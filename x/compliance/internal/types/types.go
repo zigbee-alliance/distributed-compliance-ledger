@@ -7,13 +7,14 @@ import (
 )
 
 type ModelInfo struct {
+	ID     string         `json:"id"`
 	Family string         `json:"family"`
 	Cert   string         `json:"cert"`
 	Owner  sdk.AccAddress `json:"owner"`
 }
 
-func MakeModelInfo(family string, cert string, owner sdk.AccAddress) ModelInfo {
-	return ModelInfo{Family: family, Cert: cert, Owner: owner}
+func NewModelInfo(id string, family string, cert string, owner sdk.AccAddress) ModelInfo {
+	return ModelInfo{ID: id, Family: family, Cert: cert, Owner: owner}
 }
 
 func (d ModelInfo) String() string {

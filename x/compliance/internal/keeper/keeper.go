@@ -40,6 +40,12 @@ func (k Keeper) SetModelInfo(ctx sdk.Context, id string, device types.ModelInfo)
 	store.Set([]byte(id), k.cdc.MustMarshalBinaryBare(device))
 }
 
+// Get an iterator over all names in which the keys are the names and the values are the whois
+func (k Keeper) GetModelInfoIDIterator(ctx sdk.Context) sdk.Iterator {
+	store := ctx.KVStore(k.storeKey)
+	return sdk.KVStorePrefixIterator(store, nil)
+}
+
 // Check if the ModelInfo is present in the store or not
 func (k Keeper) IsModelInfoPresent(ctx sdk.Context, id string) bool {
 	store := ctx.KVStore(k.storeKey)

@@ -11,8 +11,8 @@ type MsgAddModelInfo struct {
 	Owner  sdk.AccAddress `json:"owner"`
 }
 
-func MakeMsgAddDevice(ID string, family string, cert string, owner sdk.AccAddress) MsgAddModelInfo {
-	return MsgAddModelInfo{ID: ID, Family: family, Cert: cert, Owner: owner}
+func NewMsgAddModelInfo(id string, family string, cert string, owner sdk.AccAddress) MsgAddModelInfo {
+	return MsgAddModelInfo{ID: id, Family: family, Cert: cert, Owner: owner}
 }
 
 func (m MsgAddModelInfo) Route() string {
@@ -20,7 +20,7 @@ func (m MsgAddModelInfo) Route() string {
 }
 
 func (m MsgAddModelInfo) Type() string {
-	return "add_device"
+	return "add_model_info"
 }
 
 func (m MsgAddModelInfo) ValidateBasic() sdk.Error {

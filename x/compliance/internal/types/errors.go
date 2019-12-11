@@ -5,14 +5,14 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 const (
 	DefaultCodespace sdk.CodespaceType = ModuleName
 
-	CodeDeviceAlreadyExists sdk.CodeType = 101
-	CodeDeviceDoesNotExist  sdk.CodeType = 102
+	CodeModelInfoAlreadyExists sdk.CodeType = 101
+	CodeModelInfoDoesNotExist  sdk.CodeType = 102
 )
 
-func ErrDeviceAlreadyExists(codespace sdk.CodespaceType) sdk.Error {
-	return sdk.NewError(codespace, CodeDeviceAlreadyExists, "ModelInfo already exists")
+func ErrModelInfoAlreadyExists(codespace sdk.CodespaceType) sdk.Error {
+	return sdk.NewError(codespace, CodeModelInfoAlreadyExists, "ModelInfo already exists")
 }
 
-func ErrDeviceDoesNotExist(codespace sdk.CodespaceType) sdk.Error {
-	return sdk.NewError(codespace, CodeDeviceDoesNotExist, "ModelInfo does not exist")
+func ErrModelInfoDoesNotExist(codespace sdk.CodespaceType) sdk.Error {
+	return sdk.NewError(codespace, CodeModelInfoDoesNotExist, "ModelInfo does not exist")
 }
