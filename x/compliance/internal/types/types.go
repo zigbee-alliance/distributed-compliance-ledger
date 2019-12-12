@@ -13,8 +13,8 @@ type ModelInfo struct {
 	Owner  sdk.AccAddress `json:"owner"`
 }
 
-func NewModelInfo(Id string, family string, cert string, owner sdk.AccAddress) ModelInfo {
-	return ModelInfo{ID: Id, Family: family, Cert: cert, Owner: owner}
+func NewModelInfo(id string, family string, cert string, owner sdk.AccAddress) ModelInfo {
+	return ModelInfo{ID: id, Family: family, Cert: cert, Owner: owner}
 }
 
 func (d ModelInfo) String() string {

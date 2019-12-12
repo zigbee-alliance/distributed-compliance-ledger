@@ -87,8 +87,8 @@ type MsgDeleteModelInfo struct {
 	Owner sdk.AccAddress `json:"owner"`
 }
 
-func NewMsgDeleteModelInfo(ID string, owner sdk.AccAddress) MsgDeleteModelInfo {
-	return MsgDeleteModelInfo{ID: ID, Owner: owner}
+func NewMsgDeleteModelInfo(id string, owner sdk.AccAddress) MsgDeleteModelInfo {
+	return MsgDeleteModelInfo{ID: id, Owner: owner}
 }
 
 func (m MsgDeleteModelInfo) Route() string {

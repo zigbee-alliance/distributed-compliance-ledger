@@ -116,84 +116,37 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 		tkeys:   tkeys,
 	}
 
-	// The ParamsKeeper handles parameter storage for the application
-	app.paramsKeeper = params.NewKeeper(app.cdc, keys[params.StoreKey], tkeys[params.TStoreKey], params.DefaultCodespace)
-	// Set specific supspaces
-	authSubspace := app.paramsKeeper.Subspace(auth.DefaultParamspace)
-	bankSupspace := app.paramsKeeper.Subspace(bank.DefaultParamspace)
-	stakingSubspace := app.paramsKeeper.Subspace(staking.DefaultParamspace)
-	distrSubspace := app.paramsKeeper.Subspace(distr.DefaultParamspace)
-	slashingSubspace := app.paramsKeeper.Subspace(slashing.DefaultParamspace)
+	InitKeepers(app, keys, tkeys)
 
-	// The AccountKeeper handles address -> account lookups
-	app.accountKeeper = auth.NewAccountKeeper(
-		app.cdc,
-		keys[auth.StoreKey],
-		authSubspace,
-		auth.ProtoBaseAccount,
+	InitModuleManager(app)
+
+	// The initChainer handles translating the genesis.json file into initial state for the network
+	app.SetInitChainer(app.InitChainer)
+	app.SetBeginBlocker(app.BeginBlocker)
+	app.SetEndBlocker(app.EndBlocker)
+
+	// The AnteHandler handles signature verification and transaction pre-processing
+	app.SetAnteHandler(
+		auth.NewAnteHandler(
+			app.accountKeeper,
+			app.supplyKeeper,
+			auth.DefaultSigVerificationGasConsumer,
+		),
 	)
 
-	// The BankKeeper allows you perform sdk.Coins interactions
-	app.bankKeeper = bank.NewBaseKeeper(
-		app.accountKeeper,
-		bankSupspace,
-		bank.DefaultCodespace,
-		app.ModuleAccountAddrs(),
-	)
+	// initialize stores
+	app.MountKVStores(keys)
+	app.MountTransientStores(tkeys)
 
-	// The SupplyKeeper collects transaction fees and renders them to the fee distribution module
-	app.supplyKeeper = supply.NewKeeper(
-		app.cdc,
-		keys[supply.StoreKey],
-		app.accountKeeper,
-		app.bankKeeper,
-		maccPerms,
-	)
+	err := app.LoadLatestVersion(app.keys[bam.MainStoreKey])
+	if err != nil {
+		cmn.Exit(err.Error())
+	}
 
-	// The staking keeper
-	stakingKeeper := staking.NewKeeper(
-		app.cdc,
-		keys[staking.StoreKey],
-		tkeys[staking.TStoreKey],
-		app.supplyKeeper,
-		stakingSubspace,
-		staking.DefaultCodespace,
-	)
+	return app
+}
 
-	app.distrKeeper = distr.NewKeeper(
-		app.cdc,
-		keys[distr.StoreKey],
-		distrSubspace,
-		&stakingKeeper,
-		app.supplyKeeper,
-		distr.DefaultCodespace,
-		auth.FeeCollectorName,
-		app.ModuleAccountAddrs(),
-	)
-
-	app.slashingKeeper = slashing.NewKeeper(
-		app.cdc,
-		keys[slashing.StoreKey],
-		&stakingKeeper,
-		slashingSubspace,
-		slashing.DefaultCodespace,
-	)
-
-	// register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.stakingKeeper = *stakingKeeper.SetHooks(
-		staking.NewMultiStakingHooks(
-			app.distrKeeper.Hooks(),
-			app.slashingKeeper.Hooks()),
-	)
-
-	// The ComplianceKeeper is the Keeper from the module for this tutorial
-	// It handles interactions with the namestore
-	app.complianceKeeper = compliance.NewKeeper(
-		keys[compliance.StoreKey],
-		app.cdc,
-	)
-
+func InitModuleManager(app *zbLedgerApp) {
 	app.mm = module.NewManager(
 		genaccounts.NewAppModule(app.accountKeeper),
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
@@ -226,31 +179,127 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 	// register all module routes and module queriers
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
+}
 
-	// The initChainer handles translating the genesis.json file into initial state for the network
-	app.SetInitChainer(app.InitChainer)
-	app.SetBeginBlocker(app.BeginBlocker)
-	app.SetEndBlocker(app.EndBlocker)
+func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[string]*sdk.TransientStoreKey) {
+	// The ParamsKeeper handles parameter storage for the application
+	app.paramsKeeper = MakeParamKeeper(app, keys, tkeys)
 
-	// The AnteHandler handles signature verification and transaction pre-processing
-	app.SetAnteHandler(
-		auth.NewAnteHandler(
-			app.accountKeeper,
-			app.supplyKeeper,
-			auth.DefaultSigVerificationGasConsumer,
-		),
+	// Set specific supspaces
+	authSubspace := app.paramsKeeper.Subspace(auth.DefaultParamspace)
+	bankSupspace := app.paramsKeeper.Subspace(bank.DefaultParamspace)
+	stakingSubspace := app.paramsKeeper.Subspace(staking.DefaultParamspace)
+	distrSubspace := app.paramsKeeper.Subspace(distr.DefaultParamspace)
+	slashingSubspace := app.paramsKeeper.Subspace(slashing.DefaultParamspace)
+
+	// The AccountKeeper handles address -> account lookups
+	app.accountKeeper = MakeAccountKeeper(app, keys, authSubspace)
+
+	// The BankKeeper allows you perform sdk.Coins interactions
+	app.bankKeeper = MakeBankKeeper(app, bankSupspace)
+
+	// The SupplyKeeper collects transaction fees and renders them to the fee distribution module
+	app.supplyKeeper = MakeSupplyKeeper(app, keys)
+
+	// The staking keeper
+	stakingKeeper := MakeStakingKeeper(app, keys, tkeys, stakingSubspace)
+
+	app.distrKeeper = MakeDistrKeeper(app, keys, distrSubspace, &stakingKeeper)
+
+	app.slashingKeeper = MakeSlashingKeeper(app, keys, &stakingKeeper, slashingSubspace)
+
+	// register the staking hooks
+	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
+	app.stakingKeeper = *stakingKeeper.SetHooks(
+		staking.NewMultiStakingHooks(
+			app.distrKeeper.Hooks(),
+			app.slashingKeeper.Hooks()),
 	)
 
-	// initialize stores
-	app.MountKVStores(keys)
-	app.MountTransientStores(tkeys)
+	// The ComplianceKeeper is the Keeper from the module for this tutorial
+	app.complianceKeeper = MakeComplianceKeeper(keys, app)
+}
 
-	err := app.LoadLatestVersion(app.keys[bam.MainStoreKey])
-	if err != nil {
-		cmn.Exit(err.Error())
-	}
+func MakeComplianceKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) compliance.Keeper {
+	return compliance.NewKeeper(
+		keys[compliance.StoreKey],
+		app.cdc,
+	)
+}
 
-	return app
+func MakeSlashingKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey,
+	stakingKeeper *staking.Keeper, slashingSubspace params.Subspace) slashing.Keeper {
+	return slashing.NewKeeper(
+		app.cdc,
+		keys[slashing.StoreKey],
+		stakingKeeper,
+		slashingSubspace,
+		slashing.DefaultCodespace,
+	)
+}
+
+func MakeDistrKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey,
+	distrSubspace params.Subspace, stakingKeeper *staking.Keeper) distr.Keeper {
+	return distr.NewKeeper(
+		app.cdc,
+		keys[distr.StoreKey],
+		distrSubspace,
+		stakingKeeper,
+		app.supplyKeeper,
+		distr.DefaultCodespace,
+		auth.FeeCollectorName,
+		app.ModuleAccountAddrs(),
+	)
+}
+
+func MakeStakingKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey,
+	tkeys map[string]*sdk.TransientStoreKey, stakingSubspace params.Subspace) staking.Keeper {
+	return staking.NewKeeper(
+		app.cdc,
+		keys[staking.StoreKey],
+		tkeys[staking.TStoreKey],
+		app.supplyKeeper,
+		stakingSubspace,
+		staking.DefaultCodespace,
+	)
+}
+
+func MakeSupplyKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey) supply.Keeper {
+	return supply.NewKeeper(
+		app.cdc,
+		keys[supply.StoreKey],
+		app.accountKeeper,
+		app.bankKeeper,
+		maccPerms,
+	)
+}
+
+func MakeBankKeeper(app *zbLedgerApp, bankSupspace params.Subspace) bank.Keeper {
+	return bank.NewBaseKeeper(
+		app.accountKeeper,
+		bankSupspace,
+		bank.DefaultCodespace,
+		app.ModuleAccountAddrs(),
+	)
+}
+
+func MakeAccountKeeper(app *zbLedgerApp,
+	keys map[string]*sdk.KVStoreKey, authSubspace params.Subspace) auth.AccountKeeper {
+	return auth.NewAccountKeeper(
+		app.cdc,
+		keys[auth.StoreKey],
+		authSubspace,
+		auth.ProtoBaseAccount,
+	)
+}
+
+func MakeParamKeeper(app *zbLedgerApp,
+	keys map[string]*sdk.KVStoreKey, tkeys map[string]*sdk.TransientStoreKey) params.Keeper {
+	return params.NewKeeper(
+		app.cdc, keys[params.StoreKey],
+		tkeys[params.TStoreKey],
+		params.DefaultCodespace,
+	)
 }
 
 // GenesisState represents chain state at the start of the chain. Any initial state (account balances) are stored here.
