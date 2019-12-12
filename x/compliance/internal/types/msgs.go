@@ -42,3 +42,79 @@ func (m MsgAddModelInfo) GetSignBytes() []byte {
 func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Owner}
 }
+
+type MsgUpdateModelInfo struct {
+	ID        string         `json:"id"`
+	NewFamily string         `json:"new_family"`
+	NewCert   string         `json:"new_cert"`
+	Owner     sdk.AccAddress `json:"owner"`
+}
+
+func NewMsgUpdateModelInfo(id string, newFamily string, newCert string, owner sdk.AccAddress) MsgUpdateModelInfo {
+	return MsgUpdateModelInfo{ID: id, NewFamily: newFamily, NewCert: newCert, Owner: owner}
+}
+
+func (m MsgUpdateModelInfo) Route() string {
+	return RouterKey
+}
+
+func (m MsgUpdateModelInfo) Type() string {
+	return "update_model_info"
+}
+
+func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
+	if m.Owner.Empty() {
+		return sdk.ErrInvalidAddress(m.Owner.String())
+	}
+
+	if len(m.ID) == 0 || len(m.NewFamily) == 0 || len(m.NewCert) == 0 {
+		return sdk.ErrUnknownRequest("ID, NewFamily and NewCert cannot be empty")
+	}
+
+	return nil
+}
+
+func (m MsgUpdateModelInfo) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
+}
+
+func (m MsgUpdateModelInfo) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Owner}
+}
+
+type MsgDeleteModelInfo struct {
+	ID    string         `json:"id"`
+	Owner sdk.AccAddress `json:"owner"`
+}
+
+func NewMsgDeleteModelInfo(ID string, owner sdk.AccAddress) MsgDeleteModelInfo {
+	return MsgDeleteModelInfo{ID: ID, Owner: owner}
+}
+
+func (m MsgDeleteModelInfo) Route() string {
+	return RouterKey
+}
+
+func (m MsgDeleteModelInfo) Type() string {
+	return "delete_model_info"
+}
+
+func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
+	if m.Owner.Empty() {
+		return sdk.ErrInvalidAddress(m.Owner.String())
+	}
+
+	if len(m.ID) == 0 {
+		return sdk.ErrUnknownRequest("ID cannot be empty")
+	}
+
+	return nil
+}
+
+func (m MsgDeleteModelInfo) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
+}
+
+func (m MsgDeleteModelInfo) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Owner}
+}

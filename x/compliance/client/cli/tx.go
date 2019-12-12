@@ -23,12 +23,13 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 	complianceTxCmd.AddCommand(client.PostCommands(
 		GetCmdAddModelInfo(cdc),
+		GetCmdUpdateModelInfo(cdc),
+		GetCmdDeleteModelInfo(cdc),
 	)...)
 
 	return complianceTxCmd
 }
 
-// GetCmdAddModelInfo is the CLI command for creating a ModelInfo
 func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "add-model-info [id] [family] [cert]",
@@ -39,6 +40,46 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
 			msg := types.NewMsgAddModelInfo(args[0], args[1], args[2], cliCtx.GetFromAddress())
+			err := msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "update-model-info [id] [new-family] [new-cert]",
+		Short: "update existing ModelInfo",
+		Args:  cobra.ExactArgs(3),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			msg := types.NewMsgUpdateModelInfo(args[0], args[1], args[2], cliCtx.GetFromAddress())
+			err := msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}
+
+func GetCmdDeleteModelInfo(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "delete-model-info [id]",
+		Short: "delete existing ModelInfo",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			msg := types.NewMsgDeleteModelInfo(args[0], cliCtx.GetFromAddress())
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err

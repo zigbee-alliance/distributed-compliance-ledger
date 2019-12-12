@@ -40,6 +40,16 @@ func (k Keeper) SetModelInfo(ctx sdk.Context, id string, device types.ModelInfo)
 	store.Set([]byte(id), k.cdc.MustMarshalBinaryBare(device))
 }
 
+// Deletes the ModelInfo from the store
+func (k Keeper) DeleteModelInfo(ctx sdk.Context, id string) {
+	if !k.IsModelInfoPresent(ctx, id) {
+		panic("ModelInfo does not exist")
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	store.Delete([]byte(id))
+}
+
 // Get an iterator over all names in which the keys are the names and the values are the whois
 func (k Keeper) GetModelInfoIDIterator(ctx sdk.Context) sdk.Iterator {
 	store := ctx.KVStore(k.storeKey)

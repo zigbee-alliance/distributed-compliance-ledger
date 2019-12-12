@@ -12,16 +12,20 @@ const (
 )
 
 var (
-	NewKeeper          = keeper.NewKeeper
-	NewQuerier         = keeper.NewQuerier
-	NewMsgAddModelInfo = types.NewMsgAddModelInfo
-	ModuleCdc          = types.ModuleCdc
-	RegisterCodec      = types.RegisterCodec
+	NewKeeper             = keeper.NewKeeper
+	NewQuerier            = keeper.NewQuerier
+	NewMsgAddModelInfo    = types.NewMsgAddModelInfo
+	NewMsgUpdateModelInfo = types.NewMsgUpdateModelInfo
+	NewMsgDeleteModelInfo = types.NewMsgDeleteModelInfo
+	ModuleCdc             = types.ModuleCdc
+	RegisterCodec         = types.RegisterCodec
 )
 
 type (
-	Keeper            = keeper.Keeper
-	MsgAddModelInfo   = types.MsgAddModelInfo
-	QueryModelInfoIDs = types.QueryModelInfoIDs
-	ModelInfo         = types.ModelInfo
+	Keeper             = keeper.Keeper
+	MsgAddModelInfo    = types.MsgAddModelInfo
+	MsgUpdateModelInfo = types.MsgUpdateModelInfo
+	MsgDeleteModelInfo = types.MsgDeleteModelInfo
+	QueryModelInfoIDs  = types.QueryModelInfoIDs
+	ModelInfo          = types.ModelInfo
 )
