@@ -21,6 +21,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	}
 	complianceQueryCmd.AddCommand(client.GetCommands(
 		GetCmdModelInfo(storeKey, cdc),
+		GetCmdModelInfoWithProof(storeKey, cdc),
 		GetCmdModelInfoIDs(storeKey, cdc),
 	)...)
 
@@ -44,6 +45,28 @@ func GetCmdModelInfo(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			var out types.ModelInfo
 			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+}
+
+func GetCmdModelInfoWithProof(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "model-info-with-proof [id]",
+		Short: "Query ModelInfo with proof by ID",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			id := args[0]
+
+			res, _, err := cliCtx.QueryStore([]byte(id), queryRoute)
+			if err != nil {
+				fmt.Printf("could not query ModelInfo - %s \n", id)
+				return nil
+			}
+
+			var out types.ModelInfo
+			cdc.MustUnmarshalBinaryBare(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
 	}
