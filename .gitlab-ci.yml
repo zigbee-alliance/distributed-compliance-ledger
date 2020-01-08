@@ -17,7 +17,7 @@ build:
 test:
   image: "circleci/golang"
   before_script:
-    - go
+    - go version
     - which go
   script:
     - go get -v -t -d ./...
