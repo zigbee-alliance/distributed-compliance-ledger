@@ -1,0 +1,24 @@
+lint:
+  image: "golangci/golangci-lint"
+  before_script:
+    - golangci-lint version
+    - which golangci-lint
+  script:
+    - golangci-lint run ./...
+
+build:
+  image: "circleci/golang"
+  before_script:
+    - go version
+    - which go
+  script:
+    - make
+
+test:
+  image: "circleci/golang"
+  before_script:
+    - go version
+    - which go
+  script:
+    - go get -v -t -d ./...
+    - go test -v ./...
