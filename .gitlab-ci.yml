@@ -1,0 +1,7 @@
+lint:
+  image: "golangci/golangci-lint"
+  before_script:
+    - golangci-lint version
+    - which golangci-lint
+  script:
+    - golangci-lint run ./...
