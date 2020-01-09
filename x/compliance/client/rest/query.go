@@ -16,6 +16,7 @@ func modelInfoIDsHandler(cliCtx context.CLIContext, storeName string) http.Handl
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
 		}
+
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }

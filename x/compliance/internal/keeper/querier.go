@@ -43,7 +43,7 @@ func queryModelInfo(ctx sdk.Context, path []string, req abci.RequestQuery, keepe
 }
 
 func queryModelInfoIDs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	var namesList types.QueryModelInfoIDs
+	var namesList types.QueryModelInfoIDsResult
 
 	iterator := keeper.GetModelInfoIDIterator(ctx)
 

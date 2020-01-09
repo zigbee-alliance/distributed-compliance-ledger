@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 
+	"github.com/askolesov/zb-ledger/x/authnext"
 	"github.com/askolesov/zb-ledger/x/compliance"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -49,7 +50,8 @@ var (
 		slashing.AppModuleBasic{},
 		supply.AppModuleBasic{},
 
-		compliance.AppModule{},
+		compliance.AppModuleBasic{},
+		authnext.AppModuleBasic{},
 	)
 	// account permissions
 	maccPerms = map[string][]string{
@@ -152,11 +154,13 @@ func InitModuleManager(app *zbLedgerApp) {
 		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper),
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
-		compliance.NewAppModule(app.complianceKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		distr.NewAppModule(app.distrKeeper, app.supplyKeeper),
 		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.distrKeeper, app.accountKeeper, app.supplyKeeper),
+
+		compliance.NewAppModule(app.complianceKeeper),
+		authnext.NewAppModule(app.accountKeeper, app.cdc),
 	)
 
 	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
@@ -173,6 +177,7 @@ func InitModuleManager(app *zbLedgerApp) {
 		bank.ModuleName,
 		slashing.ModuleName,
 		compliance.ModuleName,
+		authnext.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
 	)

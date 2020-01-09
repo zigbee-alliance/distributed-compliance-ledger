@@ -22,10 +22,10 @@ var (
 )
 
 type (
-	Keeper             = keeper.Keeper
-	MsgAddModelInfo    = types.MsgAddModelInfo
-	MsgUpdateModelInfo = types.MsgUpdateModelInfo
-	MsgDeleteModelInfo = types.MsgDeleteModelInfo
-	QueryModelInfoIDs  = types.QueryModelInfoIDs
-	ModelInfo          = types.ModelInfo
+	Keeper                  = keeper.Keeper
+	MsgAddModelInfo         = types.MsgAddModelInfo
+	MsgUpdateModelInfo      = types.MsgUpdateModelInfo
+	MsgDeleteModelInfo      = types.MsgDeleteModelInfo
+	QueryModelInfoIDsResult = types.QueryModelInfoIDsResult
+	ModelInfo               = types.ModelInfo
 )

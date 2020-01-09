@@ -85,7 +85,7 @@ func GetCmdModelInfoIDs(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out types.QueryModelInfoIDs
+			var out types.QueryModelInfoIDsResult
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},
