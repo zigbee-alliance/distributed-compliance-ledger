@@ -4,8 +4,8 @@ import (
 	"os"
 	"path"
 
-	app "github.com/askolesov/zb-ledger"
-	utils "github.com/askolesov/zb-ledger/utils/proxy/rest"
+	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
+	utils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/proxy/rest"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/keys"

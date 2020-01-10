@@ -3,8 +3,8 @@ package authnext
 import (
 	"encoding/json"
 
-	"github.com/askolesov/zb-ledger/x/authnext/client/cli"
-	"github.com/askolesov/zb-ledger/x/authnext/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/client/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"

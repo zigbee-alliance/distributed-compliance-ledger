@@ -3,8 +3,8 @@ package compliance
 import (
 	"encoding/json"
 
-	"github.com/askolesov/zb-ledger/x/compliance/client/cli"
-	"github.com/askolesov/zb-ledger/x/compliance/client/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"

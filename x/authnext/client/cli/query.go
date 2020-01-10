@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/askolesov/zb-ledger/x/authnext/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"

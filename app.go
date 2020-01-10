@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/askolesov/zb-ledger/x/authnext"
-	"github.com/askolesov/zb-ledger/x/compliance"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"

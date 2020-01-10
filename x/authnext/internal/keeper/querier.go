@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/askolesov/zb-ledger/x/authnext/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/exported"

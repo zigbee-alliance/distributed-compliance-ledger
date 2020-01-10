@@ -1,8 +1,8 @@
 package authnext
 
 import (
-	"github.com/askolesov/zb-ledger/x/authnext/internal/keeper"
-	"github.com/askolesov/zb-ledger/x/authnext/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/keeper"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 )
 
 const (
