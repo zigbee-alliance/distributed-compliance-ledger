@@ -2,7 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"strconv"
+
+	"github.com/spf13/viper"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
@@ -10,6 +11,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
+)
+
+const (
+	FlagSkip = "skip"
+	FlagTake = "take"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -28,21 +34,16 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 }
 
 func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "account-headers [start] [count]",
 		Short: "List all ModelInfo IDs",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			params := types.QueryAccountHeadersParams{}
-
-			if len(args) > 0 {
-				params.Skip, _ = strconv.Atoi(args[0])
-			}
-
-			if len(args) > 1 {
-				params.Count, _ = strconv.Atoi(args[1])
-			}
+			params := types.NewQueryAccountHeadersParams(
+				viper.GetInt(FlagSkip),
+				viper.GetInt(FlagTake),
+			)
 
 			data := cdc.MustMarshalJSON(params)
 
@@ -57,4 +58,9 @@ func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			return cliCtx.PrintOutput(out)
 		},
 	}
+
+	cmd.Flags().Int(FlagSkip, 0, "amount of accounts to skip")
+	cmd.Flags().Int(FlagTake, 0, "amount of accounts to take")
+
+	return cmd
 }
