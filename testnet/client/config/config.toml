@@ -1,0 +1,4 @@
+chain-id = "zblchain"
+indent = true
+output = "json"
+trust-node = false
