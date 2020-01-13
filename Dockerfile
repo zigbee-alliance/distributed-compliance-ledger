@@ -20,10 +20,9 @@ FROM alpine:latest
 COPY --from=builder /go/bin/zbld /usr/bin/zbld
 COPY --from=builder /go/bin/zblcli /usr/bin/zblcli
 
-EXPOSE 26656 26657
+VOLUME /root/.zbld
+VOLUME /root/.zblcli
 
-RUN apk update && \
-    apk upgrade && \
-    apk --no-cache add bash
+EXPOSE 26656 26657
 
 STOPSIGNAL SIGTERM

@@ -1,0 +1,26 @@
+version: '3.2'
+services:
+  node0:
+    build: .
+    volumes:
+      - ./testnet/node0:/root/.zbld:Z
+#      - ./testnet/client:/root/.zblcmd
+    command: zbld start
+  node1:
+    build: .
+    volumes:
+      - ./testnet/node1:/root/.zbld:Z
+#      - ./testnet/client:/root/.zblcmd
+    command: zbld start
+  node2:
+    build: .
+    volumes:
+      - ./testnet/node2:/root/.zbld:Z
+#      - ./testnet/client:/root/.zblcmd
+    command: zbld start
+  node3:
+    build: .
+    volumes:
+      - ./testnet/node3:/root/.zbld:Z
+#      - ./testnet/client:/root/.zblcmd
+    command: zbld start

@@ -32,4 +32,12 @@ test:
 clean:
 	rm -rf $(OUTPUT_DIR)
 
+# Docker
+
+image:
+	docker build -t zbledger .
+
+localnet:
+	docker-compose up
+
 .PHONY: all build install test clean
