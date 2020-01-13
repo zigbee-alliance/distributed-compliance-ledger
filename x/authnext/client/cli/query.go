@@ -12,6 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	FlagSkip = "skip"
+	FlagTake = "take"
+)
+
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	complianceQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
@@ -57,4 +62,9 @@ func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			return cliCtx.PrintOutput(out)
 		},
 	}
+
+	cmd.Flags().Int(FlagSkip, 0, "amount of accounts to skip")
+	cmd.Flags().Int(FlagTake, 0, "amount of accounts to take")
+
+	return cmd
 }
