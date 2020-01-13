@@ -18,8 +18,8 @@ type QueryAccountHeadersParams struct {
 	Take int
 }
 
-func NewQueryAccountHeadersParams(skip int, take int) *QueryAccountHeadersParams {
-	return &QueryAccountHeadersParams{Skip: skip, Take: take}
+func NewQueryAccountHeadersParams(skip int, take int) QueryAccountHeadersParams {
+	return QueryAccountHeadersParams{Skip: skip, Take: take}
 }
 
 // Result Payload for a account headers query
