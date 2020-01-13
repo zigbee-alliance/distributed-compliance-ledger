@@ -1,26 +1,59 @@
 version: '3.2'
+
 services:
   node0:
     build: .
+    container_name: node0
+    ports:
+      - "26656-26657:26656-26657"
     volumes:
-      - ./testnet/node0:/root/.zbld:Z
-#      - ./testnet/client:/root/.zblcmd
+      - ./localnet/node0:/root/.zbld:Z
+    networks:
+      localnet:
+        ipv4_address: 192.167.10.2
     command: zbld start
+
   node1:
     build: .
+    container_name: node1
+    ports:
+      - "26658-26659:26656-26657"
     volumes:
-      - ./testnet/node1:/root/.zbld:Z
-#      - ./testnet/client:/root/.zblcmd
+      - ./localnet/node1:/root/.zbld:Z
+    networks:
+      localnet:
+        ipv4_address: 192.167.10.3
     command: zbld start
+
   node2:
     build: .
+    container_name: node2
+    ports:
+      - "26660-26661:26656-26657"
     volumes:
-      - ./testnet/node2:/root/.zbld:Z
-#      - ./testnet/client:/root/.zblcmd
+      - ./localnet/node2:/root/.zbld:Z
+    networks:
+      localnet:
+        ipv4_address: 192.167.10.4
     command: zbld start
+
   node3:
     build: .
+    container_name: node3
+    ports:
+      - "26662-26663:26656-26657"
     volumes:
-      - ./testnet/node3:/root/.zbld:Z
-#      - ./testnet/client:/root/.zblcmd
+      - ./localnet/node3:/root/.zbld:Z
+    networks:
+      localnet:
+        ipv4_address: 192.167.10.5
     command: zbld start
+
+networks:
+  localnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        -
+          subnet: 192.167.10.0/16

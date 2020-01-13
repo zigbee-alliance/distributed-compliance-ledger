@@ -11,6 +11,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=ZbLedger \
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 OUTPUT_DIR?=build
+LOCALNET_DIR?=localnet
 
 all: install
 
@@ -37,7 +38,13 @@ clean:
 image:
 	docker build -t zbledger .
 
+localnet_init:
+	/bin/bash ./genconfig.sh
+
 localnet:
 	docker-compose up
 
-.PHONY: all build install test clean
+localnet_clean:
+	rm -rf $(LOCALNET_DIR)
+
+.PHONY: all build install test clean image localnet_init localnet localnet_clean

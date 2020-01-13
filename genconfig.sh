@@ -1,8 +1,8 @@
 rm -rf ~/.zblcli
 rm -rf ~/.zbld
 
-rm -rf testnet
-mkdir testnet testnet/client testnet/node0 testnet/node1 testnet/node2 testnet/node3
+rm -rf localnet
+mkdir localnet localnet/client localnet/node0 localnet/node1 localnet/node2 localnet/node3
 
 # client
 
@@ -16,7 +16,7 @@ echo 'test1234' | zblcli keys add alice
 echo 'test1234' | zblcli keys add bob
 echo 'test1234' | zblcli keys add anna
 
-cp -r ~/.zblcli/* testnet/client
+cp -r ~/.zblcli/* localnet/client
 
 # node 0
 
@@ -29,7 +29,7 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 
 echo 'test1234' | zbld gentx --name jack
 
-mv ~/.zbld/* testnet/node0
+mv ~/.zbld/* localnet/node0
 
 # node 1
 
@@ -42,7 +42,7 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 
 echo 'test1234' | zbld gentx --name alice
 
-mv ~/.zbld/* testnet/node1
+mv ~/.zbld/* localnet/node1
 
 # node 2
 
@@ -55,7 +55,7 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 
 echo 'test1234' | zbld gentx --name bob
 
-mv ~/.zbld/* testnet/node2
+mv ~/.zbld/* localnet/node2
 
 # node 3
 
@@ -68,19 +68,34 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 
 echo 'test1234' | zbld gentx --name anna
 
-cp -r ~/.zbld/* testnet/node3
+cp -r ~/.zbld/* localnet/node3
 
-# collect all genesis transactions
+# collect all create validator transactions
 
-cp testnet/node0/config/gentx/* ~/.zbld/config/gentx
-cp testnet/node1/config/gentx/* ~/.zbld/config/gentx
-cp testnet/node2/config/gentx/* ~/.zbld/config/gentx
-cp testnet/node3/config/gentx/* ~/.zbld/config/gentx
+cp localnet/node0/config/gentx/* ~/.zbld/config/gentx
+cp localnet/node1/config/gentx/* ~/.zbld/config/gentx
+cp localnet/node2/config/gentx/* ~/.zbld/config/gentx
+cp localnet/node3/config/gentx/* ~/.zbld/config/gentx
+
+# embed them into genesis
 
 zbld collect-gentxs
 zbld validate-genesis
 
-cp ~/.zbld/config/genesis.json testnet/node0/config/
-cp ~/.zbld/config/genesis.json testnet/node1/config/
-cp ~/.zbld/config/genesis.json testnet/node2/config/
-cp ~/.zbld/config/genesis.json testnet/node3/config/
+# update genesis for all nodes
+
+cp ~/.zbld/config/genesis.json localnet/node0/config/
+cp ~/.zbld/config/genesis.json localnet/node1/config/
+cp ~/.zbld/config/genesis.json localnet/node2/config/
+cp ~/.zbld/config/genesis.json localnet/node3/config/
+
+# find out node ids
+
+id0=$(ls localnet/node0/config/gentx | sed 's/gentx-\(.*\).json/\1/')
+id1=$(ls localnet/node1/config/gentx | sed 's/gentx-\(.*\).json/\1/')
+id2=$(ls localnet/node2/config/gentx | sed 's/gentx-\(.*\).json/\1/')
+id3=$(ls localnet/node3/config/gentx | sed 's/gentx-\(.*\).json/\1/')
+
+# update peers for the first node
+
+sed -i "s/persistent_peers = \"\"/persistent_peers = \"$id0@192.167.10.2:26656,$id1@192.167.10.3:26656,$id2@192.167.10.4:26656,$id3@192.167.10.5:26656\"/g" localnet/node0/config/config.toml
