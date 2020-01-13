@@ -70,32 +70,40 @@ echo 'test1234' | zbld gentx --name anna
 
 cp -r ~/.zbld/* localnet/node3
 
-# collect all create validator transactions
+# Collect all validator creation transactions
 
 cp localnet/node0/config/gentx/* ~/.zbld/config/gentx
 cp localnet/node1/config/gentx/* ~/.zbld/config/gentx
 cp localnet/node2/config/gentx/* ~/.zbld/config/gentx
 cp localnet/node3/config/gentx/* ~/.zbld/config/gentx
 
-# embed them into genesis
+# Embed them into genesis
 
 zbld collect-gentxs
 zbld validate-genesis
 
-# update genesis for all nodes
+# Update genesis for all nodes
 
 cp ~/.zbld/config/genesis.json localnet/node0/config/
 cp ~/.zbld/config/genesis.json localnet/node1/config/
 cp ~/.zbld/config/genesis.json localnet/node2/config/
 cp ~/.zbld/config/genesis.json localnet/node3/config/
 
-# find out node ids
+# Find out node ids
 
 id0=$(ls localnet/node0/config/gentx | sed 's/gentx-\(.*\).json/\1/')
 id1=$(ls localnet/node1/config/gentx | sed 's/gentx-\(.*\).json/\1/')
 id2=$(ls localnet/node2/config/gentx | sed 's/gentx-\(.*\).json/\1/')
 id3=$(ls localnet/node3/config/gentx | sed 's/gentx-\(.*\).json/\1/')
 
-# update peers for the first node
+# Update address book of the first node
+peers="$id0@192.167.10.2:26656,$id1@192.167.10.3:26656,$id2@192.167.10.4:26656,$id3@192.167.10.5:26656"
+sed -i "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/node0/config/config.toml
 
-sed -i "s/persistent_peers = \"\"/persistent_peers = \"$id0@192.167.10.2:26656,$id1@192.167.10.3:26656,$id2@192.167.10.4:26656,$id3@192.167.10.5:26656\"/g" localnet/node0/config/config.toml
+# Make RPC enpoint available externally
+
+sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node0/config/config.toml
+sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node1/config/config.toml
+sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node2/config/config.toml
+sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node3/config/config.toml
+

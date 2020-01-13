@@ -6,3 +6,9 @@ Use __zbld__, __zblcli__ instead of __nsd__, __nscli__. Supported commands:
 
 - `zblcli tx compliance --help`
 - `zblcli query compliance --help`
+
+To start localnet:
+
+- make
+- make localnet_init
+- make localnet_up
