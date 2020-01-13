@@ -1,11 +1,36 @@
 package types
 
-import "strings"
+import (
+	"encoding/json"
 
-// QueryModelInfoIDsResult Queries Result Payload for a names query
-type QueryModelInfoIDsResult []string
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
-// implement fmt.Stringer
-func (n QueryModelInfoIDsResult) String() string {
-	return strings.Join(n[:], "\n")
+type ModelInfoHeader struct {
+	ID    string         `json:"id"`
+	Owner sdk.AccAddress `json:"owner"`
+}
+
+// Request Payload for a ModelInfo headers query
+type QueryModelInfoHeadersParams struct {
+	Skip int
+	Take int
+}
+
+func NewQueryModelInfoHeadersParams(skip int, take int) QueryModelInfoHeadersParams {
+	return QueryModelInfoHeadersParams{Skip: skip, Take: take}
+}
+
+// Result Payload for a ModelInfo headers query
+type QueryModelInfoHeadersResult []ModelInfoHeader
+
+// Implement fmt.Stringer
+func (n QueryModelInfoHeadersResult) String() string {
+	res, err := json.Marshal(n)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return string(res)
 }
