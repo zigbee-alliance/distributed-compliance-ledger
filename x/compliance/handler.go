@@ -3,8 +3,8 @@ package compliance
 import (
 	"fmt"
 
-	"github.com/askolesov/zb-ledger/x/compliance/internal/keeper"
-	"github.com/askolesov/zb-ledger/x/compliance/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

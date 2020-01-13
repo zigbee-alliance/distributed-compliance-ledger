@@ -1,8 +1,8 @@
 package compliance
 
 import (
-	"github.com/askolesov/zb-ledger/x/compliance/internal/keeper"
-	"github.com/askolesov/zb-ledger/x/compliance/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 )
 
 const (
@@ -22,10 +22,10 @@ var (
 )
 
 type (
-	Keeper             = keeper.Keeper
-	MsgAddModelInfo    = types.MsgAddModelInfo
-	MsgUpdateModelInfo = types.MsgUpdateModelInfo
-	MsgDeleteModelInfo = types.MsgDeleteModelInfo
-	QueryModelInfoIDs  = types.QueryModelInfoIDs
-	ModelInfo          = types.ModelInfo
+	Keeper                  = keeper.Keeper
+	MsgAddModelInfo         = types.MsgAddModelInfo
+	MsgUpdateModelInfo      = types.MsgUpdateModelInfo
+	MsgDeleteModelInfo      = types.MsgDeleteModelInfo
+	QueryModelInfoIDsResult = types.QueryModelInfoIDsResult
+	ModelInfo               = types.ModelInfo
 )

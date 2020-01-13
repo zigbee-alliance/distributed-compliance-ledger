@@ -1,4 +1,4 @@
-module github.com/askolesov/zb-ledger
+module git.dsr-corporation.com/zb-ledger/zb-ledger
 
 go 1.13
 

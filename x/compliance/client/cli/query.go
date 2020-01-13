@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/askolesov/zb-ledger/x/compliance/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -85,7 +85,7 @@ func GetCmdModelInfoIDs(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out types.QueryModelInfoIDs
+			var out types.QueryModelInfoIDsResult
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

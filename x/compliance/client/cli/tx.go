@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/askolesov/zb-ledger/x/compliance/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"

@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"github.com/askolesov/zb-ledger/x/compliance/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -43,7 +43,7 @@ func queryModelInfo(ctx sdk.Context, path []string, req abci.RequestQuery, keepe
 }
 
 func queryModelInfoIDs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	var namesList types.QueryModelInfoIDs
+	var namesList types.QueryModelInfoIDsResult
 
 	iterator := keeper.GetModelInfoIDIterator(ctx)
 
