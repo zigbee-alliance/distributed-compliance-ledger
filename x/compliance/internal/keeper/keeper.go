@@ -50,10 +50,30 @@ func (k Keeper) DeleteModelInfo(ctx sdk.Context, id string) {
 	store.Delete([]byte(id))
 }
 
-// Get an iterator over all names in which the keys are the names and the values are the whois
-func (k Keeper) GetModelInfoIDIterator(ctx sdk.Context) sdk.Iterator {
+// Iterate over all ModelInfos
+func (k Keeper) IterateModelInfos(ctx sdk.Context, process func(info types.ModelInfo) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	return sdk.KVStorePrefixIterator(store, nil)
+
+	iter := sdk.KVStorePrefixIterator(store, nil)
+	defer iter.Close()
+
+	for {
+		if !iter.Valid() {
+			return
+		}
+
+		val := iter.Value()
+
+		var modelInfo types.ModelInfo
+
+		k.cdc.MustUnmarshalBinaryBare(val, &modelInfo)
+
+		if process(modelInfo) {
+			return
+		}
+
+		iter.Next()
+	}
 }
 
 // Check if the ModelInfo is present in the store or not

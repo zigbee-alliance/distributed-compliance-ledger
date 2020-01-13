@@ -3,6 +3,8 @@ package compliance
 import (
 	"fmt"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -52,12 +54,10 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	var records []ModelInfo
 
-	iterator := k.GetModelInfoIDIterator(ctx)
-	for ; iterator.Valid(); iterator.Next() {
-		id := string(iterator.Key())
-		modelInfo := k.GetModelInfo(ctx, id)
+	k.IterateModelInfos(ctx, func(modelInfo types.ModelInfo) (stop bool) {
 		records = append(records, modelInfo)
-	}
+		return false
+	})
 
 	return GenesisState{ModelInfoRecords: records}
 }

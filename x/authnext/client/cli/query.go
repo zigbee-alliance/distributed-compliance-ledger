@@ -28,8 +28,8 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 }
 
 func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "account-headers [start] [count]",
+	cmd := &cobra.Command{
+		Use:   "account-headers",
 		Short: "List all ModelInfo IDs",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
