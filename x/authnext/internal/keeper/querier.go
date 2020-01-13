@@ -42,7 +42,7 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 			return false
 		}
 
-		if len(result) < params.Count || params.Count == 0 {
+		if len(result) < params.Take || params.Take == 0 {
 			header := types.AccountHeader{
 				Address: account.GetAddress(),
 				PubKey:  account.GetPubKey(),

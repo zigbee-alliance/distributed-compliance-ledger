@@ -2,7 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"strconv"
+
+	"github.com/spf13/viper"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
@@ -35,19 +36,14 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "account-headers",
-		Short: "List all ModelInfo IDs",
+		Short: "List ModelInfo headers",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			params := types.QueryAccountHeadersParams{}
-
-			if len(args) > 0 {
-				params.Skip, _ = strconv.Atoi(args[0])
-			}
-
-			if len(args) > 1 {
-				params.Count, _ = strconv.Atoi(args[1])
-			}
+			params := types.NewQueryAccountHeadersParams(
+				viper.GetInt(FlagSkip),
+				viper.GetInt(FlagTake),
+			)
 
 			data := cdc.MustMarshalJSON(params)
 

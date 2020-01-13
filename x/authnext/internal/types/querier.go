@@ -14,12 +14,12 @@ type AccountHeader struct {
 
 // Request Payload for a account headers query
 type QueryAccountHeadersParams struct {
-	Skip  int
-	Count int
+	Skip int
+	Take int
 }
 
-func NewQueryAccountHeadersParams(skip int, count int) QueryAccountHeadersParams {
-	return QueryAccountHeadersParams{Skip: skip, Count: count}
+func NewQueryAccountHeadersParams(skip int, take int) QueryAccountHeadersParams {
+	return QueryAccountHeadersParams{Skip: skip, Take: take}
 }
 
 // Result Payload for a account headers query
