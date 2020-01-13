@@ -39,7 +39,7 @@ image:
 	docker build -t zbledger .
 
 localnet_init:
-	/bin/bash ./genconfig.sh
+	/bin/bash ./genlocalnetconfig.sh
 
 localnet:
 	docker-compose up
