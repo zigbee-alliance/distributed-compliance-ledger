@@ -47,4 +47,13 @@ localnet:
 localnet_clean:
 	rm -rf $(LOCALNET_DIR)
 
+# Demo
+
+ccnode:
+	docker run -it --mount "type=bind,src=$(shell pwd)/localnet/node0_copy,dst=/root/.zbld" -p \
+	"26656-26657:26656-26657" --network="host" zbledger zbld start
+
+cli:
+	zblcli rest-server --node http://localhost:26659 --home localnet/client
+
 .PHONY: all build install test clean image localnet_init localnet localnet_clean
