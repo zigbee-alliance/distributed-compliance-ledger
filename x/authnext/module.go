@@ -3,6 +3,8 @@ package authnext
 import (
 	"encoding/json"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/client/rest"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
@@ -41,7 +43,9 @@ func (a AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
 }
 
 // Register rest routes
-func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {}
+func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
+	rest.RegisterRoutes(ctx, rtr, RouterKey)
+}
 
 // Get the root query command of this module
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
