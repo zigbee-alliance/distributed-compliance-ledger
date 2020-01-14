@@ -32,11 +32,15 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}
 
-	var result types.QueryAccountHeadersResult
+	result := types.QueryAccountHeadersResult{}
 
 	skipped := 0
 
 	accKeeper.IterateAccounts(ctx, func(account exported.Account) (stop bool) {
+		if account.GetPubKey() == nil {
+			return false
+		}
+
 		if skipped < params.Skip {
 			skipped++
 			return false

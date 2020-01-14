@@ -50,7 +50,7 @@ func queryModelInfoHeaders(ctx sdk.Context, req abci.RequestQuery, keeper Keeper
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}
 
-	var result types.QueryModelInfoHeadersResult
+	result := types.QueryModelInfoHeadersResult{}
 
 	skipped := 0
 
