@@ -31,7 +31,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgA
 
 	modelInfo := types.NewModelInfo(msg.ID, msg.Family, msg.Cert, msg.Owner)
 
-	keeper.SetModelInfo(ctx, msg.ID, modelInfo)
+	keeper.SetModelInfo(ctx, modelInfo)
 
 	return sdk.Result{}
 }
@@ -50,7 +50,7 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, msg types.M
 	modelInfo.Family = msg.NewFamily
 	modelInfo.Cert = msg.NewCert
 
-	keeper.SetModelInfo(ctx, msg.ID, modelInfo)
+	keeper.SetModelInfo(ctx, modelInfo)
 
 	return sdk.Result{}
 }

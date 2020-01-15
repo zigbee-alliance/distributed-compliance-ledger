@@ -3,6 +3,8 @@ package authnext
 import (
 	"encoding/json"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/client/rest"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/client/cli"
@@ -63,7 +65,7 @@ type AppModule struct {
 	cdc       *codec.Codec
 }
 
-func NewAppModule(accKeeper types.AccountKeeper, cdc *codec.Codec) AppModule {
+func NewAppModule(accKeeper types.AccountKeeper, keeper authz.Keeper, cdc *codec.Codec) AppModule {
 	return AppModule{AppModuleBasic: AppModuleBasic{}, accKeeper: accKeeper, cdc: cdc}
 }
 

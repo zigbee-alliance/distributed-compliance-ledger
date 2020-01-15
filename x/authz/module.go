@@ -1,12 +1,9 @@
-package compliance
+package authz
 
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
-
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -51,9 +48,7 @@ func (a AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
 }
 
 // Register rest routes
-func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
-	rest.RegisterRoutes(ctx, rtr, StoreKey)
-}
+func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {}
 
 // Get the root query command of this module
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
@@ -70,7 +65,7 @@ type AppModule struct {
 	keeper Keeper
 }
 
-func NewAppModule(keeper Keeper, authzKeeper authz.Keeper) AppModule {
+func NewAppModule(keeper Keeper) AppModule {
 	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper}
 }
 
