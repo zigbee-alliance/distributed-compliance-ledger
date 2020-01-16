@@ -67,11 +67,12 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 type AppModule struct {
 	AppModuleBasic
-	keeper Keeper
+	keeper      Keeper
+	authzKeeper authz.Keeper
 }
 
 func NewAppModule(keeper Keeper, authzKeeper authz.Keeper) AppModule {
-	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper}
+	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper, authzKeeper: authzKeeper}
 }
 
 func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
@@ -94,7 +95,7 @@ func (a AppModule) Route() string {
 }
 
 func (a AppModule) NewHandler() sdk.Handler {
-	return NewHandler(a.keeper)
+	return NewHandler(a.keeper, a.authzKeeper)
 }
 
 func (a AppModule) QuerierRoute() string {

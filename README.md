@@ -16,21 +16,39 @@ ModelInfo type:
 - `Cert: string`
 - `Owner: sdk.AccAddress`
 
-Transactions:   // TODO
-- `zblcli tx compliance add-model-info` - Add new ModelInfo.
-  - Owner's signature is required. Use `--from` flag.
-- `zblcli tx compliance update-model-info` - Update existing ModelInfo.
-- `zblcli tx compliance delete-model-info` - Delete existing ModelInfo.
+Transactions:
+- `zblcli tx compliance add-model-info [id:string] [family:string] [certificate:string] [owner:Bech32Addr]` - Add new
+ ModelInfo.
+  - Signature is required. Use `--from` flag.
+- `zblcli tx compliance update-model-info [id:string] [new-family:string] [new-certificate:string] [new-owner:Bech32Addr
+]` - Update existing ModelInfo.
+  - Signature is required. Use `--from` flag.
+- `zblcli tx compliance delete-model-info [id:string]` - Delete existing ModelInfo.
+  - Signature is required. Use `--from` flag.
 
-Queries
-- `zblcli query compliance model-info`
-- `zblcli query compliance model-info-with-proof`
-- `zblcli query compliance model-info-headers`
+All the transactions above require the signer to be either `administrator` or `manufacturer` and record's owner.
+
+Queries:
+- `zblcli query compliance model-info [id]` - Query single ModelInfo.
+- `zblcli query compliance model-info-with-proof [id]` - Query single ModelInfo with proof.
+- `zblcli query compliance model-info-headers --skip [x] --take [y]` - Query list of ModelInfo headers. Flags are
+ optional.
+
+Genesis:
+
+- Use `nsd add-genesis-account` to add users to genesis.
 
 ### Authorization
 
+Roles:
+- `administrator` - Is able to assign or revoke roles.
+- `manufacturer`
+
 Commands:
-- `zblcli query account-headers --skip x --take y` - The command to query list of account headers. Flags are optional.
+- `zblcli tx assign-role [address] [role]` - Assign role to specified account.
+  - Administrator's signature is required. Use `--from` flag.
+- `zblcli tx revoke-role [address] [role]` - Revoke role from specified account.
+  - Administrator's signature is required. Use `--from` flag.
 
 Genesis template:
 ```json
@@ -52,5 +70,5 @@ Genesis template:
 
 Queries:
 
-- `zblcli query authnext account-headers --skip x --take y` - The command to query list of account headers. Flags are
- optional.
+- `zblcli query authnext account-headers --skip [x] --take [y]` - The command to list account headers with roles. Flags
+ are optional.
