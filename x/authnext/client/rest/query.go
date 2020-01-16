@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 
@@ -17,11 +17,11 @@ func modelInfoHeadersHandler(cliCtx context.CLIContext, storeName string) http.H
 		skip, _ := strconv.Atoi(r.FormValue("skip"))
 		take, _ := strconv.Atoi(r.FormValue("take"))
 
-		params := types.NewQueryModelInfoHeadersParams(skip, take)
+		params := types.NewQueryAccountHeadersParams(skip, take)
 
 		data := cliCtx.Codec.MustMarshalJSON(params)
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/model_info_headers", storeName), data)
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/account_headers", storeName), data)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
