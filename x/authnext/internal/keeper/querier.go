@@ -3,6 +3,8 @@ package keeper
 import (
 	"fmt"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,11 +16,11 @@ const (
 	QueryAccountHeaders = "account_headers"
 )
 
-func NewQuerier(accKeeper types.AccountKeeper, cdc *codec.Codec) sdk.Querier {
+func NewQuerier(accKeeper types.AccountKeeper, authzKeeper authz.Keeper, cdc *codec.Codec) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
 		switch path[0] {
 		case QueryAccountHeaders:
-			return queryAccountHeaders(ctx, req, accKeeper, cdc)
+			return queryAccountHeaders(ctx, req, accKeeper, authzKeeper, cdc)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown authnext query endpoint")
 		}
@@ -26,7 +28,7 @@ func NewQuerier(accKeeper types.AccountKeeper, cdc *codec.Codec) sdk.Querier {
 }
 
 func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types.AccountKeeper,
-	cdc *codec.Codec) ([]byte, sdk.Error) {
+	authzKeeper authz.Keeper, cdc *codec.Codec) ([]byte, sdk.Error) {
 	var params types.QueryAccountHeadersParams
 	if err := cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
@@ -50,6 +52,7 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 			header := types.AccountHeader{
 				Address: account.GetAddress(),
 				PubKey:  account.GetPubKey(),
+				Roles:   authzKeeper.GetAccountRoles(ctx, account.GetAddress()).Roles,
 			}
 
 			result = append(result, header)

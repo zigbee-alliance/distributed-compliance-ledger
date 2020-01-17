@@ -30,7 +30,7 @@ func blocksHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			count = 1
 		}
 
-		res, err := cliCtx.Client.BlockchainInfo(start, start+count-1)
+		res, err := cliCtx.Client.BlockchainInfo(start, start+count)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return

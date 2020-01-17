@@ -9,10 +9,12 @@ type MsgAddModelInfo struct {
 	Family string         `json:"family"`
 	Cert   string         `json:"cert"`
 	Owner  sdk.AccAddress `json:"owner"`
+	Signer sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddModelInfo(id string, family string, cert string, owner sdk.AccAddress) MsgAddModelInfo {
-	return MsgAddModelInfo{ID: id, Family: family, Cert: cert, Owner: owner}
+func NewMsgAddModelInfo(id string, family string, cert string, owner sdk.AccAddress,
+	signer sdk.AccAddress) MsgAddModelInfo {
+	return MsgAddModelInfo{ID: id, Family: family, Cert: cert, Owner: owner, Signer: signer}
 }
 
 func (m MsgAddModelInfo) Route() string {
@@ -28,6 +30,10 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(m.Owner.String())
 	}
 
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress(m.Signer.String())
+	}
+
 	if len(m.ID) == 0 || len(m.Family) == 0 || len(m.Cert) == 0 {
 		return sdk.ErrUnknownRequest("ID, Family and Cert cannot be empty")
 	}
@@ -40,18 +46,20 @@ func (m MsgAddModelInfo) GetSignBytes() []byte {
 }
 
 func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Owner}
+	return []sdk.AccAddress{m.Signer}
 }
 
 type MsgUpdateModelInfo struct {
 	ID        string         `json:"id"`
 	NewFamily string         `json:"new_family"`
 	NewCert   string         `json:"new_cert"`
-	Owner     sdk.AccAddress `json:"owner"`
+	NewOwner  sdk.AccAddress `json:"owner"`
+	Signer    sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgUpdateModelInfo(id string, newFamily string, newCert string, owner sdk.AccAddress) MsgUpdateModelInfo {
-	return MsgUpdateModelInfo{ID: id, NewFamily: newFamily, NewCert: newCert, Owner: owner}
+func NewMsgUpdateModelInfo(id string, newFamily string, newCert string, newOwner sdk.AccAddress,
+	signer sdk.AccAddress) MsgUpdateModelInfo {
+	return MsgUpdateModelInfo{ID: id, NewFamily: newFamily, NewCert: newCert, NewOwner: newOwner, Signer: signer}
 }
 
 func (m MsgUpdateModelInfo) Route() string {
@@ -63,8 +71,12 @@ func (m MsgUpdateModelInfo) Type() string {
 }
 
 func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
-	if m.Owner.Empty() {
-		return sdk.ErrInvalidAddress(m.Owner.String())
+	if m.NewOwner.Empty() {
+		return sdk.ErrInvalidAddress(m.NewOwner.String())
+	}
+
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
 	if len(m.ID) == 0 || len(m.NewFamily) == 0 || len(m.NewCert) == 0 {
@@ -79,16 +91,16 @@ func (m MsgUpdateModelInfo) GetSignBytes() []byte {
 }
 
 func (m MsgUpdateModelInfo) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Owner}
+	return []sdk.AccAddress{m.Signer}
 }
 
 type MsgDeleteModelInfo struct {
-	ID    string         `json:"id"`
-	Owner sdk.AccAddress `json:"owner"`
+	ID     string         `json:"id"`
+	Signer sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgDeleteModelInfo(id string, owner sdk.AccAddress) MsgDeleteModelInfo {
-	return MsgDeleteModelInfo{ID: id, Owner: owner}
+func NewMsgDeleteModelInfo(id string, signer sdk.AccAddress) MsgDeleteModelInfo {
+	return MsgDeleteModelInfo{ID: id, Signer: signer}
 }
 
 func (m MsgDeleteModelInfo) Route() string {
@@ -100,8 +112,8 @@ func (m MsgDeleteModelInfo) Type() string {
 }
 
 func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
-	if m.Owner.Empty() {
-		return sdk.ErrInvalidAddress(m.Owner.String())
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
 	if len(m.ID) == 0 {
@@ -116,5 +128,5 @@ func (m MsgDeleteModelInfo) GetSignBytes() []byte {
 }
 
 func (m MsgDeleteModelInfo) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Owner}
+	return []sdk.AccAddress{m.Signer}
 }
