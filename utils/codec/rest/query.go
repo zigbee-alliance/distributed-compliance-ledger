@@ -19,31 +19,39 @@ import (
 // and responds with JSON-encoded transaction.
 func DecodeTxRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var tx types.StdTx
-
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		bytes, err := base64.StdEncoding.DecodeString(string(body))
+		var req DecodeTxsRequest
+
+		err = cliCtx.Codec.UnmarshalJSON(body, &req)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		err = cliCtx.Codec.UnmarshalBinaryLengthPrefixed(bytes, &tx)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-			return
+		resp := DecodeTxsResponse{
+			Txs: []auth.StdTx{},
 		}
 
-		rest.PostProcessResponseBare(w, cliCtx, tx)
+		for _, base64str := range req.Txs {
+			tx, err := decodeTx(cliCtx.Codec, base64str)
+			if err != nil {
+				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+				return
+			}
+
+			resp.Txs = append(resp.Txs, tx)
+		}
+
+		rest.PostProcessResponseBare(w, cliCtx, &resp)
 	}
 }
 
-func decodeTx(cdc codec.Codec, base64str string) (tx auth.StdTx, err error) {
+func decodeTx(cdc *codec.Codec, base64str string) (tx auth.StdTx, err error) {
 	var res types.StdTx
 
 	bytes, err := base64.StdEncoding.DecodeString(base64str)
@@ -51,7 +59,7 @@ func decodeTx(cdc codec.Codec, base64str string) (tx auth.StdTx, err error) {
 		return auth.StdTx{}, err
 	}
 
-	err = cliCtx.Codec.UnmarshalBinaryLengthPrefixed(bytes, &res)
+	err = cdc.UnmarshalBinaryLengthPrefixed(bytes, &res)
 	if err != nil {
 		return auth.StdTx{}, err
 	}
