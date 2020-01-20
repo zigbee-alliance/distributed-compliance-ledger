@@ -20,17 +20,17 @@ func blocksHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		start, _ := strconv.ParseInt(r.FormValue("start"), 10, 64)
-		if start < 0 {
-			start = 0
+		minHeight, _ := strconv.ParseInt(r.FormValue("minHeight"), 10, 64)
+		if minHeight < 0 {
+			minHeight = 0
 		}
 
-		count, _ := strconv.ParseInt(r.FormValue("count"), 10, 64)
-		if count < 1 {
-			count = 1
+		maxHeight, _ := strconv.ParseInt(r.FormValue("maxHeight"), 10, 64)
+		if maxHeight < minHeight {
+			maxHeight = minHeight
 		}
 
-		res, err := cliCtx.Client.BlockchainInfo(start, start+count)
+		res, err := cliCtx.Client.BlockchainInfo(minHeight, maxHeight)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
