@@ -35,9 +35,9 @@ func (k Keeper) GetModelInfo(ctx sdk.Context, id string) types.ModelInfo {
 }
 
 // Sets the entire ModelInfo metadata struct for a id
-func (k Keeper) SetModelInfo(ctx sdk.Context, id string, device types.ModelInfo) {
+func (k Keeper) SetModelInfo(ctx sdk.Context, device types.ModelInfo) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(id), k.cdc.MustMarshalBinaryBare(device))
+	store.Set([]byte(device.ID), k.cdc.MustMarshalBinaryBare(device))
 }
 
 // Deletes the ModelInfo from the store

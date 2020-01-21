@@ -30,17 +30,27 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return complianceTxCmd
 }
 
+//nolint dupl
 func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "add-model-info [id] [family] [cert]",
+		Use:   "add-model-info [id] [family] [cert] [owner]",
 		Short: "add new ModelInfo",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgAddModelInfo(args[0], args[1], args[2], cliCtx.GetFromAddress())
-			err := msg.ValidateBasic()
+			id := args[0]
+			family := args[1]
+			cert := args[2]
+
+			owner, err := sdk.AccAddressFromBech32(args[3])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgAddModelInfo(id, family, cert, owner, cliCtx.GetFromAddress())
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}
@@ -50,17 +60,27 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 	}
 }
 
+//nolint dupl
 func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "update-model-info [id] [new-family] [new-cert]",
+		Use:   "update-model-info [id] [new-family] [new-cert] [new-owner]",
 		Short: "update existing ModelInfo",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgUpdateModelInfo(args[0], args[1], args[2], cliCtx.GetFromAddress())
-			err := msg.ValidateBasic()
+			newID := args[0]
+			newFamily := args[1]
+			newCert := args[2]
+
+			newOwner, err := sdk.AccAddressFromBech32(args[3])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgUpdateModelInfo(newID, newFamily, newCert, newOwner, cliCtx.GetFromAddress())
+			err = msg.ValidateBasic()
 			if err != nil {
 				return err
 			}
@@ -79,7 +99,9 @@ func GetCmdDeleteModelInfo(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			msg := types.NewMsgDeleteModelInfo(args[0], cliCtx.GetFromAddress())
+			id := args[0]
+
+			msg := types.NewMsgDeleteModelInfo(id, cliCtx.GetFromAddress())
 			err := msg.ValidateBasic()
 			if err != nil {
 				return err

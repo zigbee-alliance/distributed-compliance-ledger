@@ -3,13 +3,16 @@ package types
 import (
 	"encoding/json"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 
 type AccountHeader struct {
-	Address sdk.AccAddress `json:"address" yaml:"address"`
-	PubKey  crypto.PubKey  `json:"public_key" yaml:"public_key"`
+	Address sdk.AccAddress      `json:"address"`
+	PubKey  crypto.PubKey       `json:"public_key"`
+	Roles   []authz.AccountRole `json:"roles"`
 }
 
 // Request Payload for a account headers query

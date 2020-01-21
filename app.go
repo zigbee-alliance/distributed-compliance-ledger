@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -52,6 +53,7 @@ var (
 
 		compliance.AppModuleBasic{},
 		authnext.AppModuleBasic{},
+		authz.AppModuleBasic{},
 	)
 	// account permissions
 	maccPerms = map[string][]string{
@@ -90,6 +92,7 @@ type zbLedgerApp struct {
 	supplyKeeper     supply.Keeper
 	paramsKeeper     params.Keeper
 	complianceKeeper compliance.Keeper
+	authzKeeper      authz.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -106,7 +109,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		supply.StoreKey, distr.StoreKey, slashing.StoreKey, params.StoreKey, compliance.StoreKey)
+		supply.StoreKey, distr.StoreKey, slashing.StoreKey, params.StoreKey, compliance.StoreKey, authz.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -159,8 +162,9 @@ func InitModuleManager(app *zbLedgerApp) {
 		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.distrKeeper, app.accountKeeper, app.supplyKeeper),
 
-		compliance.NewAppModule(app.complianceKeeper),
-		authnext.NewAppModule(app.accountKeeper, app.cdc),
+		compliance.NewAppModule(app.complianceKeeper, app.authzKeeper),
+		authnext.NewAppModule(app.accountKeeper, app.authzKeeper, app.cdc),
+		authz.NewAppModule(app.authzKeeper),
 	)
 
 	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
@@ -178,6 +182,7 @@ func InitModuleManager(app *zbLedgerApp) {
 		slashing.ModuleName,
 		compliance.ModuleName,
 		authnext.ModuleName,
+		authz.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
 	)
@@ -221,8 +226,18 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[st
 			app.slashingKeeper.Hooks()),
 	)
 
-	// The ComplianceKeeper is the Keeper from the module for this tutorial
+	// The ComplianceKeeper keeper
 	app.complianceKeeper = MakeComplianceKeeper(keys, app)
+
+	// The AuthzKeeper keeper
+	app.authzKeeper = MakeAuthzKeeper(keys, app)
+}
+
+func MakeAuthzKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) authz.Keeper {
+	return authz.NewKeeper(
+		keys[authz.StoreKey],
+		app.cdc,
+	)
 }
 
 func MakeComplianceKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) compliance.Keeper {

@@ -3,6 +3,8 @@ package authnext
 import (
 	"encoding/json"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/client/rest"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/client/cli"
@@ -59,12 +61,13 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 type AppModule struct {
 	AppModuleBasic
-	accKeeper types.AccountKeeper
-	cdc       *codec.Codec
+	accKeeper   types.AccountKeeper
+	authzKeeper authz.Keeper
+	cdc         *codec.Codec
 }
 
-func NewAppModule(accKeeper types.AccountKeeper, cdc *codec.Codec) AppModule {
-	return AppModule{AppModuleBasic: AppModuleBasic{}, accKeeper: accKeeper, cdc: cdc}
+func NewAppModule(accKeeper types.AccountKeeper, authzKeeper authz.Keeper, cdc *codec.Codec) AppModule {
+	return AppModule{AppModuleBasic: AppModuleBasic{}, accKeeper: accKeeper, authzKeeper: authzKeeper, cdc: cdc}
 }
 
 func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
@@ -90,7 +93,7 @@ func (a AppModule) QuerierRoute() string {
 }
 
 func (a AppModule) NewQuerierHandler() sdk.Querier {
-	return NewQuerier(a.accKeeper, a.cdc)
+	return NewQuerier(a.accKeeper, a.authzKeeper, a.cdc)
 }
 
 func (a AppModule) BeginBlock(sdk.Context, abci.RequestBeginBlock) {}

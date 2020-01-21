@@ -4,7 +4,7 @@ lint:
     - golangci-lint version
     - which golangci-lint
   script:
-    - golangci-lint run ./...
+    - golangci-lint run ./... --timeout 5m0s
 
 build:
   image: "circleci/golang"
