@@ -1,0 +1,10 @@
+- hosts: all
+  user: ubuntu
+  tasks:
+    - name: Service status
+      command: "service zbld status"
+      changed_when: false
+      register: status
+
+    - name: Result
+      debug: var=status.stdout_lines

@@ -1,0 +1,14 @@
+- hosts: all
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Open p2p port
+      ufw:
+        to_port: 26656
+        proto: tcp
+        rule: allow
+    - name: Open RPC port
+      ufw:
+        to_port: 26657
+        proto: tcp
+        rule: allow
