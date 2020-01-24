@@ -8,7 +8,9 @@ import (
 
 type ModelInfoHeader struct {
 	ID    string         `json:"id"`
+	Name  string         `json:"name"`
 	Owner sdk.AccAddress `json:"owner"`
+	SKU   string         `json:"sku"`
 }
 
 // Request Payload for a ModelInfo headers query

@@ -20,19 +20,35 @@ func NewGenesisState() GenesisState {
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ModelInfoRecords {
 		if record.ID == "" {
-			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing ID", record.ID)
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Invalid UUID", record.ID)
 		}
 
-		if record.Family == "" {
-			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing Family", record.Family)
-		}
-
-		if record.Cert == "" {
-			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing Cert", record.Cert)
+		if record.Name == "" {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing Name", record.Name)
 		}
 
 		if record.Owner == nil {
 			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing Owner", record.Owner)
+		}
+
+		if record.Description == "" {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing Description", record.Description)
+		}
+
+		if record.SKU == "" {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing SKU", record.SKU)
+		}
+
+		if record.FirmwareVersion == "" {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing FirmwareVersion", record.FirmwareVersion)
+		}
+
+		if record.HardwareVersion == "" {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing HardwareVersion", record.HardwareVersion)
+		}
+
+		if record.CertificateID == "" {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing CertificateID", record.CertificateID)
 		}
 	}
 
