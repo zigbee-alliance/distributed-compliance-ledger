@@ -63,7 +63,9 @@ func queryModelInfoHeaders(ctx sdk.Context, req abci.RequestQuery, keeper Keeper
 		if len(result) < params.Take || params.Take == 0 {
 			header := types.ModelInfoHeader{
 				ID:    modelInfo.ID,
+				Name:  modelInfo.Name,
 				Owner: modelInfo.Owner,
+				SKU:   modelInfo.SKU,
 			}
 
 			result = append(result, header)

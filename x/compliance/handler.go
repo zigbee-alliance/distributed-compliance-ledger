@@ -36,7 +36,18 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 		return err.Result()
 	}
 
-	modelInfo := types.NewModelInfo(msg.ID, msg.Family, msg.Cert, msg.Owner)
+	modelInfo := types.NewModelInfo(
+		msg.ID,
+		msg.Name,
+		msg.Owner,
+		msg.Description,
+		msg.SKU,
+		msg.FirmwareVersion,
+		msg.HardwareVersion,
+		msg.CertificateID,
+		msg.CertifiedDate,
+		msg.TisOrTrpTestingCompleted,
+	)
 
 	keeper.SetModelInfo(ctx, modelInfo)
 
@@ -55,9 +66,15 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 		return err.Result()
 	}
 
+	modelInfo.Name = msg.NewName
 	modelInfo.Owner = msg.NewOwner
-	modelInfo.Family = msg.NewFamily
-	modelInfo.Cert = msg.NewCert
+	modelInfo.Description = msg.NewDescription
+	modelInfo.SKU = msg.NewSKU
+	modelInfo.FirmwareVersion = msg.NewFirmwareVersion
+	modelInfo.HardwareVersion = msg.NewHardwareVersion
+	modelInfo.CertificateID = msg.NewCertificateID
+	modelInfo.CertifiedDate = msg.NewCertifiedDate
+	modelInfo.TisOrTrpTestingCompleted = msg.NewTisOrTrpTestingCompleted
 
 	keeper.SetModelInfo(ctx, modelInfo)
 
