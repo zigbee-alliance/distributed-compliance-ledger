@@ -36,8 +36,8 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use: "add-model-info [id] [name] [owner] [description] [sku] [firmwareVersion] [hardwareVersion] " +
-			"[certificateID] [certifiedDate] [tisOrTrpTestingCompleted]",
+		Use: "add-model-info [id] [name] [owner] [description] [sku] [firmware-version] [hardware-version] " +
+			"[certificate-id] [certified-date] [tis-or-trp-testing-completed]",
 		Short: "add new ModelInfo",
 		Args:  cobra.ExactArgs(10),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -84,8 +84,8 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use: "update-model-info [id] [newName] [newOwner] [newDescription] [newSku] [newFirmwareVersion] " +
-			"[newHardwareVersion] [newCertificateID] [newCertifiedDate] [newTisOrTrpTestingCompleted]",
+		Use: "update-model-info [id] [new-name] [new-owner] [new-description] [new-sku] [new-firmware-version] " +
+			"[new-hardware-version] [new-certificate-id] [new-certified-date] [new-tis-or-trp-testing-completed]",
 		Short: "update existing ModelInfo",
 		Args:  cobra.ExactArgs(10),
 		RunE: func(cmd *cobra.Command, args []string) error {
