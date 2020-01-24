@@ -50,7 +50,10 @@ func queryModelInfoHeaders(ctx sdk.Context, req abci.RequestQuery, keeper Keeper
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}
 
-	result := types.QueryModelInfoHeadersResult{}
+	result := types.QueryModelInfoHeadersResult{
+		Total: keeper.CountTotal(ctx),
+		Items: []types.ModelInfoHeader{},
+	}
 
 	skipped := 0
 
@@ -60,7 +63,7 @@ func queryModelInfoHeaders(ctx sdk.Context, req abci.RequestQuery, keeper Keeper
 			return false
 		}
 
-		if len(result) < params.Take || params.Take == 0 {
+		if len(result.Items) < params.Take || params.Take == 0 {
 			header := types.ModelInfoHeader{
 				ID:    modelInfo.ID,
 				Name:  modelInfo.Name,
@@ -68,7 +71,7 @@ func queryModelInfoHeaders(ctx sdk.Context, req abci.RequestQuery, keeper Keeper
 				SKU:   modelInfo.SKU,
 			}
 
-			result = append(result, header)
+			result.Items = append(result.Items, header)
 			return false
 		}
 

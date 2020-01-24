@@ -81,3 +81,17 @@ func (k Keeper) IsModelInfoPresent(ctx sdk.Context, id string) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has([]byte(id))
 }
+
+func (k Keeper) CountTotal(ctx sdk.Context) int {
+	store := ctx.KVStore(k.storeKey)
+	res := 0
+
+	iter := store.Iterator(nil, nil)
+	defer iter.Close()
+
+	for ; iter.Valid(); iter.Next() {
+		res++
+	}
+
+	return res
+}

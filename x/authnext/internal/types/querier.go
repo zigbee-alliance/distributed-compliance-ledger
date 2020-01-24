@@ -26,7 +26,10 @@ func NewQueryAccountHeadersParams(skip int, take int) QueryAccountHeadersParams 
 }
 
 // Result Payload for a account headers query
-type QueryAccountHeadersResult []AccountHeader
+type QueryAccountHeadersResult struct {
+	Total int             `json:"total"`
+	Items []AccountHeader `json:"items"`
+}
 
 // Implement fmt.Stringer
 func (n QueryAccountHeadersResult) String() string {
