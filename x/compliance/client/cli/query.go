@@ -46,7 +46,7 @@ func GetCmdModelInfo(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/model_info/%s", queryRoute, id), nil)
 			if err != nil {
-				fmt.Printf("could not query ModelInfo - %s \n", id)
+				fmt.Printf("could not query ModelInfo - %s: %s\n", id, err)
 				return nil
 			}
 
@@ -68,7 +68,7 @@ func GetCmdModelInfoWithProof(queryRoute string, cdc *codec.Codec) *cobra.Comman
 
 			res, _, err := cliCtx.QueryStore([]byte(id), queryRoute)
 			if err != nil {
-				fmt.Printf("could not query ModelInfo - %s \n", id)
+				fmt.Printf("could not query ModelInfo - %s: %s\n", id, err)
 				return nil
 			}
 
@@ -95,7 +95,7 @@ func GetCmdModelInfoHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command 
 
 			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/model_info_headers", queryRoute), data)
 			if err != nil {
-				fmt.Printf("could not get query names\n")
+				fmt.Printf("could not get query names: %s\n", err)
 				return nil
 			}
 
