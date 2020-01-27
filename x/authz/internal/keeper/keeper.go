@@ -52,7 +52,7 @@ func (k Keeper) DeleteAccountRoles(ctx sdk.Context, addr sdk.AccAddress) {
 }
 
 // Iterate over all AccountRoles
-func (k Keeper) IterateAccountRoles(ctx sdk.Context, process func(accountRole types.AccountRoles) (stop bool)) {
+func (k Keeper) IterateAccountRoles(ctx sdk.Context, process func(accountRoles types.AccountRoles) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	iter := sdk.KVStorePrefixIterator(store, nil)
@@ -117,4 +117,21 @@ func (k Keeper) RevokeRole(ctx sdk.Context, addr sdk.AccAddress, roleToRevoke ty
 func (k Keeper) IsAccountRolesPresent(ctx sdk.Context, addr sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(addr.Bytes())
+}
+
+func (k Keeper) CountAccounts(ctx sdk.Context, roleToCount types.AccountRole) int {
+	res := 0
+
+	k.IterateAccountRoles(ctx, func(accountRoles types.AccountRoles) (stop bool) {
+		for _, role := range accountRoles.Roles {
+			if role == roleToCount {
+				res++
+				return false
+			}
+		}
+
+		return false
+	})
+
+	return res
 }
