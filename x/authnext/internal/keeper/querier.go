@@ -34,7 +34,10 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}
 
-	result := types.QueryAccountHeadersResult{}
+	result := types.QueryAccountHeadersResult{
+		Total: CountTotal(ctx, accKeeper),
+		Items: []types.AccountHeader{},
+	}
 
 	skipped := 0
 
@@ -48,14 +51,14 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 			return false
 		}
 
-		if len(result) < params.Take || params.Take == 0 {
+		if len(result.Items) < params.Take || params.Take == 0 {
 			header := types.AccountHeader{
 				Address: account.GetAddress(),
 				PubKey:  account.GetPubKey(),
 				Roles:   authzKeeper.GetAccountRoles(ctx, account.GetAddress()).Roles,
 			}
 
-			result = append(result, header)
+			result.Items = append(result.Items, header)
 			return false
 		}
 
@@ -68,4 +71,18 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 	}
 
 	return res, nil
+}
+
+func CountTotal(ctx sdk.Context, accKeeper types.AccountKeeper) int {
+	res := 0
+
+	accKeeper.IterateAccounts(ctx, func(account exported.Account) (stop bool) {
+		if account.GetPubKey() != nil {
+			res++
+		}
+
+		return false
+	})
+
+	return res
 }

@@ -1,20 +1,43 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 const RouterKey = ModuleName
 
 type MsgAddModelInfo struct {
-	ID     string         `json:"id"`
-	Family string         `json:"family"`
-	Cert   string         `json:"cert"`
-	Owner  sdk.AccAddress `json:"owner"`
-	Signer sdk.AccAddress `json:"signer"`
+	ID                       string         `json:"id"`
+	Name                     string         `json:"name"`
+	Owner                    sdk.AccAddress `json:"owner"`
+	Description              string         `json:"description"`
+	SKU                      string         `json:"sku"`
+	FirmwareVersion          string         `json:"firmware_version"`
+	HardwareVersion          string         `json:"hardware_version"`
+	CertificateID            string         `json:"certificate_id"`
+	CertifiedDate            time.Time      `json:"certified_date"`
+	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
+	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddModelInfo(id string, family string, cert string, owner sdk.AccAddress,
-	signer sdk.AccAddress) MsgAddModelInfo {
-	return MsgAddModelInfo{ID: id, Family: family, Cert: cert, Owner: owner, Signer: signer}
+func NewMsgAddModelInfo(id string, name string, owner sdk.AccAddress, description string, sku string,
+	firmwareVersion string, hardwareVersion string, certificateID string, certifiedDate time.Time,
+	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgAddModelInfo {
+	return MsgAddModelInfo{
+		ID:                       id,
+		Name:                     name,
+		Owner:                    owner,
+		Description:              description,
+		SKU:                      sku,
+		FirmwareVersion:          firmwareVersion,
+		HardwareVersion:          hardwareVersion,
+		CertificateID:            certificateID,
+		CertifiedDate:            certifiedDate,
+		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,
+		Signer:                   signer,
+	}
 }
 
 func (m MsgAddModelInfo) Route() string {
@@ -34,8 +57,15 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
-	if len(m.ID) == 0 || len(m.Family) == 0 || len(m.Cert) == 0 {
-		return sdk.ErrUnknownRequest("ID, Family and Cert cannot be empty")
+	if len(m.ID) == 0 ||
+		len(m.Name) == 0 ||
+		len(m.Description) == 0 ||
+		len(m.SKU) == 0 ||
+		len(m.FirmwareVersion) == 0 ||
+		len(m.HardwareVersion) == 0 ||
+		len(m.CertificateID) == 0 {
+		return sdk.ErrUnknownRequest("Id, Name, Description, SKU, FirmwareVersion, HardwareVersion " +
+			"and CertificateID cannot be empty")
 	}
 
 	return nil
@@ -50,16 +80,35 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 }
 
 type MsgUpdateModelInfo struct {
-	ID        string         `json:"id"`
-	NewFamily string         `json:"new_family"`
-	NewCert   string         `json:"new_cert"`
-	NewOwner  sdk.AccAddress `json:"owner"`
-	Signer    sdk.AccAddress `json:"signer"`
+	ID                          string         `json:"id"`
+	NewName                     string         `json:"name"`
+	NewOwner                    sdk.AccAddress `json:"owner"`
+	NewDescription              string         `json:"description"`
+	NewSKU                      string         `json:"sku"`
+	NewFirmwareVersion          string         `json:"firmware_version"`
+	NewHardwareVersion          string         `json:"hardware_version"`
+	NewCertificateID            string         `json:"certificate_id"`
+	NewCertifiedDate            time.Time      `json:"certified_date"`
+	NewTisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
+	Signer                      sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgUpdateModelInfo(id string, newFamily string, newCert string, newOwner sdk.AccAddress,
-	signer sdk.AccAddress) MsgUpdateModelInfo {
-	return MsgUpdateModelInfo{ID: id, NewFamily: newFamily, NewCert: newCert, NewOwner: newOwner, Signer: signer}
+func NewMsgUpdateModelInfo(id string, newName string, newOwner sdk.AccAddress, newDescription string, newSKU string,
+	newFirmwareVersion string, newHardwareVersion string, newCertificateID string, newCertifiedDate time.Time,
+	newTisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgUpdateModelInfo {
+	return MsgUpdateModelInfo{
+		ID:                          id,
+		NewName:                     newName,
+		NewOwner:                    newOwner,
+		NewDescription:              newDescription,
+		NewSKU:                      newSKU,
+		NewFirmwareVersion:          newFirmwareVersion,
+		NewHardwareVersion:          newHardwareVersion,
+		NewCertificateID:            newCertificateID,
+		NewCertifiedDate:            newCertifiedDate,
+		NewTisOrTrpTestingCompleted: newTisOrTrpTestingCompleted,
+		Signer:                      signer,
+	}
 }
 
 func (m MsgUpdateModelInfo) Route() string {
@@ -79,8 +128,15 @@ func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
-	if len(m.ID) == 0 || len(m.NewFamily) == 0 || len(m.NewCert) == 0 {
-		return sdk.ErrUnknownRequest("ID, NewFamily and NewCert cannot be empty")
+	if len(m.ID) == 0 ||
+		len(m.NewName) == 0 ||
+		len(m.NewDescription) == 0 ||
+		len(m.NewSKU) == 0 ||
+		len(m.NewFirmwareVersion) == 0 ||
+		len(m.NewHardwareVersion) == 0 ||
+		len(m.NewCertificateID) == 0 {
+		return sdk.ErrUnknownRequest("Id, NewName, NewDescription, NewSKU, NewFirmwareVersion, NewHardwareVersion " +
+			"and NewCertificateID cannot be empty")
 	}
 
 	return nil
@@ -117,7 +173,7 @@ func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if len(m.ID) == 0 {
-		return sdk.ErrUnknownRequest("ID cannot be empty")
+		return sdk.ErrUnknownRequest("Id cannot be empty")
 	}
 
 	return nil

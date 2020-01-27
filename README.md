@@ -11,28 +11,44 @@ Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
 ### Compliance
 
 ModelInfo type:
-- `ID: string`
-- `Family: string`
-- `Cert: string`
-- `Owner: sdk.AccAddress`
+- ID: `string`
+- Name: `string`
+- Owner: `bech32 encoded address`
+- Description: `string`
+- SKU: `string`
+- FirmwareVersion: `string`
+- HardwareVersion: `string`
+- CertificateID: `string`
+- CertifiedDate: `rfc3339 encoded date`
+- TisOrTrpTestingCompleted: `bool`
+
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Signer must be either `administrator` or `manufacturer` and record's owner. See `Authorization` module for details
 
 Transactions:
-- `zblcli tx compliance add-model-info [id:string] [family:string] [certificate:string] [owner:Bech32Addr]` - Add new
- ModelInfo.
+- `zblcli tx compliance add-model-info [id:string] [name:string] [owner:bech32 encoded address] [description:string
+] [sku:string] [firmware-version:string] [hardware-version:string][certificate-id:string] [certified-date:rfc3339
+ encoded date] [tis-or-trp-testing-completed:bool]` - Add new ModelInfo.
   - Signature is required. Use `--from` flag.
-- `zblcli tx compliance update-model-info [id:string] [new-family:string] [new-certificate:string] [new-owner:Bech32Addr
-]` - Update existing ModelInfo.
+- `zblcli tx compliance update-model-info update-model-info [id:string] [new-name:string] [new-owner:bech32 encoded
+ address] [new-description:string] [new-sku:string] [new-firmware-version:string] [new-hardware-version:string] [new
+ -certificate-id:string] [new-certified-date:rfc3339 encoded date] [new-tis-or-trp-testing-completed:bool]` - Update
+  existing ModelInfo.
   - Signature is required. Use `--from` flag.
 - `zblcli tx compliance delete-model-info [id:string]` - Delete existing ModelInfo.
   - Signature is required. Use `--from` flag.
-
-All the transactions above require the signer to be either `administrator` or `manufacturer` and record's owner.
 
 Queries:
 - `zblcli query compliance model-info [id]` - Query single ModelInfo.
 - `zblcli query compliance model-info-with-proof [id]` - Query single ModelInfo with proof.
 - `zblcli query compliance model-info-headers --skip [x] --take [y]` - Query list of ModelInfo headers. Flags are
  optional.
+
+Examples:
+- `zblcli tx compliance add-model-info "b4a3b939-c5ab-42b5-a163-928b3b147f9f" "TestName
+" "cosmos1g4936hdq8mr5p6vs0qevdvxuvgpfpesh86cvc7" "Test description" "id1, id2" "1.2.3" "3.2.1" "cert34" "2020-01
+-24T14:04:21+03:00" true --from jack `
 
 Genesis:
 

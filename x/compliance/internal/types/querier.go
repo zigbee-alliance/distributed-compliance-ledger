@@ -8,7 +8,9 @@ import (
 
 type ModelInfoHeader struct {
 	ID    string         `json:"id"`
+	Name  string         `json:"name"`
 	Owner sdk.AccAddress `json:"owner"`
+	SKU   string         `json:"sku"`
 }
 
 // Request Payload for a ModelInfo headers query
@@ -22,7 +24,10 @@ func NewQueryModelInfoHeadersParams(skip int, take int) QueryModelInfoHeadersPar
 }
 
 // Result Payload for a ModelInfo headers query
-type QueryModelInfoHeadersResult []ModelInfoHeader
+type QueryModelInfoHeadersResult struct {
+	Total int               `json:"total"`
+	Items []ModelInfoHeader `json:"items"`
+}
 
 // Implement fmt.Stringer
 func (n QueryModelInfoHeadersResult) String() string {
