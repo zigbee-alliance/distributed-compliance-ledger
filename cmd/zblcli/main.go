@@ -6,6 +6,7 @@ import (
 
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
 	codecUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/codec/rest"
+	keyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/key/rest"
 	proxyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/proxy/rest"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -75,6 +76,7 @@ func registerRoutes(rs *lcd.RestServer) {
 	app.ModuleBasics.RegisterRESTRoutes(rs.CliCtx, rs.Mux)
 	proxyUtils.RegisterRoutes(rs.CliCtx, rs.Mux)
 	codecUtils.RegisterRoutes(rs.CliCtx, rs.Mux)
+	keyUtils.RegisterRoutes(rs.CliCtx, rs.Mux)
 }
 
 func queryCmd(cdc *amino.Codec) *cobra.Command {
