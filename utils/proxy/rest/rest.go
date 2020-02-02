@@ -7,5 +7,5 @@ import (
 )
 
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	r.HandleFunc("/blocks", blocksHandler(cliCtx)).Methods("GET")
+	r.HandleFunc("/blocks", BlocksHandlerFn(cliCtx)).Methods("GET")
 }

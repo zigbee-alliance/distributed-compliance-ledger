@@ -17,5 +17,4 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc(fmt.Sprintf("/%s/model_info", storeName), modelInfoHeadersHandler(cliCtx, storeName)).Methods("GET")
 	r.HandleFunc(fmt.Sprintf("/%s/model_info/{%s}", storeName, restName), modelInfoHandler(cliCtx,
 		storeName)).Methods("GET")
-	r.HandleFunc(fmt.Sprintf("/%s/model_info", storeName), addModelInfoHandler(cliCtx)).Methods("POST")
 }
