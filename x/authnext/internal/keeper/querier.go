@@ -14,6 +14,7 @@ import (
 
 const (
 	QueryAccountHeaders = "account_headers"
+	QueryAccount        = "account"
 )
 
 func NewQuerier(accKeeper types.AccountKeeper, authzKeeper authz.Keeper, cdc *codec.Codec) sdk.Querier {
@@ -21,6 +22,8 @@ func NewQuerier(accKeeper types.AccountKeeper, authzKeeper authz.Keeper, cdc *co
 		switch path[0] {
 		case QueryAccountHeaders:
 			return queryAccountHeaders(ctx, req, accKeeper, authzKeeper, cdc)
+		case QueryAccount:
+			return queryAccount(ctx, req, accKeeper, authzKeeper, cdc, path[1:])
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown authnext query endpoint")
 		}
@@ -52,12 +55,7 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
-			header := types.AccountHeader{
-				Address: account.GetAddress(),
-				PubKey:  account.GetPubKey(),
-				Roles:   authzKeeper.GetAccountRoles(ctx, account.GetAddress()).Roles,
-			}
-
+			header := ToAccountHeader(ctx, authzKeeper, account)
 			result.Items = append(result.Items, header)
 			return false
 		}
@@ -71,6 +69,42 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 	}
 
 	return res, nil
+}
+
+func queryAccount(ctx sdk.Context, req abci.RequestQuery, accKeeper types.AccountKeeper, authzKeeper authz.Keeper,
+	cdc *codec.Codec, path []string) ([]byte, sdk.Error) {
+	accAddr, err := sdk.AccAddressFromBech32(path[0])
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	acc := accKeeper.GetAccount(ctx, accAddr)
+	header := ToAccountHeader(ctx, authzKeeper, acc)
+
+	res, err := codec.MarshalJSONIndent(cdc, header)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return res, nil
+}
+
+func ToAccountHeader(ctx sdk.Context, authzKeeper authz.Keeper, account exported.Account) types.AccountHeader {
+	bechPubKey, err := sdk.Bech32ifyAccPub(account.GetPubKey())
+	if err != nil {
+		panic(err)
+	}
+
+	header := types.AccountHeader{
+		Address:       account.GetAddress(),
+		PubKey:        bechPubKey,
+		Roles:         authzKeeper.GetAccountRoles(ctx, account.GetAddress()).Roles,
+		Coins:         account.GetCoins(),
+		AccountNumber: account.GetAccountNumber(),
+		Sequence:      account.GetSequence(),
+	}
+
+	return header
 }
 
 func CountTotal(ctx sdk.Context, accKeeper types.AccountKeeper) int {

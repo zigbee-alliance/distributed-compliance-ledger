@@ -81,15 +81,15 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 
 type MsgUpdateModelInfo struct {
 	ID                          string         `json:"id"`
-	NewName                     string         `json:"name"`
-	NewOwner                    sdk.AccAddress `json:"owner"`
-	NewDescription              string         `json:"description"`
-	NewSKU                      string         `json:"sku"`
-	NewFirmwareVersion          string         `json:"firmware_version"`
-	NewHardwareVersion          string         `json:"hardware_version"`
-	NewCertificateID            string         `json:"certificate_id"`
-	NewCertifiedDate            time.Time      `json:"certified_date"`
-	NewTisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
+	NewName                     string         `json:"new_name"`
+	NewOwner                    sdk.AccAddress `json:"new_owner"`
+	NewDescription              string         `json:"new_description"`
+	NewSKU                      string         `json:"new_sku"`
+	NewFirmwareVersion          string         `json:"new_firmware_version"`
+	NewHardwareVersion          string         `json:"new_hardware_version"`
+	NewCertificateID            string         `json:"new_certificate_id"`
+	NewCertifiedDate            time.Time      `json:"new_certified_date"`
+	NewTisOrTrpTestingCompleted bool           `json:"new_tis_or_trp_testing_completed"`
 	Signer                      sdk.AccAddress `json:"signer"`
 }
 
