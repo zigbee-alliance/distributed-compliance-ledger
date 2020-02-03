@@ -41,7 +41,7 @@ func handleMsgRevokeRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRev
 		return sdk.ErrUnauthorized(fmt.Sprintf("account %s doesn't have role %s", msg.Address.String(), msg.Role)).Result()
 	}
 
-	if keeper.CountAccounts(ctx, Administrator) < 2 {
+	if msg.Role == Administrator && keeper.CountAccounts(ctx, Administrator) < 2 {
 		return sdk.ErrUnauthorized("there must be at least one administrator").Result()
 	}
 
