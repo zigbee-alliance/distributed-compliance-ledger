@@ -74,6 +74,9 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 func queryAccount(ctx sdk.Context, req abci.RequestQuery, accKeeper types.AccountKeeper, authzKeeper authz.Keeper,
 	cdc *codec.Codec, path []string) ([]byte, sdk.Error) {
 	accAddr, err := sdk.AccAddressFromBech32(path[0])
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
 
 	acc := accKeeper.GetAccount(ctx, accAddr)
 	header := ToAccountHeader(ctx, authzKeeper, acc)
