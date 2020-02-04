@@ -1,8 +1,8 @@
-- hosts: all
+- hosts: clients
   user: ubuntu
   become: yes
   tasks:
     - name: Copy service configuration
       copy:
-        src: "./templates/zbld.service"
+        src: "./../templates/zblcli.service"
         dest: "/etc/systemd/system/"

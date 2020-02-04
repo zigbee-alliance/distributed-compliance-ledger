@@ -1,0 +1,15 @@
+[Unit]
+Description=ZB Ledger client service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=ubuntu
+#systemd-escappe /usr/bin/zblcli rest-server --node 15.222.103.206:26657
+ExecStart=-usr-bin-zblcli\x20rest\x2dserver\x20\x2d\x2dnode\x2015.222.103.206:26657
+
+[Install]
+WantedBy=multi-user.target

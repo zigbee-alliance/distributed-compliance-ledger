@@ -1,8 +1,8 @@
-- hosts: all
+- hosts: clients
   user: ubuntu
   tasks:
-    - name: Service status
-      command: "service zbld status"
+    - name: Rest service status
+      command: "service zblcli status"
       changed_when: false
       register: status
 
