@@ -1,0 +1,14 @@
+[Unit]
+Description=ZB Ledger service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=ubuntu
+ExecStart=/usr/bin/zbld start
+
+[Install]
+WantedBy=multi-user.target

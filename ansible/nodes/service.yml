@@ -1,0 +1,8 @@
+- hosts: nodes
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Copy service configuration
+      copy:
+        src: "./../templates/zbld.service"
+        dest: "/etc/systemd/system/"

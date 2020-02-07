@@ -1,0 +1,13 @@
+- hosts: clients
+  user: ubuntu
+  tasks:
+    - name: Remove existing config
+      file:
+        path: "/home/ubuntu/.zblcli/"
+        state: absent
+    - name: Copy config
+      copy:
+        src: "./../../localnet/client/"
+        dest: "/home/ubuntu/.zblcli/"
+        owner: "ubuntu"
+        group: "ubuntu"

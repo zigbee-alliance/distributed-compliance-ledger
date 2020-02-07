@@ -1,0 +1,9 @@
+- hosts: clients
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Copy binary
+      copy:
+        src: "./../../build/zblcli"
+        dest: "/usr/bin/"
+        mode: 0755

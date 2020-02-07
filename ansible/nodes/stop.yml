@@ -1,0 +1,6 @@
+- hosts: nodes
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Start service
+      service: "name=zbld state=stopped enabled=yes"

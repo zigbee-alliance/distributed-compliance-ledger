@@ -1,0 +1,10 @@
+- hosts: clients
+  user: ubuntu
+  tasks:
+    - name: Rest service status
+      command: "service zblcli status"
+      changed_when: false
+      register: status
+
+    - name: Result
+      debug: var=status.stdout_lines

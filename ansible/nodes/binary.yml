@@ -1,0 +1,9 @@
+- hosts: nodes
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Copy binary
+      copy:
+        src: "./../../build/zbld"
+        dest: "/usr/bin/"
+        mode: 0755
