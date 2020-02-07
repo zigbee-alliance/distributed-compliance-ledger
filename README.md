@@ -98,11 +98,4 @@ Queries:
 
 - `zblcli query authnext account-headers --skip [x] --take [y]` - The command to list account headers with roles. Flags
  are optional.
-
-## Localnet
-
-To start localnet:
-
-- make
-- make localnet_init
-- make localnet_up
+ 
