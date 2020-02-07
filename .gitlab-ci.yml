@@ -4,7 +4,7 @@ lint:
     - golangci-lint version
     - which golangci-lint
   script:
-    - golangci-lint run ./... --timeout 5m0s
+    - make lint
 
 build:
   image: "circleci/golang"
@@ -12,7 +12,7 @@ build:
     - go version
     - which go
   script:
-    - make
+    - make build
 
 test:
   image: "circleci/golang"
@@ -20,5 +20,4 @@ test:
     - go version
     - which go
   script:
-    - go get -v -t -d ./...
-    - go test -v ./...
+    - make test

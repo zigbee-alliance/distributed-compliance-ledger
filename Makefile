@@ -28,7 +28,10 @@ go.sum: go.mod
 	GO111MODULE=on go mod verify
 
 test:
-	@go test -mod=readonly $(PACKAGES)
+	go test -v $(PACKAGES)
+
+lint:
+	golangci-lint run ./... --timeout 5m0s
 
 clean:
 	rm -rf $(OUTPUT_DIR)
@@ -50,4 +53,4 @@ localnet_stop:
 localnet_clean: localnet_stop
 	rm -rf $(LOCALNET_DIR)
 
-.PHONY: all build install test clean image localnet_init localnet_start localnet_stop localnet_clean
+.PHONY: all build install test lint clean image localnet_init localnet_start localnet_stop localnet_clean
