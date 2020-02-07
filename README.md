@@ -6,6 +6,16 @@ To build and run, follow the tutorial: https://github.com/cosmos/sdk-tutorials/b
 
 Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
 
+## Localnet
+
+- To start localnet using docker-compose run `make install && make localnet_init && make localnet_start`
+  - 4 nodes will be started and will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26662`
+- To stop localnet run `make localnet_stop`
+
+## Deployment
+
+- Read more about deployment in `ansible/readme.md`.
+
 ## Modules
 
 ### Compliance

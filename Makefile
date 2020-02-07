@@ -41,19 +41,13 @@ image:
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
 
-localnet:
-	docker-compose up
+localnet_start:
+	docker-compose up -d
 
-localnet_clean:
+localnet_stop:
+	docker-compose down
+
+localnet_clean: localnet_stop
 	rm -rf $(LOCALNET_DIR)
 
-# Demo
-
-ccnode:
-	docker run -it --mount "type=bind,src=$(shell pwd)/localnet/node0_copy,dst=/root/.zbld" -p \
-	"26656-26657:26656-26657" --network="host" zbledger zbld start
-
-cli:
-	zblcli rest-server --node http://localhost:26659 --home localnet/client
-
-.PHONY: all build install test clean image localnet_init localnet localnet_clean
+.PHONY: all build install test clean image localnet_init localnet_start localnet_stop localnet_clean
