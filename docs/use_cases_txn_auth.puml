@@ -1,0 +1,45 @@
+@startuml
+!pragma teoz true
+hide footbox
+
+actor "ZA Trustee 1" as T1
+actor "ZA Trustee 2" as T2
+database Ledger as L
+actor "ZA Trustee 3" as T3
+actor User as U
+
+
+== Genesis Block ==
+note over L
+Trustees 1 and 2
+are part of genesis
+end note
+
+== Add a new Account with role X by Trustee(s)==
+U -> U: generate account privKey and pubKey
+
+U -> T1: send publicKey `pubKeyU`
+T1 -> L: propose a new Account:\nrole=X\npubKey=pubKeyU
+
+alt if more than 1 Trustee signature is required for role X
+    T2 -> L: approve adding a new Account
+    T2 -> L: approve adding a new Account
+end alt
+
+L -> L: a new Account with role X is created
+
+== Revoke an Account by Trustee(s) ==
+T1 -> L: propose revocation of the Account
+
+alt if more than 1 Trustee signature is required for revocation
+    T2 -> L: approve revocation
+    T2 -> L: approve revocation
+end alt
+
+L -> L: account is revoked
+
+== Rotate the key ==
+
+U -> L: rotate the key for the Account
+
+@enduml

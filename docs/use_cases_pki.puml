@@ -1,0 +1,32 @@
+@startuml
+!pragma teoz true
+hide footbox
+
+actor "Root Authority" as RA
+actor "Zigbee Alliance Trustee 1" as T1
+actor "Zigbee Alliance Trustee N" as TN
+actor Vendor as V
+
+database Ledger as L
+
+== Root Certificate ==
+RA -> L: Root Certificate (pending)
+RA <-> T1: Proof of privKey possession
+T1 -> L: Approve root certificate
+
+RA <-> TN: Proof of privKey possession
+TN -> L: Approve root certificate
+
+L -> L: Pending Root Certificate becomes approved\nafter receiving approval from N (or K% of) Trustees
+
+== Intermediate Certificate ==
+
+V -> L: Certificate signed by the Root Certificate
+L -> L: Validate certificate against the Root Certificate
+
+== Revoke Certificate ==
+T1 -> L: propose revocation of CertX
+TN -> L: approve revocation of CertX
+L -> L: CertX is revoked\nafter receiving approval from N (or K% of) Trustees
+
+@enduml
