@@ -5,6 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	"testing"
+	"time"
 )
 
 func TestNewMsgAddModelInfo(t *testing.T) {
@@ -45,18 +46,18 @@ func TestMsgAddModelInfoValidation(t *testing.T) {
 		{false, NewMsgAddModelInfo(
 			test_constants.Id, test_constants.Name, test_constants.Owner, test_constants.Description, test_constants.Sku, test_constants.FirmwareVersion, "",
 			test_constants.CertificateID, test_constants.CertifiedDate, test_constants.TisOrTrpTestingCompleted, test_constants.Signer)},
-		{false, NewMsgAddModelInfo(
+		{true, NewMsgAddModelInfo(
 			test_constants.Id, test_constants.Name, test_constants.Owner, test_constants.Description, test_constants.Sku, test_constants.FirmwareVersion, test_constants.HardwareVersion,
 			"", test_constants.CertifiedDate, test_constants.TisOrTrpTestingCompleted, test_constants.Signer)},
+		{true, NewMsgAddModelInfo(
+			test_constants.Id, test_constants.Name, test_constants.Owner, test_constants.Description, test_constants.Sku, test_constants.FirmwareVersion, test_constants.HardwareVersion,
+			test_constants.CertificateID, time.Time{}, test_constants.TisOrTrpTestingCompleted, test_constants.Signer)},
 		{false, NewMsgAddModelInfo(
 			test_constants.Id, test_constants.Name, test_constants.Owner, test_constants.Description, test_constants.Sku, test_constants.FirmwareVersion, test_constants.HardwareVersion,
 			test_constants.CertificateID, test_constants.CertifiedDate, test_constants.TisOrTrpTestingCompleted, nil)},
 		{true, NewMsgAddModelInfo(
 			test_constants.Id, test_constants.Name, test_constants.Owner, test_constants.Description, test_constants.Sku, test_constants.FirmwareVersion, test_constants.HardwareVersion,
 			test_constants.CertificateID, test_constants.CertifiedDate, true, test_constants.Owner)},
-		{true, NewMsgAddModelInfo(
-			test_constants.Id, test_constants.Name, test_constants.Owner, test_constants.Description, test_constants.Sku, test_constants.FirmwareVersion, test_constants.HardwareVersion,
-			test_constants.CertificateID, test_constants.CertifiedDate, test_constants.TisOrTrpTestingCompleted, test_constants.Owner)},
 	}
 
 	for _, tc := range cases {

@@ -16,8 +16,8 @@ type MsgAddModelInfo struct {
 	SKU                      string         `json:"sku"`
 	FirmwareVersion          string         `json:"firmware_version"`
 	HardwareVersion          string         `json:"hardware_version"`
-	CertificateID            string         `json:"certificate_id"`
-	CertifiedDate            time.Time      `json:"certified_date"`
+	CertificateID            string         `json:"certificate_id,omitempty"`
+	CertifiedDate            time.Time      `json:"certified_date,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
@@ -62,10 +62,9 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		len(m.Description) == 0 ||
 		len(m.SKU) == 0 ||
 		len(m.FirmwareVersion) == 0 ||
-		len(m.HardwareVersion) == 0 ||
-		len(m.CertificateID) == 0 {
-		return sdk.ErrUnknownRequest("Id, Name, Description, SKU, FirmwareVersion, HardwareVersion " +
-			"and CertificateID cannot be empty")
+		len(m.HardwareVersion) == 0 {
+		return sdk.ErrUnknownRequest("Id, Name, Description, SKU, FirmwareVersion and HardwareVersion " +
+			"cannot be empty")
 	}
 
 	return nil
@@ -87,8 +86,8 @@ type MsgUpdateModelInfo struct {
 	NewSKU                      string         `json:"new_sku"`
 	NewFirmwareVersion          string         `json:"new_firmware_version"`
 	NewHardwareVersion          string         `json:"new_hardware_version"`
-	NewCertificateID            string         `json:"new_certificate_id"`
-	NewCertifiedDate            time.Time      `json:"new_certified_date"`
+	NewCertificateID            string         `json:"new_certificate_id,omitempty"`
+	NewCertifiedDate            time.Time      `json:"new_certified_date,omitempty"`
 	NewTisOrTrpTestingCompleted bool           `json:"new_tis_or_trp_testing_completed"`
 	Signer                      sdk.AccAddress `json:"signer"`
 }
@@ -133,10 +132,9 @@ func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 		len(m.NewDescription) == 0 ||
 		len(m.NewSKU) == 0 ||
 		len(m.NewFirmwareVersion) == 0 ||
-		len(m.NewHardwareVersion) == 0 ||
-		len(m.NewCertificateID) == 0 {
-		return sdk.ErrUnknownRequest("Id, NewName, NewDescription, NewSKU, NewFirmwareVersion, NewHardwareVersion " +
-			"and NewCertificateID cannot be empty")
+		len(m.NewHardwareVersion) == 0 {
+		return sdk.ErrUnknownRequest("Id, NewName, NewDescription, NewSKU, NewFirmwareVersion and NewHardwareVersion " +
+			"cannot be empty")
 	}
 
 	return nil

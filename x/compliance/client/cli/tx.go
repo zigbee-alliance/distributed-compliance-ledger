@@ -36,10 +36,10 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use: "add-model-info [id] [name] [owner] [description] [sku] [firmware-version] [hardware-version] " +
-			"[certificate-id] [certified-date] [tis-or-trp-testing-completed]",
+		Use: "add-model-info <id> <name> <owner> <description> <sku> <firmware-version> <hardware-version> " +
+			"<tis-or-trp-testing-completed> [certificate-id] [certified-date]",
 		Short: "add new ModelInfo",
-		Args:  cobra.ExactArgs(10),
+		Args:  cobra.RangeArgs(8, 10),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -56,16 +56,29 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 			sku := args[4]
 			firmwareVersion := args[5]
 			hardwareVersion := args[6]
-			certificateID := args[7]
 
-			certifiedDate, err := time.Parse(time.RFC3339, args[8])
+			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[7])
 			if err != nil {
 				return err
 			}
 
-			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[9])
-			if err != nil {
-				return err
+			var certificateID string
+			var certifiedDate time.Time
+
+			switch len(args) {
+			case 9: // or error?
+				{
+					certificateID = args[8]
+				}
+			case 10:
+				{
+					certificateID = args[8]
+					certifiedDate, err = time.Parse(time.RFC3339, args[9])
+					if err != nil {
+						return err
+					}
+				}
+			default:
 			}
 
 			msg := types.NewMsgAddModelInfo(id, name, owner, description, sku, firmwareVersion, hardwareVersion,
@@ -84,10 +97,10 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use: "update-model-info [id] [new-name] [new-owner] [new-description] [new-sku] [new-firmware-version] " +
-			"[new-hardware-version] [new-certificate-id] [new-certified-date] [new-tis-or-trp-testing-completed]",
+		Use: "update-model-info <id> <new-name> <new-owner> <new-description> <new-sku> <new-firmware-version> " +
+			"<new-hardware-version> <new-tis-or-trp-testing-completed> [new-certificate-id] [new-certified-date]",
 		Short: "update existing ModelInfo",
-		Args:  cobra.ExactArgs(10),
+		Args:  cobra.RangeArgs(9, 10),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -104,16 +117,29 @@ func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 			newSku := args[4]
 			newFirmwareVersion := args[5]
 			newHardwareVersion := args[6]
-			newCertificateID := args[7]
 
-			newCertifiedDate, err := time.Parse(time.RFC3339, args[8])
+			newTisOrTrpTestingCompleted, err := strconv.ParseBool(args[7])
 			if err != nil {
 				return err
 			}
 
-			newTisOrTrpTestingCompleted, err := strconv.ParseBool(args[9])
-			if err != nil {
-				return err
+			var newCertificateID string
+			var newCertifiedDate time.Time
+
+			switch len(args) {
+			case 9: // or error?
+				{
+					newCertificateID = args[8]
+				}
+			case 10:
+				{
+					newCertificateID = args[8]
+					newCertifiedDate, err = time.Parse(time.RFC3339, args[9])
+					if err != nil {
+						return err
+					}
+				}
+			default:
 			}
 
 			msg := types.NewMsgUpdateModelInfo(id, newName, newOwner, newDescription, newSku, newFirmwareVersion,
@@ -130,7 +156,7 @@ func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdDeleteModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "delete-model-info [id]",
+		Use:   "delete-model-info <id>",
 		Short: "delete existing ModelInfo",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {

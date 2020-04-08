@@ -15,8 +15,8 @@ type ModelInfo struct {
 	SKU                      string         `json:"sku"`
 	FirmwareVersion          string         `json:"firmware_version"`
 	HardwareVersion          string         `json:"hardware_version"`
-	CertificateID            string         `json:"certificate_id"`
-	CertifiedDate            time.Time      `json:"certified_date"`
+	CertificateID            string         `json:"certificate_id,omitempty"`
+	CertifiedDate            time.Time      `json:"certified_date,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 }
 

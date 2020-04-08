@@ -37,7 +37,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdModelInfo(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "model-info [id]",
+		Use:   "model-info <id>",
 		Short: "Query ModelInfo by ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -59,7 +59,7 @@ func GetCmdModelInfo(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdModelInfoWithProof(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "model-info-with-proof [id]",
+		Use:   "model-info-with-proof <id>",
 		Short: "Query ModelInfo with proof by ID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
