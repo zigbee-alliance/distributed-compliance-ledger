@@ -32,7 +32,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 		return types.ErrModelInfoAlreadyExists(types.DefaultCodespace).Result()
 	}
 
-	if err := checkAuthorized(ctx, authzKeeper, msg.Owner, msg.Signer); err != nil {
+	if err := checkAddModelRights(ctx, authzKeeper, msg.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
@@ -62,7 +62,7 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.ID)
 
-	if err := checkAuthorized(ctx, authzKeeper, modelInfo.Owner, msg.Signer); err != nil {
+	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
@@ -89,7 +89,7 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.ID)
 
-	if err := checkAuthorized(ctx, authzKeeper, modelInfo.Owner, msg.Signer); err != nil {
+	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
@@ -98,8 +98,8 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 	return sdk.Result{}
 }
 
-func checkAuthorized(ctx sdk.Context, authzKeeper authz.Keeper, owner sdk.AccAddress, signer sdk.AccAddress) sdk.Error {
-	isAuthorized := false
+func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, owner sdk.AccAddress, signer sdk.AccAddress) sdk.Error {
+	isAuthorized := true
 
 	if signer.Equals(owner) && authzKeeper.HasRole(ctx, signer, authz.Manufacturer) {
 		isAuthorized = true
@@ -110,7 +110,21 @@ func checkAuthorized(ctx sdk.Context, authzKeeper authz.Keeper, owner sdk.AccAdd
 	}
 
 	if !isAuthorized {
-		return sdk.ErrUnauthorized("tx should be signed either by owner or by administrator")
+		return sdk.ErrUnauthorized("AddModelInfo tx should be signed either by owner(manufacturer) or by administrator")
+	}
+
+	return nil
+}
+
+func checkUpdateModelRights(owner sdk.AccAddress, signer sdk.AccAddress) sdk.Error {
+	isAuthorized := false
+
+	if signer.Equals(owner) {
+		isAuthorized = true
+	}
+
+	if !isAuthorized {
+		return sdk.ErrUnauthorized("UpdateModelInfo tx should be signed by owner")
 	}
 
 	return nil

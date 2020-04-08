@@ -68,7 +68,13 @@ func (setup TestSetup) Manufacturer() sdk.AccAddress {
 	return acc
 }
 
-func TestMsgAddModelInfo(owner sdk.AccAddress) MsgAddModelInfo  {
+func (setup TestSetup) Administrator() sdk.AccAddress {
+	acc, _ := sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
+	setup.App.authzKeeper.AssignRole(setup.Ctx, acc, authz.Administrator)
+	return acc
+}
+
+func TestMsgAddModelInfo(owner sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
 		ID:                       test_constants.Id,
 		Name:                     test_constants.Name,
@@ -81,5 +87,21 @@ func TestMsgAddModelInfo(owner sdk.AccAddress) MsgAddModelInfo  {
 		CertifiedDate:            test_constants.CertifiedDate,
 		TisOrTrpTestingCompleted: false,
 		Signer:                   owner,
+	}
+}
+
+func TestMsgUpdatedModelInfo(owner sdk.AccAddress) MsgUpdateModelInfo {
+	return MsgUpdateModelInfo{
+		ID:                          test_constants.Id,
+		NewName:                     "New Name",
+		NewOwner:                    owner,
+		NewDescription:              "New Description",
+		NewSKU:                      test_constants.Sku,
+		NewFirmwareVersion:          test_constants.FirmwareVersion,
+		NewHardwareVersion:          test_constants.HardwareVersion,
+		NewCertificateID:            test_constants.CertificateID,
+		NewCertifiedDate:            test_constants.CertifiedDate,
+		NewTisOrTrpTestingCompleted: false,
+		Signer:                      owner,
 	}
 }
