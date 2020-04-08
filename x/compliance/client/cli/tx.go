@@ -27,7 +27,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	complianceTxCmd.AddCommand(client.PostCommands(
 		GetCmdAddModelInfo(cdc),
 		GetCmdUpdateModelInfo(cdc),
-		GetCmdDeleteModelInfo(cdc),
+		//GetCmdDeleteModelInfo(cdc), Disable deletion
 	)...)
 
 	return complianceTxCmd

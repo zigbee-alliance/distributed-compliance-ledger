@@ -16,13 +16,6 @@ func TestHandler_HandleAddDeleteModelInfo(t *testing.T) {
 	modelInfo := TestMsgAddModelInfo(owner)
 	result := setup.Handler(setup.Ctx, modelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
-
-	// delete model
-	result = setup.Handler(setup.Ctx, MsgDeleteModelInfo{
-		ID:     modelInfo.ID,
-		Signer: modelInfo.Owner,
-	})
-	require.Equal(t, sdk.CodeOK, result.Code)
 }
 
 func TestHandler_HandleUpdateModel(t *testing.T) {
@@ -65,15 +58,4 @@ func TestHandler_HandleUpdateModel(t *testing.T) {
 		Signer:                      owner,
 	})
 	require.Equal(t, sdk.CodeOK, result.Code)
-}
-
-func TestHandler_HandleDeleteModel(t *testing.T) {
-	setup := Setup()
-
-	// try to delete not present model
-	result := setup.Handler(setup.Ctx, MsgDeleteModelInfo{
-		ID:     test_constants.Id,
-		Signer: test_constants.Owner,
-	})
-	require.Equal(t, types.CodeModelInfoDoesNotExist, result.Code)
 }
