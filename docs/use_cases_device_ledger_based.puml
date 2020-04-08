@@ -44,7 +44,7 @@ U <-- L: Get `RootCert`\n(update cache if needed)
 U -> U: Verify `DeviceCert(vid, pid)` signature
 U -> U: Verify that `DeviceCert`'s `pid` and `vid`\nequals to `VendorCert`'s `pid` and `vid`
 U <-- L: Get ZB Compliance results\n(update cache if needed)
-
+U -> D: Start using Device
 
 
 @enduml

@@ -1,12 +1,142 @@
 # Transactions and Queries
 
 ## General
+- Every writer to the Ledger must  
+    - Have a private/public key pair.
+    - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases_txn_auth.puml)).
+        - The Account stores the public part of the key
+        - The Account has an associated role. The role is used for authorization policies (see [Auth Map](auth_map.md)).
+    - Sign every transaction by the private key.
+- Ledger is public for read which means that anyone can read from the Ledger without a need to have 
+an Account or sign the request.  
+- The following roles are supported:
+    - Trustee
+    - Vendor
+    - TestHouse
+    - CertificationCenter
+    - NodeAdmin   
+- All read (get) requests return the current `height` of the ledger in addition to the
+requested data. The `height` can be used to get a delta (changes) from the last state that the user has.
+This is useful to avoid correlation by the sender's IP address.        
+   
+## X509 PKI
 
-- Every transaction (write request) must be signed
-- The signer's public key must be stored on the ledger via `ACCOUNT` transaction. 
-- Depending on the transaction type, the signer   
+#### PROPOSE_X509_ROOT_CERT
+Proposes a new self-signed root certificate.
+- Parameters:
+  - `Cert`: PEM-encoded certificate
+- In State:
+  - `1:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format> + <List of approved trustee account IDs>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx pki propose-x509-root-cert .... `
+- REST API: 
+    -   POST `/pki/proposed/certs`
+    
 
-## MODEL_INFO
+
+#### APPROVE_X509_ROOT_CERT
+Approves the proposed root certificate.
+- Parameters:
+  - `Issuer`: string  - proposed certificates's Issuer
+  - `SerialNumber`: string  - proposed certificates's Serial Number
+- In State:
+  - `1:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format> + <List of approved trustee account IDs>`
+  - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx pki approve-x509-root-cert .... `
+- REST API: 
+    -   PATCH `/pki/certs/proposed/root/<issuer>/<serialNumber>`
+
+#### ADD_X509_CERT
+Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be
+already present on the ledger.
+
+- Parameters:
+  - `Cert`: PEM-encoded certificate
+- In State:
+  - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
+- Who can send: 
+    - Any role
+- CLI command: 
+    -   `zblcli tx pki add-x509-cert .... `
+- REST API: 
+    -   POST `/pki/certs`
+    
+#### GET_ALL_PROPOSED_X509_ROOT_CERTS
+Gets all proposed but not approved root certificates.
+Either gets all proposed root certificates (no parameters), or a proposed certificate with the given 
+issuer and serial number attributes (both attributes must be specified).
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query pki all-proposed-x509-root-certs .... `
+- REST API: 
+    -   GET `/pki/certs/proposed/root`
+
+#### GET_PROPOSED_X509_ROOT_CERT
+Gets a proposed but not approved root certificate with the given 
+issuer and serial number attributes.
+
+- Parameters:
+  - `Issuer`: string - certificates's Issuer
+  - `SerialNumber`: string - certificates's Serial Number
+- CLI command: 
+    -   `zblcli query pki proposed-x509-root-cert .... `
+- REST API: 
+    -   GET `/pki/certs/proposed/root/<issuer>/<serialNumber>`
+
+#### GET_ALL_X509_ROOT_CERTS
+Gets all approved root certificates.
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query pki all-x509-root-certs .... `
+- REST API: 
+    -   GET `/pki/certs/root/`
+
+
+#### GET_X509_CERT
+Gets a certificate (either root, intermediate or leaf) by the given 
+issuer and serial number attributes.
+
+- Parameters:
+  - `Issuer`: string - certificates's Issuer
+  - `Serial Number`: string - certificates's Serial Number
+- CLI command: 
+    -   `zblcli query pki x509-cert .... `
+- REST API: 
+    -   GET `/pki/certs/<issuer>/<serialNumber>`
+
+#### GET_ALL_X509_CERTS
+Gets all certificates (root, intermediate and leaf).
+Cn optionally bi filtered by the root certificate's issuer and serial number so that 
+only the certificate chains started with the given root certificate are returned.   
+
+- Parameters:
+  - `RootIssuer`: string (optional) - root certificates's Issuer
+  - `RootSerialNumber`: string (optional) - root certificates's Serial Number
+- CLI command: 
+    -   `zblcli query pki all-x509-certs .... `
+- REST API: 
+    -   GET `/pki/certs`
+    -   GET `/pki/certs?rootIssuer=<>;rootSerialNumber={}`
+
+#### GET_ALL_X509_CERTS_SINCE
+Gets all certificates (root, intermediate and leaf) which has been added since 
+the given ledger's `height`.
+
+- Parameters:
+  - `since`: integer - the last ledger's height the user has locally.
+- CLI command: 
+    -   `zblcli query pki all-x509-certs-since .... `
+- REST API: 
+    -   GET `/pki/certs?since=<>`
+   
+## MODEL INFO
 
 #### ADD_MODEL_INFO
 Adds a new Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID).
@@ -28,8 +158,7 @@ Adds a new Model Info identified by a unique combination of `vid` (vendor ID) an
 
 The `owner` field must be equal to the signer's account ID.
 
-##### Unique key:
- `vid:pid`
+Unique key: `vid:pid`
 
 ##### Signature:
 -  Required
@@ -70,20 +199,7 @@ Gets a Model Info by the given  `vid` (vendor ID) and `pid` (product ID).
 ##### Who can send:
 -  Anyone
 
-## X509_CERT
 
-#### PROPOSE_X509_ROOT_CERT
 
-#### APPROVE_X509_ROOT_CERT
-
-#### ADD_X509_CERT
-
-#### GET_PROPOSED_X509_ROOT_CERTS
-
-#### GET_X509_ROOT_CERTS
-
-#### GET_X509_CERT
-
-####  
 
  
