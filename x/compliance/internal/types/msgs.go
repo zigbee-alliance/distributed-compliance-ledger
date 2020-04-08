@@ -11,7 +11,6 @@ const RouterKey = ModuleName
 type MsgAddModelInfo struct {
 	ID                       string         `json:"id"`
 	Name                     string         `json:"name"`
-	Owner                    sdk.AccAddress `json:"owner"`
 	Description              string         `json:"description"`
 	SKU                      string         `json:"sku"`
 	FirmwareVersion          string         `json:"firmware_version"`
@@ -22,13 +21,12 @@ type MsgAddModelInfo struct {
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddModelInfo(id string, name string, owner sdk.AccAddress, description string, sku string,
+func NewMsgAddModelInfo(id string, name string, description string, sku string,
 	firmwareVersion string, hardwareVersion string, certificateID string, certifiedDate time.Time,
 	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
 		ID:                       id,
 		Name:                     name,
-		Owner:                    owner,
 		Description:              description,
 		SKU:                      sku,
 		FirmwareVersion:          firmwareVersion,
@@ -49,10 +47,6 @@ func (m MsgAddModelInfo) Type() string {
 }
 
 func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
-	if m.Owner.Empty() {
-		return sdk.ErrInvalidAddress(m.Owner.String())
-	}
-
 	if m.Signer.Empty() {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}

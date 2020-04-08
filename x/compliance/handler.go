@@ -17,8 +17,8 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 			return handleMsgAddModelInfo(ctx, keeper, authzKeeper, msg)
 		case types.MsgUpdateModelInfo:
 			return handleMsgUpdateModelInfo(ctx, keeper, authzKeeper, msg)
-/*		case types.MsgDeleteModelInfo:
-			return handleMsgDeleteModelInfo(ctx, keeper, authzKeeper, msg)*/
+			/*		case types.MsgDeleteModelInfo:
+					return handleMsgDeleteModelInfo(ctx, keeper, authzKeeper, msg)*/
 		default:
 			errMsg := fmt.Sprintf("unrecognized nameservice Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -32,14 +32,14 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 		return types.ErrModelInfoAlreadyExists(types.DefaultCodespace).Result()
 	}
 
-	if err := checkAddModelRights(ctx, authzKeeper, msg.Owner, msg.Signer); err != nil {
+	if err := checkAddModelRights(ctx, authzKeeper, msg.Signer); err != nil {
 		return err.Result()
 	}
 
 	modelInfo := types.NewModelInfo(
 		msg.ID,
 		msg.Name,
-		msg.Owner,
+		msg.Signer,
 		msg.Description,
 		msg.SKU,
 		msg.FirmwareVersion,
@@ -62,7 +62,7 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.ID)
 
-	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
+	if err := checkUpdateModelRights(ctx, authzKeeper, modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
@@ -89,7 +89,7 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.ID)
 
-	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
+	if err := checkUpdateModelRights(ctx, authzKeeper, modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
@@ -98,33 +98,27 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 	return sdk.Result{}
 }
 
-func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, owner sdk.AccAddress, signer sdk.AccAddress) sdk.Error {
+func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
 	isAuthorized := true
 
-	if signer.Equals(owner) && authzKeeper.HasRole(ctx, signer, authz.Manufacturer) {
-		isAuthorized = true
-	}
-
-	if authzKeeper.HasRole(ctx, signer, authz.Administrator) {
-		isAuthorized = true
-	}
+	//if authzKeeper.HasRole(ctx, signer, authz.Manufacturer) || authzKeeper.HasRole(ctx, signer, authz.Administrator) {
+	//	isAuthorized = true
+	//}
 
 	if !isAuthorized {
-		return sdk.ErrUnauthorized("AddModelInfo tx should be signed either by owner(manufacturer) or by administrator")
+		return sdk.ErrUnauthorized("MsgAddModelInfo tx should be signed either by manufacturer or by administrator")
 	}
 
 	return nil
 }
 
-func checkUpdateModelRights(owner sdk.AccAddress, signer sdk.AccAddress) sdk.Error {
-	isAuthorized := false
-
-	if signer.Equals(owner) {
-		isAuthorized = true
+func checkUpdateModelRights(ctx sdk.Context, authzKeeper authz.Keeper, owner sdk.AccAddress, signer sdk.AccAddress) sdk.Error {
+	if !signer.Equals(owner) {
+		return sdk.ErrUnauthorized("MsgUpdateModelInfo tx should be signed by owner")
 	}
 
-	if !isAuthorized {
-		return sdk.ErrUnauthorized("UpdateModelInfo tx should be signed by owner")
+	if !authzKeeper.HasRole(ctx, signer, authz.Manufacturer) && !authzKeeper.HasRole(ctx, signer, authz.Administrator) {
+		return sdk.ErrUnauthorized("MsgUpdateModelInfo tx should be signed either by manufacturer or by administrator")
 	}
 
 	return nil

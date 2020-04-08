@@ -36,10 +36,10 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use: "add-model-info <id> <name> <owner> <description> <sku> <firmware-version> <hardware-version> " +
+		Use: "add-model-info <id> <name> <description> <sku> <firmware-version> <hardware-version> " +
 			"<tis-or-trp-testing-completed> [certificate-id] [certified-date]",
 		Short: "add new ModelInfo",
-		Args:  cobra.RangeArgs(8, 10),
+		Args:  cobra.RangeArgs(7, 9),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -47,17 +47,12 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 			id := args[0]
 			name := args[1]
 
-			owner, err := sdk.AccAddressFromBech32(args[2])
-			if err != nil {
-				return err
-			}
+			description := args[2]
+			sku := args[3]
+			firmwareVersion := args[4]
+			hardwareVersion := args[5]
 
-			description := args[3]
-			sku := args[4]
-			firmwareVersion := args[5]
-			hardwareVersion := args[6]
-
-			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[7])
+			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[6])
 			if err != nil {
 				return err
 			}
@@ -66,14 +61,14 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 			var certifiedDate time.Time
 
 			switch len(args) {
-			case 9: // or error?
+			case 8: // or error?
 				{
-					certificateID = args[8]
+					certificateID = args[7]
 				}
-			case 10:
+			case 9:
 				{
-					certificateID = args[8]
-					certifiedDate, err = time.Parse(time.RFC3339, args[9])
+					certificateID = args[7]
+					certifiedDate, err = time.Parse(time.RFC3339, args[8])
 					if err != nil {
 						return err
 					}
@@ -81,7 +76,7 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 			default:
 			}
 
-			msg := types.NewMsgAddModelInfo(id, name, owner, description, sku, firmwareVersion, hardwareVersion,
+			msg := types.NewMsgAddModelInfo(id, name, description, sku, firmwareVersion, hardwareVersion,
 				certificateID, certifiedDate, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
 
 			err = msg.ValidateBasic()

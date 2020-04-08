@@ -26,7 +26,7 @@ func TestModule_AddGetModelInfo(t *testing.T) {
 	// check
 	require.Equal(t, receivedModelInfo.ID, modelInfo.ID)
 	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
-	require.Equal(t, receivedModelInfo.Owner, modelInfo.Owner)
+	require.Equal(t, receivedModelInfo.Owner, modelInfo.Signer)
 	require.Equal(t, receivedModelInfo.Description, modelInfo.Description)
 	require.Equal(t, receivedModelInfo.SKU, modelInfo.SKU)
 	require.Equal(t, receivedModelInfo.FirmwareVersion, modelInfo.FirmwareVersion)

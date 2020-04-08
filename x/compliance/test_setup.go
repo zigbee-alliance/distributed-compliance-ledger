@@ -74,11 +74,10 @@ func (setup TestSetup) Administrator() sdk.AccAddress {
 	return acc
 }
 
-func TestMsgAddModelInfo(owner sdk.AccAddress) MsgAddModelInfo {
+func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
 		ID:                       test_constants.Id,
 		Name:                     test_constants.Name,
-		Owner:                    owner,
 		Description:              test_constants.Description,
 		SKU:                      test_constants.Sku,
 		FirmwareVersion:          test_constants.FirmwareVersion,
@@ -86,15 +85,15 @@ func TestMsgAddModelInfo(owner sdk.AccAddress) MsgAddModelInfo {
 		CertificateID:            test_constants.CertificateID,
 		CertifiedDate:            test_constants.CertifiedDate,
 		TisOrTrpTestingCompleted: false,
-		Signer:                   owner,
+		Signer:                   signer,
 	}
 }
 
-func TestMsgUpdatedModelInfo(owner sdk.AccAddress) MsgUpdateModelInfo {
+func TestMsgUpdatedModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		ID:                          test_constants.Id,
 		NewName:                     "New Name",
-		NewOwner:                    owner,
+		NewOwner:                    signer,
 		NewDescription:              "New Description",
 		NewSKU:                      test_constants.Sku,
 		NewFirmwareVersion:          test_constants.FirmwareVersion,
@@ -102,6 +101,6 @@ func TestMsgUpdatedModelInfo(owner sdk.AccAddress) MsgUpdateModelInfo {
 		NewCertificateID:            test_constants.CertificateID,
 		NewCertifiedDate:            test_constants.CertifiedDate,
 		NewTisOrTrpTestingCompleted: false,
-		Signer:                      owner,
+		Signer:                      signer,
 	}
 }
