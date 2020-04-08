@@ -23,6 +23,8 @@ This is useful to avoid correlation by the sender's IP address.
 
 #### PROPOSE_X509_ROOT_CERT
 Proposes a new self-signed root certificate.
+The certificate is not applied until sufficient number of Trustees approve it.
+
 - Parameters:
   - `Cert`: PEM-encoded certificate
 - In State:
@@ -32,7 +34,7 @@ Proposes a new self-signed root certificate.
 - CLI command: 
     -   `zblcli tx pki propose-x509-root-cert .... `
 - REST API: 
-    -   POST `/pki/proposed/certs`
+    -   POST `/pki/certs/proposed/root`
     
 
 
@@ -59,17 +61,57 @@ already present on the ledger.
   - `Cert`: PEM-encoded certificate
 - In State:
   - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
+  - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate Chain's issuer/serialNumber pairs>`
 - Who can send: 
     - Any role
 - CLI command: 
     -   `zblcli tx pki add-x509-cert .... `
 - REST API: 
     -   POST `/pki/certs`
+
+#### PROPOSE_X509_CERT_REVOC
+Proposes revocation of the given X509 certificate (either root, intermediate or leaf).
+All the certificates in the chain signed by the revoked certificate will be revoked as well.
+
+The revocation is not applied until sufficient number of Trustees approve it. 
+
+- Parameters:
+  - `Issuer`: string  - revoked certificates's Issuer
+  - `SerialNumber`: string  - revoked certificates's Serial Number
+- In State:
+  - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx pki propose-x509-cert-revok .... `
+- REST API: 
+    -   POST `/pki/certs/revoked`
     
+
+
+#### APPROVE_X509_ROOT_CERT_REVOC
+Approves the revocation of the given X509 certificate (either root, intermediate or leaf).
+All the certificates in the chain signed by the revoked certificate will be revoked as well.
+
+The revocation is not applied until sufficient number of Trustees approve it. 
+
+- Parameters:
+  - `Issuer`: string  - revoked certificates's Issuer
+  - `SerialNumber`: string  - revoked certificates's Serial Number
+- In State:
+  - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
+  - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`  
+  - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
+  - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate Chain's issuer/serialNumber pairs>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx pki approve-x509-cert-revoc .... `
+- REST API: 
+    -   PATCH `/pki/certs/revoked/<issuer>/<serialNumber>`
+        
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS
 Gets all proposed but not approved root certificates.
-Either gets all proposed root certificates (no parameters), or a proposed certificate with the given 
-issuer and serial number attributes (both attributes must be specified).
 
 - Parameters: No
 - CLI command: 
@@ -88,6 +130,26 @@ issuer and serial number attributes.
     -   `zblcli query pki proposed-x509-root-cert .... `
 - REST API: 
     -   GET `/pki/certs/proposed/root/<issuer>/<serialNumber>`
+
+#### GET_ALL_PROPOSED_X509_REVOKED_CERTS
+Gets all proposed but not approved certificates to be revoked.
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query pki all-proposed-x509-revoked-certs .... `
+- REST API: 
+    -   GET `/pki/certs/revoked`
+
+#### GET_PROPOSED_X509_REVOKED_CERT
+Gets a proposed but not approved certificate to be revoked.
+
+- Parameters:
+  - `Issuer`: string - certificates's Issuer
+  - `SerialNumber`: string - certificates's Serial Number
+- CLI command: 
+    -   `zblcli query pki proposed-x509-revoked-cert .... `
+- REST API: 
+    -   GET `/pki/certs/revoked/<issuer>/<serialNumber>`
 
 #### GET_ALL_X509_ROOT_CERTS
 Gets all approved root certificates.
