@@ -16,33 +16,32 @@ end note
 == Add a new validator node ==
 NA -> NA: generate Account keys
 NA -> T1: send account's pubKey
-T1 -> L: propose a new Account with role=NodeAdmin and pubKey
+T1 -> L: PROPOSE_ADD_ACCOUNT(role=NodeAdmin; pubKey)
 
 alt if more than 1 Trustee signature is required for role NodeAdmin
-    TN -> L: approve adding a new Account
+    TN -> L: APPROVE_ADD_ACCOUNT
 end alt
 
 L -> L: a new Account with role=NodeAdmin is created
 
 NA -> NA: generate Node's key
-NA -> L: add new validator Node with Node's pubKey
+NA -> L: ADD_VALIDATOR_NODE
 
 == Remove a validator node by Trustee(s) ==
-T1 -> L: propose removing a Node
+T1 -> L: PROPOSE_REMOVE_VALIDATOR_NODE
 
 alt if more than 1 Trustee signature is required for revocation
-    TN -> L: approve revocation
-    TN -> L: approve revocation
+    TN -> L: APPROVE_REMOVE_VALIDATOR_NODE
 end alt
 
 L -> L: Node is removed
 L -> L: Node's Account is removed
 
 == Remove a validator node by NodeAdmin ==
-U -> L: remove the node
+NA -> L: REMOVE_VALIDATOR_NODE
 
 == Rotate the node's key ==
 
-U -> L: rotate the node's key
+NA -> L: UPDATE_VALIDATOR_NODE
 
 @enduml

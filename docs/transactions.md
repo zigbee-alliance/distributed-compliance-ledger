@@ -1,4 +1,5 @@
 # Transactions and Queries
+See use case sequence diagrams for the examples of how transaction can be used.
 
 ## General
 - Every writer to the Ledger must  
@@ -291,7 +292,7 @@ Gets a proposed but not approved certificate to be revoked.
 - REST API: 
     -   GET `/pki/certs/proposed/revoked/<issuer>/<serialNumber>`
 
-#### GET_ALL_REVOKED_CERTS
+#### GET_CRL
 Gets all revoked certificates (CRL or certificate revocation list).
    
 - Parameters: No

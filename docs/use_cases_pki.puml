@@ -9,24 +9,28 @@ actor Vendor as V
 
 database Ledger as L
 
-== Root Certificate ==
-RA -> L: Root Certificate (pending)
+== Add a Root Certificate ==
+RA -> L: PROPOSE_ADD_X509_ROOT_CERT
 RA <-> T1: Proof of privKey possession
-T1 -> L: Approve root certificate
+T1 -> L: APPROVE_ADD_X509_ROOT_CERT
 
 RA <-> TN: Proof of privKey possession
-TN -> L: Approve root certificate
+TN -> L: APPROVE_ADD_X509_ROOT_CERT
 
 L -> L: Pending Root Certificate becomes approved\nafter receiving approval from N (or K% of) Trustees
 
-== Intermediate Certificate ==
+== Add an Intermediate or Leaf Certificate ==
 
-V -> L: Certificate signed by the Root Certificate
+V -> V: A Certificate signed by the Root Certificate
+V -> L: ADD_X509_CERT
 L -> L: Validate certificate against the Root Certificate
 
-== Revoke Certificate ==
-T1 -> L: propose revocation of CertX
-TN -> L: approve revocation of CertX
-L -> L: CertX is revoked\nafter receiving approval from N (or K% of) Trustees
+== Revoke a Certificate by Trustees ==
+T1 -> L: PROPOSE_REVOKE_X509_CERT
+TN -> L: APPROVE_REVOKE_X509_ROOT_CERT
+L -> L:the certificate and all child certificates are revoked\nafter receiving approval from N (or K% of) Trustees
 
+== Revoke a Certificate by the owner ==
+V -> L: REVOKE_X509_CERT
+L -> L: the certificate and all child certificates are revoked
 @enduml

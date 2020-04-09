@@ -10,13 +10,13 @@ entity Device as D
 database Ledger as L
 
 note over L
-Setup PKI (see XXX):
+Setup PKI (see [use_cases_pki]):
 - Root Certificate `RootCert`
 - Vendor Certificate `VendorCert(vid. pid)`
 end note
 
 == 1. Setup Model Info ==
-V -> L: Save `ModelInfo(vid, pid)`
+V -> L: ADD_MODEL_INFO(vid, pid)
 
 == 2. Issue Device ==
 D -> D: generate `privKey` and `pubKey`
@@ -25,25 +25,25 @@ V -> D: Sign `DeviceCert` by `VendorCert(vid,pid)`
 
 == 3. Test Device Compliance ==
 T -> T: Run compliance tests for the `ModelInfo(vid, pid)`
-T -> L: Save compliance test results for `vid` and `pid`
+T -> L: ADD_TEST_RESULT(cid, pid)
 
 == 4.1. Attest Device Compliance ==
-ZB <- L: Get compliance test results for `ModelInfo(vid, pid)`
+ZB <- L: GET_TEST_RESULT(vid, pid)`
 ZB -> ZB: Check compliance test results
-ZB -> L: Attest certification of `vid` and `pid`
+ZB -> L: CERTIFY_MODEL(vid, pid)
 
 
-== 4.2. Revoke Device Compliance ==
-ZB -> L: Revoke certification of `vid` and `pid`
+== 4.2. Revoke Device Compliance (Optional) ==
+ZB -> L: REVOKE_MODEL_CERTIFICATION(vid, pid)
 
 == 5. Use Device ==
 U <- D: Get `DeviceCert(vid, pid)`
 U <-> D: Verify proof of privKey possession
-U <-- L: Get `VendorCert(vid. pid)`\n(update cache if needed)
-U <-- L: Get `RootCert`\n(update cache if needed)
+U <-- L: GET_X509_CERT / GET_ALL_X509_ROOT_CERTS\n or GET_ALL_X509_CERTS / GET_ALL_X509_CERTS_SINCE\nor GET_CRL\nupdate cache if needed
 U -> U: Verify `DeviceCert(vid, pid)` signature
 U -> U: Verify that `DeviceCert`'s `pid` and `vid`\nequals to `VendorCert`'s `pid` and `vid`
-U <-- L: Get ZB Compliance results\n(update cache if needed)
+U <-- L:GET_CERTIFIED_MODEL(vid, pid)\nor GET_VENDOR_CERTIFIED_MODELS(vid)\nor GET_ALL_CERTIFIED_MODELS / GET_ALL_CERTIFIED_MODELS_SINCE\nupdate cache if needed
+U -> U: Check that the Device is certified
 U -> D: Start using Device
 
 
