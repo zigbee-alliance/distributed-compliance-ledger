@@ -18,6 +18,22 @@ an Account or sign the request.
 - All read (get) requests return the current `height` of the ledger in addition to the
 requested data. The `height` can be used to get a delta (changes) from the last state that the user has.
 This is useful to avoid correlation by the sender's IP address.        
+
+## KV Store
+A summary of KV store and paths used:
+- KV store name: `pki`
+    - Proposed but not approved root certificates:
+        - `1:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format> + <List of approved trustee account IDs>`
+    - Approved root certificates:    
+        - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
+    - Non-root certificates:
+        - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
+    - Certificate Chain:
+        - `4:<Child Certificate's Issuer>:<Child Certificate's Serial Number>` : `<Parent certificates issuer/serialNumber pairs>`
+    - Proposed but not approved revocation of certificates:
+        - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
+    - CRL (Certificate Revocation List):
+        `6` : `CRL (Certificate Revocation List)`
    
 ## X509 PKI
 
@@ -25,9 +41,12 @@ This is useful to avoid correlation by the sender's IP address.
 Proposes a new self-signed root certificate.
 The certificate is not applied until sufficient number of Trustees approve it.
 
+The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
+
 - Parameters:
-  - `Cert`: PEM-encoded certificate
+  - `cert`: PEM-encoded certificate
 - In State:
+  - `pki` store  
   - `1:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format> + <List of approved trustee account IDs>`
 - Who can send: 
     - Trustee
@@ -41,9 +60,10 @@ The certificate is not applied until sufficient number of Trustees approve it.
 #### APPROVE_X509_ROOT_CERT
 Approves the proposed root certificate.
 - Parameters:
-  - `Issuer`: string  - proposed certificates's Issuer
-  - `SerialNumber`: string  - proposed certificates's Serial Number
+  - `issuer`: string  - proposed certificates's Issuer
+  - `serialNumber`: string  - proposed certificates's Serial Number
 - In State:
+  - `pki` store  
   - `1:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format> + <List of approved trustee account IDs>`
   - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
 - Who can send: 
@@ -57,11 +77,14 @@ Approves the proposed root certificate.
 Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be
 already present on the ledger.
 
+The certificate is immutable. It can only be revoked by either the owner or a quorum of Trustees.
+
 - Parameters:
-  - `Cert`: PEM-encoded certificate
+  - `cert`: PEM-encoded certificate
 - In State:
+  - `pki` store  
   - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
-  - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate Chain's issuer/serialNumber pairs>`
+  - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Parent certificate Chain's issuer/serialNumber pairs>`
 - Who can send: 
     - Any role
 - CLI command: 
@@ -76,9 +99,10 @@ All the certificates in the chain signed by the revoked certificate will be revo
 The revocation is not applied until sufficient number of Trustees approve it. 
 
 - Parameters:
-  - `Issuer`: string  - revoked certificates's Issuer
-  - `SerialNumber`: string  - revoked certificates's Serial Number
+  - `issuer`: string  - revoked certificates's Issuer
+  - `serialNumber`: string  - revoked certificates's Serial Number
 - In State:
+  - `pki` store  
   - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
 - Who can send: 
     - Trustee
@@ -96,13 +120,15 @@ All the certificates in the chain signed by the revoked certificate will be revo
 The revocation is not applied until sufficient number of Trustees approve it. 
 
 - Parameters:
-  - `Issuer`: string  - revoked certificates's Issuer
-  - `SerialNumber`: string  - revoked certificates's Serial Number
+  - `issuer`: string  - revoked certificates's Issuer
+  - `serialNumber`: string  - revoked certificates's Serial Number
 - In State:
+  - `pki` store  
   - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
   - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`  
   - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
   - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate Chain's issuer/serialNumber pairs>`
+  - `6` : `CRL (Certificate Revocation List)`
 - Who can send: 
     - Trustee
 - CLI command: 
@@ -124,8 +150,8 @@ Gets a proposed but not approved root certificate with the given
 issuer and serial number attributes.
 
 - Parameters:
-  - `Issuer`: string - certificates's Issuer
-  - `SerialNumber`: string - certificates's Serial Number
+  - `issuer`: string - certificates's Issuer
+  - `serialNumber`: string - certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki proposed-x509-root-cert .... `
 - REST API: 
@@ -144,8 +170,8 @@ Gets all proposed but not approved certificates to be revoked.
 Gets a proposed but not approved certificate to be revoked.
 
 - Parameters:
-  - `Issuer`: string - certificates's Issuer
-  - `SerialNumber`: string - certificates's Serial Number
+  - `issuer`: string - certificates's Issuer
+  - `serialNumber`: string - certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki proposed-x509-revoked-cert .... `
 - REST API: 
@@ -166,8 +192,8 @@ Gets a certificate (either root, intermediate or leaf) by the given
 issuer and serial number attributes.
 
 - Parameters:
-  - `Issuer`: string - certificates's Issuer
-  - `Serial Number`: string - certificates's Serial Number
+  - `issuer`: string - certificates's Issuer
+  - `serial Number`: string - certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki x509-cert .... `
 - REST API: 
@@ -179,8 +205,8 @@ Cn optionally bi filtered by the root certificate's issuer and serial number so 
 only the certificate chains started with the given root certificate are returned.   
 
 - Parameters:
-  - `RootIssuer`: string (optional) - root certificates's Issuer
-  - `RootSerialNumber`: string (optional) - root certificates's Serial Number
+  - `rootIssuer`: string (optional) - root certificates's Issuer
+  - `rootSerialNumber`: string (optional) - root certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki all-x509-certs .... `
 - REST API: 
@@ -203,65 +229,136 @@ the given ledger's `height`.
 #### ADD_MODEL_INFO
 Adds a new Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID).
 
-##### Parameters:
-- Vid: 16 bits int
-- Pid: 16 bits int
-- Cid: 16 bits int (optional)
-- Name: string
-- Owner: bech32 encoded address
-- Description: string
-- SKU: string
-- FirmwareVersion: string
-- HardwareVersion: string
-- CertificateID: string (optional)
-- CertifiedDate: rfc3339 encoded date
-- TisOrTrpTestingCompleted: bool
-- Custom: string
+The Model Info is immutable. If it needs to be edited - a new model info with a new `vid` or `pid` 
+can be created.
 
-The `owner` field must be equal to the signer's account ID.
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+    - `cid`: 16 bits int (optional)
+    - `Name`: string
+    - `owner`: bech32 encoded address
+    - `description`: string
+    - `SKU`: string
+    - `firmwareVersion`: string
+    - `hardwareVersion`: string
+    - `tisOrTrpTestingCompleted`: bool
+    - `custom`: string
+- In State:
+  - `modelinfo` store  
+  - `1:<vid>:<pid>` : `<model info>`
+  - `2:<vid>` : `<list of pids>`
+- Who can send: 
+    - Vendor
+- CLI command: 
+    -   `zblcli tx modelinfo add .... `
+- REST API: 
+    -   POST `/modelinfo`
 
-Unique key: `vid:pid`
+#### GET_ALL_MODEL_INFO
+Gets all Model Info. 
 
-##### Signature:
--  Required
+- Parameters: No
+- CLI command: 
+    -   `zblcli query modelinfo .... `
+- REST API: 
+    -   GET `/modelinfo`
+    
+#### GET_VENDOR_MODEL_INFO
+Gets all Model Info by the given `vid` (vendor ID).
 
-#### UPDATE_MODEL_INFO
-Updates an existing Model Info identified by the given  `vid` (vendor ID) and `pid` (product ID).
-Only the fields that need to be updated can be specified. Unspecified fields are not changed.
-
-##### Parameters:
-
-- Vid: 16 bits int
-- Pid: 16 bits int
-- Cid: 16 bits int (optional)
-- Name: string (optional)
-- Owner: bech32 encoded address (optional)
-- Description: string (optional)
-- SKU: string (optional)
-- FirmwareVersion: string (optional)
-- HardwareVersion: string (optional)
-- CertificateID: string (optional)
-- CertifiedDate: rfc3339 encoded date (optional)
-- TisOrTrpTestingCompleted: bool (optional)
-- Custom: string (optional)
-
-##### Unique key:
-`vid:pid`
-
-##### Who can send:
--  Manufacturer
-
+- Parameters:
+    - `vid`: 16 bits int
+- CLI command: 
+    -   `zblcli query modelinfo .... `
+- REST API: 
+    -   GET `/modelinfo/vid`
+    
 #### GET_MODEL_INFO
-Gets a Model Info by the given  `vid` (vendor ID) and `pid` (product ID).
+Gets a Model Info by the given `vid` (vendor ID) and `pid` (product ID).
 
-##### Parameters:
-- Vid: 16 bits int
-- Pid: 16 bits int
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+- CLI command: 
+    -   `zblcli query modelinfo .... `
+- REST API: 
+    -   GET `/modelinfo/vid/pid`
 
-##### Who can send:
--  Anyone
+## TEST_DEVICE_COMPLIANCE
 
+#### ADD_TEST_RESULT
+Submits result of compliance testing for the given device (`vid` and `pid`).
+The test result can be a blob of data or a reference (URL) to an external storage.
 
+Multiple test results (potentially from different test houses) can be added for the same device type. 
 
+The test result is immutable and can not be deleted or removed after submitting. 
+Another test result can be submitted instead.
 
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+    - `testResult`: string
+- In State:
+  - `testresult` store  
+  - `1:<vid>:<pid>` : `<list of test results>`
+- Who can send: 
+    - TestHouse
+- CLI command: 
+    -   `zblcli tx testresult add .... `
+- REST API: 
+    -   POST `/testresult`
+
+#### GET_TEST_RESULT
+Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
+
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+- CLI command: 
+    -   `zblcli query testresult .... `
+- REST API: 
+    -   GET `/testresult/vid/pid`
+
+## ATTEST_DEVICE_COMPLIANCE
+
+#### ATTEST_MODEL
+Attests compliance of the Model to the ZB standard.
+Can be used to enable or disable the compliance (that is it's mutable). 
  
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+    - `compliance`: bool
+- In State:
+  - `compliance` store  
+  - `1:<vid>:<pid>` : `<compliance bool>`
+- Who can send: 
+    - CertificationCenter
+- CLI command: 
+    -   `zblcli tx compliance add .... `
+- REST API: 
+    -   PUT `/compliance/vid/pid`
+    
+#### GET_MODEL_COMPLIANCE
+Gets a boolean of the given Model (identified by the `vid` and `pid`) is compliant to ZB standards. 
+ 
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+- CLI command: 
+    -   `zblcli query compliance .... `
+- REST API: 
+    -   GET `/compliance/vid/pid`
+    
+#### GET_MODEL_COMPLIANCE_DELTA
+Gets a boolean of the given Model (identified by the `vid` and `pid`) is compliant to ZB standards. 
+ 
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+- CLI command: 
+    -   `zblcli query compliance .... `
+- REST API: 
+    -   GET `/compliance/vid/pid`            
