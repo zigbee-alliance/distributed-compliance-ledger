@@ -363,13 +363,4 @@ Gets a boolean of the given Model (identified by the `vid` and `pid`) is complia
 - REST API: 
     -   GET `/compliance/vid/pid`
     
-#### GET_MODEL_COMPLIANCE_DELTA
-Gets a boolean of the given Model (identified by the `vid` and `pid`) is compliant to ZB standards. 
- 
-- Parameters:
-    - `vid`: 16 bits int
-    - `pid`: 16 bits int
-- CLI command: 
-    -   `zblcli query compliance .... `
-- REST API: 
-    -   GET `/compliance/vid/pid`            
+#### GET_MODEL_COMPLIANCE_DELTA: TBD
