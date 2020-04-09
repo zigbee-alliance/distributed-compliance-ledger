@@ -34,7 +34,7 @@ A summary of KV store and paths used:
         - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
     - CRL (Certificate Revocation List):
         - `6` : `CRL (Certificate Revocation List)`
-- KV store name: `modeilinfo`
+- KV store name: `modelinfo`
     - Model Infos 
         - `1:<vid>:<pid>` : `<model info>`
     - Vendor to Products (Models) index:
@@ -44,7 +44,11 @@ A summary of KV store and paths used:
         - `1:<vid>:<pid>` : `<list of test results>`
 - KV store name: `compliance`
     - Compliance results for every model       
-        - `1:<vid>:<pid>` : `<compliance bool>` 
+       - `1:<vid>:<pid>` : `<compliance bool>`
+    - A list of compliant models (`pid`s) for the given Vendor. 
+       - `2:<vid>` : `<compliance pids>`  
+    - A list of revoked models (`pid`s) for the given Vendor.       
+       - `3:<vid>` : `<revocation pids>`     
    
 ## X509 PKI
 
@@ -59,6 +63,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - In State:
   - `pki` store  
   - `1:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format> + <List of approved trustee account IDs>`
+  - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>` (if just 1 Trustee is required)  
 - Who can send: 
     - Trustee
 - CLI command: 
@@ -120,7 +125,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - CLI command: 
     -   `zblcli tx pki propose-x509-cert-revok .... `
 - REST API: 
-    -   POST `/pki/certs/revoked`
+    -   POST `/pki/certs/proposed/revoked`
     
 
 
@@ -175,7 +180,7 @@ Gets all proposed but not approved certificates to be revoked.
 - CLI command: 
     -   `zblcli query pki all-proposed-x509-revoked-certs .... `
 - REST API: 
-    -   GET `/pki/certs/revoked`
+    -   GET `/pki/certs/proposed/revoked`
 
 #### GET_PROPOSED_X509_REVOKED_CERT
 Gets a proposed but not approved certificate to be revoked.
@@ -186,7 +191,7 @@ Gets a proposed but not approved certificate to be revoked.
 - CLI command: 
     -   `zblcli query pki proposed-x509-revoked-cert .... `
 - REST API: 
-    -   GET `/pki/certs/revoked/<issuer>/<serialNumber>`
+    -   GET `/pki/certs/proposed/revoked/<issuer>/<serialNumber>`
 
 #### GET_ALL_X509_ROOT_CERTS
 Gets all approved root certificates.
@@ -212,8 +217,10 @@ issuer and serial number attributes.
 
 #### GET_ALL_X509_CERTS
 Gets all certificates (root, intermediate and leaf).
-Cn optionally bi filtered by the root certificate's issuer and serial number so that 
+Can optionally be filtered by the root certificate's issuer and serial number so that 
 only the certificate chains started with the given root certificate are returned.   
+
+`GET_ALL_X509_CERTS_SINCE` can be used to incrementally update the list stored locally. 
 
 - Parameters:
   - `rootIssuer`: string (optional) - root certificates's Issuer
@@ -228,13 +235,25 @@ only the certificate chains started with the given root certificate are returned
 Gets all certificates (root, intermediate and leaf) which has been added since 
 the given ledger's `height`.
 
+Can optionally be filtered by the root certificate's issuer and serial number so that 
+only the certificate chains started with the given root certificate are returned.   
+
 - Parameters:
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `zblcli query pki all-x509-certs-since .... `
+    -   `zblcli query pki all-x509-certs .... `
 - REST API: 
-    -   GET `/pki/certs?since=<>`
+    -   GET `/pki/certs?since=<>;rootIssuer=<>;rootSerialNumber={}`
    
+#### GET_ALL_REVOKED_CERTS
+Gets all revoked certificates (CRL or certificate revocation list)
+   
+- Parameters: No
+- CLI command: 
+    -   `zblcli query pki all-revoked-certs .... `
+- REST API: 
+    -   GET `/pki/certs/revoked`
+
 ## MODEL INFO
 
 #### ADD_MODEL_INFO
@@ -296,6 +315,15 @@ Gets a Model Info by the given `vid` (vendor ID) and `pid` (product ID).
 - REST API: 
     -   GET `/modelinfo/vid/pid`
 
+#### GET_VENDORS    
+Get an ordered list of all Vendor's `vid`s. 
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query modelinfo vendors .... `
+- REST API: 
+    -   GET `/modelinfo/vendors`
+
 ## TEST_DEVICE_COMPLIANCE
 
 #### ADD_TEST_RESULT
@@ -336,15 +364,24 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
 
 #### ATTEST_MODEL
 Attests compliance of the Model to the ZB standard.
-Can be used to enable or disable the compliance (that is it's mutable). 
+`REVOKE_MODEL` should be used for revoking (disabling) the compliance.
+It's possible to call it for revoked models to enable them back. 
+
+The corresponding Model Info and test results must be present on ledger.
+
+It must be called for every compliant device for use cases where compliance 
+is tracked on ledger.
+It can be used by use cases where only revocation is tracked on ledger to remove a Model
+from the revocation list.
  
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `compliance`: bool
 - In State:
   - `compliance` store  
   - `1:<vid>:<pid>` : `<compliance bool>`
+  - `2:<vid>` : `<compliance pids>`  
+  - `3:<vid>` : `<revoked pids>`  
 - Who can send: 
     - CertificationCenter
 - CLI command: 
@@ -352,8 +389,35 @@ Can be used to enable or disable the compliance (that is it's mutable).
 - REST API: 
     -   PUT `/compliance/vid/pid`
     
+#### REVOKE_MODEL
+Revoke compliance of the Model to the ZB standard.
+
+The corresponding Model Info and test results are not required to be on the ledger 
+to be used in cases where revocation only is tracked on the ledger.
+
+It can be used in cases where every compliance result 
+is written on the ledger (`ATTEST_MODEL` was called), or
+ cases where only revocation list is stored on the ledger.
+ 
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+- In State:
+  - `compliance` store  
+  - `1:<vid>:<pid>` : `<compliance bool>`
+  - `2:<vid>` : `<compliance pids>`  
+  - `3:<vid>` : `<revocation pids>`  
+- Who can send: 
+    - CertificationCenter
+- CLI command: 
+    -   `zblcli tx compliance revoke .... `
+- REST API: 
+    -   PUT `/compliance/revoked/vid/pid`    
+    
 #### GET_MODEL_COMPLIANCE
-Gets a boolean of the given Model (identified by the `vid` and `pid`) is compliant to ZB standards. 
+Gets a boolean if the given Model (identified by the `vid` and `pid`) is compliant to ZB standards. 
+This is the aggregation of compliance and
+revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
  
 - Parameters:
     - `vid`: 16 bits int
@@ -362,5 +426,306 @@ Gets a boolean of the given Model (identified by the `vid` and `pid`) is complia
     -   `zblcli query compliance .... `
 - REST API: 
     -   GET `/compliance/vid/pid`
+
+#### GET_VENDOR_MODEL_COMPLIANCE
+Gets all the compliant Models (`pid`s) issued by the given Vendor (`vid`).
+This is the aggregation of compliance and
+revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+
+- Parameters:
+    - `vid`: 16 bits int
+- CLI command: 
+    -   `zblcli query compliance .... `
+- REST API: 
+    -   GET `/compliance/vid`
     
-#### GET_MODEL_COMPLIANCE_DELTA: TBD
+#### GET_VENDOR_MODEL_REVOKED
+Gets all the Models (`pid`s) revoked for the given Vendor (`vid`).
+It contains information about revocation only, so  it should be used in cases
+ where revocation only is tracked on the ledger.
+
+
+- Parameters:
+    - `vid`: 16 bits int
+- CLI command: 
+    -   `zblcli query compliance revoked .... `
+- REST API: 
+    -   GET `/compliance/revoked/vid`
+    
+#### GET_ALL_MODEL_COMPLIANCE
+Gets all compliant Models (`pid`s) for all the vendors (`vid`s).
+This is the aggregation of compliance and
+revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+ 
+`GET_ALL_MODEL_COMPLIANCE_SINCE` can be used to incrementally update the list stored locally. 
+ 
+- Parameters: No
+- CLI command: 
+    -   `zblcli query compliance .... `
+- REST API: 
+    -   GET `/compliance`
+ 
+
+#### GET_ALL_MODEL_REVOKED
+Gets all revoked Models (`pid`s) for all vendors (`vid`s).
+It contains information about revocation only, so  it should be used in cases
+ where revocation only is tracked on the ledger.
+ 
+`GET_ALL_MODEL_COMPLIANCE_SINCE` can be used to incrementally update the list stored locally. 
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query compliance revoked.... `
+- REST API: 
+    -   GET `/compliance/revoked`
+
+#### GET_ALL_MODEL_COMPLIANCE_SINCE
+Gets a delta of all compliant Models (`pid`s) for every vendor (`vid`s) which has been added or revoked since 
+the given ledger's `height`.
+
+This is the aggregation of compliance and
+revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+ 
+- Parameters: 
+  - `since`: integer - the last ledger's height the user has locally.
+- CLI command: 
+    -   `zblcli query compliance .... `
+- REST API: 
+    -   GET `/compliance?since=<>`
+    
+#### GET_ALL_MODEL_COMPLIANCE_SINCE
+Gets a delta of all revoked Models (`pid`s) for every vendor (`vid`s) which has been added or revoked since 
+the given ledger's `height`.
+
+This is the aggregation of compliance and
+revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+ 
+- Parameters: 
+  - `since`: integer - the last ledger's height the user has locally.
+- CLI command: 
+    -   `zblcli query compliance revoked .... `
+- REST API: 
+    -   GET `/compliance/revoked?since=<>`
+    
+## AUTH
+
+#### PROPOSE_ADD_ACCOUNT
+Proposes a new Account with the given address, public key and role.
+
+If more than 1 Trustee signature is required to add the account, the account
+will be in a pending state until sufficient number of approvals is received.
+
+- Parameters:
+    - `address`
+    - `pubKey`
+    - `pubKeyType`
+    - `role` 
+- In State:
+  - `auth` store  
+  - `1:<address>` : `<account info> + <list of approvers>`
+  - `2:<address>` : `<account info>` (if just 1 Trustee is required)  
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx auth propose-add-account .... `
+- REST API: 
+    -   POST `/auth/accounts/proposed`
+    
+#### APPROVE_ADD_ACCOUNT
+Approves the proposed account.    
+
+- Parameters:
+    - `address`
+- In State:
+  - `auth` store  
+  - `1:<address>` : `<account info> + <list of approvers>`  
+  - `2:<address>` : `<account info>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx auth approve-add-account .... `
+- REST API: 
+    -   PATCH `/auth/accounts/proposed/<address>`
+    
+    
+#### ROTATE_KEY
+Rotate's the Account's public key by the owner.
+
+- Parameters:
+    - `pubKey`
+    - `pubKeyType`
+- In State:
+  - `auth` store  
+  - `1:<address>` : `<account info>`
+- Who can send: 
+    - The Account's owner
+- CLI command: 
+    -   `zblcli tx auth rotate-key .... `
+- REST API: 
+    -   PUT `/auth/accounts/<address>`
+    
+#### PROPOSE_REVOKE_ACCOUNT
+Proposes revocation of the Account with the given address.
+
+If more than 1 Trustee signature is required to revoke the account, the revocation
+will be in a pending state until sufficient number of approvals is received.
+
+- Parameters:
+    - `address`
+- In State:
+  - `auth` store  
+  - `3:<address>` : `<account info> + <list of approvers>`
+  - `2:<address>` : `<account info>` (if just 1 Trustee is required)  
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx auth propose-revoke-account .... `
+- REST API: 
+    -   POST `/auth/accounts/revoked`
+    
+#### APPROVE_REVOKE_ACCOUNT
+Approves the proposed account.    
+
+- Parameters:
+    - `address`
+- In State:
+  - `auth` store  
+  - `3:<address>` : `<account info> + <list of approvers>`  
+  - `2:<address>` : `<account info>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx auth approve-revoke-account .... `
+- REST API: 
+    -   PATCH `/auth/accounts/revoked/<address>`
+    
+#### GET_ALL_PROPOSED_ACCOUNTS
+Gets all proposed but not approved accounts.
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query auth all-proposed-accounts .... `
+- REST API: 
+    -   GET `/auth/accounts/proposed`
+    
+#### GET_ALL_ACCOUNTS
+Gets all accounts.
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query auth all-accounts .... `
+- REST API: 
+    -   GET `/auth/accounts`           
+
+#### GET_ACCOUNTS
+Gets an accounts by address.
+
+- Parameters:
+    - `address`
+- CLI command: 
+    -   `zblcli query auth account .... `
+- REST API: 
+    -   GET `/auth/accounts/<address>`         
+    
+#### GET_ALL_PROPOSED_REVOKED_ACCOUNTS
+Gets all proposed but not approved accounts to be revoked.
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query auth all-proposed-revoked-accounts .... `
+- REST API: 
+    -   GET `/auth/accounts/proposed`
+    
+    
+## VALIDATOR_NODE                      
+
+#### ADD_VALIDATOR_NODE
+Adds a new Validator node.
+
+- Parameters: Same as in `cosmos-sdk/MsgCreateValidator`
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - NodeAdmin
+- CLI command: 
+    -   `zblcli tx validator add .... `
+- REST API: 
+    -   PUT `/validators/<address>`
+    
+#### UPDATE_VALIDATOR_NODE
+Updates the Validator node by the owner.
+
+- Parameters: Same as in `cosmos-sdk/MsgCreateValidator`
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - NodeAdmin owner
+- CLI command: 
+    -   `zblcli tx validator update .... `
+- REST API: 
+    -   PUT `/validators/<address>`    
+
+#### REMOVE_VALIDATOR_NODE
+Deletes the Validator node (removes from the validator set) by the owner.
+
+- Parameters:
+    - `address`
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - NodeAdmin owner
+- CLI command: 
+    -   `zblcli tx validator remove .... `
+- REST API: 
+    -   DELETE `/validators/<address>`
+
+#### PROPOSE_REMOVE_VALIDATOR_NODE
+Proposes delete of the Validator node (removes from the validator set) by a Trustee. 
+
+- Parameters:
+    - `address`
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx validator propose-remove .... `
+- REST API: 
+    -   POST `/validators/proposed/removed`
+
+#### APPROVE_REMOVE_VALIDATOR_NODE
+Approves removing of the Validator node by a Trustee. 
+
+- Parameters:
+    - `address`
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx validator approve-remove .... `
+- REST API: 
+    -   PATCH `/validators/proposed/removed`
+            
+#### GET_ALL_VALIDATORS
+Gets all validator nodes.
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query validator all-validator-nodes .... `
+- REST API: 
+    -   GET `/validators`   
+     
+#### GET_VALIDATOR
+Gets a validator node.
+
+- Parameters:
+    - `address`
+- CLI command: 
+    -   `zblcli query validator validator-node .... `
+- REST API: 
+    -   GET `/validators/<address>`   
+    
+#### GET_ALL_PROPOSED_REMOVED_VALIDATORS
+Gets all proposed but not approved validator nodes to be removed.
+
+- Parameters: No
+- CLI command: 
+    -   `zblcli query validator all-proposed-removed-validator-nodes .... `
+- REST API: 
+    -   GET `/validators/proposed/removed`   
