@@ -99,16 +99,10 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 }
 
 func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
-	isAuthorized := true
-
-	//if authzKeeper.HasRole(ctx, signer, authz.Manufacturer) || authzKeeper.HasRole(ctx, signer, authz.Administrator) {
-	//	isAuthorized = true
-	//}
-
-	if !isAuthorized {
-		return sdk.ErrUnauthorized("MsgAddModelInfo tx should be signed either by manufacturer or by administrator")
+	if !authzKeeper.HasRole(ctx, signer, authz.Manufacturer) && !authzKeeper.HasRole(ctx, signer, authz.Administrator) {
+		return sdk.ErrUnauthorized("MsgUpdateModelInfo tx should be signed either by manufacturer or by administrator")
 	}
-
+	
 	return nil
 }
 

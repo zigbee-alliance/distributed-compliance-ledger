@@ -29,7 +29,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAccountRoles(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "account-roles <addr>",
+		Use:   "account-roles [addr]",
 		Short: "Query AccountRoles by account address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -51,7 +51,7 @@ func GetCmdAccountRoles(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAccountRolesWithProof(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "account-roles-with-proof <addr>",
+		Use:   "account-roles-with-proof [addr]",
 		Short: "Query AccountRoles with proof by account address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
