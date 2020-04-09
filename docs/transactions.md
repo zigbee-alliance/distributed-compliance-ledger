@@ -33,7 +33,7 @@ A summary of KV store and paths used:
     - Proposed but not approved revocation of certificates:
         - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
     - CRL (Certificate Revocation List):
-        `6` : `CRL (Certificate Revocation List)`
+        - `6` : `CRL (Certificate Revocation List)`
 - KV store name: `modeilinfo`
     - Model Infos 
         - `1:<vid>:<pid>` : `<model info>`
