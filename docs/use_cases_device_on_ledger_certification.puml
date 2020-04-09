@@ -9,6 +9,16 @@ actor User as U
 entity Device as D
 database Ledger as L
 
+note over V, L
+In this case Device Certification is done on Ledger:
+- Device doesn't have any certification when issued
+- Test and Certification results can be added/revoked any time in future
+- Test and Certification results must be added on ledger (as transactions)
+- Device's certification needs to be checked on Ledger
+
+The Ledger is also used as a PKI.
+end note
+
 note over L
 Setup PKI (see [use_cases_pki]):
 - Root Certificate `RootCert`

@@ -8,6 +8,16 @@ actor User as U
 entity Device as D
 database Ledger as L
 
+note over V, L
+In this case Device Certification is done off Ledger:
+- Device has a certification result blob when issued
+- Ledger doesn't have (need to have) certification result for every device (model)
+- Ledger is used to track information about revoked certifications (as transactions)
+- Device's revocation needs to be checked on Ledger
+
+The Ledger is also used as a PKI.
+end note
+
 note over L
 Setup PKI (see XXX):
 - Root Certificate `RootCert`
