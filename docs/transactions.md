@@ -34,6 +34,17 @@ A summary of KV store and paths used:
         - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
     - CRL (Certificate Revocation List):
         `6` : `CRL (Certificate Revocation List)`
+- KV store name: `modeilinfo`
+    - Model Infos 
+        - `1:<vid>:<pid>` : `<model info>`
+    - Vendor to Products (Models) index:
+        - `2:<vid>` : `<list of pids>`
+- KV store name: `testresult`
+    - Test results for every model
+        - `1:<vid>:<pid>` : `<list of test results>`
+- KV store name: `compliance`
+    - Compliance results for every model       
+        - `1:<vid>:<pid>` : `<compliance bool>` 
    
 ## X509 PKI
 
