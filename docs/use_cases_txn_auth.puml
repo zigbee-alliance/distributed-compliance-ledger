@@ -5,7 +5,6 @@ hide footbox
 actor "ZA Trustee 1" as T1
 actor "ZA Trustee 2" as T2
 database Ledger as L
-actor "ZA Trustee 3" as T3
 actor User as U
 
 
@@ -15,7 +14,7 @@ Trustees 1 and 2
 are part of genesis
 end note
 
-== Add a new Account with role X by Trustee(s)==
+== Add a new Account with role X (incl new Trustees) by Trustee(s)==
 U -> U: generate account privKey and pubKey
 
 U -> T1: send publicKey `pubKeyU`
