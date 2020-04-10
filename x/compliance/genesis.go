@@ -19,8 +19,12 @@ func NewGenesisState() GenesisState {
 
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ModelInfoRecords {
-		if record.ID == "" {
-			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Invalid UUID", record.ID)
+		if record.VID == 0 {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %d. Error: Invalid VID", record.VID)
+		}
+
+		if record.PID == 0 {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %d. Error: Invalid PID", record.PID)
 		}
 
 		if record.Name == "" {
@@ -47,8 +51,8 @@ func ValidateGenesis(data GenesisState) error {
 			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing HardwareVersion", record.HardwareVersion)
 		}
 
-		if record.CertificateID == "" {
-			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing CertificateID", record.CertificateID)
+		if record.Custom == "" {
+			return fmt.Errorf("invalid ModelInfoRecord: Value: %s. Error: Missing Custom", record.HardwareVersion)
 		}
 	}
 

@@ -7,7 +7,8 @@ import (
 )
 
 type ModelInfoHeader struct {
-	ID    string         `json:"id"`
+	VID   int16          `json:"vid"`
+	PID   int16          `json:"pid"`
 	Name  string         `json:"name"`
 	Owner sdk.AccAddress `json:"owner"`
 	SKU   string         `json:"sku"`

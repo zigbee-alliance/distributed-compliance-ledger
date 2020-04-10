@@ -28,13 +28,21 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 }
 
 func queryModelInfo(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	id := path[0]
-
-	if !keeper.IsModelInfoPresent(ctx, id) {
-		return nil, types.ErrModelInfoDoesNotExist(types.DefaultCodespace)
+	vid, err := types.ParseVID(path[0])
+	if err != nil {
+		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}
 
-	modelInfo := keeper.GetModelInfo(ctx, id)
+	pid, err := types.ParsePID(path[1])
+	if err != nil {
+		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+	}
+
+	if !keeper.IsModelInfoPresent(ctx, vid, pid) {
+		return nil, types.ErrModelInfoDoesNotExist()
+	}
+
+	modelInfo := keeper.GetModelInfo(ctx, vid, pid)
 
 	res, err := codec.MarshalJSONIndent(keeper.cdc, modelInfo)
 	if err != nil {
@@ -65,7 +73,8 @@ func queryModelInfoHeaders(ctx sdk.Context, req abci.RequestQuery, keeper Keeper
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			header := types.ModelInfoHeader{
-				ID:    modelInfo.ID,
+				VID:   modelInfo.VID,
+				PID:   modelInfo.PID,
 				Name:  modelInfo.Name,
 				Owner: modelInfo.Owner,
 				SKU:   modelInfo.SKU,

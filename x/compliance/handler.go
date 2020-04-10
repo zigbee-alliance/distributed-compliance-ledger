@@ -28,8 +28,8 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 
 func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgAddModelInfo) sdk.Result {
-	if keeper.IsModelInfoPresent(ctx, msg.ID) {
-		return types.ErrModelInfoAlreadyExists(types.DefaultCodespace).Result()
+	if keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
+		return types.ErrModelInfoAlreadyExists().Result()
 	}
 
 	if err := checkAddModelRights(ctx, authzKeeper, msg.Signer); err != nil {
@@ -37,13 +37,16 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 	}
 
 	modelInfo := types.NewModelInfo(
-		msg.ID,
+		msg.VID,
+		msg.PID,
+		msg.CID,
 		msg.Name,
 		msg.Signer,
 		msg.Description,
 		msg.SKU,
 		msg.FirmwareVersion,
 		msg.HardwareVersion,
+		msg.Custom,
 		msg.CertificateID,
 		msg.CertifiedDate,
 		msg.TisOrTrpTestingCompleted,
@@ -56,22 +59,24 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 
 func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgUpdateModelInfo) sdk.Result {
-	if !keeper.IsModelInfoPresent(ctx, msg.ID) {
-		return types.ErrModelInfoDoesNotExist(types.DefaultCodespace).Result()
+	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
+		return types.ErrModelInfoDoesNotExist().Result()
 	}
 
-	modelInfo := keeper.GetModelInfo(ctx, msg.ID)
+	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)
 
 	if err := checkUpdateModelRights(ctx, authzKeeper, modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
+	modelInfo.CID = msg.NewCID
 	modelInfo.Name = msg.NewName
 	modelInfo.Owner = msg.NewOwner
 	modelInfo.Description = msg.NewDescription
 	modelInfo.SKU = msg.NewSKU
 	modelInfo.FirmwareVersion = msg.NewFirmwareVersion
 	modelInfo.HardwareVersion = msg.NewHardwareVersion
+	modelInfo.Custom = msg.NewCustom
 	modelInfo.CertificateID = msg.NewCertificateID
 	modelInfo.CertifiedDate = msg.NewCertifiedDate
 	modelInfo.TisOrTrpTestingCompleted = msg.NewTisOrTrpTestingCompleted
@@ -83,17 +88,17 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgDeleteModelInfo) sdk.Result {
-	if !keeper.IsModelInfoPresent(ctx, msg.ID) {
-		return types.ErrModelInfoDoesNotExist(types.DefaultCodespace).Result()
+	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
+		return types.ErrModelInfoDoesNotExist().Result()
 	}
 
-	modelInfo := keeper.GetModelInfo(ctx, msg.ID)
+	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)
 
 	if err := checkUpdateModelRights(ctx, authzKeeper, modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
-	keeper.DeleteModelInfo(ctx, msg.ID)
+	keeper.DeleteModelInfo(ctx, msg.VID, msg.PID)
 
 	return sdk.Result{}
 }
@@ -102,7 +107,7 @@ func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.A
 	if !authzKeeper.HasRole(ctx, signer, authz.Manufacturer) && !authzKeeper.HasRole(ctx, signer, authz.Administrator) {
 		return sdk.ErrUnauthorized("MsgUpdateModelInfo tx should be signed either by manufacturer or by administrator")
 	}
-	
+
 	return nil
 }
 

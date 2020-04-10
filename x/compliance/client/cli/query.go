@@ -37,16 +37,18 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdModelInfo(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "model-info [id]",
-		Short: "Query ModelInfo by ID",
-		Args:  cobra.ExactArgs(1),
+		Use:   "model-info [vid] [pid]",
+		Short: "Query ModelInfo by combination of VID and PID",
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			id := args[0]
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/model_info/%s", queryRoute, id), nil)
+			vid := args[0]
+			pid := args[1]
+
+			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/model_info/%s/%s", queryRoute, vid, pid), nil)
 			if err != nil {
-				fmt.Printf("could not query ModelInfo - %s: %s\n", id, err)
+				fmt.Printf("could not query ModelInfo - %s/%s: %s\n", vid, pid, err)
 				return nil
 			}
 
@@ -59,16 +61,18 @@ func GetCmdModelInfo(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdModelInfoWithProof(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "model-info-with-proof <id>",
-		Short: "Query ModelInfo with proof by ID",
-		Args:  cobra.ExactArgs(1),
+		Use:   "model-info-with-proof [vid] [pid]",
+		Short: "Query ModelInfo with proof by combination of VID and PID",
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			id := args[0]
 
-			res, _, err := cliCtx.QueryStore([]byte(id), queryRoute)
+			vid := args[0]
+			pid := args[1]
+
+			res, _, err := cliCtx.Query(fmt.Sprintf("custom/%s/model_info/%s/%s", queryRoute, vid, pid))
 			if err != nil {
-				fmt.Printf("could not query ModelInfo - %s: %s\n", id, err)
+				fmt.Printf("could not query ModelInfo - %s/%s: %s\n", vid, pid, err)
 				return nil
 			}
 
@@ -82,7 +86,7 @@ func GetCmdModelInfoWithProof(queryRoute string, cdc *codec.Codec) *cobra.Comman
 func GetCmdModelInfoHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "model-info-headers",
-		Short: "List all ModelInfo IDs",
+		Short: "Query the list of all ModelInfo",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 

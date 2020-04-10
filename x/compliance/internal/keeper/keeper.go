@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,14 +19,14 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{storeKey: storeKey, cdc: cdc}
 }
 
-// Gets the entire ModelInfo metadata struct for a id
-func (k Keeper) GetModelInfo(ctx sdk.Context, id string) types.ModelInfo {
-	if !k.IsModelInfoPresent(ctx, id) {
+// Gets the entire ModelInfo metadata struct for a ModelInfoID
+func (k Keeper) GetModelInfo(ctx sdk.Context, vid int16, pid int16) types.ModelInfo {
+	if !k.IsModelInfoPresent(ctx, vid, pid) {
 		panic("ModelInfo does not exist")
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get([]byte(id))
+	bz := store.Get([]byte(id(vid, pid)))
 
 	var device types.ModelInfo
 
@@ -34,20 +35,20 @@ func (k Keeper) GetModelInfo(ctx sdk.Context, id string) types.ModelInfo {
 	return device
 }
 
-// Sets the entire ModelInfo metadata struct for a id
+// Sets the entire ModelInfo metadata struct for a ModelInfoID
 func (k Keeper) SetModelInfo(ctx sdk.Context, device types.ModelInfo) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(device.ID), k.cdc.MustMarshalBinaryBare(device))
+	store.Set([]byte(id(device.VID, device.PID)), k.cdc.MustMarshalBinaryBare(device))
 }
 
 // Deletes the ModelInfo from the store
-func (k Keeper) DeleteModelInfo(ctx sdk.Context, id string) {
-	if !k.IsModelInfoPresent(ctx, id) {
+func (k Keeper) DeleteModelInfo(ctx sdk.Context, vid int16, pid int16) {
+	if !k.IsModelInfoPresent(ctx, vid, pid) {
 		panic("ModelInfo does not exist")
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(id))
+	store.Delete([]byte(id(vid, pid)))
 }
 
 // Iterate over all ModelInfos
@@ -77,9 +78,9 @@ func (k Keeper) IterateModelInfos(ctx sdk.Context, process func(info types.Model
 }
 
 // Check if the ModelInfo is present in the store or not
-func (k Keeper) IsModelInfoPresent(ctx sdk.Context, id string) bool {
+func (k Keeper) IsModelInfoPresent(ctx sdk.Context, vid int16, pid int16) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has([]byte(id))
+	return store.Has([]byte(id(vid, pid)))
 }
 
 func (k Keeper) CountTotal(ctx sdk.Context) int {
@@ -94,4 +95,8 @@ func (k Keeper) CountTotal(ctx sdk.Context) int {
 	}
 
 	return res
+}
+
+func id(vid int16, pid int16) string {
+	return fmt.Sprintf("%d:%d", vid, pid)
 }

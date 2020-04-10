@@ -36,9 +36,10 @@ func modelInfoHeadersHandler(cliCtx context.CLIContext, storeName string) http.H
 func modelInfoHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		paramType := vars[restName]
+		vid := vars[vid]
+		pid := vars[pid]
 
-		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/model_info/%s", storeName, paramType), nil)
+		res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/model_info/%s/%s", storeName, vid, pid), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
