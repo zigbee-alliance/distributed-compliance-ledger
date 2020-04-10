@@ -10,7 +10,7 @@ import (
 
 type AccountHeader struct {
 	Address       sdk.AccAddress      `json:"address"`
-	PubKey        string              `json:"public_key"`
+	PubKey        string              `json:"public_key,omitempty"`
 	Roles         []authz.AccountRole `json:"roles"`
 	Coins         sdk.Coins           `json:"coins"`
 	AccountNumber uint64              `json:"account_number"`

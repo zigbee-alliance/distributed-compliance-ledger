@@ -6,6 +6,7 @@ import (
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/test_constants"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -17,28 +18,57 @@ import (
 
 /*
 	To Run test you need:
-		* init ledger
+		* prepare config with `genlocalconfig.sh`
+		* update `/.zbld/config/genesis.json` to set `administrator` role to the first account as described in Readme (#Genesis template)
+		* run node with `zbld start`
 		* run RPC service with `zblcli rest-server --chain-id zblchain --trust-node`
 
-	TODO: prepare environment automatically?
+	TODO: prepare environment automatically
 	TODO: Generic response deserialization
 */
 
 const (
-	ChainId           = "zblchain"
-	AccountName       = "jack"
-	AccountPassphrase = "test1234"
+	ChainId                  = "zblchain"
+	AdministratorAccountName = "jack"
+	AccountName              = "alice"
+	AccountPassphrase        = "test1234"
 )
 
-func Demo(t *testing.T) {
+func TestDemo(t *testing.T) {
 	// Get all model infos
 	inputModelInfos := getModelInfos()
 
-	// Get key info
-	keyInfo := getKeyInfo()
+	// Get key info for Jack
+	adminKeyInfo := getKeyInfo(AdministratorAccountName)
 
-	// Get account address account
-	accountInfo := getAccountInfo(keyInfo.Address)
+	// Get account info for Jack
+	adminAccountInfo := getAccountInfo(adminKeyInfo.Address)
+	require.Equal(t, adminAccountInfo.Roles, []string{string(authz.Administrator)})
+
+	// Get account info for Jack
+	adminAccountInfo2 := getAccountInfo(adminKeyInfo.Address)
+	require.Equal(t, adminAccountInfo2.Roles, []string{string(authz.Administrator)})
+
+	// Get key info for Alice
+	aliceKeyInfo := getKeyInfo(AccountName)
+
+	// Get account info for Alice
+	aliceAccountInfo := getAccountInfo(aliceKeyInfo.Address)
+	require.Equal(t, aliceAccountInfo.Roles, []string{})
+
+	// Assign Manufacturer role to Alice
+	newMsgAssignRole := authz.NewMsgAssignRole(
+		aliceKeyInfo.Address,
+		authz.Manufacturer,
+		adminKeyInfo.Address,
+	)
+
+	// Sign and Broadcast AssignRole message
+	signAndBroadcastMessage(adminKeyInfo.Name, adminAccountInfo, newMsgAssignRole)
+
+	// Get account info for Alice
+	aliceAccountInfo = getAccountInfo(aliceKeyInfo.Address)
+	require.Equal(t, aliceAccountInfo.Roles, []string{string(authz.Manufacturer)})
 
 	// Prepare model info
 	id := utils.RandString()
@@ -46,7 +76,7 @@ func Demo(t *testing.T) {
 	newMsgAddModelInfo := compliance.NewMsgAddModelInfo(
 		id,
 		test_constants.Name,
-		keyInfo.Address,
+		aliceKeyInfo.Address,
 		test_constants.Description,
 		test_constants.Sku,
 		test_constants.FirmwareVersion,
@@ -54,11 +84,11 @@ func Demo(t *testing.T) {
 		test_constants.CertificateID,
 		test_constants.CertifiedDate,
 		test_constants.TisOrTrpTestingCompleted,
-		keyInfo.Address,
+		aliceKeyInfo.Address,
 	)
 
 	// Sign and Broadcast AddModelInfo message
-	signAndBroadcastMessage(accountInfo, newMsgAddModelInfo)
+	signAndBroadcastMessage(aliceKeyInfo.Name, aliceAccountInfo, newMsgAddModelInfo)
 
 	// Check model is created
 	receivedModelInfo := getModelInfo(id)
@@ -70,10 +100,10 @@ func Demo(t *testing.T) {
 	require.Equal(t, utils.ParseUint(inputModelInfos.Total)+1, utils.ParseUint(modelInfos.Total))
 }
 
-func getKeyInfo() utils.KeyInfo {
+func getKeyInfo(accountName string) utils.KeyInfo {
 	println("Get User Key Info")
 
-	uri := fmt.Sprintf("key/%s", AccountName)
+	uri := fmt.Sprintf("key/%s", accountName)
 	response := utils.SendGetRequest(uri)
 
 	var keyInfo utils.KeyInfo
@@ -93,12 +123,12 @@ func getAccountInfo(address sdk.AccAddress) utils.AccountInfo {
 	return accountInfo.Result
 }
 
-func signAndBroadcastMessage(accountInfo utils.AccountInfo, message sdk.Msg) {
-	signResponse := signMessage(accountInfo, message)
+func signAndBroadcastMessage(accountName string, accountInfo utils.AccountInfo, message sdk.Msg) {
+	signResponse := signMessage(accountName, accountInfo, message)
 	broadcastMessage(signResponse)
 }
 
-func signMessage(accountInfo utils.AccountInfo, message sdk.Msg) utils.SignedMessage {
+func signMessage(accountName string, accountInfo utils.AccountInfo, message sdk.Msg) utils.SignedMessage {
 	println("Sign Message")
 
 	stdSigMsg := types.StdSignMsg{
@@ -111,7 +141,7 @@ func signMessage(accountInfo utils.AccountInfo, message sdk.Msg) utils.SignedMes
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
 
-	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", AccountName, AccountPassphrase)
+	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, AccountPassphrase)
 	response := utils.SendPostRequest(uri, body)
 
 	var result utils.SignMessageResponse
