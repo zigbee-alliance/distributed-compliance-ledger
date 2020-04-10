@@ -19,6 +19,8 @@ var (
 	NewMsgDeleteModelInfo = types.NewMsgDeleteModelInfo
 	ModuleCdc             = types.ModuleCdc
 	RegisterCodec         = types.RegisterCodec
+	QueryModelInfo        = keeper.QueryModelInfo
+	QueryModelInfoHeaders = keeper.QueryModelInfoHeaders
 )
 
 type (
@@ -29,4 +31,5 @@ type (
 	QueryModelInfoHeadersParams = types.QueryModelInfoHeadersParams
 	QueryModelInfoHeadersResult = types.QueryModelInfoHeadersResult
 	ModelInfo                   = types.ModelInfo
+	ModelInfoHeader                   = types.ModelInfoHeader
 )
