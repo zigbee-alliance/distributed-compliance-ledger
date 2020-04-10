@@ -24,7 +24,6 @@ import (
 		* run RPC service with `zblcli rest-server --chain-id zblchain --trust-node`
 
 	TODO: prepare environment automatically
-	TODO: Generic response deserialization
 */
 
 const (
@@ -108,6 +107,7 @@ func getKeyInfo(accountName string) utils.KeyInfo {
 
 	var keyInfo utils.KeyInfo
 	_ = json.Unmarshal(response, &keyInfo)
+
 	return keyInfo
 }
 
@@ -117,10 +117,10 @@ func getAccountInfo(address sdk.AccAddress) utils.AccountInfo {
 	uri := fmt.Sprintf("%s/account/%s", authnext.RouterKey, address)
 	response := utils.SendGetRequest(uri)
 
-	var accountInfo utils.GetAccountResponse
-	_ = json.Unmarshal(response, &accountInfo)
+	var result utils.AccountInfo
+	_ = json.Unmarshal(responseResult(response), &result)
 
-	return accountInfo.Result
+	return result
 }
 
 func signAndBroadcastMessage(accountName string, accountInfo utils.AccountInfo, message sdk.Msg) {
@@ -128,7 +128,7 @@ func signAndBroadcastMessage(accountName string, accountInfo utils.AccountInfo, 
 	broadcastMessage(signResponse)
 }
 
-func signMessage(accountName string, accountInfo utils.AccountInfo, message sdk.Msg) utils.SignedMessage {
+func signMessage(accountName string, accountInfo utils.AccountInfo, message sdk.Msg) interface{} {
 	println("Sign Message")
 
 	stdSigMsg := types.StdSignMsg{
@@ -144,13 +144,13 @@ func signMessage(accountName string, accountInfo utils.AccountInfo, message sdk.
 	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, AccountPassphrase)
 	response := utils.SendPostRequest(uri, body)
 
-	var result utils.SignMessageResponse
-	_ = json.Unmarshal(response, &result)
+	var result interface{}
+	_ = json.Unmarshal(responseResult(response), &result)
 
-	return result.Result
+	return result
 }
 
-func broadcastMessage(message utils.SignedMessage) {
+func broadcastMessage(message interface{}) {
 	println("Broadcast response")
 
 	body, _ := json.Marshal(message)
@@ -165,10 +165,10 @@ func getModelInfo(id string) compliance.ModelInfo {
 	uri := fmt.Sprintf("%s/%s/%s", compliance.RouterKey, compliance.QueryModelInfo, id)
 	response := utils.SendGetRequest(uri)
 
-	var result utils.GetModelInfoResponse
-	_ = json.Unmarshal(response, &result)
+	var result compliance.ModelInfo
+	_ = json.Unmarshal(responseResult(response), &result)
 
-	return result.Result
+	return result
 }
 
 func getModelInfos() utils.ModelInfoHeadersResult {
@@ -177,8 +177,14 @@ func getModelInfos() utils.ModelInfoHeadersResult {
 	uri := fmt.Sprintf("%s/%s", compliance.RouterKey, compliance.QueryModelInfo)
 	response := utils.SendGetRequest(uri)
 
-	var result utils.GetListModelInfoResponse
-	_ = json.Unmarshal(response, &result)
+	var result utils.ModelInfoHeadersResult
+	_ = json.Unmarshal(responseResult(response), &result)
 
-	return result.Result
+	return result
+}
+
+func responseResult(response []byte) json.RawMessage {
+	var responseWrapper utils.ResponseWrapper
+	_ = json.Unmarshal(response, &responseWrapper)
+	return responseWrapper.Result
 }
