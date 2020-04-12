@@ -90,9 +90,9 @@ func queryAccount(ctx sdk.Context, req abci.RequestQuery, accKeeper types.Accoun
 }
 
 func ToAccountHeader(ctx sdk.Context, authzKeeper authz.Keeper, account exported.Account) types.AccountHeader {
-	bechPubKey, err := sdk.Bech32ifyAccPub(account.GetPubKey())
+	bechPubKey, err := sdk.Bech32ifyAccPub(account.GetPubKey()) // account.GetPubKey() can return nil. Pubkey is available for validator accounts only
 	if err != nil {
-		panic(err)
+		bechPubKey = ""
 	}
 
 	header := types.AccountHeader{

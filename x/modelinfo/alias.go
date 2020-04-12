@@ -22,9 +22,10 @@ var (
 )
 
 type (
-	Keeper                  = keeper.Keeper
-	MsgAddModelInfo         = types.MsgAddModelInfo
-	MsgUpdateModelInfo      = types.MsgUpdateModelInfo
-	MsgDeleteModelInfo      = types.MsgDeleteModelInfo
-	ModelInfo               = types.ModelInfo
+	Keeper             = keeper.Keeper
+	MsgAddModelInfo    = types.MsgAddModelInfo
+	MsgUpdateModelInfo = types.MsgUpdateModelInfo
+	MsgDeleteModelInfo = types.MsgDeleteModelInfo
+	ModelInfo          = types.ModelInfo
+	ModelInfoItem      = types.ModelInfoItem
 )
