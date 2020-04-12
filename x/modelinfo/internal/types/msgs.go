@@ -17,7 +17,7 @@ type MsgAddModelInfo struct {
 	SKU                      string         `json:"sku"`
 	FirmwareVersion          string         `json:"firmware_version"`
 	HardwareVersion          string         `json:"hardware_version"`
-	Custom                   string         `json:"custom"`
+	Custom                   string         `json:"custom,omitempty"`
 	CertificateID            string         `json:"certificate_id,omitempty"`
 	CertifiedDate            time.Time      `json:"certified_date,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
@@ -63,9 +63,8 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		len(m.Description) == 0 ||
 		len(m.SKU) == 0 ||
 		len(m.FirmwareVersion) == 0 ||
-		len(m.HardwareVersion) == 0 ||
-		len(m.Custom) == 0 {
-		return sdk.ErrUnknownRequest("VID, PID, Name, Description, SKU, FirmwareVersion, HardwareVersion and Custom  " +
+		len(m.HardwareVersion) == 0 {
+		return sdk.ErrUnknownRequest("VID, PID, Name, Description, SKU, FirmwareVersion and HardwareVersion  " +
 			"cannot be empty")
 	}
 
@@ -84,33 +83,22 @@ type MsgUpdateModelInfo struct {
 	VID                         int16          `json:"vid"`
 	PID                         int16          `json:"pid"`
 	NewCID                      int16          `json:"cid,omitempty"`
-	NewName                     string         `json:"new_name"`
-	NewOwner                    sdk.AccAddress `json:"new_owner"`
 	NewDescription              string         `json:"new_description"`
-	NewSKU                      string         `json:"new_sku"`
-	NewFirmwareVersion          string         `json:"new_firmware_version"`
-	NewHardwareVersion          string         `json:"new_hardware_version"`
-	NewCustom                   string         `json:"new_custom"`
+	NewCustom                   string         `json:"new_custom,omitempty"`
 	NewCertificateID            string         `json:"new_certificate_id,omitempty"`
 	NewCertifiedDate            time.Time      `json:"new_certified_date,omitempty"`
 	NewTisOrTrpTestingCompleted bool           `json:"new_tis_or_trp_testing_completed"`
 	Signer                      sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgUpdateModelInfo(vid int16, pid int16, newCid int16, newName string, newOwner sdk.AccAddress,
-	newDescription string, newSKU string, newFirmwareVersion string, newHardwareVersion string, newCustom string,
+func NewMsgUpdateModelInfo(vid int16, pid int16, newCid int16, newDescription string, newCustom string,
 	newCertificateID string, newCertifiedDate time.Time, newTisOrTrpTestingCompleted bool,
 	signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                         vid,
 		PID:                         pid,
 		NewCID:                      newCid,
-		NewName:                     newName,
-		NewOwner:                    newOwner,
 		NewDescription:              newDescription,
-		NewSKU:                      newSKU,
-		NewFirmwareVersion:          newFirmwareVersion,
-		NewHardwareVersion:          newHardwareVersion,
 		NewCustom:                   newCustom,
 		NewCertificateID:            newCertificateID,
 		NewCertifiedDate:            newCertifiedDate,
@@ -128,24 +116,14 @@ func (m MsgUpdateModelInfo) Type() string {
 }
 
 func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
-	if m.NewOwner.Empty() {
-		return sdk.ErrInvalidAddress(m.NewOwner.String())
-	}
-
 	if m.Signer.Empty() {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
 	if m.VID == 0 ||
 		m.PID == 0 ||
-		len(m.NewName) == 0 ||
-		len(m.NewDescription) == 0 ||
-		len(m.NewSKU) == 0 ||
-		len(m.NewFirmwareVersion) == 0 ||
-		len(m.NewHardwareVersion) == 0 ||
-		len(m.NewCustom) == 0 {
-		return sdk.ErrUnknownRequest("VID, PID, NewName, NewDescription, NewSKU, NewFirmwareVersion, NewHardwareVersion and NewCustom " +
-			"cannot be empty")
+		len(m.NewDescription) == 0 {
+		return sdk.ErrUnknownRequest("VID, PID and NewDescription cannot be empty")
 	}
 
 	return nil

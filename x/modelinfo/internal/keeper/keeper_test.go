@@ -1,0 +1,154 @@
+package keeper
+
+import (
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/test_constants"
+	"github.com/stretchr/testify/require"
+	"math/rand"
+	"testing"
+)
+
+func TestKeeper_ModelInfoIterator(t *testing.T) {
+	setup := Setup()
+
+	count := 10
+
+	// add 10 models infos with same VID and check associated products
+	PopulateStoreWithWithModelsHavingSameVendor(setup, count)
+
+	// get total count
+	totalModes := setup.ModelinfoKeeper.CountTotalModelInfos(setup.Ctx)
+	require.Equal(t, count, totalModes)
+
+	// get iterator
+	var expectedRecords []types.ModelInfo
+
+	setup.ModelinfoKeeper.IterateModelInfos(setup.Ctx, func(modelInfo types.ModelInfo) (stop bool) {
+		expectedRecords = append(expectedRecords, modelInfo)
+		return false
+	})
+	require.Equal(t, count, len(expectedRecords))
+}
+
+func TestKeeper_ModelInfoDelete(t *testing.T) {
+	setup := Setup()
+
+	// create model
+	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, DefaultModelInfo())
+
+	// check if model present
+	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+
+	// delete model
+	setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+
+	// check if model present
+	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+
+	// try to get model info
+	require.Panics(t, func() {
+		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+	})
+}
+
+func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
+	setup := Setup()
+	count := 10
+
+	// check if vendor products present
+	require.False(t, setup.ModelinfoKeeper.IsVendorProductsPresent(setup.Ctx, test_constants.VID))
+
+	// get vendor products
+	vendorProducts := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, test_constants.VID)
+	require.True(t, vendorProducts.IsEmpty())
+
+	var PIDs []int16
+
+	// add 10 model infos with same VID and check associated products
+	for i := 0; i < count; i++ {
+		// add model info
+		modelInfo := DefaultModelInfo()
+		modelInfo.PID = int16(i)
+		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
+
+		PIDs = append(PIDs, int16(i))
+
+		// check vendor products
+		vendorProducts = setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, test_constants.VID)
+		require.Equal(t, PIDs, vendorProducts.PIDs)
+	}
+
+	// remove all model infos in a random way and check associated products
+	for i := count; i > 0; i-- {
+		index := int16(rand.Intn(i))
+		pid := PIDs[index]
+
+		PIDs = append(PIDs[:index], PIDs[index+1:]...)
+
+		// remove second model
+		setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, test_constants.VID, pid)
+
+		// check vendor products
+		vendorProducts = setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, test_constants.VID)
+		require.Equal(t, PIDs, vendorProducts.PIDs)
+	}
+
+	// check if vendor products present
+	require.False(t, setup.ModelinfoKeeper.IsVendorProductsPresent(setup.Ctx, test_constants.VID))
+}
+
+func TestKeeper_VendorProductsOverTwoModelsWithDifferentVendor(t *testing.T) {
+	setup := Setup()
+
+	PopulateStoreWithWithModelsHavingDifferentVendor(setup, 2)
+
+	// check vendor products for first device
+	vendorProductsForModel1 := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, 1)
+	require.Equal(t, []int16{1}, vendorProductsForModel1.PIDs)
+
+	// check vendor products for second device
+	vendorProductsForModel2 := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, 2)
+	require.Equal(t, []int16{2}, vendorProductsForModel2.PIDs)
+}
+
+func TestKeeper_VendorProductsIteratorOverOneVendor(t *testing.T) {
+	setup := Setup()
+
+	// add 10 model infos with same Vendor
+	expectedLen := 1
+	PopulateStoreWithWithModelsHavingSameVendor(setup, 10)
+
+	// get total count
+	totalVendorProducts := setup.ModelinfoKeeper.CountTotalVendorProducts(setup.Ctx)
+	require.Equal(t, expectedLen, totalVendorProducts)
+
+	// get iterator
+	var expectedRecords []types.VendorProducts
+
+	setup.ModelinfoKeeper.IterateVendorProducts(setup.Ctx, func(vendorProducts types.VendorProducts) (stop bool) {
+		expectedRecords = append(expectedRecords, vendorProducts)
+		return false
+	})
+	require.Equal(t, expectedLen, len(expectedRecords))
+}
+
+func TestKeeper_VendorProductsIteratorOverDifferentVendors(t *testing.T) {
+	setup := Setup()
+
+	// add 10 model infos with different Vendors
+	count := 10
+	PopulateStoreWithWithModelsHavingDifferentVendor(setup, count)
+
+	// get total count
+	totalVendorProducts := setup.ModelinfoKeeper.CountTotalVendorProducts(setup.Ctx)
+	require.Equal(t, count, totalVendorProducts)
+
+	// get iterator
+	var expectedRecords []types.VendorProducts
+
+	setup.ModelinfoKeeper.IterateVendorProducts(setup.Ctx, func(vendorProducts types.VendorProducts) (stop bool) {
+		expectedRecords = append(expectedRecords, vendorProducts)
+		return false
+	})
+	require.Equal(t, count, len(expectedRecords))
+}

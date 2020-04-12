@@ -18,7 +18,7 @@ type ModelInfo struct {
 	SKU                      string         `json:"sku"`
 	FirmwareVersion          string         `json:"firmware_version"`
 	HardwareVersion          string         `json:"hardware_version"`
-	Custom                   string         `json:"custom"`
+	Custom                   string         `json:"custom,omitempty"`
 	CertificateID            string         `json:"certificate_id,omitempty"`
 	CertifiedDate            time.Time      `json:"certified_date,omitempty"` // rfc3339 data format
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
@@ -45,6 +45,44 @@ func NewModelInfo(vid int16, pid int16, cid int16, name string, owner sdk.AccAdd
 }
 
 func (d ModelInfo) String() string {
+	bytes, err := json.Marshal(d)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+type VendorProducts struct {
+	VID  int16   `json:"vid"`
+	PIDs []int16 `json:"value"`
+}
+
+func NewVendorProducts(vid int16) VendorProducts {
+	return VendorProducts{
+		VID:  vid,
+		PIDs: []int16{},
+	}
+}
+
+func (d *VendorProducts) AddVendorProduct(pid int16) {
+	d.PIDs = append(d.PIDs, pid)
+}
+
+func (d *VendorProducts) RemoveVendorProduct(pid int16) {
+	for i, value := range d.PIDs {
+		if pid == value {
+			d.PIDs = append(d.PIDs[:i], d.PIDs[i+1:]...)
+			return
+		}
+	}
+}
+
+func (d *VendorProducts) IsEmpty() bool {
+	return len(d.PIDs) == 0
+}
+
+func (d VendorProducts) String() string {
 	bytes, err := json.Marshal(d)
 	if err != nil {
 		panic(err)

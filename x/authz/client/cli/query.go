@@ -12,19 +12,19 @@ import (
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	complianceQueryCmd := &cobra.Command{
+	modelinfoQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the authorization module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	complianceQueryCmd.AddCommand(client.GetCommands(
+	modelinfoQueryCmd.AddCommand(client.GetCommands(
 		GetCmdAccountRoles(storeKey, cdc),
 		GetCmdAccountRolesWithProof(storeKey, cdc),
 	)...)
 
-	return complianceQueryCmd
+	return modelinfoQueryCmd
 }
 
 func GetCmdAccountRoles(queryRoute string, cdc *codec.Codec) *cobra.Command {

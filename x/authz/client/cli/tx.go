@@ -13,7 +13,7 @@ import (
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	complianceTxCmd := &cobra.Command{
+	authzTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Authorization subcommands",
 		DisableFlagParsing:         true,
@@ -21,12 +21,12 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	complianceTxCmd.AddCommand(client.PostCommands(
+	authzTxCmd.AddCommand(client.PostCommands(
 		GetCmdAddAssignRole(cdc),
 		GetCmdRevokeRole(cdc),
 	)...)
 
-	return complianceTxCmd
+	return authzTxCmd
 }
 
 func GetCmdAddAssignRole(cdc *codec.Codec) *cobra.Command {

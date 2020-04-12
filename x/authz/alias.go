@@ -11,7 +11,7 @@ const (
 	StoreKey   = types.StoreKey
 
 	Administrator = types.Administrator
-	Manufacturer  = types.Manufacturer
+	Vendor        = types.Vendor
 )
 
 var (

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -20,36 +20,38 @@ const (
 	FlagCID              = "cid"
 	FlagCertificateId    = "certificate-id"
 	FlagCertifiedDate    = "certified-date"
+	FlagCustom           = "custom"
 	FlagNewCID           = "new-cid"
 	FlagNewCertificateId = "new-certificate-id"
 	FlagNewCertifiedDate = "new-certified-date"
+	FlagNewCustom        = "new-custom"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	complianceTxCmd := &cobra.Command{
+	modelinfoTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Compliance transaction subcommands",
+		Short:                      "Modelinfo transaction subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
 
-	complianceTxCmd.AddCommand(client.PostCommands(
-		GetCmdAddModelInfo(cdc),
-		GetCmdUpdateModelInfo(cdc),
-		//GetCmdDeleteModelInfo(cdc), Disable deletion
+	modelinfoTxCmd.AddCommand(client.PostCommands(
+		GetCmdAddModel(cdc),
+		GetCmdUpdateModel(cdc),
+		//GetCmdDeleteModel(cdc), Disable deletion
 	)...)
 
-	return complianceTxCmd
+	return modelinfoTxCmd
 }
 
 //nolint dupl
-func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
+func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "add-model-info [vid] [pid] [name] [description] [sku] [firmware-version] [hardware-version] " +
-			"[custom] [tis-or-trp-testing-completed]",
-		Short: "add new ModelInfo",
-		Args:  cobra.ExactArgs(9),
+		Use: "add-model [vid] [pid] [name] [description] [sku] [firmware-version] [hardware-version] " +
+			"[tis-or-trp-testing-completed]",
+		Short: "Add new Model",
+		Args:  cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -70,13 +72,13 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 			sku := args[4]
 			firmwareVersion := args[5]
 			hardwareVersion := args[6]
-			custom := args[7]
 
-			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[8])
+			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[7])
 			if err != nil {
 				return err
 			}
 
+			custom := viper.GetString(FlagCustom)
 			certificateID := viper.GetString(FlagCertificateId)
 
 			var certifiedDate time.Time
@@ -88,7 +90,7 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 			}
 
 			var cid int16
-			if cidStr := viper.GetString(FlagCertifiedDate); len(cidStr) != 0 {
+			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = types.ParseCID(cidStr)
 				if err != nil {
 					return err
@@ -107,20 +109,20 @@ func GetCmdAddModelInfo(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagCID, "", "Device CID")
-	cmd.Flags().String(FlagCertificateId, "", "ModelInfoID of certificate")
+	cmd.Flags().String(FlagCID, "", "Model category ID")
+	cmd.Flags().String(FlagCustom, "", "Custom information")
+	cmd.Flags().String(FlagCertificateId, "", "ID of certificate")
 	cmd.Flags().String(FlagCertifiedDate, "", "Date of device certification in the RFC3339 format")
 
 	return cmd
 }
 
 //nolint dupl
-func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
+func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "update-model-info [vid] [pid] [new-name] [new-owner] [new-description] [new-sku] [new-firmware-version] " +
-			"[new-hardware-version] [new-custom] [new-tis-or-trp-testing-completed]",
-		Short: "update existing ModelInfo",
-		Args:  cobra.ExactArgs(10),
+		Use:   "update-model [vid] [pid] [new-description] [new-tis-or-trp-testing-completed]",
+		Short: "Update existing Model",
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -135,24 +137,14 @@ func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			newName := args[2]
+			newDescription := args[2]
 
-			newOwner, err := sdk.AccAddressFromBech32(args[3])
+			newTisOrTrpTestingCompleted, err := strconv.ParseBool(args[3])
 			if err != nil {
 				return err
 			}
 
-			newDescription := args[4]
-			newSku := args[5]
-			newFirmwareVersion := args[6]
-			newHardwareVersion := args[7]
-			newCustom := args[8]
-
-			newTisOrTrpTestingCompleted, err := strconv.ParseBool(args[9])
-			if err != nil {
-				return err
-			}
-
+			newCustom := viper.GetString(FlagNewCustom)
 			newCertificateID := viper.GetString(FlagNewCertificateId)
 
 			var newCertifiedDate time.Time
@@ -171,8 +163,8 @@ func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			msg := types.NewMsgUpdateModelInfo(vid, pid, newCid, newName, newOwner, newDescription, newSku, newFirmwareVersion,
-				newHardwareVersion, newCustom, newCertificateID, newCertifiedDate, newTisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+			msg := types.NewMsgUpdateModelInfo(vid, pid, newCid, newDescription, newCustom, newCertificateID,
+				newCertifiedDate, newTisOrTrpTestingCompleted, cliCtx.GetFromAddress())
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -182,17 +174,18 @@ func GetCmdUpdateModelInfo(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagNewCID, "", "Device CID")
-	cmd.Flags().String(FlagNewCertificateId, "", "ModelInfoID of certificate")
+	cmd.Flags().String(FlagNewCID, "", "Model category ID")
+	cmd.Flags().String(FlagNewCustom, "", "Custom information")
+	cmd.Flags().String(FlagNewCertificateId, "", "ID of certificate")
 	cmd.Flags().String(FlagNewCertifiedDate, "", "Date of device certification in the RFC3339 format")
 
 	return cmd
 }
 
-func GetCmdDeleteModelInfo(cdc *codec.Codec) *cobra.Command {
+func GetCmdDeleteModel(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "delete-model-info [vid] [pid]",
-		Short: "delete existing ModelInfo",
+		Use:   "delete-model [vid] [pid]",
+		Short: "Delete existing ModelInfo",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

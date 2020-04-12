@@ -1,8 +1,8 @@
-package compliance
+package modelinfo
 
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/test_constants"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/test_constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,11 +13,12 @@ import (
 )
 
 type TestSetup struct {
-	Cdc     *amino.Codec
-	Ctx     sdk.Context
-	App     AppModule
-	Handler sdk.Handler
-	Querier sdk.Querier
+	Cdc             *amino.Codec
+	Ctx             sdk.Context
+	ModelinfoKeeper Keeper
+	AuthzKeeper     authz.Keeper
+	Handler         sdk.Handler
+	Querier         sdk.Querier
 }
 
 func Setup() TestSetup {
@@ -30,47 +31,46 @@ func Setup() TestSetup {
 
 	dbStore := store.NewCommitMultiStore(db)
 
-	complianceKey := sdk.NewKVStoreKey(StoreKey)
-	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, db)
+	modelinfoKey := sdk.NewKVStoreKey(StoreKey)
+	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
 
 	authzKey := sdk.NewKVStoreKey(authz.StoreKey)
 	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
 
-	dbStore.LoadLatestVersion()
+	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
-	complianceKeeper := NewKeeper(complianceKey, cdc)
+	modelinfoKeeper := NewKeeper(modelinfoKey, cdc)
 	authzKeeper := authz.NewKeeper(authzKey, cdc)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: "zbl-test-chain-id"}, false, log.NewNopLogger())
-
-	app := NewAppModule(complianceKeeper, authzKeeper)
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
-	querier := app.NewQuerierHandler()
-	handler := app.NewHandler()
+	querier := NewQuerier(modelinfoKeeper)
+	handler := NewHandler(modelinfoKeeper, authzKeeper)
 
 	setup := TestSetup{
-		Cdc:     cdc,
-		Ctx:     ctx,
-		App:     app,
-		Handler: handler,
-		Querier: querier,
+		Cdc:             cdc,
+		Ctx:             ctx,
+		ModelinfoKeeper: modelinfoKeeper,
+		AuthzKeeper:     authzKeeper,
+		Handler:         handler,
+		Querier:         querier,
 	}
 
 	return setup
 }
 
-func (setup TestSetup) Manufacturer() sdk.AccAddress {
+func (setup TestSetup) Vendor() sdk.AccAddress {
 	acc, _ := sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
-	setup.App.authzKeeper.AssignRole(setup.Ctx, acc, authz.Manufacturer)
+	setup.AuthzKeeper.AssignRole(setup.Ctx, acc, authz.Vendor)
 	return acc
 }
 
 func (setup TestSetup) Administrator() sdk.AccAddress {
 	acc, _ := sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
-	setup.App.authzKeeper.AssignRole(setup.Ctx, acc, authz.Administrator)
+	setup.AuthzKeeper.AssignRole(setup.Ctx, acc, authz.Administrator)
 	return acc
 }
 
@@ -87,7 +87,7 @@ func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 		Custom:                   test_constants.Custom,
 		CertificateID:            test_constants.CertificateID,
 		CertifiedDate:            test_constants.CertifiedDate,
-		TisOrTrpTestingCompleted: false,
+		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
 }
@@ -97,16 +97,11 @@ func TestMsgUpdatedModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 		VID:                         test_constants.VID,
 		PID:                         test_constants.PID,
 		NewCID:                      test_constants.CID,
-		NewName:                     "New Name",
-		NewOwner:                    signer,
 		NewDescription:              "New Description",
-		NewSKU:                      test_constants.Sku,
-		NewFirmwareVersion:          test_constants.FirmwareVersion,
-		NewHardwareVersion:          test_constants.HardwareVersion,
 		NewCustom:                   test_constants.Custom,
 		NewCertificateID:            test_constants.CertificateID,
 		NewCertifiedDate:            test_constants.CertifiedDate,
-		NewTisOrTrpTestingCompleted: false,
+		NewTisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
 		Signer:                      signer,
 	}
 }

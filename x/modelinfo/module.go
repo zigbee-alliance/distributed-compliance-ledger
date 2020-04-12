@@ -1,12 +1,12 @@
-package compliance
+package modelinfo
 
 import (
 	"encoding/json"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/rest"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
