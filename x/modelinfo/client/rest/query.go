@@ -69,15 +69,22 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		vid := vars[vid]
-		params := parsePaginationParams(cliCtx, r)
 
-		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/vendor_models/%s", storeName, vid), params)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+		res, height, err := cliCtx.QueryStore([]byte(keeper.VendorProductsId(vid)), storeName)
+		if err != nil || res == nil {
+			rest.WriteErrorResponse(w, http.StatusNotFound, "VendorProducts Not Found")
 			return
 		}
 
-		respond(w, cliCtx, res, height)
+		var vendorProducts types.VendorProducts
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &vendorProducts)
+
+		out, err := json.Marshal(vendorProducts)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+		}
+
+		respond(w, cliCtx, out, height)
 	}
 }
 

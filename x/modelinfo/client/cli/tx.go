@@ -1,12 +1,10 @@
 package cli
 
 import (
-	"github.com/spf13/viper"
-	"strconv"
-	"time"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -17,10 +15,8 @@ import (
 )
 
 const (
-	FlagCID           = "cid"
-	FlagCertificateId = "certificate-id"
-	FlagCertifiedDate = "certified-date"
-	FlagCustom        = "custom"
+	FlagCID    = "cid"
+	FlagCustom = "custom"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -75,15 +71,6 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			}
 
 			custom := viper.GetString(FlagCustom)
-			certificateID := viper.GetString(FlagCertificateId)
-
-			var certifiedDate time.Time
-			if certifiedDateStr := viper.GetString(FlagCertifiedDate); len(certifiedDateStr) != 0 {
-				certifiedDate, err = time.Parse(time.RFC3339, certifiedDateStr)
-				if err != nil {
-					return err
-				}
-			}
 
 			var cid int16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
@@ -94,7 +81,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgAddModelInfo(vid, pid, cid, name, description, sku, firmwareVersion, hardwareVersion,
-				custom, certificateID, certifiedDate, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+				custom, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
 
 			err = msg.ValidateBasic()
 			if err != nil {
@@ -107,8 +94,6 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagCID, "", "Model category ID")
 	cmd.Flags().String(FlagCustom, "", "Custom information")
-	cmd.Flags().String(FlagCertificateId, "", "ID of certificate")
-	cmd.Flags().String(FlagCertifiedDate, "", "Date of device certification in the RFC3339 format")
 
 	return cmd
 }
@@ -116,8 +101,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "update-model [vid] [pid] [name] [description] [sku] [firmware-version] [hardware-version] " +
-			"[tis-or-trp-testing-completed]",
+		Use:   "update-model [vid] [pid] [description] [tis-or-trp-testing-completed]",
 		Short: "Update existing Model",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -134,39 +118,16 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			name := args[2]
+			description := args[2]
 
-			description := args[3]
-			sku := args[4]
-			firmwareVersion := args[5]
-			hardwareVersion := args[6]
-
-			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[7])
+			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[3])
 			if err != nil {
 				return err
 			}
 
 			custom := viper.GetString(FlagCustom)
-			certificateID := viper.GetString(FlagCertificateId)
 
-			var certifiedDate time.Time
-			if certifiedDateStr := viper.GetString(FlagCertifiedDate); len(certifiedDateStr) != 0 {
-				certifiedDate, err = time.Parse(time.RFC3339, certifiedDateStr)
-				if err != nil {
-					return err
-				}
-			}
-
-			var cid int16
-			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
-				cid, err = types.ParseCID(cidStr)
-				if err != nil {
-					return err
-				}
-			}
-
-			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, name, description, sku, firmwareVersion, hardwareVersion,
-				custom, certificateID, certifiedDate, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+			msg := types.NewMsgUpdateModelInfo(vid, pid, description, custom, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -176,10 +137,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagCID, "", "Model category ID")
 	cmd.Flags().String(FlagCustom, "", "Custom information")
-	cmd.Flags().String(FlagCertificateId, "", "ID of certificate")
-	cmd.Flags().String(FlagCertifiedDate, "", "Date of device certification in the RFC3339 format")
 
 	return cmd
 }

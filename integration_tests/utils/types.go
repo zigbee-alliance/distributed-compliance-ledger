@@ -31,3 +31,8 @@ type ModelInfoHeadersResult struct {
 	Total string                    `json:"total"`
 	Items []modelinfo.ModelInfoItem `json:"items"`
 }
+
+type VendorItemHeadersResult struct {
+	Total string                 `json:"total"`
+	Items []modelinfo.VendorItem `json:"items"`
+}

@@ -164,42 +164,14 @@ func TestQuerier_QueryVendorModels(t *testing.T) {
 	// add 5 models with same vendors
 	firstId := PopulateStoreWithWithModelsHavingSameVendor(setup, count)
 
-	params := types.NewPaginationParams(0, 0)
-
 	// query all models
-	receivedVendorModels := getVendorModels(setup, firstId, params)
+	receivedVendorModels := getVendorModels(setup, firstId)
 
 	// check
-	require.Equal(t, count, receivedVendorModels.Total)
-	require.Equal(t, count, len(receivedVendorModels.Items))
+	require.Equal(t, count, len(receivedVendorModels.Products))
 
-	for i, item := range receivedVendorModels.Items {
-		require.Equal(t, firstId, item.VID)
+	for i, item := range receivedVendorModels.Products {
 		require.Equal(t, int16(i)+firstId, item.PID)
-	}
-}
-
-func TestQuerier_QueryVendorModelsWithPaginationHeaders(t *testing.T) {
-	setup := Setup()
-	count := 5
-
-	// add 5 models with same vendors
-	firstId := PopulateStoreWithWithModelsHavingSameVendor(setup, count)
-
-	skip := 1
-	take := 2
-	params := types.NewPaginationParams(skip, take)
-
-	// query vendor models skip=1 take=2
-	receivedVendorModels := getVendorModels(setup, firstId, params)
-
-	// check
-	require.Equal(t, count, receivedVendorModels.Total)
-	require.Equal(t, take, len(receivedVendorModels.Items))
-
-	for i, item := range receivedVendorModels.Items {
-		require.Equal(t, firstId, item.VID)
-		require.Equal(t, int16(skip)+int16(i)+firstId, item.PID)
 	}
 }
 
@@ -216,27 +188,27 @@ func getModels(setup TestSetup, params types.PaginationParams) types.LisModelInf
 	return receiveModelInfos
 }
 
-func getVendors(setup TestSetup, params types.PaginationParams) types.LisVendorItems {
+func getVendors(setup TestSetup, params types.PaginationParams) types.ListVendorItems {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryVendors},
 		abci.RequestQuery{Data: setup.Cdc.MustMarshalJSON(params)},
 	)
 
-	var receiveModelInfos types.LisVendorItems
+	var receiveModelInfos types.ListVendorItems
 	_ = setup.Cdc.UnmarshalJSON(result, &receiveModelInfos)
 
 	return receiveModelInfos
 }
 
-func getVendorModels(setup TestSetup, vid int16, params types.PaginationParams) types.LisModelInfoItems {
+func getVendorModels(setup TestSetup, vid int16) types.VendorProducts {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryVendorModels, fmt.Sprintf("%v", vid)},
-		abci.RequestQuery{Data: setup.Cdc.MustMarshalJSON(params)},
+		abci.RequestQuery{},
 	)
 
-	var receivedVendorModels types.LisModelInfoItems
+	var receivedVendorModels types.VendorProducts
 	_ = setup.Cdc.UnmarshalJSON(result, &receivedVendorModels)
 	return receivedVendorModels
 }

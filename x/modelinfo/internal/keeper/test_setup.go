@@ -60,8 +60,6 @@ func DefaultModelInfo() types.ModelInfo {
 		FirmwareVersion:          test_constants.FirmwareVersion,
 		HardwareVersion:          test_constants.HardwareVersion,
 		Custom:                   test_constants.Custom,
-		CertificateID:            test_constants.CertificateID,
-		CertifiedDate:            test_constants.CertifiedDate,
 		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
 	}
 }

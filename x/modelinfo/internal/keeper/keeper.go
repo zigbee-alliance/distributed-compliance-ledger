@@ -41,12 +41,18 @@ func (k Keeper) GetModelInfo(ctx sdk.Context, vid int16, pid int16) types.ModelI
 }
 
 // Sets the entire ModelInfo metadata struct for a ModelInfoID
-func (k Keeper) SetModelInfo(ctx sdk.Context, device types.ModelInfo) {
+func (k Keeper) SetModelInfo(ctx sdk.Context, model types.ModelInfo) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(ModelInfoId(device.VID, device.PID)), k.cdc.MustMarshalBinaryBare(device))
+	store.Set([]byte(ModelInfoId(model.VID, model.PID)), k.cdc.MustMarshalBinaryBare(model))
 
 	// Update the list of products associated with vendor
-	k.AppendVendorProduct(ctx, device.VID, device.PID)
+	product := types.Product{
+		PID:   model.PID,
+		Name:  model.Name,
+		Owner: model.Owner,
+		SKU:   model.SKU,
+	}
+	k.AppendVendorProduct(ctx, model.VID, product)
 }
 
 // Deletes the ModelInfo from the store
@@ -119,11 +125,11 @@ func (k Keeper) GetVendorProducts(ctx sdk.Context, vid int16) types.VendorProduc
 }
 
 // Add Product to Vendor
-func (k Keeper) AppendVendorProduct(ctx sdk.Context, vid int16, pid int16) {
+func (k Keeper) AppendVendorProduct(ctx sdk.Context, vid int16, product types.Product) {
 	store := ctx.KVStore(k.storeKey)
 
 	vendorProducts := k.GetVendorProducts(ctx, vid)
-	vendorProducts.AddVendorProduct(pid)
+	vendorProducts.AddVendorProduct(product)
 
 	store.Set([]byte(VendorProductsId(vid)), k.cdc.MustMarshalBinaryBare(vendorProducts))
 }

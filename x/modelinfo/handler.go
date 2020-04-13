@@ -47,8 +47,6 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 		msg.FirmwareVersion,
 		msg.HardwareVersion,
 		msg.Custom,
-		msg.CertificateID,
-		msg.CertifiedDate,
 		msg.TisOrTrpTestingCompleted,
 	)
 
@@ -69,24 +67,17 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 		return err.Result()
 	}
 
-	if msg.Name != modelInfo.Name || msg.SKU != modelInfo.SKU ||
-		msg.FirmwareVersion != modelInfo.FirmwareVersion || msg.HardwareVersion != modelInfo.HardwareVersion {
-		return sdk.ErrUnknownRequest("VID, PID, Name, SKU, FirmwareVersion and HardwareVersion cannot be changed").Result()
-	}
-
 	modelInfo = types.NewModelInfo(
 		msg.VID,
 		msg.PID,
-		msg.CID,
-		msg.Name,
+		modelInfo.CID,
+		modelInfo.Name,
 		msg.Signer,
 		msg.Description,
-		msg.SKU,
-		msg.FirmwareVersion,
-		msg.HardwareVersion,
+		modelInfo.SKU,
+		modelInfo.FirmwareVersion,
+		modelInfo.HardwareVersion,
 		msg.Custom,
-		msg.CertificateID,
-		msg.CertifiedDate,
 		msg.TisOrTrpTestingCompleted,
 	)
 
@@ -114,7 +105,7 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
 	if !authzKeeper.HasRole(ctx, signer, authz.Vendor) {
-		return sdk.ErrUnauthorized("MsgUpdateModelInfo tx should be signed either by vendor")
+		return sdk.ErrUnauthorized("MsgAddModelInfo transaction should be signed by an account with the vendor role")
 	}
 
 	return nil

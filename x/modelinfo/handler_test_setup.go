@@ -62,14 +62,12 @@ func Setup() TestSetup {
 	return setup
 }
 
-func (setup TestSetup) Vendor() sdk.AccAddress {
-	acc, _ := sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
+func (setup TestSetup) Vendor(acc sdk.AccAddress) sdk.AccAddress {
 	setup.AuthzKeeper.AssignRole(setup.Ctx, acc, authz.Vendor)
 	return acc
 }
 
-func (setup TestSetup) Administrator() sdk.AccAddress {
-	acc, _ := sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
+func (setup TestSetup) Administrator(acc sdk.AccAddress) sdk.AccAddress {
 	setup.AuthzKeeper.AssignRole(setup.Ctx, acc, authz.Administrator)
 	return acc
 }
@@ -85,8 +83,6 @@ func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 		FirmwareVersion:          test_constants.FirmwareVersion,
 		HardwareVersion:          test_constants.HardwareVersion,
 		Custom:                   test_constants.Custom,
-		CertificateID:            test_constants.CertificateID,
-		CertifiedDate:            test_constants.CertifiedDate,
 		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
@@ -96,15 +92,8 @@ func TestMsgUpdatedModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                      test_constants.VID,
 		PID:                      test_constants.PID,
-		CID:                      test_constants.CID,
-		Name:                     test_constants.Name,
 		Description:              "New Description",
-		SKU:                      test_constants.Sku,
-		FirmwareVersion:          test_constants.FirmwareVersion,
-		HardwareVersion:          test_constants.HardwareVersion,
 		Custom:                   "New Custom Data",
-		CertificateID:            test_constants.CertificateID,
-		CertifiedDate:            test_constants.CertifiedDate,
 		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}

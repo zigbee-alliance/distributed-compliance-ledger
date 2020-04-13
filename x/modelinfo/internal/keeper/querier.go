@@ -107,7 +107,7 @@ func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}
 
-	result := types.LisVendorItems{
+	result := types.ListVendorItems{
 		Total: keeper.CountTotalVendorProducts(ctx),
 		Items: []types.VendorItem{},
 	}
@@ -150,39 +150,9 @@ func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, ke
 		return nil, types.ErrVendorProductsDoNotExist()
 	}
 
-	var params types.PaginationParams
-	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
-	}
-
 	vendorProducts := keeper.GetVendorProducts(ctx, vid)
-	total := len(vendorProducts.PIDs)
 
-	result := types.LisModelInfoItems{
-		Total: total,
-		Items: []types.ModelInfoItem{},
-	}
-
-	count := params.Take
-	if count <= 0 {
-		count = total
-	}
-
-	for i := params.Skip; i < count+params.Skip; i++ {
-		modelInfo := keeper.GetModelInfo(ctx, vid, vendorProducts.PIDs[i])
-
-		header := types.ModelInfoItem{
-			VID:   modelInfo.VID,
-			PID:   modelInfo.PID,
-			Name:  modelInfo.Name,
-			Owner: modelInfo.Owner,
-			SKU:   modelInfo.SKU,
-		}
-
-		result.Items = append(result.Items, header)
-	}
-
-	res, err := codec.MarshalJSONIndent(keeper.cdc, result)
+	res, err := codec.MarshalJSONIndent(keeper.cdc, vendorProducts)
 	if err != nil {
 		panic("could not marshal result to JSON")
 	}

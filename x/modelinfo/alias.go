@@ -17,6 +17,7 @@ var (
 	NewMsgAddModelInfo    = types.NewMsgAddModelInfo
 	NewMsgUpdateModelInfo = types.NewMsgUpdateModelInfo
 	NewMsgDeleteModelInfo = types.NewMsgDeleteModelInfo
+	NewModelInfo          = types.NewModelInfo
 	ModuleCdc             = types.ModuleCdc
 	RegisterCodec         = types.RegisterCodec
 )
@@ -27,5 +28,7 @@ type (
 	MsgUpdateModelInfo = types.MsgUpdateModelInfo
 	MsgDeleteModelInfo = types.MsgDeleteModelInfo
 	ModelInfo          = types.ModelInfo
+	VendorProducts     = types.VendorProducts
 	ModelInfoItem      = types.ModelInfoItem
+	VendorItem         = types.VendorItem
 )

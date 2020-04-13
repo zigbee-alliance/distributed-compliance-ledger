@@ -147,3 +147,46 @@ func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
+
+func SignMessage(cliCtx context.CLIContext, name string, passphrase string, accountNumber uint64,
+	sequence uint64, chainID string, msg []sdk.Msg) ([]byte, error) {
+
+	txBldr := auth.NewTxBuilderFromCLI().
+		WithTxEncoder(utils.GetTxEncoder(cliCtx.Codec)).
+		WithAccountNumber(accountNumber).
+		WithSequence(sequence).
+		WithChainID(chainID)
+
+	txBytes, err := txBldr.BuildAndSign(name, passphrase, msg)
+	if err != nil {
+		return nil, err
+	}
+	return txBytes, nil
+}
+
+func BroadcastMessage(cliCtx context.CLIContext, message []byte) ([]byte, error) {
+	cliCtx.BroadcastMode = "block"
+
+	res, err := cliCtx.BroadcastTx(message)
+	if err != nil {
+		return nil, err
+	}
+
+	txBytes, err := cliCtx.Codec.MarshalJSON(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return txBytes, nil
+}
+
+func SignAndBroadcastMessage(cliCtx context.CLIContext, name string, passphrase string, accountNumber uint64,
+	sequence uint64, chainID string, msg []sdk.Msg) ([]byte, error) {
+
+	signedMsg, err := SignMessage(cliCtx, name, passphrase, accountNumber, sequence, chainID, msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return BroadcastMessage(cliCtx, signedMsg)
+}

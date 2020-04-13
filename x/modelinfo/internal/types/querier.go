@@ -42,13 +42,13 @@ type ModelInfoItem struct {
 }
 
 // Response Payload for a list query with pagination
-type LisVendorItems struct {
+type ListVendorItems struct {
 	Total int          `json:"total"`
 	Items []VendorItem `json:"items"`
 }
 
 // Implement fmt.Stringer
-func (n LisVendorItems) String() string {
+func (n ListVendorItems) String() string {
 	res, err := json.Marshal(n)
 
 	if err != nil {

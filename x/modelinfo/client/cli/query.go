@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/viper"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
@@ -50,8 +51,7 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, height, err := cliCtx.QueryStore([]byte(keeper.ModelInfoId(vid, pid)), queryRoute)
 			if err != nil || res == nil {
-				fmt.Printf("Model Not Found")
-				return nil
+				return sdk.ErrInternal(fmt.Sprintf("Could not query model VID:%v PID:%v", vid, pid))
 			}
 
 			var modelInfo types.ModelInfo
@@ -59,8 +59,8 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			out, err := json.Marshal(modelInfo)
 			if err != nil {
-				fmt.Printf("Could not query model VID:%v PID:%v : %s\n", vid, pid, err)
-				return nil
+				fmt.Printf("Could not query model VID:%v PID:%v\n", vid, pid)
+				return err
 			}
 
 			return cliCtx.PrintOutput(types.NewReadResult(cdc, out, height))
@@ -80,21 +80,21 @@ func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/all_models", queryRoute), params)
 			if err != nil {
 				fmt.Printf("Could not query models: %s\n", err)
-				return nil
+				return err
 			}
 
 			return cliCtx.PrintOutput(types.NewReadResult(cdc, res, height))
 		},
 	}
 
-	cmd.Flags().Int(FlagSkip, 0, "amount of accounts to skip")
-	cmd.Flags().Int(FlagTake, 0, "amount of accounts to take")
+	cmd.Flags().Int(FlagSkip, 0, "amount of models to skip")
+	cmd.Flags().Int(FlagTake, 0, "amount of models to take")
 
 	return cmd
 }
 
 func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "vendors",
 		Short: "Query the list of Vendors",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -105,12 +105,17 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/vendors", queryRoute), params)
 			if err != nil {
 				fmt.Printf("Could not get query vendors: %s\n", err)
-				return nil
+				return err
 			}
 
 			return cliCtx.PrintOutput(types.NewReadResult(cdc, res, height))
 		},
 	}
+
+	cmd.Flags().Int(FlagSkip, 0, "amount of vendors to skip")
+	cmd.Flags().Int(FlagTake, 0, "amount of vendors to take")
+
+	return cmd
 }
 
 func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
@@ -122,15 +127,22 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
 			vid := args[0]
-			params := parsePaginationParams(cdc)
 
-			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/vendor_models/%s", queryRoute, vid), params)
-			if err != nil {
-				fmt.Printf("could not get query names: %s\n", err)
-				return nil
+			res, height, err := cliCtx.QueryStore([]byte(keeper.VendorProductsId(vid)), queryRoute)
+			if err != nil || res == nil {
+				return sdk.ErrInternal(fmt.Sprintf("Could not query vendor models VID:%v\n", vid))
 			}
 
-			return cliCtx.PrintOutput(types.NewReadResult(cdc, res, height))
+			var vendorProducts types.VendorProducts
+			cdc.MustUnmarshalBinaryBare(res, &vendorProducts)
+
+			out, err := json.Marshal(vendorProducts)
+			if err != nil {
+				fmt.Printf("Could not query vendor products VID:%v", vid)
+				return err
+			}
+
+			return cliCtx.PrintOutput(types.NewReadResult(cdc, out, height))
 		},
 	}
 }

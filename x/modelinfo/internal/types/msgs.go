@@ -1,8 +1,6 @@
 package types
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -18,14 +16,12 @@ type MsgAddModelInfo struct {
 	FirmwareVersion          string         `json:"firmware_version"`
 	HardwareVersion          string         `json:"hardware_version"`
 	Custom                   string         `json:"custom,omitempty"`
-	CertificateID            string         `json:"certificate_id,omitempty"`
-	CertifiedDate            time.Time      `json:"certified_date,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
 func NewMsgAddModelInfo(vid int16, pid int16, cid int16, name string, description string, sku string,
-	firmwareVersion string, hardwareVersion string, custom string, certificateID string, certifiedDate time.Time,
+	firmwareVersion string, hardwareVersion string, custom string,
 	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
 		VID:                      vid,
@@ -37,8 +33,6 @@ func NewMsgAddModelInfo(vid int16, pid int16, cid int16, name string, descriptio
 		FirmwareVersion:          firmwareVersion,
 		HardwareVersion:          hardwareVersion,
 		Custom:                   custom,
-		CertificateID:            certificateID,
-		CertifiedDate:            certifiedDate,
 		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
@@ -82,34 +76,19 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 type MsgUpdateModelInfo struct {
 	VID                      int16          `json:"vid"`
 	PID                      int16          `json:"pid"`
-	CID                      int16          `json:"cid,omitempty"`
-	Name                     string         `json:"name"`
 	Description              string         `json:"description"`
-	SKU                      string         `json:"sku"`
-	FirmwareVersion          string         `json:"firmware_version"`
-	HardwareVersion          string         `json:"hardware_version"`
 	Custom                   string         `json:"custom,omitempty"`
-	CertificateID            string         `json:"certificate_id,omitempty"`
-	CertifiedDate            time.Time      `json:"certified_date,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgUpdateModelInfo(vid int16, pid int16, cid int16, name string, description string, sku string,
-	firmwareVersion string, hardwareVersion string, custom string, certificateID string, certifiedDate time.Time,
+func NewMsgUpdateModelInfo(vid int16, pid int16, description string, custom string,
 	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                      vid,
 		PID:                      pid,
-		CID:                      cid,
-		Name:                     name,
 		Description:              description,
-		SKU:                      sku,
-		FirmwareVersion:          firmwareVersion,
-		HardwareVersion:          hardwareVersion,
 		Custom:                   custom,
-		CertificateID:            certificateID,
-		CertifiedDate:            certifiedDate,
 		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
@@ -130,11 +109,7 @@ func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 
 	if m.VID == 0 ||
 		m.PID == 0 ||
-		len(m.Name) == 0 ||
-		len(m.Description) == 0 ||
-		len(m.SKU) == 0 ||
-		len(m.FirmwareVersion) == 0 ||
-		len(m.HardwareVersion) == 0 {
+		len(m.Description) == 0 {
 		return sdk.ErrUnknownRequest("VID, PID, Name, Description, SKU, FirmwareVersion and HardwareVersion  " +
 			"cannot be empty")
 	}
