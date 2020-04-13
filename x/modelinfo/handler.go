@@ -69,12 +69,26 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 		return err.Result()
 	}
 
-	modelInfo.CID = msg.NewCID
-	modelInfo.Description = msg.NewDescription
-	modelInfo.Custom = msg.NewCustom
-	modelInfo.CertificateID = msg.NewCertificateID
-	modelInfo.CertifiedDate = msg.NewCertifiedDate
-	modelInfo.TisOrTrpTestingCompleted = msg.NewTisOrTrpTestingCompleted
+	if msg.Name != modelInfo.Name || msg.SKU != modelInfo.SKU ||
+		msg.FirmwareVersion != modelInfo.FirmwareVersion || msg.HardwareVersion != modelInfo.HardwareVersion {
+		return sdk.ErrUnknownRequest("VID, PID, Name, SKU, FirmwareVersion and HardwareVersion cannot be changed").Result()
+	}
+
+	modelInfo = types.NewModelInfo(
+		msg.VID,
+		msg.PID,
+		msg.CID,
+		msg.Name,
+		msg.Signer,
+		msg.Description,
+		msg.SKU,
+		msg.FirmwareVersion,
+		msg.HardwareVersion,
+		msg.Custom,
+		msg.CertificateID,
+		msg.CertifiedDate,
+		msg.TisOrTrpTestingCompleted,
+	)
 
 	keeper.SetModelInfo(ctx, modelInfo)
 

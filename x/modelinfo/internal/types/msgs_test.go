@@ -110,7 +110,7 @@ func TestMsgAddModelInfoGetSignBytes(t *testing.T) {
 
 	expected := `{"type":"modelinfo/AddModelInfo","value":{"certificate_id":"ZIG12345678",` +
 		`"certified_date":"2020-01-01T00:00:00Z","cid":12345,"custom":"Custom data","description":"Device Description",` +
-		`"firmware_version":"1.0","hardware_version":"2.0","name":"Device Name","pid":22,"signer":"cosmos1d4js690r9j",` +
+		`"firmware_version":"1.0","hardware_version":"2.0","name":"Device Name","pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"sku":"RCU2205A","tis_or_trp_testing_completed":false,"vid":1}}`
 
 	require.Equal(t, expected, string(res))

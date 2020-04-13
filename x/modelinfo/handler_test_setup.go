@@ -94,14 +94,18 @@ func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 
 func TestMsgUpdatedModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
-		VID:                         test_constants.VID,
-		PID:                         test_constants.PID,
-		NewCID:                      test_constants.CID,
-		NewDescription:              "New Description",
-		NewCustom:                   test_constants.Custom,
-		NewCertificateID:            test_constants.CertificateID,
-		NewCertifiedDate:            test_constants.CertifiedDate,
-		NewTisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
-		Signer:                      signer,
+		VID:                      test_constants.VID,
+		PID:                      test_constants.PID,
+		CID:                      test_constants.CID,
+		Name:                     test_constants.Name,
+		Description:              "New Description",
+		SKU:                      test_constants.Sku,
+		FirmwareVersion:          test_constants.FirmwareVersion,
+		HardwareVersion:          test_constants.HardwareVersion,
+		Custom:                   "New Custom Data",
+		CertificateID:            test_constants.CertificateID,
+		CertifiedDate:            test_constants.CertifiedDate,
+		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
+		Signer:                   signer,
 	}
 }

@@ -17,14 +17,10 @@ import (
 )
 
 const (
-	FlagCID              = "cid"
-	FlagCertificateId    = "certificate-id"
-	FlagCertifiedDate    = "certified-date"
-	FlagCustom           = "custom"
-	FlagNewCID           = "new-cid"
-	FlagNewCertificateId = "new-certificate-id"
-	FlagNewCertifiedDate = "new-certified-date"
-	FlagNewCustom        = "new-custom"
+	FlagCID           = "cid"
+	FlagCertificateId = "certificate-id"
+	FlagCertifiedDate = "certified-date"
+	FlagCustom        = "custom"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -120,7 +116,8 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-model [vid] [pid] [new-description] [new-tis-or-trp-testing-completed]",
+		Use: "update-model [vid] [pid] [name] [description] [sku] [firmware-version] [hardware-version] " +
+			"[tis-or-trp-testing-completed]",
 		Short: "Update existing Model",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -137,34 +134,39 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			newDescription := args[2]
+			name := args[2]
 
-			newTisOrTrpTestingCompleted, err := strconv.ParseBool(args[3])
+			description := args[3]
+			sku := args[4]
+			firmwareVersion := args[5]
+			hardwareVersion := args[6]
+
+			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[7])
 			if err != nil {
 				return err
 			}
 
-			newCustom := viper.GetString(FlagNewCustom)
-			newCertificateID := viper.GetString(FlagNewCertificateId)
+			custom := viper.GetString(FlagCustom)
+			certificateID := viper.GetString(FlagCertificateId)
 
-			var newCertifiedDate time.Time
-			if newCertifiedDateStr := viper.GetString(FlagNewCertifiedDate); len(newCertifiedDateStr) != 0 {
-				newCertifiedDate, err = time.Parse(time.RFC3339, newCertifiedDateStr)
+			var certifiedDate time.Time
+			if certifiedDateStr := viper.GetString(FlagCertifiedDate); len(certifiedDateStr) != 0 {
+				certifiedDate, err = time.Parse(time.RFC3339, certifiedDateStr)
 				if err != nil {
 					return err
 				}
 			}
 
-			var newCid int16
-			if cidStr := viper.GetString(FlagNewCID); len(cidStr) != 0 {
-				newCid, err = types.ParseCID(cidStr)
+			var cid int16
+			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
+				cid, err = types.ParseCID(cidStr)
 				if err != nil {
 					return err
 				}
 			}
 
-			msg := types.NewMsgUpdateModelInfo(vid, pid, newCid, newDescription, newCustom, newCertificateID,
-				newCertifiedDate, newTisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, name, description, sku, firmwareVersion, hardwareVersion,
+				custom, certificateID, certifiedDate, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -174,10 +176,10 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagNewCID, "", "Model category ID")
-	cmd.Flags().String(FlagNewCustom, "", "Custom information")
-	cmd.Flags().String(FlagNewCertificateId, "", "ID of certificate")
-	cmd.Flags().String(FlagNewCertifiedDate, "", "Date of device certification in the RFC3339 format")
+	cmd.Flags().String(FlagCID, "", "Model category ID")
+	cmd.Flags().String(FlagCustom, "", "Custom information")
+	cmd.Flags().String(FlagCertificateId, "", "ID of certificate")
+	cmd.Flags().String(FlagCertifiedDate, "", "Date of device certification in the RFC3339 format")
 
 	return cmd
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
-type addModelReq struct {
+type ModelInfoRequest struct {
 	BaseReq                  rest.BaseReq   `json:"base_req"`
 	VID                      int16          `json:"vid"`
 	PID                      int16          `json:"pid"`
@@ -31,7 +31,7 @@ type addModelReq struct {
 
 func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req addModelReq
+		var req ModelInfoRequest
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -56,22 +56,9 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-type updateModelReq struct {
-	BaseReq                     rest.BaseReq   `json:"base_req"`
-	VID                         int16          `json:"vid"`
-	PID                         int16          `json:"pid"`
-	NewCID                      int16          `json:"new_cid,omitempty"`
-	NewDescription              string         `json:"new_description"`
-	NewCustom                   string         `json:"new_custom,omitempty"`
-	NewCertificateID            string         `json:"new_certificate_id,omitempty"`
-	NewCertifiedDate            time.Time      `json:"new_certified_date,omitempty"`
-	NewTisOrTrpTestingCompleted bool           `json:"new_tis_or_trp_testing_completed"`
-	Signer                      sdk.AccAddress `json:"signer"`
-}
-
 func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req updateModelReq
+		var req ModelInfoRequest
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -83,8 +70,8 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgUpdateModelInfo(req.VID, req.PID, req.NewCID, req.NewDescription, req.NewCustom,
-			req.NewCertificateID, req.NewCertifiedDate, req.NewTisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+		msg := types.NewMsgUpdateModelInfo(req.VID, req.PID, req.CID, req.Name, req.Description, req.SKU, req.FirmwareVersion,
+			req.HardwareVersion, req.Custom, req.CertificateID, req.CertifiedDate, req.TisOrTrpTestingCompleted, cliCtx.GetFromAddress())
 
 		err := msg.ValidateBasic()
 		if err != nil {
