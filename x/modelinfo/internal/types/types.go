@@ -2,8 +2,8 @@ package types
 
 import (
 	"encoding/json"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"strconv"
 )
 
 type ModelInfo struct {
@@ -92,23 +92,14 @@ type Product struct {
 	SKU   string         `json:"sku"`
 }
 
-func parseInt16FromString(str string) (int16, error) {
-	val_, err := strconv.ParseInt(str, 10, 16)
-	if err != nil {
-		return 0, err
-	}
-	vid := int16(val_)
-	return vid, nil
-}
-
 func ParseVID(str string) (int16, error) {
-	return parseInt16FromString(str)
+	return conversions.ParseInt16FromString(str)
 }
 
 func ParsePID(str string) (int16, error) {
-	return parseInt16FromString(str)
+	return conversions.ParseInt16FromString(str)
 }
 
 func ParseCID(str string) (int16, error) {
-	return parseInt16FromString(str)
+	return conversions.ParseInt16FromString(str)
 }

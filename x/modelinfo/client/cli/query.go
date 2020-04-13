@@ -7,6 +7,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/viper"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -63,7 +64,7 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			return cliCtx.PrintOutput(types.NewReadResult(cdc, out, height))
+			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
 		},
 	}
 }
@@ -83,7 +84,7 @@ func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			return cliCtx.PrintOutput(types.NewReadResult(cdc, res, height))
+			return cliCtx.PrintOutput(cli.NewReadResult(cdc, res, height))
 		},
 	}
 
@@ -108,7 +109,7 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			return cliCtx.PrintOutput(types.NewReadResult(cdc, res, height))
+			return cliCtx.PrintOutput(cli.NewReadResult(cdc, res, height))
 		},
 	}
 
@@ -142,7 +143,7 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			return cliCtx.PrintOutput(types.NewReadResult(cdc, out, height))
+			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
 		},
 	}
 }

@@ -1,12 +1,36 @@
 package keeper
 
 import (
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/test_constants"
 	"github.com/stretchr/testify/require"
 	"math/rand"
 	"testing"
 )
+
+func TestKeeper_ModelInfoGetSet(t *testing.T) {
+	setup := Setup()
+
+	// check if model present
+	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+
+	// no model before its created
+	require.Panics(t, func() {
+		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+	})
+
+	// create model
+	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, DefaultModelInfo())
+
+	// check if model present
+	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+
+	// get model info
+	modelInfo := setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+	require.NotNil(t, modelInfo)
+	require.Equal(t, test_constants.Name, modelInfo.Name)
+	require.Equal(t, test_constants.Owner, modelInfo.Owner)
+}
 
 func TestKeeper_ModelInfoIterator(t *testing.T) {
 	setup := Setup()

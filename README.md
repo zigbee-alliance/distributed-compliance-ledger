@@ -49,7 +49,7 @@ ModelInfo type:
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
-- Signer must have `vendor` role. See `Authorization` module for details.
+- Signer must have `Vendor` role. See `Authorization` module for details.
 
 Transactions:
 - `zblcli tx modelinfo add-model [vid:int16] [pid:int16] [name:string] [description:string] [sku:string] 
@@ -103,11 +103,35 @@ Genesis:
 
 - Use `nsd add-genesis-account` to add users to genesis.
 
+### Compliance
+
+ModelInfo type:
+- VID: `int16`
+- PID: `int16`
+- TestResult: `string`
+- Owner: `bech32 encoded address`
+
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Signer must have `TestHouse` role. See `Authorization` module for details.
+
+Transactions:
+- ` zblcli tx compliancetest add-test-result [vid] [pid] [test-result]` - Add new TestingResult.
+  - Signature is required. Use `--from` flag.
+
+  Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" --from jack`
+  
+Queries:
+- `zblcli query compliance test-result [vid] [pid]` - Query single TestingResult.
+
+  Example: `zblcli query compliance test-result 1 1`
+
 ### Authorization
 
 Roles:
-- `administrator` - Is able to assign or revoke roles.
-- `vendor`
+- `Administrator` - Is able to assign or revoke roles.
+- `Vendor`
+- `TestHouse`
 
 Commands:
 - `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.
@@ -123,7 +147,7 @@ Genesis template:
       "account_roles": [{
         "address": "cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2",
         "roles": [
-          "administrator"
+          "Administrator"
         ]
       }]
     }

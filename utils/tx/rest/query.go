@@ -15,6 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
 
+	authutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/auth"
 	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
@@ -177,4 +178,27 @@ func SignAndBroadcastMessage(cliCtx context.CLIContext, chainId string, signer s
 	}
 
 	return BroadcastMessage(cliCtx, signedMsg)
+}
+
+func ProcessMessage(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, baseReq rest.BaseReq, msg sdk.Msg, signer sdk.AccAddress) {
+	err := msg.ValidateBasic()
+	if err != nil {
+		rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	account, passphrase, err_ := authutils.GetCredentialsFromRequest(r)
+	if err_ != nil { // No credentials - just generate request message
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		return
+	}
+
+	// Credentials are found - sign and broadcast message
+	res, err_ := SignAndBroadcastMessage(cliCtx, baseReq.ChainID, signer, account, passphrase, []sdk.Msg{msg})
+	if err_ != nil {
+		rest.WriteErrorResponse(w, http.StatusInternalServerError, err_.Error())
+		return
+	}
+
+	rest.PostProcessResponse(w, cliCtx, res)
 }

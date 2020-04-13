@@ -1,8 +1,8 @@
 package modelinfo
 
 import (
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/test_constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
