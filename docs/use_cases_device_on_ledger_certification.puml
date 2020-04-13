@@ -1,0 +1,60 @@
+@startuml
+!pragma teoz true
+hide footbox
+
+actor Vendor as V
+actor "Test House" as T
+actor "ZigBee Certification" as ZB
+actor User as U
+entity Device as D
+database Ledger as L
+
+note over V, L
+In this case Device Certification is done on Ledger:
+- Device doesn't have any certification when issued
+- Test and Certification results can be added/revoked any time in future
+- Test and Certification results must be added on ledger (as transactions)
+- Device's certification needs to be checked on Ledger
+
+The Ledger is also used as a PKI.
+end note
+
+note over L
+Setup PKI (see [use_cases_pki]):
+- Root Certificate `RootCert`
+- Vendor Certificate `VendorCert(vid. pid)`
+end note
+
+== 1. Setup Model Info ==
+V -> L: ADD_MODEL_INFO(vid, pid)
+
+== 2. Issue Device ==
+D -> D: generate `privKey` and `pubKey`
+D -> D: X509 Device Cert `DeviceCert(vid,pid)`\nwith `pubKey`, `vid`, `pid`
+V -> D: Sign `DeviceCert` by `VendorCert(vid,pid)`
+
+== 3. Test Device Compliance ==
+T -> T: Run compliance tests for the `ModelInfo(vid, pid)`
+T -> L: ADD_TEST_RESULT(cid, pid)
+
+== 4.1. Attest Device Compliance ==
+ZB <- L: GET_TEST_RESULT(vid, pid)`
+ZB -> ZB: Check compliance test results
+ZB -> L: CERTIFY_MODEL(vid, pid)
+
+
+== 4.2. Revoke Device Compliance (Optional) ==
+ZB -> L: REVOKE_MODEL_CERTIFICATION(vid, pid)
+
+== 5. Use Device ==
+U <- D: Get `DeviceCert(vid, pid)`
+U <-> D: Verify proof of privKey possession
+U <-- L: GET_X509_CERT / GET_ALL_X509_ROOT_CERTS\n or GET_ALL_X509_CERTS / GET_ALL_X509_CERTS_SINCE\nor GET_CRL\nupdate cache if needed
+U -> U: Verify `DeviceCert(vid, pid)` signature
+U -> U: Verify that `DeviceCert`'s `pid` and `vid`\nequals to `VendorCert`'s `pid` and `vid`
+U <-- L:GET_CERTIFIED_MODEL(vid, pid)\nor GET_VENDOR_CERTIFIED_MODELS(vid)\nor GET_ALL_CERTIFIED_MODELS / GET_ALL_CERTIFIED_MODELS_SINCE\nupdate cache if needed
+U -> U: Check that the Device is certified
+U -> D: Start using Device
+
+
+@enduml

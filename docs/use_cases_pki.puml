@@ -1,0 +1,36 @@
+@startuml
+!pragma teoz true
+hide footbox
+
+actor "Root Authority" as RA
+actor "Zigbee Alliance Trustee 1" as T1
+actor "Zigbee Alliance Trustee N" as TN
+actor Vendor as V
+
+database Ledger as L
+
+== Add a Root Certificate ==
+RA -> L: PROPOSE_ADD_X509_ROOT_CERT
+RA <-> T1: Proof of privKey possession
+T1 -> L: APPROVE_ADD_X509_ROOT_CERT
+
+RA <-> TN: Proof of privKey possession
+TN -> L: APPROVE_ADD_X509_ROOT_CERT
+
+L -> L: Pending Root Certificate becomes approved\nafter receiving approval from N (or K% of) Trustees
+
+== Add an Intermediate or Leaf Certificate ==
+
+V -> V: A Certificate signed by the Root Certificate
+V -> L: ADD_X509_CERT
+L -> L: Validate certificate against the Root Certificate
+
+== Revoke a Certificate by Trustees ==
+T1 -> L: PROPOSE_REVOKE_X509_CERT
+TN -> L: APPROVE_REVOKE_X509_ROOT_CERT
+L -> L:the certificate and all child certificates are revoked\nafter receiving approval from N (or K% of) Trustees
+
+== Revoke a Certificate by the owner ==
+V -> L: REVOKE_X509_CERT
+L -> L: the certificate and all child certificates are revoked
+@enduml

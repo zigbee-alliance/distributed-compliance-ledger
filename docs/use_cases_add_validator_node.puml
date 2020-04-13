@@ -1,0 +1,47 @@
+@startuml
+!pragma teoz true
+hide footbox
+
+actor "ZA Trustee 1" as T1
+actor "ZA Trustee N" as TN
+database Ledger as L
+actor "Node Admin" as NA
+
+== Genesis Block ==
+note over L
+4 Node transactions
+4 Accounts with NodeAdmin roles
+end note
+
+== Add a new validator node ==
+NA -> NA: generate Account keys
+NA -> T1: send account's pubKey
+T1 -> L: PROPOSE_ADD_ACCOUNT(role=NodeAdmin; pubKey)
+
+alt if more than 1 Trustee signature is required for role NodeAdmin
+    TN -> L: APPROVE_ADD_ACCOUNT
+end alt
+
+L -> L: a new Account with role=NodeAdmin is created
+
+NA -> NA: generate Node's key
+NA -> L: ADD_VALIDATOR_NODE
+
+== Remove a validator node by Trustee(s) ==
+T1 -> L: PROPOSE_REMOVE_VALIDATOR_NODE
+
+alt if more than 1 Trustee signature is required for revocation
+    TN -> L: APPROVE_REMOVE_VALIDATOR_NODE
+end alt
+
+L -> L: Node is removed
+L -> L: Node's Account is removed
+
+== Remove a validator node by NodeAdmin ==
+NA -> L: REMOVE_VALIDATOR_NODE
+
+== Rotate the node's key ==
+
+NA -> L: UPDATE_VALIDATOR_NODE
+
+@enduml
