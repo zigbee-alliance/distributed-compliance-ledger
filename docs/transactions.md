@@ -20,6 +20,38 @@ an Account or sign the request.
 requested data. The `height` can be used to get a delta (changes) from the last state that the user has.
 This is useful to avoid correlation by the sender's IP address.        
 
+## How to write to the Ledger
+- Local CLI
+    - CLI is started in a CLI mode.
+    - Generate and store a private key for the Account to be used for sending.
+    - Send transactions to the ledger from the Account (`--from`).
+        - it will automatically build a request, sign it by the account's key, and broadcast to the ledger.
+    - See `CLI` section for every write request (transaction).
+- Non-trusted REST API (keys at the edge):
+    - CLI is started in a server mode.
+    - A private key is generated and stored off-server (in the user's private wallet).
+    - The user builds and signs the request manually.
+    - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`. 
+- Trusted REST API (keys at the server):
+    - CLI is started in a server mode.
+    - A private key is generated and stored on the server (assuming it's within the user's domain and the user trusts it).
+    - The user sends a POST to the server specifying the transaction parameters and account details (passphrase etc.).
+    The server builds the request, signs it by the specified account's private key and broadcasts to the ledger
+     in a way similar to the local CLI case.
+    - See `REST API` section for every write request (transaction).
+
+## How to read from the Ledger
+- Local CLI
+    - CLI is started in a CLI mode.
+    - No keys/account is needed as the ledger is public for reads
+    - See `CLI` section for every read request.
+- REST API
+    - CLI is started in a server mode.
+    - No keys/account is needed as the ledger is public for reads
+    - See `REST API` section for every read request.    
+
+        
+
 ## KV Store
 A summary of KV store and paths used:
 - KV store name: `pki`
@@ -30,7 +62,7 @@ A summary of KV store and paths used:
     - Non-root certificates:
         - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
     - Certificate Chain:
-        - `4:<Child Certificate's Issuer>:<Child Certificate's Serial Number>` : `<Parent certificates issuer/serialNumber pairs>`
+          - `4:<Parent Certificate's Issuer>:<Parent Certificate's Serial Number>` : `<a list of child certificates (issuer/serialNum pairs)>`
     - Proposed but not approved revocation of certificates:
         - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
     - CRL (Certificate Revocation List):
@@ -39,13 +71,13 @@ A summary of KV store and paths used:
     - Model Infos 
         - `1:<vid>:<pid>` : `<model info>`
     - Vendor to products (models) index:
-        - `2:<vid>` : `<list of pids>`
+        - `2:<vid>` : `<list of pids + metadata>`
 - KV store name: `compliancetest`
     - Test results for every model
         - `1:<vid>:<pid>` : `<list of test results>`
 - KV store name: `compliance`
     - Compliance results for every model       
-       - `1:<vid>:<pid>` : `<compliance bool>`
+       - `1:<vid>:<pid>` : `<compliance info>`
     - A list of compliant models (`pid`s) for the given vendor. 
        - `2:<vid>` : `<compliance pids>`  
     - A list of revoked models (`pid`s) for the given vendor.       
@@ -117,7 +149,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - In State:
   - `pki` store  
   - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
-  - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Parent certificate Chain's issuer/serialNumber pairs>`
+  - `4:<Parent Certificate's Issuer>:<Parent Certificate's Serial Number>` : `<a list of child certificates (issuer/serialNum pairs)>`
 - Who can send: 
     - Any role
 - CLI command: 
@@ -139,7 +171,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
   - `pki` store  
   - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`  
   - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
-  - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate Chain's issuer/serialNumber pairs>`
+  - `4:<Parent Certificate's Issuer>:<Parent Certificate's Serial Number>` : `<a list of child certificates (issuer/serialNum pairs)>`
   - `6` : `CRL (Certificate Revocation List)`
 
 - Who can send: 
@@ -186,7 +218,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
   - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
   - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`  
   - `3:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`
-  - `4:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate Chain's issuer/serialNumber pairs>`
+  - `4:<Parent Certificate's Issuer>:<Parent Certificate's Serial Number>` : `<a list of child certificates (issuer/serialNum pairs)>`
   - `6` : `CRL (Certificate Revocation List)`
 - Who can send: 
     - Trustee
@@ -307,8 +339,8 @@ Gets all revoked certificates (CRL or certificate revocation list).
 #### ADD_MODEL_INFO
 Adds a new Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID).
 
-The Model Info is immutable. If it needs to be edited - a new model info with a new `vid` or `pid` 
-can be created.
+Only some of Model Info fields can be edited (see `EDIT_MODEL_INFO`). If other fields need to be edited - 
+a new model info with a new `vid` or `pid` can be created.
 
 - Parameters:
     - `vid`: 16 bits int
@@ -325,13 +357,41 @@ can be created.
 - In State:
   - `modelinfo` store  
   - `1:<vid>:<pid>` : `<model info>`
-  - `2:<vid>` : `<list of pids>`
+  - `2:<vid>` : `<list of pids + metadata>`
 - Who can send: 
     - Vendor
 - CLI command: 
     -   `zblcli tx modelinfo add-model .... `
 - REST API: 
     -   POST `/modelinfo/models`
+
+#### EDIT_MODEL_INFO
+Edits an existing Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
+by the owner.
+
+Only the fields listed below (besides `vid` and `pid`) can be edited. If other fields need to be edited - 
+a new model info with a new `vid` or `pid` can be created.
+
+All non-edited fields remain the same. 
+
+- Parameters:
+    - `vid`: 16 bits int
+    - `pid`: 16 bits int
+    - `cid`: 16 bits int (optional)
+    - `description`: string (optional)
+    - `tisOrTrpTestingCompleted`: bool (optional)
+    - `custom`: string (optional)
+- In State:
+  - `modelinfo` store  
+  - `1:<vid>:<pid>` : `<model info>`
+  - `2:<vid>` : `<list of pids + metadata>`
+- Who can send: 
+    - Vendor; owner
+- CLI command: 
+    -   `zblcli tx modelinfo edit-model .... `
+- REST API: 
+    -   PUT `/modelinfo/models/vid/pid`
+
 
 #### GET_ALL_MODEL_INFO
 Gets all Model Infos for all vendors.
@@ -426,10 +486,11 @@ from the revocation list.
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `certificationDate`: rfc3339 encoded date
     - `certificationType` (optional): string  - `zb` is the default and the only supported value now
 - In State:
   - `compliance` store  
-  - `1:<vid>:<pid>` : `<compliance bool>`
+  - `1:<vid>:<pid>` : `<compliance info>`
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revoked pids>`  
 - Who can send: 
@@ -452,9 +513,10 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `revocationDate`: rfc3339 encoded date    
 - In State:
   - `compliance` store  
-  - `1:<vid>:<pid>` : `<compliance bool>`
+  - `1:<vid>:<pid>` : `<compliance info>`
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revocation pids>`  
 - Who can send: 
