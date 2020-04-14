@@ -16,7 +16,19 @@ Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
 
 - Read more about deployment in `ansible/readme.md`.
 
+## Docs
+- Requests and transactions: [transactions.md](docs/transactions.md)
+- Use cases:
+    - [PKI](docs/use_cases_pki.png)
+    - [Device on-ledger certification](docs/use_cases_device_on_ledger_certification.png)
+    - [Device off-ledger certification](docs/use_cases_device_off_ledger_certification.png)
+    - [Auth](docs/use_cases_txn_auth.png)
+    - [Validators](docs/use_cases_add_validator_node.png)
+
 ## Modules
+
+Some of the modules are being refactored against [transactions.md](docs/transactions.md) and may look
+a bit different than specified below.
 
 ### Model Info
 
