@@ -58,23 +58,22 @@ Transactions:
   - Optional flags: 
     - `--cid` int16
     - `--custom` string
-    - `--certificate-id` string
-    - `--certified-date` rfc3339 encoded date
 
   Example: `zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from jack`
   
   Example: `zblcli tx modelinfo add-model 1 2 "Device #2" "Device Description" "SKU324S" "2.0" "2.0" true --from jack --cid 1 --custom "Some Custom information" --certificate-id "ID123" --certified-date "2020-01-01T00:00:00Z"`
 
-- `zblcli tx modelinfo update-model [vid:int16] [pid:int16] [description:string] [tis-or-trp-testing-completed:bool]` - Update
+- `zblcli tx modelinfo update-model [vid:int16] [pid:int16] [tis-or-trp-testing-completed:bool]` - Update
   existing ModelInfo.
   - Signature is required. Use `--from` flag.
   - Optional flags: 
     - `--cid` int16
     - `--custom` string
-    - `--certificate-id` string
-    - `--certified-date` rfc3339 encoded date
+    - `--description` string
     
-  Example: `zblcli tx modelinfo update-model 1 1 "Device #1" "New Device Description" "SKU12FS" "1.0" "2.0" true --from jack --custom "Custom Data"`
+  Example: `zblcli tx modelinfo update-model 1 1 true --from jack --description "New Description"`
+  
+  Example: `zblcli tx modelinfo update-model 1 1 true --from jack --custom "Custom Data"`
 
 Queries:
 - `zblcli query modelinfo model [vid] [pid]` - Query single ModelInfo.

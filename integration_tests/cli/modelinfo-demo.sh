@@ -54,7 +54,7 @@ echo "$result"
 
 echo "Update Model with VID: ${vid} PID: ${pid}"
 description="New Device Description"
-result=$(echo "test1234" | zblcli tx modelinfo update-model $vid $pid "$description" true --from jack --yes)
+result=$(echo "test1234" | zblcli tx modelinfo update-model $vid $pid true --from jack --yes --description "$description")
 check_response "$result" "\"success\": true"
 echo "$result"
 
