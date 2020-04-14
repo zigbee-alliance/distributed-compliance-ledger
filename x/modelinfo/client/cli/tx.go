@@ -15,8 +15,10 @@ import (
 )
 
 const (
-	FlagCID    = "cid"
-	FlagCustom = "custom"
+	FlagCID                      = "cid"
+	FlagDescription              = "description"
+	FlagCustom                   = "custom"
+	FlagTisOrTrpTestingCompleted = "tis-or-trp-testing-completed"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -101,9 +103,9 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-model [vid] [pid] [description] [tis-or-trp-testing-completed]",
+		Use:   "update-model [vid] [pid] [tis-or-trp-testing-completed]",
 		Short: "Update existing Model",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
@@ -118,12 +120,12 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			description := args[2]
-
-			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[3])
+			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[2])
 			if err != nil {
 				return err
 			}
+
+			description := viper.GetString(FlagDescription)
 
 			var cid int16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
@@ -146,6 +148,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagCID, "", "Model category ID")
+	cmd.Flags().String(FlagDescription, "", "Model description")
 	cmd.Flags().String(FlagCustom, "", "Custom information")
 
 	return cmd

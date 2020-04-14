@@ -157,7 +157,8 @@ func SignMessage(cliCtx context.CLIContext, chainId string, signer sdk.AccAddres
 }
 
 func BroadcastMessage(cliCtx context.CLIContext, message []byte) ([]byte, error) {
-	res, err := cliCtx.BroadcastTxCommit(message)
+	cliCtx.BroadcastMode = "block"
+	res, err := cliCtx.BroadcastTx(message)
 	if err != nil {
 		return nil, err
 	}
