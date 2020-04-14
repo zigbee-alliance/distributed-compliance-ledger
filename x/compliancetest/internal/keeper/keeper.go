@@ -16,7 +16,7 @@ type Keeper struct {
 }
 
 const (
-	testingResultPrefix = "tr"
+	testingResultsPrefix = "tr"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
@@ -37,13 +37,13 @@ func (k Keeper) GetTestingResults(ctx sdk.Context, vid int16, pid int16) types.T
 	return testingResults
 }
 
-// Sets the entire TestingResults struct for a TestingResultID
+// Sets the entire TestingResults record for a VID/PID combination
 func (k Keeper) SetTestingResults(ctx sdk.Context, testingResult types.TestingResults) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(TestingResultId(testingResult.VID, testingResult.PID)), k.cdc.MustMarshalBinaryBare(testingResult))
 }
 
-// Add TestingResult for an existing TestingResults record
+// Add single TestingResult for an existing TestingResults record
 func (k Keeper) AddTestingResult(ctx sdk.Context, testingResult types.TestingResult) sdk.Error {
 	testingResults := k.GetTestingResults(ctx, testingResult.VID, testingResult.PID)
 
@@ -65,17 +65,17 @@ func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid int16, pid int16) 
 	return store.Has([]byte(TestingResultId(vid, pid)))
 }
 
-// Check if the TestingResult is present in the store or not
+// Check if the particular TestingResult is present in the store or not
 func (k Keeper) IsTestingResultPresents(ctx sdk.Context, vid int16, pid int16, owner sdk.AccAddress) bool {
 	testingResults := k.GetTestingResults(ctx, vid, pid)
 	return testingResults.ContainsTestingResult(owner)
 }
 
-// Iterate over all TestingResults
+// Iterate over all TestingResults records
 func (k Keeper) IterateTestingResults(ctx sdk.Context, process func(info types.TestingResults) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iter := sdk.KVStorePrefixIterator(store, []byte(testingResultPrefix))
+	iter := sdk.KVStorePrefixIterator(store, []byte(testingResultsPrefix))
 	defer iter.Close()
 
 	for {
@@ -97,7 +97,7 @@ func (k Keeper) IterateTestingResults(ctx sdk.Context, process func(info types.T
 	}
 }
 
-// Id builder for TestingResultItem
+// Id builder for TestingResults
 func TestingResultId(vid interface{}, pid interface{}) string {
-	return fmt.Sprintf("%s:%v:%v", testingResultPrefix, vid, pid)
+	return fmt.Sprintf("%s:%v:%v", testingResultsPrefix, vid, pid)
 }

@@ -23,18 +23,12 @@ func TestCompliancetestDemo(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo := utils.GetKeyInfo(test_constants.AccountName)
 
-	// Get account info for Jack
-	jackAccountInfo := utils.GetAccountInfo(jackKeyInfo.Address)
-
 	//Assign Vendor role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
 
 	// Publish model info
-	modelInfo := utils.NewModelInfo(jackAccountInfo.Address)
-	utils.PublishModelInfo(jackAccountInfo, modelInfo)
-
-	// Check model is created
-	utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
+	modelInfo := utils.NewModelInfo(jackKeyInfo.Address)
+	utils.PublishModelInfo(jackKeyInfo.Address, modelInfo)
 
 	//Assign TestHouse role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.TestHouse)
@@ -43,8 +37,8 @@ func TestCompliancetestDemo(t *testing.T) {
 	firstTestingResult := compliancetest.NewMsgAddTestingResult(
 		modelInfo.VID,
 		modelInfo.PID,
-		test_constants.TestResult,
-		jackAccountInfo.Address,
+		utils.RandString(),
+		jackKeyInfo.Address,
 	)
 
 	utils.SignAndBroadcastMessage(jackKeyInfo, firstTestingResult)
@@ -58,27 +52,24 @@ func TestCompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.Results[0].Owner, firstTestingResult.Signer)
 
 	// Publish second model info
-	secondModelInfo := utils.NewModelInfo(jackAccountInfo.Address)
-	utils.PublishModelInfo(jackAccountInfo, secondModelInfo)
-
-	// Check model is created
-	utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
+	secondModelInfo := utils.NewModelInfo(jackKeyInfo.Address)
+	utils.PublishModelInfo(jackKeyInfo.Address, secondModelInfo)
 
 	// Publish second testing result using POST
 	secondTestingResult := compliancetest.NewTestingResult(
 		secondModelInfo.VID,
 		secondModelInfo.PID,
-		test_constants.TestResult,
-		jackAccountInfo.Address,
+		utils.RandString(),
+		jackKeyInfo.Address,
 	)
 
-	utils.PublishTestingResult(jackAccountInfo, secondTestingResult)
+	utils.PublishTestingResult(jackKeyInfo.Address, secondTestingResult)
 
 	// Check testing result is created
 	receivedTestingResult = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
 	require.Equal(t, receivedTestingResult.VID, secondTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, secondTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
-	require.Equal(t, receivedTestingResult.Results[0].TestResult, firstTestingResult.TestResult)
-	require.Equal(t, receivedTestingResult.Results[0].Owner, firstTestingResult.Signer)
+	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)
+	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Owner)
 }

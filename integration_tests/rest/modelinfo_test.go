@@ -36,14 +36,13 @@ func TestModelinfoDemo(t *testing.T) {
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
 
 	// Prepare model info
-	vid := int16(utils.RandInt())
-	pid := int16(utils.RandInt())
+	VID := int16(utils.RandInt())
 
 	firstModelInfo := modelinfo.NewMsgAddModelInfo(
-		vid,
-		pid,
+		VID,
 		int16(utils.RandInt()),
-		test_constants.Name,
+		int16(utils.RandInt()),
+		utils.RandString(),
 		test_constants.Description,
 		test_constants.Sku,
 		test_constants.FirmwareVersion,
@@ -57,15 +56,15 @@ func TestModelinfoDemo(t *testing.T) {
 	utils.SignAndBroadcastMessage(jackKeyInfo, firstModelInfo)
 
 	// Check model is created
-	receivedModelInfo := utils.GetModelInfo(vid, pid)
+	receivedModelInfo := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
 	require.Equal(t, receivedModelInfo.VID, firstModelInfo.VID)
 	require.Equal(t, receivedModelInfo.PID, firstModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Name, firstModelInfo.Name)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewModelInfo(jackAccountInfo.Address)
-	secondModelInfo.VID = vid // Set same Vendor as for the first model
-	utils.PublishModelInfo(jackAccountInfo, secondModelInfo)
+	secondModelInfo.VID = VID // Set same Vendor as for the first model
+	utils.PublishModelInfo(jackAccountInfo.Address, secondModelInfo)
 
 	// Check model is created
 	receivedModelInfo = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
@@ -82,7 +81,7 @@ func TestModelinfoDemo(t *testing.T) {
 	require.Equal(t, utils.ParseUint(inputVendors.Total)+1, utils.ParseUint(vendors.Total))
 
 	// Get vendor models
-	vendorModels := utils.GetVendorModels(vendors.Items[0].VID)
+	vendorModels := utils.GetVendorModels(VID)
 	require.Equal(t, uint64(2), uint64(len(vendorModels.Products)))
 	require.Equal(t, firstModelInfo.PID, vendorModels.Products[0].PID)
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)

@@ -45,12 +45,12 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var testingResult types.TestingResultItem
+			var testingResult types.TestingResults
 			cdc.MustUnmarshalBinaryBare(res, &testingResult)
 
 			out, err := json.Marshal(testingResult)
 			if err != nil {
-				fmt.Printf("Testing Result Not Found")
+				return sdk.ErrInternal(fmt.Sprintf("Could not query testing result VID:%v PID:%v", vid, pid))
 				return nil
 			}
 

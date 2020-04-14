@@ -47,13 +47,13 @@ func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) {
 	BroadcastMessage(signResponse)
 }
 
-func PublishModelInfo(accountInfo AccountInfo, model modelinfo.ModelInfo) json.RawMessage {
+func PublishModelInfo(address sdk.AccAddress, model modelinfo.ModelInfo) json.RawMessage {
 	println("Publish Model Info")
 
 	request := modelinfoRest.ModelInfoRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: test_constants.ChainId,
-			From:    accountInfo.Address.String(),
+			From:    address.String(),
 		},
 		VID:                      model.VID,
 		PID:                      model.PID,
@@ -154,13 +154,13 @@ func GetVendorModels(vid int16) modelinfo.VendorProducts {
 	return result
 }
 
-func PublishTestingResult(accountInfo AccountInfo, testingResult compliancetest.TestingResult) json.RawMessage {
+func PublishTestingResult(address sdk.AccAddress, testingResult compliancetest.TestingResult) json.RawMessage {
 	println("Publish Testing Result")
 
 	request := complianceRest.TestingResultRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: test_constants.ChainId,
-			From:    accountInfo.Address.String(),
+			From:    address.String(),
 		},
 		VID:        testingResult.VID,
 		PID:        testingResult.PID,
@@ -200,11 +200,9 @@ func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role authz.Account
 }
 
 func NewModelInfo(owner sdk.AccAddress) modelinfo.ModelInfo {
-	vid := int16(RandInt())
-	pid := int16(RandInt())
 	return modelinfo.NewModelInfo(
-		vid,
-		pid,
+		int16(RandInt()),
+		int16(RandInt()),
 		test_constants.CID,
 		test_constants.Name,
 		owner,

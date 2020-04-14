@@ -13,6 +13,8 @@ import (
 
 func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
 		vars := mux.Vars(r)
 		vid := vars[vid]
 		pid := vars[pid]
@@ -23,7 +25,7 @@ func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.H
 			return
 		}
 
-		var testingResult types.TestingResultItem
+		var testingResult types.TestingResults
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &testingResult)
 
 		out, err := json.Marshal(testingResult)

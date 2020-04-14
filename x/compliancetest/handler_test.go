@@ -114,7 +114,7 @@ func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 	}
 }
 
-func TestHandler_AddTestingResultTwiceForSameModel(t *testing.T) {
+func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T) {
 	setup := Setup()
 	testHouse := setup.TestHouse(test_constants.Address1)
 

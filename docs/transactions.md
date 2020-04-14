@@ -347,7 +347,6 @@ a new model info with a new `vid` or `pid` can be created.
     - `pid`: 16 bits int
     - `cid`: 16 bits int (optional)
     - `Name`: string
-    - `owner`: bech32 encoded address
     - `description`: string
     - `SKU`: string
     - `firmwareVersion`: string
@@ -464,7 +463,7 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
     - `vid`: 16 bits int
     - `pid`: 16 bits int
 - CLI command: 
-    -   `zblcli query compliancetest .... `
+    -   `zblcli query compliancetest test-result .... `
 - REST API: 
     -   GET `/compliancetest/testresults/vid/pid`
 

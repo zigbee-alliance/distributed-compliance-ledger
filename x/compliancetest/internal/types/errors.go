@@ -10,9 +10,9 @@ const (
 )
 
 func ErrTestingResultAlreadyExists() sdk.Error {
-	return sdk.NewError(Codespace, CodeTestingResultAlreadyExists, "TestingResultItem already exists")
+	return sdk.NewError(Codespace, CodeTestingResultAlreadyExists, "TestingResult already exists")
 }
 
 func ErrTestingResultDoesNotExist() sdk.Error {
-	return sdk.NewError(Codespace, CodeTestingResultDoesNotExist, "TestingResultItem does not exist")
+	return sdk.NewError(Codespace, CodeTestingResultDoesNotExist, "TestingResults do not exist")
 }

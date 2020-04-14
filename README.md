@@ -102,9 +102,9 @@ Genesis:
 
 - Use `nsd add-genesis-account` to add users to genesis.
 
-### Compliance
+### Compliance Test
 
-ModelInfo type:
+Testing Result type:
 - VID: `int16`
 - PID: `int16`
 - TestResult: `string`
@@ -115,13 +115,13 @@ Permissions:
 - Signer must have `TestHouse` role. See `Authorization` module for details.
 
 Transactions:
-- ` zblcli tx compliancetest add-test-result [vid] [pid] [test-result]` - Add new TestingResult.
+- ` zblcli tx compliancetest add-test-result [vid] [pid] [test-result]` - Add new Testing Result.
   - Signature is required. Use `--from` flag.
 
   Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" --from jack`
   
 Queries:
-- `zblcli query compliance test-result [vid] [pid]` - Query single TestingResult.
+- `zblcli query compliance test-result [vid] [pid]` - Query Testing Results associated with VID/PID.
 
   Example: `zblcli query compliance test-result 1 1`
 
