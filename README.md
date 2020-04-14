@@ -30,47 +30,73 @@ Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
 Some of the modules are being refactored against [transactions.md](docs/transactions.md) and may look
 a bit different than specified below.
 
-### Compliance
+### Model Info
 
 ModelInfo type:
-- ID: `string`
+- VID: `int16`
+- PID: `int16`
+- CID: `int16` (optional)
 - Name: `string`
 - Owner: `bech32 encoded address`
 - Description: `string`
 - SKU: `string`
 - FirmwareVersion: `string`
 - HardwareVersion: `string`
+- Custom: `string` (optional)
 - CertificateID: `string`
 - CertifiedDate: `rfc3339 encoded date`
 - TisOrTrpTestingCompleted: `bool`
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
-- Signer must be either `administrator` or `manufacturer` and record's owner. See `Authorization` module for details
+- Signer must have `vendor` role. See `Authorization` module for details.
 
 Transactions:
-- `zblcli tx compliance add-model-info [id:string] [name:string] [owner:bech32 encoded address] [description:string
-] [sku:string] [firmware-version:string] [hardware-version:string][certificate-id:string] [certified-date:rfc3339
- encoded date] [tis-or-trp-testing-completed:bool]` - Add new ModelInfo.
+- `zblcli tx modelinfo add-model [vid:int16] [pid:int16] [name:string] [description:string] [sku:string] 
+[firmware-version:string] [hardware-version:string] [tis-or-trp-testing-completed:bool]` - Add new ModelInfo.
   - Signature is required. Use `--from` flag.
-- `zblcli tx compliance update-model-info update-model-info [id:string] [new-name:string] [new-owner:bech32 encoded
- address] [new-description:string] [new-sku:string] [new-firmware-version:string] [new-hardware-version:string] [new
- -certificate-id:string] [new-certified-date:rfc3339 encoded date] [new-tis-or-trp-testing-completed:bool]` - Update
+  - Optional flags: 
+    - `--cid` int16
+    - `--custom` string
+
+  Example: `zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from jack`
+  
+  Example: `zblcli tx modelinfo add-model 1 2 "Device #2" "Device Description" "SKU324S" "2.0" "2.0" true --from jack --cid 1 --custom "Some Custom information" --certificate-id "ID123" --certified-date "2020-01-01T00:00:00Z"`
+
+- `zblcli tx modelinfo update-model [vid:int16] [pid:int16] [tis-or-trp-testing-completed:bool]` - Update
   existing ModelInfo.
   - Signature is required. Use `--from` flag.
-- `zblcli tx compliance delete-model-info [id:string]` - Delete existing ModelInfo.
-  - Signature is required. Use `--from` flag.
+  - Optional flags: 
+    - `--cid` int16
+    - `--custom` string
+    - `--description` string
+    
+  Example: `zblcli tx modelinfo update-model 1 1 true --from jack --description "New Description"`
+  
+  Example: `zblcli tx modelinfo update-model 1 1 true --from jack --custom "Custom Data"`
 
 Queries:
-- `zblcli query compliance model-info [id]` - Query single ModelInfo.
-- `zblcli query compliance model-info-with-proof [id]` - Query single ModelInfo with proof.
-- `zblcli query compliance model-info-headers --skip [x] --take [y]` - Query list of ModelInfo headers. Flags are
- optional.
+- `zblcli query modelinfo model [vid] [pid]` - Query single ModelInfo.
 
-Examples:
-- `zblcli tx compliance add-model-info "b4a3b939-c5ab-42b5-a163-928b3b147f9f" "TestName
-" "cosmos1g4936hdq8mr5p6vs0qevdvxuvgpfpesh86cvc7" "Test description" "id1, id2" "1.2.3" "3.2.1" "cert34" "2020-01
--24T14:04:21+03:00" true --from jack `
+  Example: `zblcli query modelinfo model 1 1`
+  
+- `zblcli query modelinfo all-models` - Query list of ModelInfos. Optional flags: 
+    - `--skip` int
+    - `--take` int
+    
+  Example: `zblcli query modelinfo all-models`
+
+- `zblcli query modelinfo vendors` - Query list of Vendors. Optional flags: 
+    - `--skip` int
+    - `--take` int
+    
+  Example: `zblcli query modelinfo vendors`
+  
+- `zblcli query modelinfo vendor-models [vid]` - Query list of ModelInfos for the given Vendor. Optional flags: 
+    - `--skip` int
+    - `--take` int
+
+  Example: `zblcli query modelinfo vendor-models 1`
 
 Genesis:
 
@@ -80,12 +106,12 @@ Genesis:
 
 Roles:
 - `administrator` - Is able to assign or revoke roles.
-- `manufacturer`
+- `vendor`
 
 Commands:
-- `zblcli tx assign-role [address] [role]` - Assign role to specified account.
+- `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.
   - Administrator's signature is required. Use `--from` flag.
-- `zblcli tx revoke-role [address] [role]` - Revoke role from specified account.
+- `zblcli tx authz revoke-role [address] [role]` - Revoke role from specified account.
   - Administrator's signature is required. Use `--from` flag.
 
 Genesis template:

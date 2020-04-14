@@ -379,7 +379,7 @@ All non-edited fields remain the same.
     - `pid`: 16 bits int
     - `cid`: 16 bits int (optional)
     - `description`: string (optional)
-    - `tisOrTrpTestingCompleted`: bool (optional)
+    - `tisOrTrpTestingCompleted`: bool
     - `custom`: string (optional)
 - In State:
   - `modelinfo` store  

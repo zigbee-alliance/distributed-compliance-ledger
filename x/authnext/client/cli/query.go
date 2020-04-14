@@ -19,18 +19,18 @@ const (
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	complianceQueryCmd := &cobra.Command{
+	authnextQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Querying commands for the authentication extensions module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,
 	}
-	complianceQueryCmd.AddCommand(client.GetCommands(
+	authnextQueryCmd.AddCommand(client.GetCommands(
 		GetCmdAccountHeaders(storeKey, cdc),
 	)...)
 
-	return complianceQueryCmd
+	return authnextQueryCmd
 }
 
 func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {

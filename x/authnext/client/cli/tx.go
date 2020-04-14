@@ -9,7 +9,7 @@ import (
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	complianceTxCmd := &cobra.Command{
+	authnextTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Authentication extensions transaction subcommands",
 		DisableFlagParsing:         true,
@@ -17,7 +17,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	complianceTxCmd.AddCommand(client.PostCommands()...)
+	authnextTxCmd.AddCommand(client.PostCommands()...)
 
-	return complianceTxCmd
+	return authnextTxCmd
 }

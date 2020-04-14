@@ -21,12 +21,16 @@ func SendGetRequest(uri string) []byte {
 	return response
 }
 
-func SendPostRequest(uri string, body []byte) []byte {
-	resp, _ := http.Post(BuildUrl(uri), "text", bytes.NewBuffer(body))
+func SendPostRequest(uri string, body []byte, account string, passphrase string) []byte {
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", BuildUrl(uri), bytes.NewBuffer(body))
+	if len(account) != 0 && len(passphrase) != 0 {
+		req.SetBasicAuth(account, passphrase)
+	}
+	resp, _ := client.Do(req)
 	response := ReadResponseBody(resp)
 	println(string(response))
 	return response
-
 }
 
 func ReadResponseBody(resp *http.Response) []byte {

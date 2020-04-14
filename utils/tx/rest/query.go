@@ -7,7 +7,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -90,18 +89,11 @@ func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		txBldr := types.NewTxBuilder(
-			utils.GetTxEncoder(cliCtx.Codec),
-			signMsg.AccountNumber,
-			signMsg.Sequence,
-			signMsg.Fee.Gas,
-			flags.DefaultGasAdjustment,
-			false,
-			signMsg.ChainID,
-			signMsg.Memo,
-			signMsg.Fee.Amount,
-			nil,
-		)
+		txBldr := auth.NewTxBuilderFromCLI().
+			WithTxEncoder(utils.GetTxEncoder(cliCtx.Codec)).
+			WithAccountNumber(signMsg.AccountNumber).
+			WithSequence(signMsg.Sequence).
+			WithChainID(signMsg.ChainID)
 
 		stdTx := auth.StdTx{
 			Msgs:       signMsg.Msgs,
@@ -136,9 +128,8 @@ func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		cliCtx.BroadcastMode = "block"
+		res, err := BroadcastMessage(cliCtx, txBytes)
 
-		res, err := cliCtx.BroadcastTx(txBytes)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -146,4 +137,45 @@ func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
+}
+
+func SignMessage(cliCtx context.CLIContext, chainId string, signer sdk.AccAddress,
+	name string, passphrase string, msg []sdk.Msg) ([]byte, error) {
+
+	acc, err := auth.NewAccountRetriever(cliCtx).GetAccount(signer)
+	if err != nil {
+		return nil, err
+	}
+
+	txBldr := auth.NewTxBuilderFromCLI().
+		WithTxEncoder(utils.GetTxEncoder(cliCtx.Codec)).
+		WithAccountNumber(acc.GetAccountNumber()).
+		WithSequence(acc.GetSequence()).
+		WithChainID(chainId)
+
+	return txBldr.BuildAndSign(name, passphrase, msg)
+}
+
+func BroadcastMessage(cliCtx context.CLIContext, message []byte) ([]byte, error) {
+	cliCtx.BroadcastMode = "block"
+	res, err := cliCtx.BroadcastTx(message)
+	if err != nil {
+		return nil, err
+	}
+
+	txBytes, err := cliCtx.Codec.MarshalJSON(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return txBytes, nil
+}
+
+func SignAndBroadcastMessage(cliCtx context.CLIContext, chainId string, signer sdk.AccAddress, account string, passphrase string, msg []sdk.Msg) ([]byte, error) {
+	signedMsg, err := SignMessage(cliCtx, chainId, signer, account, passphrase, msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return BroadcastMessage(cliCtx, signedMsg)
 }

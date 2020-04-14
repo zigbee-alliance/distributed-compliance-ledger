@@ -2,7 +2,7 @@ package utils
 
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -28,6 +28,11 @@ type KeyInfo struct {
 }
 
 type ModelInfoHeadersResult struct {
-	Total string                       `json:"total"`
-	Items []compliance.ModelInfoHeader `json:"items"`
+	Total string                    `json:"total"`
+	Items []modelinfo.ModelInfoItem `json:"items"`
+}
+
+type VendorItemHeadersResult struct {
+	Total string                 `json:"total"`
+	Items []modelinfo.VendorItem `json:"items"`
 }

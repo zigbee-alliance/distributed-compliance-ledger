@@ -101,7 +101,7 @@ func (k Keeper) AssignRole(ctx sdk.Context, addr sdk.AccAddress, roleToAdd types
 
 func (k Keeper) RevokeRole(ctx sdk.Context, addr sdk.AccAddress, roleToRevoke types.AccountRole) {
 	accountRoles := k.GetAccountRoles(ctx, addr)
-	filteredRoles := []types.AccountRole{}
+	var filteredRoles []types.AccountRole
 
 	for _, role := range accountRoles.Roles {
 		if role != roleToRevoke {
