@@ -67,17 +67,32 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 		return err.Result()
 	}
 
+	CID := modelInfo.CID
+	if msg.CID != 0 {
+		CID = msg.CID
+	}
+
+	description := modelInfo.Description
+	if len(msg.Description) != 0 {
+		description = msg.Description
+	}
+
+	custom := modelInfo.Custom
+	if len(msg.Custom) != 0 {
+		custom = msg.Custom
+	}
+
 	modelInfo = types.NewModelInfo(
 		msg.VID,
 		msg.PID,
-		modelInfo.CID,
+		CID,
 		modelInfo.Name,
 		msg.Signer,
-		msg.Description,
+		description,
 		modelInfo.SKU,
 		modelInfo.FirmwareVersion,
 		modelInfo.HardwareVersion,
-		msg.Custom,
+		custom,
 		msg.TisOrTrpTestingCompleted,
 	)
 

@@ -90,10 +90,7 @@ func /*Test*/Demo(t *testing.T) {
 	require.Equal(t, receivedModelInfo.Name, newMsgAddModelInfo.Name)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
-	jackAccountInfo = getAccountInfo(jackAccountInfo.Address)
-
 	pid = int16(utils.RandInt())
-
 	secondModelInfo := modelinfo.NewModelInfo(
 		vid,
 		pid,
@@ -126,7 +123,7 @@ func /*Test*/Demo(t *testing.T) {
 
 	// Get vendor models
 	vendorModels := getVendorModels(vendors.Items[0].VID)
-	require.Equal(t, utils.ParseUint(modelInfos.Total), uint64(len(vendorModels.Products)))
+	require.Equal(t, uint64(2), uint64(len(vendorModels.Products)))
 	require.Equal(t, newMsgAddModelInfo.PID, vendorModels.Products[0].PID)
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)
 }
@@ -165,10 +162,8 @@ func publishModelInfo(accountInfo utils.AccountInfo, model modelinfo.ModelInfo) 
 
 	request := modelinfoRest.ModelInfoRequest{
 		BaseReq: rest.BaseReq{
-			From:          accountInfo.Address.String(),
-			ChainID:       ChainId,
-			AccountNumber: utils.ParseUint(accountInfo.AccountNumber),
-			Sequence:      utils.ParseUint(accountInfo.Sequence),
+			ChainID: ChainId,
+			From:    accountInfo.Address.String(),
 		},
 		VID:                      model.VID,
 		PID:                      model.PID,
@@ -180,15 +175,12 @@ func publishModelInfo(accountInfo utils.AccountInfo, model modelinfo.ModelInfo) 
 		HardwareVersion:          model.HardwareVersion,
 		Custom:                   model.Custom,
 		TisOrTrpTestingCompleted: model.TisOrTrpTestingCompleted,
-		Signer:                   accountInfo.Address,
-		Account:                  AccountName,
-		Passphrase:               AccountPassphrase,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
-	response := utils.SendPostRequest(uri, body)
+	response := utils.SendPostRequest(uri, body, AccountName, AccountPassphrase)
 
 	var result interface{}
 	_ = json.Unmarshal(responseResult(response), &result)
@@ -210,7 +202,7 @@ func signMessage(accountName string, accountInfo utils.AccountInfo, message sdk.
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
 
 	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, AccountPassphrase)
-	response := utils.SendPostRequest(uri, body)
+	response := utils.SendPostRequest(uri, body, "", "")
 
 	var result interface{}
 	_ = json.Unmarshal(responseResult(response), &result)
@@ -224,7 +216,7 @@ func broadcastMessage(message interface{}) {
 	body, _ := json.Marshal(message)
 
 	uri := fmt.Sprintf("%s/%s", "tx", "broadcast")
-	utils.SendPostRequest(uri, body)
+	utils.SendPostRequest(uri, body, "", "")
 }
 
 func getModelInfo(vid int16, pid int16) modelinfo.ModelInfo {

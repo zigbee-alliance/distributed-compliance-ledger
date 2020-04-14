@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/auth"
 	restutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/tx/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -12,20 +13,17 @@ import (
 )
 
 type ModelInfoRequest struct {
-	BaseReq                  rest.BaseReq   `json:"base_req"`
-	VID                      int16          `json:"vid"`
-	PID                      int16          `json:"pid"`
-	CID                      int16          `json:"cid,omitempty"`
-	Name                     string         `json:"name"`
-	Description              string         `json:"description"`
-	SKU                      string         `json:"sku"`
-	FirmwareVersion          string         `json:"firmware_version"`
-	HardwareVersion          string         `json:"hardware_version"`
-	Custom                   string         `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
-	Signer                   sdk.AccAddress `json:"signer"`
-	Account                  string         `json:"account,omitempty"`
-	Passphrase               string         `json:"passphrase,omitempty"`
+	BaseReq                  rest.BaseReq `json:"base_req"`
+	VID                      int16        `json:"vid"`
+	PID                      int16        `json:"pid"`
+	CID                      int16        `json:"cid,omitempty"`
+	Name                     string       `json:"name"`
+	Description              string       `json:"description"`
+	SKU                      string       `json:"sku"`
+	FirmwareVersion          string       `json:"firmware_version"`
+	HardwareVersion          string       `json:"hardware_version"`
+	Custom                   string       `json:"custom,omitempty"`
+	TisOrTrpTestingCompleted bool         `json:"tis_or_trp_testing_completed"`
 }
 
 func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -41,16 +39,22 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAddModelInfo(req.VID, req.PID, req.CID, req.Name, req.Description, req.SKU, req.FirmwareVersion,
-			req.HardwareVersion, req.Custom, req.TisOrTrpTestingCompleted, req.Signer)
+		from, err := sdk.AccAddressFromBech32(baseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
 
-		err := msg.ValidateBasic()
+		msg := types.NewMsgAddModelInfo(req.VID, req.PID, req.CID, req.Name, req.Description, req.SKU, req.FirmwareVersion,
+			req.HardwareVersion, req.Custom, req.TisOrTrpTestingCompleted, from)
+
+		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		processMessage(cliCtx, w, req, msg)
+		processMessage(cliCtx, w, r, baseReq, msg, from)
 	}
 }
 
@@ -68,26 +72,33 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgUpdateModelInfo(req.VID, req.PID, req.Description, req.Custom, req.TisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+		from, err := sdk.AccAddressFromBech32(baseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
 
-		err := msg.ValidateBasic()
+		msg := types.NewMsgUpdateModelInfo(req.VID, req.PID, req.CID, req.Description, req.Custom, req.TisOrTrpTestingCompleted, from)
+
+		err = msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		processMessage(cliCtx, w, req, msg)
+		processMessage(cliCtx, w, r, baseReq, msg, from)
 	}
 }
 
-func processMessage(cliCtx context.CLIContext, w http.ResponseWriter, req ModelInfoRequest, msg sdk.Msg) {
-	if len(req.Passphrase) == 0 || len(req.Account) == 0 {
-		utils.WriteGenerateStdTxResponse(w, cliCtx, req.BaseReq, []sdk.Msg{msg})
+func processMessage(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, baseReq rest.BaseReq, msg sdk.Msg, signer sdk.AccAddress) {
+	account, passphrase, err := auth.GetCredentialsFromRequest(r)
+	if err != nil { // No credentials - just generate request message
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 		return
 	}
 
-	res, err_ := restutils.SignAndBroadcastMessage(cliCtx, req.Account, req.Passphrase, req.BaseReq.AccountNumber,
-		req.BaseReq.Sequence, req.BaseReq.ChainID, []sdk.Msg{msg})
+	// Credentials are found - sign and broadcast message
+	res, err_ := restutils.SignAndBroadcastMessage(cliCtx, baseReq.ChainID, signer, account, passphrase, []sdk.Msg{msg})
 	if err_ != nil {
 		rest.WriteErrorResponse(w, http.StatusInternalServerError, err_.Error())
 		return

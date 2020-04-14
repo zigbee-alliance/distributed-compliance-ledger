@@ -125,9 +125,17 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			var cid int16
+			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
+				cid, err = types.ParseCID(cidStr)
+				if err != nil {
+					return err
+				}
+			}
+
 			custom := viper.GetString(FlagCustom)
 
-			msg := types.NewMsgUpdateModelInfo(vid, pid, description, custom, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description, custom, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -137,6 +145,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagCID, "", "Model category ID")
 	cmd.Flags().String(FlagCustom, "", "Custom information")
 
 	return cmd

@@ -76,17 +76,19 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 type MsgUpdateModelInfo struct {
 	VID                      int16          `json:"vid"`
 	PID                      int16          `json:"pid"`
+	CID                      int16          `json:"cid"`
 	Description              string         `json:"description"`
 	Custom                   string         `json:"custom,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgUpdateModelInfo(vid int16, pid int16, description string, custom string,
+func NewMsgUpdateModelInfo(vid int16, pid int16, cid int16, description string, custom string,
 	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                      vid,
 		PID:                      pid,
+		CID:                      cid,
 		Description:              description,
 		Custom:                   custom,
 		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,

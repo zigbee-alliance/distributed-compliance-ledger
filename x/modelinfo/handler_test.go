@@ -105,6 +105,31 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 	require.Equal(t, sdk.CodeUnauthorized, result.Code)
 }
 
+func TestHandler_PartiallyUpdateModel(t *testing.T) {
+	setup := Setup()
+	owner := setup.Vendor(test_constants.Address1)
+
+	// add new model
+	msgAddModelInfo := TestMsgAddModelInfo(owner)
+	result := setup.Handler(setup.Ctx, msgAddModelInfo)
+
+	// owner update Description of existing model
+	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(owner)
+	msgUpdatedModelInfo.Description = "New Description"
+	msgUpdatedModelInfo.Custom = ""
+	msgUpdatedModelInfo.CID = 0
+	result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
+	require.Equal(t, sdk.CodeOK, result.Code)
+
+	// query model
+	receivedModelInfo := queryModelInfo(setup, msgUpdatedModelInfo.VID, msgUpdatedModelInfo.PID)
+
+	// check
+	require.Equal(t, receivedModelInfo.Description, msgUpdatedModelInfo.Description)
+	require.Equal(t, receivedModelInfo.Custom, msgAddModelInfo.Custom)
+	require.Equal(t, receivedModelInfo.CID, msgAddModelInfo.CID)
+}
+
 func queryModelInfo(setup TestSetup, vid int16, pid int16) types.ModelInfo {
 	result, _ := setup.Querier(
 		setup.Ctx,

@@ -92,6 +92,7 @@ func TestMsgUpdatedModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                      test_constants.VID,
 		PID:                      test_constants.PID,
+		CID:                      test_constants.CID + 1,
 		Description:              "New Description",
 		Custom:                   "New Custom Data",
 		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
