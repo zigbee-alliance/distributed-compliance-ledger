@@ -400,7 +400,24 @@ Gets all Model Infos for all vendors.
     -   `zblcli query modelinfo all-models ...`
 - REST API: 
     -   GET `/modelinfo/models`
-    
+```json
+{
+  "height": string,
+  "result": {
+    "total": string,
+    "items": [
+      {
+        "vid": 16 bits int,
+        "pid": 16 bits int,
+        "name": string,
+        "owner": string,
+        "sku": string
+      }
+    ]
+  }
+}
+```
+
 #### GET_VENDOR_MODEL_INFO
 Gets all Model Info by the given Vendor (`vid`).
 
@@ -410,7 +427,24 @@ Gets all Model Info by the given Vendor (`vid`).
     -   `zblcli query modelinfo vendor-models .... `
 - REST API: 
     -   GET `/modelinfo/models/vid`
-    
+- Result
+```json
+{
+  "height": string,
+  "result": {
+    "vid": 16 bits int,
+    "products": [
+      {
+        "pid": 16 bits int,
+        "name": string,
+        "owner": string,
+        "sku": string
+      }
+    ]
+  }
+}
+```
+
 #### GET_MODEL_INFO
 Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 
@@ -421,6 +455,25 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
     -   `zblcli query modelinfo model.... `
 - REST API: 
     -   GET `/modelinfo/models/vid/pid`
+- Result
+```json
+{
+  "height": string,
+  "result": {
+    "vid": 16 bits int,
+    "pid": 16 bits int,
+    "cid": (optional) 16 bits int,
+    "name": string,
+    "owner": string,
+    "description": string,
+    "sku": string,
+    "firmware_version": string,
+    "hardware_version": string,
+    "custom": (optional) string,
+    "tis_or_trp_testing_completed": bool
+  }
+}
+```
 
 #### GET_VENDORS    
 Get a list of all Vendors (`vid`s). 
@@ -430,6 +483,21 @@ Get a list of all Vendors (`vid`s).
     -   `zblcli query modelinfo vendors .... `
 - REST API: 
     -   GET `/modelinfo/vendors`
+- Result
+- Result:
+```json
+{
+  "height": string,
+  "result": {
+    "total": string,
+    "items": [
+      {
+        "vid": 16 bits int
+      }
+    ]
+  }
+}
+```
 
 ## TEST_DEVICE_COMPLIANCE
 
@@ -466,6 +534,23 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
     -   `zblcli query compliancetest test-result .... `
 - REST API: 
     -   GET `/compliancetest/testresults/vid/pid`
+- Result:
+```json
+{
+  "height": string,
+  "result": {
+    "vid": 16 bits int,
+    "pid": 16 bits int,
+    "results": [
+      {
+        "test_result": string,
+        "owner": string,
+        "created_at": datetime
+      }
+    ]
+  }
+}
+```
 
 ## CERTIFY_DEVICE_COMPLIANCE
 

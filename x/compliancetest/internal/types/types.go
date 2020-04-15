@@ -2,8 +2,8 @@ package types
 
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"time"
 )
 
 type TestingResult struct {
@@ -11,6 +11,7 @@ type TestingResult struct {
 	PID        int16          `json:"pid"`
 	TestResult string         `json:"test_result"`
 	Owner      sdk.AccAddress `json:"owner"`
+	CreatedAt  time.Time      `json:"created_at"` // creation time - sets automatically
 }
 
 func NewTestingResult(vid int16, pid int16, testResult string, owner sdk.AccAddress) TestingResult {
@@ -19,6 +20,7 @@ func NewTestingResult(vid int16, pid int16, testResult string, owner sdk.AccAddr
 		PID:        pid,
 		TestResult: testResult,
 		Owner:      owner,
+		CreatedAt:  time.Now(),
 	}
 }
 
@@ -59,28 +61,14 @@ func (d *TestingResults) AddTestingResult(testingResult TestingResult) {
 		TestingResultItem{
 			TestResult: testingResult.TestResult,
 			Owner:      testingResult.Owner,
+			CreatedAt:  testingResult.CreatedAt,
 		})
-}
-
-func (d *TestingResults) ContainsTestingResult(owner sdk.AccAddress) bool {
-	for _, item := range d.Results {
-		if item.Owner.Equals(owner) {
-			return true
-		}
-	}
-	return false
 }
 
 type TestingResultItem struct {
 	TestResult string         `json:"test_result"`
 	Owner      sdk.AccAddress `json:"owner"`
-}
-
-func NewTestingResultItem(testResult string, owner sdk.AccAddress) TestingResultItem {
-	return TestingResultItem{
-		TestResult: testResult,
-		Owner:      owner,
-	}
+	CreatedAt  time.Time      `json:"created_at"`
 }
 
 func (d TestingResultItem) String() string {
@@ -90,12 +78,4 @@ func (d TestingResultItem) String() string {
 	}
 
 	return string(bytes)
-}
-
-func ParseVID(str string) (int16, error) {
-	return conversions.ParseInt16FromString(str)
-}
-
-func ParsePID(str string) (int16, error) {
-	return conversions.ParseInt16FromString(str)
 }

@@ -35,10 +35,15 @@ func (m MsgAddTestingResult) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
-	if m.VID == 0 ||
-		m.PID == 0 ||
-		len(m.TestResult) == 0 {
-		return sdk.ErrUnknownRequest("VID, PID and TestResult cannot be empty")
+	if m.VID == 0 {
+		return sdk.ErrUnknownRequest("Invalid VID: it must be 16-bit integer")
+	}
+	if m.PID == 0 {
+		return sdk.ErrUnknownRequest("Invalid PID: it must be 16-bit integer")
+	}
+
+	if len(m.TestResult) == 0 {
+		return sdk.ErrUnknownRequest("Invalid TestResult: it cannot be empty")
 	}
 
 	return nil

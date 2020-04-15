@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -90,16 +89,4 @@ type Product struct {
 	Name  string         `json:"name"`
 	Owner sdk.AccAddress `json:"owner"`
 	SKU   string         `json:"sku"`
-}
-
-func ParseVID(str string) (int16, error) {
-	return conversions.ParseInt16FromString(str)
-}
-
-func ParsePID(str string) (int16, error) {
-	return conversions.ParseInt16FromString(str)
-}
-
-func ParseCID(str string) (int16, error) {
-	return conversions.ParseInt16FromString(str)
 }

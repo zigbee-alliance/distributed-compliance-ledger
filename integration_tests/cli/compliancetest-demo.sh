@@ -26,18 +26,27 @@ echo "$result"
 sleep 5
 
 echo "Add Testing Result for Model VID: $vid PID: $pid"
-testing_result="http://place.com"
+testing_result="http://first.place.com"
 result=$(echo "test1234" | zblcli tx compliancetest add-test-result $vid $pid "$testing_result" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-sleep 10
+sleep 5
+
+echo "Add Second Testing Result for Model VID: $vid PID: $pid"
+second_testing_result="http://second.place.com"
+result=$(echo "test1234" | zblcli tx compliancetest add-test-result $vid $pid "$second_testing_result" --from jack --yes)
+check_response "$result" "\"success\": true"
+echo "$result"
+
+sleep 5
 
 echo "Get Testing Result for Model with VID: ${vid} PID: ${pid}"
 result=$(zblcli query compliancetest test-result $vid $pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"test_result\": \"$testing_result\""
+check_response "$result" "\"test_result\": \"$second_testing_result\""
 echo "$result"
 
 sleep 5

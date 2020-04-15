@@ -31,7 +31,8 @@ func TestHandler_AddTestingResult(t *testing.T) {
 	require.Equal(t, receivedTestingResult.VID, vid)
 	require.Equal(t, receivedTestingResult.PID, pid)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
-	require.Equal(t, receivedTestingResult.Results[0], types.NewTestingResultItem(testingResult.TestResult, testingResult.Signer))
+	require.Equal(t, receivedTestingResult.Results[0].TestResult, testingResult.TestResult)
+	require.Equal(t, receivedTestingResult.Results[0].Owner, testingResult.Signer)
 }
 
 func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
@@ -86,7 +87,8 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 		require.Equal(t, receivedTestingResult.VID, vid)
 		require.Equal(t, receivedTestingResult.PID, pid)
 		require.Equal(t, i+1, len(receivedTestingResult.Results))
-		require.Equal(t, receivedTestingResult.Results[i], types.NewTestingResultItem(testingResult.TestResult, testingResult.Signer))
+		require.Equal(t, receivedTestingResult.Results[i].TestResult, testingResult.TestResult)
+		require.Equal(t, receivedTestingResult.Results[i].Owner, testingResult.Signer)
 	}
 }
 
@@ -110,7 +112,8 @@ func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 		require.Equal(t, receivedTestingResult.VID, vid)
 		require.Equal(t, receivedTestingResult.PID, pid)
 		require.Equal(t, 1, len(receivedTestingResult.Results))
-		require.Equal(t, receivedTestingResult.Results[0], types.NewTestingResultItem(testingResult.TestResult, testingResult.Signer))
+		require.Equal(t, receivedTestingResult.Results[0].Owner, testingResult.Signer)
+		require.Equal(t, receivedTestingResult.Results[0].TestResult, testingResult.TestResult)
 	}
 }
 
@@ -127,9 +130,15 @@ func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// add testing result second time
+	testingResult.TestResult = "Second Testing Result"
 	result = setup.Handler(setup.Ctx, testingResult)
-	require.Equal(t, types.CodeTestingResultAlreadyExists, result.Code)
+	require.Equal(t, sdk.CodeOK, result.Code)
 
+	// query testing result
+	receivedTestingResult := queryTestingResult(setup, vid, pid)
+
+	// check
+	require.Equal(t, 2, len(receivedTestingResult.Results))
 }
 
 func queryTestingResult(setup TestSetup, vid int16, pid int16) types.TestingResults {

@@ -109,6 +109,7 @@ Testing Result type:
 - PID: `int16`
 - TestResult: `string`
 - Owner: `bech32 encoded address`
+- CreatedAt: `datetime`
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.

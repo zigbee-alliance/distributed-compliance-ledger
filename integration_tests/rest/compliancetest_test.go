@@ -19,7 +19,7 @@ import (
 	TODO: prepare environment automatically
 */
 
-func TestCompliancetestDemo(t *testing.T) {
+func /*Test*/CompliancetestDemo(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo := utils.GetKeyInfo(test_constants.AccountName)
 

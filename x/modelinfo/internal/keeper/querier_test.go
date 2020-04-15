@@ -2,8 +2,8 @@ package keeper
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/test_constants"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"testing"

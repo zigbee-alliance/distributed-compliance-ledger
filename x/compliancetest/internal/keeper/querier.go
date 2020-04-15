@@ -1,8 +1,7 @@
 package keeper
 
 import (
-	"fmt"
-
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -25,14 +24,14 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 }
 
 func queryTestingResult(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	vid, err := types.ParseVID(path[0])
+	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse vid: %s", err))
+		return nil, err
 	}
 
-	pid, err := types.ParsePID(path[1])
+	pid, err := conversions.ParsePID(path[1])
 	if err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse pid: %s", err))
+		return nil, err
 	}
 
 	if !keeper.IsTestingResultsPresents(ctx, vid, pid) {
@@ -41,8 +40,8 @@ func queryTestingResult(ctx sdk.Context, path []string, req abci.RequestQuery, k
 
 	testingResult := keeper.GetTestingResults(ctx, vid, pid)
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, testingResult)
-	if err != nil {
+	res, err_ := codec.MarshalJSONIndent(keeper.cdc, testingResult)
+	if err_ != nil {
 		panic("could not marshal result to JSON")
 	}
 

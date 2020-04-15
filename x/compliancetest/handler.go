@@ -32,10 +32,6 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoK
 		return modelinfo.ErrModelInfoDoesNotExist().Result()
 	}
 
-	if keeper.IsTestingResultPresents(ctx, msg.VID, msg.PID, msg.Signer) {
-		return types.ErrTestingResultAlreadyExists().Result()
-	}
-
 	testingResult := types.NewTestingResult(
 		msg.VID,
 		msg.PID,
@@ -43,9 +39,7 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoK
 		msg.Signer,
 	)
 
-	if err := keeper.AddTestingResult(ctx, testingResult); err != nil {
-		return err.Result()
-	}
+	keeper.AddTestingResult(ctx, testingResult)
 
 	return sdk.Result{}
 }

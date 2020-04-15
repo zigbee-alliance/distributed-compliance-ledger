@@ -44,31 +44,19 @@ func (k Keeper) SetTestingResults(ctx sdk.Context, testingResult types.TestingRe
 }
 
 // Add single TestingResult for an existing TestingResults record
-func (k Keeper) AddTestingResult(ctx sdk.Context, testingResult types.TestingResult) sdk.Error {
+func (k Keeper) AddTestingResult(ctx sdk.Context, testingResult types.TestingResult) {
 	testingResults := k.GetTestingResults(ctx, testingResult.VID, testingResult.PID)
-
-	if testingResults.ContainsTestingResult(testingResult.Owner) {
-		return types.ErrTestingResultAlreadyExists()
-	}
 
 	testingResults.AddTestingResult(testingResult)
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(TestingResultId(testingResult.VID, testingResult.PID)), k.cdc.MustMarshalBinaryBare(testingResults))
-
-	return nil
 }
 
 // Check if the TestingResults record is present in the store or not
 func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid int16, pid int16) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has([]byte(TestingResultId(vid, pid)))
-}
-
-// Check if the particular TestingResult is present in the store or not
-func (k Keeper) IsTestingResultPresents(ctx sdk.Context, vid int16, pid int16, owner sdk.AccAddress) bool {
-	testingResults := k.GetTestingResults(ctx, vid, pid)
-	return testingResults.ContainsTestingResult(owner)
 }
 
 // Iterate over all TestingResults records

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/spf13/cobra"
 
@@ -38,12 +39,12 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			vid, err := types.ParseVID(args[0])
+			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
 				return err
 			}
 
-			pid, err := types.ParsePID(args[1])
+			pid, err := conversions.ParsePID(args[1])
 			if err != nil {
 				return err
 			}
