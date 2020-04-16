@@ -4,7 +4,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -17,9 +16,10 @@ import (
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
 	TODO: prepare environment automatically
+	TODO: provide tests for error cases
 */
 
-func /*Test*/ModelinfoDemo(t *testing.T) {
+func /*TestModelinfo*/Demo(t *testing.T) {
 	// Get all model infos
 	inputModelInfos := utils.GetModelInfos()
 
@@ -36,21 +36,8 @@ func /*Test*/ModelinfoDemo(t *testing.T) {
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
 
 	// Prepare model info
-	VID := int16(utils.RandInt())
-
-	firstModelInfo := modelinfo.NewMsgAddModelInfo(
-		VID,
-		int16(utils.RandInt()),
-		int16(utils.RandInt()),
-		utils.RandString(),
-		test_constants.Description,
-		test_constants.Sku,
-		test_constants.FirmwareVersion,
-		test_constants.HardwareVersion,
-		test_constants.Custom,
-		test_constants.TisOrTrpTestingCompleted,
-		jackAccountInfo.Address,
-	)
+	firstModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
+	VID := firstModelInfo.VID
 
 	// Sign and Broadcast AddModelInfo message
 	utils.SignAndBroadcastMessage(jackKeyInfo, firstModelInfo)
@@ -62,9 +49,9 @@ func /*Test*/ModelinfoDemo(t *testing.T) {
 	require.Equal(t, receivedModelInfo.Name, firstModelInfo.Name)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
-	secondModelInfo := utils.NewModelInfo(jackAccountInfo.Address)
+	secondModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
 	secondModelInfo.VID = VID // Set same Vendor as for the first model
-	utils.PublishModelInfo(jackAccountInfo.Address, secondModelInfo)
+	utils.PublishModelInfo(secondModelInfo)
 
 	// Check model is created
 	receivedModelInfo = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)

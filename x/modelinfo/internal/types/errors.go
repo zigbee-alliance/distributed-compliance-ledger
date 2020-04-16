@@ -1,6 +1,9 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
+import (
+	"fmt"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 const (
 	Codespace sdk.CodespaceType = ModuleName
@@ -10,14 +13,17 @@ const (
 	CodeVendorProductsDoNotExist sdk.CodeType = 103
 )
 
-func ErrModelInfoAlreadyExists() sdk.Error {
-	return sdk.NewError(Codespace, CodeModelInfoAlreadyExists, "ModelInfo already exists")
+func ErrModelInfoAlreadyExists(vid interface{}, pid interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeModelInfoAlreadyExists,
+		fmt.Sprintf("Model info associated with the vid=%v and pid=%v already exists on the ledger", vid, pid))
 }
 
-func ErrModelInfoDoesNotExist() sdk.Error {
-	return sdk.NewError(Codespace, CodeModelInfoDoesNotExist, "ModelInfo does not exist")
+func ErrModelInfoDoesNotExist(vid interface{}, pid interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeModelInfoDoesNotExist,
+		fmt.Sprintf("No model info associated with the vid=%v and pid=%v on the ledger", vid, pid))
 }
 
-func ErrVendorProductsDoNotExist() sdk.Error {
-	return sdk.NewError(Codespace, CodeVendorProductsDoNotExist, "Vendor Products do not exist")
+func ErrVendorProductsDoNotExist(vid interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeVendorProductsDoNotExist,
+		fmt.Sprintf("No models associated with the vid=%v on the ledger", vid))
 }

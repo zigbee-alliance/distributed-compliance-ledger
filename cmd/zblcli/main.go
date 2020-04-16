@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/tendermint/go-amino"
 	"os"
 	"path"
 
@@ -20,7 +21,6 @@ import (
 	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	amino "github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 )
 

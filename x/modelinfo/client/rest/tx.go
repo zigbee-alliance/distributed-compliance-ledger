@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	restutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/tx/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -26,9 +27,10 @@ type ModelInfoRequest struct {
 
 func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
 		var req ModelInfoRequest
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
 
@@ -39,7 +41,7 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		from, err := sdk.AccAddressFromBech32(baseReq.From)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
 			return
 		}
 
@@ -52,10 +54,11 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
 		var req ModelInfoRequest
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
 
@@ -66,7 +69,7 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		from, err := sdk.AccAddressFromBech32(baseReq.From)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
 			return
 		}
 

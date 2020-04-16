@@ -65,7 +65,7 @@ func DefaultModelInfo() types.ModelInfo {
 }
 
 // add 10 models with same VID and check associated products {VID: 1, PID: 1..count}
-func PopulateStoreWithWithModelsHavingSameVendor(setup TestSetup, count int) int16 {
+func PopulateStoreWithModelsHavingSameVendor(setup TestSetup, count int) int16 {
 	firstId := int16(1)
 
 	modelInfo := DefaultModelInfo()
@@ -80,7 +80,7 @@ func PopulateStoreWithWithModelsHavingSameVendor(setup TestSetup, count int) int
 }
 
 // add 10 models with same VID and check associated products {VID: 1..count, PID: 1..count}
-func PopulateStoreWithWithModelsHavingDifferentVendor(setup TestSetup, count int) int16 {
+func PopulateStoreWithModelsHavingDifferentVendor(setup TestSetup, count int) int16 {
 	firstId := int16(1)
 
 	modelInfo := DefaultModelInfo()

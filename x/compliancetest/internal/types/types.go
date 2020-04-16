@@ -9,18 +9,18 @@ import (
 type TestingResult struct {
 	VID        int16          `json:"vid"`
 	PID        int16          `json:"pid"`
-	TestResult string         `json:"test_result"`
 	Owner      sdk.AccAddress `json:"owner"`
-	CreatedAt  time.Time      `json:"created_at"` // creation time - sets automatically
+	TestResult string         `json:"test_result"`
+	TestDate   time.Time      `json:"test_date"` // rfc3339 encoded date
 }
 
-func NewTestingResult(vid int16, pid int16, testResult string, owner sdk.AccAddress) TestingResult {
+func NewTestingResult(vid int16, pid int16, owner sdk.AccAddress, testResult string, testDate time.Time) TestingResult {
 	return TestingResult{
 		VID:        vid,
 		PID:        pid,
-		TestResult: testResult,
 		Owner:      owner,
-		CreatedAt:  time.Now(),
+		TestResult: testResult,
+		TestDate:   testDate,
 	}
 }
 
@@ -61,14 +61,14 @@ func (d *TestingResults) AddTestingResult(testingResult TestingResult) {
 		TestingResultItem{
 			TestResult: testingResult.TestResult,
 			Owner:      testingResult.Owner,
-			CreatedAt:  testingResult.CreatedAt,
+			TestDate:   testingResult.TestDate,
 		})
 }
 
 type TestingResultItem struct {
-	TestResult string         `json:"test_result"`
 	Owner      sdk.AccAddress `json:"owner"`
-	CreatedAt  time.Time      `json:"created_at"`
+	TestResult string         `json:"test_result"`
+	TestDate   time.Time      `json:"test_date"` // rfc3339 encoded date
 }
 
 func (d TestingResultItem) String() string {

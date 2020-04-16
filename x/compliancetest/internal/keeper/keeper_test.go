@@ -25,11 +25,10 @@ func TestKeeper_TestingResultGetSet(t *testing.T) {
 
 	// get testing results
 	receivedTestingResult = setup.CompliancetestKeeper.GetTestingResults(setup.Ctx, test_constants.VID, test_constants.PID)
-	require.Equal(t, test_constants.VID, receivedTestingResult.VID)
-	require.Equal(t, test_constants.PID, receivedTestingResult.PID)
+	require.Equal(t, receivedTestingResult.VID, test_constants.VID)
+	require.Equal(t, receivedTestingResult.PID, test_constants.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
-	require.Equal(t, receivedTestingResult.Results[0].Owner, testingResult.Owner)
-	require.Equal(t, receivedTestingResult.Results[0].TestResult, testingResult.TestResult)
+	CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 
 	// add second testing result
 	secondTestingResult := DefaultTestingResult()
@@ -39,11 +38,9 @@ func TestKeeper_TestingResultGetSet(t *testing.T) {
 
 	// get testing results
 	receivedTestingResult = setup.CompliancetestKeeper.GetTestingResults(setup.Ctx, test_constants.VID, test_constants.PID)
-	require.Equal(t, test_constants.VID, receivedTestingResult.VID)
-	require.Equal(t, test_constants.PID, receivedTestingResult.PID)
+	require.Equal(t, receivedTestingResult.VID, test_constants.VID)
+	require.Equal(t, receivedTestingResult.PID, test_constants.PID)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
-	require.Equal(t, receivedTestingResult.Results[0].Owner, testingResult.Owner)
-	require.Equal(t, receivedTestingResult.Results[0].TestResult, testingResult.TestResult)
-	require.Equal(t, receivedTestingResult.Results[1].Owner, secondTestingResult.Owner)
-	require.Equal(t, receivedTestingResult.Results[1].TestResult, secondTestingResult.TestResult)
+	CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
+	CheckTestingResult(t, receivedTestingResult.Results[1], secondTestingResult)
 }

@@ -9,21 +9,21 @@ const (
 	ModuleName = types.ModuleName
 	RouterKey  = types.RouterKey
 	StoreKey   = types.StoreKey
+	CodeTestingResultDoesNotExist = types.CodeTestingResultsDoNotExist
 )
 
 var (
-	NewKeeper              = keeper.NewKeeper
-	NewQuerier             = keeper.NewQuerier
-	NewMsgAddTestingResult = types.NewMsgAddTestingResult
-	NewTestingResult       = types.NewTestingResult
-	ModuleCdc              = types.ModuleCdc
-	RegisterCodec          = types.RegisterCodec
+	NewKeeper                     = keeper.NewKeeper
+	NewQuerier                    = keeper.NewQuerier
+	NewMsgAddTestingResult        = types.NewMsgAddTestingResult
+	ModuleCdc                     = types.ModuleCdc
+	RegisterCodec                 = types.RegisterCodec
+	ErrTestingResultDoesNotExist  = types.ErrTestingResultDoesNotExist
 )
 
 type (
 	Keeper              = keeper.Keeper
 	MsgAddTestingResult = types.MsgAddTestingResult
-	TestingResult       = types.TestingResult
 	TestingResults      = types.TestingResults
-	TestingResultItem   = types.TestingResultItem
+	TestingResult       = types.TestingResult
 )

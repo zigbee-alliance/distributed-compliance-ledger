@@ -3,6 +3,7 @@ package keeper
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -55,10 +56,10 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	count := 5
 
 	// add 5 models
-	firstId := PopulateStoreWithWithModelsHavingDifferentVendor(setup, count)
+	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	// query all models
-	params := types.NewPaginationParams(0, 0)
+	params := pagination.NewPaginationParams(0, 0)
 	receiveModelInfos := getModels(setup, params)
 
 	// check
@@ -76,12 +77,12 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	count := 5
 
 	// add 5 models
-	firstId := PopulateStoreWithWithModelsHavingDifferentVendor(setup, count)
+	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	// query all models skip=1 take=2
 	skip := 1
 	take := 2
-	params := types.NewPaginationParams(skip, take)
+	params := pagination.NewPaginationParams(skip, take)
 	receiveModelInfos := getModels(setup, params)
 
 	// check
@@ -99,9 +100,9 @@ func TestQuerier_QueryVendorsForModelsHaveDifferentVendors(t *testing.T) {
 	count := 5
 
 	// add 5 models with different vendors
-	firstId := PopulateStoreWithWithModelsHavingDifferentVendor(setup, count)
+	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
-	params := types.NewPaginationParams(0, 0)
+	params := pagination.NewPaginationParams(0, 0)
 
 	// query all vendors
 	receiveModelInfos := getVendors(setup, params)
@@ -120,9 +121,9 @@ func TestQuerier_QueryVendorsForModelsHaveSameVendor(t *testing.T) {
 	count := 5
 
 	// add 5 models with same vendors
-	firstId := PopulateStoreWithWithModelsHavingSameVendor(setup, count)
+	firstId := PopulateStoreWithModelsHavingSameVendor(setup, count)
 
-	params := types.NewPaginationParams(0, 0)
+	params := pagination.NewPaginationParams(0, 0)
 
 	// query all vendors
 	receiveModelInfos := getVendors(setup, params)
@@ -139,11 +140,11 @@ func TestQuerier_QueryVendorsWithPaginationHeaders(t *testing.T) {
 	count := 5
 
 	// add 5 models with different vendor
-	firstId := PopulateStoreWithWithModelsHavingDifferentVendor(setup, count)
+	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	skip := 1
 	take := 2
-	params := types.NewPaginationParams(skip, take)
+	params := pagination.NewPaginationParams(skip, take)
 
 	// query vendors skip=1, take=2
 	receiveModelInfos := getVendors(setup, params)
@@ -162,7 +163,7 @@ func TestQuerier_QueryVendorModels(t *testing.T) {
 	count := 5
 
 	// add 5 models with same vendors
-	firstId := PopulateStoreWithWithModelsHavingSameVendor(setup, count)
+	firstId := PopulateStoreWithModelsHavingSameVendor(setup, count)
 
 	// query all models
 	receivedVendorModels := getVendorModels(setup, firstId)
@@ -175,7 +176,7 @@ func TestQuerier_QueryVendorModels(t *testing.T) {
 	}
 }
 
-func getModels(setup TestSetup, params types.PaginationParams) types.LisModelInfoItems {
+func getModels(setup TestSetup, params pagination.PaginationParams) types.LisModelInfoItems {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryAllModels},
@@ -188,7 +189,7 @@ func getModels(setup TestSetup, params types.PaginationParams) types.LisModelInf
 	return receiveModelInfos
 }
 
-func getVendors(setup TestSetup, params types.PaginationParams) types.ListVendorItems {
+func getVendors(setup TestSetup, params pagination.PaginationParams) types.ListVendorItems {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryVendors},

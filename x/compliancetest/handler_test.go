@@ -31,8 +31,7 @@ func TestHandler_AddTestingResult(t *testing.T) {
 	require.Equal(t, receivedTestingResult.VID, vid)
 	require.Equal(t, receivedTestingResult.PID, pid)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
-	require.Equal(t, receivedTestingResult.Results[0].TestResult, testingResult.TestResult)
-	require.Equal(t, receivedTestingResult.Results[0].Owner, testingResult.Signer)
+	CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 }
 
 func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
@@ -87,8 +86,7 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 		require.Equal(t, receivedTestingResult.VID, vid)
 		require.Equal(t, receivedTestingResult.PID, pid)
 		require.Equal(t, i+1, len(receivedTestingResult.Results))
-		require.Equal(t, receivedTestingResult.Results[i].TestResult, testingResult.TestResult)
-		require.Equal(t, receivedTestingResult.Results[i].Owner, testingResult.Signer)
+		CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 	}
 }
 
@@ -112,8 +110,7 @@ func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 		require.Equal(t, receivedTestingResult.VID, vid)
 		require.Equal(t, receivedTestingResult.PID, pid)
 		require.Equal(t, 1, len(receivedTestingResult.Results))
-		require.Equal(t, receivedTestingResult.Results[0].Owner, testingResult.Signer)
-		require.Equal(t, receivedTestingResult.Results[0].TestResult, testingResult.TestResult)
+		CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 	}
 }
 

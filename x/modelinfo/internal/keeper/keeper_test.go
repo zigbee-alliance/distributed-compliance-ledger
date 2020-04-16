@@ -38,7 +38,7 @@ func TestKeeper_ModelInfoIterator(t *testing.T) {
 	count := 10
 
 	// add 10 models infos with same VID and check associated products
-	PopulateStoreWithWithModelsHavingSameVendor(setup, count)
+	PopulateStoreWithModelsHavingSameVendor(setup, count)
 
 	// get total count
 	totalModes := setup.ModelinfoKeeper.CountTotalModelInfos(setup.Ctx)
@@ -130,7 +130,7 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 func TestKeeper_VendorProductsOverTwoModelsWithDifferentVendor(t *testing.T) {
 	setup := Setup()
 
-	PopulateStoreWithWithModelsHavingDifferentVendor(setup, 2)
+	PopulateStoreWithModelsHavingDifferentVendor(setup, 2)
 
 	// check vendor products for first device
 	vendorProductsForModel1 := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, 1)
@@ -148,7 +148,7 @@ func TestKeeper_VendorProductsIteratorOverOneVendor(t *testing.T) {
 
 	// add 10 model infos with same Vendor
 	expectedLen := 1
-	PopulateStoreWithWithModelsHavingSameVendor(setup, 10)
+	PopulateStoreWithModelsHavingSameVendor(setup, 10)
 
 	// get total count
 	totalVendorProducts := setup.ModelinfoKeeper.CountTotalVendorProducts(setup.Ctx)
@@ -169,7 +169,7 @@ func TestKeeper_VendorProductsIteratorOverDifferentVendors(t *testing.T) {
 
 	// add 10 model infos with different Vendors
 	count := 10
-	PopulateStoreWithWithModelsHavingDifferentVendor(setup, count)
+	PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	// get total count
 	totalVendorProducts := setup.ModelinfoKeeper.CountTotalVendorProducts(setup.Ctx)

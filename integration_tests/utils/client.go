@@ -15,15 +15,20 @@ func BuildUrl(uri string) string {
 }
 
 func SendGetRequest(uri string) []byte {
-	resp, _ := http.Get(BuildUrl(uri))
-	response := ReadResponseBody(resp)
-	println(string(response))
-	return response
+	return sendRequest(uri, "GET", []byte{}, "", "")
 }
 
 func SendPostRequest(uri string, body []byte, account string, passphrase string) []byte {
+	return sendRequest(uri, "POST", body, account, passphrase)
+}
+
+func SendPutRequest(uri string, body []byte, account string, passphrase string) []byte {
+	return sendRequest(uri, "PUT", body, account, passphrase)
+}
+
+func sendRequest(uri string, method string, body []byte, account string, passphrase string) []byte {
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", BuildUrl(uri), bytes.NewBuffer(body))
+	req, _ := http.NewRequest(method, BuildUrl(uri), bytes.NewBuffer(body))
 	if len(account) != 0 && len(passphrase) != 0 {
 		req.SetBasicAuth(account, passphrase)
 	}

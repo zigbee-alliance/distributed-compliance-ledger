@@ -5,10 +5,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	"testing"
+	"time"
 )
 
 func TestNewMsgAddTestingResult(t *testing.T) {
-	var msg = NewMsgAddTestingResult(test_constants.VID, test_constants.PID, test_constants.TestResult, test_constants.Signer)
+	var msg = NewMsgAddTestingResult(test_constants.VID, test_constants.PID, test_constants.TestResult,
+		test_constants.TestDate, test_constants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "add_testing_result")
@@ -21,13 +23,17 @@ func TestMsgAddTestingResultValidation(t *testing.T) {
 		msg   MsgAddTestingResult
 	}{
 		{true, NewMsgAddTestingResult(
-			test_constants.VID, test_constants.PID, test_constants.TestResult, test_constants.Signer)},
+			test_constants.VID, test_constants.PID, test_constants.TestResult, test_constants.TestDate, test_constants.Signer)},
 		{false, NewMsgAddTestingResult(
-			0, test_constants.PID, test_constants.TestResult, test_constants.Signer)},
+			0, test_constants.PID, test_constants.TestResult, test_constants.TestDate, test_constants.Signer)},
 		{false, NewMsgAddTestingResult(
-			test_constants.VID, 0, test_constants.TestResult, test_constants.Signer)},
+			test_constants.VID, 0, test_constants.TestResult, test_constants.TestDate, test_constants.Signer)},
 		{false, NewMsgAddTestingResult(
-			test_constants.VID, test_constants.PID, test_constants.TestResult, nil)},
+			test_constants.VID, test_constants.PID, "", test_constants.TestDate, test_constants.Signer)},
+		{false, NewMsgAddTestingResult(
+			test_constants.VID, test_constants.PID, test_constants.TestResult, time.Time{}, test_constants.Signer)},
+		{false, NewMsgAddTestingResult(
+			test_constants.VID, test_constants.PID, test_constants.TestResult, test_constants.TestDate, nil)},
 	}
 
 	for _, tc := range cases {
@@ -41,7 +47,8 @@ func TestMsgAddTestingResultValidation(t *testing.T) {
 }
 
 func TestMsgAddTestingResultGetSignBytes(t *testing.T) {
-	var msg = NewMsgAddTestingResult(test_constants.VID, test_constants.PID, test_constants.TestResult, test_constants.Signer)
+	var msg = NewMsgAddTestingResult(test_constants.VID, test_constants.PID, test_constants.TestResult,
+		test_constants.TestDate, test_constants.Signer)
 	res := msg.GetSignBytes()
 
 	expected := `{"type":"compliancetest/AddTestingResult","value":{"pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +

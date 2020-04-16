@@ -35,7 +35,7 @@ func queryTestingResult(ctx sdk.Context, path []string, req abci.RequestQuery, k
 	}
 
 	if !keeper.IsTestingResultsPresents(ctx, vid, pid) {
-		return nil, types.ErrTestingResultDoesNotExist()
+		return nil, types.ErrTestingResultDoesNotExist(vid, pid)
 	}
 
 	testingResult := keeper.GetTestingResults(ctx, vid, pid)
