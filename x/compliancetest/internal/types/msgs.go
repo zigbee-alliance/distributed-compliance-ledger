@@ -36,14 +36,14 @@ func (m MsgAddTestingResult) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be not zero 16-bit integer")
 	}
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be not zero 16-bit integer")
 	}
 
 	if len(m.TestResult) == 0 {
-		return sdk.ErrUnknownRequest("Invalid TestResult: it cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid TestResult: it not zero cannot be empty")
 	}
 
 	return nil

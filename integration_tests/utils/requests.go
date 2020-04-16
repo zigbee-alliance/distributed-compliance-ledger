@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
-	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
+	complianceRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
-	complianceRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/rest"
+	compliancetestRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	modelinfoRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/rest"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -36,7 +38,7 @@ func GetAccountInfo(address sdk.AccAddress) AccountInfo {
 	response := SendGetRequest(uri)
 
 	var result AccountInfo
-	_ = json.Unmarshal(responseResult(response), &result)
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result
 }
@@ -47,13 +49,13 @@ func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) {
 	BroadcastMessage(signResponse)
 }
 
-func PublishModelInfo(address sdk.AccAddress, model modelinfo.ModelInfo) json.RawMessage {
+func PublishModelInfo(model modelinfo.MsgAddModelInfo) json.RawMessage {
 	println("Publish Model Info")
 
 	request := modelinfoRest.ModelInfoRequest{
 		BaseReq: rest.BaseReq{
-			ChainID: test_constants.ChainId,
-			From:    address.String(),
+			ChainID: constants.ChainId,
+			From:    model.Signer.String(),
 		},
 		VID:                      model.VID,
 		PID:                      model.PID,
@@ -70,16 +72,15 @@ func PublishModelInfo(address sdk.AccAddress, model modelinfo.ModelInfo) json.Ra
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
-	response := SendPostRequest(uri, body, test_constants.AccountName, test_constants.AccountPassphrase)
-	result := responseResult(response)
-	return result
+	response := SendPostRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
+	return removeResponseWrapper(response)
 }
 
 func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) interface{} {
 	println("Sign Message")
 
 	stdSigMsg := types.StdSignMsg{
-		ChainID:       test_constants.ChainId,
+		ChainID:       constants.ChainId,
 		AccountNumber: ParseUint(accountInfo.AccountNumber),
 		Sequence:      ParseUint(accountInfo.Sequence),
 		Fee:           types.StdFee{Gas: 200000},
@@ -88,11 +89,11 @@ func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) i
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
 
-	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, test_constants.AccountPassphrase)
+	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, constants.AccountPassphrase)
 	response := SendPostRequest(uri, body, "", "")
 
 	var result interface{}
-	_ = json.Unmarshal(responseResult(response), &result)
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result
 }
@@ -113,7 +114,7 @@ func GetModelInfo(vid int16, pid int16) modelinfo.ModelInfo {
 	response := SendGetRequest(uri)
 
 	var result modelinfo.ModelInfo
-	_ = json.Unmarshal(responseResult(response), &result)
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result
 }
@@ -125,7 +126,7 @@ func GetModelInfos() ModelInfoHeadersResult {
 	response := SendGetRequest(uri)
 
 	var result ModelInfoHeadersResult
-	_ = json.Unmarshal(responseResult(response), &result)
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result
 }
@@ -137,7 +138,7 @@ func GetVendors() VendorItemHeadersResult {
 	response := SendGetRequest(uri)
 
 	var result VendorItemHeadersResult
-	_ = json.Unmarshal(responseResult(response), &result)
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result
 }
@@ -149,18 +150,18 @@ func GetVendorModels(vid int16) modelinfo.VendorProducts {
 	response := SendGetRequest(uri)
 
 	var result modelinfo.VendorProducts
-	_ = json.Unmarshal(responseResult(response), &result)
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result
 }
 
-func PublishTestingResult(address sdk.AccAddress, testingResult compliancetest.TestingResult) json.RawMessage {
+func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) json.RawMessage {
 	println("Publish Testing Result")
 
-	request := complianceRest.TestingResultRequest{
+	request := compliancetestRest.TestingResultRequest{
 		BaseReq: rest.BaseReq{
-			ChainID: test_constants.ChainId,
-			From:    address.String(),
+			ChainID: constants.ChainId,
+			From:    testingResult.Signer.String(),
 		},
 		VID:        testingResult.VID,
 		PID:        testingResult.PID,
@@ -170,9 +171,8 @@ func PublishTestingResult(address sdk.AccAddress, testingResult compliancetest.T
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", compliancetest.RouterKey, "testresults")
-	response := SendPostRequest(uri, body, test_constants.AccountName, test_constants.AccountPassphrase)
-	result := responseResult(response)
-	return result
+	response := SendPostRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
+	return removeResponseWrapper(response)
 }
 
 func GetTestingResult(vid int16, pid int16) compliancetest.TestingResults {
@@ -182,7 +182,7 @@ func GetTestingResult(vid int16, pid int16) compliancetest.TestingResults {
 	response := SendGetRequest(uri)
 
 	var result compliancetest.TestingResults
-	_ = json.Unmarshal(responseResult(response), &result)
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result
 }
@@ -199,23 +199,77 @@ func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role authz.Account
 	SignAndBroadcastMessage(sender, newMsgAssignRole)
 }
 
-func NewModelInfo(owner sdk.AccAddress) modelinfo.ModelInfo {
-	return modelinfo.NewModelInfo(
+func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) json.RawMessage {
+	println("Publish Certified Model")
+
+	request := complianceRest.CertifiedModelRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainId,
+			From:    certifyModel.Signer.String(),
+		},
+		VID:               certifyModel.VID,
+		PID:               certifyModel.PID,
+		CertificationDate: certifyModel.CertificationDate,
+		CertificationType: certifyModel.CertificationType,
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", compliance.RouterKey, "certified")
+	response := SendPostRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
+	return removeResponseWrapper(response)
+}
+
+func GetCertifiedModel(vid int16, pid int16) compliance.CertifiedModel {
+	println(fmt.Sprintf("Get Certification Data for Model with VID:%v PID:%v", vid, pid))
+
+	uri := fmt.Sprintf("%s/%s/%v/%v", compliance.RouterKey, "certified", vid, pid)
+	response := SendGetRequest(uri)
+
+	var result compliance.CertifiedModel
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
+
+	return result
+}
+
+func GetAllCertifiedModels() CertifiedModelsHeadersResult {
+	println("Get all certified models")
+
+	uri := fmt.Sprintf("%s/%s", compliance.RouterKey, "certified")
+	response := SendGetRequest(uri)
+
+	var result CertifiedModelsHeadersResult
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
+
+	return result
+}
+
+func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
+	return modelinfo.NewMsgAddModelInfo(
 		int16(RandInt()),
 		int16(RandInt()),
-		test_constants.CID,
-		test_constants.Name,
+		constants.CID,
+		RandString(),
+		RandString(),
+		RandString(),
+		constants.FirmwareVersion,
+		constants.HardwareVersion,
+		RandString(),
+		constants.TisOrTrpTestingCompleted,
 		owner,
-		test_constants.Description,
-		test_constants.Sku,
-		test_constants.FirmwareVersion,
-		test_constants.HardwareVersion,
-		test_constants.Custom,
-		test_constants.TisOrTrpTestingCompleted,
 	)
 }
 
-func responseResult(response []byte) json.RawMessage {
+func NewMsgAddTestingResult(vid int16, pid int16, owner sdk.AccAddress) compliancetest.MsgAddTestingResult {
+	return compliancetest.NewMsgAddTestingResult(
+		vid,
+		pid,
+		RandString(),
+		owner,
+	)
+}
+
+func removeResponseWrapper(response []byte) json.RawMessage {
 	var responseWrapper ResponseWrapper
 	_ = json.Unmarshal(response, &responseWrapper)
 	return responseWrapper.Result

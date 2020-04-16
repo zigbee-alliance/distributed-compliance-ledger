@@ -5,16 +5,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// Request Payload for a list query with pagination
-type PaginationParams struct {
-	Skip int
-	Take int
-}
-
-func NewPaginationParams(skip int, take int) PaginationParams {
-	return PaginationParams{Skip: skip, Take: take}
-}
-
 // Response Payload for a list query with pagination
 type LisModelInfoItems struct {
 	Total int             `json:"total"`

@@ -4,7 +4,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -27,20 +26,14 @@ func /*Test*/CompliancetestDemo(t *testing.T) {
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
 
 	// Publish model info
-	modelInfo := utils.NewModelInfo(jackKeyInfo.Address)
-	utils.PublishModelInfo(jackKeyInfo.Address, modelInfo)
+	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
+	utils.PublishModelInfo(modelInfo)
 
 	//Assign TestHouse role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.TestHouse)
 
 	// Publish first testing result using Sign and Broadcast AddTestingResult message
-	firstTestingResult := compliancetest.NewMsgAddTestingResult(
-		modelInfo.VID,
-		modelInfo.PID,
-		utils.RandString(),
-		jackKeyInfo.Address,
-	)
-
+	firstTestingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, jackKeyInfo.Address)
 	utils.SignAndBroadcastMessage(jackKeyInfo, firstTestingResult)
 
 	// Check testing result is created
@@ -52,18 +45,12 @@ func /*Test*/CompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.Results[0].Owner, firstTestingResult.Signer)
 
 	// Publish second model info
-	secondModelInfo := utils.NewModelInfo(jackKeyInfo.Address)
-	utils.PublishModelInfo(jackKeyInfo.Address, secondModelInfo)
+	secondModelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
+	utils.PublishModelInfo(secondModelInfo)
 
 	// Publish second testing result using POST
-	secondTestingResult := compliancetest.NewTestingResult(
-		secondModelInfo.VID,
-		secondModelInfo.PID,
-		utils.RandString(),
-		jackKeyInfo.Address,
-	)
-
-	utils.PublishTestingResult(jackKeyInfo.Address, secondTestingResult)
+	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, jackKeyInfo.Address)
+	utils.PublishTestingResult(secondTestingResult)
 
 	// Check testing result is created
 	receivedTestingResult = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
@@ -71,5 +58,5 @@ func /*Test*/CompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.PID, secondTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)
-	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Owner)
+	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
 }

@@ -19,6 +19,7 @@ type TestingResultRequest struct {
 
 func addTestingResultHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
 		var req TestingResultRequest
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {

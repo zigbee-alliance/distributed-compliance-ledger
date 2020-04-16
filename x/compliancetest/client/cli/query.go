@@ -42,7 +42,6 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			res, height, err := cliCtx.QueryStore([]byte(keeper.TestingResultId(vid, pid)), queryRoute)
 			if err != nil || res == nil {
 				return sdk.ErrInternal(fmt.Sprintf("Could not query testing result VID:%v PID:%v", vid, pid))
-				return nil
 			}
 
 			var testingResult types.TestingResults
@@ -51,7 +50,6 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			out, err := json.Marshal(testingResult)
 			if err != nil {
 				return sdk.ErrInternal(fmt.Sprintf("Could not query testing result VID:%v PID:%v", vid, pid))
-				return nil
 			}
 
 			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))

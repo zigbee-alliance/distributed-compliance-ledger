@@ -582,7 +582,7 @@ from the revocation list.
 - CLI command: 
     -   `zblcli tx compliance certify-model .... `
 - REST API: 
-    -   PUT `/compliance/certified/vid/pid`
+    -   POST `/compliance/certified/vid/pid`
     
 #### REVOKE_MODEL_CERTIFICATION
 Revoke compliance of the Model to the ZB standard.
@@ -624,6 +624,19 @@ is tracked on the ledger.
     -   `zblcli query compliance certified-model .... `
 - REST API: 
     -   GET `/compliance/certified/vid/pid`
+- Result
+```json
+{
+  "result": {
+    "vid": 16 bits int,
+    "pid": 16 bits int,
+    "certification_date": rfc3339 encoded date,
+    "certification_type": string,
+    "owner": string
+  },
+  "height": string
+}
+```
 
 #### GET_REVOKED_MODEL
 Gets a boolean if the given Model's compliance is revoked. 
@@ -679,7 +692,24 @@ revocation information for every vid/pid. It should be used in cases where compl
     -   `zblcli query compliance all-certified-models `
 - REST API: 
     -   GET `/compliance/certified`
- 
+ - Result
+ ```json
+{
+  "result": {
+    "total": string,
+    "items": [
+      {
+        "vid": 16 bits int,
+        "pid": 16 bits int,
+        "certification_date": rfc3339 encoded date,
+        "certification_type": string,
+        "owner": string
+      }
+    ]
+  },
+  "height": string
+}
+ ```
 
 #### GET_ALL_REVOKED_MODELS
 Gets all revoked Models (`pid`s) for all vendors (`vid`s).

@@ -11,7 +11,7 @@ func init() {
 	RegisterCodec(ModuleCdc)
 }
 
-// RegisterCodec registers concrete types on the Amino codec
+// RegisterCodec registers concrete pagination on the Amino codec
 func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgAssignRole{}, ModuleName+"/AssignRole", nil)
 	cdc.RegisterConcrete(MsgRevokeRole{}, ModuleName+"/RevokeRole", nil)

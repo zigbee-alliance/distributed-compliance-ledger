@@ -3,19 +3,24 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
-	"net/http"
-	"strconv"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func getModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		params := parsePaginationParams(cliCtx, r)
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
+		params, err := pagination.ParsePaginationParamsFromRequest(cliCtx.Codec, r)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
 
 		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/all_models", storeName), params)
 		if err != nil {
@@ -47,6 +52,7 @@ func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 		out, err := json.Marshal(modelInfo)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		respond(w, cliCtx, out, height)
@@ -55,7 +61,13 @@ func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 
 func getVendorsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		params := parsePaginationParams(cliCtx, r)
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
+		params, err := pagination.ParsePaginationParamsFromRequest(cliCtx.Codec, r)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
 
 		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/vendors", storeName), params)
 		if err != nil {
@@ -86,21 +98,14 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 		out, err := json.Marshal(vendorProducts)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		respond(w, cliCtx, out, height)
 	}
 }
 
-func parsePaginationParams(cliCtx context.CLIContext, r *http.Request) []byte {
-	skip, _ := strconv.Atoi(r.FormValue("skip"))
-	take, _ := strconv.Atoi(r.FormValue("take"))
-	params := types.NewPaginationParams(skip, take)
-	return cliCtx.Codec.MustMarshalJSON(params)
-}
-
 func respond(w http.ResponseWriter, cliCtx context.CLIContext, data []byte, height int64) {
 	cliCtx.Height = height
 	rest.PostProcessResponse(w, cliCtx, data)
-
 }

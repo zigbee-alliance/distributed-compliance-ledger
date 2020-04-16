@@ -31,6 +31,7 @@ func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.H
 		out, err := json.Marshal(testingResult)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		cliCtx = cliCtx.WithHeight(height)

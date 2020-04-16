@@ -3,19 +3,13 @@ package cli
 import (
 	"fmt"
 
-	"github.com/spf13/viper"
-
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
-)
-
-const (
-	FlagSkip = "skip"
-	FlagTake = "take"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -40,13 +34,7 @@ func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			params := types.NewQueryAccountHeadersParams(
-				viper.GetInt(FlagSkip),
-				viper.GetInt(FlagTake),
-			)
-
-			data := cdc.MustMarshalJSON(params)
-
+			data := pagination.ParsePaginationParamsFromFlags(cliCtx.Codec)
 			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/account_headers", queryRoute), data)
 			if err != nil {
 				fmt.Printf("could not get account headers\n")
@@ -59,8 +47,8 @@ func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int(FlagSkip, 0, "amount of accounts to skip")
-	cmd.Flags().Int(FlagTake, 0, "amount of accounts to take")
+	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of accounts to skip")
+	cmd.Flags().Int(pagination.FlagTake, 0, "amount of accounts to take")
 
 	return cmd
 }

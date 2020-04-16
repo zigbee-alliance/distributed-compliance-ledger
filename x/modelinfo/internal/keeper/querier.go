@@ -2,9 +2,9 @@ package keeper
 
 import (
 	"fmt"
-
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -60,7 +60,7 @@ func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Ke
 }
 
 func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	var params types.PaginationParams
+	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}
@@ -103,7 +103,7 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]by
 }
 
 func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	var params types.PaginationParams
+	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}

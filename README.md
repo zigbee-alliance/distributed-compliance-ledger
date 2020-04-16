@@ -122,16 +122,49 @@ Transactions:
   Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" --from jack`
   
 Queries:
-- `zblcli query compliance test-result [vid] [pid]` - Query Testing Results associated with VID/PID.
+- `zblcli query compliancetest test-result [vid] [pid]` - Query Testing Results associated with VID/PID.
 
-  Example: `zblcli query compliance test-result 1 1`
+  Example: `zblcli query compliancetest test-result 1 1`
+
+### Compliance
+
+Certified Models type:
+- vid: `int16`
+- pid: `int16`
+- certification_date: `rfc3339 encoded date`
+- certification_type:(optional) `string`  - zb is the default and the only supported value now
+- owner: `bech32 encoded address`
+
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Signer must have `ZBCertificationCenter` role. See `Authorization` module for details.
+
+Transactions:
+- ` zblcli tx compliance certify-model [vid] [pid] [certification-date]` - Certify model.
+  - Signature is required. Use `--from` flag.
+  - Optional flags: 
+    - `--certification-type` string
+
+  Example: `zblcli tx compliance certify-model 1 1 "2020-04-16T06:04:57.05Z" --from jack`
+  
+  Example: `zblcli tx compliance certify-model 1 1 "2020-04-16T06:04:57.05Z" --certification-type "zb" --from jack`
+  
+Queries:
+- `zblcli query compliance certified-model [vid] [pid]` - Query certification data for model associated with VID/PID.
+
+  Example: `zblcli query compliance certified-model 1 1`
+  
+- `zblcli query compliance all-certified-models` - Query all certified models.
+
+  Example: `zblcli query compliance all-certified-models`
 
 ### Authorization
 
 Roles:
 - `Administrator` - Is able to assign or revoke roles.
-- `Vendor`
-- `TestHouse`
+- `Vendor` - Is able to add models
+- `TestHouse` - Is able to add testing results for an model
+- `ZBCertificationCenter` - Is able to certify models
 
 Commands:
 - `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.

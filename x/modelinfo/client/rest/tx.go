@@ -26,6 +26,8 @@ type ModelInfoRequest struct {
 
 func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
 		var req ModelInfoRequest
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -52,6 +54,8 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
 		var req ModelInfoRequest
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
