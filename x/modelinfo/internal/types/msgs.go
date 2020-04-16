@@ -51,14 +51,19 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
-	if m.VID == 0 ||
-		m.PID == 0 ||
-		len(m.Name) == 0 ||
+	if m.VID == 0 {
+		return sdk.ErrUnknownRequest("Invalid VID: it must be 16-bit integer")
+	}
+	if m.PID == 0 {
+		return sdk.ErrUnknownRequest("Invalid PID: it must be 16-bit integer")
+	}
+
+	if len(m.Name) == 0 ||
 		len(m.Description) == 0 ||
 		len(m.SKU) == 0 ||
 		len(m.FirmwareVersion) == 0 ||
 		len(m.HardwareVersion) == 0 {
-		return sdk.ErrUnknownRequest("VID, PID, Name, Description, SKU, FirmwareVersion and HardwareVersion  " +
+		return sdk.ErrUnknownRequest("Name, Description, SKU, FirmwareVersion and HardwareVersion  " +
 			"cannot be empty")
 	}
 
@@ -109,13 +114,12 @@ func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
-	if m.VID == 0 ||
-		m.PID == 0 ||
-		len(m.Description) == 0 {
-		return sdk.ErrUnknownRequest("VID, PID, Name, Description, SKU, FirmwareVersion and HardwareVersion  " +
-			"cannot be empty")
+	if m.VID == 0 {
+		return sdk.ErrUnknownRequest("Invalid VID: it must be 16-bit integer")
 	}
-
+	if m.PID == 0 {
+		return sdk.ErrUnknownRequest("Invalid PID: it must be 16-bit integer")
+	}
 	return nil
 }
 
@@ -154,8 +158,11 @@ func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress(m.Signer.String())
 	}
 
-	if m.VID == 0 || m.PID == 0 {
-		return sdk.ErrUnknownRequest("VID and PID cannot be empty")
+	if m.VID == 0 {
+		return sdk.ErrUnknownRequest("Invalid VID: it must be 16-bit integer")
+	}
+	if m.PID == 0 {
+		return sdk.ErrUnknownRequest("Invalid PID: it must be 16-bit integer")
 	}
 
 	return nil

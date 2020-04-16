@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -15,10 +17,9 @@ import (
 )
 
 const (
-	FlagCID                      = "cid"
-	FlagDescription              = "description"
-	FlagCustom                   = "custom"
-	FlagTisOrTrpTestingCompleted = "tis-or-trp-testing-completed"
+	FlagCID         = "cid"
+	FlagDescription = "description"
+	FlagCustom      = "custom"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -50,12 +51,12 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			vid, err := types.ParseVID(args[0])
+			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
 				return err
 			}
 
-			pid, err := types.ParsePID(args[1])
+			pid, err := conversions.ParsePID(args[1])
 			if err != nil {
 				return err
 			}
@@ -67,16 +68,16 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			firmwareVersion := args[5]
 			hardwareVersion := args[6]
 
-			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[7])
-			if err != nil {
-				return err
+			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(args[7])
+			if err_ != nil {
+				return sdk.ErrInternal(fmt.Sprintf("Invalid tis-or-trp-testing-completed: Parsing Error: %v must be boolean", tisOrTrpTestingCompleted))
 			}
 
 			custom := viper.GetString(FlagCustom)
 
 			var cid int16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
-				cid, err = types.ParseCID(cidStr)
+				cid, err = conversions.ParseCID(cidStr)
 				if err != nil {
 					return err
 				}
@@ -110,26 +111,26 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			vid, err := types.ParseVID(args[0])
+			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
 				return err
 			}
 
-			pid, err := types.ParsePID(args[1])
+			pid, err := conversions.ParsePID(args[1])
 			if err != nil {
 				return err
 			}
 
-			tisOrTrpTestingCompleted, err := strconv.ParseBool(args[2])
-			if err != nil {
-				return err
+			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(args[2])
+			if err_ != nil {
+				return err_
 			}
 
 			description := viper.GetString(FlagDescription)
 
 			var cid int16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
-				cid, err = types.ParseCID(cidStr)
+				cid, err = conversions.ParseCID(cidStr)
 				if err != nil {
 					return err
 				}
@@ -163,12 +164,12 @@ func GetCmdDeleteModel(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			vid, err := types.ParseVID(args[0])
+			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
 				return err
 			}
 
-			pid, err := types.ParsePID(args[1])
+			pid, err := conversions.ParsePID(args[1])
 			if err != nil {
 				return err
 			}

@@ -11,15 +11,16 @@ import (
 type AccountRole string
 
 const (
-	Administrator AccountRole = "administrator"
-	Vendor        AccountRole = "vendor"
+	Administrator AccountRole = "Administrator"
+	Vendor        AccountRole = "Vendor"
+	TestHouse     AccountRole = "TestHouse"
 )
 
 func (lt *AccountRole) UnmarshalJSON(b []byte) error {
 	accountRole := AccountRole(strings.Trim(string(b), `"`))
 
 	switch accountRole {
-	case Administrator, Vendor:
+	case Administrator, Vendor, TestHouse:
 		*lt = accountRole
 		return nil
 	}

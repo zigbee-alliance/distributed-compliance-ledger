@@ -18,7 +18,7 @@ func RandString() string {
 }
 
 func RandInt() int {
-	return rand.Intn(100000)
+	return time.Now().Second() * time.Now().Second()
 }
 
 func ParseUint(num string) uint64 {

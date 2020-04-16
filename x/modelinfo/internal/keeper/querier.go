@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -34,14 +35,14 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 }
 
 func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	vid, err := types.ParseVID(path[0])
+	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse vid: %s", err))
+		return nil, err
 	}
 
-	pid, err := types.ParsePID(path[1])
+	pid, err := conversions.ParsePID(path[1])
 	if err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse pid: %s", err))
+		return nil, err
 	}
 
 	if !keeper.IsModelInfoPresent(ctx, vid, pid) {
@@ -50,8 +51,8 @@ func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Ke
 
 	modelInfo := keeper.GetModelInfo(ctx, vid, pid)
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, modelInfo)
-	if err != nil {
+	res, err_ := codec.MarshalJSONIndent(keeper.cdc, modelInfo)
+	if err_ != nil {
 		panic("could not marshal result to JSON")
 	}
 
@@ -141,9 +142,9 @@ func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte
 }
 
 func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
-	vid, err := types.ParseVID(path[0])
+	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse vid: %s", err))
+		return nil, err
 	}
 
 	if !keeper.IsVendorProductsPresent(ctx, vid) {
@@ -152,8 +153,8 @@ func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, ke
 
 	vendorProducts := keeper.GetVendorProducts(ctx, vid)
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, vendorProducts)
-	if err != nil {
+	res, err_ := codec.MarshalJSONIndent(keeper.cdc, vendorProducts)
+	if err_ != nil {
 		panic("could not marshal result to JSON")
 	}
 

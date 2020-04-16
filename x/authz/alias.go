@@ -12,6 +12,7 @@ const (
 
 	Administrator = types.Administrator
 	Vendor        = types.Vendor
+	TestHouse     = types.TestHouse
 )
 
 var (

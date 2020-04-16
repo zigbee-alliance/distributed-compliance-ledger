@@ -6,6 +6,7 @@ import (
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -52,6 +53,7 @@ var (
 		supply.AppModuleBasic{},
 
 		modelinfo.AppModuleBasic{},
+		compliancetest.AppModuleBasic{},
 		authnext.AppModuleBasic{},
 		authz.AppModuleBasic{},
 	)
@@ -84,15 +86,16 @@ type zbLedgerApp struct {
 	tkeys map[string]*sdk.TransientStoreKey
 
 	// Keepers
-	accountKeeper   auth.AccountKeeper
-	bankKeeper      bank.Keeper
-	stakingKeeper   staking.Keeper
-	slashingKeeper  slashing.Keeper
-	distrKeeper     distr.Keeper
-	supplyKeeper    supply.Keeper
-	paramsKeeper    params.Keeper
-	modelinfoKeeper modelinfo.Keeper
-	authzKeeper     authz.Keeper
+	accountKeeper    auth.AccountKeeper
+	bankKeeper       bank.Keeper
+	stakingKeeper    staking.Keeper
+	slashingKeeper   slashing.Keeper
+	distrKeeper      distr.Keeper
+	supplyKeeper     supply.Keeper
+	paramsKeeper     params.Keeper
+	modelinfoKeeper  modelinfo.Keeper
+	complianceKeeper compliancetest.Keeper
+	authzKeeper      authz.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -109,7 +112,8 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		supply.StoreKey, distr.StoreKey, slashing.StoreKey, params.StoreKey, modelinfo.StoreKey, authz.StoreKey)
+		supply.StoreKey, distr.StoreKey, slashing.StoreKey, params.StoreKey, modelinfo.StoreKey, authz.StoreKey,
+		compliancetest.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -163,6 +167,7 @@ func InitModuleManager(app *zbLedgerApp) {
 		staking.NewAppModule(app.stakingKeeper, app.distrKeeper, app.accountKeeper, app.supplyKeeper),
 
 		modelinfo.NewAppModule(app.modelinfoKeeper, app.authzKeeper),
+		compliancetest.NewAppModule(app.complianceKeeper, app.authzKeeper, app.modelinfoKeeper),
 		authnext.NewAppModule(app.accountKeeper, app.authzKeeper, app.cdc),
 		authz.NewAppModule(app.authzKeeper),
 	)
@@ -181,6 +186,7 @@ func InitModuleManager(app *zbLedgerApp) {
 		bank.ModuleName,
 		slashing.ModuleName,
 		modelinfo.ModuleName,
+		compliancetest.ModuleName,
 		authnext.ModuleName,
 		authz.ModuleName,
 		supply.ModuleName,
@@ -229,6 +235,9 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[st
 	// The ModelinfoKeeper keeper
 	app.modelinfoKeeper = MakeModelinfoKeeper(keys, app)
 
+	// The CompliancetestKeeper keeper
+	app.complianceKeeper = MakeComplianceKeeper(keys, app)
+
 	// The AuthzKeeper keeper
 	app.authzKeeper = MakeAuthzKeeper(keys, app)
 }
@@ -243,6 +252,13 @@ func MakeAuthzKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) authz.Ke
 func MakeModelinfoKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) modelinfo.Keeper {
 	return modelinfo.NewKeeper(
 		keys[modelinfo.StoreKey],
+		app.cdc,
+	)
+}
+
+func MakeComplianceKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) compliancetest.Keeper {
+	return compliancetest.NewKeeper(
+		keys[compliancetest.StoreKey],
 		app.cdc,
 	)
 }

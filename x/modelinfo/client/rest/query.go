@@ -29,6 +29,8 @@ func getModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerF
 
 func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
 		vars := mux.Vars(r)
 		vid := vars[vid]
 		pid := vars[pid]
@@ -67,6 +69,8 @@ func getVendorsHandler(cliCtx context.CLIContext, storeName string) http.Handler
 
 func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+
 		vars := mux.Vars(r)
 		vid := vars[vid]
 
