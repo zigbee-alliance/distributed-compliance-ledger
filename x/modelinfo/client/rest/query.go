@@ -42,7 +42,7 @@ func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 
 		res, height, err := cliCtx.QueryStore([]byte(keeper.ModelInfoId(vid, pid)), storeName)
 		if err != nil || res == nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, "Model Not Found")
+			rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrModelInfoDoesNotExist(vid, pid).Error())
 			return
 		}
 
@@ -88,7 +88,7 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 
 		res, height, err := cliCtx.QueryStore([]byte(keeper.VendorProductsId(vid)), storeName)
 		if err != nil || res == nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, "VendorProducts Not Found")
+			rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrVendorProductsDoNotExist(vid).Error())
 			return
 		}
 

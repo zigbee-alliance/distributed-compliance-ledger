@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/json"
-	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -21,7 +20,7 @@ func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.H
 
 		res, height, err := cliCtx.QueryStore([]byte(keeper.TestingResultId(vid, pid)), storeName)
 		if err != nil || res == nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, fmt.Sprintf("Could not query testing result VID:%v PID:%v", vid, pid))
+			rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrTestingResultDoesNotExist(vid, pid).Error())
 			return
 		}
 

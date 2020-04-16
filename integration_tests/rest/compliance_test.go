@@ -18,9 +18,10 @@ import (
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
 	TODO: prepare environment automatically
+	TODO: provide tests for error cases
 */
 
-func /*Test*/ComplianceDemo(t *testing.T) {
+func TestComplianceDemo(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo := utils.GetKeyInfo(test_constants.AccountName)
 

@@ -17,7 +17,7 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 			return handleMsgAddModelInfo(ctx, keeper, authzKeeper, msg)
 		case types.MsgUpdateModelInfo:
 			return handleMsgUpdateModelInfo(ctx, keeper, authzKeeper, msg)
-			/*		case pagination.MsgDeleteModelInfo:
+			/*		case type.MsgDeleteModelInfo:
 					return handleMsgDeleteModelInfo(ctx, keeper, authzKeeper, msg)*/
 		default:
 			errMsg := fmt.Sprintf("unrecognized nameservice Msg type: %v", msg.Type())
@@ -28,8 +28,12 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 
 func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgAddModelInfo) sdk.Result {
+	if err := msg.ValidateBasic(); err != nil {
+		return err.Result()
+	} // TODO: investigate whether we need to call it here explicitly or tandermind/sdk already does it before
+
 	if keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return types.ErrModelInfoAlreadyExists().Result()
+		return types.ErrModelInfoAlreadyExists(msg.VID, msg.PID).Result()
 	}
 
 	if err := checkAddModelRights(ctx, authzKeeper, msg.Signer); err != nil {
@@ -57,8 +61,12 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 
 func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgUpdateModelInfo) sdk.Result {
+	if err := msg.ValidateBasic(); err != nil {
+		return err.Result()
+	}
+
 	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return types.ErrModelInfoDoesNotExist().Result()
+		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)
@@ -103,8 +111,12 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgDeleteModelInfo) sdk.Result {
+	if err := msg.ValidateBasic(); err != nil {
+		return err.Result()
+	}
+
 	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return types.ErrModelInfoDoesNotExist().Result()
+		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)

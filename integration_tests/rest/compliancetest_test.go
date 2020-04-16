@@ -16,6 +16,7 @@ import (
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
 	TODO: prepare environment automatically
+	TODO: provide tests for error cases
 */
 
 func /*Test*/CompliancetestDemo(t *testing.T) {
@@ -42,6 +43,7 @@ func /*Test*/CompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.PID, firstTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, firstTestingResult.TestResult)
+	require.Equal(t, receivedTestingResult.Results[0].TestDate, firstTestingResult.TestDate)
 	require.Equal(t, receivedTestingResult.Results[0].Owner, firstTestingResult.Signer)
 
 	// Publish second model info
@@ -58,5 +60,6 @@ func /*Test*/CompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.PID, secondTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)
+	require.Equal(t, receivedTestingResult.Results[0].TestDate, secondTestingResult.TestDate)
 	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
 }

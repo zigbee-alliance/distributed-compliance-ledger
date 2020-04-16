@@ -3,14 +3,17 @@ package compliancetest
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 	"github.com/tendermint/go-amino"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+	"testing"
 )
 
 type TestSetup struct {
@@ -89,6 +92,13 @@ func TestMsgAddTestingResult(signer sdk.AccAddress, vid int16, pid int16) MsgAdd
 		VID:        vid,
 		PID:        pid,
 		TestResult: test_constants.TestResult,
+		TestDate:   test_constants.TestDate,
 		Signer:     signer,
 	}
+}
+
+func CheckTestingResult(t *testing.T, receivedTestingResult types.TestingResultItem, expectedTestingResult types.MsgAddTestingResult) {
+	require.Equal(t, receivedTestingResult.Owner, expectedTestingResult.Signer)
+	require.Equal(t, receivedTestingResult.TestResult, expectedTestingResult.TestResult)
+	require.Equal(t, receivedTestingResult.TestDate, expectedTestingResult.TestDate)
 }

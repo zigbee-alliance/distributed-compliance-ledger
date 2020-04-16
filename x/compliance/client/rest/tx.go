@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	restutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/tx/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -22,7 +23,6 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req CertifiedModelRequest
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
 
@@ -33,7 +33,7 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		from, err := sdk.AccAddressFromBech32(baseReq.From)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
 			return
 		}
 

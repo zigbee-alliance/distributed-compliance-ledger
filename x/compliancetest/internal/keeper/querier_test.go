@@ -30,8 +30,7 @@ func TestQuerier_QueryTestingResult(t *testing.T) {
 	require.Equal(t, receivedTestingResult.VID, testingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, testingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
-	require.Equal(t, receivedTestingResult.Results[0].Owner, testingResult.Owner)
-	require.Equal(t, receivedTestingResult.Results[0].TestResult, testingResult.TestResult)
+	CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 }
 
 func TestQuerier_QueryTestingResultForUnknown(t *testing.T) {
@@ -43,5 +42,5 @@ func TestQuerier_QueryTestingResultForUnknown(t *testing.T) {
 		[]string{QueryTestingResult, fmt.Sprintf("%v", test_constants.VID), fmt.Sprintf("%v", test_constants.PID)},
 		abci.RequestQuery{},
 	)
-	require.Equal(t, types.CodeTestingResultDoesNotExist, err.Code())
+	require.Equal(t, types.CodeTestingResultsDoNotExist, err.Code())
 }

@@ -46,7 +46,7 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, height, err := cliCtx.QueryStore([]byte(keeper.ModelInfoId(vid, pid)), queryRoute)
 			if err != nil || res == nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not query model VID:%v PID:%v", vid, pid))
+				return types.ErrModelInfoDoesNotExist(vid, pid)
 			}
 
 			var modelInfo types.ModelInfo
@@ -54,7 +54,7 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			out, err := json.Marshal(modelInfo)
 			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not query model VID:%v PID:%v\n", vid, pid))
+				return sdk.ErrInternal(fmt.Sprintf("Could encode result: %v", err))
 			}
 
 			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
@@ -122,7 +122,7 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, height, err := cliCtx.QueryStore([]byte(keeper.VendorProductsId(vid)), queryRoute)
 			if err != nil || res == nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not query vendor models VID:%v\n", vid))
+				return types.ErrVendorProductsDoNotExist(vid)
 			}
 
 			var vendorProducts types.VendorProducts
@@ -130,7 +130,7 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			out, err := json.Marshal(vendorProducts)
 			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not query vendor products VID:%v", vid))
+				return sdk.ErrInternal(fmt.Sprintf("Could encode result: %v", err))
 			}
 
 			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))

@@ -102,6 +102,7 @@ func (k Keeper) isRecordPresent(ctx sdk.Context, id string) bool {
 	return store.Has([]byte(id))
 }
 
+//  TODO: Is iteration the only way to calculate the total number of elements? It looks like that in a non-pagination case we iterate twice: to get the total number of elements and to get the real content.
 func (k Keeper) countTotal(ctx sdk.Context, prefix string) int {
 	store := ctx.KVStore(k.storeKey)
 	res := 0

@@ -42,7 +42,7 @@ func getCertifiedModelHandler(cliCtx context.CLIContext, storeName string) http.
 
 		res, height, err := cliCtx.QueryStore([]byte(keeper.CertifiedModelId(vid, pid)), storeName)
 		if err != nil || res == nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, "Model Not Found")
+			rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrDeviceComplianceoDoesNotExist(vid, pid).Error())
 			return
 		}
 

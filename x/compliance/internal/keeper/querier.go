@@ -41,7 +41,7 @@ func queryCertifiedModel(ctx sdk.Context, path []string, req abci.RequestQuery, 
 	}
 
 	if !keeper.IsCertifiedModelPresent(ctx, vid, pid) {
-		return nil, types.ErrDeviceComplianceoDoesNotExist()
+		return nil, types.ErrDeviceComplianceoDoesNotExist(vid, pid)
 	}
 
 	certifiedModel := keeper.GetCertifiedModel(ctx, vid, pid)

@@ -6,9 +6,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+	"testing"
 )
 
 type TestSetup struct {
@@ -53,6 +55,13 @@ func DefaultTestingResult() types.TestingResult {
 		VID:        test_constants.VID,
 		PID:        test_constants.PID,
 		TestResult: test_constants.TestResult,
+		TestDate:   test_constants.TestDate,
 		Owner:      test_constants.Owner,
 	}
+}
+
+func CheckTestingResult(t *testing.T, receivedTestingResult types.TestingResultItem, expectedTestingResult types.TestingResult) {
+	require.Equal(t, receivedTestingResult.Owner, expectedTestingResult.Owner)
+	require.Equal(t, receivedTestingResult.TestResult, expectedTestingResult.TestResult)
+	require.Equal(t, receivedTestingResult.TestDate, expectedTestingResult.TestDate)
 }

@@ -81,7 +81,7 @@ func TestHandler_CertifyModelForModelWithoutTestingResults(t *testing.T) {
 	require.Equal(t, compliancetest.CodeTestingResultDoesNotExist, result.Code)
 }
 
-func TestHandler_CertifyModelTwice(t *testing.T) {
+/*func TestHandler_CertifyModelTwice(t *testing.T) {
 	setup := Setup()
 
 	// add model amd testing result
@@ -102,7 +102,7 @@ func TestHandler_CertifyModelTwice(t *testing.T) {
 		result := setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Equal(t, tc.expectedCode, result.Code)
 	}
-}
+}*/
 
 func TestHandler_CertifyDifferentModels(t *testing.T) {
 	setup := Setup()
@@ -145,6 +145,20 @@ func TestHandler_CertifyModelForEmptyCertificationType(t *testing.T) {
 
 	// check default type is set
 	require.Equal(t, receivedTestingResult.CertificationType, types.ZbCertificationType)
+}
+
+func TestHandler_CertifyModelForNotZbCertificationType(t *testing.T) {
+	setup := Setup()
+
+	// add model amd testing result
+	vid, pid := addModel(setup, constants.VID, constants.PID)
+	addTestingResult(setup, vid, pid)
+
+	// certify model
+	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid)
+	certifyModelMsg.CertificationType = "Other"
+	result := setup.Handler(setup.Ctx, certifyModelMsg)
+	require.Equal(t, sdk.CodeUnknownRequest, result.Code)
 }
 
 func queryCertifiedModel(setup TestSetup, vid int16, pid int16) types.CertifiedModel {

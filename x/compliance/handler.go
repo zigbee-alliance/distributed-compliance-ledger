@@ -29,19 +29,23 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	compliancetestKeeper compliancetest.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgCertifyModel) sdk.Result {
 
-	if keeper.IsCertifiedModelPresent(ctx, msg.VID, msg.PID) {
-		return types.ErrDeviceComplianceAlreadyExists().Result()
+	if err := msg.ValidateBasic(); err != nil {
+		return err.Result()
 	}
 
+	//if keeper.IsCertifiedModelPresent(ctx, msg.VID, msg.PID) {
+	//	return types.ErrDeviceComplianceAlreadyExists(msg.VID, msg.PID).Result()
+	//}
+
 	if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return modelinfo.ErrModelInfoDoesNotExist().Result()
+		return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
 	if !compliancetestKeeper.IsTestingResultsPresents(ctx, msg.VID, msg.PID) {
-		return compliancetest.ErrTestingResultDoesNotExist().Result()
+		return compliancetest.ErrTestingResultDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
-	if err := checkCertifyModelsRights(ctx, authzKeeper, msg.Signer); err != nil {
+	if err := checkCertifyModelsRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
 		return err.Result()
 	}
 
@@ -58,9 +62,11 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	return sdk.Result{}
 }
 
-func checkCertifyModelsRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
-	if !authzKeeper.HasRole(ctx, signer, authz.ZBCertificationCenter) {
-		return sdk.ErrUnauthorized("MsgCertifyModel transaction should be signed by an account with the ZBCertificationCenter role")
+func checkCertifyModelsRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress, certificationType string) sdk.Error {
+	if len(certificationType) == 0 || certificationType == types.ZbCertificationType { // certification type is empty or ZbCertificationType
+		if !authzKeeper.HasRole(ctx, signer, authz.ZBCertificationCenter) {
+			return sdk.ErrUnauthorized("MsgCertifyModel transaction should be signed by an account with the ZBCertificationCenter role")
+		}
 	}
 
 	return nil

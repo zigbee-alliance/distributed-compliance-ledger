@@ -45,7 +45,7 @@ func GetCmdCertifiedModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, height, err := cliCtx.QueryStore([]byte(keeper.CertifiedModelId(vid, pid)), queryRoute)
 			if err != nil || res == nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not get certified model VID:%v PID:%v", vid, pid))
+				return types.ErrDeviceComplianceoDoesNotExist(vid, pid)
 			}
 
 			var certifiedModel types.CertifiedModel
@@ -53,7 +53,7 @@ func GetCmdCertifiedModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			out, err := json.Marshal(certifiedModel)
 			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not get certified model VID:%v PID:%v", vid, pid))
+				return sdk.ErrInternal(fmt.Sprintf("Could encode result: %v", err))
 			}
 
 			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))

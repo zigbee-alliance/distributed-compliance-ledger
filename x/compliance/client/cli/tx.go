@@ -56,14 +56,14 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			certifiedDate, err_ := time.Parse(time.RFC3339, args[2])
+			certificationDate, err_ := time.Parse(time.RFC3339, args[2])
 			if err_ != nil {
 				return sdk.ErrInternal(fmt.Sprintf("Invalid certification-date: Parsing Error: %v must be RFC3339 date", err_))
 			}
 
-			certificationDate := viper.GetString(FlagCertificationType)
+			certificationType := viper.GetString(FlagCertificationType)
 
-			msg := types.NewMsgCertifyModel(vid, pid, certifiedDate, certificationDate, cliCtx.GetFromAddress())
+			msg := types.NewMsgCertifyModel(vid, pid, certificationDate, certificationType, cliCtx.GetFromAddress())
 
 			err = msg.ValidateBasic()
 			if err != nil {

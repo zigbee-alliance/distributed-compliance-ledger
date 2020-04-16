@@ -52,7 +52,7 @@ func (m MsgCertifyModel) ValidateBasic() sdk.Error {
 
 	if m.CertificationType != "" && m.CertificationType != ZbCertificationType {
 		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported pagination: [%s]", m.CertificationType, ZbCertificationType))
+			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, ZbCertificationType))
 	}
 
 	return nil

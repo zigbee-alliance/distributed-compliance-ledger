@@ -16,9 +16,10 @@ import (
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
 	TODO: prepare environment automatically
+	TODO: provide tests for error cases
 */
 
-func /*Test*/ModelinfoDemo(t *testing.T) {
+func /*TestModelinfo*/Demo(t *testing.T) {
 	// Get all model infos
 	inputModelInfos := utils.GetModelInfos()
 

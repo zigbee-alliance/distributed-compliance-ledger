@@ -43,8 +43,6 @@ ModelInfo type:
 - firmware_version: `string`
 - hardware_version: `string`
 - custom: `string` (optional)
-- certificate_id: `string`
-- certified_date: `rfc3339 encoded date`
 - tis_or_trp_testing_completed: `bool`
 
 Permissions:
@@ -108,18 +106,18 @@ Testing Result type:
 - vid: `int16`
 - pid: `int16`
 - test_result: `string`
+- test_date: `rfc3339 encoded date`
 - owner: `bech32 encoded address`
-- created_at: `datetime`
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
 - Signer must have `TestHouse` role. See `Authorization` module for details.
 
 Transactions:
-- ` zblcli tx compliancetest add-test-result [vid] [pid] [test-result]` - Add new Testing Result.
+- ` zblcli tx compliancetest add-test-result [vid] [pid] [test-result] [test_date]` - Add new Testing Result.
   - Signature is required. Use `--from` flag.
 
-  Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" --from jack`
+  Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" "2020-04-16T06:04:57.05Z" --from jack`
   
 Queries:
 - `zblcli query compliancetest test-result [vid] [pid]` - Query Testing Results associated with VID/PID.

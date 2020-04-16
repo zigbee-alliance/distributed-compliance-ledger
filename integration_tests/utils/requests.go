@@ -17,6 +17,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"time"
 )
 
 func GetKeyInfo(accountName string) KeyInfo {
@@ -166,6 +167,7 @@ func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) json
 		VID:        testingResult.VID,
 		PID:        testingResult.PID,
 		TestResult: testingResult.TestResult,
+		TestDate:   testingResult.TestDate,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -216,7 +218,7 @@ func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) json.RawMess
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", compliance.RouterKey, "certified")
-	response := SendPostRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
+	response := SendPutRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
 	return removeResponseWrapper(response)
 }
 
@@ -265,6 +267,7 @@ func NewMsgAddTestingResult(vid int16, pid int16, owner sdk.AccAddress) complian
 		vid,
 		pid,
 		RandString(),
+		time.Now().UTC(),
 		owner,
 	)
 }

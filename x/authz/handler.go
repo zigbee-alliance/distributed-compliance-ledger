@@ -23,6 +23,10 @@ func NewHandler(keeper keeper.Keeper) sdk.Handler {
 }
 
 func handleMsgAssignRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAssignRole) sdk.Result {
+	if err := msg.ValidateBasic(); err != nil {
+		return err.Result()
+	}
+
 	if !keeper.HasRole(ctx, msg.Signer, Administrator) {
 		return sdk.ErrUnauthorized("you are not authorized to perform this action").Result()
 	}
@@ -33,6 +37,10 @@ func handleMsgAssignRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAss
 }
 
 func handleMsgRevokeRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRevokeRole) sdk.Result {
+	if err := msg.ValidateBasic(); err != nil {
+		return err.Result()
+	}
+
 	if !keeper.HasRole(ctx, msg.Signer, Administrator) {
 		return sdk.ErrUnauthorized("you are not authorized to perform this action").Result()
 	}

@@ -46,7 +46,7 @@ func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Ke
 	}
 
 	if !keeper.IsModelInfoPresent(ctx, vid, pid) {
-		return nil, types.ErrModelInfoDoesNotExist()
+		return nil, types.ErrModelInfoDoesNotExist(vid, pid)
 	}
 
 	modelInfo := keeper.GetModelInfo(ctx, vid, pid)
@@ -148,7 +148,7 @@ func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, ke
 	}
 
 	if !keeper.IsVendorProductsPresent(ctx, vid) {
-		return nil, types.ErrVendorProductsDoNotExist()
+		return nil, types.ErrVendorProductsDoNotExist(vid)
 	}
 
 	vendorProducts := keeper.GetVendorProducts(ctx, vid)

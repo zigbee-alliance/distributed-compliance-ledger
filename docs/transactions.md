@@ -514,6 +514,7 @@ Another test result can be submitted instead.
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `test_result`: string
+    - `test_date`: rfc3339 encoded date
 - In State:
   - `compliancetest` store  
   - `1:<vid>:<pid>` : `<list of test results>`
@@ -544,8 +545,8 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
     "results": [
       {
         "test_result": string,
-        "owner": string,
-        "created_at": datetime
+        "test_date": datetime,
+        "owner": string
       }
     ]
   }

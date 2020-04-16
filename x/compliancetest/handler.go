@@ -24,19 +24,24 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKee
 
 func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgAddTestingResult) sdk.Result {
+	if err := msg.ValidateBasic(); err != nil {
+		return err.Result()
+	}
+
 	if err := checkAddTestingResultRights(ctx, authzKeeper, msg.Signer); err != nil {
 		return err.Result()
 	}
 
 	if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return modelinfo.ErrModelInfoDoesNotExist().Result()
+		return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
 	testingResult := types.NewTestingResult(
 		msg.VID,
 		msg.PID,
-		msg.TestResult,
 		msg.Signer,
+		msg.TestResult,
+		msg.TestDate,
 	)
 
 	keeper.AddTestingResult(ctx, testingResult)

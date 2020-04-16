@@ -9,7 +9,7 @@ const (
 	ModuleName = types.ModuleName
 	RouterKey  = types.RouterKey
 	StoreKey   = types.StoreKey
-	CodeTestingResultDoesNotExist = types.CodeTestingResultDoesNotExist
+	CodeTestingResultDoesNotExist = types.CodeTestingResultsDoNotExist
 )
 
 var (

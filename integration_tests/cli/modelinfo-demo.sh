@@ -2,6 +2,8 @@
 set -e
 source integration_tests/cli/common.sh
 
+# TODO: Avoid timeouts (sleep 5). Provide a helper for submitting request with retries
+
 echo "Get key info for Jack"
 result=$(zblcli keys show jack)
 check_response "$result" "\"name\": \"jack\""
