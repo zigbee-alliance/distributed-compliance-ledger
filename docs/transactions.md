@@ -126,7 +126,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 
 - Parameters:
   - `issuer`: string  - proposed certificates's Issuer
-  - `serialNumber`: string  - proposed certificates's Serial Number
+  - `serial_number`: string  - proposed certificates's Serial Number
 - In State:
   - `pki` store  
   - `1:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format> + <List of approved trustee account IDs>`
@@ -136,7 +136,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - CLI command: 
     -   `zblcli tx pki approve-add-x509-root-cert .... `
 - REST API: 
-    -   PATCH `/pki/certs/proposed/root/<issuer>/<serialNumber>`
+    -   PATCH `/pki/certs/proposed/root/<issuer>/<serial_number>`
 
 #### ADD_X509_CERT
 Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be
@@ -166,7 +166,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 
 - Parameters:
   - `issuer`: string  - revoked certificates's Issuer
-  - `serialNumber`: string  - revoked certificates's Serial Number
+  - `serial_number`: string  - revoked certificates's Serial Number
 - In State:
   - `pki` store  
   - `2:<Certificate's Issuer>:<Certificate's Serial Number>` : `<Certificate in PEM format>`  
@@ -179,7 +179,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - CLI command: 
     -   `zblcli tx pki revoke-x509-cert .... `
 - REST API: 
-    -   DELETE `/pki/certs/<issuer>/<serialNumber>`
+    -   DELETE `/pki/certs/<issuer>/<serial_number>`
 
 #### PROPOSE_REVOKE_X509_CERT
 Proposes revocation of the given X509 certificate (either root, intermediate or leaf) by a Trustee.
@@ -191,7 +191,7 @@ then the certificate will be in a pending state until sufficient number of other
 
 - Parameters:
   - `issuer`: string  - revoked certificates's Issuer
-  - `serialNumber`: string  - revoked certificates's Serial Number
+  - `serial_sumber`: string  - revoked certificates's Serial Number
 - In State:
   - `pki` store  
   - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
@@ -200,7 +200,7 @@ then the certificate will be in a pending state until sufficient number of other
 - CLI command: 
     -   `zblcli tx pki propose-revoke-x509-cert .... `
 - REST API: 
-    -   PUT `/pki/certs/proposed/revoked/<issuer>/<serialNumber>`
+    -   PUT `/pki/certs/proposed/revoked/<issuer>/<serial_number>`
     
 
 
@@ -212,7 +212,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 
 - Parameters:
   - `issuer`: string  - revoked certificates's Issuer
-  - `serialNumber`: string  - revoked certificates's Serial Number
+  - `serial_number`: string  - revoked certificates's Serial Number
 - In State:
   - `pki` store  
   - `5:<Certificate's Issuer>:<Certificate's Serial Number>` : `<List of approved trustee account IDs>`
@@ -225,7 +225,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - CLI command: 
     -   `zblcli tx pki approve-revoke-x509-cert .... `
 - REST API: 
-    -   PATCH `/pki/certs/proposed/revoked/<issuer>/<serialNumber>`
+    -   PATCH `/pki/certs/proposed/revoked/<issuer>/<serial_number>`
         
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS
 Gets all proposed but not approved root certificates.
@@ -242,11 +242,11 @@ issuer and serial number attributes.
 
 - Parameters:
   - `issuer`: string - certificates's Issuer
-  - `serialNumber`: string - certificates's Serial Number
+  - `serial_number`: string - certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki proposed-x509-root-cert .... `
 - REST API: 
-    -   GET `/pki/certs/proposed/root/<issuer>/<serialNumber>`
+    -   GET `/pki/certs/proposed/root/<issuer>/<serial_number>`
 
 #### GET_ALL_X509_ROOT_CERTS
 Gets all approved root certificates.
@@ -264,11 +264,11 @@ issuer and serial number attributes.
 
 - Parameters:
   - `issuer`: string - certificates's Issuer
-  - `serial Number`: string - certificates's Serial Number
+  - `serial_number`: string - certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki x509-cert .... `
 - REST API: 
-    -   GET `/pki/certs/<issuer>/<serialNumber>`
+    -   GET `/pki/certs/<issuer>/<serial_number>`
 
 #### GET_ALL_X509_CERTS
 Gets all certificates (root, intermediate and leaf).
@@ -278,13 +278,13 @@ only the certificate chains started with the given root certificate are returned
 `GET_ALL_X509_CERTS_SINCE` can be used to incrementally update the list stored locally. 
 
 - Parameters:
-  - `rootIssuer`: string (optional) - root certificates's Issuer
-  - `rootSerialNumber`: string (optional) - root certificates's Serial Number
+  - `root_issuer`: string (optional) - root certificates's Issuer
+  - `root_serial_number`: string (optional) - root certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki all-x509-certs .... `
 - REST API: 
     -   GET `/pki/certs`
-    -   GET `/pki/certs?rootIssuer=<>;rootSerialNumber={}`
+    -   GET `/pki/certs?rootIssuer=<>;root_serial_number={}`
 
 #### GET_ALL_X509_CERTS_SINCE
 Gets all certificates (root, intermediate and leaf) which has been added since 
@@ -295,13 +295,13 @@ only the certificate chains started with the given root certificate are returned
 
 - Parameters:
   - `since`: integer - the last ledger's height the user has locally.
-  - `rootIssuer`: string (optional) - root certificates's Issuer
-  - `rootSerialNumber`: string (optional) - root certificates's Serial Number  
+  - `root_issuer`: string (optional) - root certificates's Issuer
+  - `root_serial_number`: string (optional) - root certificates's Serial Number  
 - CLI command: 
     -   `zblcli query pki all-x509-certs-delta .... `
 - REST API: 
     -   GET `/pki/certs?since=<>`
-    -   GET `/pki/certs?since=<>;rootIssuer=<>;rootSerialNumber={}`
+    -   GET `/pki/certs?since=<>;rootIssuer=<>;root_serial_number={}`
    
 
 #### GET_ALL_PROPOSED_X509_CERTS_TO_REVOKE
@@ -318,11 +318,11 @@ Gets a proposed but not approved certificate to be revoked.
 
 - Parameters:
   - `issuer`: string - certificates's Issuer
-  - `serialNumber`: string - certificates's Serial Number
+  - `serial_number`: string - certificates's Serial Number
 - CLI command: 
     -   `zblcli query pki proposed-x509-cert-to-revoke ....`
 - REST API: 
-    -   GET `/pki/certs/proposed/revoked/<issuer>/<serialNumber>`
+    -   GET `/pki/certs/proposed/revoked/<issuer>/<serial_number>`
 
 #### GET_CRL
 Gets all revoked certificates (CRL or certificate revocation list).
@@ -346,12 +346,12 @@ a new model info with a new `vid` or `pid` can be created.
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `cid`: 16 bits int (optional)
-    - `Name`: string
+    - `name`: string
     - `description`: string
-    - `SKU`: string
-    - `firmwareVersion`: string
-    - `hardwareVersion`: string
-    - `tisOrTrpTestingCompleted`: bool
+    - `sku`: string
+    - `firmware_version`: string
+    - `hardware_version`: string
+    - `tis_or_trp_testing_completed`: bool
     - `custom`: string (optional)
 - In State:
   - `modelinfo` store  
@@ -378,7 +378,7 @@ All non-edited fields remain the same.
     - `pid`: 16 bits int
     - `cid`: 16 bits int (optional)
     - `description`: string (optional)
-    - `tisOrTrpTestingCompleted`: bool
+    - `tis_or_trp_testing_completed`: bool
     - `custom`: string (optional)
 - In State:
   - `modelinfo` store  
@@ -400,6 +400,7 @@ Gets all Model Infos for all vendors.
     -   `zblcli query modelinfo all-models ...`
 - REST API: 
     -   GET `/modelinfo/models`
+- Result
 ```json
 {
   "height": string,
@@ -484,7 +485,6 @@ Get a list of all Vendors (`vid`s).
 - REST API: 
     -   GET `/modelinfo/vendors`
 - Result
-- Result:
 ```json
 {
   "height": string,
@@ -513,7 +513,7 @@ Another test result can be submitted instead.
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `testResult`: string
+    - `test_result`: string
 - In State:
   - `compliancetest` store  
   - `1:<vid>:<pid>` : `<list of test results>`
@@ -570,8 +570,8 @@ from the revocation list.
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `certificationDate`: rfc3339 encoded date
-    - `certificationType` (optional): string  - `zb` is the default and the only supported value now
+    - `certification_date`: rfc3339 encoded date
+    - `certification_type` (optional): string  - `zb` is the default and the only supported value now
 - In State:
   - `compliance` store  
   - `1:<vid>:<pid>` : `<compliance info>`
@@ -597,7 +597,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `revocationDate`: rfc3339 encoded date    
+    - `revocation_date`: rfc3339 encoded date    
 - In State:
   - `compliance` store  
   - `1:<vid>:<pid>` : `<compliance info>`
@@ -733,8 +733,8 @@ will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
     - `address`
-    - `pubKey`
-    - `pubKeyType`
+    - `pub_key`
+    - `pub_key_type`
     - `role` 
 - In State:
   - `auth` store  
@@ -770,8 +770,8 @@ The account is not active until sufficient number of Trustees approve it.
 Rotate's the Account's public key by the owner.
 
 - Parameters:
-    - `pubKey`
-    - `pubKeyType`
+    - `pub_key`
+    - `pub_key_type`
 - In State:
   - `auth` store  
   - `1:<address>` : `<account info>`

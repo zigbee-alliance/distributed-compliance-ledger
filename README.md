@@ -33,19 +33,19 @@ a bit different than specified below.
 ### Model Info
 
 ModelInfo type:
-- VID: `int16`
-- PID: `int16`
-- CID: `int16` (optional)
-- Name: `string`
-- Owner: `bech32 encoded address`
-- Description: `string`
-- SKU: `string`
-- FirmwareVersion: `string`
-- HardwareVersion: `string`
-- Custom: `string` (optional)
-- CertificateID: `string`
-- CertifiedDate: `rfc3339 encoded date`
-- TisOrTrpTestingCompleted: `bool`
+- vid: `int16`
+- pid: `int16`
+- cid: `int16` (optional)
+- name: `string`
+- owner: `bech32 encoded address`
+- description: `string`
+- sku: `string`
+- firmware_version: `string`
+- hardware_version: `string`
+- custom: `string` (optional)
+- certificate_id: `string`
+- certified_date: `rfc3339 encoded date`
+- tis_or_trp_testing_completed: `bool`
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
@@ -105,11 +105,11 @@ Genesis:
 ### Compliance Test
 
 Testing Result type:
-- VID: `int16`
-- PID: `int16`
-- TestResult: `string`
-- Owner: `bech32 encoded address`
-- CreatedAt: `datetime`
+- vid: `int16`
+- pid: `int16`
+- test_result: `string`
+- owner: `bech32 encoded address`
+- created_at: `datetime`
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
