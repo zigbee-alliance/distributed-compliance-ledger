@@ -49,7 +49,7 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			out, err := json.Marshal(testingResult)
 			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could encode result: %v", err))
+				return sdk.ErrInternal(fmt.Sprintf("Could not encode result: %v", err))
 			}
 
 			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
