@@ -55,7 +55,8 @@ echo "Get Certified Model with VID: ${vid} PID: ${pid}"
 result=$(zblcli query compliance certified-model $vid $pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certification_date\": \"$certification_date\""
+check_response "$result" "\"state\": \"certified\""
+check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"certification_type\": \"zb\""
 echo "$result"
 
@@ -65,12 +66,65 @@ echo "Get All Certified Models"
 result=$(zblcli query compliance all-certified-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certification_type\": \"zb\""
+check_response "$result" "\"date\": \"$certification_date\""
+echo "$result"
+
+echo "Revoke Certification for Model with VID: $vid PID: $pid"
+revocation_date="2020-02-02T02:20:20Z"
+revocation_reason="some reason"
+result=$(echo "test1234" | zblcli tx compliance revoke-model $vid $pid "$revocation_date" --reason "$revocation_reason" --from jack --yes)
+check_response "$result" "\"success\": true"
 echo "$result"
 
 sleep 6
 
-echo "Certify Model with VID: $vid PID: $pid using unsupported certification type"
-result=$(echo "test1234" | zblcli tx compliance certify-model $vid $pid "$certification_date" --certification-type "Other" --from jack --yes)
-check_response "$result" "\"code\": 6"
+echo "Get Revoked Model with VID: ${vid} PID: ${pid}"
+result=$(zblcli query compliance revoked-model $vid $pid)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"state\": \"revoked\""
+check_response "$result" "\"date\": \"$revocation_date\""
+check_response "$result" "\"reason\": \"$revocation_reason\""
+check_response "$result" "\"history\""
+echo "$result"
+
+sleep 6
+
+echo "Get All Revoked Models"
+result=$(zblcli query compliance all-revoked-models)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+echo "$result"
+
+sleep 6
+
+echo "Again Certify Model with VID: $vid PID: $pid"
+certification_date="2020-03-03T00:00:00Z"
+result=$(echo "test1234" | zblcli tx compliance certify-model $vid $pid "$certification_date" --certification-type "zb" --from jack --yes)
+check_response "$result" "\"success\": true"
+echo "$result"
+
+sleep 6
+
+echo "Get Certified Model with VID: ${vid} PID: ${pid}"
+result=$(zblcli query compliance certified-model $vid $pid)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"state\": \"certified\""
+check_response "$result" "\"date\": \"$certification_date\""
+check_response "$result" "\"certification_type\": \"zb\""
+echo "$result"
+
+echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid}"
+result=$(zblcli query compliance compliance-info $vid $pid)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"state\": \"certified\""
+echo "$result"
+
+echo "Get All Compliance Infos"
+result=$(zblcli query compliance all-compliance-info-records)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"state\": \"certified\""
 echo "$result"

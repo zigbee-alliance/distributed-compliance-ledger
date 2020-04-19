@@ -15,7 +15,7 @@ func accountHeadersHandler(cliCtx context.CLIContext, storeName string) http.Han
 	return func(w http.ResponseWriter, r *http.Request) {
 		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
 
-		data, err := pagination.ParsePaginationParamsFromRequest(cliCtx.Codec, r)
+		data, err := pagination.ParseAndMarshalPaginationParamsFromRequest(cliCtx.Codec, r)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

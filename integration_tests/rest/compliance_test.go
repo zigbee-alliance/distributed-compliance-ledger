@@ -28,8 +28,14 @@ func TestComplianceDemo(t *testing.T) {
 	// Assign Vendor role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
 
+	// Get all compliance infos
+	inputComplianceInfos := utils.GetComplianceInfos()
+
 	// Get all certified models
 	inputCertifiedModels := utils.GetAllCertifiedModels()
+
+	// Get all revoked models
+	inputRevokedModels := utils.GetAllRevokedModels()
 
 	// Publish model info
 	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
@@ -47,17 +53,54 @@ func TestComplianceDemo(t *testing.T) {
 
 	// Certify model
 	certifyModelMsg := compliance.NewMsgCertifyModel(modelInfo.VID, modelInfo.PID, time.Now().UTC(),
-		test_constants.CertificationType, jackKeyInfo.Address)
+		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, jackKeyInfo.Address)
 	utils.PublishCertifiedModel(certifyModelMsg)
 
 	// Check model is certified
-	certifiedModel := utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID)
-	require.Equal(t, certifiedModel.VID, modelInfo.VID)
-	require.Equal(t, certifiedModel.PID, modelInfo.PID)
-	require.Equal(t, certifiedModel.CertificationType, certifyModelMsg.CertificationType)
-	require.Equal(t, certifiedModel.CertificationDate, certifyModelMsg.CertificationDate)
+	complianceInfo := utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID)
+	require.Equal(t, complianceInfo.VID, modelInfo.VID)
+	require.Equal(t, complianceInfo.PID, modelInfo.PID)
+	require.Equal(t, complianceInfo.State, compliance.CertifiedState)
+	require.Equal(t, complianceInfo.CertificationType, certifyModelMsg.CertificationType)
+	require.Equal(t, complianceInfo.Date, certifyModelMsg.CertificationDate)
 
 	// Get all certified models
 	certifiedModels := utils.GetAllCertifiedModels()
 	require.Equal(t, utils.ParseUint(inputCertifiedModels.Total)+1, utils.ParseUint(certifiedModels.Total))
+
+	// Revoke model certification
+	revocationTime := certifyModelMsg.CertificationDate.AddDate(0, 0, 1)
+	revokeModelMsg := compliance.NewMsgRevokeModel(modelInfo.VID, modelInfo.PID, revocationTime,
+		compliance.CertificationType(test_constants.CertificationType), test_constants.RevocationReason, jackKeyInfo.Address)
+	utils.PublishRevokedModel(revokeModelMsg)
+
+	// Check model is revoked
+	complianceInfo = utils.GetRevokedModel(modelInfo.VID, modelInfo.PID)
+	require.Equal(t, complianceInfo.VID, modelInfo.VID)
+	require.Equal(t, complianceInfo.PID, modelInfo.PID)
+	require.Equal(t, complianceInfo.State, compliance.RevokedState)
+	require.Equal(t, complianceInfo.CertificationType, revokeModelMsg.CertificationType)
+	require.Equal(t, complianceInfo.Date, revokeModelMsg.RevocationDate)
+	require.Equal(t, complianceInfo.Reason, revokeModelMsg.Reason)
+	require.Equal(t, 1, len(complianceInfo.History))
+	require.Equal(t, complianceInfo.History[0].State, compliance.CertifiedState)
+	require.Equal(t, complianceInfo.History[0].Date, certifyModelMsg.CertificationDate)
+
+	// Get all revoked models
+	revokedModels := utils.GetAllRevokedModels()
+	require.Equal(t, utils.ParseUint(inputRevokedModels.Total)+1, utils.ParseUint(revokedModels.Total))
+
+	// Get all certified models
+	certifiedModels = utils.GetAllCertifiedModels()
+	require.Equal(t, utils.ParseUint(inputCertifiedModels.Total), utils.ParseUint(certifiedModels.Total))
+
+	// Get all compliance infos
+	complianceInfos := utils.GetComplianceInfos()
+	require.Equal(t, utils.ParseUint(inputComplianceInfos.Total)+1, utils.ParseUint(complianceInfos.Total))
+
+	// Get compliance info
+	complianceInfo = utils.GetComplianceInfo(modelInfo.VID, modelInfo.PID)
+	require.Equal(t, complianceInfo.State, compliance.RevokedState)
+	require.Equal(t, 1, len(complianceInfo.History))
+	require.Equal(t, complianceInfo.History[0].State, compliance.CertifiedState)
 }

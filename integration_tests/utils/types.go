@@ -38,7 +38,7 @@ type VendorItemHeadersResult struct {
 	Items []modelinfo.VendorItem `json:"items"`
 }
 
-type CertifiedModelsHeadersResult struct {
+type ComplianceInfosHeadersResult struct {
 	Total string                      `json:"total"`
-	Items []compliance.CertifiedModel `json:"items"`
+	Items []compliance.ComplianceInfo `json:"items"`
 }

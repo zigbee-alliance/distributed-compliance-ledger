@@ -12,17 +12,20 @@ const (
 )
 
 var (
-	NewKeeper                        = keeper.NewKeeper
-	NewQuerier                       = keeper.NewQuerier
-	NewMsgCertifyModel               = types.NewMsgCertifyModel
-	NewDeviceCompliance              = types.NewCertifiedModel
-	ModuleCdc                        = types.ModuleCdc
-	RegisterCodec                    = types.RegisterCodec
-	ErrDeviceComplianceAlreadyExists = types.ErrDeviceComplianceAlreadyExists
+	NewKeeper          = keeper.NewKeeper
+	NewQuerier         = keeper.NewQuerier
+	NewMsgCertifyModel = types.NewMsgCertifyModel
+	NewMsgRevokeModel  = types.NewMsgRevokeModel
+	ModuleCdc          = types.ModuleCdc
+	RegisterCodec      = types.RegisterCodec
+	CertifiedState     = types.Certified
+	RevokedState       = types.Revoked
 )
 
 type (
-	Keeper                  = keeper.Keeper
-	MsgCertifyModel         = types.MsgCertifyModel
-	CertifiedModel          = types.CertifiedModel
+	Keeper            = keeper.Keeper
+	MsgCertifyModel   = types.MsgCertifyModel
+	MsgRevokeModel    = types.MsgRevokeModel
+	ComplianceInfo    = types.ComplianceInfo
+	CertificationType = types.CertificationType
 )

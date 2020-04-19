@@ -7,50 +7,75 @@ import (
 	"testing"
 )
 
-func TestKeeper_CertifiedModelGetSet(t *testing.T) {
+func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
 	setup := Setup()
 
-	// check if certified model present
-	require.False(t, setup.CompliancetKeeper.IsCertifiedModelPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+	// check if compliance info present
+	require.False(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
+		types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID))
 
-	// no certified model before its created
+	// no compliance info before its created
 	require.Panics(t, func() {
-		setup.CompliancetKeeper.GetCertifiedModel(setup.Ctx, test_constants.VID, test_constants.PID)
+		setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
+			types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID)
 	})
 
-	// create certified model
+	// create compliance info
 	certifiedModel := DefaultCertifiedModel()
-	setup.CompliancetKeeper.SetCertifiedModel(setup.Ctx, certifiedModel)
+	setup.CompliancetKeeper.SetComplianceInfo(setup.Ctx, certifiedModel)
 
-	// check if certified model present
-	require.True(t, setup.CompliancetKeeper.IsCertifiedModelPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+	// check if compliance info present
+	require.True(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
+		types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID))
 
-	// get certified model
-	receivedCertifiedModel := setup.CompliancetKeeper.GetCertifiedModel(setup.Ctx, test_constants.VID, test_constants.PID)
-	require.Equal(t, test_constants.VID, receivedCertifiedModel.VID)
-	require.Equal(t, test_constants.PID, receivedCertifiedModel.PID)
-	require.Equal(t, test_constants.CertificationDate, receivedCertifiedModel.CertificationDate)
-	require.Equal(t, test_constants.CertificationType, receivedCertifiedModel.CertificationType)
+	// get compliance info
+	receivedComplianceInfo := setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
+		types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID)
+	CheckComplianceInfo(t, certifiedModel, receivedComplianceInfo)
 }
 
-func TestKeeper_CertifiedModelIterator(t *testing.T) {
+func TestKeeper_ComplianceInfoIterator(t *testing.T) {
 	setup := Setup()
 
 	count := 10
 
 	// add 10 models
-	PopulateStoreWithCertifiedModels(setup, count)
+	PopulateStoreWithMixedModels(setup, count)
 
 	// get total count
-	totalModes := setup.CompliancetKeeper.CountTotalCertifiedModel(setup.Ctx)
+	totalModes := setup.CompliancetKeeper.CountTotalComplianceInfo(setup.Ctx, types.CertificationType(test_constants.CertificationType))
 	require.Equal(t, count, totalModes)
 
 	// get iterator
-	var expectedRecords []types.CertifiedModel
+	var expectedRecords []types.ComplianceInfo
 
-	setup.CompliancetKeeper.IterateCertifiedModels(setup.Ctx, func(modelInfo types.CertifiedModel) (stop bool) {
-		expectedRecords = append(expectedRecords, modelInfo)
-		return false
-	})
+	setup.CompliancetKeeper.IterateComplianceInfos(setup.Ctx, types.CertificationType(test_constants.CertificationType),
+		func(modelInfo types.ComplianceInfo) (stop bool) {
+			expectedRecords = append(expectedRecords, modelInfo)
+			return false
+		})
 	require.Equal(t, count, len(expectedRecords))
+}
+
+func TestKeeper_TwoComplianceInfoWithDifferentType(t *testing.T) {
+	setup := Setup()
+
+	// create zb compliance info
+	zbCertifiedModel := DefaultCertifiedModel()
+	setup.CompliancetKeeper.SetComplianceInfo(setup.Ctx, zbCertifiedModel)
+
+	// create other compliance info
+	otherCertifiedModel := DefaultCertifiedModel()
+	otherCertifiedModel.CertificationType = "Other"
+	setup.CompliancetKeeper.SetComplianceInfo(setup.Ctx, otherCertifiedModel)
+
+	// get zb compliance info
+	receivedComplianceInfo := setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
+		zbCertifiedModel.CertificationType, zbCertifiedModel.VID, zbCertifiedModel.PID)
+	CheckComplianceInfo(t, zbCertifiedModel, receivedComplianceInfo)
+
+	// get other compliance info
+	receivedComplianceInfo = setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
+		otherCertifiedModel.CertificationType, otherCertifiedModel.VID, otherCertifiedModel.PID)
+	CheckComplianceInfo(t, otherCertifiedModel, receivedComplianceInfo)
 }

@@ -69,7 +69,7 @@ func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			params := pagination.ParsePaginationParamsFromFlags(cdc)
+			params := pagination.ParseAndMarshalPaginationParamsFromFlags(cdc)
 
 			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/all_models", queryRoute), params)
 			if err != nil {
@@ -93,7 +93,7 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			params := pagination.ParsePaginationParamsFromFlags(cdc)
+			params := pagination.ParseAndMarshalPaginationParamsFromFlags(cdc)
 
 			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/vendors", queryRoute), params)
 			if err != nil {

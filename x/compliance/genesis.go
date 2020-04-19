@@ -10,15 +10,15 @@ import (
 )
 
 type GenesisState struct {
-	CertifiedModelRecords []CertifiedModel `json:"certified_model_records"`
+	ComplianceInfoRecords []ComplianceInfo `json:"compliance_model_records"`
 }
 
 func NewGenesisState() GenesisState {
-	return GenesisState{CertifiedModelRecords: []CertifiedModel{}}
+	return GenesisState{ComplianceInfoRecords: []ComplianceInfo{}}
 }
 
 func ValidateGenesis(data GenesisState) error {
-	for _, record := range data.CertifiedModelRecords {
+	for _, record := range data.ComplianceInfoRecords {
 		if record.VID == 0 {
 			return fmt.Errorf("invalid CertifiedModelRecord: value: %d. Error: Invalid VID: it cannot be 0", record.VID)
 		}
@@ -27,8 +27,12 @@ func ValidateGenesis(data GenesisState) error {
 			return fmt.Errorf("invalid CertifiedModelRecord: value: %d. Error: Invalid PID: it cannot be 0", record.PID)
 		}
 
-		if record.CertificationDate.IsZero() {
-			return fmt.Errorf("invalid CertifiedModelRecord: value: %v. Error: Invalid CertificationDate: it cannot be empty", record.CertificationDate)
+		if len(record.State) == 0 {
+			return fmt.Errorf("invalid CertifiedModelRecord: value: %d. Error: Invalid State: it cannot be empty", record.PID)
+		}
+
+		if record.Date.IsZero() {
+			return sdk.ErrUnknownRequest("invalid Date: it cannot be empty")
 		}
 
 		if record.CertificationType != "" && record.CertificationType != types.ZbCertificationType {
@@ -45,20 +49,20 @@ func DefaultGenesisState() GenesisState {
 }
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-	for _, record := range data.CertifiedModelRecords {
-		keeper.SetCertifiedModel(ctx, record)
+	for _, record := range data.ComplianceInfoRecords {
+		keeper.SetComplianceInfo(ctx, record)
 	}
 
 	return []abci.ValidatorUpdate{}
 }
 
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	var records []CertifiedModel
+	var records []ComplianceInfo
 
-	k.IterateCertifiedModels(ctx, func(deviceCompliance types.CertifiedModel) (stop bool) {
+	k.IterateComplianceInfos(ctx, types.EmptyCertificationType, func(deviceCompliance types.ComplianceInfo) (stop bool) {
 		records = append(records, deviceCompliance)
 		return false
 	})
 
-	return GenesisState{CertifiedModelRecords: records}
+	return GenesisState{ComplianceInfoRecords: records}
 }

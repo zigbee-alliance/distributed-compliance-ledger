@@ -6,27 +6,96 @@ import (
 	"time"
 )
 
-const ZbCertificationType = "zb"
+type ComplianceState string
 
-type CertifiedModel struct {
-	VID               int16          `json:"vid"`
-	PID               int16          `json:"pid"`
-	CertificationDate time.Time      `json:"certification_date"` // rfc3339 encoded date
-	CertificationType string         `json:"certification_type"`
-	Owner             sdk.AccAddress `json:"owner"`
+const (
+	Certified ComplianceState = "certified"
+	Revoked   ComplianceState = "revoked"
+)
+
+type CertificationType string
+
+const (
+	ZbCertificationType    CertificationType = "zb"
+	EmptyCertificationType CertificationType = ""
+)
+
+type ComplianceInfo struct {
+	VID               int16                   `json:"vid"`
+	PID               int16                   `json:"pid"`
+	State             ComplianceState         `json:"state"`
+	Date              time.Time               `json:"date"` // rfc3339 encoded date
+	CertificationType CertificationType       `json:"certification_type,omitempty"`
+	Reason            string                  `json:"reason,omitempty"`
+	Owner             sdk.AccAddress          `json:"owner"`
+	History           []ComplianceHistoryItem `json:"history,omitempty"`
 }
 
-func NewCertifiedModel(vid int16, pid int16, certificationDate time.Time, certificationType string, owner sdk.AccAddress) CertifiedModel {
-	return CertifiedModel{
+func NewCertifiedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
-		CertificationDate: certificationDate,
-		CertificationType: ZbCertificationType, // zb certification type is only supported now
+		State:             Certified,
+		Date:              date,
+		CertificationType: ZbCertificationType, // `zb` certification_type is only supported now
+		Reason:            reason,
 		Owner:             owner,
+		History:           []ComplianceHistoryItem{},
 	}
 }
 
-func (d CertifiedModel) String() string {
+func NewRevokedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+	return ComplianceInfo{
+		VID:               vid,
+		PID:               pid,
+		State:             Revoked,
+		Date:              date,
+		CertificationType: ZbCertificationType,
+		Reason:            reason,
+		Owner:             owner,
+		History:           []ComplianceHistoryItem{},
+	}
+}
+
+func (d *ComplianceInfo) UpdateComplianceInfo(date time.Time, reason string) {
+
+	d.History = append(d.History, NewComplianceHistoryItem(d.State, d.Date, d.Reason))
+
+	// Toggle state
+	state := Certified
+	if d.State == Certified {
+		state = Revoked
+	}
+
+	d.State = state
+	d.Date = date
+	d.Reason = reason
+}
+
+func (d ComplianceInfo) String() string {
+	bytes, err := json.Marshal(d)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+type ComplianceHistoryItem struct {
+	State  ComplianceState `json:"state"`
+	Date   time.Time       `json:"date"` // rfc3339 encoded date
+	Reason string          `json:"reason,omitempty"`
+}
+
+func NewComplianceHistoryItem(state ComplianceState, date time.Time, reason string) ComplianceHistoryItem {
+	return ComplianceHistoryItem{
+		State:  state,
+		Date:   date,
+		Reason: reason,
+	}
+}
+
+func (d ComplianceHistoryItem) String() string {
 	bytes, err := json.Marshal(d)
 	if err != nil {
 		panic(err)

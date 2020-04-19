@@ -103,11 +103,11 @@ Genesis:
 ### Compliance Test
 
 Testing Result type:
-- vid: `int16`
-- pid: `int16`
-- test_result: `string`
-- test_date: `rfc3339 encoded date`
-- owner: `bech32 encoded address`
+- vid: `int16` - vendor id
+- pid: `int16` - product id
+- test_result: `string` - test result report. It can contain url, blob, etc..
+- test_date: `rfc3339 encoded date` - the date of testing
+- owner: `bech32 encoded address` - the address used for sending the original message
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
@@ -126,26 +126,43 @@ Queries:
 
 ### Compliance
 
-Certified Models type:
-- vid: `int16`
-- pid: `int16`
-- certification_date: `rfc3339 encoded date`
-- certification_type:(optional) `string`  - zb is the default and the only supported value now
-- owner: `bech32 encoded address`
+Compliance Info type:
+- vid: `int16` - vendor id
+- pid: `int16` - product id
+- state: `string` - current compliance state: either `certified` or `revoked`
+- date:(optional) `rfc3339 encoded date` - depending on the state either certification date or revocation date 
+- certification_type:(optional) `string`  - `zb` is the default and the only supported value now
+- reason:(optional) `string` - an optional comment describing the reason of action
+- owner: `bech32 encoded address` - the address used for sending the original message
+- history: array of items - contains the history of all state changes
+    - state: `string` - either `certified` or `revoked` - previous state
+    - date:(optional) `rfc3339 encoded date` - previous date
 
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
 - Signer must have `ZBCertificationCenter` role. See `Authorization` module for details.
+- Only owner can update an easting record. 
 
 Transactions:
 - ` zblcli tx compliance certify-model [vid] [pid] [certification-date]` - Certify model.
   - Signature is required. Use `--from` flag.
   - Optional flags: 
-    - `--certification-type` string
+    - `--certification-type` string -  `zb` is the default and the only supported value now
+    - `--reason` string -  an optional comment describing the reason of certification
 
   Example: `zblcli tx compliance certify-model 1 1 "2020-04-16T06:04:57.05Z" --from jack`
   
   Example: `zblcli tx compliance certify-model 1 1 "2020-04-16T06:04:57.05Z" --certification-type "zb" --from jack`
+ 
+- ` zblcli tx compliance revoke-model [vid] [pid] [revocation-date]` - Revoke certification for a model.
+  - Signature is required. Use `--from` flag.
+  - Optional flags: 
+    - `--certification-type` string -  `zb` is the default and the only supported value now
+    - `--reason` string -  an optional comment describing the reason of revocation
+
+  Example: `zblcli tx compliance revoke-model 1 1 "2020-04-16T06:04:57.05Z" --from jack`
+  
+  Example: `zblcli tx compliance revoke-model 1 1 "2020-04-16T06:04:57.05Z" --reason "Some Reason" --from jack`
   
 Queries:
 - `zblcli query compliance certified-model [vid] [pid]` - Query certification data for model associated with VID/PID.
@@ -155,6 +172,22 @@ Queries:
 - `zblcli query compliance all-certified-models` - Query all certified models.
 
   Example: `zblcli query compliance all-certified-models`
+  
+- `zblcli query compliance revoked-model [vid] [pid]` - Query revocation data for model associated with VID/PID.
+
+  Example: `zblcli query compliance revoked-model 1 1`
+  
+- `zblcli query compliance all-certified-models` - Query all revoked models.
+
+  Example: `zblcli query compliance all-revoked-models`
+  
+- `zblcli query compliance compliance-info [vid] [pid]` - Query compliance info for model associated with VID/PID.
+
+  Example: `zblcli query compliance compliance-info 1 1`
+  
+- `zblcli query compliance all-compliance-info-records` - Query all compliance-infos.
+
+  Example: `zblcli query compliance all-compliance-info-records`
 
 ### Authorization
 

@@ -14,4 +14,5 @@ func init() {
 // RegisterCodec registers concrete type on the Amino codec
 func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgCertifyModel{}, ModuleName+"/CertifyModel", nil)
+	cdc.RegisterConcrete(MsgRevokeModel{}, ModuleName+"/RevokeModel", nil)
 }

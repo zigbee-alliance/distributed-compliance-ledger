@@ -9,19 +9,22 @@ import (
 const RouterKey = ModuleName
 
 type MsgCertifyModel struct {
-	VID               int16          `json:"vid"`
-	PID               int16          `json:"pid"`
-	CertificationDate time.Time      `json:"certification_date"` // rfc3339 encoded date
-	CertificationType string         `json:"certification_type,omitempty"`
-	Signer            sdk.AccAddress `json:"signer"`
+	VID               int16             `json:"vid"`
+	PID               int16             `json:"pid"`
+	CertificationDate time.Time         `json:"certification_date"` // rfc3339 encoded date
+	CertificationType CertificationType `json:"certification_type,omitempty"`
+	Reason            string            `json:"reason,omitempty"`
+	Signer            sdk.AccAddress    `json:"signer"`
 }
 
-func NewMsgCertifyModel(vid int16, pid int16, certificationDate time.Time, certificationType string, signer sdk.AccAddress) MsgCertifyModel {
+func NewMsgCertifyModel(vid int16, pid int16, certificationDate time.Time, certificationType CertificationType,
+	reason string, signer sdk.AccAddress) MsgCertifyModel {
 	return MsgCertifyModel{
 		VID:               vid,
 		PID:               pid,
 		CertificationDate: certificationDate,
 		CertificationType: certificationType,
+		Reason:            reason,
 		Signer:            signer,
 	}
 }
@@ -50,7 +53,7 @@ func (m MsgCertifyModel) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid CertificationDate: it cannot be empty")
 	}
 
-	if m.CertificationType != "" && m.CertificationType != ZbCertificationType {
+	if m.CertificationType != EmptyCertificationType && m.CertificationType != ZbCertificationType {
 		return sdk.ErrUnknownRequest(
 			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, ZbCertificationType))
 	}
@@ -63,5 +66,65 @@ func (m MsgCertifyModel) GetSignBytes() []byte {
 }
 
 func (m MsgCertifyModel) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Signer}
+}
+
+type MsgRevokeModel struct {
+	VID               int16             `json:"vid"`
+	PID               int16             `json:"pid"`
+	RevocationDate    time.Time         `json:"revocation_date"` // rfc3339 encoded date
+	CertificationType CertificationType `json:"certification_type,omitempty"`
+	Reason            string            `json:"reason,omitempty"`
+	Signer            sdk.AccAddress    `json:"signer"`
+}
+
+func NewMsgRevokeModel(vid int16, pid int16, revocationDate time.Time, certificationType CertificationType, revocationReason string, signer sdk.AccAddress) MsgRevokeModel {
+	return MsgRevokeModel{
+		VID:               vid,
+		PID:               pid,
+		RevocationDate:    revocationDate,
+		CertificationType: certificationType,
+		Reason:            revocationReason,
+		Signer:            signer,
+	}
+}
+
+func (m MsgRevokeModel) Route() string {
+	return RouterKey
+}
+
+func (m MsgRevokeModel) Type() string {
+	return "revoke_model"
+}
+
+func (m MsgRevokeModel) ValidateBasic() sdk.Error {
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress(m.Signer.String())
+	}
+
+	if m.VID == 0 {
+		return sdk.ErrUnknownRequest("Invalid VID: it must be not zero 16-bit integer")
+	}
+	if m.PID == 0 {
+		return sdk.ErrUnknownRequest("Invalid PID: it must be not zero 16-bit integer")
+	}
+
+	if m.RevocationDate.IsZero() {
+		return sdk.ErrUnknownRequest("Invalid RevocationDate: it cannot be empty")
+	}
+
+	if m.CertificationType != EmptyCertificationType && m.CertificationType != ZbCertificationType {
+		return sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, ZbCertificationType))
+	}
+
+	return nil
+}
+
+func (m MsgRevokeModel) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
+}
+
+func (m MsgRevokeModel) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
 }

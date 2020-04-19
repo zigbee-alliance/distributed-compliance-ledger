@@ -24,20 +24,23 @@ func NewPaginationParams(skip int, take int) PaginationParams {
 	return PaginationParams{Skip: skip, Take: take}
 }
 
-func ParsePaginationParamsFromFlags(cdc *codec.Codec) []byte {
-	params := NewPaginationParams(
+func ParsePaginationParamsFromFlags() PaginationParams {
+	return NewPaginationParams(
 		viper.GetInt(FlagSkip),
 		viper.GetInt(FlagTake),
 	)
-	return cdc.MustMarshalJSON(params)
 }
 
-func ParsePaginationParamsFromRequest(cdc *codec.Codec, r *http.Request) ([]byte, error) {
+func ParseAndMarshalPaginationParamsFromFlags(cdc *codec.Codec) []byte {
+	return cdc.MustMarshalJSON(ParsePaginationParamsFromFlags())
+}
+
+func ParsePaginationParamsFromRequest(cdc *codec.Codec, r *http.Request) (PaginationParams, error) {
 	skip := 0
 	if str := r.FormValue("skip"); len(str) > 0 {
 		val_, err := strconv.Atoi(str)
 		if err != nil {
-			return nil, error(sdk.ErrInternal(fmt.Sprintf("Invalid query parameter `skip`: Parsing Error: %v must be number", str)))
+			return PaginationParams{}, error(sdk.ErrInternal(fmt.Sprintf("Invalid query parameter `skip`: Parsing Error: %v must be number", str)))
 		}
 		skip = val_
 	}
@@ -46,11 +49,18 @@ func ParsePaginationParamsFromRequest(cdc *codec.Codec, r *http.Request) ([]byte
 	if str := r.FormValue("take"); len(str) > 0 {
 		val_, err := strconv.Atoi(str)
 		if err != nil {
-			return nil, error(sdk.ErrInternal(fmt.Sprintf("Invalid query parameter `take`: Parsing Error: %v must be number", str)))
+			return PaginationParams{}, error(sdk.ErrInternal(fmt.Sprintf("Invalid query parameter `take`: Parsing Error: %v must be number", str)))
 		}
 		take = val_
 	}
 
-	params := NewPaginationParams(skip, take)
+	return NewPaginationParams(skip, take), nil
+}
+
+func ParseAndMarshalPaginationParamsFromRequest(cdc *codec.Codec, r *http.Request) ([]byte, error) {
+	params, err := ParsePaginationParamsFromRequest(cdc, r)
+	if err != nil {
+		return nil, err
+	}
 	return cdc.MustMarshalJSON(params), nil
 }
