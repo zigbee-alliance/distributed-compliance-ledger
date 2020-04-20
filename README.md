@@ -177,7 +177,7 @@ Queries:
 
   Example: `zblcli query compliance revoked-model 1 1`
   
-- `zblcli query compliance all-certified-models` - Query all revoked models.
+- `zblcli query compliance all-revoked-models` - Query all revoked models.
 
   Example: `zblcli query compliance all-revoked-models`
   
