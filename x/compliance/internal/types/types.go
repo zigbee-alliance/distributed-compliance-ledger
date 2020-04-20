@@ -16,8 +16,7 @@ const (
 type CertificationType string
 
 const (
-	ZbCertificationType    CertificationType = "zb"
-	EmptyCertificationType CertificationType = ""
+	ZbCertificationType CertificationType = "zb"
 )
 
 type ComplianceInfo struct {
@@ -25,17 +24,13 @@ type ComplianceInfo struct {
 	PID               int16                   `json:"pid"`
 	State             ComplianceState         `json:"state"`
 	Date              time.Time               `json:"date"` // rfc3339 encoded date
-	CertificationType CertificationType       `json:"certification_type,omitempty"`
+	CertificationType CertificationType       `json:"certification_type"`
 	Reason            string                  `json:"reason,omitempty"`
 	Owner             sdk.AccAddress          `json:"owner"`
 	History           []ComplianceHistoryItem `json:"history,omitempty"`
 }
 
 func NewCertifiedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
-	if certificationType == EmptyCertificationType { // `zb` certification_type is only supported now
-		certificationType = ZbCertificationType
-	}
-
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
@@ -49,10 +44,6 @@ func NewCertifiedComplianceInfo(vid int16, pid int16, certificationType Certific
 }
 
 func NewRevokedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
-	if certificationType == EmptyCertificationType { // `zb` certification_type is only supported now
-		certificationType = ZbCertificationType
-	}
-
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
@@ -110,4 +101,10 @@ func (d ComplianceHistoryItem) String() string {
 	}
 
 	return string(bytes)
+}
+
+type ComplianceInfoKey struct {
+	VID               int16             `json:"vid"`
+	PID               int16             `json:"pid"`
+	CertificationType CertificationType `json:"certification_type"`
 }

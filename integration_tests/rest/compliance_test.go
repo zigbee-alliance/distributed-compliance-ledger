@@ -41,6 +41,13 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
 	utils.PublishModelInfo(modelInfo)
 
+	// Check if model either certified or revoked before Compliance record was created
+	modelIsCertified := utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, compliance.ZbCertificationType)
+	require.False(t, modelIsCertified.Value)
+
+	modelIsRevoked := utils.GetRevokedModel(modelInfo.VID, modelInfo.PID, compliance.ZbCertificationType)
+	require.False(t, modelIsRevoked.Value)
+
 	// Assign TestHouse role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.TestHouse)
 
@@ -53,16 +60,22 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 	// Certify model
 	certifyModelMsg := compliance.NewMsgCertifyModel(modelInfo.VID, modelInfo.PID, time.Now().UTC(),
-		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, jackKeyInfo.Address)
+		compliance.CertificationType(test_constants.CertificationType), test_constants.CertificationType, jackKeyInfo.Address)
 	utils.PublishCertifiedModel(certifyModelMsg)
 
 	// Check model is certified
-	complianceInfo := utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID)
+	complianceInfo := utils.GetComplianceInfo(modelInfo.VID, modelInfo.PID, certifyModelMsg.CertificationType)
 	require.Equal(t, complianceInfo.VID, modelInfo.VID)
 	require.Equal(t, complianceInfo.PID, modelInfo.PID)
 	require.Equal(t, complianceInfo.State, compliance.CertifiedState)
 	require.Equal(t, complianceInfo.CertificationType, certifyModelMsg.CertificationType)
 	require.Equal(t, complianceInfo.Date, certifyModelMsg.CertificationDate)
+
+	modelIsCertified = utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, certifyModelMsg.CertificationType)
+	require.True(t, modelIsCertified.Value)
+
+	modelIsRevoked = utils.GetRevokedModel(modelInfo.VID, modelInfo.PID, certifyModelMsg.CertificationType)
+	require.False(t, modelIsRevoked.Value)
 
 	// Get all certified models
 	certifiedModels := utils.GetAllCertifiedModels()
@@ -75,7 +88,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	utils.PublishRevokedModel(revokeModelMsg)
 
 	// Check model is revoked
-	complianceInfo = utils.GetRevokedModel(modelInfo.VID, modelInfo.PID)
+	complianceInfo = utils.GetComplianceInfo(modelInfo.VID, modelInfo.PID, revokeModelMsg.CertificationType)
 	require.Equal(t, complianceInfo.VID, modelInfo.VID)
 	require.Equal(t, complianceInfo.PID, modelInfo.PID)
 	require.Equal(t, complianceInfo.State, compliance.RevokedState)
@@ -85,6 +98,12 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	require.Equal(t, 1, len(complianceInfo.History))
 	require.Equal(t, complianceInfo.History[0].State, compliance.CertifiedState)
 	require.Equal(t, complianceInfo.History[0].Date, certifyModelMsg.CertificationDate)
+
+	modelIsCertified = utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, revokeModelMsg.CertificationType)
+	require.False(t, modelIsCertified.Value)
+
+	modelIsRevoked = utils.GetRevokedModel(modelInfo.VID, modelInfo.PID, revokeModelMsg.CertificationType)
+	require.True(t, modelIsRevoked.Value)
 
 	// Get all revoked models
 	revokedModels := utils.GetAllRevokedModels()
@@ -97,12 +116,6 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Get all compliance infos
 	complianceInfos := utils.GetComplianceInfos()
 	require.Equal(t, utils.ParseUint(inputComplianceInfos.Total)+1, utils.ParseUint(complianceInfos.Total))
-
-	// Get compliance info
-	complianceInfo = utils.GetComplianceInfo(modelInfo.VID, modelInfo.PID)
-	require.Equal(t, complianceInfo.State, compliance.RevokedState)
-	require.Equal(t, 1, len(complianceInfo.History))
-	require.Equal(t, complianceInfo.History[0].State, compliance.CertifiedState)
 }
 
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
@@ -127,13 +140,19 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	utils.PublishRevokedModel(revokeModelMsg)
 
 	// Check model is revoked
-	complianceInfo := utils.GetRevokedModel(vid, pid)
+	complianceInfo := utils.GetComplianceInfo(vid, pid, revokeModelMsg.CertificationType)
 	require.Equal(t, complianceInfo.VID, vid)
 	require.Equal(t, complianceInfo.PID, pid)
 	require.Equal(t, complianceInfo.State, compliance.RevokedState)
 	require.Equal(t, complianceInfo.CertificationType, revokeModelMsg.CertificationType)
 	require.Equal(t, complianceInfo.Date, revokeModelMsg.RevocationDate)
 	require.Equal(t, complianceInfo.Reason, revokeModelMsg.Reason)
+
+	modelIsRevoked := utils.GetRevokedModel(revokeModelMsg.VID, revokeModelMsg.PID, revokeModelMsg.CertificationType)
+	require.True(t, modelIsRevoked.Value)
+
+	modelIsCertified := utils.GetCertifiedModel(revokeModelMsg.VID, revokeModelMsg.PID, revokeModelMsg.CertificationType)
+	require.False(t, modelIsCertified.Value)
 
 	// Get all revoked models
 	revokedModels := utils.GetAllRevokedModels()
@@ -142,16 +161,22 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Certify model
 	certificationTime := revocationTime.AddDate(0, 0, 1)
 	certifyModelMsg := compliance.NewMsgCertifyModel(vid, pid, certificationTime,
-		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, jackKeyInfo.Address)
+		compliance.CertificationType(test_constants.CertificationType), test_constants.CertificationType, jackKeyInfo.Address)
 	utils.PublishCertifiedModel(certifyModelMsg)
 
 	// Check model is certified
-	complianceInfo = utils.GetCertifiedModel(vid, pid)
+	complianceInfo = utils.GetComplianceInfo(vid, pid, certifyModelMsg.CertificationType)
 	require.Equal(t, complianceInfo.VID, vid)
 	require.Equal(t, complianceInfo.PID, pid)
 	require.Equal(t, complianceInfo.State, compliance.CertifiedState)
 	require.Equal(t, complianceInfo.CertificationType, certifyModelMsg.CertificationType)
 	require.Equal(t, complianceInfo.Date, certifyModelMsg.CertificationDate)
+
+	modelIsRevoked = utils.GetRevokedModel(certifyModelMsg.VID, certifyModelMsg.PID, certifyModelMsg.CertificationType)
+	require.False(t, modelIsRevoked.Value)
+
+	modelIsCertified = utils.GetCertifiedModel(certifyModelMsg.VID, certifyModelMsg.PID, certifyModelMsg.CertificationType)
+	require.True(t, modelIsCertified.Value)
 
 	// Get all certified models
 	certifiedModels := utils.GetAllCertifiedModels()

@@ -77,7 +77,7 @@ A summary of KV store and paths used:
         - `1:<vid>:<pid>` : `<list of test results>`
 - KV store name: `compliance`
     - Compliance results for every model       
-       - `1:<vid>:<pid>` : `<compliance info>`
+       - `1:<certification_type>:<vid>:<pid>` : `<compliance info>`
     - A list of compliant models (`pid`s) for the given vendor. 
        - `2:<vid>` : `<compliance pids>`  
     - A list of revoked models (`pid`s) for the given vendor.       
@@ -572,11 +572,11 @@ from the revocation list.
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `certification_date`: rfc3339 encoded date - date of certification
-    - `certification_type` (optional): string  - `zb` is the default and the only supported value now
+    - `certification_type`: string  - `zb` is the default and the only supported value now
     - `reason` (optional): string  - optional comment describing the reason of the certification
 - In State:
   - `compliance` store  
-  - `1:<vid>:<pid>` : `<compliance info>`
+  - `1:<certification_type>:<vid>:<pid>` : `<compliance info>`
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revoked pids>`  
 - Who can send: 
@@ -584,7 +584,7 @@ from the revocation list.
 - CLI command: 
     -   `zblcli tx compliance certify-model .... `
 - REST API: 
-    -   POST `/compliance/certified/vid/pid`
+    -   PUT `/compliance/certified/vid/pid/certification_type`
     
 #### REVOKE_MODEL_CERTIFICATION
 Revoke compliance of the Model to the ZB standard.
@@ -600,11 +600,11 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `revocation_date`: rfc3339 encoded date - date of revocation
-    - `certification_type` (optional): string  - `zb` is the default and the only supported value now
-    - `reason` (optional): string  - optional comment describing the reason of the revocation
+    - `certification_type` string - `zb` is the default and the only supported value now
+    - `reason` (optional): string - optional comment describing the reason of the revocation
 - In State:
   - `compliance` store  
-  - `1:<vid>:<pid>` : `<compliance info>`
+  - `1:<certification_type>:<vid>:<pid>` : `<compliance info>`
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revocation pids>`  
 - Who can send: 
@@ -612,140 +612,84 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - CLI command: 
     -   `zblcli tx compliance revoke-model-certification .... `
 - REST API: 
-    -   PUT `/compliance/revoked/vid/pid`    
+    -   PUT `/compliance/revoked/vid/pid/certification_type`    
     
 #### GET_CERTIFIED_MODEL
-Gets a compliance info if the given Model (identified by the `vid` and `pid`) is compliant to ZB standards. 
+Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is compliant to ZB standards. 
 
 This is the aggregation of compliance and
 revocation information for every vid/pid. It should be used in cases where compliance 
 is tracked on the ledger.
- 
-Note: This function responds with `NotFoundError` (404 code) in two cases:
-- compliance information (identified by the `vid` and `pid`) not found in store.
-- compliance information (identified by the `vid` and `pid`) is found but it is in `revoked` state. 
 
-You can use `GET_COMPLICE_INFO` method to get compliance information without additional state checks.
+Note: This function returns `false` in two cases:
+- compliance information not found in the store.
+- compliance information is found but it is in `revoked` state. 
+
+You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
  
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `certification_type`: string - `zb` is the default and the only supported value now
 - CLI command: 
     -   `zblcli query compliance certified-model .... `
 - REST API: 
-    -   GET `/compliance/certified/vid/pid`
-        - optional query parameter `certification_type` can be passed
+    -   GET `/compliance/certified/vid/pid/certification_type`
 - Result
 ```json
 {
   "result": {
-    "vid": 16 bits int,
-    "pid": 16 bits int,
-    "state": string, // certified
-    "date": rfc3339 encoded date,
-    "certification_type": string,
-    "reason": optional(string),
-    "owner": string
-  },
-  "height": string
-}
-```
-- Result in case the model was revoked before:
-```json
-{
-  "result": {
-    "vid": 16 bits int,
-    "pid": 16 bits int,
-    "state": string, // certified
-    "date": rfc3339 encoded date,
-    "certification_type": string,
-    "reason": optional(string),
-    "owner": string,
-    "history": [
-      {
-        "state": string, // revoked
-        "date": rfc3339 encoded date,
-        "reason": optional(string)
-      }
-    ]
+    "value": bool
   },
   "height": string
 }
 ```
 
 #### GET_REVOKED_MODEL
-Gets a compliance info if the given Model's compliance is revoked. 
+Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is revoked. 
 
 It contains information about revocation only, so it should be used in cases
  where only revocation is tracked on the ledger.
- 
-Note: This function responds with `NotFoundError` (404 code) in two cases:
-- compliance information (identified by the `vid` and `pid`) not found in store.
-- compliance information (identified by the `vid` and `pid`) is found but it is in `certified` state. 
 
-You can use `GET_COMPLICE_INFO` method to get compliance information without additional state checks.
+Note: This function returns `false` in two cases:
+- compliance information not found in the store.
+- compliance information is found but it is in `certified` state. 
+ 
+You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `certification_type`: string - `zb` is the default and the only supported value now
 - CLI command: 
     -   `zblcli query compliance revoked-model .... `
 - REST API: 
-    -   GET `/compliance/revoked/vid/pid`
-        - optional query parameter `certification_type` can be passed
+    -   GET `/compliance/revoked/vid/pid/certification_type`
 - Result:
 ```json
 {
   "result": {
-    "vid": 16 bits int,
-    "pid": 16 bits int,
-    "state": string,
-    "date": rfc3339 encoded date,
-    "certification_type": string,
-    "reason": optional(string),
-    "owner": string
-  },
-  "height": string
-}
-```
-- Result in case the model was certified before:
-```json
-{
-  "result": {
-    "vid": 16 bits int,
-    "pid": 16 bits int,
-    "state": string, // revoked
-    "date": rfc3339 encoded date,
-    "certification_type": string,
-    "reason": optional(string),
-    "owner": string,
-    "history": [
-      {
-        "state": string, // certified
-        "date": rfc3339 encoded date,
-        "reason": optional(string)
-      }
-    ]
+    "value": bool
   },
   "height": string
 }
 ```
 
 #### GET_COMPLIANCE_INFO
-Gets compliance information associated with the Model (identified by the `vid` and `pid`).
+Gets compliance information associated with the Model (identified by the `vid` and `pid` and `certification_type`).
 
 It can be used instead of GET_CERTIFIED_MODEL / GET_REVOKED_MODEL methods 
- to get compliance information without additional state check.
-So, this function responds with `NotFoundError` (404 code) only if compliance information (identified by the `vid` and `pid`) not found in store.
+ to get the whole compliance information without additional state check.
+This function responds with `NotFoundError` (404 code) if compliance information (identified by the `vid` and `pid`) not found in store.
  
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `certification_type`: string - `zb` is the default and the only supported value now
 - CLI command: 
     -   `zblcli query compliance compliance-info .... `
 - REST API: 
-    -   GET `/compliance/vid/pid`
-        - optional query parameter `certification_type` can be passed
+    -   GET `/compliance/vid/pid/certification_type`
 - Result:
 ```json
 {
@@ -822,9 +766,9 @@ It contains information about revocation only, so it should be used in cases
 - Parameters: No
 - CLI command: 
     -   `zblcli query compliance all-revoked-models.... `
-        - optional query parameter `certification_type` can be passed
 - REST API: 
     -   GET `/compliance/revoked`
+        - optional query parameter `certification_type` can be passed to filter by certification type.
  - Result
  ```json
 {
@@ -834,12 +778,7 @@ It contains information about revocation only, so it should be used in cases
       {
         "vid": 16 bits int,
         "pid": 16 bits int,
-        "state": string, // revoked
-        "date": rfc3339 encoded date,
         "certification_type": string,
-        "reason": optional(string),
-        "owner": string
-        "history":  array // (as for `GET_REVOKED_MODEL`) if not empty
       }
     ]
   },
@@ -860,7 +799,7 @@ revocation information for every vid/pid. It should be used in cases where compl
     -   `zblcli query compliance all-certified-models `
 - REST API: 
     -   GET `/compliance/certified`
-        - optional query parameter `certification_type` can be passed
+        - optional query parameter `certification_type` can be passed to filter by certification type.
  - Result
  ```json
 {
@@ -870,12 +809,7 @@ revocation information for every vid/pid. It should be used in cases where compl
       {
         "vid": 16 bits int,
         "pid": 16 bits int,
-        "state": string, // certified
-        "date": rfc3339 encoded date,
         "certification_type": string,
-        "reason": optional(string),
-        "owner": string
-        "history":  array // (as for `GET_CERTIFIED_MODEL`) if not empty
       }
     ]
   },

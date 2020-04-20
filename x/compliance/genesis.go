@@ -59,7 +59,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	var records []ComplianceInfo
 
-	k.IterateComplianceInfos(ctx, types.EmptyCertificationType, func(deviceCompliance types.ComplianceInfo) (stop bool) {
+	k.IterateComplianceInfos(ctx, "", func(deviceCompliance types.ComplianceInfo) (stop bool) {
 		records = append(records, deviceCompliance)
 		return false
 	})
