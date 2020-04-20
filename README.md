@@ -141,7 +141,7 @@ Compliance Info type:
 Permissions:
 - All the transactions below must be signed. Use `--from` flag.
 - Signer must have `ZBCertificationCenter` role. See `Authorization` module for details.
-- Only owner can update an easting record. 
+- Only owner can update an existing record. 
 
 Transactions:
 - ` zblcli tx compliance certify-model [vid] [pid] [certification-date]` - Certify model.
