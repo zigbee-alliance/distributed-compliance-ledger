@@ -87,7 +87,7 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revoke-model [vid] [pid] [revocation-date]",
-		Short: "Revoke compliance of the existing model.",
+		Short: "Revoke compliance of an existing model.",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

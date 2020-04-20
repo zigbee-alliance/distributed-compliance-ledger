@@ -41,7 +41,6 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 
 func queryComplianceInfo(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) ([]byte, sdk.Error) {
 	var params types.SingleQueryParams
-
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
 	}

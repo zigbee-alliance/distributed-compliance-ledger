@@ -32,12 +32,16 @@ type ComplianceInfo struct {
 }
 
 func NewCertifiedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+	if certificationType == EmptyCertificationType { // `zb` certification_type is only supported now
+		certificationType = ZbCertificationType
+	}
+
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
 		State:             Certified,
 		Date:              date,
-		CertificationType: ZbCertificationType, // `zb` certification_type is only supported now
+		CertificationType: certificationType,
 		Reason:            reason,
 		Owner:             owner,
 		History:           []ComplianceHistoryItem{},
@@ -45,12 +49,16 @@ func NewCertifiedComplianceInfo(vid int16, pid int16, certificationType Certific
 }
 
 func NewRevokedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+	if certificationType == EmptyCertificationType { // `zb` certification_type is only supported now
+		certificationType = ZbCertificationType
+	}
+
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
 		State:             Revoked,
 		Date:              date,
-		CertificationType: ZbCertificationType,
+		CertificationType: certificationType,
 		Reason:            reason,
 		Owner:             owner,
 		History:           []ComplianceHistoryItem{},
@@ -58,15 +66,15 @@ func NewRevokedComplianceInfo(vid int16, pid int16, certificationType Certificat
 }
 
 func (d *ComplianceInfo) UpdateComplianceInfo(date time.Time, reason string) {
-
-	d.History = append(d.History, NewComplianceHistoryItem(d.State, d.Date, d.Reason))
-
 	// Toggle state
-	state := Certified
+	var state ComplianceState
 	if d.State == Certified {
 		state = Revoked
+	} else {
+		state = Certified
 	}
 
+	d.History = append(d.History, NewComplianceHistoryItem(d.State, d.Date, d.Reason))
 	d.State = state
 	d.Date = date
 	d.Reason = reason

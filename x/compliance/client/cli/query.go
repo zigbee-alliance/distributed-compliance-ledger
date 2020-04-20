@@ -136,6 +136,7 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec, args []string, state
 	vid := args[0]
 	pid := args[1]
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
+
 	res, height, err := cliCtx.QueryStore([]byte(keeper.ComplianceInfoId(certificationType, vid, pid)), queryRoute)
 	if err != nil || res == nil {
 		return types.ErrComplianceInfoDoesNotExist(vid, pid)

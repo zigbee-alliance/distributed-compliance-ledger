@@ -33,7 +33,7 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 		return err.Result()
 	}
 
-	if err := checkZbCertificationRightsRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
+	if err := checkZbCertificationRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
 		return err.Result()
 	}
 
@@ -86,7 +86,7 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper aut
 		return err.Result()
 	}
 
-	if err := checkZbCertificationRightsRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
+	if err := checkZbCertificationRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
 		return err.Result()
 	}
 
@@ -125,10 +125,10 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper aut
 	return sdk.Result{}
 }
 
-func checkZbCertificationRightsRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress, certificationType types.CertificationType) sdk.Error {
+func checkZbCertificationRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress, certificationType types.CertificationType) sdk.Error {
 	if certificationType == types.EmptyCertificationType || certificationType == types.ZbCertificationType { // certification type is empty or ZbCertificationType
 		if !authzKeeper.HasRole(ctx, signer, authz.ZBCertificationCenter) {
-			return sdk.ErrUnauthorized("MsgCertifyModel transaction should be signed by an account with the ZBCertificationCenter role")
+			return sdk.ErrUnauthorized("MsgCertifyModel/MsgRevokeModel transaction should be signed by an account with the ZBCertificationCenter role")
 		}
 	}
 

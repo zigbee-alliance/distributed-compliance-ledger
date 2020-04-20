@@ -352,6 +352,26 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	require.Equal(t, types.CodeComplianceInfoDoesNotExist, err.Code())
 }
 
+func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
+	setup := Setup()
+
+	// revoke model
+	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, constants.VID, constants.PID)
+	revokedModelMsg.RevocationDate = time.Now().UTC()
+	result := setup.Handler(setup.Ctx, revokedModelMsg)
+	require.Equal(t, sdk.CodeOK, result.Code)
+
+	// query certified model
+	receivedComplianceInfo, _ := queryRevokedModel(setup, constants.VID, constants.PID)
+	checkRevokedModel(t, receivedComplianceInfo, revokedModelMsg)
+
+	// certify model
+	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, constants.VID, constants.PID)
+	certifyModelMsg.CertificationDate = revokedModelMsg.RevocationDate.AddDate(0, 0, 1)
+	result = setup.Handler(setup.Ctx, certifyModelMsg)
+	require.Equal(t, sdk.CodeOK, result.Code)
+}
+
 func queryCertifiedModel(setup TestSetup, vid int16, pid int16) (types.ComplianceInfo, sdk.Error) {
 	return queryModel(setup, vid, pid, keeper.QueryCertifiedModel)
 }

@@ -14,6 +14,12 @@ type ListQueryParams struct {
 	Take              int
 }
 
+func NewSingleQueryParams(certificationType CertificationType) SingleQueryParams {
+	return SingleQueryParams{
+		CertificationType: certificationType,
+	}
+}
+
 func NewListQueryParams(certificationType CertificationType, skip int, take int) ListQueryParams {
 	return ListQueryParams{
 		CertificationType: certificationType,
