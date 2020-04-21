@@ -34,7 +34,7 @@ func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			data := pagination.ParsePaginationParamsFromFlags(cliCtx.Codec)
+			data := pagination.ParseAndMarshalPaginationParamsFromFlags(cliCtx.Codec)
 			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/account_headers", queryRoute), data)
 			if err != nil {
 				fmt.Printf("could not get account headers\n")

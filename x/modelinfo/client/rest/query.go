@@ -16,7 +16,7 @@ func getModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerF
 	return func(w http.ResponseWriter, r *http.Request) {
 		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
 
-		params, err := pagination.ParsePaginationParamsFromRequest(cliCtx.Codec, r)
+		params, err := pagination.ParseAndMarshalPaginationParamsFromRequest(cliCtx.Codec, r)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -63,7 +63,7 @@ func getVendorsHandler(cliCtx context.CLIContext, storeName string) http.Handler
 	return func(w http.ResponseWriter, r *http.Request) {
 		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
 
-		params, err := pagination.ParsePaginationParamsFromRequest(cliCtx.Codec, r)
+		params, err := pagination.ParseAndMarshalPaginationParamsFromRequest(cliCtx.Codec, r)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

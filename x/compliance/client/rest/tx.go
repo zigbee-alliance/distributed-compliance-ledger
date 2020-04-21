@@ -11,17 +11,18 @@ import (
 	"time"
 )
 
-type CertifiedModelRequest struct {
-	BaseReq           rest.BaseReq `json:"base_req"`
-	VID               int16        `json:"vid"`
-	PID               int16        `json:"pid"`
-	CertificationDate time.Time    `json:"certification_date"` // rfc3339 encoded date
-	CertificationType string       `json:"certification_type,omitempty"`
+type CertifyModelRequest struct {
+	BaseReq           rest.BaseReq            `json:"base_req"`
+	VID               int16                   `json:"vid"`
+	PID               int16                   `json:"pid"`
+	CertificationDate time.Time               `json:"certification_date"` // rfc3339 encoded date
+	CertificationType types.CertificationType `json:"certification_type"`
+	Reason            string                  `json:"reason,omitempty"`
 }
 
 func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req CertifiedModelRequest
+		var req CertifyModelRequest
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			return
 		}
@@ -37,7 +38,40 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCertifyModel(req.VID, req.PID, req.CertificationDate, req.CertificationType, from)
+		msg := types.NewMsgCertifyModel(req.VID, req.PID, req.CertificationDate, req.CertificationType, req.Reason, from)
+
+		restutils.ProcessMessage(cliCtx, w, r, baseReq, msg, from)
+	}
+}
+
+type RevokeModelRequest struct {
+	BaseReq           rest.BaseReq            `json:"base_req"`
+	VID               int16                   `json:"vid"`
+	PID               int16                   `json:"pid"`
+	RevocationDate    time.Time               `json:"revocation_date"` // rfc3339 encoded date
+	CertificationType types.CertificationType `json:"certification_type"`
+	Reason            string                  `json:"reason,omitempty"`
+}
+
+func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req RevokeModelRequest
+		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+			return
+		}
+
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		from, err := sdk.AccAddressFromBech32(baseReq.From)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
+			return
+		}
+
+		msg := types.NewMsgRevokeModel(req.VID, req.PID, req.RevocationDate, req.CertificationType, req.Reason, from)
 
 		restutils.ProcessMessage(cliCtx, w, r, baseReq, msg, from)
 	}

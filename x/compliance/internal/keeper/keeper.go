@@ -16,51 +16,40 @@ type Keeper struct {
 }
 
 const (
-	certifiedModelPrefix  = "cm"
-	vendorCertifiedModels = "vcm"
+	complianceInfoPrefix = "ci"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{storeKey: storeKey, cdc: cdc}
 }
 
-// Gets the entire CertifiedModel struct for a CertifiedModelID
-func (k Keeper) GetCertifiedModel(ctx sdk.Context, vid int16, pid int16) types.CertifiedModel {
-	if !k.IsCertifiedModelPresent(ctx, vid, pid) {
-		panic("CertifiedModel does not exist")
+// Gets the entire ComplianceInfo struct for a ComplianceInfoID
+func (k Keeper) GetComplianceInfo(ctx sdk.Context, certificationType types.CertificationType, vid int16, pid int16) types.ComplianceInfo {
+	if !k.IsComplianceInfoPresent(ctx, certificationType, vid, pid) {
+		panic("ComplianceInfo does not exist")
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get([]byte(CertifiedModelId(vid, pid)))
+	bz := store.Get([]byte(ComplianceInfoId(certificationType, vid, pid)))
 
-	var device types.CertifiedModel
+	var device types.ComplianceInfo
 
 	k.cdc.MustUnmarshalBinaryBare(bz, &device)
 
 	return device
 }
 
-// Sets the entire CertifiedModel metadata struct for a CertifiedModelID
-func (k Keeper) SetCertifiedModel(ctx sdk.Context, model types.CertifiedModel) {
+// Sets the entire ComplianceInfo metadata struct for a ComplianceInfoID
+func (k Keeper) SetComplianceInfo(ctx sdk.Context, model types.ComplianceInfo) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(CertifiedModelId(model.VID, model.PID)), k.cdc.MustMarshalBinaryBare(model))
+	store.Set([]byte(ComplianceInfoId(model.CertificationType, model.VID, model.PID)), k.cdc.MustMarshalBinaryBare(model))
 }
 
-// Deletes the CertifiedModel from the store
-func (k Keeper) DeleteCertifiedModel(ctx sdk.Context, vid int16, pid int16) {
-	if !k.IsCertifiedModelPresent(ctx, vid, pid) {
-		panic("CertifiedModel does not exist")
-	}
-
-	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(CertifiedModelId(vid, pid)))
-}
-
-// Iterate over all CertifiedModels
-func (k Keeper) IterateCertifiedModels(ctx sdk.Context, process func(info types.CertifiedModel) (stop bool)) {
+// Iterate over all ComplianceInfos
+func (k Keeper) IterateComplianceInfos(ctx sdk.Context, certificationType types.CertificationType, process func(info types.ComplianceInfo) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iter := sdk.KVStorePrefixIterator(store, []byte(certifiedModelPrefix))
+	iter := sdk.KVStorePrefixIterator(store, []byte(prefix(certificationType)))
 	defer iter.Close()
 
 	for {
@@ -70,7 +59,7 @@ func (k Keeper) IterateCertifiedModels(ctx sdk.Context, process func(info types.
 
 		val := iter.Value()
 
-		var certifiedModel types.CertifiedModel
+		var certifiedModel types.ComplianceInfo
 
 		k.cdc.MustUnmarshalBinaryBare(val, &certifiedModel)
 
@@ -82,18 +71,22 @@ func (k Keeper) IterateCertifiedModels(ctx sdk.Context, process func(info types.
 	}
 }
 
-func (k Keeper) CountTotalCertifiedModel(ctx sdk.Context) int {
-	return k.countTotal(ctx, certifiedModelPrefix)
+func (k Keeper) CountTotalComplianceInfo(ctx sdk.Context, certificationType types.CertificationType) int {
+	return k.countTotal(ctx, prefix(certificationType))
 }
 
-// Check if the CertifiedModel is present in the store or not
-func (k Keeper) IsCertifiedModelPresent(ctx sdk.Context, vid int16, pid int16) bool {
-	return k.isRecordPresent(ctx, CertifiedModelId(vid, pid))
+// Check if the ComplianceInfo is present in the store or not
+func (k Keeper) IsComplianceInfoPresent(ctx sdk.Context, certificationType types.CertificationType, vid int16, pid int16) bool {
+	return k.isRecordPresent(ctx, ComplianceInfoId(certificationType, vid, pid))
 }
 
-// Id builder for CertifiedModel
-func CertifiedModelId(vid interface{}, pid interface{}) string {
-	return fmt.Sprintf("%s:%v:%v", certifiedModelPrefix, vid, pid)
+// Id builder for ComplianceInfo
+func ComplianceInfoId(certificationType types.CertificationType, vid interface{}, pid interface{}) string {
+	return fmt.Sprintf("%s:%v:%v", prefix(certificationType), vid, pid)
+}
+
+func prefix(certificationType types.CertificationType) string {
+	return fmt.Sprintf("%s:%v", complianceInfoPrefix, certificationType)
 }
 
 // Check if the record is present in the store or not
@@ -102,7 +95,8 @@ func (k Keeper) isRecordPresent(ctx sdk.Context, id string) bool {
 	return store.Has([]byte(id))
 }
 
-//  TODO: Is iteration the only way to calculate the total number of elements? It looks like that in a non-pagination case we iterate twice: to get the total number of elements and to get the real content.
+//  TODO: Is iteration the only way to calculate the total number of elements?
+//  It looks like that in a non-pagination case we iterate twice: to get the total number of elements and to get the real content.
 func (k Keeper) countTotal(ctx sdk.Context, prefix string) int {
 	store := ctx.KVStore(k.storeKey)
 	res := 0

@@ -6,9 +6,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+	"testing"
 )
 
 type TestSetup struct {
@@ -48,25 +50,57 @@ func Setup() TestSetup {
 	return setup
 }
 
-func DefaultCertifiedModel() types.CertifiedModel {
-	return types.CertifiedModel{
-		VID:               test_constants.VID,
-		PID:               test_constants.PID,
-		CertificationDate: test_constants.CertificationDate,
-		CertificationType: test_constants.CertificationType,
-		Owner:             test_constants.Owner,
-	}
+func DefaultCertifiedModel() types.ComplianceInfo {
+	return types.NewCertifiedComplianceInfo(
+		test_constants.VID,
+		test_constants.PID,
+		types.CertificationType(test_constants.CertificationType),
+		test_constants.CertificationDate,
+		test_constants.EmptyString,
+		test_constants.Owner,
+	)
 }
 
-// add 10 certified models {VID: 1, PID: 1..count}
-func PopulateStoreWithCertifiedModels(setup TestSetup, count int) int16 {
+func DefaultRevokedModel() types.ComplianceInfo {
+	return types.NewRevokedComplianceInfo(
+		test_constants.VID,
+		test_constants.PID,
+		types.CertificationType(test_constants.CertificationType),
+		test_constants.RevocationDate,
+		test_constants.RevocationReason,
+		test_constants.Owner,
+	)
+}
+
+// add n=count/2 certified and count-n revoked models {VID: 1, PID: 1..count}
+func PopulateStoreWithMixedModels(setup TestSetup, count int) int16 {
 	firstId := int16(1)
-	model := DefaultCertifiedModel()
+	n := count / 2
+
+	certifiedModel := DefaultCertifiedModel()
+	PopulateStoreWithModels(setup, firstId, n, certifiedModel)
+
+	revokedModel := DefaultRevokedModel()
+	PopulateStoreWithModels(setup, firstId+int16(n), count, revokedModel)
+
+	return firstId
+}
+
+// add n models {VID: 1, PID: 1..count}
+func PopulateStoreWithModels(setup TestSetup, firstId int16, count int, complianceInfo types.ComplianceInfo) int16 {
 	for i := firstId; i <= int16(count); i++ {
 		// add model {VID: 1, PID: i}
-		model.PID = i
-		model.VID = i
-		setup.CompliancetKeeper.SetCertifiedModel(setup.Ctx, model)
+		complianceInfo.PID = i
+		complianceInfo.VID = i
+		setup.CompliancetKeeper.SetComplianceInfo(setup.Ctx, complianceInfo)
 	}
 	return firstId
+}
+
+func CheckComplianceInfo(t *testing.T, expected types.ComplianceInfo, received types.ComplianceInfo) {
+	require.Equal(t, expected.VID, received.VID)
+	require.Equal(t, expected.PID, received.PID)
+	require.Equal(t, expected.CertificationType, received.CertificationType)
+	require.Equal(t, expected.Date, received.Date)
+	require.Equal(t, expected.Reason, received.Reason)
 }
