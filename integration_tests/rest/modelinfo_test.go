@@ -11,7 +11,7 @@ import (
 /*
 	To Run test you need:
 		* prepare config with `genlocalconfig.sh`
-		* update `/.zbld/config/genesis.json` to set `Administrator` role to the first account as described in Readme (#Genesis template)
+		* update `/.zbld/config/genesis.json` to set `Trustee` role to the first account as described in Readme (#Genesis template)
 		* run node with `zbld start`
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 

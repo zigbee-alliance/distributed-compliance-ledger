@@ -15,13 +15,14 @@ const (
 	Vendor                AccountRole = "Vendor"
 	TestHouse             AccountRole = "TestHouse"
 	ZBCertificationCenter AccountRole = "ZBCertificationCenter"
+	Trustee               AccountRole = "Trustee"
 )
 
 func (lt *AccountRole) UnmarshalJSON(b []byte) error {
 	accountRole := AccountRole(strings.Trim(string(b), `"`))
 
 	switch accountRole {
-	case Administrator, Vendor, TestHouse, ZBCertificationCenter:
+	case Administrator, Vendor, TestHouse, ZBCertificationCenter, Trustee:
 		*lt = accountRole
 		return nil
 	}
