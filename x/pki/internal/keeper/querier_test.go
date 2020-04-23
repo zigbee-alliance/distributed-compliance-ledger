@@ -61,10 +61,13 @@ func TestQuerier_QueryX509Cert(t *testing.T) {
 		abci.RequestQuery{},
 	)
 
-	var receivedCertificate types.Certificate
-	_ = setup.Cdc.UnmarshalJSON(result, &receivedCertificate)
+	var receivedCertificates types.Certificates
+	_ = setup.Cdc.UnmarshalJSON(result, &receivedCertificates)
 
 	// check
+	require.Equal(t, 1, len(receivedCertificates.Items))
+	receivedCertificate := receivedCertificates.Items[0]
+
 	require.Equal(t, certificate.PemCert, receivedCertificate.PemCert)
 	require.Equal(t, certificate.Subject, receivedCertificate.Subject)
 	require.Equal(t, certificate.SubjectKeyId, receivedCertificate.SubjectKeyId)
@@ -286,39 +289,30 @@ func TestQuerier_QueryAllSubjectX509Certs_Filer(t *testing.T) {
 
 	paginationParams := pagination.NewPaginationParams(0, 0)
 
-	// filter by different fields. No records expected
-	cases := []types.ListCertificatesQueryParams{
-		types.NewListCertificatesQueryParams(paginationParams, string(firstRootId+1), "", ""),
-		types.NewListCertificatesQueryParams(paginationParams, "", string(firstRootId+1), ""),
-		types.NewListCertificatesQueryParams(paginationParams, "", "", string(firstRootId+1)),
-	}
+	params, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, string(firstRootId+1), ""))
 
-	for _, queryParams := range cases {
-		params, _ := setup.Cdc.MarshalJSON(queryParams)
+	// query testing result
+	result, _ := setup.Querier(
+		setup.Ctx,
+		[]string{QueryAllSubjectX509Certs, string(firstRootId)},
+		abci.RequestQuery{Data: params},
+	)
 
-		// query testing result
-		result, _ := setup.Querier(
-			setup.Ctx,
-			[]string{QueryAllSubjectX509Certs, string(firstRootId)},
-			abci.RequestQuery{Data: params},
-		)
+	var listCertificates types.ListCertificates
+	_ = setup.Cdc.UnmarshalJSON(result, &listCertificates)
 
-		var listCertificates types.ListCertificates
-		_ = setup.Cdc.UnmarshalJSON(result, &listCertificates)
-
-		// check
-		require.Equal(t, 0, len(listCertificates.Items))
-	}
+	// check
+	require.Equal(t, 0, len(listCertificates.Items))
 }
 
 func emptyQueryParams(setup TestSetup) []byte {
 	paginationParams := pagination.NewPaginationParams(0, 0)
-	res, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", "", ""))
+	res, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
 	return res
 }
 
 func queryParams(setup TestSetup, skip int, take int) []byte {
 	paginationParams := pagination.NewPaginationParams(skip, take)
-	res, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", "", ""))
+	res, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
 	return res
 }

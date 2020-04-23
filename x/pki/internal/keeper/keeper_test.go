@@ -14,9 +14,8 @@ func TestKeeper_CertificateGetSet(t *testing.T) {
 	require.False(t, setup.PkiKeeper.IsCertificatePresent(setup.Ctx, test_constants.LeafSubject, test_constants.LeafSubjectKeyId))
 
 	// no certificate before its created
-	require.Panics(t, func() {
-		setup.PkiKeeper.GetCertificate(setup.Ctx, test_constants.LeafSubject, test_constants.LeafSubjectKeyId)
-	})
+	certificates := setup.PkiKeeper.GetCertificates(setup.Ctx, test_constants.LeafSubject, test_constants.LeafSubjectKeyId)
+	require.Equal(t, 0, len(certificates.Items))
 
 	// store certificate
 	certificate := types.NewIntermediateCertificate(
@@ -24,6 +23,7 @@ func TestKeeper_CertificateGetSet(t *testing.T) {
 		test_constants.LeafSubject,
 		test_constants.LeafSubjectKeyId,
 		test_constants.LeafSerialNumber,
+		test_constants.RootSubject,
 		test_constants.RootSubjectKeyId,
 		test_constants.Address1,
 	)
@@ -34,13 +34,16 @@ func TestKeeper_CertificateGetSet(t *testing.T) {
 	require.True(t, setup.PkiKeeper.IsCertificatePresent(setup.Ctx, test_constants.LeafSubject, test_constants.LeafSubjectKeyId))
 
 	// get certificate
-	receivedCertificate := setup.PkiKeeper.GetCertificate(setup.Ctx, test_constants.LeafSubject, certificate.SubjectKeyId)
+	receivedCertificates := setup.PkiKeeper.GetCertificates(setup.Ctx, test_constants.LeafSubject, certificate.SubjectKeyId)
+	require.Equal(t, 1, len(receivedCertificates.Items))
+
+	receivedCertificate := receivedCertificates.Items[0]
 	require.Equal(t, certificate.SubjectKeyId, receivedCertificate.SubjectKeyId)
 	require.Equal(t, certificate.Subject, receivedCertificate.Subject)
 	require.Equal(t, certificate.SerialNumber, receivedCertificate.SerialNumber)
 	require.Equal(t, certificate.PemCert, receivedCertificate.PemCert)
 	require.Equal(t, certificate.Owner, receivedCertificate.Owner)
-	require.Equal(t, certificate.RootSubjectId, receivedCertificate.RootSubjectId)
+	require.Equal(t, certificate.RootSubjectKeyId, receivedCertificate.RootSubjectKeyId)
 }
 
 func TestKeeper_PendingCertificateGetSet(t *testing.T) {
@@ -135,8 +138,10 @@ func TestKeeper_CertificateIterator(t *testing.T) {
 	// get iterator
 	var expectedRecords []types.Certificate
 
-	setup.PkiKeeper.IterateCertificates(setup.Ctx, "", func(certificate types.Certificate) (stop bool) {
-		expectedRecords = append(expectedRecords, certificate)
+	setup.PkiKeeper.IterateCertificates(setup.Ctx, "", func(certificates types.Certificates) (stop bool) {
+		for _, certificate := range certificates.Items {
+			expectedRecords = append(expectedRecords, certificate)
+		}
 		return false
 	})
 	require.Equal(t, count/3*2, len(expectedRecords))

@@ -17,8 +17,7 @@ import (
 )
 
 const (
-	FlagSubjectKeyId     = "subject-key-id"
-	FlagSerialNumber     = "serial-number"
+	FlagRootSubject      = "root-subject"
 	FlagRootSubjectKeyId = "root-subject-key-id"
 )
 
@@ -95,8 +94,6 @@ func GetCmdGetAllX509RootCerts(queryRoute string, cdc *codec.Codec) *cobra.Comma
 		},
 	}
 
-	cmd.Flags().String(FlagSubjectKeyId, "", "filter certificates by `Subject Key Id`")
-	cmd.Flags().String(FlagSerialNumber, "", "filter certificates by `Serial Number`")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
 
@@ -105,8 +102,8 @@ func GetCmdGetAllX509RootCerts(queryRoute string, cdc *codec.Codec) *cobra.Comma
 
 func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "pki x509-cert [subject] [subject-key-id]",
-		Short: "Gets a certificate (either root, intermediate or leaf) by the given combination of subject and subject-key-id",
+		Use:   "x509-cert [subject] [subject-key-id]",
+		Short: "Gets a certificates (either root, intermediate or leaf) by the given combination of subject and subject-key-id",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -116,10 +113,10 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, height, err := cliCtx.QueryStore([]byte(keeper.CertificateId(subject, subjectKeyId)), queryRoute)
 			if err != nil || res == nil {
-				return types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId)
+				return types.ErrCertificateDoesNotExist(subject, subjectKeyId)
 			}
 
-			var certificate types.Certificate
+			var certificate types.Certificates
 			cdc.MustUnmarshalBinaryBare(res, &certificate)
 
 			out, err := json.Marshal(certificate)
@@ -141,8 +138,7 @@ func GetCmdGetAllX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagSubjectKeyId, "", "filter certificates by `Subject Key Id`")
-	cmd.Flags().String(FlagSerialNumber, "", "filter certificates by `Serial Number`")
+	cmd.Flags().String(FlagRootSubject, "", "filter certificates by `Subject` of root certificate (only the certificates started with the given root certificate are returned)")
 	cmd.Flags().String(FlagRootSubjectKeyId, "", "filter certificates by `Subject Key Id` of root certificate (only the certificates started with the given root certificate are returned)")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
@@ -161,8 +157,7 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 		},
 	}
 
-	cmd.Flags().String(FlagSubjectKeyId, "", "filter certificates by `Subject Key Id`")
-	cmd.Flags().String(FlagSerialNumber, "", "filter certificates by `Serial Number`")
+	cmd.Flags().String(FlagRootSubject, "", "filter certificates by `Subject` of root certificate (only the certificates started with the given root certificate are returned)")
 	cmd.Flags().String(FlagRootSubjectKeyId, "", "filter certificates by `Subject Key Id` of root certificate (only the certificates started with the given root certificate are returned)")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
@@ -173,12 +168,11 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 func getAllCertificates(cdc *codec.Codec, route string) error {
 	cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-	subjectKeyId := viper.GetString(FlagSubjectKeyId)
-	serialNumber := viper.GetString(FlagSerialNumber)
+	rootSubject := viper.GetString(FlagRootSubject)
 	rootSubjectKeyId := viper.GetString(FlagRootSubjectKeyId)
 
 	paginationParams := pagination.ParsePaginationParamsFromFlags()
-	params := types.NewListCertificatesQueryParams(paginationParams, subjectKeyId, serialNumber, rootSubjectKeyId)
+	params := types.NewListCertificatesQueryParams(paginationParams, rootSubject, rootSubjectKeyId)
 
 	res, height, err := cliCtx.QueryWithData(route, cdc.MustMarshalJSON(params))
 	if err != nil {

@@ -54,6 +54,7 @@ func DefaultIntermediateCertificate() types.Certificate {
 		test_constants.LeafSubject,
 		test_constants.LeafSubjectKeyId,
 		test_constants.LeafSerialNumber,
+		test_constants.RootSubject,
 		test_constants.RootSubjectKeyId,
 		test_constants.Address1)
 }
@@ -95,7 +96,8 @@ func populateStoreWithCertificates(setup TestSetup, count int, certificate types
 		certificate.Subject = string(i)
 		certificate.SubjectKeyId = string(i)
 		certificate.SerialNumber = string(i)
-		certificate.RootSubjectId = string(i)
+		certificate.RootSubject = string(i)
+		certificate.RootSubjectKeyId = string(i)
 		setup.PkiKeeper.SetCertificate(setup.Ctx, certificate)
 	}
 	return firstId

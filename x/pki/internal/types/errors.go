@@ -14,9 +14,9 @@ const (
 	CodeInappropriateCertificateType   sdk.CodeType = 403
 )
 
-func ErrCertificateAlreadyExists(subject string, subjectKeyId string) sdk.Error {
+func ErrCertificateAlreadyExists(subject string, subjectKeyId string, serialNumber string) sdk.Error {
 	return sdk.NewError(Codespace, CodeCertificateAlreadyExists,
-		fmt.Sprintf("X509 certificate associated with the combination of subject=%v and subjectKeyId=%v already exists on the ledger", subject, subjectKeyId))
+		fmt.Sprintf("X509 certificate associated with the combination of subject=%v, subjectKeyId=%v and serialNumber=%v already exists on the ledger", subject, subjectKeyId, serialNumber))
 }
 
 func ErrProposedCertificateDoesNotExist(subject string, subjectKeyId string) sdk.Error {

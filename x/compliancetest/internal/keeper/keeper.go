@@ -16,7 +16,7 @@ type Keeper struct {
 }
 
 const (
-	testingResultsPrefix = "tr"
+	testingResultsPrefix = "1"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {

@@ -14,25 +14,31 @@ import (
 
 func getAllX509RootCertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_x509_root_certs", storeName))
+		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_x509_root_certs", storeName), "", "")
 	}
 }
 
 func getAllProposedX509RootCertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_proposed_x509_root_certs", storeName))
+		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_proposed_x509_root_certs", storeName), "", "")
 	}
 }
 
 func getAllX509CertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_x509_certs", storeName))
+		rootSubject := r.FormValue(rootSubject)
+		rootSubjectKeyId := r.FormValue(rootSubjectKeyId)
+		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_x509_certs", storeName), rootSubject, rootSubjectKeyId)
 	}
 }
 
 func getAllSubjectX509CertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s", storeName, subject))
+		vars := mux.Vars(r)
+		subject := vars[subject]
+		rootSubject := r.FormValue(rootSubject)
+		rootSubjectKeyId := r.FormValue(rootSubjectKeyId)
+		getListCertificates(cliCtx, w, r, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s", storeName, subject), rootSubject, rootSubjectKeyId)
 	}
 }
 
@@ -78,8 +84,8 @@ func getX509CertHandler(cliCtx context.CLIContext, storeName string) http.Handle
 			return
 		}
 
-		var certificate types.Certificate
-		cliCtx.Codec.MustUnmarshalBinaryBare(res, &res)
+		var certificate types.Certificates
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &certificate)
 
 		out, err := json.Marshal(certificate)
 		if err != nil {
@@ -92,12 +98,8 @@ func getX509CertHandler(cliCtx context.CLIContext, storeName string) http.Handle
 	}
 }
 
-func getListCertificates(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, path string) {
+func getListCertificates(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, path string, rootSubject string, rootSubjectKeyId string) {
 	cliCtx = context.NewCLIContext().WithCodec(cliCtx.Codec)
-
-	subjectKeyId := r.FormValue(subjectKeyId)
-	serialNumber := r.FormValue(serialNumber)
-	rootSubjectKeyId := r.FormValue(rootSubjectKeyId)
 
 	paginationParams, err := pagination.ParsePaginationParamsFromRequest(cliCtx.Codec, r)
 	if err != nil {
@@ -105,7 +107,7 @@ func getListCertificates(cliCtx context.CLIContext, w http.ResponseWriter, r *ht
 		return
 	}
 
-	params := types.NewListCertificatesQueryParams(paginationParams, subjectKeyId, serialNumber, rootSubjectKeyId)
+	params := types.NewListCertificatesQueryParams(paginationParams, rootSubject, rootSubjectKeyId)
 
 	res, height, err := cliCtx.QueryWithData(path, cliCtx.Codec.MustMarshalJSON(params))
 	if err != nil {

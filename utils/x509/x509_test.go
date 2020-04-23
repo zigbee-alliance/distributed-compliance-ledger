@@ -28,6 +28,7 @@ func Test_DecodeCertificates(t *testing.T) {
 	// decode root certificate
 	certificate, err = DecodeX509Certificate(test_constants.RootCertPem)
 	require.Nil(t, err)
+	require.True(t, certificate.IsRootCertificate())
 	require.Equal(t, test_constants.RootSubject, certificate.Issuer)
 	require.Equal(t, "", certificate.AuthorityKeyId)
 	require.Equal(t, test_constants.RootSerialNumber, certificate.SerialNumber)

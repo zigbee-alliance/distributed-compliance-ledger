@@ -10,9 +10,7 @@ import (
 
 /*
 	To Run test you need:
-		* prepare config with `genlocalconfig.sh`
-		* update `/.zbld/config/genesis.json` to set `Trustee` role to the first account as described in Readme (#Genesis template)
-		* run node with `zbld start`
+		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
 	TODO: prepare environment automatically
@@ -21,14 +19,14 @@ import (
 
 func /*Test*/CompliancetestDemo(t *testing.T) {
 	// Get key info for Jack
-	jackKeyInfo := utils.GetKeyInfo(test_constants.AccountName)
+	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 
 	//Assign Vendor role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
 
 	// Publish model info
 	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
-	utils.PublishModelInfo(modelInfo)
+	_, _ = utils.PublishModelInfo(modelInfo)
 
 	//Assign TestHouse role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.TestHouse)
@@ -38,7 +36,7 @@ func /*Test*/CompliancetestDemo(t *testing.T) {
 	utils.SignAndBroadcastMessage(jackKeyInfo, firstTestingResult)
 
 	// Check testing result is created
-	receivedTestingResult := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID)
+	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID)
 	require.Equal(t, receivedTestingResult.VID, firstTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, firstTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
@@ -48,14 +46,14 @@ func /*Test*/CompliancetestDemo(t *testing.T) {
 
 	// Publish second model info
 	secondModelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
-	utils.PublishModelInfo(secondModelInfo)
+	_, _ = utils.PublishModelInfo(secondModelInfo)
 
 	// Publish second testing result using POST
 	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, jackKeyInfo.Address)
-	utils.PublishTestingResult(secondTestingResult)
+	_, _ = utils.PublishTestingResult(secondTestingResult)
 
 	// Check testing result is created
-	receivedTestingResult = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
 	require.Equal(t, receivedTestingResult.VID, secondTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, secondTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))

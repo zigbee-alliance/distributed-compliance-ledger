@@ -97,7 +97,7 @@ func queryX509Cert(ctx sdk.Context, path []string, keeper Keeper) ([]byte, sdk.E
 		return nil, types.ErrCertificateDoesNotExist(subject, subjectKeyId)
 	}
 
-	certificate := keeper.GetCertificate(ctx, subject, subjectKeyId)
+	certificate := keeper.GetCertificates(ctx, subject, subjectKeyId)
 
 	res, err_ := codec.MarshalJSONIndent(keeper.cdc, certificate)
 	if err_ != nil {
@@ -129,39 +129,35 @@ func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, certi
 	result := types.NewListCertificates()
 	skipped := 0
 
-	keeper.IterateCertificates(ctx, iteratorPrefix, func(certificate types.Certificate) (stop bool) {
-		// filter by certificate type (Root/Any)
-		if len(certificateType) != 0 && certificate.Type != certificateType {
-			return false
+	keeper.IterateCertificates(ctx, iteratorPrefix, func(certificates types.Certificates) (stop bool) {
+		for _, certificate := range certificates.Items {
+			// filter by certificate type (Root/Any)
+			if len(certificateType) != 0 && certificate.Type != certificateType {
+				return false
+			}
+
+			// filter by root subject
+			if len(params.RootSubject) > 0 && params.RootSubject != certificate.RootSubject {
+				return false
+			}
+
+			// filter by root subject ky id
+			if len(params.RootSubjectKeyId) > 0 && params.RootSubjectKeyId != certificate.RootSubjectKeyId {
+				return false
+			}
+
+			result.Total++
+
+			if skipped < params.Skip {
+				skipped++
+				return false
+			}
+
+			if len(result.Items) < params.Take || params.Take == 0 {
+				result.Items = append(result.Items, certificate)
+				return false
+			}
 		}
-
-		// filter by subject ky id
-		if len(params.SubjectKeyId) > 0 && params.SubjectKeyId != certificate.SubjectKeyId {
-			return false
-		}
-
-		// filter by serial number
-		if len(params.SerialNumber) > 0 && params.SerialNumber != certificate.SerialNumber {
-			return false
-		}
-
-		// filter by root subject ky id
-		if len(params.RootSubjectKeyId) > 0 && params.SerialNumber != certificate.RootSubjectId {
-			return false
-		}
-
-		result.Total++
-
-		if skipped < params.Skip {
-			skipped++
-			return false
-		}
-
-		if len(result.Items) < params.Take || params.Take == 0 {
-			result.Items = append(result.Items, certificate)
-			return false
-		}
-
 		return false
 	})
 

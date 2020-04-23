@@ -16,9 +16,9 @@ type Keeper struct {
 }
 
 const (
-	approvedCertificatePrefix = "ac"
-	proposedCertificatePrefix = "pc"
-	childCertificatesPrefix   = "cc"
+	proposedCertificatePrefix = "1"
+	approvedCertificatePrefix = "2"
+	childCertificatesPrefix   = "3"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
@@ -30,15 +30,15 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 */
 
 // Gets the entire Certificate record associated with a Subject/SubjectKeyId combination
-func (k Keeper) GetCertificate(ctx sdk.Context, subject string, subjectKeyId string) types.Certificate {
+func (k Keeper) GetCertificates(ctx sdk.Context, subject string, subjectKeyId string) types.Certificates {
 	if !k.IsCertificatePresent(ctx, subject, subjectKeyId) {
-		panic("Certificate does not exist")
+		return types.NewCertificates([]types.Certificate{})
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get([]byte(CertificateId(subject, subjectKeyId)))
 
-	var cert types.Certificate
+	var cert types.Certificates
 	k.cdc.MustUnmarshalBinaryBare(bz, &cert)
 	return cert
 }
@@ -46,13 +46,19 @@ func (k Keeper) GetCertificate(ctx sdk.Context, subject string, subjectKeyId str
 // Sets the entire Certificate record for a Subject/SubjectKeyId combination
 func (k Keeper) SetCertificate(ctx sdk.Context, certificate types.Certificate) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(CertificateId(certificate.Subject, certificate.SubjectKeyId)), k.cdc.MustMarshalBinaryBare(certificate))
+	store.Set([]byte(CertificateId(certificate.Subject, certificate.SubjectKeyId)), k.cdc.MustMarshalBinaryBare(types.NewCertificates([]types.Certificate{certificate})))
+}
+
+// Sets the entire Certificate record for a Subject/SubjectKeyId combination
+func (k Keeper) SetCertificates(ctx sdk.Context, subject string, subjectKeyId string, certificates types.Certificates) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(CertificateId(subject, subjectKeyId)), k.cdc.MustMarshalBinaryBare(certificates))
 }
 
 // Deletes the entire Certificate record associated with a Subject/SubjectKeyId combination
-func (k Keeper) DeleteCertificate(ctx sdk.Context, certificate types.Certificate) {
+func (k Keeper) DeleteCertificates(ctx sdk.Context, subject string, subjectKeyId string) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(CertificateId(certificate.Subject, certificate.SubjectKeyId)))
+	store.Delete([]byte(CertificateId(subject, subjectKeyId)))
 }
 
 // Check if the Certificate record associated with a Subject/SubjectKeyId combination is present in the store or not
@@ -66,7 +72,7 @@ func (k Keeper) CountTotalCertificates(ctx sdk.Context) int {
 	return k.countTotal(ctx, approvedCertificatePrefix)
 }
 
-func (k Keeper) IterateCertificates(ctx sdk.Context, prefix string, process func(info types.Certificate) (stop bool)) {
+func (k Keeper) IterateCertificates(ctx sdk.Context, prefix string, process func(info types.Certificates) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	iter := sdk.KVStorePrefixIterator(store, []byte(fmt.Sprintf("%v:%v", approvedCertificatePrefix, prefix)))
@@ -79,11 +85,11 @@ func (k Keeper) IterateCertificates(ctx sdk.Context, prefix string, process func
 
 		val := iter.Value()
 
-		var certificate types.Certificate
+		var certificates types.Certificates
 
-		k.cdc.MustUnmarshalBinaryBare(val, &certificate)
+		k.cdc.MustUnmarshalBinaryBare(val, &certificates)
 
-		if process(certificate) {
+		if process(certificates) {
 			return
 		}
 

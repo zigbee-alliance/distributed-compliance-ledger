@@ -12,10 +12,12 @@ const (
 )
 
 var (
-	NewKeeper     = keeper.NewKeeper
-	NewQuerier    = keeper.NewQuerier
-	ModuleCdc     = types.ModuleCdc
-	RegisterCodec = types.RegisterCodec
+	NewKeeper               = keeper.NewKeeper
+	NewQuerier              = keeper.NewQuerier
+	ModuleCdc               = types.ModuleCdc
+	RegisterCodec           = types.RegisterCodec
+	RootCertificate         = types.RootCertificate
+	IntermediateCertificate = types.IntermediateCertificate
 )
 
 type (
@@ -23,4 +25,7 @@ type (
 	MsgProposeAddX509RootCert = types.MsgProposeAddX509RootCert
 	MsgApproveAddX509RootCert = types.MsgApproveAddX509RootCert
 	MsgAddX509Cert            = types.MsgAddX509Cert
+	Certificate               = types.Certificate
+	Certificates              = types.Certificates
+	ProposedCertificate       = types.ProposedCertificate
 )

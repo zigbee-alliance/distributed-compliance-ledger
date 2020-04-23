@@ -11,7 +11,7 @@ import (
 const (
 	subject          = "subject"
 	subjectKeyId     = "subject_key_id"
-	serialNumber     = "serial_number"
+	rootSubject      = "root_subject"
 	rootSubjectKeyId = "root_subject_key_id"
 )
 

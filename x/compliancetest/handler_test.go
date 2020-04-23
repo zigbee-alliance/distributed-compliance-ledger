@@ -86,7 +86,7 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 		require.Equal(t, receivedTestingResult.VID, vid)
 		require.Equal(t, receivedTestingResult.PID, pid)
 		require.Equal(t, i+1, len(receivedTestingResult.Results))
-		CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
+		CheckTestingResult(t, receivedTestingResult.Results[i], testingResult)
 	}
 }
 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/rest"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"

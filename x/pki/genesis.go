@@ -10,14 +10,14 @@ import (
 )
 
 type GenesisState struct {
-	ApprovedCertificateRecords []types.Certificate         `json:"approved_certificate_records"`
+	ApprovedCertificateRecords []types.Certificates       `json:"approved_certificate_records"`
 	PendingCertificateRecords  []types.ProposedCertificate `json:"pending_certificate_records"`
 	ChildCertificatesRecords   []types.ChildCertificates   `json:"child_certificates_records"`
 }
 
 func NewGenesisState() GenesisState {
 	return GenesisState{
-		ApprovedCertificateRecords: []types.Certificate{},
+		ApprovedCertificateRecords: []types.Certificates{},
 		PendingCertificateRecords:  []types.ProposedCertificate{},
 		ChildCertificatesRecords:   []types.ChildCertificates{},
 	}
@@ -25,24 +25,26 @@ func NewGenesisState() GenesisState {
 
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ApprovedCertificateRecords {
-		if len(record.PemCert) == 0 {
-			return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty X509 Certificate", record.PemCert)
-		}
-		if record.Type != types.RootCertificate && record.Type != types.IntermediateCertificate {
-			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("invalid ApprovedCertificateRecords: value: %v. Error: Invalid Certificate Type: unknown type; supported types: [%s,%s]", record.Type, types.RootCertificate, types.IntermediateCertificate))
-		}
-		if len(record.Subject) == 0 {
-			return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty Subject", record.Subject)
-		}
-		if len(record.SubjectKeyId) == 0 {
-			return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty SubjectKeyId", record.SubjectKeyId)
-		}
-		if len(record.SerialNumber) == 0 {
-			return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty SerialNumber", record.SerialNumber)
-		}
-		if len(record.RootSubjectId) == 0 {
-			return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty RootSubjectId", record.RootSubjectId)
+		for _, certificate := range record.Items {
+			if len(certificate.PemCert) == 0 {
+				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty X509 Certificate", certificate.PemCert)
+			}
+			if certificate.Type != types.RootCertificate && certificate.Type != types.IntermediateCertificate {
+				return sdk.ErrUnknownRequest(
+					fmt.Sprintf("invalid ApprovedCertificateRecords: value: %v. Error: Invalid Certificate Type: unknown type; supported types: [%s,%s]", certificate.Type, types.RootCertificate, types.IntermediateCertificate))
+			}
+			if len(certificate.Subject) == 0 {
+				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty Subject", certificate.Subject)
+			}
+			if len(certificate.SubjectKeyId) == 0 {
+				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty SubjectKeyId", certificate.SubjectKeyId)
+			}
+			if len(certificate.SerialNumber) == 0 {
+				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty SerialNumber", certificate.SerialNumber)
+			}
+			if len(certificate.RootSubjectKeyId) == 0 {
+				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty RootSubjectId", certificate.RootSubjectKeyId)
+			}
 		}
 	}
 
@@ -81,7 +83,9 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	}
 
 	for _, record := range data.ApprovedCertificateRecords {
-		keeper.SetCertificate(ctx, record)
+		if len(record.Items) > 0 {
+			keeper.SetCertificates(ctx, record.Items[0].Subject, record.Items[0].SubjectKeyId, record)
+		}
 	}
 
 	for _, record := range data.ChildCertificatesRecords {
@@ -92,12 +96,12 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 }
 
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	var approvedCertificates []types.Certificate
+	var approvedCertificates []types.Certificates
 	var pendingCertificates []types.ProposedCertificate
 	var childCertificatesList []types.ChildCertificates
 
-	k.IterateCertificates(ctx, "", func(certificate types.Certificate) (stop bool) {
-		approvedCertificates = append(approvedCertificates, certificate)
+	k.IterateCertificates(ctx, "", func(certificates types.Certificates) (stop bool) {
+		approvedCertificates = append(approvedCertificates, certificates)
 		return false
 	})
 

@@ -27,6 +27,10 @@ zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000sta
 zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
+# Update genesis transactions to set jack as admin
+jack_address=$(zblcli keys show jack -a)
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
+
 echo 'test1234' | zbld gentx --name jack
 
 mv ~/.zbld/* localnet/node0
@@ -39,6 +43,9 @@ zbld add-genesis-account $(zblcli keys show jack -a) 1000nametoken,100000000stak
 zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
+
+# Update genesis transactions to set jack as admin
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
 
 echo 'test1234' | zbld gentx --name alice
 
@@ -53,6 +60,9 @@ zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000sta
 zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
+# Update genesis transactions to set jack as admin
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
+
 echo 'test1234' | zbld gentx --name bob
 
 mv ~/.zbld/* localnet/node2
@@ -65,6 +75,9 @@ zbld add-genesis-account $(zblcli keys show jack -a) 1000nametoken,100000000stak
 zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
+
+# Update genesis transactions to set jack as admin
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
 
 echo 'test1234' | zbld gentx --name anna
 

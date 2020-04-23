@@ -10,9 +10,7 @@ import (
 
 /*
 	To Run test you need:
-		* prepare config with `genlocalconfig.sh`
-		* update `/.zbld/config/genesis.json` to set `Trustee` role to the first account as described in Readme (#Genesis template)
-		* run node with `zbld start`
+		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
 	TODO: prepare environment automatically
@@ -21,16 +19,16 @@ import (
 
 func /*TestModelinfo*/Demo(t *testing.T) {
 	// Get all model infos
-	inputModelInfos := utils.GetModelInfos()
+	inputModelInfos, _ := utils.GetModelInfos()
 
 	// Get all vendors
-	inputVendors := utils.GetVendors()
+	inputVendors, _ := utils.GetVendors()
 
 	// Get key info for Jack
-	jackKeyInfo := utils.GetKeyInfo(test_constants.AccountName)
+	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 
 	// Get account info for Jack
-	jackAccountInfo := utils.GetAccountInfo(jackKeyInfo.Address)
+	jackAccountInfo, _ := utils.GetAccountInfo(jackKeyInfo.Address)
 
 	// Assign Vendor role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
@@ -43,7 +41,7 @@ func /*TestModelinfo*/Demo(t *testing.T) {
 	utils.SignAndBroadcastMessage(jackKeyInfo, firstModelInfo)
 
 	// Check model is created
-	receivedModelInfo := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
+	receivedModelInfo, _ := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
 	require.Equal(t, receivedModelInfo.VID, firstModelInfo.VID)
 	require.Equal(t, receivedModelInfo.PID, firstModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Name, firstModelInfo.Name)
@@ -51,24 +49,24 @@ func /*TestModelinfo*/Demo(t *testing.T) {
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
 	secondModelInfo.VID = VID // Set same Vendor as for the first model
-	utils.PublishModelInfo(secondModelInfo)
+	_, _ = utils.PublishModelInfo(secondModelInfo)
 
 	// Check model is created
-	receivedModelInfo = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
+	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
 	require.Equal(t, receivedModelInfo.VID, secondModelInfo.VID)
 	require.Equal(t, receivedModelInfo.PID, secondModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Name, secondModelInfo.Name)
 
 	// Get all model infos
-	modelInfos := utils.GetModelInfos()
+	modelInfos, _ := utils.GetModelInfos()
 	require.Equal(t, utils.ParseUint(inputModelInfos.Total)+2, utils.ParseUint(modelInfos.Total))
 
 	// Get all vendors
-	vendors := utils.GetVendors()
+	vendors, _ := utils.GetVendors()
 	require.Equal(t, utils.ParseUint(inputVendors.Total)+1, utils.ParseUint(vendors.Total))
 
 	// Get vendor models
-	vendorModels := utils.GetVendorModels(VID)
+	vendorModels, _ := utils.GetVendorModels(VID)
 	require.Equal(t, uint64(2), uint64(len(vendorModels.Products)))
 	require.Equal(t, firstModelInfo.PID, vendorModels.Products[0].PID)
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)

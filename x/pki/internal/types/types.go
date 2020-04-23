@@ -13,16 +13,39 @@ const (
 )
 
 /*
-	Approved Root / Intermediate / Leaf certificate stored in KVStore
+	Approved Root / Intermediate / Leaf certificates stored in KVStore and matching to the same key
+*/
+type Certificates struct {
+	Items []Certificate `json:"items"`
+}
+
+func NewCertificates(items []Certificate) Certificates {
+	return Certificates{
+		Items: items,
+	}
+}
+
+func (d Certificates) String() string {
+	bytes, err := json.Marshal(d)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+/*
+	Single Approved Root / Intermediate / Leaf certificate
 */
 type Certificate struct {
-	PemCert       string          `json:"pem_cert"`
-	Subject       string          `json:"subject"`
-	SubjectKeyId  string          `json:"subject_key_id"`
-	SerialNumber  string          `json:"serial_number"`
-	Type          CertificateType `json:"type"`
-	Owner         sdk.AccAddress  `json:"owner"`
-	RootSubjectId string          `json:"root_subject_key_id"`
+	PemCert          string          `json:"pem_cert"`
+	Subject          string          `json:"subject"`
+	SubjectKeyId     string          `json:"subject_key_id"`
+	SerialNumber     string          `json:"serial_number"`
+	RootSubject      string          `json:"root_subject,omitempty"`
+	RootSubjectKeyId string          `json:"root_subject_key_id,omitempty"`
+	Type             CertificateType `json:"type"`
+	Owner            sdk.AccAddress  `json:"owner"`
 }
 
 func NewRootCertificate(pemCert string, subject string, subjectKeyId string, serialNumber string, owner sdk.AccAddress) Certificate {
@@ -36,15 +59,16 @@ func NewRootCertificate(pemCert string, subject string, subjectKeyId string, ser
 	}
 }
 
-func NewIntermediateCertificate(pemCert string, subject string, subjectKeyId string, serialNumber string, rootSubjectId string, owner sdk.AccAddress) Certificate {
+func NewIntermediateCertificate(pemCert string, subject string, subjectKeyId string, serialNumber string, rootSubject string, rootSubjectKeyId string, owner sdk.AccAddress) Certificate {
 	return Certificate{
-		PemCert:       pemCert,
-		Subject:       subject,
-		SubjectKeyId:  subjectKeyId,
-		SerialNumber:  serialNumber,
-		Type:          IntermediateCertificate,
-		Owner:         owner,
-		RootSubjectId: rootSubjectId,
+		PemCert:          pemCert,
+		Subject:          subject,
+		SubjectKeyId:     subjectKeyId,
+		SerialNumber:     serialNumber,
+		RootSubject:      rootSubject,
+		RootSubjectKeyId: rootSubjectKeyId,
+		Type:             IntermediateCertificate,
+		Owner:            owner,
 	}
 }
 

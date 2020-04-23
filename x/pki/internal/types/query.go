@@ -13,17 +13,15 @@ import (
 type ListCertificatesQueryParams struct {
 	Skip             int
 	Take             int
-	SubjectKeyId     string
-	SerialNumber     string
+	RootSubject      string
 	RootSubjectKeyId string
 }
 
-func NewListCertificatesQueryParams(pagination pagination.PaginationParams, subjectKeyId string, serialNumber string, rootSubjectKeyId string) ListCertificatesQueryParams {
+func NewListCertificatesQueryParams(pagination pagination.PaginationParams, rootSubject string, rootSubjectKeyId string) ListCertificatesQueryParams {
 	return ListCertificatesQueryParams{
 		Skip:             pagination.Skip,
 		Take:             pagination.Take,
-		SubjectKeyId:     subjectKeyId,
-		SerialNumber:     serialNumber,
+		RootSubject:      rootSubject,
 		RootSubjectKeyId: rootSubjectKeyId,
 	}
 }

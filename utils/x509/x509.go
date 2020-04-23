@@ -67,5 +67,5 @@ func (c X509Certificate) VerifyX509Certificate(parent *x509.Certificate) sdk.Err
 }
 
 func (c X509Certificate) IsRootCertificate() bool {
-	return c.Subject == c.Issuer
+	return c.Subject == c.Issuer || (len(c.AuthorityKeyId) > 0 && c.AuthorityKeyId == c.SubjectKeyId)
 }

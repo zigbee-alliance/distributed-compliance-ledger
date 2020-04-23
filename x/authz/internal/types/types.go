@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,7 +28,7 @@ func (lt *AccountRole) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	return errors.New("invalid account role")
+	return errors.New(fmt.Sprintf("invalid account role: %s", accountRole))
 }
 
 type AccountRoles struct {

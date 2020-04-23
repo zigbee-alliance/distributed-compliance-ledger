@@ -251,7 +251,7 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[st
 	// The CompliancetestKeeper keeper
 	app.compliancetestKeeper = MakeCompliancetestKeeper(keys, app)
 
-	// The PLI keeper
+	// The PKI keeper
 	app.pkiKeeper = MakePkiKeeper(keys, app)
 
 	// The AuthzKeeper keeper

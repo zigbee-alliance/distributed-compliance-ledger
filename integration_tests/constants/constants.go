@@ -8,7 +8,7 @@ import (
 var (
 	ChainId                        = "zblchain"
 	AccountName                    = "jack"
-	AccountPassphrase              = "test1234"
+	Passphrase                     = "test1234"
 	VID                      int16 = 1
 	PID                      int16 = 22
 	CID                      int16 = 12345

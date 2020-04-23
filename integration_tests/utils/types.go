@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -41,4 +42,14 @@ type VendorItemHeadersResult struct {
 type ComplianceInfosHeadersResult struct {
 	Total string                      `json:"total"`
 	Items []compliance.ComplianceInfo `json:"items"`
+}
+
+type ProposedCertificatesHeadersResult struct {
+	Total string                    `json:"total"`
+	Items []pki.ProposedCertificate `json:"items"`
+}
+
+type CertificatesHeadersResult struct {
+	Total string            `json:"total"`
+	Items []pki.Certificate `json:"items"`
 }

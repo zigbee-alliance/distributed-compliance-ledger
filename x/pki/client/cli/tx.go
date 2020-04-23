@@ -111,7 +111,7 @@ func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 }
 
 func ReadCertificate(cert string) (string, error) {
-	if _, err := os.Stat(cert); os.IsExist(err) { // check whether it is a path
+	if _, err := os.Stat(cert); err == nil { // check whether it is a path
 		bytes, err := ioutil.ReadFile(cert)
 		if err != nil {
 			return "", err
