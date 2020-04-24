@@ -130,14 +130,17 @@ jjnAZrhowZT5bTsGAIMjIw90Pqz/77Xjam50VkMo7R/Ik8D25/Wy0TboZPK75NaX
 nKzrbFlTU4d9Cmib
 -----END CERTIFICATE-----`
 
+	RootIssuer       = "CN=DST Root CA X3,O=Digital Signature Trust Co."
 	RootSubject      = "CN=DST Root CA X3,O=Digital Signature Trust Co."
 	RootSubjectKeyId = "C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"
 	RootSerialNumber = "91299735575339953335919266965803778155"
 
+	IntermediateIssuer       = "CN=DST Root CA X3,O=Digital Signature Trust Co."
 	IntermediateSubject      = "CN=Let's Encrypt Authority X3,O=Let's Encrypt,C=US"
 	IntermediateSubjectKeyId = "A8:4A:6A:63:4:7D:DD:BA:E6:D1:39:B7:A6:45:65:EF:F3:A8:EC:A1"
 	IntermediateSerialNumber = "13298795840390663119752826058995181320"
 
+	LeafIssuer       = "CN=Let's Encrypt Authority X3,O=Let's Encrypt,C=US"
 	LeafSubject      = "CN=dsr-corporation.com"
 	LeafSubjectKeyId = "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"
 	LeafSerialNumber = "312128364102099997394566658874957944692446"

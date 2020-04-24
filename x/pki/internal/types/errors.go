@@ -22,7 +22,7 @@ func ErrCertificateAlreadyExists(subject string, subjectKeyId string, serialNumb
 func ErrProposedCertificateDoesNotExist(subject string, subjectKeyId string) sdk.Error {
 	return sdk.NewError(Codespace, CodePendingCertificateDoesNotExist,
 		fmt.Sprintf("No proposed X509 root certificate associated with the combination of subject=%v and subjectKeyId=%v on the ledger."+
-			"The serificate either does not exists or already approved.", subject, subjectKeyId))
+			"The cerificate either does not exists or already approved.", subject, subjectKeyId))
 }
 
 func ErrCertificateDoesNotExist(subject string, subjectKeyId string) sdk.Error {

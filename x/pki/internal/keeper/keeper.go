@@ -19,6 +19,7 @@ const (
 	proposedCertificatePrefix = "1"
 	approvedCertificatePrefix = "2"
 	childCertificatesPrefix   = "3"
+	issuerSerialNumber        = "10"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
@@ -53,12 +54,6 @@ func (k Keeper) SetCertificate(ctx sdk.Context, certificate types.Certificate) {
 func (k Keeper) SetCertificates(ctx sdk.Context, subject string, subjectKeyId string, certificates types.Certificates) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set([]byte(CertificateId(subject, subjectKeyId)), k.cdc.MustMarshalBinaryBare(certificates))
-}
-
-// Deletes the entire Certificate record associated with a Subject/SubjectKeyId combination
-func (k Keeper) DeleteCertificates(ctx sdk.Context, subject string, subjectKeyId string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(CertificateId(subject, subjectKeyId)))
 }
 
 // Check if the Certificate record associated with a Subject/SubjectKeyId combination is present in the store or not
@@ -263,4 +258,25 @@ func (k Keeper) IterateChildCertificatesRecords(ctx sdk.Context, process func(in
 
 		iter.Next()
 	}
+}
+
+/*
+	Combination of Issuer : Serial Number must be unique
+	Helper collection to track uniqueness
+*/
+// Sets existence flag for combination of Issuer/Serial Number
+func (k Keeper) AddCertificateExistenceFlag(ctx sdk.Context, issuer string, serialNumber string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(existenceFlagId(issuer, serialNumber)), k.cdc.MustMarshalBinaryBare(true))
+}
+
+// Check if the certificate for combination of Issuer/Serial Number is present
+func (k Keeper) IsCertificateExists(ctx sdk.Context, issuer string, serialNumber string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has([]byte(existenceFlagId(issuer, serialNumber)))
+}
+
+// Id builder for existence flag
+func existenceFlagId(issuer string, serialNumber string) string {
+	return fmt.Sprintf("%s:%v:%v", issuerSerialNumber, issuer, serialNumber)
 }

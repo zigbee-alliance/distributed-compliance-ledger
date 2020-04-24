@@ -36,6 +36,11 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 		return err.Result()
 	}
 
+	// verify certificate against self
+	if err := certificate.VerifyX509Certificate(certificate.Certificate); err != nil {
+		return err.Result()
+	}
+
 	// check if certificate is `root`
 	if !certificate.IsRootCertificate() {
 		return sdk.NewError(types.Codespace, types.CodeInappropriateCertificateType,
@@ -47,18 +52,17 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 		return types.ErrCertificateAlreadyExists(certificate.Subject, certificate.SubjectKeyId, certificate.SerialNumber).Result()
 	}
 
+	// check if certificate with Issuer/Serial Number combination already exists
+	if keeper.IsCertificateExists(ctx, certificate.Issuer, certificate.SerialNumber) {
+		return types.ErrCertificateAlreadyExists(certificate.Subject, certificate.SubjectKeyId, certificate.SerialNumber).Result()
+	}
+
 	// Get list of certificates for Subject / Subject Key Id combination
 	existingCertificates := keeper.GetCertificates(ctx, certificate.Subject, certificate.SubjectKeyId)
 
-	// check `proposed` certificate against existing
-	for _, cert := range existingCertificates.Items {
-		// serial number must be different
-		if certificate.SerialNumber == cert.SerialNumber {
-			return types.ErrCertificateAlreadyExists(certificate.Subject, certificate.SubjectKeyId, certificate.SerialNumber).Result()
-		}
-
-		// signer must be same as owner
-		if !msg.Signer.Equals(cert.Owner) {
+	if len(existingCertificates.Items) > 0 {
+		// signer must be same as owner of existing certificates
+		if !msg.Signer.Equals(existingCertificates.Items[0].Owner) {
 			return sdk.ErrUnauthorized(
 				fmt.Sprintf("Only owner can append next certificate corresponding to the same subject=%v and subjectKeyId=%v combination", certificate.Subject, certificate.SubjectKeyId)).Result()
 		}
@@ -80,6 +84,9 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 
 	// store proposed certificate
 	keeper.SetProposedCertificate(ctx, pendingCertificate)
+
+	// set certificate existence flag
+	keeper.AddCertificateExistenceFlag(ctx, certificate.Issuer, certificate.SerialNumber)
 
 	return sdk.Result{}
 }
@@ -157,18 +164,18 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 			"Inappropriate Certificate Type: Passed certificate is a root certificate. Please use `PROPOSE_ADD_X509_ROOT_CERT` to propose a root certificate").Result()
 	}
 
+	// check if certificate with Issuer/Serial Number combination already exists
+	if keeper.IsCertificateExists(ctx, certificate.Issuer, certificate.SerialNumber) {
+		return sdk.NewError(types.Codespace, types.CodeCertificateAlreadyExists,
+			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger",  certificate.Issuer, certificate.SerialNumber)).Result()
+	}
+
 	// Get list of certificates for Subject / Subject Key Id combination
 	existingCertificates := keeper.GetCertificates(ctx, certificate.Subject, certificate.SubjectKeyId)
 
-	// check `proposed` certificate against existing
-	for _, cert := range existingCertificates.Items {
-		// serial number must be different
-		if certificate.SerialNumber == cert.SerialNumber {
-			return types.ErrCertificateAlreadyExists(certificate.Subject, certificate.SubjectKeyId, certificate.SerialNumber).Result()
-		}
-
-		// signer must be the same as owner
-		if !msg.Signer.Equals(cert.Owner) {
+	if len(existingCertificates.Items) > 0 {
+		// signer must be same as owner of existing certificates
+		if !msg.Signer.Equals(existingCertificates.Items[0].Owner) {
 			return sdk.ErrUnauthorized(
 				fmt.Sprintf("Only owner can append next certificate corresponding to the same subject=%v and subjectKeyId=%v combination", certificate.Subject, certificate.SubjectKeyId)).Result()
 		}
@@ -177,7 +184,8 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 	// valid certificate chain can be build for new certificate
 	rootCertificateSubject, rootCertificateSubjectKeyId, err := VerifyCertificate(ctx, keeper, certificate)
 	if err != nil {
-		return err.Result()
+		return sdk.ErrInternal(
+			fmt.Sprintf("Cannot build valid chain to root for certificate with subject=%v and subjectKeyId=%v. Error: %v", certificate.Subject, certificate.SubjectKeyId, err)).Result()
 	}
 
 	// create new certificate
@@ -198,6 +206,9 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 	// append to parent certificate reference on child
 	keeper.AddChildCertificate(ctx, certificate.Issuer, certificate.AuthorityKeyId, leafCertificate)
 
+	// set certificate existence flag
+	keeper.AddCertificateExistenceFlag(ctx, certificate.Issuer, certificate.SerialNumber)
+
 	return sdk.Result{}
 }
 
@@ -215,7 +226,7 @@ func VerifyCertificate(ctx sdk.Context, keeper keeper.Keeper, certificate *x509.
 
 	parentCertificates := keeper.GetCertificates(ctx, certificate.Issuer, certificate.AuthorityKeyId)
 
-	for _, cert := range parentCertificates.Items  {
+	for _, cert := range parentCertificates.Items {
 		parentX509Certificate, err := x509.DecodeX509Certificate(cert.PemCert)
 		if err != nil {
 			continue
@@ -233,5 +244,5 @@ func VerifyCertificate(ctx sdk.Context, keeper keeper.Keeper, certificate *x509.
 	}
 
 	return "", "", sdk.ErrInternal(
-		fmt.Sprintf("Cannot build valid chain for certificate with issuer=%v and authorityKeyId=%v on the ledger", certificate.Issuer, certificate.SubjectKeyId))
+		fmt.Sprintf("Cannot build validate certificate with sibject=%v and subjectKeyId=%v", certificate.SubjectKeyId, certificate.SubjectKeyId))
 }
