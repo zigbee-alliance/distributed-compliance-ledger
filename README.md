@@ -103,7 +103,7 @@ Queries:
   - Optional flags: 
     - `--skip` int
     - `--take` int
-    - `--root-subject-key-id` string
+    - `--root-subject` string
     - `--root-subject-key-id` string
 
   Example: `zblcli query pki x509-certs`

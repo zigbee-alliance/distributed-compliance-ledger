@@ -19,6 +19,7 @@ const (
 	proposedCertificatePrefix = "1"
 	approvedCertificatePrefix = "2"
 	childCertificatesPrefix   = "3"
+	issuerSerialNumber        = "6"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
@@ -55,12 +56,6 @@ func (k Keeper) SetCertificates(ctx sdk.Context, subject string, subjectKeyId st
 	store.Set([]byte(CertificateId(subject, subjectKeyId)), k.cdc.MustMarshalBinaryBare(certificates))
 }
 
-// Deletes the entire Certificate record associated with a Subject/SubjectKeyId combination
-func (k Keeper) DeleteCertificates(ctx sdk.Context, subject string, subjectKeyId string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(CertificateId(subject, subjectKeyId)))
-}
-
 // Check if the Certificate record associated with a Subject/SubjectKeyId combination is present in the store or not
 func (k Keeper) IsCertificatePresent(ctx sdk.Context, subject string, subjectKeyId string) bool {
 	store := ctx.KVStore(k.storeKey)
@@ -95,6 +90,12 @@ func (k Keeper) IterateCertificates(ctx sdk.Context, prefix string, process func
 
 		iter.Next()
 	}
+}
+
+// Deletes the entire Certificate record associated with a Subject/SubjectKeyId combination
+func (k Keeper) DeleteCertificates(ctx sdk.Context, subject string, subjectKeyId string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete([]byte(CertificateId(subject, subjectKeyId)))
 }
 
 // Id builder for Certificate record
@@ -263,4 +264,31 @@ func (k Keeper) IterateChildCertificatesRecords(ctx sdk.Context, process func(in
 
 		iter.Next()
 	}
+}
+
+/*
+	Combination of Issuer : Serial Number must be unique
+	Helper collection to track uniqueness
+*/
+// Sets existence flag for combination of Issuer/Serial Number
+func (k Keeper) AddCertificateExistenceFlag(ctx sdk.Context, issuer string, serialNumber string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set([]byte(existenceFlagId(issuer, serialNumber)), k.cdc.MustMarshalBinaryBare(true))
+}
+
+// Check if the certificate for combination of Issuer/Serial Number is present
+func (k Keeper) IsCertificateExists(ctx sdk.Context, issuer string, serialNumber string) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has([]byte(existenceFlagId(issuer, serialNumber)))
+}
+
+// Deletes the Existence Flag
+func (k Keeper) DeleteExistenceFlag(ctx sdk.Context, issuer string, serialNumber string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete([]byte(existenceFlagId(issuer, serialNumber)))
+}
+
+// Id builder for existence flag
+func existenceFlagId(issuer string, serialNumber string) string {
+	return fmt.Sprintf("%s:%v:%v", issuerSerialNumber, issuer, serialNumber)
 }

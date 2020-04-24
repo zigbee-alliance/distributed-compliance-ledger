@@ -39,6 +39,7 @@ func TestHandler_ProposeAddX509RootCertByNotTrustee(t *testing.T) {
 
 		// delete proposed certificate for next iteration
 		setup.PkiKeeper.DeleteProposedCertificate(setup.Ctx, constants.RootSubject, constants.RootSubjectKeyId)
+		setup.PkiKeeper.DeleteExistenceFlag(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber)
 	}
 }
 
@@ -99,16 +100,17 @@ func TestHandler_ProposeAddX509RootCert_Twice(t *testing.T) {
 func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 	setup := Setup()
 
-	// store root certificate
-	certificate := rootCertificate(setup.Trustee)
-	setup.PkiKeeper.SetCertificate(setup.Ctx, certificate)
+	// propose add x509 root certificate as Trustee
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.RootCertPem, setup.Trustee)
+	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+	require.Equal(t, sdk.CodeOK, result.Code)
 
 	for _, role := range []authz.AccountRole{authz.Trustee, authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor} {
 		// assign role
 		setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, role)
 
 		// again propose adding of x509 root certificate
-		proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(certificate.PemCert, constants.Address1)
+		proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(proposeAddX509RootCert.Cert, constants.Address1)
 		result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 		require.Equal(t, types.CodeCertificateAlreadyExists, result.Code)
 	}
@@ -244,7 +246,8 @@ func TestHandler_AddX509Cert(t *testing.T) {
 		require.Equal(t, types.CodePendingCertificateDoesNotExist, err.Code())
 
 		// delete for next iteration
-		setup.PkiKeeper.DeleteCertificates(setup.Ctx, certificate.Subject, certificate.SubjectKeyId)
+		setup.PkiKeeper.DeleteCertificates(setup.Ctx, constants.IntermediateSubject, constants.IntermediateSubjectKeyId)
+		setup.PkiKeeper.DeleteExistenceFlag(setup.Ctx, constants.IntermediateIssuer, constants.IntermediateSerialNumber)
 	}
 }
 
@@ -274,12 +277,13 @@ func TestHandler_AddX509Cert_ForDuplicate(t *testing.T) {
 	setup.PkiKeeper.SetCertificate(setup.Ctx, rootCertificate)
 
 	// store root intermediate
-	intermediateCertificate := intermediateCertificate(setup.Trustee)
-	setup.PkiKeeper.SetCertificate(setup.Ctx, intermediateCertificate)
+	addX509Cert := types.NewMsgAddX509Cert(constants.IntermediateCertPem, setup.Trustee)
+	result := setup.Handler(setup.Ctx, addX509Cert)
+	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store root intermediate second time
-	addX509Cert := types.NewMsgAddX509Cert(constants.IntermediateCertPem, constants.Address1)
-	result := setup.Handler(setup.Ctx, addX509Cert)
+	secondAddX509Cert := types.NewMsgAddX509Cert(constants.IntermediateCertPem, setup.Trustee)
+	result = setup.Handler(setup.Ctx, secondAddX509Cert)
 	require.Equal(t, types.CodeCertificateAlreadyExists, result.Code)
 }
 
@@ -341,7 +345,7 @@ func TestHandler_AddX509Cert_ForAbsentDirectParentCert(t *testing.T) {
 	// add intermediate x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(constants.IntermediateCertPem, constants.Address1)
 	result := setup.Handler(setup.Ctx, addX509Cert)
-	require.Equal(t, types.CodeCertificateDoesNotExist, result.Code)
+	require.Equal(t, sdk.CodeInternal, result.Code)
 }
 
 func TestHandler_AddX509Cert_ForNoRootCert(t *testing.T) {

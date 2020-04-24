@@ -65,6 +65,8 @@ A summary of KV store and paths used:
         - `4:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<List of approved trustee account IDs>`
     - CRL (Certificate Revocation List):
         - `5` : `CRL (Certificate Revocation List)`
+    - Certificate uniqueness:
+        - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
 - KV store name: `modelinfo`
     - Model Infos 
         - `1:<vid>:<pid>` : `<model info>`
@@ -93,6 +95,9 @@ A summary of KV store and paths used:
    
 ## X509 PKI
 
+**NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
+All PKI related methods are based on this restriction.
+
 #### PROPOSE_ADD_X509_ROOT_CERT
 Proposes a new self-signed root certificate.
 
@@ -108,6 +113,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - `pki` store  
   - `1:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<Certificate> + <List of approved trustee account IDs>`
   - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]` (if just 1 Trustee is required)  
+  - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
 - Who can send: 
     - Any role
 - The current number of required approvals: 
@@ -121,9 +127,10 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
         - `Issuer` == `Subject` 
         - `Authority Key Identifier` == `Subject Key Identifier`
     - no existing `Proposed` certificate with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
+    - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
     - if approved certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exists:
-        - `Serial Number` of the proposed certificate must differ from existing certificates.
         - sender must match to the owner of the existing certificates.
+    - the signature (self-signature) and expiration date are valid.
 
 #### APPROVE_ADD_X509_ROOT_CERT
 Approves the proposed root certificate.
@@ -160,6 +167,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - `pki` store  
   - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]`
   - `3:<Parent Certificate's Subject>:<Parent Certificate's Subject Key ID>` : `<a list of child certificates (subject/subjectKeyId pairs)>`
+  - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
 - Who can send: 
     - Any role
 - CLI command: 
@@ -170,11 +178,12 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
     - provided certificate must not be root: 
         - `Issuer` != `Subject` 
         - `Authority Key Identifier` != `Subject Key Identifier`
-    - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exists:
-        - `Serial Number` of the new certificate must differ from existing certificates.
+    - no existing certificate with the same `<Certificate's Issuer>:<Certificate's Serial Number>` combination.
+    - if certificates with the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination already exist:
         - sender must match to the owner of the existing certificates.
+    - the signature (self-signature) and expiration date are valid.
     - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built. 
-    
+
 Note: Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
     
 #### REVOKE_X509_CERT
@@ -185,20 +194,19 @@ Only the owner (sender) can revoke the certificate.
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
 
 - Parameters:
-  - `issuer`: string  - revoked certificates's Issuer
-  - `serial_number`: string  - revoked certificates's Serial Number
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
 - In State:
   - `pki` store  
   - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]`  
-  - `3:<Parent Certificate's Issuer>:<Parent Certificate's Serial Number>` : `<a list of child certificates (subject/subjectKeyId pairs)>`
+  - `3:<Parent Certificate's Subject>:<Parent Certificate's Subject Key ID>` : `<a list of child certificates (subject/subjectKeyId pairs)>`
   - `5` : `CRL (Certificate Revocation List)`
-
 - Who can send: 
     - Any role; owner
 - CLI command: 
     -   `zblcli tx pki revoke-x509-cert .... `
 - REST API: 
-    -   DELETE `/pki/certs/<issuer>/<serial_number>`
+    -   DELETE `/pki/certs/<subject>/<subject_key_id>`
 
 #### PROPOSE_REVOKE_X509_CERT
 Proposes revocation of the given X509 certificate (either root, intermediate or leaf) by a Trustee.
@@ -209,8 +217,8 @@ If more than 1 Trustee signature is required to revoke a root certificate,
 then the certificate will be in a pending state until sufficient number of other Trustee's approvals is received.
 
 - Parameters:
-  - `subject`: string  - revoked certificates's `Subject`
-  - `subject_key_id`: string  - revoked certificates's `Subject Key Id`
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
 - In State:
   - `pki` store  
   - `4:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<List of approved trustee account IDs>`
@@ -230,8 +238,8 @@ All the certificates in the chain signed by the revoked certificate will be revo
 The revocation is not applied until sufficient number of Trustees approve it. 
 
 - Parameters:
-  - `subject`: string  - revoked certificates's `Subject`
-  - `subject_key_id`: string  - revoked certificates's `Subject Key Id`
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
 - In State:
   - `pki` store  
   - `4:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<List of approved trustee account IDs>`
@@ -248,7 +256,9 @@ The revocation is not applied until sufficient number of Trustees approve it.
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS
 Gets all proposed but not approved root certificates.
 
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query pki all-proposed-x509-root-certs .... `
 - REST API: 
@@ -277,8 +287,8 @@ Gets all proposed but not approved root certificates.
 Gets a proposed but not approved root certificate with the given subject and subject key id attributes.
 
 - Parameters:
-  - `subject`: string  - revoked certificates's `Subject`
-  - `subject_key_id`: string  - revoked certificates's `Subject Key Id`
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
 - CLI command: 
     -   `zblcli query pki proposed-x509-root-cert .... `
 - REST API: 
@@ -300,6 +310,9 @@ Gets a proposed but not approved root certificate with the given subject and sub
 #### GET_ALL_X509_ROOT_CERTS
 Gets all approved root certificates.
 
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query pki all-x509-root-certs .... `
 - REST API: 
@@ -329,8 +342,8 @@ Gets a certificate (either root, intermediate or leaf) by the given
 subject and subject key id attributes.
 
 - Parameters:
-  - `subject`: string  - revoked certificates's `Subject`
-  - `subject_key_id`: string  - revoked certificates's `Subject Key Id`
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
 - CLI command: 
     -   `zblcli query pki x509-cert .... `
 - REST API: 
@@ -364,6 +377,8 @@ only the certificate chains started with the given root certificate are returned
 `GET_ALL_X509_CERTS_SINCE` can be used to incrementally update the list stored locally. 
 
 - Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
@@ -401,6 +416,8 @@ Can optionally be filtered by the root certificate's subject or subject key id s
 only the certificate chains started with the given root certificate are returned. 
 
 - Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
@@ -440,19 +457,21 @@ only the certificate chains started with the given root certificate are returned
 
 - Parameters:
   - `since`: integer - the last ledger's height the user has locally.
-  - `root_issuer`: string (optional) - root certificates's Issuer
-  - `root_serial_number`: string (optional) - root certificates's Serial Number  
+  - `root_subject`: string (optional) - root certificates's `Subject`
+  - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id` 
 - CLI command: 
     -   `zblcli query pki all-x509-certs-delta .... `
 - REST API: 
     -   GET `/pki/certs?since=<>`
-    -   GET `/pki/certs?since=<>;rootIssuer=<>;root_serial_number={}`
+    -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
    
 
 #### GET_ALL_PROPOSED_X509_CERTS_TO_REVOKE
 Gets all proposed but not approved certificates to be revoked.
 
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query pki all-proposed-x509-certs-to-revoke .... `
 - REST API: 
@@ -462,12 +481,12 @@ Gets all proposed but not approved certificates to be revoked.
 Gets a proposed but not approved certificate to be revoked.
 
 - Parameters:
-  - `issuer`: string - certificates's Issuer
-  - `serial_number`: string - certificates's Serial Number
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
 - CLI command: 
     -   `zblcli query pki proposed-x509-cert-to-revoke ....`
 - REST API: 
-    -   GET `/pki/certs/proposed/revoked/<issuer>/<serial_number>`
+    -   GET `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
 
 #### GET_CRL
 Gets all revoked certificates (CRL or certificate revocation list).
@@ -540,7 +559,9 @@ All non-edited fields remain the same.
 #### GET_ALL_MODEL_INFO
 Gets all Model Infos for all vendors.
 
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query modelinfo all-models ...`
 - REST API: 
@@ -624,7 +645,9 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 #### GET_VENDORS    
 Get a list of all Vendors (`vid`s). 
 
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query modelinfo vendors .... `
 - REST API: 
@@ -964,7 +987,9 @@ It contains information about revocation only, so it should be used in cases
  
 `GET_ALL_REVOKED_MODELS_SINCE` can be used to incrementally update the list stored locally. 
 
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query compliance all-revoked-models.... `
         - optional query parameter `certification_type` can be passed
@@ -1000,7 +1025,9 @@ revocation information for every vid/pid. It should be used in cases where compl
  
 `GET_ALL_CERTIFIED_MODELS_SINCE` can be used to incrementally update the list stored locally. 
  
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query compliance all-certified-models `
 - REST API: 
@@ -1033,7 +1060,9 @@ Gets all stored compliance information records.
 
 `GET_ALL_COMPLIANCE_INFO_RECORDS_SINCE` can be used to incrementally update the list stored locally.
  
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
     -   `zblcli query compliance all-compliance-info-records`
 - REST API: 
