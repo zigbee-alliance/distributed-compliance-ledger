@@ -49,7 +49,23 @@ This is useful to avoid correlation by the sender's IP address.
     - CLI is started in a server mode.
     - No keys/account is needed as the ledger is public for reads
     - See `REST API` section for every read request.    
-
+- Query single value:
+    - By default, all read requests are performed for the last ledger state (height) and 
+        then state proof verification is performed for result values.
+        In order to verify state proof, app must have the next ledger state (height + 1) which will be created after some time.
+        Because of this expectation queries may take significant time. 
+    
+        In order to avoid this delay CLI and REST exposes optional flag/parameter `prev-height`.
+        When this flag is specified read requests will be performed for previous state (height-1). 
+        The next state (height) is already present on the ledger so state proof verification is performed immediately.
+    
+        Note:     
+        * In case simple reading use `prev-height` flag to get quick response.
+        * In case of sequent add/read requests flag `prev-height` can be used. In case of failure for height-1 one more request for current height will be sent.
+        * In case of sequent update/read requests flag `prev-height` must not be used because data before modification can be returned.
+             
+- Query list of values:
+    - At the current moment, there is no state proof verification for list queries so there are no delays for those queries.
         
 
 ## KV Store
@@ -190,8 +206,8 @@ Only the owner (sender) can revoke the certificate.
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
 
 - Parameters:
-  - `issuer`: string  - revoked certificates's Issuer
-  - `serial_number`: string  - revoked certificates's Serial Number
+  - `subject`: string  - proposed certificates's `Subject`
+  - `subject_key_id`: string  - proposed certificates's `Subject Key Id`
 - In State:
   - `pki` store  
   - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]`  
@@ -203,7 +219,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - CLI command: 
     -   `zblcli tx pki revoke-x509-cert .... `
 - REST API: 
-    -   DELETE `/pki/certs/<issuer>/<serial_number>`
+    -   DELETE `/pki/certs/<subject>/<subject_key_id>`
 
 #### PROPOSE_REVOKE_X509_CERT
 Proposes revocation of the given X509 certificate (either root, intermediate or leaf) by a Trustee.
@@ -224,7 +240,7 @@ then the certificate will be in a pending state until sufficient number of other
 - CLI command: 
     -   `zblcli tx pki propose-revoke-x509-cert .... `
 - REST API: 
-    -   PUT `/pki/certs/proposed/revoked/<issuer>/<serial_number>`
+    -   PUT `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
     
 
 
@@ -248,7 +264,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - CLI command: 
     -   `zblcli tx pki approve-revoke-x509-cert .... `
 - REST API: 
-    -   PATCH `/pki/certs/proposed/revoked/<issuer>/<serial_number>`
+    -   PATCH `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
         
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS
 Gets all proposed but not approved root certificates.
@@ -286,6 +302,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
 - Parameters:
   - `subject`: string  - revoked certificates's `Subject`
   - `subject_key_id`: string  - revoked certificates's `Subject Key Id`
+  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `zblcli query pki proposed-x509-root-cert .... `
 - REST API: 
@@ -341,6 +358,7 @@ subject and subject key id attributes.
 - Parameters:
   - `subject`: string  - revoked certificates's `Subject`
   - `subject_key_id`: string  - revoked certificates's `Subject Key Id`
+  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `zblcli query pki x509-cert .... `
 - REST API: 
@@ -449,18 +467,18 @@ only the certificate chains started with the given root certificate are returned
 Gets all certificates (root, intermediate and leaf) which has been added since 
 the given ledger's `height`.
 
-Can optionally be filtered by the root certificate's issuer and serial number so that 
+Can optionally be filtered by the root certificate's subject and subject key id so that 
 only the certificate chains started with the given root certificate are returned.   
 
 - Parameters:
   - `since`: integer - the last ledger's height the user has locally.
-  - `root_issuer`: string (optional) - root certificates's Issuer
-  - `root_serial_number`: string (optional) - root certificates's Serial Number  
+  - `root_subject`: string (optional) - root certificates's `Subject`
+  - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
     -   `zblcli query pki all-x509-certs-delta .... `
 - REST API: 
     -   GET `/pki/certs?since=<>`
-    -   GET `/pki/certs?since=<>;rootIssuer=<>;root_serial_number={}`
+    -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
    
 
 #### GET_ALL_PROPOSED_X509_CERTS_TO_REVOKE
@@ -478,12 +496,12 @@ Gets all proposed but not approved certificates to be revoked.
 Gets a proposed but not approved certificate to be revoked.
 
 - Parameters:
-  - `issuer`: string - certificates's Issuer
-  - `serial_number`: string - certificates's Serial Number
+  - `subject`: string  - revoked certificates's `Subject`
+  - `subject_key_id`: string  - revoked certificates's `Subject Key Id`
 - CLI command: 
     -   `zblcli query pki proposed-x509-cert-to-revoke ....`
 - REST API: 
-    -   GET `/pki/certs/proposed/revoked/<issuer>/<serial_number>`
+    -   GET `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
 
 #### GET_CRL
 Gets all revoked certificates (CRL or certificate revocation list).
@@ -615,6 +633,7 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `zblcli query modelinfo model.... `
 - REST API: 
@@ -696,6 +715,7 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `zblcli query compliancetest test-result .... `
 - REST API: 
@@ -795,6 +815,7 @@ You can use `GET_COMPLICE_INFO` method to get compliance information without add
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `zblcli query compliance certified-model .... `
 - REST API: 
@@ -853,6 +874,7 @@ You can use `GET_COMPLICE_INFO` method to get compliance information without add
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `zblcli query compliance revoked-model .... `
 - REST API: 
@@ -906,6 +928,7 @@ So, this function responds with `NotFoundError` (404 code) only if compliance in
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `zblcli query compliance compliance-info .... `
 - REST API: 

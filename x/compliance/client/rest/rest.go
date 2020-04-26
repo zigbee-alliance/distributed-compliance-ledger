@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	vid = "vid"
-	pid = "pid"
+	vid                = "vid"
+	pid                = "pid"
+	certificationType = "certification_type"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application

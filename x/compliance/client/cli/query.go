@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -12,9 +11,7 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -48,6 +45,7 @@ func GetCmdGetComplianceInfo(queryRoute string, cdc *codec.Codec) *cobra.Command
 	}
 
 	cmd.Flags().String(FlagCertificationType, "", "Requested certification type. `zb` is the default and the only supported value now")
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	return cmd
 }
@@ -79,6 +77,7 @@ func GetCmdGetCertifiedModel(queryRoute string, cdc *codec.Codec) *cobra.Command
 	}
 
 	cmd.Flags().String(FlagCertificationType, "", "Requested certification type. `zb` is the default and the only supported value now")
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	return cmd
 }
@@ -110,6 +109,7 @@ func GetCmdGetRevokedModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagCertificationType, "", "Requested certification type. `zb` is the default and the only supported value now")
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	return cmd
 }
@@ -131,13 +131,13 @@ func GetCmdGetAllRevokedModels(queryRoute string, cdc *codec.Codec) *cobra.Comma
 }
 
 func getComplianceInfo(queryRoute string, cdc *codec.Codec, args []string, state types.ComplianceState) error {
-	cliCtx := context.NewCLIContext().WithCodec(cdc)
+	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 	vid := args[0]
 	pid := args[1]
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
-	res, height, err := cliCtx.QueryStore([]byte(keeper.ComplianceInfoId(certificationType, vid, pid)), queryRoute)
+	res, height, err := cliCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), queryRoute)
 	if err != nil || res == nil {
 		return types.ErrComplianceInfoDoesNotExist(vid, pid)
 	}
@@ -149,26 +149,16 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec, args []string, state
 		return types.ErrComplianceInfoDoesNotExist(vid, pid)
 	}
 
-	out, err := json.Marshal(complianceInfo)
-	if err != nil {
-		return sdk.ErrInternal(fmt.Sprintf("Could not encode result: %v", err))
-	}
-
-	return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
+	return cliCtx.EncodeAndPrintWithHeight(complianceInfo, height)
 }
 
 func getAllComplianceInfoRecords(cdc *codec.Codec, path string) error {
-	cliCtx := context.NewCLIContext().WithCodec(cdc)
+	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 	paginationParams := pagination.ParsePaginationParamsFromFlags()
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
 	params := types.NewListQueryParams(certificationType, paginationParams.Skip, paginationParams.Take)
 
-	res, height, err := cliCtx.QueryWithData(path, cliCtx.Codec.MustMarshalJSON(params))
-	if err != nil {
-		return sdk.ErrInternal(fmt.Sprintf("Could not query compliance info records: %s\n", err))
-	}
-
-	return cliCtx.PrintOutput(cli.NewReadResult(cdc, res, height))
+	return cliCtx.QueryList(path, params)
 }

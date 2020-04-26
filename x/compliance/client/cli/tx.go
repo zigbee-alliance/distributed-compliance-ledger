@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/spf13/cobra"
@@ -9,16 +10,13 @@ import (
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
 const (
 	FlagCertificationType = "certification-type"
-	FlagReason  = "reason"
+	FlagReason            = "reason"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -45,8 +43,7 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 		Short: "Certify an existing model. Note that the corresponding Model Info and test results must be present on ledger.",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
@@ -66,14 +63,9 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgCertifyModel(vid, pid, certificationDate, certificationType, reason, cliCtx.GetFromAddress())
+			msg := types.NewMsgCertifyModel(vid, pid, certificationDate, certificationType, reason, cliCtx.FromAddress())
 
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 
@@ -90,8 +82,7 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 		Short: "Revoke compliance of an existing model.",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
@@ -111,14 +102,9 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgRevokeModel(vid, pid, revocationDate, certificationType, reason, cliCtx.GetFromAddress())
+			msg := types.NewMsgRevokeModel(vid, pid, revocationDate, certificationType, reason, cliCtx.FromAddress())
 
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 

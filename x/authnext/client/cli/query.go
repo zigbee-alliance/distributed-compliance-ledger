@@ -2,12 +2,12 @@ package cli
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 )
@@ -32,18 +32,9 @@ func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Use:   "account-headers",
 		Short: "List ModelInfo headers",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			data := pagination.ParseAndMarshalPaginationParamsFromFlags(cliCtx.Codec)
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/account_headers", queryRoute), data)
-			if err != nil {
-				fmt.Printf("could not get account headers\n")
-				return nil
-			}
-
-			var out types.QueryAccountHeadersResult
-			cdc.MustUnmarshalJSON(res, &out)
-			return cliCtx.PrintOutput(out)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+			params := pagination.ParsePaginationParamsFromFlags()
+			return cliCtx.QueryList(fmt.Sprintf("custom/%s/account_headers", queryRoute), params)
 		},
 	}
 

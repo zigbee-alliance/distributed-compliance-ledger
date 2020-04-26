@@ -2,7 +2,6 @@ package pagination
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/viper"
 	"net/http"
@@ -14,7 +13,7 @@ const (
 	FlagTake = "take"
 )
 
-// Request Payload for a list query with pagination
+// request Payload for a list query with pagination
 type PaginationParams struct {
 	Skip int
 	Take int
@@ -31,11 +30,7 @@ func ParsePaginationParamsFromFlags() PaginationParams {
 	)
 }
 
-func ParseAndMarshalPaginationParamsFromFlags(cdc *codec.Codec) []byte {
-	return cdc.MustMarshalJSON(ParsePaginationParamsFromFlags())
-}
-
-func ParsePaginationParamsFromRequest(cdc *codec.Codec, r *http.Request) (PaginationParams, error) {
+func ParsePaginationParamsFromRequest(r *http.Request) (PaginationParams, error) {
 	skip := 0
 	if str := r.FormValue("skip"); len(str) > 0 {
 		val_, err := strconv.Atoi(str)
@@ -55,12 +50,4 @@ func ParsePaginationParamsFromRequest(cdc *codec.Codec, r *http.Request) (Pagina
 	}
 
 	return NewPaginationParams(skip, take), nil
-}
-
-func ParseAndMarshalPaginationParamsFromRequest(cdc *codec.Codec, r *http.Request) ([]byte, error) {
-	params, err := ParsePaginationParamsFromRequest(cdc, r)
-	if err != nil {
-		return nil, err
-	}
-	return cdc.MustMarshalJSON(params), nil
 }

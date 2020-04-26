@@ -1,16 +1,12 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 )
@@ -34,17 +30,17 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 }
 
 func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "model [vid] [pid]",
 		Short: "Query Model by combination of Vendor ID and Product ID",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid := args[0]
 			pid := args[1]
 
-			res, height, err := cliCtx.QueryStore([]byte(keeper.ModelInfoId(vid, pid)), queryRoute)
+			res, height, err := cliCtx.QueryStore(keeper.ModelInfoId(vid, pid), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrModelInfoDoesNotExist(vid, pid)
 			}
@@ -52,14 +48,12 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			var modelInfo types.ModelInfo
 			cdc.MustUnmarshalBinaryBare(res, &modelInfo)
 
-			out, err := json.Marshal(modelInfo)
-			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not encode result: %v", err))
-			}
-
-			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
+			return cliCtx.EncodeAndPrintWithHeight(modelInfo, height)
 		},
 	}
+
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+	return cmd
 }
 
 func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
@@ -67,16 +61,9 @@ func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Use:   "all-models",
 		Short: "Query the list of all Models",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			params := pagination.ParseAndMarshalPaginationParamsFromFlags(cdc)
-
-			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/all_models", queryRoute), params)
-			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not query models: %s\n", err))
-			}
-
-			return cliCtx.PrintOutput(cli.NewReadResult(cdc, res, height))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+			params := pagination.ParsePaginationParamsFromFlags()
+			return cliCtx.QueryList(fmt.Sprintf("custom/%s/all_models", queryRoute), params)
 		},
 	}
 
@@ -91,16 +78,9 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Use:   "vendors",
 		Short: "Query the list of Vendors",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			params := pagination.ParseAndMarshalPaginationParamsFromFlags(cdc)
-
-			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/vendors", queryRoute), params)
-			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not get query vendors: %s\n", err))
-			}
-
-			return cliCtx.PrintOutput(cli.NewReadResult(cdc, res, height))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+			params := pagination.ParsePaginationParamsFromFlags()
+			return cliCtx.QueryList(fmt.Sprintf("custom/%s/vendors", queryRoute), params)
 		},
 	}
 
@@ -111,16 +91,16 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 }
 
 func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "vendor-models [vid]",
 		Short: "Query the list of Models for the given Vendor",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid := args[0]
 
-			res, height, err := cliCtx.QueryStore([]byte(keeper.VendorProductsId(vid)), queryRoute)
+			res, height, err := cliCtx.QueryStore(keeper.VendorProductsId(vid), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrVendorProductsDoNotExist(vid)
 			}
@@ -128,12 +108,10 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			var vendorProducts types.VendorProducts
 			cdc.MustUnmarshalBinaryBare(res, &vendorProducts)
 
-			out, err := json.Marshal(vendorProducts)
-			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not encode result: %v", err))
-			}
-
-			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
+			return cliCtx.EncodeAndPrintWithHeight(vendorProducts, height)
 		},
 	}
+
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+	return cmd
 }

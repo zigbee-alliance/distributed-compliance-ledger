@@ -1,14 +1,11 @@
 package rest
 
 import (
-	"encoding/json"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -49,16 +46,16 @@ func getRevokedModelHandler(cliCtx context.CLIContext, storeName string) http.Ha
 }
 
 func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, storeName string, state types.ComplianceState) {
-	cliCtx = context.NewCLIContext().WithCodec(cliCtx.Codec)
+	restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-	vars := mux.Vars(r)
+	vars := restCtx.Variables()
 	vid := vars[vid]
 	pid := vars[pid]
 	certificationType := types.CertificationType(r.FormValue("certification_type"))
 
-	res, height, err := cliCtx.QueryStore([]byte(keeper.ComplianceInfoId(certificationType, vid, pid)), storeName)
+	res, height, err := restCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), storeName)
 	if err != nil || res == nil {
-		rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
+		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
 		return
 	}
 
@@ -66,39 +63,23 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 	cliCtx.Codec.MustUnmarshalBinaryBare(res, &complianceInfo)
 
 	if len(state) > 0 && complianceInfo.State != state {
-		rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
+		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
 		return
 	}
 
-	out, err := json.Marshal(complianceInfo)
-	if err != nil {
-		rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	cliCtx.Height = height
-	rest.PostProcessResponse(w, cliCtx, out)
+	restCtx.EncodeAndRespondWithHeight(complianceInfo, height)
 }
 
 func getAllComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, path string) {
-	cliCtx = context.NewCLIContext().WithCodec(cliCtx.Codec)
+	restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-	paginationParams, err := pagination.ParsePaginationParamsFromRequest(cliCtx.Codec, r)
+	paginationParams, err := restCtx.ParsePaginationParams()
 	if err != nil {
-		rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	certificationType := types.CertificationType(r.FormValue("certification_type"))
-
+	certificationType := types.CertificationType(restCtx.Request().FormValue(certificationType))
 	params := types.NewListQueryParams(certificationType, paginationParams.Skip, paginationParams.Take)
 
-	res, height, err := cliCtx.QueryWithData(path, cliCtx.Codec.MustMarshalJSON(params))
-	if err != nil {
-		rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
-		return
-	}
-
-	cliCtx.Height = height
-	rest.PostProcessResponse(w, cliCtx, res)
+	restCtx.QueryList(path, params)
 }

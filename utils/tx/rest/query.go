@@ -2,6 +2,7 @@ package rest
 
 import (
 	"encoding/base64"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"io/ioutil"
 	"net/http"
 
@@ -11,11 +12,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
 
-	authutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/auth"
 	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
@@ -24,17 +23,19 @@ import (
 // and responds with JSON-encoded transaction.
 func DecodeTxRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
 		}
 
 		var req DecodeTxsRequest
 
-		err = cliCtx.Codec.UnmarshalJSON(body, &req)
+		err = restCtx.Codec().UnmarshalJSON(body, &req)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
 		}
 
@@ -43,16 +44,16 @@ func DecodeTxRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		for _, base64str := range req.Txs {
-			tx, err := decodeTx(cliCtx.Codec, base64str)
+			tx, err := decodeTx(restCtx.Codec(), base64str)
 			if err != nil {
-				rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+				restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 				return
 			}
 
 			resp.Txs = append(resp.Txs, tx)
 		}
 
-		rest.PostProcessResponseBare(w, cliCtx, &resp)
+		restCtx.PostProcessResponseBare(&resp)
 	}
 }
 
@@ -74,9 +75,11 @@ func decodeTx(cdc *codec.Codec, base64str string) (tx auth.StdTx, err error) {
 
 func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
 		err := r.ParseForm()
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest,
+			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
 			return
 		}
@@ -84,14 +87,12 @@ func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		name, passphrase := r.FormValue("name"), r.FormValue("passphrase")
 
 		var signMsg types.StdSignMsg
-
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &signMsg) {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+		if !restCtx.ReadRESTReq(&signMsg) {
 			return
 		}
 
 		txBldr := auth.NewTxBuilderFromCLI().
-			WithTxEncoder(utils.GetTxEncoder(cliCtx.Codec)).
+			WithTxEncoder(utils.GetTxEncoder(restCtx.Codec())).
 			WithAccountNumber(signMsg.AccountNumber).
 			WithSequence(signMsg.Sequence).
 			WithChainID(signMsg.ChainID)
@@ -106,100 +107,35 @@ func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		signedStdTx, err := txBldr.SignStdTx(name, passphrase, stdTx, false)
 
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
 		}
 
-		rest.PostProcessResponse(w, cliCtx, signedStdTx)
+		restCtx.PostProcessResponse(signedStdTx)
 	}
 }
 
 func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
 		var stdTx types.StdTx
-
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &stdTx) {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+		if !restCtx.ReadRESTReq(&stdTx) {
 			return
 		}
 
-		txBytes, err := cliCtx.Codec.MarshalBinaryLengthPrefixed(stdTx)
+		txBytes, err := restCtx.Codec().MarshalBinaryLengthPrefixed(stdTx)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
 		}
 
-		res, err := BroadcastMessage(cliCtx, txBytes)
-
+		res, err := restCtx.BroadcastMessage(txBytes)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
 		}
 
-		rest.PostProcessResponse(w, cliCtx, res)
+		restCtx.PostProcessResponse(res)
 	}
-}
-
-func SignMessage(cliCtx context.CLIContext, chainId string, signer sdk.AccAddress,
-	name string, passphrase string, msg []sdk.Msg) ([]byte, error) {
-
-	acc, err := auth.NewAccountRetriever(cliCtx).GetAccount(signer)
-	if err != nil {
-		return nil, err
-	}
-
-	txBldr := auth.NewTxBuilderFromCLI().
-		WithTxEncoder(utils.GetTxEncoder(cliCtx.Codec)).
-		WithAccountNumber(acc.GetAccountNumber()).
-		WithSequence(acc.GetSequence()).
-		WithChainID(chainId)
-
-	return txBldr.BuildAndSign(name, passphrase, msg)
-}
-
-func BroadcastMessage(cliCtx context.CLIContext, message []byte) ([]byte, error) {
-	cliCtx.BroadcastMode = "block"
-	res, err := cliCtx.BroadcastTx(message)
-	if err != nil {
-		return nil, err
-	}
-
-	txBytes, err := cliCtx.Codec.MarshalJSON(res)
-	if err != nil {
-		return nil, err
-	}
-
-	return txBytes, nil
-}
-
-func SignAndBroadcastMessage(cliCtx context.CLIContext, chainId string, signer sdk.AccAddress, account string, passphrase string, msg []sdk.Msg) ([]byte, error) {
-	signedMsg, err := SignMessage(cliCtx, chainId, signer, account, passphrase, msg)
-	if err != nil {
-		return nil, err
-	}
-
-	return BroadcastMessage(cliCtx, signedMsg)
-}
-
-func ProcessMessage(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, baseReq rest.BaseReq, msg sdk.Msg, signer sdk.AccAddress) {
-	err := msg.ValidateBasic()
-	if err != nil {
-		rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	account, passphrase, err_ := authutils.GetCredentialsFromRequest(r)
-	if err_ != nil { // No credentials - just generate request message
-		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
-		return
-	}
-
-	// Credentials are found - sign and broadcast message
-	res, err_ := SignAndBroadcastMessage(cliCtx, baseReq.ChainID, signer, account, passphrase, []sdk.Msg{msg})
-	if err_ != nil {
-		rest.WriteErrorResponse(w, http.StatusInternalServerError, err_.Error())
-		return
-	}
-
-	rest.PostProcessResponse(w, cliCtx, res)
 }

@@ -19,7 +19,7 @@ const (
 	proposedCertificatePrefix = "1"
 	approvedCertificatePrefix = "2"
 	childCertificatesPrefix   = "3"
-	issuerSerialNumber        = "10"
+	issuerSerialNumber        = "9"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {

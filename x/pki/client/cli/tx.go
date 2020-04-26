@@ -1,13 +1,10 @@
 package cli
 
 import (
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
@@ -38,22 +35,16 @@ func GetCmdProposeAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 		Short: "Proposes a new self-signed root certificate",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			cert, err := ReadCertificate(args[0])
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgProposeAddX509RootCert(cert, cliCtx.GetFromAddress())
+			msg := types.NewMsgProposeAddX509RootCert(cert, cliCtx.FromAddress())
 
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 }
@@ -65,20 +56,14 @@ func GetCmdApproveAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 		Short: "Approves the proposed root certificate correspondent to combination of subject and subject-key-id",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			subject := args[0]
 			subjectKeyId := args[1]
 
-			msg := types.NewMsgApproveAddX509RootCert(subject, subjectKeyId, cliCtx.GetFromAddress())
+			msg := types.NewMsgApproveAddX509RootCert(subject, subjectKeyId, cliCtx.FromAddress())
 
-			err := msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 }
@@ -90,22 +75,16 @@ func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 		Short: "Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			cert, err := ReadCertificate(args[0])
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgAddX509Cert(cert, cliCtx.GetFromAddress())
+			msg := types.NewMsgAddX509Cert(cert, cliCtx.FromAddress())
 
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 }

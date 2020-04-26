@@ -1,17 +1,14 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 )
@@ -62,12 +59,12 @@ func GetCmdProposedX509RootCert(queryRoute string, cdc *codec.Codec) *cobra.Comm
 		Short: "Gets a proposed but not approved root certificate with the given combination of subject and subject-key-id",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			subject := args[0]
 			subjectKeyId := args[1]
 
-			res, height, err := cliCtx.QueryStore([]byte(keeper.ProposedCertificateId(subject, subjectKeyId)), queryRoute)
+			res, height, err := cliCtx.QueryStore(keeper.ProposedCertificateId(subject, subjectKeyId), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId)
 			}
@@ -75,12 +72,7 @@ func GetCmdProposedX509RootCert(queryRoute string, cdc *codec.Codec) *cobra.Comm
 			var proposedCertificate types.ProposedCertificate
 			cdc.MustUnmarshalBinaryBare(res, &proposedCertificate)
 
-			out, err := json.Marshal(proposedCertificate)
-			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not encode result: %v", err))
-			}
-
-			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
+			return cliCtx.EncodeAndPrintWithHeight(proposedCertificate, height)
 		},
 	}
 }
@@ -106,12 +98,12 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Short: "Gets a certificates (either root, intermediate or leaf) by the given combination of subject and subject-key-id",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			subject := args[0]
 			subjectKeyId := args[1]
 
-			res, height, err := cliCtx.QueryStore([]byte(keeper.CertificateId(subject, subjectKeyId)), queryRoute)
+			res, height, err := cliCtx.QueryStore(keeper.CertificateId(subject, subjectKeyId), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrCertificateDoesNotExist(subject, subjectKeyId)
 			}
@@ -119,12 +111,7 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			var certificate types.Certificates
 			cdc.MustUnmarshalBinaryBare(res, &certificate)
 
-			out, err := json.Marshal(certificate)
-			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not encode result: %v", err))
-			}
-
-			return cliCtx.PrintOutput(cli.NewReadResult(cdc, out, height))
+			return cliCtx.EncodeAndPrintWithHeight(certificate, height)
 		},
 	}
 }
@@ -166,7 +153,7 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 }
 
 func getAllCertificates(cdc *codec.Codec, route string) error {
-	cliCtx := context.NewCLIContext().WithCodec(cdc)
+	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 	rootSubject := viper.GetString(FlagRootSubject)
 	rootSubjectKeyId := viper.GetString(FlagRootSubjectKeyId)
@@ -174,10 +161,5 @@ func getAllCertificates(cdc *codec.Codec, route string) error {
 	paginationParams := pagination.ParsePaginationParamsFromFlags()
 	params := types.NewListCertificatesQueryParams(paginationParams, rootSubject, rootSubjectKeyId)
 
-	res, height, err := cliCtx.QueryWithData(route, cdc.MustMarshalJSON(params))
-	if err != nil {
-		return sdk.ErrInternal(fmt.Sprintf("Could not query certificates: %s\n", err))
-	}
-
-	return cliCtx.PrintOutput(cli.NewReadResult(cdc, res, height))
+	return cliCtx.QueryList(route, params)
 }

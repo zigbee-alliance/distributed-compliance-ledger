@@ -2,17 +2,15 @@ package cli
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/spf13/cobra"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -38,8 +36,7 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 		Short: "Add new testing result",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
@@ -58,14 +55,9 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 				return sdk.ErrInternal(fmt.Sprintf("Parsing Error: %v. `test-date` must be RFC3339 encoded date", err_))
 			}
 
-			msg := types.NewMsgAddTestingResult(vid, pid, testResult, testDate, cliCtx.GetFromAddress())
+			msg := types.NewMsgAddTestingResult(vid, pid, testResult, testDate, cliCtx.FromAddress())
 
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 }
