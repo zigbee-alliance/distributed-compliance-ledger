@@ -34,7 +34,7 @@ func TestMsgCertifyModelValidation(t *testing.T) {
 		{false, NewMsgCertifyModel(
 			test_constants.VID, test_constants.PID, time.Time{},
 			CertificationType(test_constants.CertificationType), test_constants.Reason, test_constants.Signer)},
-		{true, NewMsgCertifyModel(
+		{false, NewMsgCertifyModel(
 			test_constants.VID, test_constants.PID, test_constants.CertificationDate,
 			"", test_constants.Reason, test_constants.Signer)},
 		{false, NewMsgCertifyModel(
@@ -98,7 +98,7 @@ func TestMsgRevokeModelValidation(t *testing.T) {
 		{true, NewMsgRevokeModel(
 			test_constants.VID, test_constants.PID, test_constants.RevocationDate,
 			CertificationType(test_constants.CertificationType), "", test_constants.Signer)},
-		{true, NewMsgRevokeModel(
+		{false, NewMsgRevokeModel(
 			test_constants.VID, test_constants.PID, test_constants.RevocationDate,
 			"", test_constants.RevocationReason, test_constants.Signer)},
 		{false, NewMsgRevokeModel(

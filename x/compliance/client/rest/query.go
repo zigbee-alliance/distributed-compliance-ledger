@@ -14,7 +14,7 @@ import (
 
 func getComplianceInfoHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		getComplianceInfo(cliCtx, w, r, storeName, "")
+		getComplianceInfo(cliCtx, w, r, storeName)
 	}
 }
 
@@ -32,7 +32,7 @@ func getCertifiedModelsHandler(cliCtx context.CLIContext, storeName string) http
 
 func getCertifiedModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		getComplianceInfo(cliCtx, w, r, storeName, types.Certified)
+		getComplianceInfoInState(cliCtx, w, r, storeName, types.Certified)
 	}
 }
 
@@ -44,17 +44,45 @@ func getRevokedModelsHandler(cliCtx context.CLIContext, storeName string) http.H
 
 func getRevokedModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		getComplianceInfo(cliCtx, w, r, storeName, types.Revoked)
+		getComplianceInfoInState(cliCtx, w, r, storeName, types.Revoked)
 	}
 }
 
-func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, storeName string, state types.ComplianceState) {
+func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, storeName string, state types.ComplianceState) {
 	cliCtx = context.NewCLIContext().WithCodec(cliCtx.Codec)
 
 	vars := mux.Vars(r)
 	vid := vars[vid]
 	pid := vars[pid]
-	certificationType := types.CertificationType(r.FormValue("certification_type"))
+	certificationType := types.CertificationType(vars[certificationType])
+
+	isInState := types.ComplianceInfoInState{Value: false}
+
+	res, height, err := cliCtx.QueryStore([]byte(keeper.ComplianceInfoId(certificationType, vid, pid)), storeName)
+	if res != nil {
+		var complianceInfo types.ComplianceInfo
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &complianceInfo)
+
+		isInState.Value = complianceInfo.State == state
+	}
+
+	out, err := json.Marshal(isInState)
+	if err != nil {
+		rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	cliCtx.Height = height
+	rest.PostProcessResponse(w, cliCtx, out)
+}
+
+func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, storeName string) {
+	cliCtx = context.NewCLIContext().WithCodec(cliCtx.Codec)
+
+	vars := mux.Vars(r)
+	vid := vars[vid]
+	pid := vars[pid]
+	certificationType := types.CertificationType(vars[certificationType])
 
 	res, height, err := cliCtx.QueryStore([]byte(keeper.ComplianceInfoId(certificationType, vid, pid)), storeName)
 	if err != nil || res == nil {
@@ -64,11 +92,6 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 
 	var complianceInfo types.ComplianceInfo
 	cliCtx.Codec.MustUnmarshalBinaryBare(res, &complianceInfo)
-
-	if len(state) > 0 && complianceInfo.State != state {
-		rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
-		return
-	}
 
 	out, err := json.Marshal(complianceInfo)
 	if err != nil {

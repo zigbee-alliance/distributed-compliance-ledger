@@ -53,7 +53,7 @@ func TestQuerier_QueryCertifiedModel(t *testing.T) {
 	receivedComplianceInfo, _ := getCertifiedModel(setup, certifiedModel.VID, certifiedModel.PID)
 
 	// check
-	CheckComplianceInfo(t, certifiedModel, receivedComplianceInfo)
+	require.True(t, receivedComplianceInfo.Value)
 }
 
 func TestQuerier_QueryCertifiedModelForUnknown(t *testing.T) {
@@ -93,7 +93,7 @@ func TestQuerier_QueryRevokedModel(t *testing.T) {
 	receivedComplianceInfo, _ := getRevokedModel(setup, revokedModel.VID, revokedModel.PID)
 
 	// check
-	CheckComplianceInfo(t, revokedModel, receivedComplianceInfo)
+	require.True(t, receivedComplianceInfo.Value)
 }
 
 func TestQuerier_QueryRevokedModelForUnknown(t *testing.T) {
@@ -129,14 +129,34 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	// add 4 certified and 4 revoked models
 	firstId := PopulateStoreWithMixedModels(setup, count)
 
-	params := types.NewListQueryParams(types.EmptyCertificationType, 0, 0)
+	params := types.NewListQueryParams("", 0, 0)
+
+	receivedInfos := getComplianceInfos(setup, params)
+
+	// check
+	require.Equal(t, count, receivedInfos.Total)
+	require.Equal(t, count, len(receivedInfos.Items))
+
+	for i, item := range receivedInfos.Items {
+		require.Equal(t, int16(i)+firstId, item.VID)
+		require.Equal(t, int16(i)+firstId, item.PID)
+	}
+}
+
+func TestQuerier_QueryAllModelsInState(t *testing.T) {
+	setup := Setup()
+	count := 8
+
+	// add 4 certified and 4 revoked models
+	firstId := PopulateStoreWithMixedModels(setup, count)
+
+	params := types.NewListQueryParams("", 0, 0)
 
 	cases := []struct {
 		firstId       int16
 		count         int
-		receivedInfos types.ListComplianceInfoItems
+		receivedInfos types.ListComplianceInfoKeyItems
 	}{
-		{firstId, count, getComplianceInfos(setup, params)},                    // query compliance infos
 		{firstId, count / 2, getCertifiedModels(setup, params)},                // query certified model
 		{firstId + int16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
 	}
@@ -163,14 +183,38 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	// query all certified models skip=1 take=2
 	skip := 1
 	take := 2
-	params := types.NewListQueryParams(types.EmptyCertificationType, skip, take)
+	params := types.NewListQueryParams("", skip, take)
+
+	// query all certified models skip=1 take=2
+	receivedInfos := getComplianceInfos(setup, params)
+
+	// check
+	require.Equal(t, count, receivedInfos.Total)
+	require.Equal(t, take, len(receivedInfos.Items))
+
+	for i, item := range receivedInfos.Items {
+		require.Equal(t, int16(skip)+int16(i)+firstId, item.VID)
+		require.Equal(t, int16(skip)+int16(i)+firstId, item.PID)
+	}
+}
+
+func TestQuerier_QueryAllModelsInStateWithPaginationHeaders(t *testing.T) {
+	setup := Setup()
+	count := 8
+
+	// add 4 certified and 4 revoked models
+	firstId := PopulateStoreWithMixedModels(setup, count)
+
+	// query all certified models skip=1 take=2
+	skip := 1
+	take := 2
+	params := types.NewListQueryParams("", skip, take)
 
 	cases := []struct {
 		firstId       int16
 		count         int
-		receivedInfos types.ListComplianceInfoItems
+		receivedInfos types.ListComplianceInfoKeyItems
 	}{
-		{firstId, count, getComplianceInfos(setup, params)},                    // query compliance infos
 		{firstId, count / 2, getCertifiedModels(setup, params)},                // query certified model
 		{firstId + int16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
 	}
@@ -191,31 +235,31 @@ func getComplianceInfo(setup TestSetup, vid int16, pid int16) (types.ComplianceI
 	return getSingle(setup, vid, pid, QueryComplianceInfo)
 }
 
-func getCertifiedModel(setup TestSetup, vid int16, pid int16) (types.ComplianceInfo, sdk.Error) {
-	return getSingle(setup, vid, pid, QueryCertifiedModel)
+func getCertifiedModel(setup TestSetup, vid int16, pid int16) (types.ComplianceInfoInState, sdk.Error) {
+	return getSingleInState(setup, vid, pid, QueryCertifiedModel)
 }
 
-func getRevokedModel(setup TestSetup, vid int16, pid int16) (types.ComplianceInfo, sdk.Error) {
-	return getSingle(setup, vid, pid, QueryRevokedModel)
+func getRevokedModel(setup TestSetup, vid int16, pid int16) (types.ComplianceInfoInState, sdk.Error) {
+	return getSingleInState(setup, vid, pid, QueryRevokedModel)
 }
 
 func getComplianceInfos(setup TestSetup, params types.ListQueryParams) types.ListComplianceInfoItems {
 	return getAll(setup, params, QueryAllComplianceInfoRecords)
 }
 
-func getCertifiedModels(setup TestSetup, params types.ListQueryParams) types.ListComplianceInfoItems {
-	return getAll(setup, params, QueryAllCertifiedModels)
+func getCertifiedModels(setup TestSetup, params types.ListQueryParams) types.ListComplianceInfoKeyItems {
+	return getAllInState(setup, params, QueryAllCertifiedModels)
 }
 
-func getRevokedModels(setup TestSetup, params types.ListQueryParams) types.ListComplianceInfoItems {
-	return getAll(setup, params, QueryAllRevokedModels)
+func getRevokedModels(setup TestSetup, params types.ListQueryParams) types.ListComplianceInfoKeyItems {
+	return getAllInState(setup, params, QueryAllRevokedModels)
 }
 
 func getSingle(setup TestSetup, vid int16, pid int16, state string) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid)},
-		abci.RequestQuery{Data: setup.Cdc.MustMarshalJSON(types.SingleQueryParams{CertificationType: types.ZbCertificationType})},
+		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
+		abci.RequestQuery{},
 	)
 
 	if err != nil {
@@ -223,6 +267,23 @@ func getSingle(setup TestSetup, vid int16, pid int16, state string) (types.Compl
 	}
 
 	var receivedComplianceInfo types.ComplianceInfo
+	_ = setup.Cdc.UnmarshalJSON(result, &receivedComplianceInfo)
+
+	return receivedComplianceInfo, nil
+}
+
+func getSingleInState(setup TestSetup, vid int16, pid int16, state string) (types.ComplianceInfoInState, sdk.Error) {
+	result, err := setup.Querier(
+		setup.Ctx,
+		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
+		abci.RequestQuery{},
+	)
+
+	if err != nil {
+		return types.ComplianceInfoInState{}, err
+	}
+
+	var receivedComplianceInfo types.ComplianceInfoInState
 	_ = setup.Cdc.UnmarshalJSON(result, &receivedComplianceInfo)
 
 	return receivedComplianceInfo, nil
@@ -236,6 +297,19 @@ func getAll(setup TestSetup, params types.ListQueryParams, state string) types.L
 	)
 
 	var receiveModelInfos types.ListComplianceInfoItems
+	_ = setup.Cdc.UnmarshalJSON(result, &receiveModelInfos)
+
+	return receiveModelInfos
+}
+
+func getAllInState(setup TestSetup, params types.ListQueryParams, state string) types.ListComplianceInfoKeyItems {
+	result, _ := setup.Querier(
+		setup.Ctx,
+		[]string{state},
+		abci.RequestQuery{Data: setup.Cdc.MustMarshalJSON(params)},
+	)
+
+	var receiveModelInfos types.ListComplianceInfoKeyItems
 	_ = setup.Cdc.UnmarshalJSON(result, &receiveModelInfos)
 
 	return receiveModelInfos
