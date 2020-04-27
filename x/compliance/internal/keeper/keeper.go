@@ -82,10 +82,6 @@ func (k Keeper) IsComplianceInfoPresent(ctx sdk.Context, certificationType types
 
 // Id builder for ComplianceInfo
 func ComplianceInfoId(certificationType types.CertificationType, vid interface{}, pid interface{}) string {
-	if certificationType == types.EmptyCertificationType {
-		certificationType = types.ZbCertificationType
-	}
-
 	return fmt.Sprintf("%s:%v:%v", prefix(certificationType), vid, pid)
 }
 

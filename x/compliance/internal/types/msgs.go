@@ -12,7 +12,7 @@ type MsgCertifyModel struct {
 	VID               int16             `json:"vid"`
 	PID               int16             `json:"pid"`
 	CertificationDate time.Time         `json:"certification_date"` // rfc3339 encoded date
-	CertificationType CertificationType `json:"certification_type,omitempty"`
+	CertificationType CertificationType `json:"certification_type"`
 	Reason            string            `json:"reason,omitempty"`
 	Signer            sdk.AccAddress    `json:"signer"`
 }
@@ -53,7 +53,7 @@ func (m MsgCertifyModel) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid CertificationDate: it cannot be empty")
 	}
 
-	if m.CertificationType != EmptyCertificationType && m.CertificationType != ZbCertificationType {
+	if m.CertificationType != ZbCertificationType {
 		return sdk.ErrUnknownRequest(
 			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, ZbCertificationType))
 	}
@@ -73,7 +73,7 @@ type MsgRevokeModel struct {
 	VID               int16             `json:"vid"`
 	PID               int16             `json:"pid"`
 	RevocationDate    time.Time         `json:"revocation_date"` // rfc3339 encoded date
-	CertificationType CertificationType `json:"certification_type,omitempty"`
+	CertificationType CertificationType `json:"certification_type"`
 	Reason            string            `json:"reason,omitempty"`
 	Signer            sdk.AccAddress    `json:"signer"`
 }
@@ -113,7 +113,7 @@ func (m MsgRevokeModel) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid RevocationDate: it cannot be empty")
 	}
 
-	if m.CertificationType != EmptyCertificationType && m.CertificationType != ZbCertificationType {
+	if m.CertificationType != ZbCertificationType {
 		return sdk.ErrUnknownRequest(
 			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, ZbCertificationType))
 	}

@@ -40,12 +40,13 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	var complianceInfo types.ComplianceInfo
 
 	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
+		// Compliance record already exist. Cases:
+		// 1) Only revocation is tracked on the ledger. We want to certify revoked compliance. The corresponding Model Info and test results are not required to be on the ledger.
+		// 2) Compliance is tracked on ledger. We want to certify revoked compliance. `Else` branch was passed on first certification. So Model Info and test results are exists on the ledger.
+
 		complianceInfo = keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID)
 
-		if !complianceInfo.Owner.Equals(msg.Signer) {
-			return sdk.ErrUnauthorized("MsgCertifyModel transaction should be signed by the owner for editing of the existing record").Result()
-		}
-
+		// if state changes on `certified` check that certification_date is after revocation_date
 		if complianceInfo.State == types.Revoked {
 			if msg.CertificationDate.Before(complianceInfo.Date) {
 				return sdk.ErrInternal(
@@ -56,6 +57,8 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 		}
 		// TODO: else allow setting different certification date?
 	} else {
+		// Compliance is tracked on ledger. There is no compliance record yet. The corresponding Model Info and test results must be present on ledger.
+
 		if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
 			return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 		}
@@ -93,14 +96,12 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper aut
 	var complianceInfo types.ComplianceInfo
 
 	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
+		// Compliance record already exist.
+
 		complianceInfo = keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID)
 
-		if !complianceInfo.Owner.Equals(msg.Signer) {
-			return sdk.ErrUnauthorized("MsgRevokeModel transaction should be signed by the owner for editing of the existing record").Result()
-		}
-
+		// if state changes on `revoked` check that revocation_date is after certification_date
 		if complianceInfo.State == types.Certified {
-
 			if msg.RevocationDate.Before(complianceInfo.Date) {
 				return sdk.ErrInternal(
 					fmt.Sprintf("The `revocation_date`:%v must be after the `certification_date`:%v to revoke model", msg.RevocationDate, complianceInfo.Date)).Result()
@@ -110,6 +111,7 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper aut
 		}
 		// TODO: else allow setting different revocation date?
 	} else {
+		// Only revocation is tracked on the ledger. There is no compliance record yet. The corresponding Model Info and test results are not required to be on the ledger.
 		complianceInfo = types.NewRevokedComplianceInfo(
 			msg.VID,
 			msg.PID,
@@ -126,7 +128,7 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper aut
 }
 
 func checkZbCertificationRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress, certificationType types.CertificationType) sdk.Error {
-	if certificationType == types.EmptyCertificationType || certificationType == types.ZbCertificationType { // certification type is empty or ZbCertificationType
+	if certificationType == types.ZbCertificationType {
 		if !authzKeeper.HasRole(ctx, signer, authz.ZBCertificationCenter) {
 			return sdk.ErrUnauthorized("MsgCertifyModel/MsgRevokeModel transaction should be signed by an account with the ZBCertificationCenter role")
 		}

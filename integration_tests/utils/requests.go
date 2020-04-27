@@ -251,7 +251,7 @@ func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) (json.RawMes
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
-	uri := fmt.Sprintf("%s/%s", compliance.RouterKey, "certified")
+	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "certified", certifyModel.VID, certifyModel.PID, certifyModel.CertificationType)
 	response, err := SendPutRequest(uri, body, constants.AccountName, constants.Passphrase)
 	if err != nil {
 		return json.RawMessage{}, err
@@ -268,15 +268,16 @@ func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) (json.RawMessage
 			ChainID: constants.ChainId,
 			From:    revokeModel.Signer.String(),
 		},
-		VID:            revokeModel.VID,
-		PID:            revokeModel.PID,
-		RevocationDate: revokeModel.RevocationDate,
-		Reason:         revokeModel.Reason,
+		VID:               revokeModel.VID,
+		PID:               revokeModel.PID,
+		RevocationDate:    revokeModel.RevocationDate,
+		Reason:            revokeModel.Reason,
+		CertificationType: revokeModel.CertificationType,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
-	uri := fmt.Sprintf("%s/%s", compliance.RouterKey, "revoked")
+	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "revoked", revokeModel.VID, revokeModel.PID, revokeModel.CertificationType)
 	response, err := SendPutRequest(uri, body, constants.AccountName, constants.Passphrase)
 	if err != nil {
 		return json.RawMessage{}, err
@@ -285,36 +286,44 @@ func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) (json.RawMessage
 	return removeResponseWrapper(response), nil
 }
 
-func GetComplianceInfo(vid int16, pid int16) (compliance.ComplianceInfo, error) {
-	println(fmt.Sprintf("Get Compliance Data for Model with VID:%v PID:%v", vid, pid))
-	return getSingleComplianceInfo(vid, pid, "")
+
+func GetComplianceInfo(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfo, error) {
+	println(fmt.Sprintf("Get Compliance Info for Model with VID:%v PID:%v", vid, pid))
+	return getComplianceInfo(vid, pid, certificationType)
 }
 
-func GetCertifiedModel(vid int16, pid int16) (compliance.ComplianceInfo, error) {
-	println(fmt.Sprintf("Get Compliance Data for Certified Model with VID:%v PID:%v", vid, pid))
-	return getSingleComplianceInfo(vid, pid, "certified")
+func GetCertifiedModel(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, error) {
+	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Certified", vid, pid))
+	return getComplianceInfoInState(vid, pid, certificationType, "certified")
 }
 
-func GetRevokedModel(vid int16, pid int16) (compliance.ComplianceInfo, error) {
-	println(fmt.Sprintf("Get Compliance Data for Revoked Model with VID:%v PID:%v", vid, pid))
-	return getSingleComplianceInfo(vid, pid, "revoked")
+func GetRevokedModel(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, error) {
+	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Revoked", vid, pid))
+	return getComplianceInfoInState(vid, pid, certificationType, "revoked")
 }
 
-func getSingleComplianceInfo(vid int16, pid int16, state string) (compliance.ComplianceInfo, error) {
-	var uri string
-
-	if len(state) > 0 {
-		uri = fmt.Sprintf("%s/%v/%v/%v", compliance.RouterKey, state, vid, pid)
-	} else {
-		uri = fmt.Sprintf("%s/%v/%v", compliance.RouterKey, vid, pid)
-	}
-
+func getComplianceInfo(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfo, error) {
+	uri := fmt.Sprintf("%s/%v/%v/%v", compliance.RouterKey, vid, pid, certificationType)
 	response, err := SendGetRequest(uri)
 	if err != nil {
 		return compliance.ComplianceInfo{}, err
 	}
 
 	var result compliance.ComplianceInfo
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
+
+	return result, nil
+}
+
+func getComplianceInfoInState(vid int16, pid int16, certificationType compliance.CertificationType, state string) (compliance.ComplianceInfoInState, error) {
+	uri := fmt.Sprintf("%s/%v/%v/%v/%v", compliance.RouterKey, state, vid, pid, certificationType)
+
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return compliance.ComplianceInfoInState{}, err
+	}
+
+	var result compliance.ComplianceInfoInState
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result, nil

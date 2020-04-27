@@ -39,9 +39,9 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "certify-model [vid] [pid] [certification-date]",
+		Use:   "certify-model [vid] [pid] [certification-type] [certification-date]",
 		Short: "Certify an existing model. Note that the corresponding Model Info and test results must be present on ledger.",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -55,12 +55,13 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			certificationDate, err_ := time.Parse(time.RFC3339, args[2])
+			certificationType := types.CertificationType(args[2])
+
+			certificationDate, err_ := time.Parse(time.RFC3339, args[3])
 			if err_ != nil {
 				return sdk.ErrInternal(fmt.Sprintf("Invalid certification-date: Parsing Error: %v must be RFC3339 date", err_))
 			}
 
-			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 			reason := viper.GetString(FlagReason)
 
 			msg := types.NewMsgCertifyModel(vid, pid, certificationDate, certificationType, reason, cliCtx.FromAddress())
@@ -69,7 +70,6 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagCertificationType, "", "Certification type. `zb` is the default and the only supported value now")
 	cmd.Flags().String(FlagReason, "", "Optional comment describing the reason of certification")
 
 	return cmd
@@ -78,9 +78,9 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "revoke-model [vid] [pid] [revocation-date]",
+		Use:   "revoke-model [vid] [pid] [certification-type] [revocation-date]",
 		Short: "Revoke compliance of an existing model.",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -94,12 +94,13 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			revocationDate, err_ := time.Parse(time.RFC3339, args[2])
+			certificationType := types.CertificationType(args[2])
+
+			revocationDate, err_ := time.Parse(time.RFC3339, args[3])
 			if err_ != nil {
 				return sdk.ErrInternal(fmt.Sprintf("Invalid revocation-date: Parsing Error: %v must be RFC3339 date", err_))
 			}
 
-			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 			reason := viper.GetString(FlagReason)
 
 			msg := types.NewMsgRevokeModel(vid, pid, revocationDate, certificationType, reason, cliCtx.FromAddress())
@@ -108,7 +109,6 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagCertificationType, "", "Certification type. `zb` is the default and the only supported value now")
 	cmd.Flags().String(FlagReason, "", "Optional comment describing the reason of revocation")
 
 	return cmd

@@ -24,15 +24,15 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case QueryComplianceInfo:
 			return queryComplianceInfo(ctx, path[1:], req, keeper, "")
 		case QueryAllComplianceInfoRecords:
-			return queryAllComplianceInfoRecords(ctx, req, keeper, "")
+			return queryAllComplianceInfoRecords(ctx, req, keeper)
 		case QueryCertifiedModel:
 			return queryComplianceInfo(ctx, path[1:], req, keeper, types.Certified)
 		case QueryAllCertifiedModels:
-			return queryAllComplianceInfoRecords(ctx, req, keeper, types.Certified)
+			return queryAllComplianceInfoInStateRecords(ctx, req, keeper, types.Certified)
 		case QueryRevokedModel:
 			return queryComplianceInfo(ctx, path[1:], req, keeper, types.Revoked)
 		case QueryAllRevokedModels:
-			return queryAllComplianceInfoRecords(ctx, req, keeper, types.Revoked)
+			return queryAllComplianceInfoInStateRecords(ctx, req, keeper, types.Revoked)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown compliance query endpoint")
 		}
@@ -40,11 +40,6 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 }
 
 func queryComplianceInfo(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) ([]byte, sdk.Error) {
-	var params types.SingleQueryParams
-	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
-	}
-
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err
@@ -55,25 +50,30 @@ func queryComplianceInfo(ctx sdk.Context, path []string, req abci.RequestQuery, 
 		return nil, err
 	}
 
-	if !keeper.IsComplianceInfoPresent(ctx, params.CertificationType, vid, pid) {
+	certificationType := types.CertificationType(path[2])
+
+	if !keeper.IsComplianceInfoPresent(ctx, certificationType, vid, pid) {
 		return nil, types.ErrComplianceInfoDoesNotExist(vid, pid)
 	}
 
-	complianceInfo := keeper.GetComplianceInfo(ctx, params.CertificationType, vid, pid)
+	complianceInfo := keeper.GetComplianceInfo(ctx, certificationType, vid, pid)
 
-	if len(requestedState) != 0 && complianceInfo.State != requestedState {
-		return nil, types.ErrComplianceInfoDoesNotExist(vid, pid)
-	}
+	var res []byte
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, complianceInfo)
-	if err_ != nil {
-		panic("could not marshal result to JSON")
+	if len(requestedState) != 0 {
+		if complianceInfo.State != requestedState {
+			return nil, types.ErrComplianceInfoDoesNotExist(vid, pid)
+		}
+
+		res, _ = codec.MarshalJSONIndent(keeper.cdc, types.ComplianceInfoInState{Value: true})
+	} else {
+		res, _ = codec.MarshalJSONIndent(keeper.cdc, complianceInfo)
 	}
 
 	return res, nil
 }
 
-func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) ([]byte, sdk.Error) {
+func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	var params types.ListQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
@@ -82,6 +82,42 @@ func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keepe
 	result := types.ListComplianceInfoItems{
 		Total: 0,
 		Items: []types.ComplianceInfo{},
+	}
+	skipped := 0
+
+	keeper.IterateComplianceInfos(ctx, params.CertificationType, func(complianceInfo types.ComplianceInfo) (stop bool) {
+		result.Total++
+
+		if skipped < params.Skip {
+			skipped++
+			return false
+		}
+
+		if len(result.Items) < params.Take || params.Take == 0 {
+			result.Items = append(result.Items, complianceInfo)
+			return false
+		}
+
+		return false
+	})
+
+	res, err := codec.MarshalJSONIndent(keeper.cdc, result)
+	if err != nil {
+		panic("could not marshal result to JSON")
+	}
+
+	return res, nil
+}
+
+func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) ([]byte, sdk.Error) {
+	var params types.ListQueryParams
+	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
+		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+	}
+
+	result := types.ListComplianceInfoKeyItems{
+		Total: 0,
+		Items: []types.ComplianceInfoKey{},
 	}
 	skipped := 0
 
@@ -98,7 +134,11 @@ func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keepe
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
-			result.Items = append(result.Items, complianceInfo)
+			result.Items = append(result.Items, types.ComplianceInfoKey{
+				VID:               complianceInfo.VID,
+				PID:               complianceInfo.PID,
+				CertificationType: complianceInfo.CertificationType,
+			})
 			return false
 		}
 

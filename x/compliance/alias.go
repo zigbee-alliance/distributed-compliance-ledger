@@ -20,12 +20,15 @@ var (
 	RegisterCodec      = types.RegisterCodec
 	CertifiedState     = types.Certified
 	RevokedState       = types.Revoked
+	ZbCertificationType       = types.ZbCertificationType
 )
 
 type (
-	Keeper            = keeper.Keeper
-	MsgCertifyModel   = types.MsgCertifyModel
-	MsgRevokeModel    = types.MsgRevokeModel
-	ComplianceInfo    = types.ComplianceInfo
-	CertificationType = types.CertificationType
+	Keeper                = keeper.Keeper
+	MsgCertifyModel       = types.MsgCertifyModel
+	MsgRevokeModel        = types.MsgRevokeModel
+	ComplianceInfo        = types.ComplianceInfo
+	ComplianceInfoKey     = types.ComplianceInfoKey
+	ComplianceInfoInState = types.ComplianceInfoInState
+	CertificationType     = types.CertificationType
 )

@@ -19,7 +19,7 @@ const (
 	proposedCertificatePrefix = "1"
 	approvedCertificatePrefix = "2"
 	childCertificatesPrefix   = "3"
-	issuerSerialNumber        = "9"
+	issuerSerialNumber        = "6"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
@@ -90,6 +90,12 @@ func (k Keeper) IterateCertificates(ctx sdk.Context, prefix string, process func
 
 		iter.Next()
 	}
+}
+
+// Deletes the entire Certificate record associated with a Subject/SubjectKeyId combination
+func (k Keeper) DeleteCertificates(ctx sdk.Context, subject string, subjectKeyId string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete([]byte(CertificateId(subject, subjectKeyId)))
 }
 
 // Id builder for Certificate record
@@ -274,6 +280,12 @@ func (k Keeper) AddCertificateExistenceFlag(ctx sdk.Context, issuer string, seri
 func (k Keeper) IsCertificateExists(ctx sdk.Context, issuer string, serialNumber string) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has([]byte(existenceFlagId(issuer, serialNumber)))
+}
+
+// Deletes the Existence Flag
+func (k Keeper) DeleteExistenceFlag(ctx sdk.Context, issuer string, serialNumber string) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete([]byte(existenceFlagId(issuer, serialNumber)))
 }
 
 // Id builder for existence flag
