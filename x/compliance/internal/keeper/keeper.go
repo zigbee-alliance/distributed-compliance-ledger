@@ -16,7 +16,7 @@ type Keeper struct {
 }
 
 const (
-	complianceInfoPrefix = "ci"
+	complianceInfoPrefix = "1"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {

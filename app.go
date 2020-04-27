@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	"os"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
@@ -58,6 +59,7 @@ var (
 		compliancetest.AppModuleBasic{},
 		authnext.AppModuleBasic{},
 		authz.AppModuleBasic{},
+		pki.AppModuleBasic{},
 	)
 	// account permissions
 	maccPerms = map[string][]string{
@@ -96,6 +98,7 @@ type zbLedgerApp struct {
 	supplyKeeper         supply.Keeper
 	paramsKeeper         params.Keeper
 	modelinfoKeeper      modelinfo.Keeper
+	pkiKeeper            pki.Keeper
 	complianceKeeper     compliance.Keeper
 	compliancetestKeeper compliancetest.Keeper
 	authzKeeper          authz.Keeper
@@ -116,7 +119,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
 		supply.StoreKey, distr.StoreKey, slashing.StoreKey, params.StoreKey, modelinfo.StoreKey, authz.StoreKey,
-		compliance.StoreKey, compliancetest.StoreKey)
+		compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
 
@@ -174,6 +177,7 @@ func InitModuleManager(app *zbLedgerApp) {
 		compliancetest.NewAppModule(app.compliancetestKeeper, app.authzKeeper, app.modelinfoKeeper),
 		authnext.NewAppModule(app.accountKeeper, app.authzKeeper, app.cdc),
 		authz.NewAppModule(app.authzKeeper),
+		pki.NewAppModule(app.pkiKeeper, app.authzKeeper),
 	)
 
 	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
@@ -194,6 +198,7 @@ func InitModuleManager(app *zbLedgerApp) {
 		compliancetest.ModuleName,
 		authnext.ModuleName,
 		authz.ModuleName,
+		pki.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
 	)
@@ -246,6 +251,9 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[st
 	// The CompliancetestKeeper keeper
 	app.compliancetestKeeper = MakeCompliancetestKeeper(keys, app)
 
+	// The PKI keeper
+	app.pkiKeeper = MakePkiKeeper(keys, app)
+
 	// The AuthzKeeper keeper
 	app.authzKeeper = MakeAuthzKeeper(keys, app)
 }
@@ -274,6 +282,13 @@ func MakeComplianceKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) com
 func MakeCompliancetestKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) compliancetest.Keeper {
 	return compliancetest.NewKeeper(
 		keys[compliancetest.StoreKey],
+		app.cdc,
+	)
+}
+
+func MakePkiKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) pki.Keeper {
+	return pki.NewKeeper(
+		keys[pki.StoreKey],
 		app.cdc,
 	)
 }

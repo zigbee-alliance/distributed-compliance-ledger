@@ -52,7 +52,7 @@ func TestMsgAddTestingResultGetSignBytes(t *testing.T) {
 	res := msg.GetSignBytes()
 
 	expected := `{"type":"compliancetest/AddTestingResult","value":{"pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"test_result":"http://test.result.com","vid":1}}`
+		`"test_date":"2020-02-02T02:00:00Z","test_result":"http://test.result.com","vid":1}}`
 
 	require.Equal(t, expected, string(res))
 }

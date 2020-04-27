@@ -30,6 +30,101 @@ Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
 Some of the modules are being refactored against [transactions.md](docs/transactions.md) and may look
 a bit different than specified below.
 
+### PKI
+
+Proposed Certificate type:
+- pem_cert: `string` - pem encoded certificate
+- subject: `string` - certificates's `Subject`
+- subject_key_id: `string` - certificates's `Subject Key Id`
+- serial_number: `string` - certificates's `Serial Number`
+- approvals: `string` - Trustees addresses who approved root certificate
+- owner: `bech32 encoded address` - the address used for sending the original message
+
+Certificate type:
+- pem_cert: `string` - pem encoded certificate
+- subject: `string` - certificates's `Subject`
+- subject_key_id: `string` - certificates's `Subject Key Id`
+- serial_number: `string` - certificates's `Serial Number`
+- root_subject: `string` - root certificates's `Subject`
+- root_subject_key_id: `string` - root certificates's `Subject Key Id`
+- type: `string` - certificate type: either root or intermediate
+- owner: `bech32 encoded address` - the address used for sending the original message
+
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Propose Root Certificate: Any Role.
+- Approve Root Certificate: Signer must have `Trustee` role. See `Authorization` module for details.
+- Add Leaf Certificate: Any Role.
+
+Transactions:
+- ` zblcli tx pki propose-add-x509-root-cert [certificate-path-or-pem-string]` - Proposes a new self-signed root certificate.
+  - Signature is required. Use `--from` flag.
+
+  Example: `zblcli tx pki propose-add-x509-root-cert "/path/to/certificate/file" --from jack`
+  
+  Example: `zblcli tx pki propose-add-x509-root-cert "----BEGIN CERTIFICATE----- ......" --from jack`
+
+- ` zblcli tx pki approve-add-x509-root-cert [subject] [subject-key-id]` - Approves the proposed root certificate.
+  - Signature is required. Use `--from` flag.
+
+  Example: `zblcli tx pki approve-add-x509-root-cert "CN=dsr-corporation.com" "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C" --from jack`
+  
+- ` zblcli tx pki add-x509-cert [certificate-path-or-pem-string]` - Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
+  - Signature is required. Use `--from` flag.
+
+  Example: `zblcli tx pki add-x509-cert "/path/to/certificate/file" --from jack`
+  
+  Example: `zblcli tx pki add-x509-cert "----BEGIN CERTIFICATE----- ......" --from jack`  
+    
+Queries:
+- `zblcli query pki all-proposed-x509-root-certs` - Gets all proposed but not approved root certificates.
+  - Optional flags: 
+    - `--skip` int
+    - `--take` int
+    
+  Example: `zblcli query pki all-proposed-x509-root-certs`
+  
+- `zblcli query pki proposed-x509-root-cert [subject] [subject-key-id]` - Gets a proposed but not approved root certificate.
+
+  Example: `zblcli query pki proposed-x509-root-cert "CN=dsr-corporation.com" "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+
+- `zblcli query pki all-x509-root-certs` - Gets all approved root certificates.
+  - Optional flags: 
+    - `--skip` int
+    - `--take` int
+
+  Example: `zblcli query pki all-x509-root-certs`
+  
+- `zblcli query pki x509-cert [subject] [subject-key-id]` - Gets a certificates (either root, intermediate or leaf).
+
+  Example: `zblcli query pki x509-certs "CN=dsr-corporation.com" "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  
+- `zblcli query pki all-x509-certs` - Gets all certificates (root, intermediate and leaf).
+  - Optional flags: 
+    - `--skip` int
+    - `--take` int
+    - `--root-subject` string
+    - `--root-subject-key-id` string
+
+  Example: `zblcli query pki x509-certs`
+  
+  Example: `zblcli query pki x509-certs --root-subject-key-id "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  
+  Example: `zblcli query pki x509-certs --root-subject "CN=dsr-corporation.com"`
+  
+- `zblcli query pki all-subject-x509-certs` - Gets all certificates (root, intermediate and leaf) associated with subject.
+  - Optional flags: 
+    - `--skip` int
+    - `--take` int
+    - `--root-subject` string
+    - `--root-subject-key-id` string
+
+  Example: `zblcli query pki all-subject-x509-certs`
+
+  Example: `zblcli query pki all-subject-x509-certs --root-subject-key-id "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  
+  Example: `zblcli query pki all-subject-x509-certs --root-subject "CN=dsr-corporation.com"`
+
 ### Model Info
 
 ModelInfo type:
@@ -192,6 +287,7 @@ Roles:
 - `Vendor` - Is able to add models
 - `TestHouse` - Is able to add testing results for an model
 - `ZBCertificationCenter` - Is able to certify models
+- `Trustee` - Is able to approve root certificates
 
 Commands:
 - `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.

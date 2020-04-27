@@ -2,7 +2,6 @@ package authz
 
 import (
 	"fmt"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz/internal/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

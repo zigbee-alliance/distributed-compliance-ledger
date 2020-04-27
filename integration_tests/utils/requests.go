@@ -13,6 +13,8 @@ import (
 	compliancetestRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	modelinfoRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
+	pkiRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/rest"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
@@ -20,37 +22,43 @@ import (
 	"time"
 )
 
-func GetKeyInfo(accountName string) KeyInfo {
-	println("Get User Key Info")
+func GetKeyInfo(accountName string) (KeyInfo, error) {
+	println("Get User Key Info: ", accountName)
 
 	uri := fmt.Sprintf("key/%s", accountName)
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return KeyInfo{}, err
+	}
 
 	var keyInfo KeyInfo
 	_ = json.Unmarshal(response, &keyInfo)
 
-	return keyInfo
+	return keyInfo, nil
 }
 
-func GetAccountInfo(address sdk.AccAddress) AccountInfo {
+func GetAccountInfo(address sdk.AccAddress) (AccountInfo, error) {
 	println("Get Account Info")
 
 	uri := fmt.Sprintf("%s/account/%s", authnext.RouterKey, address)
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return AccountInfo{}, err
+	}
 
 	var result AccountInfo
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
 func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) {
-	senderAccountInfo := GetAccountInfo(sender.Address) // Refresh account info
-	signResponse := SignMessage(sender.Name, senderAccountInfo, message)
-	BroadcastMessage(signResponse)
+	senderAccountInfo, _ := GetAccountInfo(sender.Address) // Refresh account info
+	signResponse, _ := SignMessage(sender.Name, senderAccountInfo, message)
+	_, _ = BroadcastMessage(signResponse)
 }
 
-func PublishModelInfo(model modelinfo.MsgAddModelInfo) json.RawMessage {
+func PublishModelInfo(model modelinfo.MsgAddModelInfo) (json.RawMessage, error) {
 	println("Publish Model Info")
 
 	request := modelinfoRest.ModelInfoRequest{
@@ -73,11 +81,15 @@ func PublishModelInfo(model modelinfo.MsgAddModelInfo) json.RawMessage {
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
-	response := SendPostRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
-	return removeResponseWrapper(response)
+	response, err := SendPostRequest(uri, body, constants.AccountName, constants.Passphrase)
+	if err != nil {
+		return json.RawMessage{}, err
+	}
+
+	return removeResponseWrapper(response), nil
 }
 
-func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) interface{} {
+func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) (interface{}, error) {
 	println("Sign Message")
 
 	stdSigMsg := types.StdSignMsg{
@@ -90,73 +102,88 @@ func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) i
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
 
-	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, constants.AccountPassphrase)
-	response := SendPostRequest(uri, body, "", "")
+	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, constants.Passphrase)
+	response, err := SendPostRequest(uri, body, "", "")
+	if err != nil {
+		return json.RawMessage{}, err
+	}
 
 	var result interface{}
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
-func BroadcastMessage(message interface{}) {
+func BroadcastMessage(message interface{}) ([]byte, error) {
 	println("Broadcast Message")
 
 	body, _ := json.Marshal(message)
 
 	uri := fmt.Sprintf("%s/%s", "tx", "broadcast")
-	SendPostRequest(uri, body, "", "")
+	return SendPostRequest(uri, body, "", "")
 }
 
-func GetModelInfo(vid int16, pid int16) modelinfo.ModelInfo {
+func GetModelInfo(vid int16, pid int16) (modelinfo.ModelInfo, error) {
 	println(fmt.Sprintf("Get Model Info with VID:%v PID:%v", vid, pid))
 
 	uri := fmt.Sprintf("%s/%s/%v/%v", modelinfo.RouterKey, "models", vid, pid)
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return modelinfo.ModelInfo{}, err
+	}
 
 	var result modelinfo.ModelInfo
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
-func GetModelInfos() ModelInfoHeadersResult {
+func GetModelInfos() (ModelInfoHeadersResult, error) {
 	println("Get the list of model infos")
 
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return ModelInfoHeadersResult{}, err
+	}
 
 	var result ModelInfoHeadersResult
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
-func GetVendors() VendorItemHeadersResult {
+func GetVendors() (VendorItemHeadersResult, error) {
 	println("Get the list of vendors")
 
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "vendors")
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return VendorItemHeadersResult{}, err
+	}
 
 	var result VendorItemHeadersResult
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
-func GetVendorModels(vid int16) modelinfo.VendorProducts {
+func GetVendorModels(vid int16) (modelinfo.VendorProducts, error) {
 	println("Get the list of models for VID:", vid)
 
 	uri := fmt.Sprintf("%s/%s/%v", modelinfo.RouterKey, "models", vid)
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return modelinfo.VendorProducts{}, err
+	}
 
 	var result modelinfo.VendorProducts
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
-func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) json.RawMessage {
+func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) (json.RawMessage, error) {
 	println("Publish Testing Result")
 
 	request := compliancetestRest.TestingResultRequest{
@@ -173,20 +200,27 @@ func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) json
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", compliancetest.RouterKey, "testresults")
-	response := SendPostRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
-	return removeResponseWrapper(response)
+	response, err := SendPostRequest(uri, body, constants.AccountName, constants.Passphrase)
+	if err != nil {
+		return json.RawMessage{}, err
+	}
+
+	return removeResponseWrapper(response), nil
 }
 
-func GetTestingResult(vid int16, pid int16) compliancetest.TestingResults {
+func GetTestingResult(vid int16, pid int16) (compliancetest.TestingResults, error) {
 	println(fmt.Sprintf("Get Testing Result for Model with VID:%v PID:%v", vid, pid))
 
 	uri := fmt.Sprintf("%s/%s/%v/%v", compliancetest.RouterKey, "testresults", vid, pid)
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return compliancetest.TestingResults{}, err
+	}
 
 	var result compliancetest.TestingResults
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
 func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role authz.AccountRole) {
@@ -201,7 +235,7 @@ func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role authz.Account
 	SignAndBroadcastMessage(sender, newMsgAssignRole)
 }
 
-func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) json.RawMessage {
+func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) (json.RawMessage, error) {
 	println("Publish Certified Model")
 
 	request := complianceRest.CertifyModelRequest{
@@ -217,12 +251,16 @@ func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) json.RawMess
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
+	response, err := SendPutRequest(uri, body, constants.AccountName, constants.Passphrase)
+	if err != nil {
+		return json.RawMessage{}, err
+	}
+
+	return removeResponseWrapper(response), nil
 	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "certified", certifyModel.VID, certifyModel.PID, certifyModel.CertificationType)
-	response := SendPutRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
-	return removeResponseWrapper(response)
 }
 
-func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) json.RawMessage {
+func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) (json.RawMessage, error) {
 	println("Publish Revoked Model")
 
 	request := complianceRest.RevokeModelRequest{
@@ -240,62 +278,62 @@ func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) json.RawMessage 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "revoked", revokeModel.VID, revokeModel.PID, revokeModel.CertificationType)
-	response := SendPutRequest(uri, body, constants.AccountName, constants.AccountPassphrase)
-	return removeResponseWrapper(response)
+	response, err := SendPutRequest(uri, body, constants.AccountName, constants.Passphrase)
+	if err != nil {
+	}
+		return json.RawMessage{}, err
+
+	return removeResponseWrapper(response), nil
 }
 
-func GetComplianceInfo(vid int16, pid int16, certificationType compliance.CertificationType) compliance.ComplianceInfo {
-	println(fmt.Sprintf("Get Compliance Info for Model with VID:%v PID:%v", vid, pid))
-	return getComplianceInfo(vid, pid, certificationType)
+func GetComplianceInfo(vid int16, pid int16) (compliance.ComplianceInfo, error) {
+	println(fmt.Sprintf("Get Compliance Data for Model with VID:%v PID:%v", vid, pid))
+	return getSingleComplianceInfo(vid, pid, "")
 }
 
-func GetCertifiedModel(vid int16, pid int16, certificationType compliance.CertificationType) compliance.ComplianceInfoInState {
-	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Certified", vid, pid))
-	return getComplianceInfoInState(vid, pid, certificationType, "certified")
+func GetCertifiedModel(vid int16, pid int16) (compliance.ComplianceInfo, error) {
+	println(fmt.Sprintf("Get Compliance Data for Certified Model with VID:%v PID:%v", vid, pid))
+	return getSingleComplianceInfo(vid, pid, "certified")
 }
 
-func GetRevokedModel(vid int16, pid int16, certificationType compliance.CertificationType) compliance.ComplianceInfoInState {
-	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Revoked", vid, pid))
-	return getComplianceInfoInState(vid, pid, certificationType, "revoked")
+func GetRevokedModel(vid int16, pid int16) (compliance.ComplianceInfo, error) {
+	println(fmt.Sprintf("Get Compliance Data for Revoked Model with VID:%v PID:%v", vid, pid))
+	return getSingleComplianceInfo(vid, pid, "revoked")
 }
 
-func getComplianceInfo(vid int16, pid int16, certificationType compliance.CertificationType) compliance.ComplianceInfo {
-	uri := fmt.Sprintf("%s/%v/%v/%v", compliance.RouterKey, vid, pid, certificationType)
-	response := SendGetRequest(uri)
+func getSingleComplianceInfo(vid int16, pid int16, state string) (compliance.ComplianceInfo, error) {
+	var uri string
 
 	var result compliance.ComplianceInfo
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
-}
-
-func getComplianceInfoInState(vid int16, pid int16, certificationType compliance.CertificationType, state string) compliance.ComplianceInfoInState {
-	uri := fmt.Sprintf("%s/%v/%v/%v/%v", compliance.RouterKey, state, vid, pid, certificationType)
-
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return compliance.ComplianceInfo{}, err
+	}
 
 	var result compliance.ComplianceInfoInState
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
 }
 
-func GetComplianceInfos() ComplianceInfosHeadersResult {
+func GetComplianceInfos() (ComplianceInfosHeadersResult, error) {
 	println("Get all compliance info records")
 	return GetAllComplianceInfos("")
 }
 
-func GetAllCertifiedModels() ComplianceInfosHeadersResult {
+func GetAllCertifiedModels() (ComplianceInfosHeadersResult, error) {
 	println("Get all certified models")
 	return GetAllComplianceInfos("certified")
 }
 
-func GetAllRevokedModels() ComplianceInfosHeadersResult {
+func GetAllRevokedModels() (ComplianceInfosHeadersResult, error) {
 	println("Get all revoked models")
 	return GetAllComplianceInfos("revoked")
 }
 
-func GetAllComplianceInfos(state string) ComplianceInfosHeadersResult {
+func GetAllComplianceInfos(state string) (ComplianceInfosHeadersResult, error) {
 	var uri string
 
 	if len(state) > 0 {
@@ -304,12 +342,153 @@ func GetAllComplianceInfos(state string) ComplianceInfosHeadersResult {
 		uri = fmt.Sprintf("%s", compliance.RouterKey)
 	}
 
-	response := SendGetRequest(uri)
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return ComplianceInfosHeadersResult{}, err
+	}
 
 	var result ComplianceInfosHeadersResult
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
-	return result
+	return result, nil
+}
+
+func ProposeAddX509RootCert(proposeAddX509RootCert pki.MsgProposeAddX509RootCert, account string, passphrase string) (json.RawMessage, error) {
+	println("Propose X509 Root Certificate")
+
+	request := pkiRest.AddCertificateRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainId,
+			From:    proposeAddX509RootCert.Signer.String(),
+		},
+		Certificate: proposeAddX509RootCert.Cert,
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", pki.RouterKey, "certs/proposed/root")
+
+	response, err := SendPostRequest(uri, body, account, passphrase)
+	if err != nil {
+		return json.RawMessage{}, err
+	}
+
+	return removeResponseWrapper(response), nil
+}
+
+func ApproveAddX509RootCert(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert, account string, passphrase string) (json.RawMessage, error) {
+	println(fmt.Sprintf("Approve X509 Root Cert with subject=%s and subjectKeyId=%s", msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyId))
+
+	request := pkiRest.ApproveCertificateRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainId,
+			From:    msgApproveAddX509RootCert.Signer.String(),
+		},
+		Subject:      msgApproveAddX509RootCert.Subject,
+		SubjectKeyId: msgApproveAddX509RootCert.SubjectKeyId,
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", pki.RouterKey, fmt.Sprintf("certs/proposed/root/%s/%s", msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyId))
+
+	response, err := SendPatchRequest(uri, body, account, passphrase)
+	if err != nil {
+		return json.RawMessage{}, err
+	}
+
+	return removeResponseWrapper(response), nil
+}
+
+func AddX509Cert(addX509Cert pki.MsgAddX509Cert, account string, passphrase string) (json.RawMessage, error) {
+	println("Add X509 Certificate")
+
+	request := pkiRest.AddCertificateRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainId,
+			From:    addX509Cert.Signer.String(),
+		},
+		Certificate: addX509Cert.Cert,
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", pki.RouterKey, "certs")
+
+	response, err := SendPostRequest(uri, body, account, passphrase)
+	if err != nil {
+		return json.RawMessage{}, err
+	}
+
+	return removeResponseWrapper(response), nil
+}
+
+func GetAllX509RootCerts() (CertificatesHeadersResult, error) {
+	return getCertificates(fmt.Sprintf("%s/certs/root", pki.RouterKey))
+}
+
+func GetAllSubjectX509Certs(subject string) (CertificatesHeadersResult, error) {
+	return getCertificates(fmt.Sprintf("%s/certs/%s", pki.RouterKey, subject))
+}
+
+func GetAllX509Certs() (CertificatesHeadersResult, error) {
+	return getCertificates(fmt.Sprintf("%s/certs", pki.RouterKey))
+}
+
+func GetAllProposedX509RootCerts() (ProposedCertificatesHeadersResult, error) {
+	return getProposedCertificates(fmt.Sprintf("%s/certs/proposed/root", pki.RouterKey))
+}
+
+func GetProposedX509RootCert(subject string, subjectKeyId string) (pki.ProposedCertificate, error) {
+	response, err := SendGetRequest(fmt.Sprintf("%s/certs/proposed/root/%s/%s", pki.RouterKey, subject, subjectKeyId))
+	if err != nil {
+		return pki.ProposedCertificate{}, err
+	}
+
+	var result pki.ProposedCertificate
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
+
+	return result, nil
+}
+
+func GetX509Cert(subject string, subjectKeyId string) (pki.Certificate, error) {
+	response, err := SendGetRequest(fmt.Sprintf("%s/certs/%s/%s", pki.RouterKey, subject, subjectKeyId))
+	if err != nil {
+		return pki.Certificate{}, err
+	}
+
+	var result pki.Certificates
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
+
+	if len(result.Items) > 1 {
+		return pki.Certificate{}, sdk.ErrInternal("Unexpected certificates number")
+	}
+
+	return result.Items[0], nil
+}
+
+func getCertificates(uri string) (CertificatesHeadersResult, error) {
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return CertificatesHeadersResult{}, err
+	}
+
+	var result CertificatesHeadersResult
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
+
+	return result, nil
+}
+
+func getProposedCertificates(uri string) (ProposedCertificatesHeadersResult, error) {
+	response, err := SendGetRequest(uri)
+	if err != nil {
+		return ProposedCertificatesHeadersResult{}, err
+	}
+
+	var result ProposedCertificatesHeadersResult
+	_ = json.Unmarshal(removeResponseWrapper(response), &result)
+
+	return result, nil
 }
 
 func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {

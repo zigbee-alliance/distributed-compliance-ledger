@@ -16,8 +16,8 @@ type Keeper struct {
 }
 
 const (
-	modelInfoPrefix      = "mi"
-	vendorProductsPrefix = "vp"
+	modelInfoPrefix      = "1"
+	vendorProductsPrefix = "2"
 )
 
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {

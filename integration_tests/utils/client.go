@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"io/ioutil"
 	"net/http"
 )
@@ -14,28 +15,45 @@ func BuildUrl(uri string) string {
 	return BaseUrl + "/" + uri
 }
 
-func SendGetRequest(uri string) []byte {
+func SendGetRequest(uri string) ([]byte, error) {
 	return sendRequest(uri, "GET", []byte{}, "", "")
 }
 
-func SendPostRequest(uri string, body []byte, account string, passphrase string) []byte {
+func SendPostRequest(uri string, body []byte, account string, passphrase string) ([]byte, error) {
 	return sendRequest(uri, "POST", body, account, passphrase)
 }
 
-func SendPutRequest(uri string, body []byte, account string, passphrase string) []byte {
+func SendPutRequest(uri string, body []byte, account string, passphrase string) ([]byte, error) {
 	return sendRequest(uri, "PUT", body, account, passphrase)
 }
 
-func sendRequest(uri string, method string, body []byte, account string, passphrase string) []byte {
+func SendPatchRequest(uri string, body []byte, account string, passphrase string) ([]byte, error) {
+	return sendRequest(uri, "PATCH", body, account, passphrase)
+}
+
+func sendRequest(uri string, method string, body []byte, account string, passphrase string) ([]byte, error) {
 	client := &http.Client{}
-	req, _ := http.NewRequest(method, BuildUrl(uri), bytes.NewBuffer(body))
+	req, err := http.NewRequest(method, BuildUrl(uri), bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+
 	if len(account) != 0 && len(passphrase) != 0 {
 		req.SetBasicAuth(account, passphrase)
 	}
-	resp, _ := client.Do(req)
+
+	resp, err := client.Do(req)
+	if resp.StatusCode != 200 {
+		return nil, sdk.NewError("test", sdk.CodeType(resp.StatusCode), "Error occurred")
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
 	response := ReadResponseBody(resp)
 	println(string(response))
-	return response
+	return response, nil
 }
 
 func ReadResponseBody(resp *http.Response) []byte {

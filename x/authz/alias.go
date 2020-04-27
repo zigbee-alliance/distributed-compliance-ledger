@@ -14,6 +14,7 @@ const (
 	Vendor                = types.Vendor
 	TestHouse             = types.TestHouse
 	ZBCertificationCenter = types.ZBCertificationCenter
+	Trustee               = types.Trustee
 )
 
 var (

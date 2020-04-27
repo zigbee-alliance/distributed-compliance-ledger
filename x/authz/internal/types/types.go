@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,18 +16,19 @@ const (
 	Vendor                AccountRole = "Vendor"
 	TestHouse             AccountRole = "TestHouse"
 	ZBCertificationCenter AccountRole = "ZBCertificationCenter"
+	Trustee               AccountRole = "Trustee"
 )
 
 func (lt *AccountRole) UnmarshalJSON(b []byte) error {
 	accountRole := AccountRole(strings.Trim(string(b), `"`))
 
 	switch accountRole {
-	case Administrator, Vendor, TestHouse, ZBCertificationCenter:
+	case Administrator, Vendor, TestHouse, ZBCertificationCenter, Trustee:
 		*lt = accountRole
 		return nil
 	}
 
-	return errors.New("invalid account role")
+	return errors.New(fmt.Sprintf("invalid account role: %s", accountRole))
 }
 
 type AccountRoles struct {
