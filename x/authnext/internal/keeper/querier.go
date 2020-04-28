@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	QueryAccountHeaders = "account_headers"
+	QueryAccountHeaders = "accounts"
 	QueryAccount        = "account"
 )
 

@@ -17,7 +17,7 @@ func accountHeadersHandler(cliCtx context.CLIContext, storeName string) http.Han
 			return
 		}
 
-		restCtx.QueryList(fmt.Sprintf("custom/%s/account_headers", storeName), params)
+		restCtx.QueryList(fmt.Sprintf("custom/%s/accounts", storeName), params)
 	}
 }
 

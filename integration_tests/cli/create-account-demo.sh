@@ -30,7 +30,13 @@ check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get all accouts"
-result=$(zblcli query authnext account-headers)
+result=$(zblcli query authnext accounts)
+check_response "$result" "\"address\": \"$tony_address\""
+check_response "$result" "\"public_key\": \"$tony_pubkey\""
+echo "$result"
+
+echo "Get Tony accout"
+result=$(zblcli query authnext account $tony_address)
 check_response "$result" "\"address\": \"$tony_address\""
 check_response "$result" "\"public_key\": \"$tony_pubkey\""
 check_response "$result" "\"roles\": []"

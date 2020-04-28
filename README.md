@@ -214,6 +214,8 @@ Transactions:
 
   Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" "2020-04-16T06:04:57.05Z" --from jack`
   
+  Example: `zblcli tx compliancetest add-test-result 1 1 "path/to/document" "2020-04-16T06:04:57.05Z" --from jack`
+  
 Queries:
 - `zblcli query compliancetest test-result [vid] [pid]` - Query Testing Results associated with VID/PID.
 
@@ -322,6 +324,13 @@ Transactions:
 
 Queries:
 
-- `zblcli query authnext account-headers --skip [x] --take [y]` - The command to list account headers with roles. Flags
+- `zblcli query authnext account [account]` - The command to query single account.
+
+  Example: `zblcli query authnext account cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+
+- `zblcli query authnext accounts --skip [x] --take [y]` - The command to list account headers with roles. Flags
  are optional.
+ 
+  Example: `zblcli query authnext accounts`
+
  
