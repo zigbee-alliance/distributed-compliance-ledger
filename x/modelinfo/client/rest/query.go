@@ -1,111 +1,77 @@
 package rest
 
 import (
-	"encoding/json"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/types/rest"
-	"github.com/gorilla/mux"
 	"net/http"
 )
 
 func getModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		params, err := pagination.ParseAndMarshalPaginationParamsFromRequest(cliCtx.Codec, r)
+		params, err := restCtx.ParsePaginationParams()
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/all_models", storeName), params)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
-			return
-		}
-
-		respond(w, cliCtx, res, height)
+		restCtx.QueryList(fmt.Sprintf("custom/%s/all_models", storeName), params)
 	}
 }
 
 func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		vars := mux.Vars(r)
+		vars := restCtx.Variables()
 		vid := vars[vid]
 		pid := vars[pid]
 
-		res, height, err := cliCtx.QueryStore([]byte(keeper.ModelInfoId(vid, pid)), storeName)
+		res, height, err := restCtx.QueryStore(keeper.ModelInfoId(vid, pid), storeName)
 		if err != nil || res == nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrModelInfoDoesNotExist(vid, pid).Error())
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrModelInfoDoesNotExist(vid, pid).Error())
 			return
 		}
 
 		var modelInfo types.ModelInfo
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &modelInfo)
 
-		out, err := json.Marshal(modelInfo)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		respond(w, cliCtx, out, height)
+		restCtx.EncodeAndRespondWithHeight(modelInfo, height)
 	}
 }
 
 func getVendorsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		params, err := pagination.ParseAndMarshalPaginationParamsFromRequest(cliCtx.Codec, r)
+		params, err := restCtx.ParsePaginationParams()
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/vendors", storeName), params)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
-			return
-		}
-
-		respond(w, cliCtx, res, height)
+		restCtx.QueryList(fmt.Sprintf("custom/%s/vendors", storeName), params)
 	}
 }
 
 func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		vars := mux.Vars(r)
+		vars := restCtx.Variables()
 		vid := vars[vid]
 
-		res, height, err := cliCtx.QueryStore([]byte(keeper.VendorProductsId(vid)), storeName)
+		res, height, err := restCtx.QueryStore(keeper.VendorProductsId(vid), storeName)
 		if err != nil || res == nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, types.ErrVendorProductsDoNotExist(vid).Error())
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrVendorProductsDoNotExist(vid).Error())
 			return
 		}
 
 		var vendorProducts types.VendorProducts
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &vendorProducts)
 
-		out, err := json.Marshal(vendorProducts)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		respond(w, cliCtx, out, height)
+		restCtx.EncodeAndRespondWithHeight(vendorProducts, height)
 	}
-}
-
-func respond(w http.ResponseWriter, cliCtx context.CLIContext, data []byte, height int64) {
-	cliCtx.Height = height
-	rest.PostProcessResponse(w, cliCtx, data)
 }

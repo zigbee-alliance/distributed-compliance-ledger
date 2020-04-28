@@ -1,100 +1,95 @@
 package rest
 
 import (
-	"fmt"
-	restutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/tx/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"net/http"
 )
 
 type AddCertificateRequest struct {
-	BaseReq     rest.BaseReq `json:"base_req"`
-	Certificate string       `json:"cert"`
+	BaseReq     restTypes.BaseReq `json:"base_req"`
+	Certificate string            `json:"cert"`
 }
 
 type ApproveCertificateRequest struct {
-	BaseReq      rest.BaseReq `json:"base_req"`
-	Subject      string       `json:"subject"`
-	SubjectKeyId string       `json:"subject_key_id"`
+	BaseReq      restTypes.BaseReq `json:"base_req"`
+	Subject      string            `json:"subject"`
+	SubjectKeyId string            `json:"subject_key_id"`
 }
 
 func proposeAddX509RootCertHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
 		var req AddCertificateRequest
-
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
 
-		baseReq := req.BaseReq.Sanitize()
-		if !baseReq.ValidateBasic(w) {
-			return
-		}
-
-		from, err := sdk.AccAddressFromBech32(baseReq.From)
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
 			return
 		}
 
-		msg := types.NewMsgProposeAddX509RootCert(req.Certificate, from)
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
 
-		restutils.ProcessMessage(cliCtx, w, r, baseReq, msg, from)
+		msg := types.NewMsgProposeAddX509RootCert(req.Certificate, restCtx.Signer())
+
+		restCtx.HandleWriteRequest(msg)
 	}
 }
 
 func approveAddX509RootCertHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
 		var req ApproveCertificateRequest
-
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
 
-		baseReq := req.BaseReq.Sanitize()
-		if !baseReq.ValidateBasic(w) {
-			return
-		}
-
-		from, err := sdk.AccAddressFromBech32(baseReq.From)
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
 			return
 		}
 
-		msg := types.NewMsgApproveAddX509RootCert(req.Subject, req.SubjectKeyId, from)
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
 
-		restutils.ProcessMessage(cliCtx, w, r, baseReq, msg, from)
+		msg := types.NewMsgApproveAddX509RootCert(req.Subject, req.SubjectKeyId, restCtx.Signer())
+
+		restCtx.HandleWriteRequest(msg)
 	}
 }
 
 func addX509CertHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cliCtx := context.NewCLIContext().WithCodec(cliCtx.Codec)
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
 		var req AddCertificateRequest
-
-		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
+		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
 
-		baseReq := req.BaseReq.Sanitize()
-		if !baseReq.ValidateBasic(w) {
-			return
-		}
-
-		from, err := sdk.AccAddressFromBech32(baseReq.From)
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
 			return
 		}
 
-		msg := types.NewMsgAddX509Cert(req.Certificate, from)
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
 
-		restutils.ProcessMessage(cliCtx, w, r, baseReq, msg, from)
+		msg := types.NewMsgAddX509Cert(req.Certificate, restCtx.Signer())
+
+		restCtx.HandleWriteRequest(msg)
 	}
 }

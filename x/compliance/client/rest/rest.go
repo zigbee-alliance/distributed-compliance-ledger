@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	vid = "vid"
-	pid = "pid"
+	vid                = "vid"
+	pid                = "pid"
 	certificationType = "certification_type"
 )
 

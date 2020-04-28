@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/spf13/cobra"
@@ -9,11 +10,8 @@ import (
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
 const (
@@ -48,8 +46,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 		Short: "Add new Model",
 		Args:  cobra.ExactArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
@@ -84,14 +81,9 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgAddModelInfo(vid, pid, cid, name, description, sku, firmwareVersion, hardwareVersion,
-				custom, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
+				custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
 
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 
@@ -108,8 +100,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 		Short: "Update existing Model",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
@@ -138,13 +129,9 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 
 			custom := viper.GetString(FlagCustom)
 
-			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description, custom, tisOrTrpTestingCompleted, cliCtx.GetFromAddress())
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
+			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description, custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 
@@ -161,8 +148,7 @@ func GetCmdDeleteModel(cdc *codec.Codec) *cobra.Command {
 		Short: "Delete existing ModelInfo",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			vid, err := conversions.ParseVID(args[0])
 			if err != nil {
@@ -174,13 +160,9 @@ func GetCmdDeleteModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgDeleteModelInfo(vid, pid, cliCtx.GetFromAddress())
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
+			msg := types.NewMsgDeleteModelInfo(vid, pid, cliCtx.FromAddress())
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 }

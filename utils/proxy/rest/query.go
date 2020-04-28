@@ -8,14 +8,16 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 
-	"github.com/cosmos/cosmos-sdk/types/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 )
 
 func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := r.ParseForm()
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		err := restCtx.Request().ParseForm()
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest,
+			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
 			return
 		}
@@ -30,12 +32,12 @@ func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			maxHeight = minHeight
 		}
 
-		res, err := cliCtx.Client.BlockchainInfo(minHeight, maxHeight)
+		res, err := restCtx.BlockchainInfo(minHeight, maxHeight)
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
+			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
 			return
 		}
 
-		rest.PostProcessResponse(w, cliCtx, res)
+		restCtx.PostProcessResponse(res)
 	}
 }
