@@ -30,7 +30,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdAccountHeaders(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "account-headers",
-		Short: "List ModelInfo headers",
+		Short: "query the list of accounts",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()

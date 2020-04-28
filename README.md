@@ -313,6 +313,13 @@ Genesis template:
 
 ### Authentication extensions
 
+Transactions:
+
+- `zblcli tx authnext create-account [account] [public-key]` - The command to creates a new account.
+  - Signature is required. Use `--from` flag.
+
+  Example: `zblcli tx authnext create-account cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from jack`
+
 Queries:
 
 - `zblcli query authnext account-headers --skip [x] --take [y]` - The command to list account headers with roles. Flags
