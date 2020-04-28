@@ -27,10 +27,7 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 
 func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgProposeAddX509RootCert) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// decode pem certificate
 	certificate, err := x509.DecodeX509Certificate(msg.Cert)
 	if err != nil {
 		return err.Result()
@@ -94,10 +91,6 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 
 func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgApproveAddX509RootCert) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
 	// check if corresponding proposed certificate exists
 	if !keeper.IsProposedCertificatePresent(ctx, msg.Subject, msg.SubjectKeyId) {
 		return types.ErrProposedCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId).Result()
@@ -150,10 +143,7 @@ func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 }
 
 func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAddX509Cert) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// decode pem certificate
 	certificate, err := x509.DecodeX509Certificate(msg.Cert)
 	if err != nil {
 		return err.Result()

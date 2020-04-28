@@ -49,7 +49,7 @@ func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "account [address]",
-		Short: "Query the list of accounts",
+		Short: "Query account information associated with the address",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)

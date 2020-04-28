@@ -23,14 +23,13 @@ func NewHandler(accKeeper AccountKeeper, authzKeeper authz.Keeper, cdc *codec.Co
 }
 
 func handleMsgAddAccount(ctx sdk.Context, keeper AccountKeeper, authzKeeper authz.Keeper, msg types.MsgAddAccount) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// check if sender has enough rights to create account
 	if !authzKeeper.HasRole(ctx, msg.Signer, authz.Trustee) {
-		return sdk.ErrUnauthorized("MsgAddAccount transaction should be signed by an account with the Trustee role").Result()
+		return sdk.ErrUnauthorized(
+			fmt.Sprintf("MsgAddAccount transaction should be signed by an account with the %s role", authz.Trustee)).Result()
 	}
 
+	// check if account already exists
 	if account := keeper.GetAccount(ctx, msg.Address); account != nil {
 		return sdk.ErrInvalidAddress(fmt.Sprintf("Account associated with the address=%v already exists on the ledger", msg.Address)).Result()
 	}
@@ -40,12 +39,14 @@ func handleMsgAddAccount(ctx sdk.Context, keeper AccountKeeper, authzKeeper auth
 		return sdk.ErrInternal(err.Error()).Result()
 	}
 
+	// create account and fill key
 	account := keeper.NewAccountWithAddress(ctx, msg.Address)
 	err = account.SetPubKey(pubKey)
 	if err != nil {
 		return sdk.ErrInternal(err.Error()).Result()
 	}
 
+	// store account
 	keeper.SetAccount(ctx, account)
 
 	return sdk.Result{}

@@ -27,7 +27,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "test-result [vid] [pid]",
-		Short: "Query testing result by combination of Vendor ID and Product ID",
+		Short: "Query testing results for Model (identified by the `vid` and `pid`)",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)

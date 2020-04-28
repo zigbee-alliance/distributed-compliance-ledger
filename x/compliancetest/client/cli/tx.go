@@ -33,7 +33,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "add-test-result [vid] [pid] [test-result-string-or-path] [test-date]",
-		Short: "Add new testing result",
+		Short: "Add new testing result for Model (identified by the `vid` and `pid`)",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)

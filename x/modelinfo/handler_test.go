@@ -3,6 +3,7 @@ package modelinfo
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -13,10 +14,9 @@ import (
 
 func TestHandler_AddModel(t *testing.T) {
 	setup := Setup()
-	owner := setup.Vendor(test_constants.Address1)
 
 	// add new model
-	modelInfo := TestMsgAddModelInfo(owner)
+	modelInfo := TestMsgAddModelInfo(setup.Vendor)
 	result := setup.Handler(setup.Ctx, modelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -32,15 +32,14 @@ func TestHandler_AddModel(t *testing.T) {
 
 func TestHandler_UpdateModel(t *testing.T) {
 	setup := Setup()
-	owner := setup.Vendor(test_constants.Address1)
 
 	// try update not present model
-	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(owner)
+	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(setup.Vendor)
 	result := setup.Handler(setup.Ctx, msgUpdatedModelInfo)
 	require.Equal(t, types.CodeModelInfoDoesNotExist, result.Code)
 
 	// add new model
-	msgAddModelInfo := TestMsgAddModelInfo(owner)
+	msgAddModelInfo := TestMsgAddModelInfo(setup.Vendor)
 	result = setup.Handler(setup.Ctx, msgAddModelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -51,37 +50,32 @@ func TestHandler_UpdateModel(t *testing.T) {
 
 func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 	setup := Setup()
-	owner := setup.Vendor(test_constants.Address1)
-	administrator := setup.Administrator(test_constants.Address2)
-	vendor := setup.Vendor(test_constants.Address3)
 
 	// add new model
-	msgAddModelInfo := TestMsgAddModelInfo(owner)
+	msgAddModelInfo := TestMsgAddModelInfo(setup.Vendor)
 	result := setup.Handler(setup.Ctx, msgAddModelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	// update existing model by non-owner administrator
-	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(administrator)
-	result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
-	require.Equal(t, sdk.CodeUnauthorized, result.Code)
+	for _, role := range []authz.AccountRole{authz.Trustee, authz.TestHouse, authz.Administrator, authz.Vendor} {
+		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
 
-	// update existing model by non-owner vendor
-	msgUpdatedModelInfo = TestMsgUpdatedModelInfo(vendor)
-	result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
-	require.Equal(t, sdk.CodeUnauthorized, result.Code)
+		// update existing model by not owner
+		msgUpdatedModelInfo := TestMsgUpdatedModelInfo(test_constants.Address3)
+		result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
+		require.Equal(t, sdk.CodeUnauthorized, result.Code)
+	}
 
 	// owner update existing model
-	msgUpdatedModelInfo = TestMsgUpdatedModelInfo(owner)
+	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(setup.Vendor)
 	result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 }
 
 func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 	setup := Setup()
-	owner := setup.Vendor(test_constants.Address1)
 
 	// add new model
-	modelInfo := TestMsgAddModelInfo(owner)
+	modelInfo := TestMsgAddModelInfo(setup.Vendor)
 	modelInfo.CID = 0     // Set empty CID
 	modelInfo.Custom = "" // Set empty Custom
 
@@ -99,22 +93,25 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 func TestHandler_AddModelByNonVendor(t *testing.T) {
 	setup := Setup()
 
-	// add new model
-	modelInfo := TestMsgAddModelInfo(test_constants.Address1)
-	result := setup.Handler(setup.Ctx, modelInfo)
-	require.Equal(t, sdk.CodeUnauthorized, result.Code)
+	for _, role := range []authz.AccountRole{authz.Trustee, authz.TestHouse, authz.Administrator} {
+		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
+
+		// add new model
+		modelInfo := TestMsgAddModelInfo(test_constants.Address3)
+		result := setup.Handler(setup.Ctx, modelInfo)
+		require.Equal(t, sdk.CodeUnauthorized, result.Code)
+	}
 }
 
 func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	setup := Setup()
-	owner := setup.Vendor(test_constants.Address1)
 
 	// add new model
-	msgAddModelInfo := TestMsgAddModelInfo(owner)
+	msgAddModelInfo := TestMsgAddModelInfo(setup.Vendor)
 	result := setup.Handler(setup.Ctx, msgAddModelInfo)
 
 	// owner update Description of existing model
-	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(owner)
+	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(setup.Vendor)
 	msgUpdatedModelInfo.Description = "New Description"
 	msgUpdatedModelInfo.Custom = ""
 	msgUpdatedModelInfo.CID = 0

@@ -3,6 +3,7 @@ package compliancetest
 import (
 	"fmt"
 	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
@@ -19,8 +20,7 @@ func TestHandler_AddTestingResult(t *testing.T) {
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
 	// add new testing result
-	testHouse := setup.TestHouse(test_constants.Address1)
-	testingResult := TestMsgAddTestingResult(testHouse, vid, pid)
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid)
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -38,14 +38,11 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	setup := Setup()
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
-	cases := []sdk.AccAddress{
-		setup.Vendor(test_constants.Address1),
-		setup.Administrator(test_constants.Address1),
-	}
+	for _, role:= range []authz.AccountRole{authz.Vendor, authz.Administrator, authz.ZBCertificationCenter, authz.Administrator} {
+		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
 
-	for _, tc := range cases {
 		// add new testing result by non TestHouse
-		testingResult := TestMsgAddTestingResult(tc, vid, pid)
+		testingResult := TestMsgAddTestingResult(test_constants.Address3, vid, pid)
 		result := setup.Handler(setup.Ctx, testingResult)
 		require.Equal(t, sdk.CodeUnauthorized, result.Code)
 	}
@@ -53,10 +50,9 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 
 func TestHandler_AddTestingResultForUnknownModel(t *testing.T) {
 	setup := Setup()
-	testHouse := setup.TestHouse(test_constants.Address1)
 
 	// add new testing result
-	testingResult := TestMsgAddTestingResult(testHouse, test_constants.VID, test_constants.PID)
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, test_constants.VID, test_constants.PID)
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, modelinfo.CodeModelInfoDoesNotExist, result.Code)
 }
@@ -67,13 +63,9 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 	// add model
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
-	testHouses := []sdk.AccAddress{
-		setup.TestHouse(test_constants.Address1),
-		setup.TestHouse(test_constants.Address2),
-		setup.TestHouse(test_constants.Address3),
-	}
+	for i, th := range []sdk.AccAddress{test_constants.Address1, test_constants.Address2, test_constants.Address3} {
+		setup.AuthzKeeper.AssignRole(setup.Ctx, th, authz.TestHouse)
 
-	for i, th := range testHouses {
 		// add new testing result
 		testingResult := TestMsgAddTestingResult(th, vid, pid)
 		result := setup.Handler(setup.Ctx, testingResult)
@@ -92,14 +84,13 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 
 func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 	setup := Setup()
-	testHouse := setup.TestHouse(test_constants.Address1)
 
 	for i := uint16(1); i < uint16(5); i++ {
 		// add model
 		vid, pid := addModel(setup, i, i)
 
 		// add new testing result
-		testingResult := TestMsgAddTestingResult(testHouse, vid, pid)
+		testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid)
 		result := setup.Handler(setup.Ctx, testingResult)
 		require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -116,13 +107,12 @@ func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 
 func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T) {
 	setup := Setup()
-	testHouse := setup.TestHouse(test_constants.Address1)
 
 	// add model
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
 	// add new testing result
-	testingResult := TestMsgAddTestingResult(testHouse, vid, pid)
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid)
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, sdk.CodeOK, result.Code)
 

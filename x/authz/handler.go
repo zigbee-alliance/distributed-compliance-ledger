@@ -23,36 +23,36 @@ func NewHandler(keeper keeper.Keeper) sdk.Handler {
 }
 
 func handleMsgAssignRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAssignRole) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// check if sender has enough rights to assign role
 	if !keeper.HasRole(ctx, msg.Signer, Trustee) {
-		return sdk.ErrUnauthorized("you are not authorized to perform this action").Result()
+		return sdk.ErrUnauthorized(
+			fmt.Sprintf("MsgAssignRole transaction should be signed by an account with the %s role", Trustee)).Result()
 	}
 
+	// assign role to account
 	keeper.AssignRole(ctx, msg.Address, msg.Role)
 
 	return sdk.Result{}
 }
 
 func handleMsgRevokeRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRevokeRole) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// check if sender has enough rights to revoke role
 	if !keeper.HasRole(ctx, msg.Signer, Trustee) {
-		return sdk.ErrUnauthorized("you are not authorized to perform this action").Result()
+		return sdk.ErrUnauthorized(
+			fmt.Sprintf("MsgRevokeRole transaction should be signed by an account with the %s role", Trustee)).Result()
 	}
 
+	// check if target account has role to revoke
 	if !keeper.HasRole(ctx, msg.Address, msg.Role) {
-		return sdk.ErrUnauthorized(fmt.Sprintf("account %s doesn't have role %s", msg.Address.String(), msg.Role)).Result()
+		return sdk.ErrUnauthorized(fmt.Sprintf("Account %s doesn't have role %s to revoke", msg.Address.String(), msg.Role)).Result()
 	}
 
+	// at least one trustee must be on the ledger
 	if msg.Role == Trustee && keeper.CountAccounts(ctx, Trustee) < 2 {
 		return sdk.ErrUnauthorized("there must be at least one Trustee").Result()
 	}
 
+	// remove role
 	keeper.RevokeRole(ctx, msg.Address, msg.Role)
 
 	return sdk.Result{}

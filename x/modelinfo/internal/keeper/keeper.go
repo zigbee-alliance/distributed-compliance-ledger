@@ -24,7 +24,7 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{storeKey: storeKey, cdc: cdc}
 }
 
-// Gets the entire ModelInfo metadata struct for a ModelInfoID
+// Gets the entire ModelInfo struct for a ModelInfoID
 func (k Keeper) GetModelInfo(ctx sdk.Context, vid uint16, pid uint16) types.ModelInfo {
 	if !k.IsModelInfoPresent(ctx, vid, pid) {
 		panic("ModelInfo does not exist")

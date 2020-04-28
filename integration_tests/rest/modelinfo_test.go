@@ -13,7 +13,6 @@ import (
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
-	TODO: prepare environment automatically
 	TODO: provide tests for error cases
 */
 

@@ -28,14 +28,12 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 
 func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgAddModelInfo) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	} // TODO: investigate whether we need to call it here explicitly or tandermind/sdk already does it before
-
+	// check if model already exists
 	if keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
 		return types.ErrModelInfoAlreadyExists(msg.VID, msg.PID).Result()
 	}
 
+	// check sender has enough rights to add model
 	if err := checkAddModelRights(ctx, authzKeeper, msg.Signer); err != nil {
 		return err.Result()
 	}
@@ -54,6 +52,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 		msg.TisOrTrpTestingCompleted,
 	)
 
+	// store new model
 	keeper.SetModelInfo(ctx, modelInfo)
 
 	return sdk.Result{}
@@ -61,20 +60,19 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 
 func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgUpdateModelInfo) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// check is model exists
 	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
 		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)
 
+	// check if sender has enough rights to update model
 	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
+	// updates existing model value only if corresponding value in MsgUpdate is not empty
 	CID := modelInfo.CID
 	if msg.CID != 0 {
 		CID = msg.CID
@@ -104,6 +102,7 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 		msg.TisOrTrpTestingCompleted,
 	)
 
+	// store updated model
 	keeper.SetModelInfo(ctx, modelInfo)
 
 	return sdk.Result{}
@@ -111,34 +110,35 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 
 func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgDeleteModelInfo) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// check if model exists
 	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
 		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
 	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)
 
+	// check if sender has enough rights to delete model
 	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
 		return err.Result()
 	}
 
+	// remove model from the store
 	keeper.DeleteModelInfo(ctx, msg.VID, msg.PID)
 
 	return sdk.Result{}
 }
 
 func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
+	// sender must have Vendor role to add new model
 	if !authzKeeper.HasRole(ctx, signer, authz.Vendor) {
-		return sdk.ErrUnauthorized("MsgAddModelInfo transaction should be signed by an account with the vendor role")
+		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddModelInfo transaction should be signed by an account with the %s role", authz.Vendor))
 	}
 
 	return nil
 }
 
 func checkUpdateModelRights(owner sdk.AccAddress, signer sdk.AccAddress) sdk.Error {
+	// sender must be equal to owner to edit model
 	if !signer.Equals(owner) {
 		return sdk.ErrUnauthorized("MsgUpdateModelInfo tx should be signed by owner")
 	}

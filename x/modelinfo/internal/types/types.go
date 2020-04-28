@@ -49,6 +49,9 @@ func (d ModelInfo) String() string {
 	return string(bytes)
 }
 
+/*
+	List of products for specific Vendor
+*/
 type VendorProducts struct {
 	VID      uint16    `json:"vid"`
 	Products []Product `json:"products"`
@@ -87,6 +90,7 @@ func (d VendorProducts) String() string {
 	return string(bytes)
 }
 
+// Single Vendor Product
 type Product struct {
 	PID   uint16         `json:"pid"`
 	Name  string         `json:"name"`

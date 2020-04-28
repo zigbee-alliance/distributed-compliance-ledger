@@ -19,6 +19,7 @@ type TestSetup struct {
 	AuthzKeeper     authz.Keeper
 	Handler         sdk.Handler
 	Querier         sdk.Querier
+	Vendor          sdk.AccAddress
 }
 
 func Setup() TestSetup {
@@ -50,6 +51,9 @@ func Setup() TestSetup {
 	querier := NewQuerier(modelinfoKeeper)
 	handler := NewHandler(modelinfoKeeper, authzKeeper)
 
+	account := test_constants.Address1
+	authzKeeper.AssignRole(ctx, account, authz.Vendor)
+
 	setup := TestSetup{
 		Cdc:             cdc,
 		Ctx:             ctx,
@@ -57,19 +61,10 @@ func Setup() TestSetup {
 		AuthzKeeper:     authzKeeper,
 		Handler:         handler,
 		Querier:         querier,
+		Vendor:          account,
 	}
 
 	return setup
-}
-
-func (setup TestSetup) Vendor(acc sdk.AccAddress) sdk.AccAddress {
-	setup.AuthzKeeper.AssignRole(setup.Ctx, acc, authz.Vendor)
-	return acc
-}
-
-func (setup TestSetup) Administrator(acc sdk.AccAddress) sdk.AccAddress {
-	setup.AuthzKeeper.AssignRole(setup.Ctx, acc, authz.Administrator)
-	return acc
 }
 
 func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {

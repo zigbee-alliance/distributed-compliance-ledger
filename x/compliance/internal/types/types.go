@@ -19,6 +19,9 @@ const (
 	ZbCertificationType CertificationType = "zb"
 )
 
+/*
+	Compliance info stored into KVStore
+*/
 type ComplianceInfo struct {
 	VID               uint16                  `json:"vid"`
 	PID               uint16                  `json:"pid"`
@@ -80,6 +83,9 @@ func (d ComplianceInfo) String() string {
 	return string(bytes)
 }
 
+/*
+	Compliance info state changes
+*/
 type ComplianceHistoryItem struct {
 	State  ComplianceState `json:"state"`
 	Date   time.Time       `json:"date"` // rfc3339 encoded date

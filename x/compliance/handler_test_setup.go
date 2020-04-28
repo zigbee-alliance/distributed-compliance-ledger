@@ -80,8 +80,3 @@ func Setup() TestSetup {
 
 	return setup
 }
-
-func (setup TestSetup) ZBCertificationCenter(address sdk.AccAddress) sdk.AccAddress {
-	setup.AuthzKeeper.AssignRole(setup.Ctx, address, authz.ZBCertificationCenter)
-	return address
-}

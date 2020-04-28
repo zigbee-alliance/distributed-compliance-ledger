@@ -149,7 +149,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 func GetCmdDeleteModel(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "delete-model [vid] [pid]",
-		Short: "Delete existing ModelInfo",
+		Short: "Delete existing Model",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)

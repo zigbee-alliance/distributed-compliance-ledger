@@ -30,7 +30,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "create-account [addr] [pub-key]",
-		Short: "creates new account for specified address",
+		Short: "Create new account for specified address",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
