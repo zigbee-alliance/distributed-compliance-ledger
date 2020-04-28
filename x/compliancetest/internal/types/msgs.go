@@ -8,14 +8,14 @@ import (
 const RouterKey = ModuleName
 
 type MsgAddTestingResult struct {
-	VID        int16          `json:"vid"`
-	PID        int16          `json:"pid"`
+	VID        uint16         `json:"vid"`
+	PID        uint16         `json:"pid"`
 	TestResult string         `json:"test_result"`
 	TestDate   time.Time      `json:"test_date"` // rfc3339 encoded date
 	Signer     sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddTestingResult(vid int16, pid int16, testResult string, testDate time.Time, signer sdk.AccAddress) MsgAddTestingResult {
+func NewMsgAddTestingResult(vid uint16, pid uint16, testResult string, testDate time.Time, signer sdk.AccAddress) MsgAddTestingResult {
 	return MsgAddTestingResult{
 		VID:        vid,
 		PID:        pid,

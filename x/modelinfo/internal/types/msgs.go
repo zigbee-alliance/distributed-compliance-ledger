@@ -7,9 +7,9 @@ import (
 const RouterKey = ModuleName
 
 type MsgAddModelInfo struct {
-	VID                      int16          `json:"vid"`
-	PID                      int16          `json:"pid"`
-	CID                      int16          `json:"cid,omitempty"`
+	VID                      uint16         `json:"vid"`
+	PID                      uint16         `json:"pid"`
+	CID                      uint16         `json:"cid,omitempty"`
 	Name                     string         `json:"name"`
 	Description              string         `json:"description"`
 	SKU                      string         `json:"sku"`
@@ -20,7 +20,7 @@ type MsgAddModelInfo struct {
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddModelInfo(vid int16, pid int16, cid int16, name string, description string, sku string,
+func NewMsgAddModelInfo(vid uint16, pid uint16, cid uint16, name string, description string, sku string,
 	firmwareVersion string, hardwareVersion string, custom string,
 	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
@@ -79,16 +79,16 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 }
 
 type MsgUpdateModelInfo struct {
-	VID                      int16          `json:"vid"`
-	PID                      int16          `json:"pid"`
-	CID                      int16          `json:"cid"`
+	VID                      uint16         `json:"vid"`
+	PID                      uint16         `json:"pid"`
+	CID                      uint16         `json:"cid"`
 	Description              string         `json:"description"`
 	Custom                   string         `json:"custom,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgUpdateModelInfo(vid int16, pid int16, cid int16, description string, custom string,
+func NewMsgUpdateModelInfo(vid uint16, pid uint16, cid uint16, description string, custom string,
 	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                      vid,
@@ -132,12 +132,12 @@ func (m MsgUpdateModelInfo) GetSigners() []sdk.AccAddress {
 }
 
 type MsgDeleteModelInfo struct {
-	VID    int16          `json:"vid"`
-	PID    int16          `json:"pid"`
+	VID    uint16         `json:"vid"`
+	PID    uint16         `json:"pid"`
 	Signer sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgDeleteModelInfo(vid int16, pid int16, signer sdk.AccAddress) MsgDeleteModelInfo {
+func NewMsgDeleteModelInfo(vid uint16, pid uint16, signer sdk.AccAddress) MsgDeleteModelInfo {
 	return MsgDeleteModelInfo{
 		VID:    vid,
 		PID:    pid,

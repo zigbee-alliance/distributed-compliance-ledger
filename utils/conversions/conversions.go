@@ -6,32 +6,32 @@ import (
 	"strconv"
 )
 
-func ParseInt16FromString(str string) (int16, sdk.Error) {
+func ParseUInt16FromString(str string) (uint16, sdk.Error) {
 	val, err := strconv.ParseInt(str, 10, 16)
-	if err != nil {
-		return 0, sdk.ErrInternal(fmt.Sprintf("Parsing Error: %v must be 16 bit integer", str))
+	if err != nil || val < 0 {
+		return 0, sdk.ErrInternal(fmt.Sprintf("Parsing Error: %v must be 16 bit unsigned integer", str))
 	}
-	return int16(val), nil
+	return uint16(val), nil
 }
 
-func ParseVID(str string) (int16, sdk.Error) {
-	res, err := ParseInt16FromString(str)
+func ParseVID(str string) (uint16, sdk.Error) {
+	res, err := ParseUInt16FromString(str)
 	if err != nil {
 		return 0, sdk.ErrInternal(fmt.Sprintf("Invalid VID: %v", err))
 	}
 	return res, nil
 }
 
-func ParsePID(str string) (int16, sdk.Error) {
-	res, err := ParseInt16FromString(str)
+func ParsePID(str string) (uint16, sdk.Error) {
+	res, err := ParseUInt16FromString(str)
 	if err != nil {
 		return 0, sdk.ErrInternal(fmt.Sprintf("Invalid PID: %v", err))
 	}
 	return res, nil
 }
 
-func ParseCID(str string) (int16, sdk.Error) {
-	res, err := ParseInt16FromString(str)
+func ParseCID(str string) (uint16, sdk.Error) {
+	res, err := ParseUInt16FromString(str)
 	if err != nil {
 		return 0, sdk.ErrInternal(fmt.Sprintf("Invalid CID: %v", err))
 	}

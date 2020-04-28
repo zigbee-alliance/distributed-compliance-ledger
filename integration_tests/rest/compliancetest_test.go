@@ -17,7 +17,7 @@ import (
 	TODO: provide tests for error cases
 */
 
-func /*Test*/CompliancetestDemo(t *testing.T) {
+func /*Test*/ CompliancetestDemo(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 

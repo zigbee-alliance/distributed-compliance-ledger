@@ -25,7 +25,7 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 }
 
 // Gets the entire ModelInfo metadata struct for a ModelInfoID
-func (k Keeper) GetModelInfo(ctx sdk.Context, vid int16, pid int16) types.ModelInfo {
+func (k Keeper) GetModelInfo(ctx sdk.Context, vid uint16, pid uint16) types.ModelInfo {
 	if !k.IsModelInfoPresent(ctx, vid, pid) {
 		panic("ModelInfo does not exist")
 	}
@@ -56,7 +56,7 @@ func (k Keeper) SetModelInfo(ctx sdk.Context, model types.ModelInfo) {
 }
 
 // Deletes the ModelInfo from the store
-func (k Keeper) DeleteModelInfo(ctx sdk.Context, vid int16, pid int16) {
+func (k Keeper) DeleteModelInfo(ctx sdk.Context, vid uint16, pid uint16) {
 	if !k.IsModelInfoPresent(ctx, vid, pid) {
 		panic("ModelInfo does not exist")
 	}
@@ -99,7 +99,7 @@ func (k Keeper) CountTotalModelInfos(ctx sdk.Context) int {
 }
 
 // Check if the ModelInfo is present in the store or not
-func (k Keeper) IsModelInfoPresent(ctx sdk.Context, vid int16, pid int16) bool {
+func (k Keeper) IsModelInfoPresent(ctx sdk.Context, vid uint16, pid uint16) bool {
 	return k.isRecordPresent(ctx, ModelInfoId(vid, pid))
 }
 
@@ -109,7 +109,7 @@ func ModelInfoId(vid interface{}, pid interface{}) string {
 }
 
 // Gets the entire VendorProducts struct for a Vendor
-func (k Keeper) GetVendorProducts(ctx sdk.Context, vid int16) types.VendorProducts {
+func (k Keeper) GetVendorProducts(ctx sdk.Context, vid uint16) types.VendorProducts {
 	if !k.IsVendorProductsPresent(ctx, vid) {
 		return types.NewVendorProducts(vid)
 	}
@@ -125,7 +125,7 @@ func (k Keeper) GetVendorProducts(ctx sdk.Context, vid int16) types.VendorProduc
 }
 
 // Add Product to Vendor
-func (k Keeper) AppendVendorProduct(ctx sdk.Context, vid int16, product types.Product) {
+func (k Keeper) AppendVendorProduct(ctx sdk.Context, vid uint16, product types.Product) {
 	store := ctx.KVStore(k.storeKey)
 
 	vendorProducts := k.GetVendorProducts(ctx, vid)
@@ -135,7 +135,7 @@ func (k Keeper) AppendVendorProduct(ctx sdk.Context, vid int16, product types.Pr
 }
 
 // Delete Product of Vendor
-func (k Keeper) RemoveVendorProduct(ctx sdk.Context, vid int16, pid int16) {
+func (k Keeper) RemoveVendorProduct(ctx sdk.Context, vid uint16, pid uint16) {
 	if !k.IsVendorProductsPresent(ctx, vid) {
 		panic("VendorProducts does not exist")
 	}
@@ -153,7 +153,7 @@ func (k Keeper) RemoveVendorProduct(ctx sdk.Context, vid int16, pid int16) {
 }
 
 // Check if the VendorProducts is present in the store or not
-func (k Keeper) IsVendorProductsPresent(ctx sdk.Context, vid int16) bool {
+func (k Keeper) IsVendorProductsPresent(ctx sdk.Context, vid uint16) bool {
 	return k.isRecordPresent(ctx, VendorProductsId(vid))
 }
 

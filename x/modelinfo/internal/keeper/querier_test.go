@@ -67,8 +67,8 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	require.Equal(t, count, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, int16(i)+firstId, item.VID)
-		require.Equal(t, int16(i)+firstId, item.PID)
+		require.Equal(t, uint16(i)+firstId, item.VID)
+		require.Equal(t, uint16(i)+firstId, item.PID)
 	}
 }
 
@@ -90,7 +90,7 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	require.Equal(t, take, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, int16(skip)+int16(i)+firstId, item.VID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.VID)
 	}
 }
 
@@ -112,7 +112,7 @@ func TestQuerier_QueryVendorsForModelsHaveDifferentVendors(t *testing.T) {
 	require.Equal(t, count, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, int16(i)+firstId, item.VID)
+		require.Equal(t, uint16(i)+firstId, item.VID)
 	}
 }
 
@@ -154,7 +154,7 @@ func TestQuerier_QueryVendorsWithPaginationHeaders(t *testing.T) {
 	require.Equal(t, take, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, int16(skip)+int16(i)+firstId, item.VID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.VID)
 	}
 }
 
@@ -172,7 +172,7 @@ func TestQuerier_QueryVendorModels(t *testing.T) {
 	require.Equal(t, count, len(receivedVendorModels.Products))
 
 	for i, item := range receivedVendorModels.Products {
-		require.Equal(t, int16(i)+firstId, item.PID)
+		require.Equal(t, uint16(i)+firstId, item.PID)
 	}
 }
 
@@ -202,7 +202,7 @@ func getVendors(setup TestSetup, params pagination.PaginationParams) types.ListV
 	return receiveModelInfos
 }
 
-func getVendorModels(setup TestSetup, vid int16) types.VendorProducts {
+func getVendorModels(setup TestSetup, vid uint16) types.VendorProducts {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryVendorModels, fmt.Sprintf("%v", vid)},

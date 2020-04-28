@@ -53,7 +53,7 @@ func getProposedX509RootCertHandler(cliCtx context.CLIContext, storeName string)
 
 		res, height, err := restCtx.QueryStore(keeper.ProposedCertificateId(subject, subjectKeyId), storeName)
 		if err != nil || res == nil {
-			restCtx.WriteErrorResponse( http.StatusNotFound, types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId).Error())
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId).Error())
 			return
 		}
 
@@ -74,7 +74,7 @@ func getX509CertHandler(cliCtx context.CLIContext, storeName string) http.Handle
 
 		res, height, err := restCtx.QueryStore(keeper.CertificateId(subject, subjectKeyId), storeName)
 		if err != nil || res == nil {
-			restCtx.WriteErrorResponse( http.StatusNotFound, types.ErrCertificateDoesNotExist(subject, subjectKeyId).Error())
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrCertificateDoesNotExist(subject, subjectKeyId).Error())
 			return
 		}
 

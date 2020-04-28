@@ -29,7 +29,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAddAssignRole(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "assign-role <addr> <role>",
+		Use:   "assign-role [addr] [role]",
 		Short: "assign new role to the account",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -49,7 +49,7 @@ func GetCmdAddAssignRole(cdc *codec.Codec) *cobra.Command {
 
 func GetCmdRevokeRole(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "revoke-role <addr> <role>",
+		Use:   "revoke-role [addr] [role]",
 		Short: "revoke role from the account",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {

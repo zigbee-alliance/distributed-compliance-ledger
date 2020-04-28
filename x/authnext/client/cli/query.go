@@ -31,8 +31,8 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "accounts",
-		Short:   "Query the list of accounts",
+		Use:   "accounts",
+		Short: "Query the list of accounts",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
@@ -48,9 +48,9 @@ func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:     "account [address]",
-		Short:   "Query the list of accounts",
-		Args:    cobra.ExactArgs(1),
+		Use:   "account [address]",
+		Short: "Query the list of accounts",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 

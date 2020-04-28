@@ -1,8 +1,8 @@
 package keeper
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -65,13 +65,13 @@ func DefaultModelInfo() types.ModelInfo {
 }
 
 // add 10 models with same VID and check associated products {VID: 1, PID: 1..count}
-func PopulateStoreWithModelsHavingSameVendor(setup TestSetup, count int) int16 {
-	firstId := int16(1)
+func PopulateStoreWithModelsHavingSameVendor(setup TestSetup, count int) uint16 {
+	firstId := uint16(1)
 
 	modelInfo := DefaultModelInfo()
 	modelInfo.VID = firstId
 
-	for i := firstId; i <= int16(count); i++ {
+	for i := firstId; i <= uint16(count); i++ {
 		// add model info {VID: 1, PID: i}
 		modelInfo.PID = i
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
@@ -80,12 +80,12 @@ func PopulateStoreWithModelsHavingSameVendor(setup TestSetup, count int) int16 {
 }
 
 // add 10 models with same VID and check associated products {VID: 1..count, PID: 1..count}
-func PopulateStoreWithModelsHavingDifferentVendor(setup TestSetup, count int) int16 {
-	firstId := int16(1)
+func PopulateStoreWithModelsHavingDifferentVendor(setup TestSetup, count int) uint16 {
+	firstId := uint16(1)
 
 	modelInfo := DefaultModelInfo()
 
-	for i := firstId; i <= int16(count); i++ {
+	for i := firstId; i <= uint16(count); i++ {
 		// add model info {VID: i, PID: i}
 		modelInfo.VID = i
 		modelInfo.PID = i

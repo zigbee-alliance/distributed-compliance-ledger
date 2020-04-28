@@ -94,7 +94,7 @@ func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 	setup := Setup()
 	testHouse := setup.TestHouse(test_constants.Address1)
 
-	for i := int16(1); i < int16(5); i++ {
+	for i := uint16(1); i < uint16(5); i++ {
 		// add model
 		vid, pid := addModel(setup, i, i)
 
@@ -138,7 +138,7 @@ func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 }
 
-func queryTestingResult(setup TestSetup, vid int16, pid int16) types.TestingResults {
+func queryTestingResult(setup TestSetup, vid uint16, pid uint16) types.TestingResults {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{keeper.QueryTestingResult, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid)},
@@ -150,7 +150,7 @@ func queryTestingResult(setup TestSetup, vid int16, pid int16) types.TestingResu
 	return receivedTestingResult
 }
 
-func addModel(setup TestSetup, vid int16, pid int16) (int16, int16) {
+func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	modelInfo := modelinfo.ModelInfo{
 		VID:                      vid,
 		PID:                      pid,

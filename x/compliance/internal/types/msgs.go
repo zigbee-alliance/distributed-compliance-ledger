@@ -9,15 +9,15 @@ import (
 const RouterKey = ModuleName
 
 type MsgCertifyModel struct {
-	VID               int16             `json:"vid"`
-	PID               int16             `json:"pid"`
+	VID               uint16            `json:"vid"`
+	PID               uint16            `json:"pid"`
 	CertificationDate time.Time         `json:"certification_date"` // rfc3339 encoded date
 	CertificationType CertificationType `json:"certification_type"`
 	Reason            string            `json:"reason,omitempty"`
 	Signer            sdk.AccAddress    `json:"signer"`
 }
 
-func NewMsgCertifyModel(vid int16, pid int16, certificationDate time.Time, certificationType CertificationType,
+func NewMsgCertifyModel(vid uint16, pid uint16, certificationDate time.Time, certificationType CertificationType,
 	reason string, signer sdk.AccAddress) MsgCertifyModel {
 	return MsgCertifyModel{
 		VID:               vid,
@@ -70,15 +70,15 @@ func (m MsgCertifyModel) GetSigners() []sdk.AccAddress {
 }
 
 type MsgRevokeModel struct {
-	VID               int16             `json:"vid"`
-	PID               int16             `json:"pid"`
+	VID               uint16            `json:"vid"`
+	PID               uint16            `json:"pid"`
 	RevocationDate    time.Time         `json:"revocation_date"` // rfc3339 encoded date
 	CertificationType CertificationType `json:"certification_type"`
 	Reason            string            `json:"reason,omitempty"`
 	Signer            sdk.AccAddress    `json:"signer"`
 }
 
-func NewMsgRevokeModel(vid int16, pid int16, revocationDate time.Time, certificationType CertificationType, revocationReason string, signer sdk.AccAddress) MsgRevokeModel {
+func NewMsgRevokeModel(vid uint16, pid uint16, revocationDate time.Time, certificationType CertificationType, revocationReason string, signer sdk.AccAddress) MsgRevokeModel {
 	return MsgRevokeModel{
 		VID:               vid,
 		PID:               pid,

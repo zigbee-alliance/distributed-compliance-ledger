@@ -64,7 +64,7 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 		isInState.Value = complianceInfo.State == state
 	}
 	if err != nil {
-		restCtx.WriteErrorResponse( http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
+		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
 		return
 	}
 

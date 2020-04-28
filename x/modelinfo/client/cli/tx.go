@@ -76,7 +76,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 
 			custom := viper.GetString(FlagCustom)
 
-			var cid int16
+			var cid uint16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = conversions.ParseCID(cidStr)
 				if err != nil {
@@ -123,7 +123,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 
 			description := viper.GetString(FlagDescription)
 
-			var cid int16
+			var cid uint16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = conversions.ParseCID(cidStr)
 				if err != nil {

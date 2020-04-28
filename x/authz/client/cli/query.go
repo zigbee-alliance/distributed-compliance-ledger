@@ -27,9 +27,9 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAccountRoles(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:        "account-roles [addr]",
-		Short:      "Query roles by account address",
-		Args:       cobra.ExactArgs(1),
+		Use:   "account-roles [addr]",
+		Short: "Query roles by account address",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 

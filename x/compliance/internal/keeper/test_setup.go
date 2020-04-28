@@ -73,22 +73,22 @@ func DefaultRevokedModel() types.ComplianceInfo {
 }
 
 // add n=count/2 certified and count-n revoked models {VID: 1, PID: 1..count}
-func PopulateStoreWithMixedModels(setup TestSetup, count int) int16 {
-	firstId := int16(1)
+func PopulateStoreWithMixedModels(setup TestSetup, count int) uint16 {
+	firstId := uint16(1)
 	n := count / 2
 
 	certifiedModel := DefaultCertifiedModel()
 	PopulateStoreWithModels(setup, firstId, n, certifiedModel)
 
 	revokedModel := DefaultRevokedModel()
-	PopulateStoreWithModels(setup, firstId+int16(n), count, revokedModel)
+	PopulateStoreWithModels(setup, firstId+uint16(n), count, revokedModel)
 
 	return firstId
 }
 
 // add n models {VID: 1, PID: 1..count}
-func PopulateStoreWithModels(setup TestSetup, firstId int16, count int, complianceInfo types.ComplianceInfo) int16 {
-	for i := firstId; i <= int16(count); i++ {
+func PopulateStoreWithModels(setup TestSetup, firstId uint16, count int, complianceInfo types.ComplianceInfo) uint16 {
+	for i := firstId; i <= uint16(count); i++ {
 		// add model {VID: 1, PID: i}
 		complianceInfo.PID = i
 		complianceInfo.VID = i

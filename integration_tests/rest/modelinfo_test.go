@@ -17,7 +17,7 @@ import (
 	TODO: provide tests for error cases
 */
 
-func /*TestModelinfo*/Demo(t *testing.T) {
+func /*TestModelinfo*/ Demo(t *testing.T) {
 	// Get all model infos
 	inputModelInfos, _ := utils.GetModelInfos()
 

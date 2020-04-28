@@ -19,7 +19,7 @@ import (
 	TODO: provide tests for error cases
 */
 
-func /*Test*/ComplianceDemo_KeepTrackCompliance(t *testing.T) {
+func /*Test*/ ComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 
@@ -104,7 +104,7 @@ func /*Test*/ComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	require.Equal(t, complianceInfo.History[0].State, compliance.CertifiedState)
 }
 
-func /*Test*/ComplianceDemo_KeepTrackRevocation(t *testing.T) {
+func /*Test*/ ComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 

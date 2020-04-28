@@ -25,7 +25,7 @@ const (
 	annaAccount  = "anna"
 )
 
-func /*Test*/PkiDemo(t *testing.T) {
+func /*Test*/ PkiDemo(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo, _ := utils.GetKeyInfo(jackAccount)
 

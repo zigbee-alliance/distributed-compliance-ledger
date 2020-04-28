@@ -87,7 +87,7 @@ func (setup TestSetup) Administrator(address sdk.AccAddress) sdk.AccAddress {
 	return address
 }
 
-func TestMsgAddTestingResult(signer sdk.AccAddress, vid int16, pid int16) MsgAddTestingResult {
+func TestMsgAddTestingResult(signer sdk.AccAddress, vid uint16, pid uint16) MsgAddTestingResult {
 	return MsgAddTestingResult{
 		VID:        vid,
 		PID:        pid,

@@ -5,10 +5,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+/*
+	Model Info stored in KVStore
+*/
 type ModelInfo struct {
-	VID                      int16          `json:"vid"`
-	PID                      int16          `json:"pid"`
-	CID                      int16          `json:"cid,omitempty"`
+	VID                      uint16         `json:"vid"`
+	PID                      uint16         `json:"pid"`
+	CID                      uint16         `json:"cid,omitempty"`
 	Name                     string         `json:"name"`
 	Owner                    sdk.AccAddress `json:"owner"`
 	Description              string         `json:"description"`
@@ -19,7 +22,7 @@ type ModelInfo struct {
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 }
 
-func NewModelInfo(vid int16, pid int16, cid int16, name string, owner sdk.AccAddress,
+func NewModelInfo(vid uint16, pid uint16, cid uint16, name string, owner sdk.AccAddress,
 	description string, sku string, firmwareVersion string, hardwareVersion string, custom string,
 	tisOrTrpTestingCompleted bool) ModelInfo {
 	return ModelInfo{
@@ -47,11 +50,11 @@ func (d ModelInfo) String() string {
 }
 
 type VendorProducts struct {
-	VID      int16     `json:"vid"`
+	VID      uint16    `json:"vid"`
 	Products []Product `json:"products"`
 }
 
-func NewVendorProducts(vid int16) VendorProducts {
+func NewVendorProducts(vid uint16) VendorProducts {
 	return VendorProducts{
 		VID:      vid,
 		Products: []Product{},
@@ -62,7 +65,7 @@ func (d *VendorProducts) AddVendorProduct(pid Product) {
 	d.Products = append(d.Products, pid)
 }
 
-func (d *VendorProducts) RemoveVendorProduct(pid int16) {
+func (d *VendorProducts) RemoveVendorProduct(pid uint16) {
 	for i, value := range d.Products {
 		if pid == value.PID {
 			d.Products = append(d.Products[:i], d.Products[i+1:]...)
@@ -85,7 +88,7 @@ func (d VendorProducts) String() string {
 }
 
 type Product struct {
-	PID   int16          `json:"pid"`
+	PID   uint16         `json:"pid"`
 	Name  string         `json:"name"`
 	Owner sdk.AccAddress `json:"owner"`
 	SKU   string         `json:"sku"`

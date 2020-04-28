@@ -8,7 +8,7 @@ import (
 const (
 	Codespace sdk.CodespaceType = ModuleName
 
-	CodeComplianceInfoDoesNotExist    sdk.CodeType = 301
+	CodeComplianceInfoDoesNotExist sdk.CodeType = 301
 )
 
 func ErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}) sdk.Error {

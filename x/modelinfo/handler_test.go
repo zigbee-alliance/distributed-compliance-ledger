@@ -2,9 +2,9 @@ package modelinfo
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -92,7 +92,7 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 	receivedModelInfo := queryModelInfo(setup, test_constants.VID, test_constants.PID)
 
 	// check
-	require.Equal(t, receivedModelInfo.CID, int16(0))
+	require.Equal(t, receivedModelInfo.CID, uint16(0))
 	require.Equal(t, receivedModelInfo.Custom, "")
 }
 
@@ -130,7 +130,7 @@ func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	require.Equal(t, receivedModelInfo.CID, msgAddModelInfo.CID)
 }
 
-func queryModelInfo(setup TestSetup, vid int16, pid int16) types.ModelInfo {
+func queryModelInfo(setup TestSetup, vid uint16, pid uint16) types.ModelInfo {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{keeper.QueryModel, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid)},

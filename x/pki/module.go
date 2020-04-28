@@ -66,8 +66,8 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 type AppModule struct {
 	AppModuleBasic
-	keeper          Keeper
-	authzKeeper     authz.Keeper
+	keeper      Keeper
+	authzKeeper authz.Keeper
 }
 
 func NewAppModule(keeper Keeper, authzKeeper authz.Keeper) AppModule {

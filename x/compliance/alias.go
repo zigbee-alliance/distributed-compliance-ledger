@@ -12,15 +12,15 @@ const (
 )
 
 var (
-	NewKeeper          = keeper.NewKeeper
-	NewQuerier         = keeper.NewQuerier
-	NewMsgCertifyModel = types.NewMsgCertifyModel
-	NewMsgRevokeModel  = types.NewMsgRevokeModel
-	ModuleCdc          = types.ModuleCdc
-	RegisterCodec      = types.RegisterCodec
-	CertifiedState     = types.Certified
-	RevokedState       = types.Revoked
-	ZbCertificationType       = types.ZbCertificationType
+	NewKeeper           = keeper.NewKeeper
+	NewQuerier          = keeper.NewQuerier
+	NewMsgCertifyModel  = types.NewMsgCertifyModel
+	NewMsgRevokeModel   = types.NewMsgRevokeModel
+	ModuleCdc           = types.ModuleCdc
+	RegisterCodec       = types.RegisterCodec
+	CertifiedState      = types.Certified
+	RevokedState        = types.Revoked
+	ZbCertificationType = types.ZbCertificationType
 )
 
 type (

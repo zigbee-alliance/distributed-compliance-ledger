@@ -109,7 +109,7 @@ func TestHandler_CertifyModelTwice(t *testing.T) {
 func TestHandler_CertifyDifferentModels(t *testing.T) {
 	setup := Setup()
 
-	for i := int16(1); i < int16(5); i++ {
+	for i := uint16(1); i < uint16(5); i++ {
 		// add model amd testing result
 		vid, pid := addModel(setup, i, i)
 		addTestingResult(setup, vid, pid)
@@ -250,7 +250,7 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 func TestHandler_RevokeDifferentModels(t *testing.T) {
 	setup := Setup()
 
-	for i := int16(1); i < int16(5); i++ {
+	for i := uint16(1); i < uint16(5); i++ {
 		// revoke model
 		revokedModelMsg := msgRevokedModel(setup.CertificationCenter, constants.VID, constants.PID)
 		result := setup.Handler(setup.Ctx, revokedModelMsg)
@@ -377,7 +377,7 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 }
 
-func queryComplianceInfo(setup TestSetup, vid int16, pid int16) (types.ComplianceInfo, sdk.Error) {
+func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
 		[]string{keeper.QueryComplianceInfo, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
@@ -393,15 +393,15 @@ func queryComplianceInfo(setup TestSetup, vid int16, pid int16) (types.Complianc
 	return model, nil
 }
 
-func queryCertifiedModel(setup TestSetup, vid int16, pid int16) (bool, sdk.Error) {
+func queryCertifiedModel(setup TestSetup, vid uint16, pid uint16) (bool, sdk.Error) {
 	return queryComplianceInfoInState(setup, vid, pid, keeper.QueryCertifiedModel)
 }
 
-func queryRevokedModel(setup TestSetup, vid int16, pid int16) (bool, sdk.Error) {
+func queryRevokedModel(setup TestSetup, vid uint16, pid uint16) (bool, sdk.Error) {
 	return queryComplianceInfoInState(setup, vid, pid, keeper.QueryRevokedModel)
 }
 
-func queryComplianceInfoInState(setup TestSetup, vid int16, pid int16, state string) (bool, sdk.Error) {
+func queryComplianceInfoInState(setup TestSetup, vid uint16, pid uint16, state string) (bool, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
 		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
@@ -417,7 +417,7 @@ func queryComplianceInfoInState(setup TestSetup, vid int16, pid int16, state str
 	return model.Value, nil
 }
 
-func addModel(setup TestSetup, vid int16, pid int16) (int16, int16) {
+func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	modelInfo := modelinfo.ModelInfo{
 		VID:                      vid,
 		PID:                      pid,
@@ -436,7 +436,7 @@ func addModel(setup TestSetup, vid int16, pid int16) (int16, int16) {
 	return vid, pid
 }
 
-func addTestingResult(setup TestSetup, vid int16, pid int16) (int16, int16) {
+func addTestingResult(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	testingResult := compliancetest.TestingResult{
 		VID:        vid,
 		PID:        pid,
@@ -448,7 +448,7 @@ func addTestingResult(setup TestSetup, vid int16, pid int16) (int16, int16) {
 	return vid, pid
 }
 
-func msgCertifyModel(signer sdk.AccAddress, vid int16, pid int16) MsgCertifyModel {
+func msgCertifyModel(signer sdk.AccAddress, vid uint16, pid uint16) MsgCertifyModel {
 	return MsgCertifyModel{
 		VID:               vid,
 		PID:               pid,
@@ -458,7 +458,7 @@ func msgCertifyModel(signer sdk.AccAddress, vid int16, pid int16) MsgCertifyMode
 	}
 }
 
-func msgRevokedModel(signer sdk.AccAddress, vid int16, pid int16) MsgRevokeModel {
+func msgRevokedModel(signer sdk.AccAddress, vid uint16, pid uint16) MsgRevokeModel {
 	return MsgRevokeModel{
 		VID:               vid,
 		PID:               pid,

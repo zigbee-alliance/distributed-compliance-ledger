@@ -55,7 +55,7 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 	// check if certificate with Issuer/Serial Number combination already exists
 	if keeper.IsCertificateExists(ctx, certificate.Issuer, certificate.SerialNumber) {
 		return sdk.NewError(types.Codespace, types.CodeCertificateAlreadyExists,
-			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger",  certificate.Issuer, certificate.SerialNumber)).Result()
+			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger", certificate.Issuer, certificate.SerialNumber)).Result()
 	}
 
 	// Get list of certificates for Subject / Subject Key Id combination
@@ -168,7 +168,7 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 	// check if certificate with Issuer/Serial Number combination already exists
 	if keeper.IsCertificateExists(ctx, certificate.Issuer, certificate.SerialNumber) {
 		return sdk.NewError(types.Codespace, types.CodeCertificateAlreadyExists,
-			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger",  certificate.Issuer, certificate.SerialNumber)).Result()
+			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger", certificate.Issuer, certificate.SerialNumber)).Result()
 	}
 
 	// Get list of certificates for Subject / Subject Key Id combination

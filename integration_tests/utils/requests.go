@@ -123,7 +123,7 @@ func BroadcastMessage(message interface{}) ([]byte, error) {
 	return SendPostRequest(uri, body, "", "")
 }
 
-func GetModelInfo(vid int16, pid int16) (modelinfo.ModelInfo, error) {
+func GetModelInfo(vid uint16, pid uint16) (modelinfo.ModelInfo, error) {
 	println(fmt.Sprintf("Get Model Info with VID:%v PID:%v", vid, pid))
 
 	uri := fmt.Sprintf("%s/%s/%v/%v", modelinfo.RouterKey, "models", vid, pid)
@@ -168,7 +168,7 @@ func GetVendors() (VendorItemHeadersResult, error) {
 	return result, nil
 }
 
-func GetVendorModels(vid int16) (modelinfo.VendorProducts, error) {
+func GetVendorModels(vid uint16) (modelinfo.VendorProducts, error) {
 	println("Get the list of models for VID:", vid)
 
 	uri := fmt.Sprintf("%s/%s/%v", modelinfo.RouterKey, "models", vid)
@@ -208,7 +208,7 @@ func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) (jso
 	return removeResponseWrapper(response), nil
 }
 
-func GetTestingResult(vid int16, pid int16) (compliancetest.TestingResults, error) {
+func GetTestingResult(vid uint16, pid uint16) (compliancetest.TestingResults, error) {
 	println(fmt.Sprintf("Get Testing Result for Model with VID:%v PID:%v", vid, pid))
 
 	uri := fmt.Sprintf("%s/%s/%v/%v", compliancetest.RouterKey, "testresults", vid, pid)
@@ -286,23 +286,22 @@ func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) (json.RawMessage
 	return removeResponseWrapper(response), nil
 }
 
-
-func GetComplianceInfo(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfo, error) {
+func GetComplianceInfo(vid uint16, pid uint16, certificationType compliance.CertificationType) (compliance.ComplianceInfo, error) {
 	println(fmt.Sprintf("Get Compliance Info for Model with VID:%v PID:%v", vid, pid))
 	return getComplianceInfo(vid, pid, certificationType)
 }
 
-func GetCertifiedModel(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, error) {
+func GetCertifiedModel(vid uint16, pid uint16, certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, error) {
 	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Certified", vid, pid))
 	return getComplianceInfoInState(vid, pid, certificationType, "certified")
 }
 
-func GetRevokedModel(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, error) {
+func GetRevokedModel(vid uint16, pid uint16, certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, error) {
 	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Revoked", vid, pid))
 	return getComplianceInfoInState(vid, pid, certificationType, "revoked")
 }
 
-func getComplianceInfo(vid int16, pid int16, certificationType compliance.CertificationType) (compliance.ComplianceInfo, error) {
+func getComplianceInfo(vid uint16, pid uint16, certificationType compliance.CertificationType) (compliance.ComplianceInfo, error) {
 	uri := fmt.Sprintf("%s/%v/%v/%v", compliance.RouterKey, vid, pid, certificationType)
 	response, err := SendGetRequest(uri)
 	if err != nil {
@@ -315,7 +314,7 @@ func getComplianceInfo(vid int16, pid int16, certificationType compliance.Certif
 	return result, nil
 }
 
-func getComplianceInfoInState(vid int16, pid int16, certificationType compliance.CertificationType, state string) (compliance.ComplianceInfoInState, error) {
+func getComplianceInfoInState(vid uint16, pid uint16, certificationType compliance.CertificationType, state string) (compliance.ComplianceInfoInState, error) {
 	uri := fmt.Sprintf("%s/%v/%v/%v/%v", compliance.RouterKey, state, vid, pid, certificationType)
 
 	response, err := SendGetRequest(uri)
@@ -504,8 +503,8 @@ func getProposedCertificates(uri string) (ProposedCertificatesHeadersResult, err
 
 func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 	return modelinfo.NewMsgAddModelInfo(
-		int16(RandInt()),
-		int16(RandInt()),
+		uint16(RandInt()),
+		uint16(RandInt()),
 		constants.CID,
 		RandString(),
 		RandString(),
@@ -518,7 +517,7 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 	)
 }
 
-func NewMsgAddTestingResult(vid int16, pid int16, owner sdk.AccAddress) compliancetest.MsgAddTestingResult {
+func NewMsgAddTestingResult(vid uint16, pid uint16, owner sdk.AccAddress) compliancetest.MsgAddTestingResult {
 	return compliancetest.NewMsgAddTestingResult(
 		vid,
 		pid,
