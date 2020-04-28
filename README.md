@@ -291,9 +291,9 @@ Roles:
 
 Commands:
 - `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.
-  - Administrator's signature is required. Use `--from` flag.
+  - Trustee's signature is required. Use `--from` flag.
 - `zblcli tx authz revoke-role [address] [role]` - Revoke role from specified account.
-  - Administrator's signature is required. Use `--from` flag.
+  - Trustee's signature is required. Use `--from` flag.
 
 Genesis template:
 ```json
@@ -303,7 +303,7 @@ Genesis template:
       "account_roles": [{
         "address": "cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2",
         "roles": [
-          "Administrator"
+          "Trustee"
         ]
       }]
     }

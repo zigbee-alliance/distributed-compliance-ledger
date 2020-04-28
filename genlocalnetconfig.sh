@@ -29,7 +29,7 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 
 # Update genesis transactions to set jack as admin
 jack_address=$(zblcli keys show jack -a)
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
 
 echo 'test1234' | zbld gentx --name jack
 
@@ -45,7 +45,7 @@ zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
 # Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
 
 echo 'test1234' | zbld gentx --name alice
 
@@ -61,7 +61,7 @@ zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
 # Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
 
 echo 'test1234' | zbld gentx --name bob
 
@@ -77,7 +77,7 @@ zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
 # Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Administrator"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
 
 echo 'test1234' | zbld gentx --name anna
 
