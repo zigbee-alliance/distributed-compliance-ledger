@@ -2,14 +2,10 @@
 set -e
 source integration_tests/cli/common.sh
 
-# TODO: Avoid timeouts (sleep 5). Provide a helper for submitting request with retries
-
 echo "Assign Vendor role to Jack"
 result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -a) "Vendor" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 vid=$RANDOM
 pid=$RANDOM
@@ -18,14 +14,10 @@ result=$(echo "test1234" | zblcli tx modelinfo add-model $vid $pid "Device #1" "
 check_response "$result" "\"success\": true"
 echo "$result"
 
-sleep 6
-
 echo "Assign TestHouse role to Jack"
 result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -a) "TestHouse" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Add Testing Result for Model VID: $vid PID: $pid"
 testing_result="http://first.place.com"
@@ -33,8 +25,6 @@ test_date="2020-11-24T10:00:00Z"
 result=$(echo "test1234" | zblcli tx compliancetest add-test-result $vid $pid "$testing_result" "$test_date" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created"
 result=$(zblcli query compliance certified-model $vid $pid "zb")
@@ -51,16 +41,12 @@ result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -
 check_response "$result" "\"success\": true"
 echo "$result"
 
-sleep 6
-
 echo "Certify Model with VID: $vid PID: $pid"
 certification_date="2020-01-01T00:00:00Z"
 certification_type="zb"
 result=$(echo "test1234" | zblcli tx compliance certify-model $vid $pid "$certification_type" "$certification_date" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid}"
 result=$(zblcli query compliance certified-model $vid $pid $certification_type)
@@ -97,8 +83,6 @@ result=$(echo "test1234" | zblcli tx compliance revoke-model $vid $pid "$certifi
 check_response "$result" "\"success\": true"
 echo "$result"
 
-sleep 6
-
 echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid}"
 result=$(zblcli query compliance compliance-info $vid $pid $certification_type)
 check_response "$result" "\"vid\": $vid"
@@ -132,8 +116,6 @@ certification_date="2020-03-03T00:00:00Z"
 result=$(echo "test1234" | zblcli tx compliance certify-model $vid $pid "$certification_type" "$certification_date" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid}"
 result=$(zblcli query compliance compliance-info $vid $pid $certification_type)

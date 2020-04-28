@@ -2,8 +2,6 @@
 set -e
 source integration_tests/cli/common.sh
 
-# TODO: Avoid timeouts (sleep 5). Provide a helper for submitting request with retries
-
 echo "Get key info for Jack"
 result=$(zblcli keys show jack)
 check_response "$result" "\"name\": \"jack\""
@@ -19,8 +17,6 @@ result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -
 check_response "$result" "\"success\": true"
 echo "$result"
 
-sleep 5
-
 vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
@@ -28,8 +24,6 @@ echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | zblcli tx modelinfo add-model $vid $pid "$name" "Device Description" "SKU12FS" "1.0" "2.0" true --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 5
 
 echo "Get Model with VID: $vid PID: $pid"
 result=$(zblcli query modelinfo model $vid $pid)
@@ -59,8 +53,6 @@ description="New Device Description"
 result=$(echo "test1234" | zblcli tx modelinfo update-model $vid $pid true --from jack --yes --description "$description")
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 5
 
 echo "Get Model with VID: ${vid} PID: ${pid}"
 result=$(zblcli query modelinfo model $vid $pid)

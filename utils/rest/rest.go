@@ -232,7 +232,6 @@ func (ctx RestContext) SignMessage(chainId string, name string, passphrase strin
 }
 
 func (ctx RestContext) BroadcastMessage(message []byte) ([]byte, error) {
-	ctx.context.BroadcastMode = "block"
 	res, err := ctx.context.BroadcastTx(message)
 	if err != nil {
 		return nil, err
