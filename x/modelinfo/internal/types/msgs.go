@@ -52,19 +52,30 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
 
-	if len(m.Name) == 0 ||
-		len(m.Description) == 0 ||
-		len(m.SKU) == 0 ||
-		len(m.FirmwareVersion) == 0 ||
-		len(m.HardwareVersion) == 0 {
-		return sdk.ErrUnknownRequest("Name, Description, SKU, FirmwareVersion and HardwareVersion  " +
-			"cannot be empty")
+	if len(m.Name) == 0 {
+		return sdk.ErrUnknownRequest("Name cannot be empty")
+	}
+
+	if len(m.Description) == 0 {
+		return sdk.ErrUnknownRequest("Description cannot be empty")
+	}
+
+	if len(m.SKU) == 0 {
+		return sdk.ErrUnknownRequest("SKU cannot be empty")
+	}
+
+	if len(m.FirmwareVersion) == 0 {
+		return sdk.ErrUnknownRequest("FirmwareVersion cannot be empty")
+	}
+
+	if len(m.HardwareVersion) == 0 {
+		return sdk.ErrUnknownRequest("HardwareVersion cannot be empty")
 	}
 
 	return nil
@@ -115,10 +126,10 @@ func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
 	return nil
 }
@@ -159,10 +170,10 @@ func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
 
 	return nil

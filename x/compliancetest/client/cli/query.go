@@ -2,6 +2,7 @@ package cli
 
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -32,8 +33,15 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vid := args[0]
-			pid := args[1]
+			vid, err_ := conversions.ParseVID(args[0])
+			if err_ != nil {
+				return err_
+			}
+
+			pid, err_ := conversions.ParsePID(args[1])
+			if err_ != nil {
+				return err_
+			}
 
 			res, height, err := cliCtx.QueryStore(keeper.TestingResultId(vid, pid), queryRoute)
 			if err != nil || res == nil {

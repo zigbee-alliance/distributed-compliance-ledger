@@ -43,10 +43,10 @@ func (m MsgCertifyModel) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
 
 	if m.CertificationDate.IsZero() {
@@ -103,10 +103,10 @@ func (m MsgRevokeModel) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be not zero 16-bit integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
 
 	if m.RevocationDate.IsZero() {

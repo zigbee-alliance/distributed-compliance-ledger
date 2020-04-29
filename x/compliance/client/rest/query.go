@@ -64,7 +64,7 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 		isInState.Value = complianceInfo.State == state
 	}
 	if err != nil {
-		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
+		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
 		return
 	}
 
@@ -81,7 +81,7 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 
 	res, height, err := restCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), storeName)
 	if err != nil || res == nil {
-		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid).Error())
+		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
 		return
 	}
 

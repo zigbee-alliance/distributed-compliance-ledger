@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
@@ -130,13 +131,21 @@ func GetCmdGetAllRevokedModels(queryRoute string, cdc *codec.Codec) *cobra.Comma
 func getComplianceInfo(queryRoute string, cdc *codec.Codec, args []string) error {
 	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-	vid := args[0]
-	pid := args[1]
+	vid, err_ := conversions.ParseVID(args[0])
+	if err_ != nil {
+		return err_
+	}
+
+	pid, err_ := conversions.ParsePID(args[1])
+	if err_ != nil {
+		return err_
+	}
+
 	certificationType := types.CertificationType(args[2])
 
 	res, height, err := cliCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), queryRoute)
 	if err != nil || res == nil {
-		return types.ErrComplianceInfoDoesNotExist(vid, pid)
+		return types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
 	}
 
 	var complianceInfo types.ComplianceInfo
@@ -148,8 +157,16 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec, args []string) error
 func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, args []string, state types.ComplianceState) error {
 	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-	vid := args[0]
-	pid := args[1]
+	vid, err_ := conversions.ParseVID(args[0])
+	if err_ != nil {
+		return err_
+	}
+
+	pid, err_ := conversions.ParsePID(args[1])
+	if err_ != nil {
+		return err_
+	}
+
 	certificationType := types.CertificationType(args[2])
 
 	isInState := types.ComplianceInfoInState{Value: false}
@@ -162,7 +179,7 @@ func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, args []string
 		isInState.Value = complianceInfo.State == state
 	}
 	if err != nil {
-		return types.ErrComplianceInfoDoesNotExist(vid, pid)
+		return types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
 	}
 
 	return cliCtx.EncodeAndPrintWithHeight(isInState, height)
