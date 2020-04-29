@@ -19,7 +19,7 @@ import (
 	TODO: provide tests for error cases
 */
 
-func /*TestModelinfo*/ Demo(t *testing.T) {
+func TestModelinfoDemo(t *testing.T) {
 	// Get all model infos
 	inputModelInfos, _ := utils.GetModelInfos()
 
@@ -51,7 +51,7 @@ func /*TestModelinfo*/ Demo(t *testing.T) {
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
 	secondModelInfo.VID = VID // Set same Vendor as for the first model
-	_, _ = utils.PublishModelInfo(secondModelInfo)
+	_, _ = utils.PublishModelInfo(secondModelInfo, jackKeyInfo)
 
 	// Check model is created
 	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
@@ -77,28 +77,32 @@ func /*TestModelinfo*/ Demo(t *testing.T) {
 /* Error cases */
 
 func Test_AddModelinfo_ByNonVendor(t *testing.T) {
-	annaKeyInfo, _ := utils.GetKeyInfo(test_constants.AnnaAccount)
+	// register new account
+	testAccount, _ := utils.RegisterNewAccount()
 
-	modelInfo := utils.NewMsgAddModelInfo(annaKeyInfo.Address)
-
-	res, _ := utils.SignAndBroadcastMessage(annaKeyInfo, modelInfo)
+	// try to publish model info
+	modelInfo := utils.NewMsgAddModelInfo(testAccount.Address)
+	res, _ := utils.SignAndBroadcastMessage(testAccount, modelInfo)
 	require.Equal(t, sdk.CodeUnauthorized, sdk.CodeType(res.Code))
 }
 
 func Test_AddModelinfo_Twice(t *testing.T) {
-	// Get key info for Jack
+	// register new account
+	testAccount, _ := utils.RegisterNewAccount()
+
+	// get jack account
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.JackAccount)
 
-	// Assign Vendor role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
+	// Assign Vendor role to test account
+	utils.AssignRole(testAccount.Address, jackKeyInfo, authz.Vendor)
 
+	// publish model info
 	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
-
-	res, _ := utils.PublishModelInfo(modelInfo)
+	res, _ := utils.PublishModelInfo(modelInfo, jackKeyInfo)
 	require.Equal(t, sdk.CodeOK, sdk.CodeType(res.Code))
 
 	// publish second time
-	res, _ = utils.PublishModelInfo(modelInfo)
+	res, _ = utils.PublishModelInfo(modelInfo, jackKeyInfo)
 	require.Equal(t, modelinfo.CodeModelInfoAlreadyExists, sdk.CodeType(res.Code))
 }
 

@@ -12,9 +12,10 @@ const (
 )
 
 var (
-	NewQuerier    = keeper.NewQuerier
-	ModuleCdc     = types.ModuleCdc
-	RegisterCodec = types.RegisterCodec
+	NewQuerier       = keeper.NewQuerier
+	ModuleCdc        = types.ModuleCdc
+	RegisterCodec    = types.RegisterCodec
+	NewMsgAddAccount = types.NewMsgAddAccount
 )
 
 type (

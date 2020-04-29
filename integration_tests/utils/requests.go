@@ -15,13 +15,27 @@ import (
 	modelinfoRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	pkiRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/rest"
+	keyUtil "github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/cosmos/go-bip39"
 	"net/http"
 	"time"
 )
+
+func CreateKey(accountName string) (KeyInfo, int) {
+	println("Create Key for: ", accountName)
+
+	kb, _ := keyUtil.NewKeyBaseFromDir(app.DefaultCLIHome)
+
+	entropySeed, _ := bip39.NewEntropy(256)
+	mnemonic, _ := bip39.NewMnemonic(entropySeed[:])
+	_, _ = kb.CreateAccount(accountName, mnemonic, "", constants.Passphrase, 0, 0)
+
+	return GetKeyInfo(accountName)
+}
 
 func GetKeyInfo(accountName string) (KeyInfo, int) {
 	println("Get User Key Info: ", accountName)
@@ -33,6 +47,13 @@ func GetKeyInfo(accountName string) (KeyInfo, int) {
 	parseGetReqResponse(response, &keyInfo, code)
 
 	return keyInfo, code
+}
+
+func CreateAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
+	println("Create Account for: ", keyInfo.Name)
+
+	msgAddAccount := authnext.NewMsgAddAccount(keyInfo.Address, keyInfo.PublicKey, signer.Address)
+	return SignAndBroadcastMessage(signer, msgAddAccount)
 }
 
 func GetAccountInfo(address sdk.AccAddress) (AccountInfo, int) {
@@ -47,13 +68,23 @@ func GetAccountInfo(address sdk.AccAddress) (AccountInfo, int) {
 	return result, code
 }
 
+func RegisterNewAccount() (KeyInfo, int) {
+	name := RandString()
+	println("Register new account on the ledger: ", name)
+
+	jackKeyInfo, _ := GetKeyInfo(constants.JackAccount)
+	testAccountKeyInfo, _ := CreateKey(name)
+	_, code := CreateAccount(testAccountKeyInfo, jackKeyInfo)
+	return testAccountKeyInfo, code
+}
+
 func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) (TxnResponse, int) {
 	senderAccountInfo, _ := GetAccountInfo(sender.Address) // Refresh account info
 	signResponse, _ := SignMessage(sender.Name, senderAccountInfo, message)
 	return BroadcastMessage(signResponse)
 }
 
-func PublishModelInfo(model modelinfo.MsgAddModelInfo) (TxnResponse, int) {
+func PublishModelInfo(model modelinfo.MsgAddModelInfo, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Model Info")
 
 	request := modelinfoRest.ModelInfoRequest{
@@ -76,7 +107,7 @@ func PublishModelInfo(model modelinfo.MsgAddModelInfo) (TxnResponse, int) {
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
-	response, code := SendPostRequest(uri, body, constants.AccountName, constants.Passphrase)
+	response, code := SendPostRequest(uri, body, sender.Name, constants.Passphrase)
 
 	return parseWriteTxnResponse(response, code)
 }
@@ -162,7 +193,7 @@ func GetVendorModels(vid uint16) (modelinfo.VendorProducts, int) {
 	return result, code
 }
 
-func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) (TxnResponse, int) {
+func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Testing Result")
 
 	request := compliancetestRest.TestingResultRequest{
@@ -179,7 +210,7 @@ func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult) (Txn
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", compliancetest.RouterKey, "testresults")
-	response, code := SendPostRequest(uri, body, constants.AccountName, constants.Passphrase)
+	response, code := SendPostRequest(uri, body, sender.Name, constants.Passphrase)
 
 	return parseWriteTxnResponse(response, code)
 }
@@ -208,7 +239,7 @@ func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role authz.Account
 	SignAndBroadcastMessage(sender, newMsgAssignRole)
 }
 
-func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) (TxnResponse, int) {
+func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Certified Model")
 
 	request := complianceRest.CertifyModelRequest{
@@ -225,12 +256,12 @@ func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel) (TxnResponse
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "certified", certifyModel.VID, certifyModel.PID, certifyModel.CertificationType)
-	response, code := SendPutRequest(uri, body, constants.AccountName, constants.Passphrase)
+	response, code := SendPutRequest(uri, body, sender.Name, constants.Passphrase)
 
 	return parseWriteTxnResponse(response, code)
 }
 
-func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) (TxnResponse, int) {
+func PublishRevokedModel(revokeModel compliance.MsgRevokeModel, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Revoked Model")
 
 	request := complianceRest.RevokeModelRequest{
@@ -248,7 +279,7 @@ func PublishRevokedModel(revokeModel compliance.MsgRevokeModel) (TxnResponse, in
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "revoked", revokeModel.VID, revokeModel.PID, revokeModel.CertificationType)
-	response, code := SendPutRequest(uri, body, constants.AccountName, constants.Passphrase)
+	response, code := SendPutRequest(uri, body, sender.Name, constants.Passphrase)
 
 	return parseWriteTxnResponse(response, code)
 }

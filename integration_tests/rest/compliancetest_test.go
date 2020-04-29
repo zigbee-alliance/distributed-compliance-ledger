@@ -16,23 +16,29 @@ import (
 	TODO: provide tests for error cases
 */
 
-func /*Test*/ CompliancetestDemo(t *testing.T) {
+func TestCompliancetestDemo(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 
-	//Assign Vendor role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
+	// Register new Vendor account
+	vendor, _ := utils.RegisterNewAccount()
+	utils.AssignRole(vendor.Address, jackKeyInfo, authz.Vendor)
+
+	// Register new TestHouse account
+	testHouse, _ := utils.RegisterNewAccount()
+	utils.AssignRole(testHouse.Address, jackKeyInfo, authz.TestHouse)
+
+	// Register new TestHouse account
+	secondTestHouse, _ := utils.RegisterNewAccount()
+	utils.AssignRole(secondTestHouse.Address, jackKeyInfo, authz.TestHouse)
 
 	// Publish model info
-	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
-	_, _ = utils.PublishModelInfo(modelInfo)
-
-	//Assign TestHouse role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.TestHouse)
+	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
+	_, _ = utils.PublishModelInfo(modelInfo, vendor)
 
 	// Publish first testing result using Sign and Broadcast AddTestingResult message
-	firstTestingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, jackKeyInfo.Address)
-	utils.SignAndBroadcastMessage(jackKeyInfo, firstTestingResult)
+	firstTestingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, testHouse.Address)
+	utils.SignAndBroadcastMessage(testHouse, firstTestingResult)
 
 	// Check testing result is created
 	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID)
@@ -44,12 +50,12 @@ func /*Test*/ CompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.Results[0].Owner, firstTestingResult.Signer)
 
 	// Publish second model info
-	secondModelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
-	_, _ = utils.PublishModelInfo(secondModelInfo)
+	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
+	_, _ = utils.PublishModelInfo(secondModelInfo, vendor)
 
 	// Publish second testing result using POST
-	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, jackKeyInfo.Address)
-	_, _ = utils.PublishTestingResult(secondTestingResult)
+	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, testHouse.Address)
+	_, _ = utils.PublishTestingResult(secondTestingResult, testHouse)
 
 	// Check testing result is created
 	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
@@ -59,4 +65,16 @@ func /*Test*/ CompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)
 	require.Equal(t, receivedTestingResult.Results[0].TestDate, secondTestingResult.TestDate)
 	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
+
+	// Publish new testing result for second model
+	thirdTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, secondTestHouse.Address)
+	_, _ = utils.PublishTestingResult(thirdTestingResult, secondTestHouse)
+
+	// Check testing result is created
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
+	require.Equal(t, 2, len(receivedTestingResult.Results))
+	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
+	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)
+	require.Equal(t, receivedTestingResult.Results[1].Owner, thirdTestingResult.Signer)
+	require.Equal(t, receivedTestingResult.Results[1].TestResult, thirdTestingResult.TestResult)
 }
