@@ -48,7 +48,7 @@ func (m MsgAddModelInfo) Type() string {
 
 func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if m.VID == 0 {
@@ -59,23 +59,23 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if len(m.Name) == 0 {
-		return sdk.ErrUnknownRequest("Name cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid Name: it cannot be empty")
 	}
 
 	if len(m.Description) == 0 {
-		return sdk.ErrUnknownRequest("Description cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid Description: it cannot be empty")
 	}
 
 	if len(m.SKU) == 0 {
-		return sdk.ErrUnknownRequest("SKU cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid SKU: it cannot be empty")
 	}
 
 	if len(m.FirmwareVersion) == 0 {
-		return sdk.ErrUnknownRequest("FirmwareVersion cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid FirmwareVersion: it cannot be empty")
 	}
 
 	if len(m.HardwareVersion) == 0 {
-		return sdk.ErrUnknownRequest("HardwareVersion cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid HardwareVersion: it cannot be empty")
 	}
 
 	return nil
@@ -122,7 +122,7 @@ func (m MsgUpdateModelInfo) Type() string {
 
 func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if m.VID == 0 {
@@ -166,7 +166,7 @@ func (m MsgDeleteModelInfo) Type() string {
 
 func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if m.VID == 0 {

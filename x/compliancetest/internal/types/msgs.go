@@ -35,7 +35,7 @@ func (m MsgAddTestingResult) Type() string {
 
 func (m MsgAddTestingResult) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if m.VID == 0 {

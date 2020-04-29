@@ -39,7 +39,7 @@ func (m MsgCertifyModel) Type() string {
 
 func (m MsgCertifyModel) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if m.VID == 0 {
@@ -99,7 +99,7 @@ func (m MsgRevokeModel) Type() string {
 
 func (m MsgRevokeModel) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if m.VID == 0 {

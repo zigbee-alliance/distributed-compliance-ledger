@@ -24,11 +24,11 @@ func (m MsgAssignRole) Type() string {
 
 func (m MsgAssignRole) ValidateBasic() sdk.Error {
 	if m.Address.Empty() {
-		return sdk.ErrInvalidAddress(m.Address.String())
+		return sdk.ErrInvalidAddress("Invalid Address: it cannot be empty")
 	}
 
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	return nil
@@ -62,11 +62,11 @@ func (m MsgRevokeRole) Type() string {
 
 func (m MsgRevokeRole) ValidateBasic() sdk.Error {
 	if m.Address.Empty() {
-		return sdk.ErrInvalidAddress(m.Address.String())
+		return sdk.ErrInvalidAddress("Invalid Address: it cannot be empty")
 	}
 
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	return nil

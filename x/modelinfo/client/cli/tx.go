@@ -71,7 +71,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 
 			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(args[7])
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid tis-or-trp-testing-completed: Parsing Error: \"%v\" must be boolean", args[7]))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Tis-or-trp-testing-completed: Parsing Error: \"%v\" must be boolean", args[7]))
 			}
 
 			custom, err_ := cliCtx.ReadFromFile(viper.GetString(FlagCustom))
