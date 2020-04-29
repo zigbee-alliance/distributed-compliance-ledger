@@ -85,7 +85,7 @@ func (a AppModule) Route() string {
 }
 
 func (a AppModule) NewHandler() sdk.Handler {
-	return NewHandler(a.accKeeper, a.cdc)
+	return NewHandler(a.accKeeper, a.authzKeeper, a.cdc)
 }
 
 func (a AppModule) QuerierRoute() string {

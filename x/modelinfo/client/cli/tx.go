@@ -41,7 +41,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "add-model [vid] [pid] [name] [description] [sku] [firmware-version] [hardware-version] " +
+		Use: "add-model [vid] [pid] [name] [description-string-or-path] [sku] [firmware-version] [hardware-version] " +
 			"[tis-or-trp-testing-completed]",
 		Short: "Add new Model",
 		Args:  cobra.ExactArgs(8),
@@ -60,7 +60,11 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 
 			name := args[2]
 
-			description := args[3]
+			description, err_ := cliCtx.ReadFromFile(args[3])
+			if err_ != nil {
+				return err_
+			}
+
 			sku := args[4]
 			firmwareVersion := args[5]
 			hardwareVersion := args[6]

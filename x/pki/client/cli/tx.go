@@ -6,8 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
-	"io/ioutil"
-	"os"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -37,7 +35,7 @@ func GetCmdProposeAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			cert, err := ReadCertificate(args[0])
+			cert, err := cliCtx.ReadFromFile(args[0])
 			if err != nil {
 				return err
 			}
@@ -77,7 +75,7 @@ func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			cert, err := ReadCertificate(args[0])
+			cert, err := cliCtx.ReadFromFile(args[0])
 			if err != nil {
 				return err
 			}
@@ -86,17 +84,5 @@ func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
-	}
-}
-
-func ReadCertificate(cert string) (string, error) {
-	if _, err := os.Stat(cert); err == nil { // check whether it is a path
-		bytes, err := ioutil.ReadFile(cert)
-		if err != nil {
-			return "", err
-		}
-		return string(bytes), nil
-	} else { // else return as is
-		return cert, nil
 	}
 }

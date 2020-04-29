@@ -2,8 +2,6 @@
 set -e
 source integration_tests/cli/common.sh
 
-# TODO: Avoid timeouts (sleep 5). Provide a helper for submitting request with retries
-
 root_cert_subject="CN=DST Root CA X3,O=Digital Signature Trust Co."
 root_cert_subject_key_id="C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"
 root_cert_serial_number="91299735575339953335919266965803778155"
@@ -21,22 +19,16 @@ result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -
 check_response "$result" "\"success\": true"
 echo "$result"
 
-sleep 6
-
 echo "Assign Trustee role to Alice"
 result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show alice -a) "Trustee" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Anna (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
 result=$(echo "test1234" | zblcli tx pki propose-add-x509-root-cert "$root_path" --from anna --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Request proposed Root certificate"
 result=$(zblcli query pki proposed-x509-root-cert "$root_cert_subject" "$root_cert_subject_key_id")
@@ -63,14 +55,10 @@ result=$(zblcli query pki all-x509-root-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
 
-sleep 6
-
 echo "Jack (Trustee) approve Root certificate"
 result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert "$root_cert_subject" "$root_cert_subject_key_id" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Certificate mut be still in Proposed state. Request proposed Root certificate"
 result=$(zblcli query pki proposed-x509-root-cert "$root_cert_subject" "$root_cert_subject_key_id")
@@ -90,8 +78,6 @@ result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert "$root_cert_
 check_response "$result" "\"success\": true"
 echo "$result"
 
-sleep 6
-
 echo "Certificate mut be Approved. Request Root certificate"
 result=$(zblcli query pki x509-cert "$root_cert_subject" "$root_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$root_cert_subject\""
@@ -110,15 +96,11 @@ check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
-sleep 6
-
 echo "Bob (Not Trustee) add intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
 result=$(echo "test1234" | zblcli tx pki add-x509-cert "$intermediate_path" --from bob --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Request intermediate certificate"
 result=$(zblcli query pki x509-cert "$intermediate_cert_subject" "$intermediate_cert_subject_key_id")
@@ -144,15 +126,11 @@ check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
-sleep 6
-
 echo "Alice (Trustee) add leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
 result=$(echo "test1234" | zblcli tx pki add-x509-cert "$leaf_path" --from alice --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
-
-sleep 6
 
 echo "Request leaf certificate"
 result=$(zblcli query pki x509-cert "$leaf_cert_subject" "$leaf_cert_subject_key_id")

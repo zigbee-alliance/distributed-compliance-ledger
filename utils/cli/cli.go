@@ -10,6 +10,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/viper"
+	"io/ioutil"
+	"os"
 )
 
 const (
@@ -137,4 +139,16 @@ func (ctx CliContext) PrintWithHeight(out []byte, height int64) (err error) {
 	ctx.context.Codec.MustUnmarshalJSON(out, &value)
 
 	return ctx.context.PrintOutput(NewReadResult(value, height))
+}
+
+func (ctx CliContext) ReadFromFile(target string) (string, error) {
+	if _, err := os.Stat(target); err == nil { // check whether it is a path
+		bytes, err := ioutil.ReadFile(target)
+		if err != nil {
+			return "", err
+		}
+		return string(bytes), nil
+	} else { // else return as is
+		return target, nil
+	}
 }

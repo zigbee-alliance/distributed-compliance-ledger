@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/tendermint/go-amino"
 	"os"
 	"path"
@@ -46,6 +49,11 @@ func main() {
 	rootCmd.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
 		return initConfig(rootCmd)
 	}
+
+	rootCmd.PersistentFlags().String(client.FlagBroadcastMode, settings.DefaultBroadcastMode,
+		fmt.Sprintf("Transaction broadcast mode to use (%s, %s, %s)", flags.BroadcastBlock, flags.BroadcastSync, flags.BroadcastAsync))
+
+	viper.SetDefault(client.FlagBroadcastMode, settings.DefaultBroadcastMode)
 
 	// Construct Root Command
 	rootCmd.AddCommand(

@@ -214,6 +214,8 @@ Transactions:
 
   Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" "2020-04-16T06:04:57.05Z" --from jack`
   
+  Example: `zblcli tx compliancetest add-test-result 1 1 "path/to/document" "2020-04-16T06:04:57.05Z" --from jack`
+  
 Queries:
 - `zblcli query compliancetest test-result [vid] [pid]` - Query Testing Results associated with VID/PID.
 
@@ -291,9 +293,9 @@ Roles:
 
 Commands:
 - `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.
-  - Administrator's signature is required. Use `--from` flag.
+  - Trustee's signature is required. Use `--from` flag.
 - `zblcli tx authz revoke-role [address] [role]` - Revoke role from specified account.
-  - Administrator's signature is required. Use `--from` flag.
+  - Trustee's signature is required. Use `--from` flag.
 
 Genesis template:
 ```json
@@ -303,7 +305,7 @@ Genesis template:
       "account_roles": [{
         "address": "cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2",
         "roles": [
-          "Administrator"
+          "Trustee"
         ]
       }]
     }
@@ -313,8 +315,22 @@ Genesis template:
 
 ### Authentication extensions
 
+Transactions:
+
+- `zblcli tx authnext create-account [account] [public-key]` - The command to creates a new account.
+  - Signature is required. Use `--from` flag.
+
+  Example: `zblcli tx authnext create-account cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from jack`
+
 Queries:
 
-- `zblcli query authnext account-headers --skip [x] --take [y]` - The command to list account headers with roles. Flags
+- `zblcli query authnext account [account]` - The command to query single account.
+
+  Example: `zblcli query authnext account cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+
+- `zblcli query authnext accounts --skip [x] --take [y]` - The command to list account headers with roles. Flags
  are optional.
+ 
+  Example: `zblcli query authnext accounts`
+
  

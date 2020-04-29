@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
 	"io"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/cosmos/cosmos-sdk/store/types"
 	"github.com/cosmos/cosmos-sdk/x/genaccounts"
 	genaccscli "github.com/cosmos/cosmos-sdk/x/genaccounts/client/cli"
 	"github.com/cosmos/cosmos-sdk/x/staking"
@@ -65,17 +65,14 @@ func main() {
 	}
 }
 
-// Application prune strategy: Store every state. Keep last two states
-var PruningStrategy = types.NewPruningOptions(2, 1)
-
 func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application {
-	return app.NewZbLedgerApp(logger, db, baseapp.SetPruning(PruningStrategy))
+	return app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 }
 
 func exportAppStateAndTMValidators(logger log.Logger, db dbm.DB, traceStore io.Writer,
 	height int64, forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tmtypes.GenesisValidator, error) {
 	if height != -1 {
-		nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(PruningStrategy))
+		nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 
 		err := nsApp.LoadHeight(height)
 		if err != nil {
@@ -85,7 +82,7 @@ func exportAppStateAndTMValidators(logger log.Logger, db dbm.DB, traceStore io.W
 		return nsApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
-	nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(PruningStrategy))
+	nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 
 	return nsApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }

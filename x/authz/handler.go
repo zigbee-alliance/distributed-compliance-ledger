@@ -27,7 +27,7 @@ func handleMsgAssignRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAss
 		return err.Result()
 	}
 
-	if !keeper.HasRole(ctx, msg.Signer, Administrator) {
+	if !keeper.HasRole(ctx, msg.Signer, Trustee) {
 		return sdk.ErrUnauthorized("you are not authorized to perform this action").Result()
 	}
 
@@ -41,7 +41,7 @@ func handleMsgRevokeRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRev
 		return err.Result()
 	}
 
-	if !keeper.HasRole(ctx, msg.Signer, Administrator) {
+	if !keeper.HasRole(ctx, msg.Signer, Trustee) {
 		return sdk.ErrUnauthorized("you are not authorized to perform this action").Result()
 	}
 
@@ -49,8 +49,8 @@ func handleMsgRevokeRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRev
 		return sdk.ErrUnauthorized(fmt.Sprintf("account %s doesn't have role %s", msg.Address.String(), msg.Role)).Result()
 	}
 
-	if msg.Role == Administrator && keeper.CountAccounts(ctx, Administrator) < 2 {
-		return sdk.ErrUnauthorized("there must be at least one administrator").Result()
+	if msg.Role == Trustee && keeper.CountAccounts(ctx, Trustee) < 2 {
+		return sdk.ErrUnauthorized("there must be at least one Trustee").Result()
 	}
 
 	keeper.RevokeRole(ctx, msg.Address, msg.Role)

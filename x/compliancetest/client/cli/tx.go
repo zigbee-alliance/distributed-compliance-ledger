@@ -32,7 +32,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 //nolint dupl
 func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "add-test-result [vid] [pid] [test-result] [test-date]",
+		Use:   "add-test-result [vid] [pid] [test-result-string-or-path] [test-date]",
 		Short: "Add new testing result",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -48,7 +48,10 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			testResult := args[2]
+			testResult, err_ := cliCtx.ReadFromFile(args[2])
+			if err_ != nil {
+				return err_
+			}
 
 			testDate, err_ := time.Parse(time.RFC3339, args[3])
 			if err_ != nil {
