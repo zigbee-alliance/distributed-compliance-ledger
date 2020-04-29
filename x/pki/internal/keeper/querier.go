@@ -38,10 +38,10 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-func queryAllProposedX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryAllProposedX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params types.ListCertificatesQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("Failed to parse params: %s", err))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Failed to parse request params: %s", err))
 	}
 
 	result := types.NewListProposedCertificates()
@@ -63,15 +63,12 @@ func queryAllProposedX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keepe
 		return false
 	})
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, result)
-	if err_ != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("Could not marshal result to JSON: %s", err_))
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
 
 	return res, nil
 }
 
-func queryProposedX509RootCert(ctx sdk.Context, path []string, keeper Keeper) ([]byte, sdk.Error) {
+func queryProposedX509RootCert(ctx sdk.Context, path []string, keeper Keeper) (res []byte, err sdk.Error) {
 	subject := path[0]
 	subjectKeyId := path[1]
 
@@ -81,15 +78,12 @@ func queryProposedX509RootCert(ctx sdk.Context, path []string, keeper Keeper) ([
 
 	certificate := keeper.GetProposedCertificate(ctx, subject, subjectKeyId)
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, certificate)
-	if err_ != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("Could not marshal result to JSON: %s", err_))
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, certificate)
 
 	return res, nil
 }
 
-func queryX509Cert(ctx sdk.Context, path []string, keeper Keeper) ([]byte, sdk.Error) {
+func queryX509Cert(ctx sdk.Context, path []string, keeper Keeper) (res []byte, err sdk.Error) {
 	subject := path[0]
 	subjectKeyId := path[1]
 
@@ -99,10 +93,7 @@ func queryX509Cert(ctx sdk.Context, path []string, keeper Keeper) ([]byte, sdk.E
 
 	certificate := keeper.GetCertificates(ctx, subject, subjectKeyId)
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, certificate)
-	if err_ != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("Could not marshal result to JSON: %s", err_))
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, certificate)
 
 	return res, nil
 }
@@ -120,12 +111,11 @@ func queryAllSubjectX509Certs(ctx sdk.Context, path []string, req abci.RequestQu
 	return queryX509Certs(ctx, req, keeper, "", subject)
 }
 
-func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, certificateType types.CertificateType, iteratorPrefix string) ([]byte, sdk.Error) {
+func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, certificateType types.CertificateType, iteratorPrefix string) (res []byte, err sdk.Error) {
 	var params types.ListCertificatesQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("Failed to parse params: %s", err))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Failed to parse request params: %s", err))
 	}
-
 	result := types.NewListCertificates()
 	skipped := 0
 
@@ -161,10 +151,7 @@ func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, certi
 		return false
 	})
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, result)
-	if err_ != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("Could not marshal result to JSON: %s", err_))
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
 
 	return res, nil
 }

@@ -59,7 +59,7 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 			certificationDate, err_ := time.Parse(time.RFC3339, args[3])
 			if err_ != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Invalid certification-date: Parsing Error: %v must be RFC3339 date", err_))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CertificationDate \"%v\": it must be RFC3339 date. Error: %v", args[3], err_.Error()))
 			}
 
 			reason := viper.GetString(FlagReason)
@@ -98,7 +98,7 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 			revocationDate, err_ := time.Parse(time.RFC3339, args[3])
 			if err_ != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Invalid revocation-date: Parsing Error: %v must be RFC3339 date", err_))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CertificationDate \"%v\": it must be RFC3339 date. Error: %v", args[3], err_.Error()))
 			}
 
 			reason := viper.GetString(FlagReason)

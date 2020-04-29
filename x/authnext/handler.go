@@ -36,14 +36,14 @@ func handleMsgAddAccount(ctx sdk.Context, keeper AccountKeeper, authzKeeper auth
 
 	pubKey, err := sdk.GetAccPubKeyBech32(msg.PublicKey)
 	if err != nil {
-		return sdk.ErrInternal(err.Error()).Result()
+		return sdk.ErrInvalidPubKey(err.Error()).Result()
 	}
 
 	// create account and fill key
 	account := keeper.NewAccountWithAddress(ctx, msg.Address)
 	err = account.SetPubKey(pubKey)
 	if err != nil {
-		return sdk.ErrInternal(err.Error()).Result()
+		return sdk.ErrInvalidPubKey(err.Error()).Result()
 	}
 
 	// store account

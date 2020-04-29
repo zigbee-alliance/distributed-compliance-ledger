@@ -55,7 +55,7 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 
 			testDate, err_ := time.Parse(time.RFC3339, args[3])
 			if err_ != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Parsing Error: %v. `test-date` must be RFC3339 encoded date", err_))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestDate \"%v\": it must be RFC3339 encoded date", args[3]))
 			}
 
 			msg := types.NewMsgAddTestingResult(vid, pid, testResult, testDate, cliCtx.FromAddress())

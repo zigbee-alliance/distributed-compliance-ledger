@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
@@ -58,7 +56,7 @@ func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/account/%v", queryRoute, address), nil)
 			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not get data: %s\n", err))
+				return types.ErrAccountDoesNotExist(address)
 			}
 
 			return cliCtx.PrintWithHeight(res, height)

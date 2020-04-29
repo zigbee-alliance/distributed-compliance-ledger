@@ -72,7 +72,7 @@ func TestHandler_ProposeAddX509RootCert_ForInvalidCertificate(t *testing.T) {
 	// propose x509 root certificate
 	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.StubCert, setup.Trustee)
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, types.CodeInvalidCertificate, result.Code)
 }
 
 func TestHandler_ProposeAddX509RootCert_ForNotRootCertificate(t *testing.T) {
@@ -211,7 +211,7 @@ func TestHandler_ApproveAddX509RootCert_Twice(t *testing.T) {
 
 	// approve second time
 	result = setup.Handler(setup.Ctx, approveAddX509RootCert)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, sdk.CodeUnauthorized, result.Code)
 }
 
 func TestHandler_AddX509Cert(t *testing.T) {
@@ -257,7 +257,7 @@ func TestHandler_AddX509Cert_ForInvalidCertificate(t *testing.T) {
 	// add x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(constants.StubCert, setup.Trustee)
 	result := setup.Handler(setup.Ctx, addX509Cert)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, types.CodeInvalidCertificate, result.Code)
 }
 
 func TestHandler_AddX509Cert_ForRootCertificate(t *testing.T) {
@@ -345,7 +345,7 @@ func TestHandler_AddX509Cert_ForAbsentDirectParentCert(t *testing.T) {
 	// add intermediate x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(constants.IntermediateCertPem, constants.Address1)
 	result := setup.Handler(setup.Ctx, addX509Cert)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, types.CodeInvalidCertificate, result.Code)
 }
 
 func TestHandler_AddX509Cert_ForNoRootCert(t *testing.T) {
@@ -358,7 +358,7 @@ func TestHandler_AddX509Cert_ForNoRootCert(t *testing.T) {
 	// add leaf x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(constants.LeafCertPem, setup.Trustee)
 	result := setup.Handler(setup.Ctx, addX509Cert)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, types.CodeInvalidCertificate, result.Code)
 }
 
 func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
@@ -371,7 +371,7 @@ func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
 	// add intermediate x509 certificate
 	addX509Cert := types.NewMsgAddX509Cert(constants.IntermediateCertPem, setup.Trustee)
 	result := setup.Handler(setup.Ctx, addX509Cert)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, types.CodeInvalidCertificate, result.Code)
 }
 
 func TestHandler_AddX509Cert_ChildRefersToTwoParents(t *testing.T) {

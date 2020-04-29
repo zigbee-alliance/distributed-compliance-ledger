@@ -31,10 +31,10 @@ func NewQuerier(accKeeper types.AccountKeeper, authzKeeper authz.Keeper, cdc *co
 }
 
 func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types.AccountKeeper,
-	authzKeeper authz.Keeper, cdc *codec.Codec) ([]byte, sdk.Error) {
+	authzKeeper authz.Keeper, cdc *codec.Codec) (res []byte, err sdk.Error) {
 	var params types.QueryAccountHeadersParams
 	if err := cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
 	result := types.QueryAccountHeadersResult{
@@ -63,28 +63,22 @@ func queryAccountHeaders(ctx sdk.Context, req abci.RequestQuery, accKeeper types
 		return true
 	})
 
-	res, err := codec.MarshalJSONIndent(cdc, result)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(cdc, result)
 
 	return res, nil
 }
 
 func queryAccount(ctx sdk.Context, req abci.RequestQuery, accKeeper types.AccountKeeper, authzKeeper authz.Keeper,
-	cdc *codec.Codec, path []string) ([]byte, sdk.Error) {
-	accAddr, err := sdk.AccAddressFromBech32(path[0])
-	if err != nil {
-		panic("could not marshal result to JSON")
+	cdc *codec.Codec, path []string) (res []byte, err sdk.Error) {
+	accAddr, err_ := sdk.AccAddressFromBech32(path[0])
+	if err_ != nil {
+		return nil, sdk.ErrInvalidAddress(err_.Error())
 	}
 
 	acc := accKeeper.GetAccount(ctx, accAddr)
 	header := ToAccountHeader(ctx, authzKeeper, acc)
 
-	res, err := codec.MarshalJSONIndent(cdc, header)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(cdc, header)
 
 	return res, nil
 }

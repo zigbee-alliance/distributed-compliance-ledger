@@ -284,7 +284,7 @@ func TestHandler_RevokeCertifiedModelForRevocationDateBeforeCertificationDate(t 
 	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, vid, pid)
 	revokedModelMsg.RevocationDate = revocationDate
 	result = setup.Handler(setup.Ctx, revokedModelMsg)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, types.CodeInconsistentDates, result.Code)
 }
 
 func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *testing.T) {
@@ -307,7 +307,7 @@ func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *
 	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid)
 	certifyModelMsg.CertificationDate = certificationDate
 	result = setup.Handler(setup.Ctx, certifyModelMsg)
-	require.Equal(t, sdk.CodeInternal, result.Code)
+	require.Equal(t, types.CodeInconsistentDates, result.Code)
 }
 
 func TestHandler_CertifyRevokedModel(t *testing.T) {

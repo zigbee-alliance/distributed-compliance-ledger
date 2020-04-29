@@ -23,7 +23,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-func queryTestingResult(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryTestingResult(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err
@@ -40,10 +40,7 @@ func queryTestingResult(ctx sdk.Context, path []string, req abci.RequestQuery, k
 
 	testingResult := keeper.GetTestingResults(ctx, vid, pid)
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, testingResult)
-	if err_ != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, testingResult)
 
 	return res, nil
 }

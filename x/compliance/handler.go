@@ -44,7 +44,7 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 		// if state changes on `certified` check that certification_date is after revocation_date
 		if complianceInfo.State == types.Revoked {
 			if msg.CertificationDate.Before(complianceInfo.Date) {
-				return sdk.ErrInternal(
+				return types.ErrInconsistentDates(
 					fmt.Sprintf("The `certification_date`:%v must be after the current `date`:%v to certify model", msg.CertificationDate, complianceInfo.Date)).Result()
 			}
 
@@ -93,7 +93,7 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper aut
 		// if state changes on `revoked` check that revocation_date is after certification_date
 		if complianceInfo.State == types.Certified {
 			if msg.RevocationDate.Before(complianceInfo.Date) {
-				return sdk.ErrInternal(
+				return types.ErrInconsistentDates(
 					fmt.Sprintf("The `revocation_date`:%v must be after the `certification_date`:%v to revoke model", msg.RevocationDate, complianceInfo.Date)).Result()
 			}
 
