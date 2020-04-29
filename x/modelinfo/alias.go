@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	ModuleName                = types.ModuleName
-	RouterKey                 = types.RouterKey
-	StoreKey                  = types.StoreKey
-	CodeModelInfoDoesNotExist = types.CodeModelInfoDoesNotExist
+	ModuleName                 = types.ModuleName
+	RouterKey                  = types.RouterKey
+	StoreKey                   = types.StoreKey
+	CodeModelInfoDoesNotExist  = types.CodeModelInfoDoesNotExist
+	CodeModelInfoAlreadyExists = types.CodeModelInfoAlreadyExists
 )
 
 var (

@@ -18,25 +18,18 @@ import (
 	TODO: provide tests for error cases
 */
 
-const (
-	jackAccount  = "jack"
-	aliceAccount = "alice"
-	bobAccount   = "bob"
-	annaAccount  = "anna"
-)
-
 func /*Test*/ PkiDemo(t *testing.T) {
 	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(jackAccount)
+	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.JackAccount)
 
 	// Get key info for Alice
-	aliceKeyInfo, _ := utils.GetKeyInfo(aliceAccount)
+	aliceKeyInfo, _ := utils.GetKeyInfo(test_constants.AliceAccount)
 
 	// Get key info for Anna
-	annaKeyInfo, _ := utils.GetKeyInfo(annaAccount)
+	annaKeyInfo, _ := utils.GetKeyInfo(test_constants.AnnaAccount)
 
 	// Get key info for Bob
-	bobKeyInfo, _ := utils.GetKeyInfo(bobAccount)
+	bobKeyInfo, _ := utils.GetKeyInfo(test_constants.BobAccount)
 
 	// Assign Trustee role to Jack
 	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Trustee)
@@ -57,7 +50,7 @@ func /*Test*/ PkiDemo(t *testing.T) {
 		Cert:   test_constants.RootCertPem,
 		Signer: annaKeyInfo.Address,
 	}
-	_, _ = utils.ProposeAddX509RootCert(msgProposeAddX509RootCert, annaAccount, test_constants.Passphrase)
+	_, _ = utils.ProposeAddX509RootCert(msgProposeAddX509RootCert, test_constants.AnnaAccount, test_constants.Passphrase)
 
 	//Request all proposed Root certificate
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
@@ -85,7 +78,7 @@ func /*Test*/ PkiDemo(t *testing.T) {
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
 		Signer:       jackKeyInfo.Address,
 	}
-	_, _ = utils.ApproveAddX509RootCert(msgApproveAddX509RootCert, jackAccount, test_constants.Passphrase)
+	_, _ = utils.ApproveAddX509RootCert(msgApproveAddX509RootCert, test_constants.JackAccount, test_constants.Passphrase)
 
 	// Certificate mut be still in Proposed state. Request proposed Root certificate. 1 Approval received
 	proposedCertificate, _ = utils.GetProposedX509RootCert(test_constants.RootSubject, test_constants.RootSubjectKeyId)
@@ -113,7 +106,7 @@ func /*Test*/ PkiDemo(t *testing.T) {
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
 		Signer:       aliceKeyInfo.Address,
 	}
-	_, _ = utils.ApproveAddX509RootCert(secondMsgApproveAddX509RootCert, aliceAccount, test_constants.Passphrase)
+	_, _ = utils.ApproveAddX509RootCert(secondMsgApproveAddX509RootCert, test_constants.AliceAccount, test_constants.Passphrase)
 
 	// Certificate mut be Approved. Request Root certificate
 	certificate, _ := utils.GetX509Cert(test_constants.RootSubject, test_constants.RootSubjectKeyId)
@@ -142,7 +135,7 @@ func /*Test*/ PkiDemo(t *testing.T) {
 		Cert:   test_constants.IntermediateCertPem,
 		Signer: bobKeyInfo.Address,
 	}
-	_, _ = utils.AddX509Cert(msgAddX509Cert, bobAccount, test_constants.Passphrase)
+	_, _ = utils.AddX509Cert(msgAddX509Cert, test_constants.BobAccount, test_constants.Passphrase)
 
 	// Request all proposed Root certificates must be empty
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
@@ -172,7 +165,7 @@ func /*Test*/ PkiDemo(t *testing.T) {
 		Cert:   test_constants.LeafCertPem,
 		Signer: aliceKeyInfo.Address,
 	}
-	_, _ = utils.AddX509Cert(secondMsgAddX509Cert, aliceAccount, test_constants.Passphrase)
+	_, _ = utils.AddX509Cert(secondMsgAddX509Cert, test_constants.AliceAccount, test_constants.Passphrase)
 
 	// Request all proposed Root certificates must be empty
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()

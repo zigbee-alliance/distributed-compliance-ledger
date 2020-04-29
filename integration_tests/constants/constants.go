@@ -6,6 +6,10 @@ import (
 )
 
 var (
+	JackAccount                     = "jack"
+	AliceAccount                    = "alice"
+	BobAccount                      = "bob"
+	AnnaAccount                     = "anna"
 	ChainId                         = "zblchain"
 	AccountName                     = "jack"
 	Passphrase                      = "test1234"
