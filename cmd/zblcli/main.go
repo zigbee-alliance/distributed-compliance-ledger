@@ -9,9 +9,9 @@ import (
 	"path"
 
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
-	keyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/key/rest"
-	proxyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/proxy/rest"
-	txUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/tx/rest"
+	keyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/key/rest"
+	proxyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/proxy/rest"
+	txUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/keys"

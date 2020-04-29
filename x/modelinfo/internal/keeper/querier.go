@@ -34,7 +34,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err
@@ -51,18 +51,15 @@ func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Ke
 
 	modelInfo := keeper.GetModelInfo(ctx, vid, pid)
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, modelInfo)
-	if err_ != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, modelInfo)
 
 	return res, nil
 }
 
-func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
 	result := types.LisModelInfoItems{
@@ -94,18 +91,15 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]by
 		return true
 	})
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, result)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
 
 	return res, nil
 }
 
-func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
 	result := types.ListVendorItems{
@@ -133,15 +127,12 @@ func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte
 		return true
 	})
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, result)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
 
 	return res, nil
 }
 
-func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err
@@ -153,10 +144,7 @@ func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, ke
 
 	vendorProducts := keeper.GetVendorProducts(ctx, vid)
 
-	res, err_ := codec.MarshalJSONIndent(keeper.cdc, vendorProducts)
-	if err_ != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, vendorProducts)
 
 	return res, nil
 }

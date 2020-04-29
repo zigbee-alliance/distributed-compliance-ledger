@@ -6,19 +6,19 @@ import (
 )
 
 const (
-	ModuleName = types.ModuleName
-	RouterKey  = types.RouterKey
-	StoreKey   = types.StoreKey
+	ModuleName                    = types.ModuleName
+	RouterKey                     = types.RouterKey
+	StoreKey                      = types.StoreKey
 	CodeTestingResultDoesNotExist = types.CodeTestingResultsDoNotExist
 )
 
 var (
-	NewKeeper                     = keeper.NewKeeper
-	NewQuerier                    = keeper.NewQuerier
-	NewMsgAddTestingResult        = types.NewMsgAddTestingResult
-	ModuleCdc                     = types.ModuleCdc
-	RegisterCodec                 = types.RegisterCodec
-	ErrTestingResultDoesNotExist  = types.ErrTestingResultDoesNotExist
+	NewKeeper                    = keeper.NewKeeper
+	NewQuerier                   = keeper.NewQuerier
+	NewMsgAddTestingResult       = types.NewMsgAddTestingResult
+	ModuleCdc                    = types.ModuleCdc
+	RegisterCodec                = types.RegisterCodec
+	ErrTestingResultDoesNotExist = types.ErrTestingResultDoesNotExist
 )
 
 type (

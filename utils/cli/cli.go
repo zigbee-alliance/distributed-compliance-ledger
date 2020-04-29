@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	FlagPreviousHeight = "prev-height"
+	FlagPreviousHeight      = "prev-height"
 	FlagPreviousHeightUsage = "Query data from previous height to avoid delay linked to state proof verification"
 )
 

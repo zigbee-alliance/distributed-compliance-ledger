@@ -15,16 +15,24 @@ import (
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
-	TODO: prepare environment automatically
 	TODO: provide tests for error cases
 */
 
-func /*Test*/ComplianceDemo_KeepTrackCompliance(t *testing.T) {
-	// Get key info for Jack
+func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
+	// Get key info for Jack (Trustee)
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 
-	// Assign Vendor role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
+	// Register new Vendor account
+	vendor, _ := utils.RegisterNewAccount()
+	utils.AssignRole(vendor.Address, jackKeyInfo, authz.Vendor)
+
+	// Register new TestHouse account
+	testHouse, _ := utils.RegisterNewAccount()
+	utils.AssignRole(testHouse.Address, jackKeyInfo, authz.TestHouse)
+
+	// Register new ZBCertificationCenter account
+	zb, _ := utils.RegisterNewAccount()
+	utils.AssignRole(zb.Address, jackKeyInfo, authz.ZBCertificationCenter)
 
 	// Get all compliance infos
 	inputComplianceInfos, _ := utils.GetComplianceInfos()
@@ -36,8 +44,8 @@ func /*Test*/ComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	inputRevokedModels, _ := utils.GetAllRevokedModels()
 
 	// Publish model info
-	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
-	_, _ = utils.PublishModelInfo(modelInfo)
+	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
+	_, _ = utils.PublishModelInfo(modelInfo, vendor)
 
 	// Check if model either certified or revoked before Compliance record was created
 	modelIsCertified, _ := utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, compliance.ZbCertificationType)
@@ -46,20 +54,14 @@ func /*Test*/ComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	modelIsRevoked, _ := utils.GetRevokedModel(modelInfo.VID, modelInfo.PID, compliance.ZbCertificationType)
 	require.False(t, modelIsRevoked.Value)
 
-	// Assign TestHouse role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.TestHouse)
-
 	// Publish testing result
-	testingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, jackKeyInfo.Address)
-	_, _ = utils.PublishTestingResult(testingResult)
-
-	// Assign ZBCertificationCenter role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.ZBCertificationCenter)
+	testingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, testHouse.Address)
+	_, _ = utils.PublishTestingResult(testingResult, testHouse)
 
 	// Certify model
 	certifyModelMsg := compliance.NewMsgCertifyModel(modelInfo.VID, modelInfo.PID, time.Now().UTC(),
-		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, jackKeyInfo.Address)
-	_, _ = utils.PublishCertifiedModel(certifyModelMsg)
+		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, zb.Address)
+	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zb)
 
 	// Check model is certified
 	modelIsCertified, _ = utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, certifyModelMsg.CertificationType)
@@ -75,8 +77,8 @@ func /*Test*/ComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Revoke model certification
 	revocationTime := certifyModelMsg.CertificationDate.AddDate(0, 0, 1)
 	revokeModelMsg := compliance.NewMsgRevokeModel(modelInfo.VID, modelInfo.PID, revocationTime,
-		compliance.CertificationType(test_constants.CertificationType), test_constants.RevocationReason, jackKeyInfo.Address)
-	_, _ = utils.PublishRevokedModel(revokeModelMsg)
+		compliance.CertificationType(test_constants.CertificationType), test_constants.RevocationReason, zb.Address)
+	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
 
 	// Check model is revoked
 	modelIsCertified, _ = utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, revokeModelMsg.CertificationType)
@@ -104,7 +106,7 @@ func /*Test*/ComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	require.Equal(t, complianceInfo.History[0].State, compliance.CertifiedState)
 }
 
-func /*Test*/ComplianceDemo_KeepTrackRevocation(t *testing.T) {
+func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
 
@@ -114,16 +116,17 @@ func /*Test*/ComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Get all revoked models
 	inputRevokedModels, _ := utils.GetAllRevokedModels()
 
-	// Assign ZBCertificationCenter role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.ZBCertificationCenter)
+	// Register new ZBCertificationCenter account
+	zb, _ := utils.RegisterNewAccount()
+	utils.AssignRole(zb.Address, jackKeyInfo, authz.ZBCertificationCenter)
 
 	vid, pid := test_constants.VID, test_constants.PID
 
 	// Revoke model
 	revocationTime := time.Now().UTC()
 	revokeModelMsg := compliance.NewMsgRevokeModel(vid, pid, revocationTime,
-		compliance.CertificationType(test_constants.CertificationType), test_constants.RevocationReason, jackKeyInfo.Address)
-	_, _ = utils.PublishRevokedModel(revokeModelMsg)
+		compliance.CertificationType(test_constants.CertificationType), test_constants.RevocationReason, zb.Address)
+	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
 
 	// Check model is revoked
 	modelIsRevoked, _ := utils.GetRevokedModel(revokeModelMsg.VID, revokeModelMsg.PID, revokeModelMsg.CertificationType)
@@ -139,8 +142,8 @@ func /*Test*/ComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Certify model
 	certificationTime := revocationTime.AddDate(0, 0, 1)
 	certifyModelMsg := compliance.NewMsgCertifyModel(vid, pid, certificationTime,
-		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, jackKeyInfo.Address)
-	_, _ = utils.PublishCertifiedModel(certifyModelMsg)
+		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, zb.Address)
+	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zb)
 
 	// Check model is certified
 	modelIsRevoked, _ = utils.GetRevokedModel(certifyModelMsg.VID, certifyModelMsg.PID, certifyModelMsg.CertificationType)

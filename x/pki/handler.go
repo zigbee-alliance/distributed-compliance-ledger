@@ -2,10 +2,10 @@ package pki
 
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/x509"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/x509"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -27,23 +27,20 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 
 func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgProposeAddX509RootCert) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// decode pem certificate
 	certificate, err := x509.DecodeX509Certificate(msg.Cert)
 	if err != nil {
-		return err.Result()
+		return types.ErrCodeInvalidCertificate(err.Data()).Result()
 	}
 
 	// verify certificate against self
 	if err := certificate.VerifyX509Certificate(certificate.Certificate); err != nil {
-		return err.Result()
+		return types.ErrCodeInvalidCertificate(err.Data()).Result()
 	}
 
 	// check if certificate is `root`
 	if !certificate.IsRootCertificate() {
-		return sdk.NewError(types.Codespace, types.CodeInappropriateCertificateType,
+		return types.ErrInappropriateCertificateType(
 			"Inappropriate Certificate Type: Passed certificate is not a root certificate so it cannot be used for root certificates proposing.").Result()
 	}
 
@@ -55,7 +52,7 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 	// check if certificate with Issuer/Serial Number combination already exists
 	if keeper.IsCertificateExists(ctx, certificate.Issuer, certificate.SerialNumber) {
 		return sdk.NewError(types.Codespace, types.CodeCertificateAlreadyExists,
-			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger",  certificate.Issuer, certificate.SerialNumber)).Result()
+			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger", certificate.Issuer, certificate.SerialNumber)).Result()
 	}
 
 	// Get list of certificates for Subject / Subject Key Id combination
@@ -94,10 +91,6 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 
 func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgApproveAddX509RootCert) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
 	// check if corresponding proposed certificate exists
 	if !keeper.IsProposedCertificatePresent(ctx, msg.Subject, msg.SubjectKeyId) {
 		return types.ErrProposedCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId).Result()
@@ -114,7 +107,7 @@ func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 
 	// check if certificate already has approval form signer
 	if pendingCertificate.HasApprovalFrom(msg.Signer) {
-		return sdk.ErrInternal(
+		return sdk.ErrUnauthorized(
 			fmt.Sprintf("Certificate associated with the subject=%v and subjectKeyId=%v combination already has approval from=%v", msg.Subject, msg.SubjectKeyId, msg.Signer)).Result()
 	}
 
@@ -150,10 +143,7 @@ func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 }
 
 func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAddX509Cert) sdk.Result {
-	if err := msg.ValidateBasic(); err != nil {
-		return err.Result()
-	}
-
+	// decode pem certificate
 	certificate, err := x509.DecodeX509Certificate(msg.Cert)
 	if err != nil {
 		return err.Result()
@@ -161,14 +151,14 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 
 	// check if certificate is NOT root
 	if certificate.IsRootCertificate() {
-		return sdk.NewError(types.Codespace, types.CodeInappropriateCertificateType,
+		return types.ErrInappropriateCertificateType(
 			"Inappropriate Certificate Type: Passed certificate is a root certificate. Please use `PROPOSE_ADD_X509_ROOT_CERT` to propose a root certificate").Result()
 	}
 
 	// check if certificate with Issuer/Serial Number combination already exists
 	if keeper.IsCertificateExists(ctx, certificate.Issuer, certificate.SerialNumber) {
 		return sdk.NewError(types.Codespace, types.CodeCertificateAlreadyExists,
-			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger",  certificate.Issuer, certificate.SerialNumber)).Result()
+			fmt.Sprintf("X509 certificate with the combination of issuer=%v, serialNumber=%v already exists on the ledger", certificate.Issuer, certificate.SerialNumber)).Result()
 	}
 
 	// Get list of certificates for Subject / Subject Key Id combination
@@ -185,8 +175,8 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 	// valid certificate chain can be build for new certificate
 	rootCertificateSubject, rootCertificateSubjectKeyId, err := VerifyCertificate(ctx, keeper, certificate)
 	if err != nil {
-		return sdk.ErrInternal(
-			fmt.Sprintf("Cannot build valid chain to root for certificate with subject=%v and subjectKeyId=%v. Error: %v", certificate.Subject, certificate.SubjectKeyId, err)).Result()
+		return types.ErrCodeInvalidCertificate(
+			fmt.Sprintf("Cannot build valid chain to root for certificate with subject=%v and subjectKeyId=%v. Error: %v", certificate.Subject, certificate.SubjectKeyId, err.Data())).Result()
 	}
 
 	// create new certificate
@@ -244,6 +234,6 @@ func VerifyCertificate(ctx sdk.Context, keeper keeper.Keeper, certificate *x509.
 		}
 	}
 
-	return "", "", sdk.ErrInternal(
-		fmt.Sprintf("Cannot build validate certificate with sibject=%v and subjectKeyId=%v", certificate.SubjectKeyId, certificate.SubjectKeyId))
+	return "", "", types.ErrCodeInvalidCertificate(
+		fmt.Sprintf("Certificate verification failed for certificate with sibject=%v and subjectKeyId=%v", certificate.SubjectKeyId, certificate.SubjectKeyId))
 }

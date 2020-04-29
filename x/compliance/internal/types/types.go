@@ -19,9 +19,12 @@ const (
 	ZbCertificationType CertificationType = "zb"
 )
 
+/*
+	Compliance info stored into KVStore
+*/
 type ComplianceInfo struct {
-	VID               int16                   `json:"vid"`
-	PID               int16                   `json:"pid"`
+	VID               uint16                  `json:"vid"`
+	PID               uint16                  `json:"pid"`
 	State             ComplianceState         `json:"state"`
 	Date              time.Time               `json:"date"` // rfc3339 encoded date
 	CertificationType CertificationType       `json:"certification_type"`
@@ -30,7 +33,7 @@ type ComplianceInfo struct {
 	History           []ComplianceHistoryItem `json:"history,omitempty"`
 }
 
-func NewCertifiedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+func NewCertifiedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
@@ -43,7 +46,7 @@ func NewCertifiedComplianceInfo(vid int16, pid int16, certificationType Certific
 	}
 }
 
-func NewRevokedComplianceInfo(vid int16, pid int16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+func NewRevokedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
@@ -80,6 +83,9 @@ func (d ComplianceInfo) String() string {
 	return string(bytes)
 }
 
+/*
+	Compliance info state changes
+*/
 type ComplianceHistoryItem struct {
 	State  ComplianceState `json:"state"`
 	Date   time.Time       `json:"date"` // rfc3339 encoded date
@@ -104,7 +110,7 @@ func (d ComplianceHistoryItem) String() string {
 }
 
 type ComplianceInfoKey struct {
-	VID               int16             `json:"vid"`
-	PID               int16             `json:"pid"`
+	VID               uint16            `json:"vid"`
+	PID               uint16            `json:"pid"`
 	CertificationType CertificationType `json:"certification_type"`
 }

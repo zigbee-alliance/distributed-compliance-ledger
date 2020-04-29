@@ -138,8 +138,8 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	require.Equal(t, count, len(receivedInfos.Items))
 
 	for i, item := range receivedInfos.Items {
-		require.Equal(t, int16(i)+firstId, item.VID)
-		require.Equal(t, int16(i)+firstId, item.PID)
+		require.Equal(t, uint16(i)+firstId, item.VID)
+		require.Equal(t, uint16(i)+firstId, item.PID)
 	}
 }
 
@@ -153,12 +153,12 @@ func TestQuerier_QueryAllModelsInState(t *testing.T) {
 	params := types.NewListQueryParams("", 0, 0)
 
 	cases := []struct {
-		firstId       int16
+		firstId       uint16
 		count         int
 		receivedInfos types.ListComplianceInfoKeyItems
 	}{
-		{firstId, count / 2, getCertifiedModels(setup, params)},                // query certified model
-		{firstId + int16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
+		{firstId, count / 2, getCertifiedModels(setup, params)},                 // query certified model
+		{firstId + uint16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
 	}
 
 	for _, tc := range cases {
@@ -167,8 +167,8 @@ func TestQuerier_QueryAllModelsInState(t *testing.T) {
 		require.Equal(t, tc.count, len(tc.receivedInfos.Items))
 
 		for i, item := range tc.receivedInfos.Items {
-			require.Equal(t, int16(i)+tc.firstId, item.VID)
-			require.Equal(t, int16(i)+tc.firstId, item.PID)
+			require.Equal(t, uint16(i)+tc.firstId, item.VID)
+			require.Equal(t, uint16(i)+tc.firstId, item.PID)
 		}
 	}
 }
@@ -193,8 +193,8 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	require.Equal(t, take, len(receivedInfos.Items))
 
 	for i, item := range receivedInfos.Items {
-		require.Equal(t, int16(skip)+int16(i)+firstId, item.VID)
-		require.Equal(t, int16(skip)+int16(i)+firstId, item.PID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.VID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.PID)
 	}
 }
 
@@ -211,12 +211,12 @@ func TestQuerier_QueryAllModelsInStateWithPaginationHeaders(t *testing.T) {
 	params := types.NewListQueryParams("", skip, take)
 
 	cases := []struct {
-		firstId       int16
+		firstId       uint16
 		count         int
 		receivedInfos types.ListComplianceInfoKeyItems
 	}{
-		{firstId, count / 2, getCertifiedModels(setup, params)},                // query certified model
-		{firstId + int16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
+		{firstId, count / 2, getCertifiedModels(setup, params)},                 // query certified model
+		{firstId + uint16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
 	}
 
 	for _, tc := range cases {
@@ -225,21 +225,21 @@ func TestQuerier_QueryAllModelsInStateWithPaginationHeaders(t *testing.T) {
 		require.Equal(t, take, len(tc.receivedInfos.Items))
 
 		for i, item := range tc.receivedInfos.Items {
-			require.Equal(t, int16(skip)+int16(i)+tc.firstId, item.VID)
-			require.Equal(t, int16(skip)+int16(i)+tc.firstId, item.PID)
+			require.Equal(t, uint16(skip)+uint16(i)+tc.firstId, item.VID)
+			require.Equal(t, uint16(skip)+uint16(i)+tc.firstId, item.PID)
 		}
 	}
 }
 
-func getComplianceInfo(setup TestSetup, vid int16, pid int16) (types.ComplianceInfo, sdk.Error) {
+func getComplianceInfo(setup TestSetup, vid uint16, pid uint16) (types.ComplianceInfo, sdk.Error) {
 	return getSingle(setup, vid, pid, QueryComplianceInfo)
 }
 
-func getCertifiedModel(setup TestSetup, vid int16, pid int16) (types.ComplianceInfoInState, sdk.Error) {
+func getCertifiedModel(setup TestSetup, vid uint16, pid uint16) (types.ComplianceInfoInState, sdk.Error) {
 	return getSingleInState(setup, vid, pid, QueryCertifiedModel)
 }
 
-func getRevokedModel(setup TestSetup, vid int16, pid int16) (types.ComplianceInfoInState, sdk.Error) {
+func getRevokedModel(setup TestSetup, vid uint16, pid uint16) (types.ComplianceInfoInState, sdk.Error) {
 	return getSingleInState(setup, vid, pid, QueryRevokedModel)
 }
 
@@ -255,7 +255,7 @@ func getRevokedModels(setup TestSetup, params types.ListQueryParams) types.ListC
 	return getAllInState(setup, params, QueryAllRevokedModels)
 }
 
-func getSingle(setup TestSetup, vid int16, pid int16, state string) (types.ComplianceInfo, sdk.Error) {
+func getSingle(setup TestSetup, vid uint16, pid uint16, state string) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
 		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
@@ -272,7 +272,7 @@ func getSingle(setup TestSetup, vid int16, pid int16, state string) (types.Compl
 	return receivedComplianceInfo, nil
 }
 
-func getSingleInState(setup TestSetup, vid int16, pid int16, state string) (types.ComplianceInfoInState, sdk.Error) {
+func getSingleInState(setup TestSetup, vid uint16, pid uint16, state string) (types.ComplianceInfoInState, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
 		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},

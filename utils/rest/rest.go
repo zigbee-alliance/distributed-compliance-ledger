@@ -107,7 +107,7 @@ func (ctx RestContext) WithSigner() (RestContext, error) {
 func (ctx RestContext) WithBaseRequest(baseReq rest.BaseReq) (RestContext, error) {
 	ctx.baseReq = baseReq.Sanitize()
 	if !baseReq.ValidateBasic(ctx.responseWriter) {
-		return RestContext{}, sdk.ErrInternal("Base request validation failed")
+		return RestContext{}, sdk.ErrUnknownRequest("Base request validation failed")
 	}
 	return ctx, nil
 }

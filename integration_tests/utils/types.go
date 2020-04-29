@@ -53,3 +53,9 @@ type CertificatesHeadersResult struct {
 	Total string            `json:"total"`
 	Items []pki.Certificate `json:"items"`
 }
+
+type TxnResponse struct {
+	Height    string `json:"height"`
+	TxHash    string `json:"txhash"`
+	Code      int    `json:"code"`
+}

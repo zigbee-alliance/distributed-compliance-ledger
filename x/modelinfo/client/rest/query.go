@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
@@ -27,8 +28,18 @@ func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
 		vars := restCtx.Variables()
-		vid := vars[vid]
-		pid := vars[pid]
+
+		vid, err_ := conversions.ParseVID(vars[vid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+			return
+		}
+
+		pid, err_ := conversions.ParsePID(vars[pid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+			return
+		}
 
 		res, height, err := restCtx.QueryStore(keeper.ModelInfoId(vid, pid), storeName)
 		if err != nil || res == nil {
@@ -61,7 +72,12 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
 		vars := restCtx.Variables()
-		vid := vars[vid]
+
+		vid, err_ := conversions.ParseVID(vars[vid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+			return
+		}
 
 		res, height, err := restCtx.QueryStore(keeper.VendorProductsId(vid), storeName)
 		if err != nil || res == nil {

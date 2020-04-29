@@ -4,7 +4,10 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+	"net/http"
 	"testing"
 )
 
@@ -13,11 +16,10 @@ import (
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
 		* run RPC service with `zblcli rest-server --chain-id zblchain`
 
-	TODO: prepare environment automatically
 	TODO: provide tests for error cases
 */
 
-func /*TestModelinfo*/Demo(t *testing.T) {
+func TestModelinfoDemo(t *testing.T) {
 	// Get all model infos
 	inputModelInfos, _ := utils.GetModelInfos()
 
@@ -49,7 +51,7 @@ func /*TestModelinfo*/Demo(t *testing.T) {
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
 	secondModelInfo.VID = VID // Set same Vendor as for the first model
-	_, _ = utils.PublishModelInfo(secondModelInfo)
+	_, _ = utils.PublishModelInfo(secondModelInfo, jackKeyInfo)
 
 	// Check model is created
 	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
@@ -70,4 +72,51 @@ func /*TestModelinfo*/Demo(t *testing.T) {
 	require.Equal(t, uint64(2), uint64(len(vendorModels.Products)))
 	require.Equal(t, firstModelInfo.PID, vendorModels.Products[0].PID)
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)
+}
+
+/* Error cases */
+
+func Test_AddModelinfo_ByNonVendor(t *testing.T) {
+	// register new account
+	testAccount, _ := utils.RegisterNewAccount()
+
+	// try to publish model info
+	modelInfo := utils.NewMsgAddModelInfo(testAccount.Address)
+	res, _ := utils.SignAndBroadcastMessage(testAccount, modelInfo)
+	require.Equal(t, sdk.CodeUnauthorized, sdk.CodeType(res.Code))
+}
+
+func Test_AddModelinfo_Twice(t *testing.T) {
+	// register new account
+	testAccount, _ := utils.RegisterNewAccount()
+
+	// get jack account
+	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.JackAccount)
+
+	// Assign Vendor role to test account
+	utils.AssignRole(testAccount.Address, jackKeyInfo, authz.Vendor)
+
+	// publish model info
+	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
+	res, _ := utils.PublishModelInfo(modelInfo, jackKeyInfo)
+	require.Equal(t, sdk.CodeOK, sdk.CodeType(res.Code))
+
+	// publish second time
+	res, _ = utils.PublishModelInfo(modelInfo, jackKeyInfo)
+	require.Equal(t, modelinfo.CodeModelInfoAlreadyExists, sdk.CodeType(res.Code))
+}
+
+func Test_GetModelinfo_ForUnknown(t *testing.T) {
+	_, code := utils.GetModelInfo(uint16(utils.RandInt()), uint16(utils.RandInt()))
+	require.Equal(t, http.StatusNotFound, code)
+}
+
+func Test_GetModelinfo_ForInvalidVidPid(t *testing.T) {
+	// zero vid
+	_, code := utils.GetModelInfo(0, uint16(utils.RandInt()))
+	require.Equal(t, http.StatusBadRequest, code)
+
+	// zero pid
+	_, code = utils.GetModelInfo(uint16(utils.RandInt()), 0)
+	require.Equal(t, http.StatusBadRequest, code)
 }

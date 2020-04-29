@@ -12,8 +12,8 @@ import (
 
 type CertifyModelRequest struct {
 	BaseReq           restTypes.BaseReq       `json:"base_req"`
-	VID               int16                   `json:"vid"`
-	PID               int16                   `json:"pid"`
+	VID               uint16                  `json:"vid"`
+	PID               uint16                  `json:"pid"`
 	CertificationDate time.Time               `json:"certification_date"` // rfc3339 encoded date
 	CertificationType types.CertificationType `json:"certification_type"`
 	Reason            string                  `json:"reason,omitempty"`
@@ -46,8 +46,8 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 type RevokeModelRequest struct {
 	BaseReq           restTypes.BaseReq       `json:"base_req"`
-	VID               int16                   `json:"vid"`
-	PID               int16                   `json:"pid"`
+	VID               uint16                  `json:"vid"`
+	PID               uint16                  `json:"pid"`
 	RevocationDate    time.Time               `json:"revocation_date"` // rfc3339 encoded date
 	CertificationType types.CertificationType `json:"certification_type"`
 	Reason            string                  `json:"reason,omitempty"`

@@ -92,7 +92,7 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 	for i := 0; i < count; i++ {
 		// add model info
 		modelInfo := DefaultModelInfo()
-		modelInfo.PID = int16(i)
+		modelInfo.PID = uint16(i)
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 
 		vendorProduct := types.Product{
@@ -110,7 +110,7 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 
 	// remove all model infos in a random way and check associated products
 	for i := count; i > 0; i-- {
-		index := int16(rand.Intn(i))
+		index := uint16(rand.Intn(i))
 		pid := PIDs[index]
 
 		PIDs = append(PIDs[:index], PIDs[index+1:]...)
@@ -135,12 +135,12 @@ func TestKeeper_VendorProductsOverTwoModelsWithDifferentVendor(t *testing.T) {
 	// check vendor products for first device
 	vendorProductsForModel1 := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, 1)
 	require.Equal(t, 1, len(vendorProductsForModel1.Products))
-	require.Equal(t, int16(1), vendorProductsForModel1.Products[0].PID)
+	require.Equal(t, uint16(1), vendorProductsForModel1.Products[0].PID)
 
 	// check vendor products for second device
 	vendorProductsForModel2 := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, 2)
 	require.Equal(t, 1, len(vendorProductsForModel2.Products))
-	require.Equal(t, int16(2), vendorProductsForModel2.Products[0].PID)
+	require.Equal(t, uint16(2), vendorProductsForModel2.Products[0].PID)
 }
 
 func TestKeeper_VendorProductsIteratorOverOneVendor(t *testing.T) {

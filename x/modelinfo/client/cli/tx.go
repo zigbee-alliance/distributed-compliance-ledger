@@ -71,12 +71,15 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 
 			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(args[7])
 			if err_ != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Invalid tis-or-trp-testing-completed: Parsing Error: %v must be boolean", tisOrTrpTestingCompleted))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Tis-or-trp-testing-completed: Parsing Error: \"%v\" must be boolean", args[7]))
 			}
 
-			custom := viper.GetString(FlagCustom)
+			custom, err_ := cliCtx.ReadFromFile(viper.GetString(FlagCustom))
+			if err_ != nil {
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid custom:\"%v\"", err_))
+			}
 
-			var cid int16
+			var cid uint16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = conversions.ParseCID(cidStr)
 				if err != nil {
@@ -92,7 +95,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagCID, "", "Model category ID")
-	cmd.Flags().String(FlagCustom, "", "Custom information")
+	cmd.Flags().String(FlagCustom, "", "Custom information (string or path to file containing data)")
 
 	return cmd
 }
@@ -118,12 +121,15 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 
 			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(args[2])
 			if err_ != nil {
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid tis-or-trp-testing-completed: Parsing Error: \"%v\" must be boolean", args[7]))
+			}
+
+			description, err_ := cliCtx.ReadFromFile(viper.GetString(FlagDescription))
+			if err_ != nil {
 				return err_
 			}
 
-			description := viper.GetString(FlagDescription)
-
-			var cid int16
+			var cid uint16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = conversions.ParseCID(cidStr)
 				if err != nil {
@@ -131,7 +137,10 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			custom := viper.GetString(FlagCustom)
+			custom, err_ := cliCtx.ReadFromFile(viper.GetString(FlagCustom))
+			if err_ != nil {
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid custom:\"%v\"", err_))
+			}
 
 			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description, custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
 
@@ -140,8 +149,8 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagCID, "", "Model category ID")
-	cmd.Flags().String(FlagDescription, "", "Model description")
-	cmd.Flags().String(FlagCustom, "", "Custom information")
+	cmd.Flags().String(FlagDescription, "", "Model description  (string or path to file containing data)")
+	cmd.Flags().String(FlagCustom, "", "Custom information  (string or path to file containing data)")
 
 	return cmd
 }
@@ -149,7 +158,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 func GetCmdDeleteModel(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "delete-model [vid] [pid]",
-		Short: "Delete existing ModelInfo",
+		Short: "Delete existing Model",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)

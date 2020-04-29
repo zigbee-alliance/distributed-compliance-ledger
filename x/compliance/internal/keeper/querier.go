@@ -22,15 +22,15 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
 		switch path[0] {
 		case QueryComplianceInfo:
-			return queryComplianceInfo(ctx, path[1:], req, keeper, "")
+			return queryComplianceInfo(ctx, path[1:], keeper, "")
 		case QueryAllComplianceInfoRecords:
 			return queryAllComplianceInfoRecords(ctx, req, keeper)
 		case QueryCertifiedModel:
-			return queryComplianceInfo(ctx, path[1:], req, keeper, types.Certified)
+			return queryComplianceInfo(ctx, path[1:], keeper, types.Certified)
 		case QueryAllCertifiedModels:
 			return queryAllComplianceInfoInStateRecords(ctx, req, keeper, types.Certified)
 		case QueryRevokedModel:
-			return queryComplianceInfo(ctx, path[1:], req, keeper, types.Revoked)
+			return queryComplianceInfo(ctx, path[1:], keeper, types.Revoked)
 		case QueryAllRevokedModels:
 			return queryAllComplianceInfoInStateRecords(ctx, req, keeper, types.Revoked)
 		default:
@@ -39,7 +39,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-func queryComplianceInfo(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) ([]byte, sdk.Error) {
+func queryComplianceInfo(ctx sdk.Context, path []string, keeper Keeper, requestedState types.ComplianceState) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err
@@ -53,30 +53,28 @@ func queryComplianceInfo(ctx sdk.Context, path []string, req abci.RequestQuery, 
 	certificationType := types.CertificationType(path[2])
 
 	if !keeper.IsComplianceInfoPresent(ctx, certificationType, vid, pid) {
-		return nil, types.ErrComplianceInfoDoesNotExist(vid, pid)
+		return nil, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
 	}
 
 	complianceInfo := keeper.GetComplianceInfo(ctx, certificationType, vid, pid)
 
-	var res []byte
-
 	if len(requestedState) != 0 {
 		if complianceInfo.State != requestedState {
-			return nil, types.ErrComplianceInfoDoesNotExist(vid, pid)
+			return nil, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
 		}
 
-		res, _ = codec.MarshalJSONIndent(keeper.cdc, types.ComplianceInfoInState{Value: true})
+		res = codec.MustMarshalJSONIndent(keeper.cdc, types.ComplianceInfoInState{Value: true})
 	} else {
-		res, _ = codec.MarshalJSONIndent(keeper.cdc, complianceInfo)
+		res = codec.MustMarshalJSONIndent(keeper.cdc, complianceInfo)
 	}
 
 	return res, nil
 }
 
-func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
+func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params types.ListQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
 	result := types.ListComplianceInfoItems{
@@ -101,18 +99,15 @@ func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keepe
 		return false
 	})
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, result)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
 
 	return res, nil
 }
 
-func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) ([]byte, sdk.Error) {
+func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) (res []byte, err sdk.Error) {
 	var params types.ListQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("failed to parse params: %s", err))
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
 	result := types.ListComplianceInfoKeyItems{
@@ -145,10 +140,7 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 		return false
 	})
 
-	res, err := codec.MarshalJSONIndent(keeper.cdc, result)
-	if err != nil {
-		panic("could not marshal result to JSON")
-	}
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
 
 	return res, nil
 }

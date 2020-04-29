@@ -11,9 +11,9 @@ import (
 
 type ModelInfoRequest struct {
 	BaseReq                  restTypes.BaseReq `json:"base_req"`
-	VID                      int16             `json:"vid"`
-	PID                      int16             `json:"pid"`
-	CID                      int16             `json:"cid,omitempty"`
+	VID                      uint16             `json:"vid"`
+	PID                      uint16             `json:"pid"`
+	CID                      uint16             `json:"cid,omitempty"`
 	Name                     string            `json:"name"`
 	Description              string            `json:"description"`
 	SKU                      string            `json:"sku"`

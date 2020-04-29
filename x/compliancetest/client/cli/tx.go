@@ -33,7 +33,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "add-test-result [vid] [pid] [test-result-string-or-path] [test-date]",
-		Short: "Add new testing result",
+		Short: "Add new testing result for Model (identified by the `vid` and `pid`)",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
@@ -55,7 +55,7 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 
 			testDate, err_ := time.Parse(time.RFC3339, args[3])
 			if err_ != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Parsing Error: %v. `test-date` must be RFC3339 encoded date", err_))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestDate \"%v\": it must be RFC3339 encoded date", args[3]))
 			}
 
 			msg := types.NewMsgAddTestingResult(vid, pid, testResult, testDate, cliCtx.FromAddress())

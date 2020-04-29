@@ -21,7 +21,7 @@ const (
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	complianceQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Querying commands for the compliancetest module",
+		Short:                      "Querying commands for the pki module",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

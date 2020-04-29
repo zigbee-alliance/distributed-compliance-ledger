@@ -24,7 +24,7 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 }
 
 // Gets the entire ComplianceInfo struct for a ComplianceInfoID
-func (k Keeper) GetComplianceInfo(ctx sdk.Context, certificationType types.CertificationType, vid int16, pid int16) types.ComplianceInfo {
+func (k Keeper) GetComplianceInfo(ctx sdk.Context, certificationType types.CertificationType, vid uint16, pid uint16) types.ComplianceInfo {
 	if !k.IsComplianceInfoPresent(ctx, certificationType, vid, pid) {
 		panic("ComplianceInfo does not exist")
 	}
@@ -76,7 +76,7 @@ func (k Keeper) CountTotalComplianceInfo(ctx sdk.Context, certificationType type
 }
 
 // Check if the ComplianceInfo is present in the store or not
-func (k Keeper) IsComplianceInfoPresent(ctx sdk.Context, certificationType types.CertificationType, vid int16, pid int16) bool {
+func (k Keeper) IsComplianceInfoPresent(ctx sdk.Context, certificationType types.CertificationType, vid uint16, pid uint16) bool {
 	return k.isRecordPresent(ctx, ComplianceInfoId(certificationType, vid, pid))
 }
 

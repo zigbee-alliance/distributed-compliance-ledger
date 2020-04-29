@@ -23,8 +23,8 @@ func (n LisModelInfoItems) String() string {
 }
 
 type ModelInfoItem struct {
-	VID   int16          `json:"vid"`
-	PID   int16          `json:"pid"`
+	VID   uint16         `json:"vid"`
+	PID   uint16         `json:"pid"`
 	Name  string         `json:"name"`
 	Owner sdk.AccAddress `json:"owner"`
 	SKU   string         `json:"sku"`
@@ -48,5 +48,5 @@ func (n ListVendorItems) String() string {
 }
 
 type VendorItem struct {
-	VID int16 `json:"vid"`
+	VID uint16 `json:"vid"`
 }

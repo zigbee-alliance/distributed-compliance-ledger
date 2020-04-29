@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
@@ -13,8 +14,18 @@ func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.H
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
 		vars := restCtx.Variables()
-		vid := vars[vid]
-		pid := vars[pid]
+
+		vid, err_ := conversions.ParseVID(vars[vid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+			return
+		}
+
+		pid, err_ := conversions.ParsePID(vars[pid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+			return
+		}
 
 		res, height, err := restCtx.QueryStore(keeper.TestingResultId(vid, pid), storeName)
 		if err != nil || res == nil {

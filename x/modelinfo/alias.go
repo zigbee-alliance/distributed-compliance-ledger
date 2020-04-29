@@ -6,19 +6,17 @@ import (
 )
 
 const (
-	ModuleName                = types.ModuleName
-	RouterKey                 = types.RouterKey
-	StoreKey                  = types.StoreKey
-	CodeModelInfoDoesNotExist = types.CodeModelInfoDoesNotExist
+	ModuleName                 = types.ModuleName
+	RouterKey                  = types.RouterKey
+	StoreKey                   = types.StoreKey
+	CodeModelInfoDoesNotExist  = types.CodeModelInfoDoesNotExist
+	CodeModelInfoAlreadyExists = types.CodeModelInfoAlreadyExists
 )
 
 var (
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	NewMsgAddModelInfo       = types.NewMsgAddModelInfo
-	NewMsgUpdateModelInfo    = types.NewMsgUpdateModelInfo
-	NewMsgDeleteModelInfo    = types.NewMsgDeleteModelInfo
-	NewModelInfo             = types.NewModelInfo
 	ModuleCdc                = types.ModuleCdc
 	RegisterCodec            = types.RegisterCodec
 	ErrModelInfoDoesNotExist = types.ErrModelInfoDoesNotExist

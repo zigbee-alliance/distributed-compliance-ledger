@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
 
@@ -31,8 +29,8 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "accounts",
-		Short:   "Query the list of accounts",
+		Use:   "accounts",
+		Short: "Query the list of accounts",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
@@ -48,9 +46,9 @@ func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:     "account [address]",
-		Short:   "Query the list of accounts",
-		Args:    cobra.ExactArgs(1),
+		Use:   "account [address]",
+		Short: "Query account information associated with the address",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -58,7 +56,7 @@ func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 			res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/account/%v", queryRoute, address), nil)
 			if err != nil {
-				return sdk.ErrInternal(fmt.Sprintf("Could not get data: %s\n", err))
+				return types.ErrAccountDoesNotExist(address)
 			}
 
 			return cliCtx.PrintWithHeight(res, height)

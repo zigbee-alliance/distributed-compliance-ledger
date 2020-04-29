@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
@@ -37,8 +38,15 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vid := args[0]
-			pid := args[1]
+			vid, err_ := conversions.ParseVID(args[0])
+			if err_ != nil {
+				return err_
+			}
+
+			pid, err_ := conversions.ParsePID(args[1])
+			if err_ != nil {
+				return err_
+			}
 
 			res, height, err := cliCtx.QueryStore(keeper.ModelInfoId(vid, pid), queryRoute)
 			if err != nil || res == nil {
@@ -60,6 +68,7 @@ func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-models",
 		Short: "Query the list of all Models",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
@@ -77,6 +86,7 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "vendors",
 		Short: "Query the list of Vendors",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
@@ -98,7 +108,10 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vid := args[0]
+			vid, err_ := conversions.ParseVID(args[0])
+			if err_ != nil {
+				return err_
+			}
 
 			res, height, err := cliCtx.QueryStore(keeper.VendorProductsId(vid), queryRoute)
 			if err != nil || res == nil {

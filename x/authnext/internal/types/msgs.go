@@ -26,7 +26,7 @@ func (m MsgAddAccount) Type() string {
 
 func (m MsgAddAccount) ValidateBasic() sdk.Error {
 	if m.Address.Empty() {
-		return sdk.ErrInvalidAddress(m.Address.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if len(m.PublicKey) == 0 {

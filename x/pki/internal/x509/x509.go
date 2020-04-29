@@ -4,6 +4,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strings"
 )
@@ -20,12 +21,12 @@ type X509Certificate struct {
 func DecodeX509Certificate(pemCertificate string) (*X509Certificate, sdk.Error) {
 	block, _ := pem.Decode([]byte(pemCertificate))
 	if block == nil {
-		return nil, sdk.ErrInternal("Could not decode pemCertificate")
+		return nil, types.ErrCodeInvalidCertificate("Could not decode pem certificate")
 	}
 
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return nil, sdk.ErrInternal(fmt.Sprintf("Could not parse pemCertificate" + err.Error()))
+		return nil, types.ErrCodeInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
 	}
 
 	certificate := X509Certificate{
@@ -60,7 +61,7 @@ func (c X509Certificate) VerifyX509Certificate(parent *x509.Certificate) sdk.Err
 	opts := x509.VerifyOptions{Roots: roots}
 
 	if _, err := c.Certificate.Verify(opts); err != nil {
-		return sdk.ErrInternal(fmt.Sprintf("Certificate verification failed. Error: %v", err))
+		return types.ErrCodeInvalidCertificate(fmt.Sprintf("Certificate verification failed. Error: %v", err))
 	}
 
 	return nil

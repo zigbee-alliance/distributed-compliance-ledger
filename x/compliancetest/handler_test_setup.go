@@ -24,6 +24,7 @@ type TestSetup struct {
 	ModelinfoKeeper      modelinfo.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
+	TestHouse            sdk.AccAddress
 }
 
 func Setup() TestSetup {
@@ -59,6 +60,9 @@ func Setup() TestSetup {
 	querier := NewQuerier(compliancetestKeeper)
 	handler := NewHandler(compliancetestKeeper, modelinfoKeeper, authzKeeper)
 
+	account := test_constants.Address1
+	authzKeeper.AssignRole(ctx, account, authz.TestHouse)
+
 	setup := TestSetup{
 		Cdc:                  cdc,
 		Ctx:                  ctx,
@@ -67,27 +71,13 @@ func Setup() TestSetup {
 		AuthzKeeper:          authzKeeper,
 		Handler:              handler,
 		Querier:              querier,
+		TestHouse:            account,
 	}
 
 	return setup
 }
 
-func (setup TestSetup) TestHouse(address sdk.AccAddress) sdk.AccAddress {
-	setup.AuthzKeeper.AssignRole(setup.Ctx, address, authz.TestHouse)
-	return address
-}
-
-func (setup TestSetup) Vendor(address sdk.AccAddress) sdk.AccAddress {
-	setup.AuthzKeeper.AssignRole(setup.Ctx, address, authz.Vendor)
-	return address
-}
-
-func (setup TestSetup) Administrator(address sdk.AccAddress) sdk.AccAddress {
-	setup.AuthzKeeper.AssignRole(setup.Ctx, address, authz.Administrator)
-	return address
-}
-
-func TestMsgAddTestingResult(signer sdk.AccAddress, vid int16, pid int16) MsgAddTestingResult {
+func TestMsgAddTestingResult(signer sdk.AccAddress, vid uint16, pid uint16) MsgAddTestingResult {
 	return MsgAddTestingResult{
 		VID:        vid,
 		PID:        pid,

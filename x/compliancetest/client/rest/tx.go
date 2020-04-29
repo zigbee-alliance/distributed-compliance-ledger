@@ -12,8 +12,8 @@ import (
 
 type TestingResultRequest struct {
 	BaseReq    restTypes.BaseReq `json:"base_req"`
-	VID        int16             `json:"vid"`
-	PID        int16             `json:"pid"`
+	VID        uint16            `json:"vid"`
+	PID        uint16            `json:"pid"`
 	TestResult string            `json:"test_result"`
 	TestDate   time.Time         `json:"test_date"` // rfc3339 encoded date
 }

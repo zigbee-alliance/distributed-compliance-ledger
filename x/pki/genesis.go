@@ -10,7 +10,7 @@ import (
 )
 
 type GenesisState struct {
-	ApprovedCertificateRecords []types.Certificates       `json:"approved_certificate_records"`
+	ApprovedCertificateRecords []types.Certificates        `json:"approved_certificate_records"`
 	PendingCertificateRecords  []types.ProposedCertificate `json:"pending_certificate_records"`
 	ChildCertificatesRecords   []types.ChildCertificates   `json:"child_certificates_records"`
 }

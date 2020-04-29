@@ -24,7 +24,7 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 }
 
 // Gets the entire TestingResults record for VID/PID combination
-func (k Keeper) GetTestingResults(ctx sdk.Context, vid int16, pid int16) types.TestingResults {
+func (k Keeper) GetTestingResults(ctx sdk.Context, vid uint16, pid uint16) types.TestingResults {
 	if !k.IsTestingResultsPresents(ctx, vid, pid) {
 		return types.NewTestingResults(vid, pid)
 	}
@@ -54,7 +54,7 @@ func (k Keeper) AddTestingResult(ctx sdk.Context, testingResult types.TestingRes
 }
 
 // Check if the TestingResults record is present in the store or not
-func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid int16, pid int16) bool {
+func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid uint16, pid uint16) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has([]byte(TestingResultId(vid, pid)))
 }

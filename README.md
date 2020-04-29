@@ -128,9 +128,9 @@ Queries:
 ### Model Info
 
 ModelInfo type:
-- vid: `int16`
-- pid: `int16`
-- cid: `int16` (optional)
+- vid: `uint16`
+- pid: `uint16`
+- cid: `uint16` (optional)
 - name: `string`
 - owner: `bech32 encoded address`
 - description: `string`
@@ -145,22 +145,22 @@ Permissions:
 - Signer must have `Vendor` role. See `Authorization` module for details.
 
 Transactions:
-- `zblcli tx modelinfo add-model [vid:int16] [pid:int16] [name:string] [description:string] [sku:string] 
+- `zblcli tx modelinfo add-model [vid:uint16] [pid:uint16] [name:string] [description:string] [sku:string] 
 [firmware-version:string] [hardware-version:string] [tis-or-trp-testing-completed:bool]` - Add new ModelInfo.
   - Signature is required. Use `--from` flag.
   - Optional flags: 
-    - `--cid` int16
+    - `--cid` uint16
     - `--custom` string
 
   Example: `zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from jack`
   
   Example: `zblcli tx modelinfo add-model 1 2 "Device #2" "Device Description" "SKU324S" "2.0" "2.0" true --from jack --cid 1 --custom "Some Custom information" --certificate-id "ID123" --certified-date "2020-01-01T00:00:00Z"`
 
-- `zblcli tx modelinfo update-model [vid:int16] [pid:int16] [tis-or-trp-testing-completed:bool]` - Update
+- `zblcli tx modelinfo update-model [vid:uint16] [pid:uint16] [tis-or-trp-testing-completed:bool]` - Update
   existing ModelInfo.
   - Signature is required. Use `--from` flag.
   - Optional flags: 
-    - `--cid` int16
+    - `--cid` uint16
     - `--custom` string
     - `--description` string
     
@@ -198,8 +198,8 @@ Genesis:
 ### Compliance Test
 
 Testing Result type:
-- vid: `int16` - vendor id
-- pid: `int16` - product id
+- vid: `uint16` - vendor id
+- pid: `uint16` - product id
 - test_result: `string` - test result report. It can contain url, blob, etc..
 - test_date: `rfc3339 encoded date` - the date of testing
 - owner: `bech32 encoded address` - the address used for sending the original message
@@ -224,8 +224,8 @@ Queries:
 ### Compliance
 
 Compliance Info type:
-- vid: `int16` - vendor id
-- pid: `int16` - product id
+- vid: `uint16` - vendor id
+- pid: `uint16` - product id
 - state: `string` - current compliance state: either `certified` or `revoked`
 - date:(optional) `rfc3339 encoded date` - depending on the state either certification date or revocation date 
 - certification_type: `string`  - `zb` is the default and the only supported value now
@@ -291,11 +291,22 @@ Roles:
 - `ZBCertificationCenter` - Is able to certify models
 - `Trustee` - Is able to approve root certificates
 
-Commands:
+Transactions:
 - `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.
   - Trustee's signature is required. Use `--from` flag.
+
+  Example: `zblcli tx authz assign-role cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 Vendor --from jack`
+  
 - `zblcli tx authz revoke-role [address] [role]` - Revoke role from specified account.
   - Trustee's signature is required. Use `--from` flag.
+
+  Example: `zblcli tx authz revoke-role cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 Vendor --from jack`
+
+Queries:
+
+- `zblcli query authz account-roles [account]` - The command to query roles by account address.
+
+  Example: `zblcli query authz account-roles cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
 Genesis template:
 ```json

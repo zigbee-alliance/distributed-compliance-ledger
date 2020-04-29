@@ -32,7 +32,7 @@ func (m MsgProposeAddX509RootCert) Type() string {
 
 func (m MsgProposeAddX509RootCert) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if len(m.Cert) == 0 {
@@ -78,7 +78,7 @@ func (m MsgApproveAddX509RootCert) Type() string {
 
 func (m MsgApproveAddX509RootCert) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if len(m.Subject) == 0 {
@@ -126,7 +126,7 @@ func (m MsgAddX509Cert) Type() string {
 
 func (m MsgAddX509Cert) ValidateBasic() sdk.Error {
 	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress(m.Signer.String())
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
 	if len(m.Cert) == 0 {
