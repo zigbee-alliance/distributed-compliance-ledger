@@ -19,3 +19,18 @@ response_does_not_contain() {
   fi
 }
 
+create_account_with_name(){
+  name=$1
+
+  echo "Generate key for $name"
+  echo 'test1234' | zblcli keys add "$name"
+
+  address=$(zblcli keys show $name -a)
+  pubkey=$(zblcli keys show $name -p)
+
+  echo "Jack creates account for $name"
+  result=$(echo "test1234" | zblcli tx authnext create-account "$address" "$pubkey" --from jack --yes)
+  check_response "$result" "\"success\": true"
+  echo "$result"
+}
+
