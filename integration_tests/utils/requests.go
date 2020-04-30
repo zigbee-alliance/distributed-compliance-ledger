@@ -125,8 +125,8 @@ func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) (
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
 
-	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, constants.Passphrase)
-	response, code := SendPostRequest(uri, body, "", "")
+	uri := fmt.Sprintf("%s/%s", "tx", "sign")
+	response, code := SendPostRequest(uri, body, accountName, constants.Passphrase)
 	if code != http.StatusOK {
 		return json.RawMessage{}, code
 	}

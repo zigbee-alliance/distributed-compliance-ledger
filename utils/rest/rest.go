@@ -3,7 +3,6 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
-	authutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -184,6 +183,10 @@ func (ctx RestContext) PostProcessResponse(body interface{}) {
 	rest.PostProcessResponse(ctx.responseWriter, ctx.context, body)
 }
 
+func (ctx RestContext) BasicAuth() (username, password string, ok bool)  {
+	return ctx.request.BasicAuth()
+}
+
 func (ctx RestContext) HandleWriteRequest(msg sdk.Msg) {
 	err := msg.ValidateBasic()
 	if err != nil {
@@ -191,8 +194,8 @@ func (ctx RestContext) HandleWriteRequest(msg sdk.Msg) {
 		return
 	}
 
-	account, passphrase, err_ := authutils.GetCredentialsFromRequest(ctx.request)
-	if err_ != nil { // No credentials - just generate request message
+	account, passphrase, ok := ctx.BasicAuth()
+	if !ok { // No credentials - just generate request message
 		utils.WriteGenerateStdTxResponse(ctx.responseWriter, ctx.context, ctx.baseReq, []sdk.Msg{msg})
 		return
 	}

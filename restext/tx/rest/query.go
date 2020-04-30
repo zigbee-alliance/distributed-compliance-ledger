@@ -84,7 +84,11 @@ func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		name, passphrase := r.FormValue("name"), r.FormValue("passphrase")
+		account, passphrase, ok := restCtx.BasicAuth()
+		if !ok {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, "Could not find credentials to use")
+			return
+		}
 
 		var signMsg types.StdSignMsg
 		if !restCtx.ReadRESTReq(&signMsg) {
@@ -104,7 +108,7 @@ func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			Memo:       signMsg.Memo,
 		}
 
-		signedStdTx, err := txBldr.SignStdTx(name, passphrase, stdTx, false)
+		signedStdTx, err := txBldr.SignStdTx(account, passphrase, stdTx, false)
 
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
