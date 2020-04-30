@@ -27,10 +27,20 @@ This is useful to avoid correlation by the sender's IP address.
     - Send transactions to the ledger from the Account (`--from`).
         - it will automatically build a request, sign it by the account's key, and broadcast to the ledger.
     - See `CLI` section for every write request (transaction).
+- CLI (keys at the edge)
+    - CLI is started in a CLI mode.
+    - A private key is generated and stored off-server (in the user's private wallet).
+    - Register account containing generated `Address` and `PubKey` on the ledger.
+    - Build transaction using the account (`--from`) and `--generate-only` flag.
+    - Sign the transaction manually.
+    - Broadcast signed transaction using CLI (`broadcast command)
 - Non-trusted REST API (keys at the edge):
     - CLI is started in a server mode.
     - A private key is generated and stored off-server (in the user's private wallet).
-    - The user builds and signs the request manually.
+    - Build transaction:
+        - The user builds the transaction manually.
+        - The user does a `POST` to the server specifying the transaction parameters. The server builds the transaction.
+    - Sign the transaction manually.
     - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`. 
 - Trusted REST API (keys at the server):
     - CLI is started in a server mode.

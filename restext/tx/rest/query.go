@@ -3,6 +3,7 @@ package rest
 import (
 	"encoding/base64"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
+	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"io/ioutil"
 	"net/http"
 
@@ -141,5 +142,58 @@ func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		restCtx.PostProcessResponse(res)
+	}
+}
+
+type SignStdTxnRequest struct {
+	BaseReq restTypes.BaseReq `json:"base_req"`
+	Txn     types.StdTx       `json:"txn"`
+}
+
+func SignStdTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		var req SignStdTxnRequest
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
+
+		err := r.ParseForm()
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest,
+				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+			return
+		}
+
+		account, passphrase, ok := restCtx.BasicAuth()
+		if !ok {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, "Could not find credentials to use")
+			return
+		}
+
+		restCtx, err = restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
+		}
+
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
+		txBldr, err := restCtx.TxnBuilder()
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		signedStdTx, err := txBldr.SignStdTx(account, passphrase, req.Txn, false)
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		restCtx.PostProcessResponse(signedStdTx)
 	}
 }

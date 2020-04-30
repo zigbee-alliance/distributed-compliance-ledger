@@ -31,6 +31,10 @@ func SendPatchRequest(uri string, body []byte, account string, passphrase string
 }
 
 func sendRequest(uri string, method string, body []byte, account string, passphrase string) ([]byte, int) {
+	if len(account) == 0 {
+		passphrase = ""
+	}
+
 	client := &http.Client{}
 	req, err := http.NewRequest(method, BuildUrl(uri), bytes.NewBuffer(body))
 	if err != nil {

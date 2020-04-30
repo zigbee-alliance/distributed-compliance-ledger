@@ -74,6 +74,28 @@ func TestModelinfoDemo(t *testing.T) {
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)
 }
 
+func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
+	// Get key info for Jack
+	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
+
+	// Register new Vendor account
+	vendor, _ := utils.RegisterNewAccount()
+	utils.AssignRole(vendor.Address, jackKeyInfo, authz.Vendor)
+
+	// Prepare model info
+	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
+
+	// Prepare Sing Broadcast
+	addModelTransaction, _ := utils.PrepareModelInfoTransaction(modelInfo)
+	_, _ = utils.SignAndBroadcastTransaction(vendor, addModelTransaction)
+
+	// Check model is created
+	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
+	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
+	require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
+	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
+}
+
 /* Error cases */
 
 func Test_AddModelinfo_ByNonVendor(t *testing.T) {
