@@ -27,28 +27,48 @@ This is useful to avoid correlation by the sender's IP address.
     - Send transactions to the ledger from the Account (`--from`).
         - it will automatically build a request, sign it by the account's key, and broadcast to the ledger.
     - See `CLI` section for every write request (transaction).
+    - Example
+        ```json
+        zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
+        ```
 - CLI (keys at the edge)
     - CLI is started in a CLI mode.
     - A private key is generated and stored off-server (in the user's private wallet).
     - Register account containing generated `Address` and `PubKey` on the ledger.
     - Build transaction using the account (`--from`) and `--generate-only` flag.
-    - Sign the transaction manually.
+    - Sign the transaction manually. `zblcli tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
     - Broadcast signed transaction using CLI (`broadcast command)
+    - Example
+        ```json
+        zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
+        zblcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
+        zblcli tx broadcast /home/artem/zb-ledger/txn.json
+        ```
 - Non-trusted REST API (keys at the edge):
     - CLI is started in a server mode.
     - A private key is generated and stored off-server (in the user's private wallet).
-    - Build transaction:
-        - The user builds the transaction manually.
+    - Build transaction
+        - The user builds the transaction manually (see `Extensions` section to find transactions format):.
         - The user does a `POST` to the server specifying the transaction parameters. The server builds the transaction.
-    - Sign the transaction manually.
-    - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`. 
+    - Sign the transaction manually using CLI or `tx/sign` endpoint.
+    - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`.     
+    - Example
+        ```json
+        POST /modelinfo/models
+        POST tx/sign
+        POST tx/broadcast
+        ```
 - Trusted REST API (keys at the server):
     - CLI is started in a server mode.
     - A private key is generated and stored on the server (assuming it's within the user's domain and the user trusts it).
-    - The user sends a POST to the server specifying the transaction parameters and account details (passphrase etc.).
+    - The user sends a POST to the server specifying the transaction parameters and account details (passphrase etc.) using `Authorization` header`.
     The server builds the request, signs it by the specified account's private key and broadcasts to the ledger
      in a way similar to the local CLI case.
     - See `REST API` section for every write request (transaction).
+    - Example
+        ```json
+        POST /modelinfo/models with setting Authorization header 
+        ```
 
 ## How to read from the Ledger
 - Local CLI
@@ -1326,3 +1346,92 @@ Gets all proposed but not approved validator nodes to be removed.
     -   `zblcli query validator all-proposed-nodes-to-remove .... `
 - REST API: 
     -   GET `/validators/proposed/removed`   
+    
+    
+## Extensions    
+
+#### SIGN
+Sign transaction by the given key.
+
+- Parameters:
+    - `txn` - transaction to sign
+- CLI command: 
+    -   `zblcli tx sign [path-to-txn-file] --from [address]`
+    - Transaction:
+        ```
+        {
+            "type":"cosmos-sdk/StdTx",
+            "value":{
+                "msg":[
+                    {msg to sign}
+                ],
+                "fee":{
+                    "amount":[],
+                    "gas":"200000"
+                },
+                "signatures":null,
+                "memo":""
+            }
+        }
+        ```
+- REST API: 
+    - POST `/tx/sign`  
+    - Request
+    ```
+        base_req: {
+            "from": string,
+            "chain_id": string,
+            "account_number": optional(string),
+            "sequence": optional(string),
+        },
+        txn: {
+            "type":"cosmos-sdk/StdTx",
+            "value":{
+                "msg":[
+                    {msg to sign}
+                ],
+                "fee":{
+                    "amount":[],
+                    "gas":"200000"
+                },
+                "signatures":null,
+                "memo":""
+            }
+        }
+    ```
+   Note: if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  
+   
+#### Broadcast
+Broadcast transaction to the ledger.
+
+- Parameters:
+    - `txn` - transaction to broadcast
+- CLI command: 
+    -   `zblcli tx broadcast [path-to-txn-file]`
+- REST API: 
+    - POST `/tx/broadcast`  
+- Transaction:
+    ```
+    {
+        "type":"cosmos-sdk/StdTx",
+        "value":{
+            "msg":[
+                {msg to sign}
+            ],
+            "fee":{
+                "amount":[],
+                "gas":"200000"
+            },
+            "signatures": [
+                {
+                    "pub_key": {
+                        "type": "tendermint/PubKeySecp256k1",
+                        "value": "AiXgamO0AZKu38IZE/j9Tt54mQq4yza/5zilm6rlHwrb"
+                    },
+                    "signature": "SS+52lsXPWtQuEUFJv6Tl8U+vfdyatWK3piYjNlZWb1pg2tYMZlH4IEIIYs+Cfg6/F3lPEOb/SJeuCsh/Zl2/w=="
+                }
+            ],
+            "memo":""
+        }
+    }
+    ```

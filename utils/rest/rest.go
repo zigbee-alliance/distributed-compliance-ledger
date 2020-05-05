@@ -223,15 +223,23 @@ func (ctx RestContext) WriteErrorResponse(status int, err string) {
 func (ctx RestContext) TxnBuilder() (types.TxBuilder, error) {
 	txBldr := auth.NewTxBuilderFromCLI()
 
-	acc, err := auth.NewAccountRetriever(ctx.context).GetAccount(ctx.signer)
-	if err != nil {
-		return txBldr, err
+	accountNumber := ctx.baseReq.AccountNumber
+	sequence := ctx.baseReq.Sequence
+
+	if accountNumber == 0 && sequence == 0 {
+		acc, err := auth.NewAccountRetriever(ctx.context).GetAccount(ctx.signer)
+		if err != nil {
+			return txBldr, err
+		}
+
+		accountNumber = acc.GetAccountNumber()
+		sequence = acc.GetSequence()
 	}
 
 	txBldr = txBldr.
 		WithTxEncoder(utils.GetTxEncoder(ctx.Codec())).
-		WithAccountNumber(acc.GetAccountNumber()).
-		WithSequence(acc.GetSequence()).
+		WithAccountNumber(accountNumber).
+		WithSequence(sequence).
 		WithChainID(ctx.baseReq.ChainID)
 
 	return txBldr, nil

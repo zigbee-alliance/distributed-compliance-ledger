@@ -80,52 +80,35 @@ func RegisterNewAccount() (KeyInfo, int) {
 }
 
 func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) (TxnResponse, int) {
-	senderAccountInfo, _ := GetAccountInfo(sender.Address) // Refresh account info
-	signResponse, _ := SignMessage(sender.Name, senderAccountInfo, message)
+	txn := types.StdTx{
+		Msgs: []sdk.Msg{message},
+		Fee:  types.StdFee{Gas: 2000000},
+	}
+	signResponse, _ := SignMessage(sender, txn)
 	return BroadcastMessage(signResponse)
 }
 
 func SignAndBroadcastTransaction(sender KeyInfo, txn types.StdTx) (TxnResponse, int) {
-	signResponse, _ := SignStdTransaction(sender, txn)
+	signResponse, _ := SignMessage(sender, txn)
 	return BroadcastMessage(signResponse)
 }
 
-func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) (json.RawMessage, int) {
-	println("Sign Message")
+func SignMessage(sender KeyInfo, txn types.StdTx) (json.RawMessage, int) {
+	println("Sign prepared transaction")
 
-	stdSigMsg := types.StdSignMsg{
-		ChainID:       constants.ChainId,
-		AccountNumber: ParseUint(accountInfo.AccountNumber),
-		Sequence:      ParseUint(accountInfo.Sequence),
-		Fee:           types.StdFee{Gas: 200000},
-		Msgs:          []sdk.Msg{message},
+	stdSigMsg := extRest.SignMessageRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainId,
+			From:    sender.Address.String(),
+		},
+		Txn: extRest.Txn{
+			Value: txn,
+		},
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
 
 	uri := fmt.Sprintf("%s/%s", "tx", "sign")
-	response, code := SendPostRequest(uri, body, accountName, constants.Passphrase)
-	if code != http.StatusOK {
-		return json.RawMessage{}, code
-	}
-
-	return removeResponseWrapper(response), code
-}
-
-func SignStdTransaction(sender KeyInfo, txn types.StdTx) (json.RawMessage, int) {
-	println("Sign prepared transaction")
-
-	stdSigMsg := extRest.SignStdTxnRequest{
-		BaseReq: rest.BaseReq{
-			ChainID: constants.ChainId,
-			From:    sender.Address.String(),
-		},
-		Txn: txn,
-	}
-
-	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
-
-	uri := fmt.Sprintf("%s/%s", "tx", "sign-txn")
 	response, code := SendPostRequest(uri, body, sender.Name, constants.Passphrase)
 	if code != http.StatusOK {
 		return json.RawMessage{}, code
