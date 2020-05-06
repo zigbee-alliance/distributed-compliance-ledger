@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"os"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
-
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/libs/log"
@@ -24,12 +25,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/bank"
-	distr "github.com/cosmos/cosmos-sdk/x/distribution"
 	"github.com/cosmos/cosmos-sdk/x/genaccounts"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/cosmos/cosmos-sdk/x/slashing"
-	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 )
 
@@ -47,14 +44,13 @@ var (
 	// NewBasicManager is in charge of setting up basic module elemnets
 	ModuleBasics = module.NewBasicManager(
 		genaccounts.AppModuleBasic{},
-		genutil.AppModuleBasic{},
 		auth.AppModuleBasic{},
 		bank.AppModuleBasic{},
-		staking.AppModuleBasic{},
-		distr.AppModuleBasic{},
+		validator.AppModuleBasic{},
 		params.AppModuleBasic{},
-		slashing.AppModuleBasic{},
 		supply.AppModuleBasic{},
+
+		genutil.AppModuleBasic{},
 
 		modelinfo.AppModuleBasic{},
 		compliance.AppModuleBasic{},
@@ -66,9 +62,6 @@ var (
 	// account permissions
 	maccPerms = map[string][]string{
 		auth.FeeCollectorName:     nil,
-		distr.ModuleName:          nil,
-		staking.BondedPoolName:    {supply.Burner, supply.Staking},
-		staking.NotBondedPoolName: {supply.Burner, supply.Staking},
 	}
 )
 
@@ -92,11 +85,9 @@ type zbLedgerApp struct {
 	tkeys map[string]*sdk.TransientStoreKey
 
 	// Keepers
+	validatorKeeper            validator.Keeper
 	accountKeeper        auth.AccountKeeper
 	bankKeeper           bank.Keeper
-	stakingKeeper        staking.Keeper
-	slashingKeeper       slashing.Keeper
-	distrKeeper          distr.Keeper
 	supplyKeeper         supply.Keeper
 	paramsKeeper         params.Keeper
 	modelinfoKeeper      modelinfo.Keeper
@@ -119,11 +110,11 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 	bApp.SetAppVersion(version.Version)
 
-	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, staking.StoreKey,
-		supply.StoreKey, distr.StoreKey, slashing.StoreKey, params.StoreKey, modelinfo.StoreKey, authz.StoreKey,
+	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, validator.StoreKey,
+		supply.StoreKey, params.StoreKey, modelinfo.StoreKey, authz.StoreKey,
 		compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey)
 
-	tkeys := sdk.NewTransientStoreKeys(staking.TStoreKey, params.TStoreKey)
+	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
 	// Here you initialize your application with the store keys it requires
 	var app = &zbLedgerApp{
@@ -166,13 +157,11 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 func InitModuleManager(app *zbLedgerApp) {
 	app.mm = module.NewManager(
 		genaccounts.NewAppModule(app.accountKeeper),
-		genutil.NewAppModule(app.accountKeeper, app.stakingKeeper, app.BaseApp.DeliverTx),
+		genutil.NewAppModule(app.accountKeeper, app.validatorKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.accountKeeper),
 		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
-		distr.NewAppModule(app.distrKeeper, app.supplyKeeper),
-		slashing.NewAppModule(app.slashingKeeper, app.stakingKeeper),
-		staking.NewAppModule(app.stakingKeeper, app.distrKeeper, app.accountKeeper, app.supplyKeeper),
+		validator.NewAppModule(app.validatorKeeper, app.authzKeeper),
 
 		modelinfo.NewAppModule(app.modelinfoKeeper, app.authzKeeper),
 		compliance.NewAppModule(app.complianceKeeper, app.modelinfoKeeper, app.compliancetestKeeper, app.authzKeeper),
@@ -182,19 +171,14 @@ func InitModuleManager(app *zbLedgerApp) {
 		pki.NewAppModule(app.pkiKeeper, app.authzKeeper),
 	)
 
-	app.mm.SetOrderBeginBlockers(distr.ModuleName, slashing.ModuleName)
-	app.mm.SetOrderEndBlockers(staking.ModuleName)
+	app.mm.SetOrderBeginBlockers()
+	app.mm.SetOrderEndBlockers(validator.ModuleName)
 
-	// Sets the order of Genesis - Order matters, genutil is to always come last
-	// NOTE: The genutils moodule must occur after staking so that pools are
-	// properly initialized with tokens from genesis accounts.
 	app.mm.SetOrderInitGenesis(
 		genaccounts.ModuleName,
-		distr.ModuleName,
-		staking.ModuleName,
 		auth.ModuleName,
+		validator.ModuleName,
 		bank.ModuleName,
-		slashing.ModuleName,
 		modelinfo.ModuleName,
 		compliance.ModuleName,
 		compliancetest.ModuleName,
@@ -216,9 +200,6 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[st
 	// Set specific supspaces
 	authSubspace := app.paramsKeeper.Subspace(auth.DefaultParamspace)
 	bankSupspace := app.paramsKeeper.Subspace(bank.DefaultParamspace)
-	stakingSubspace := app.paramsKeeper.Subspace(staking.DefaultParamspace)
-	distrSubspace := app.paramsKeeper.Subspace(distr.DefaultParamspace)
-	slashingSubspace := app.paramsKeeper.Subspace(slashing.DefaultParamspace)
 
 	// The AccountKeeper handles address -> account lookups
 	app.accountKeeper = MakeAccountKeeper(app, keys, authSubspace)
@@ -229,20 +210,8 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[st
 	// The SupplyKeeper collects transaction fees and renders them to the fee distribution module
 	app.supplyKeeper = MakeSupplyKeeper(app, keys)
 
-	// The staking keeper
-	stakingKeeper := MakeStakingKeeper(app, keys, tkeys, stakingSubspace)
-
-	app.distrKeeper = MakeDistrKeeper(app, keys, distrSubspace, &stakingKeeper)
-
-	app.slashingKeeper = MakeSlashingKeeper(app, keys, &stakingKeeper, slashingSubspace)
-
-	// register the staking hooks
-	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
-	app.stakingKeeper = *stakingKeeper.SetHooks(
-		staking.NewMultiStakingHooks(
-			app.distrKeeper.Hooks(),
-			app.slashingKeeper.Hooks()),
-	)
+	// The Validator keeper
+	app.validatorKeeper = MakeValidatorKeeper(keys, app)
 
 	// The ModelinfoKeeper keeper
 	app.modelinfoKeeper = MakeModelinfoKeeper(keys, app)
@@ -295,40 +264,10 @@ func MakePkiKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) pki.Keeper
 	)
 }
 
-func MakeSlashingKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey,
-	stakingKeeper *staking.Keeper, slashingSubspace params.Subspace) slashing.Keeper {
-	return slashing.NewKeeper(
+func MakeValidatorKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) validator.Keeper {
+	return validator.NewKeeper(
+		keys[validator.StoreKey],
 		app.cdc,
-		keys[slashing.StoreKey],
-		stakingKeeper,
-		slashingSubspace,
-		slashing.DefaultCodespace,
-	)
-}
-
-func MakeDistrKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey,
-	distrSubspace params.Subspace, stakingKeeper *staking.Keeper) distr.Keeper {
-	return distr.NewKeeper(
-		app.cdc,
-		keys[distr.StoreKey],
-		distrSubspace,
-		stakingKeeper,
-		app.supplyKeeper,
-		distr.DefaultCodespace,
-		auth.FeeCollectorName,
-		app.ModuleAccountAddrs(),
-	)
-}
-
-func MakeStakingKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey,
-	tkeys map[string]*sdk.TransientStoreKey, stakingSubspace params.Subspace) staking.Keeper {
-	return staking.NewKeeper(
-		app.cdc,
-		keys[staking.StoreKey],
-		tkeys[staking.TStoreKey],
-		app.supplyKeeper,
-		stakingSubspace,
-		staking.DefaultCodespace,
 	)
 }
 
@@ -422,7 +361,7 @@ func (app *zbLedgerApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhit
 		return nil, nil, err
 	}
 
-	validators = staking.WriteValidators(ctx, app.stakingKeeper)
+	validators = validator.WriteValidators(ctx, app.validatorKeeper)
 
 	return appState, validators, nil
 }
