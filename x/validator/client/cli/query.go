@@ -2,14 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/keeper"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
 )
 
 // GetQueryCmd returns the cli query commands for this module
@@ -34,23 +32,22 @@ func GetCmdQueryValidator(storeName string, cdc *codec.Codec) *cobra.Command {
 		Short: "Query a validator",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			addr, err := sdk.ValAddressFromBech32(args[0])
 			if err != nil {
 				return err
 			}
 
-			res, _, err := cliCtx.QueryStore(keeper.ValidatorId(addr), storeName)
-			if err != nil {
-				return err
+			res, height, err := cliCtx.QueryStore(types.GetValidatorKey(addr), storeName)
+			if err != nil || res == nil {
+				return types.ErrValidatorDoesNotExist(addr)
 			}
 
-			if len(res) == 0 {
-				return fmt.Errorf("no validator found with address %s", addr)
-			}
+			var certificate types.Validator
+			cdc.MustUnmarshalBinaryBare(res, &certificate)
 
-			return cliCtx.PrintOutput(types.MustUnmarshalValidator(cdc, res))
+			return cliCtx.EncodeAndPrintWithHeight(certificate, height)
 		},
 	}
 }
@@ -62,19 +59,8 @@ func GetCmdQueryValidators(storeName string, cdc *codec.Codec) *cobra.Command {
 		Short: "Query for all validators",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
-
-			resKVs, _, err := cliCtx.QuerySubspace([]byte(keeper.ValidatorPrefix), storeName)
-			if err != nil {
-				return err
-			}
-
-			var validators types.Validators
-			for _, kv := range resKVs {
-				validators = append(validators, types.MustUnmarshalValidator(cdc, kv.Value))
-			}
-
-			return cliCtx.PrintOutput(validators)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+			return cliCtx.QueryList(fmt.Sprintf("custom/%s/validators", storeName), nil)
 		},
 	}
 }

@@ -53,7 +53,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, pm
 		Use:   "gentx",
 		Short: "Generate a genesis tx",
 		Args:  cobra.NoArgs,
-		Long: fmt.Sprintf(`This command is an alias of the 'tx create-validator' command'.
+		Long: fmt.Sprintf(`This command is an alias of the 'tx validator add-node' command'.
 
 		It creates a genesis transaction to create a validator. 
 		The following default parameters are included: 

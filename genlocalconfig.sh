@@ -17,7 +17,7 @@ zbld init node0 --chain-id zblchain
 zbld add-genesis-account $(zblcli keys show jack -a) 1000nametoken,100000000stake
 
 jack_address=$(zblcli keys show jack -a)
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
 echo 'test1234' | zbld gentx --name jack
 

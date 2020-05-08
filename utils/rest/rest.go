@@ -116,7 +116,7 @@ func (ctx RestContext) ReadRESTReq(req interface{}) bool {
 	return rest.ReadRESTReq(ctx.responseWriter, ctx.request, ctx.Codec(), req)
 }
 
-func (ctx RestContext) QueryStore(key string, storeName string) ([]byte, int64, error) {
+func (ctx RestContext) QueryStore(key []byte, storeName string) ([]byte, int64, error) {
 	requestPrevState := false
 	var err error
 
@@ -133,14 +133,14 @@ func (ctx RestContext) QueryStore(key string, storeName string) ([]byte, int64, 
 			return nil, 0, err
 		}
 
-		res, height, err := ctx.context.QueryStore([]byte(key), storeName)
+		res, height, err := ctx.context.QueryStore(key, storeName)
 		if res != nil {
 			return res, height, err
 		}
 	}
 	// request on the current height
 	ctx.context = ctx.context.WithHeight(0)
-	return ctx.context.QueryStore([]byte(key), storeName)
+	return ctx.context.QueryStore(key, storeName)
 }
 
 func (ctx RestContext) QueryWithData(path string, data interface{}) ([]byte, int64, error) {

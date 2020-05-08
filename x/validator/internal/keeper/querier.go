@@ -14,36 +14,33 @@ const (
 	QueryValidator  = "validator"
 )
 
-// creates a querier for
+// creates a querier for validator module
 func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
 		switch path[0] {
 		case QueryValidators:
-			return queryValidators(ctx, req, k)
+			return queryValidators(ctx, k)
 		case QueryValidator:
-			return queryValidator(ctx, req, path[1:], k)
+			return queryValidator(ctx, path[1:], k)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown pki query endpoint")
 		}
 	}
 }
 
-func queryValidators(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, sdk.Error) {
-	var params types.QueryValidatorsParams
+func queryValidators(ctx sdk.Context, k Keeper) ([]byte, sdk.Error) {
+	validators, total := k.GetAllValidators(ctx)
 
-	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
-	if err != nil {
-		return nil, sdk.ErrUnknownRequest(err.Error())
+	result := types.LisValidatorItems{
+		Total: total,
+		Items: validators,
 	}
 
-	validators := k.GetAllValidators(ctx)
-
-	res := codec.MustMarshalJSONIndent(types.ModuleCdc, validators)
-
+	res := codec.MustMarshalJSONIndent(types.ModuleCdc, result)
 	return res, nil
 }
 
-func queryValidator(ctx sdk.Context, req abci.RequestQuery, path []string, k Keeper) ([]byte, sdk.Error) {
+func queryValidator(ctx sdk.Context, path []string, k Keeper) ([]byte, sdk.Error) {
 	validatorAddr, err := sdk.ValAddressFromBech32(path[0])
 	if err != nil {
 		return nil, sdk.ErrUnknownRequest(err.Error())

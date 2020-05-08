@@ -6,13 +6,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
 // HTTP request handler to query list of validators
-func validatorsHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func getValidatorsHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 		restCtx.QueryList(fmt.Sprintf("custom/%s/validators", storeName), nil)
@@ -20,12 +19,12 @@ func validatorsHandlerFn(cliCtx context.CLIContext, storeName string) http.Handl
 }
 
 // HTTP request handler to query the validator information from a given validator address
-func validatorHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func getValidatorHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
 		vars := restCtx.Variables()
-		bech32validatorAddr := vars["validatorAddr"]
+		bech32validatorAddr := vars[validatorAddr]
 
 		validatorAddr, err := sdk.ValAddressFromBech32(bech32validatorAddr)
 		if err != nil {
@@ -33,15 +32,14 @@ func validatorHandlerFn(cliCtx context.CLIContext, storeName string) http.Handle
 			return
 		}
 
-		res, height, err := restCtx.QueryStore(fmt.Sprintf("%s:%v", keeper.ValidatorPrefix, validatorAddr), storeName)
+		res, height, err := restCtx.QueryStore(types.GetValidatorKey(validatorAddr), storeName)
 		if err != nil || res == nil {
-			restCtx.WriteErrorResponse(http.StatusNotFound, "TODO: ERROR message")
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrValidatorDoesNotExist(validatorAddr).Error())
 			return
 		}
 
-		var proposedCertificate types.Validator
-		restCtx.Codec().MustUnmarshalBinaryBare(res, &proposedCertificate)
+		validator := types.MustUnmarshalBinaryBareValidator(restCtx.Codec(), res)
 
-		restCtx.EncodeAndRespondWithHeight(proposedCertificate, height)
+		restCtx.EncodeAndRespondWithHeight(validator, height)
 	}
 }

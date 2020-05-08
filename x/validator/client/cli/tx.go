@@ -57,11 +57,13 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().AddFlagSet(FsPk)
-	cmd.Flags().AddFlagSet(fsDescriptionCreate)
-
+	cmd.Flags().String(FlagPubKey, "", "The Bech32 encoded ConsensusPubkey of the validator")
 	cmd.Flags().String(FlagIP, "", fmt.Sprintf("The node's public IP. It takes effect only when used in combination with --%s", flags.FlagGenerateOnly))
 	cmd.Flags().String(FlagNodeID, "", "The node's ID")
+	cmd.Flags().String(FlagMoniker, "", "The validator's name")
+	cmd.Flags().String(FlagIdentity, "", "The optional identity signature (ex. UPort or Keybase)")
+	cmd.Flags().String(FlagWebsite, "", "The validator's (optional) website")
+	cmd.Flags().String(FlagDetails, "", "The validator's (optional) details")
 
 	cmd.MarkFlagRequired(flags.FlagFrom)
 	cmd.MarkFlagRequired(FlagPubKey)
@@ -77,16 +79,14 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 func CreateValidatorMsgHelpers(ipDefault string) (fs *flag.FlagSet, nodeIDFlag, pubkeyFlag, defaultsDesc string) {
 
 	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
+	fsCreateValidator.String(FlagPubKey, "", "The Bech32 encoded ConsensusPubkey of the validator")
 	fsCreateValidator.String(FlagIP, ipDefault, "The node's public IP")
 	fsCreateValidator.String(FlagNodeID, "", "The node's NodeID")
 	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
 	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
 	fsCreateValidator.String(FlagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
-	fsCreateValidator.AddFlagSet(FsPk)
 
-	defaultsDesc = ""
-
-	return fsCreateValidator, FlagNodeID, FlagPubKey, defaultsDesc
+	return fsCreateValidator, FlagNodeID, FlagPubKey, ""
 }
 
 // prepare flags in config
@@ -137,8 +137,7 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (
 		viper.GetString(FlagDetails),
 	)
 
-	msg := types.NewMsgCreateValidator(
-		sdk.ValAddress(valAddr), pkStr, description)
+	msg := types.NewMsgCreateValidator(sdk.ValAddress(valAddr), pkStr, description)
 
 	if viper.GetBool(client.FlagGenerateOnly) {
 		ip := viper.GetString(FlagIP)

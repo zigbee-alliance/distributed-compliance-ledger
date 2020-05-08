@@ -9,9 +9,8 @@ import (
 )
 
 type GenesisState struct {
-	Validators          types.Validators           `json:"validators"`
-	LastValidatorPowers []types.LastValidatorPower `json:"last_validator_powers"`
-	Exported            bool                       `json:"exported"`
+	Validators     []Validator                `json:"validators"`
+	LastValidators []types.LastValidatorPower `json:"last_validators"`
 }
 
 func NewGenesisState(validators []Validator) GenesisState {
@@ -38,8 +37,8 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 		keeper.SetValidatorByConsAddr(ctx, validator)
 	}
 
-	for _, lv := range data.LastValidatorPowers {
-		keeper.SetLastValidatorPower(ctx, lv.Address, lv.Power)
+	for _, address := range data.LastValidators {
+		keeper.SetLastValidatorPower(ctx, address)
 	}
 
 	res = keeper.ApplyAndReturnValidatorSetUpdates(ctx)
@@ -51,13 +50,12 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 // GenesisState will contain the pool, params, validators, and bonds found in
 // the keeper.
 func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
-	validators := keeper.GetAllValidators(ctx)
-	lastValidatorPowers := keeper.GetLastValidatorPowers(ctx)
+	validators, _ := keeper.GetAllValidators(ctx)
+	lastValidators := keeper.GetLastValidatorPowers(ctx)
 
 	return GenesisState{
-		Validators:          validators,
-		LastValidatorPowers: lastValidatorPowers,
-		Exported:            true,
+		Validators:     validators,
+		LastValidators: lastValidators,
 	}
 }
 
@@ -85,17 +83,16 @@ func validateGenesisStateValidators(validators []Validator) (err error) {
 	return
 }
 
-// WriteValidators returns a slice of bonded genesis validators.
+// WriteValidators returns a slice of genesis validators.
 func WriteValidators(ctx sdk.Context, keeper Keeper) (vals []tmtypes.GenesisValidator) {
-	keeper.IterateLastValidators(ctx, func(_ int64, validator types.Validator) (stop bool) {
+	keeper.IterateLastValidators(ctx, func(validator types.Validator) (stop bool) {
 		vals = append(vals, tmtypes.GenesisValidator{
 			PubKey: validator.GetConsPubKey(),
-			Power:  validator.GetWeight(),
+			Power:  validator.GetPower(),
 			Name:   validator.GetMoniker(),
 		})
 
 		return false
 	})
-
 	return
 }

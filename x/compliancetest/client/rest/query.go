@@ -3,7 +3,6 @@ package rest
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"net/http"
@@ -17,17 +16,17 @@ func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.H
 
 		vid, err_ := conversions.ParseVID(vars[vid])
 		if err_ != nil {
-			restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 			return
 		}
 
 		pid, err_ := conversions.ParsePID(vars[pid])
 		if err_ != nil {
-			restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 			return
 		}
 
-		res, height, err := restCtx.QueryStore(keeper.TestingResultId(vid, pid), storeName)
+		res, height, err := restCtx.QueryStore(types.GetTestingResultsKey(vid, pid), storeName)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrTestingResultDoesNotExist(vid, pid).Error())
 			return

@@ -1,10 +1,9 @@
 package keeper
 
 import (
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // Calculate the ValidatorUpdates for the current block
@@ -13,12 +12,7 @@ func (k Keeper) BlockValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {
 	return k.ApplyAndReturnValidatorSetUpdates(ctx)
 }
 
-// Apply and return accumulated updates to the bonded validator set. Also,
-// * Updates the active valset as keyed by LastValidatorPowerKey.
-// * Updates the total power as keyed by LastTotalPowerKey.
-// * Updates validator status' according to updated powers.
-// * Updates the fee pool bonded vs not-bonded tokens.
-// * Updates relevant indices.
+// Apply and return accumulated updates to the bonded validator set.
 // It gets called once after genesis, another time maybe after genesis transactions,
 // then once at every EndBlock.
 //
@@ -29,13 +23,14 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 	// Iterate over validators
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		// power on the last height
-		lastPower := k.GetLastValidatorPower(ctx, validator.OperatorAddress)
+		lastValidatorPower := k.GetLastValidatorPower(ctx, validator.OperatorAddress)
 
-		if lastPower == 0 {
+		// if last power was 0 it means that validator was added in the current block. additionally ensure that potential power more than 0
+		if lastValidatorPower.Power == 0 && validator.GetPower() > 0 {
 			updates = append(updates, validator.ABCIValidatorUpdate())
 
 			// set validator power on lookup index
-			k.SetLastValidatorPower(ctx, validator.OperatorAddress, validator.GetWeight())
+			k.SetLastValidatorPower(ctx, types.NewLastValidatorPower(validator.OperatorAddress))
 		}
 
 		return false
