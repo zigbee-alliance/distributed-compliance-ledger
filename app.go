@@ -171,7 +171,7 @@ func InitModuleManager(app *zbLedgerApp) {
 		pki.NewAppModule(app.pkiKeeper, app.authzKeeper),
 	)
 
-	app.mm.SetOrderBeginBlockers()
+	app.mm.SetOrderBeginBlockers(validator.ModuleName)
 	app.mm.SetOrderEndBlockers(validator.ModuleName)
 
 	app.mm.SetOrderInitGenesis(

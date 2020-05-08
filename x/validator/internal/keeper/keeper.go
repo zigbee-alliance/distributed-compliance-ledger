@@ -72,7 +72,7 @@ func (k Keeper) GetAllValidators(ctx sdk.Context) (validators []types.Validator,
 func (k Keeper) IterateValidators(ctx sdk.Context, process func(validator types.Validator) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iter := sdk.KVStorePrefixIterator(store, types.ValidatorKey)
+	iter := sdk.KVStorePrefixIterator(store, types.ValidatorPrefix)
 	defer iter.Close()
 
 	for {
@@ -88,6 +88,42 @@ func (k Keeper) IterateValidators(ctx sdk.Context, process func(validator types.
 
 		iter.Next()
 	}
+}
+
+// Slash a validator for an infraction. So it will be removed from Tendermint validator set
+func (k Keeper) Slash(ctx sdk.Context, consAddr sdk.ConsAddress) {
+	validator := k.GetValidatorByConsAddr(ctx, consAddr)
+
+	// Zeroing validator's weight
+	validator.Power = types.ZeroPower
+	k.SetValidator(ctx, validator)
+}
+
+// jail a validator
+func (k Keeper) Jail(ctx sdk.Context, consAddr sdk.ConsAddress, reason string) {
+	validator := k.GetValidatorByConsAddr(ctx, consAddr)
+
+	if validator.Jailed {
+		k.Logger(ctx).Error(fmt.Sprintf("Cannot jail already jailed validator, validator: %v\n", validator))
+		return
+	}
+
+	validator.Jailed = true
+	validator.JailedReason = reason
+	k.SetValidator(ctx, validator)
+}
+
+// unjail a validator
+func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
+	validator := k.GetValidatorByConsAddr(ctx, consAddr)
+
+	if !validator.Jailed {
+		k.Logger(ctx).Error(fmt.Sprintf("Cannot unjail already unjailed validator, validator: %v\n", validator))
+		return
+	}
+
+	validator.Jailed = false
+	k.SetValidator(ctx, validator)
 }
 
 /*
@@ -143,10 +179,16 @@ func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, address sdk.ValAddr
 	return store.Has(types.GetValidatorLastPowerKey(address))
 }
 
+// Delete validator power
+func (k Keeper) DeleteLastValidatorPower(ctx sdk.Context, address sdk.ValAddress) {
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.GetValidatorLastPowerKey(address))
+}
+
 // Get active validator set
 func (k Keeper) GetLastValidatorPowers(ctx sdk.Context) []types.LastValidatorPower {
 	store := ctx.KVStore(k.storeKey)
-	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerKey)
+	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerPrefix)
 	defer iter.Close()
 
 	var lastValidators []types.LastValidatorPower
@@ -179,7 +221,7 @@ func (k Keeper) GetAllLastValidators(ctx sdk.Context) (validators []types.Valida
 // Iterate through the active validator set and perform the provided function
 func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator types.Validator) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
-	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerKey)
+	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerPrefix)
 
 	defer iter.Close()
 	for {

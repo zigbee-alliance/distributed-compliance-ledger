@@ -3,13 +3,13 @@ package types
 import "encoding/json"
 
 // Response Payload for a list query
-type LisValidatorItems struct {
+type ListValidatorItems struct {
 	Total int         `json:"total"`
 	Items []Validator `json:"items"`
 }
 
 // Implement fmt.Stringer
-func (n LisValidatorItems) String() string {
+func (n ListValidatorItems) String() string {
 	res, err := json.Marshal(n)
 
 	if err != nil {

@@ -35,18 +35,18 @@ var (
 	Address1, _                     = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
 	Address2, _                     = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
 	Address3, _                     = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	PubKey                = "cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3"
-	Signer                = Address1
-	CertificationType     = "zb"
-	EmptyString           = ""
-	ValAddress1, _        = sdk.ValAddressFromBech32("cosmosvaloper18gcwk73gtt84aeatqdh7yfesmz9956l0zw8lfw")
-	ValAddress2, _        = sdk.ValAddressFromBech32("cosmosvaloper1c8jtz9fgcswhg9sq6x4h3vfz8c2mtvssf6kjth")
-	ConsensusPubKey1      = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
-	ConsensusPubKey2      = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
-	ConsensusAddress1     = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ConsensusPubKey1).Address())
-	ConsensusAddress2     = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ConsensusPubKey2).Address())
-	ValidatorDescription1 = stakingtypes.Description{Moniker: "Test"}
-	ValidatorDescription2 = stakingtypes.Description{Moniker: "Test 2"}
+	PubKey                          = "cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3"
+	Signer                          = Address1
+	CertificationType               = "zb"
+	EmptyString                     = ""
+	ValAddress1, _                  = sdk.ValAddressFromBech32("cosmosvaloper18gcwk73gtt84aeatqdh7yfesmz9956l0zw8lfw")
+	ValAddress2, _                  = sdk.ValAddressFromBech32("cosmosvaloper1c8jtz9fgcswhg9sq6x4h3vfz8c2mtvssf6kjth")
+	ConsensusPubKey1                = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
+	ConsensusPubKey2                = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
+	ConsensusAddress1               = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ConsensusPubKey1).Address())
+	ConsensusAddress2               = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ConsensusPubKey2).Address())
+	ValidatorDescription1           = stakingtypes.Description{Moniker: "Test"}
+	ValidatorDescription2           = stakingtypes.Description{Moniker: "Test 2"}
 )
 
 /*

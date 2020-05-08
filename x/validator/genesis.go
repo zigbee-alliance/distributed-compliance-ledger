@@ -9,8 +9,15 @@ import (
 )
 
 type GenesisState struct {
-	Validators     []Validator                `json:"validators"`
-	LastValidators []types.LastValidatorPower `json:"last_validators"`
+	Validators     []Validator                           `json:"validators"`
+	LastValidators []types.LastValidatorPower            `json:"last_validators"`
+	SigningInfos   map[string]types.ValidatorSigningInfo `json:"signing_infos"`
+	MissedBlocks   map[string][]MissedBlock              `json:"missed_blocks"`
+}
+
+type MissedBlock struct {
+	Index  int64 `json:"index"`
+	Missed bool  `json:"missed"`
 }
 
 func NewGenesisState(validators []Validator) GenesisState {
@@ -20,7 +27,12 @@ func NewGenesisState(validators []Validator) GenesisState {
 }
 
 func DefaultGenesisState() GenesisState {
-	return GenesisState{}
+	return GenesisState{
+		Validators:     []Validator{},
+		LastValidators: []types.LastValidatorPower{},
+		SigningInfos:   make(map[string]types.ValidatorSigningInfo),
+		MissedBlocks:   make(map[string][]MissedBlock),
+	}
 }
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.ValidatorUpdate) {
@@ -41,6 +53,20 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 		keeper.SetLastValidatorPower(ctx, address)
 	}
 
+	for _, info := range data.SigningInfos {
+		keeper.SetValidatorSigningInfo(ctx, info)
+	}
+
+	for addr, array := range data.MissedBlocks {
+		address, err := sdk.ConsAddressFromBech32(addr)
+		if err != nil {
+			panic(err)
+		}
+		for _, missed := range array {
+			keeper.SetValidatorMissedBlockBitArray(ctx, address, missed.Index, missed.Missed)
+		}
+	}
+
 	res = keeper.ApplyAndReturnValidatorSetUpdates(ctx)
 
 	return res
@@ -53,9 +79,28 @@ func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
 	validators, _ := keeper.GetAllValidators(ctx)
 	lastValidators := keeper.GetLastValidatorPowers(ctx)
 
+	signingInfos := make(map[string]types.ValidatorSigningInfo)
+	missedBlocks := make(map[string][]MissedBlock)
+
+	keeper.IterateValidatorSigningInfos(ctx, func(info types.ValidatorSigningInfo) (stop bool) {
+		bechAddr := info.Address.String()
+		signingInfos[bechAddr] = info
+		var localMissedBlocks []MissedBlock
+
+		keeper.IterateValidatorMissedBlockBitArray(ctx, info.Address, func(index int64, missed bool) (stop bool) {
+			localMissedBlocks = append(localMissedBlocks, MissedBlock{index, missed})
+			return false
+		})
+		missedBlocks[bechAddr] = localMissedBlocks
+
+		return false
+	})
+
 	return GenesisState{
 		Validators:     validators,
 		LastValidators: lastValidators,
+		SigningInfos:   signingInfos,
+		MissedBlocks:   missedBlocks,
 	}
 }
 
@@ -76,7 +121,7 @@ func validateGenesisStateValidators(validators []Validator) (err error) {
 		val := validators[i]
 		strKey := string(val.GetConsPubKey().Bytes())
 		if _, ok := addrMap[strKey]; ok {
-			return fmt.Errorf("duplicate validator in genesis state: moniker %v, address %v", val.Description.Moniker, val.GetConsAddress())
+			return fmt.Errorf("duplicate validator in genesis state: moniker %v, address %v", val.Description.Moniker, val.GetOperatorAddress())
 		}
 		addrMap[strKey] = true
 	}

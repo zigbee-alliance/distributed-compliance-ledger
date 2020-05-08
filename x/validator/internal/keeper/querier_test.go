@@ -58,7 +58,7 @@ func TestQuerier_QueryValidators(t *testing.T) {
 		abci.RequestQuery{},
 	)
 
-	var listValidators types.LisValidatorItems
+	var listValidators types.ListValidatorItems
 	setup.Cdc.MustUnmarshalJSON(result, &listValidators)
 
 	// check

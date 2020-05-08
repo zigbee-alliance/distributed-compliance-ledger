@@ -31,7 +31,7 @@ func NewQuerier(k Keeper) sdk.Querier {
 func queryValidators(ctx sdk.Context, k Keeper) ([]byte, sdk.Error) {
 	validators, total := k.GetAllValidators(ctx)
 
-	result := types.LisValidatorItems{
+	result := types.ListValidatorItems{
 		Total: total,
 		Items: validators,
 	}

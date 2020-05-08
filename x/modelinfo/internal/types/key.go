@@ -11,8 +11,8 @@ const (
 )
 
 var (
-	ModelInfoPrefix      = []byte{0x1} // prefix for each key to a model info
-	VendorProductsPrefix = []byte{0x2} // prefix for each key to a vendor products
+	ModelInfoPrefix      = []byte{0x01} // prefix for each key to a model info
+	VendorProductsPrefix = []byte{0x02} // prefix for each key to a vendor products
 )
 
 // Key builder for Model Info

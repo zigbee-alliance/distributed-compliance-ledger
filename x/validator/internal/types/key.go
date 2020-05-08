@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/binary"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -19,22 +20,42 @@ const (
 )
 
 var (
-	ValidatorKey           = []byte{0x1} // prefix for each key to a validator
-	ValidatorByConsAddrKey = []byte{0x2} // prefix for each key to a validator index, by pubkey
-	ValidatorLastPowerKey  = []byte{0x3} // prefix for each key to a validator index, by last power
+	ValidatorPrefix           = []byte{0x01} // prefix for each key to a validator
+	ValidatorByConsAddrPrefix = []byte{0x02} // prefix for each key to a validator index, by pubkey
+	ValidatorLastPowerPrefix  = []byte{0x03} // prefix for each key to a validator index, by last power
+
+	ValidatorSigningInfoPrefix         = []byte{0x11} // prefix for validator signing info
+	ValidatorMissedBlockBitArrayPrefix = []byte{0x12} // prefix for validator missed blocks
+
 )
 
 // Key builder for Validator record
 func GetValidatorKey(addr sdk.ValAddress) []byte {
-	return append(ValidatorKey, addr.Bytes()...)
+	return append(ValidatorPrefix, addr.Bytes()...)
 }
 
 // Key builder for Consensus Address to Validator Address mapping record
 func GetValidatorByConsAddrKey(addr sdk.ConsAddress) []byte {
-	return append(ValidatorByConsAddrKey, addr.Bytes()...)
+	return append(ValidatorByConsAddrPrefix, addr.Bytes()...)
 }
 
 // Key builder for Last Validator Power record
 func GetValidatorLastPowerKey(addr sdk.ValAddress) []byte {
-	return append(ValidatorLastPowerKey, addr.Bytes()...)
+	return append(ValidatorLastPowerPrefix, addr.Bytes()...)
+}
+
+// Key builder for Validator signing info record
+func GetValidatorSigningInfoKey(addr sdk.ConsAddress) []byte {
+	return append(ValidatorSigningInfoPrefix, addr.Bytes()...)
+}
+
+func GetValidatorMissedBlockBitArrayPrefixKey(v sdk.ConsAddress) []byte {
+	return append(ValidatorMissedBlockBitArrayPrefix, v.Bytes()...)
+}
+
+// Key builder for Validator Missed blocks
+func GetValidatorMissedBlockBitArrayKey(v sdk.ConsAddress, i int64) []byte {
+	b := make([]byte, 8)
+	binary.LittleEndian.PutUint64(b, uint64(i))
+	return append(GetValidatorMissedBlockBitArrayPrefixKey(v), b...)
 }

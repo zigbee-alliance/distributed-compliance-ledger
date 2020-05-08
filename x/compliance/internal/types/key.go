@@ -11,7 +11,7 @@ const (
 )
 
 var (
-	ComplianceInfoPrefix = []byte{0x1} // prefix for each key to a compliance info
+	ComplianceInfoPrefix = []byte{0x01} // prefix for each key to a compliance info
 )
 
 // Key builder for Compliance Info

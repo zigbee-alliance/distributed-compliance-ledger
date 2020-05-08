@@ -115,7 +115,7 @@ id3=$(ls localnet/node3/config/gentx | sed 's/gentx-\(.*\).json/\1/')
 
 # Update address book of the first node
 peers="$id0@192.167.10.2:26656,$id1@192.167.10.3:26656,$id2@192.167.10.4:26656,$id3@192.167.10.5:26656"
-sed -i "s/persistent_peers = \"\"/persistent_peers = \"51a4941d9db396c300a21e57b7a7945babfaa1fe@192.167.10.2:26656,f39fe4715eeafb6ae41092e6e58cc05ed095571f@192.167.10.3:26656,bcc8b659e9ea4411df01958cdb88a6c80bccb040@192.167.10.4:26656,582ea7b0904913aaad53c522b8e9fa3ed5deb168@192.167.10.5:26656\"/g" localnet/node0/config/config.toml
+sed -i "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/node0/config/config.toml
 
 # Make RPC enpoint available externally
 

@@ -11,7 +11,7 @@ const (
 )
 
 var (
-	TestingResultsPrefix = []byte{0x1} // prefix for each key to a testing results
+	TestingResultsPrefix = []byte{0x01} // prefix for each key to a testing results
 )
 
 // Key builder for Testing Results

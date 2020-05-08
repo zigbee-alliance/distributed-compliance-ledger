@@ -9,10 +9,10 @@ const (
 )
 
 var (
-	ProposedCertificatePrefix             = []byte{0x1} // prefix for each key to a proposed certificate
-	ApprovedCertificatePrefix             = []byte{0x2} // prefix for each key to an approved certificate
-	ChildCertificatesPrefix               = []byte{0x3} // prefix for a helper index containing the list of child certificates
-	CertificateByIssuerSerialNumberPrefix = []byte{0x6} // prefix for a helper index containing existence flags for certificate issuer/serial number
+	ProposedCertificatePrefix             = []byte{0x01} // prefix for each key to a proposed certificate
+	ApprovedCertificatePrefix             = []byte{0x02} // prefix for each key to an approved certificate
+	ChildCertificatesPrefix               = []byte{0x03} // prefix for a helper index containing the list of child certificates
+	CertificateByIssuerSerialNumberPrefix = []byte{0x06} // prefix for a helper index containing existence flags for certificate issuer/serial number
 )
 
 // Key builder for Approved Certificate
