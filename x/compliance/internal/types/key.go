@@ -1,6 +1,8 @@
 package types
 
-import "fmt"
+import (
+	"encoding/binary"
+)
 
 const (
 	// ModuleName is the name of the module
@@ -16,7 +18,11 @@ var (
 
 // Key builder for Compliance Info
 func GetComplianceInfoKey(certificationType CertificationType, vid uint16, pid uint16) []byte {
-	return append(ComplianceInfoPrefix, []byte(fmt.Sprintf("%v:%v:%v", certificationType, vid, pid))...)
+	v := make([]byte, 2)
+	binary.LittleEndian.PutUint16(v, vid)
+	p := make([]byte, 2)
+	binary.LittleEndian.PutUint16(p, pid)
+	return append(ComplianceInfoPrefix, append([]byte(certificationType), append(v, p...)...)...)
 }
 
 // Key builder for Compliance Info

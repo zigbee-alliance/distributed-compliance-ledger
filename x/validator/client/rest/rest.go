@@ -9,6 +9,7 @@ import (
 
 const (
 	validatorAddr = "validator_addr"
+	state         = "state"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application

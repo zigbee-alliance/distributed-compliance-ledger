@@ -59,13 +59,12 @@ func (k Keeper) IsValidatorPresent(ctx sdk.Context, addr sdk.ValAddress) bool {
 }
 
 // get the set of all validators
-func (k Keeper) GetAllValidators(ctx sdk.Context) (validators []types.Validator, total int) {
+func (k Keeper) GetAllValidators(ctx sdk.Context) (validators []types.Validator) {
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		validators = append(validators, validator)
-		total++
 		return false
 	})
-	return validators, total
+	return validators
 }
 
 // iterate over validators and apply function

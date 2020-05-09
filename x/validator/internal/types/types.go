@@ -2,9 +2,9 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	tmtypes "github.com/tendermint/tendermint/types"
@@ -14,15 +14,15 @@ import (
 	Validator
 */
 type Validator struct {
-	Description     stakingtypes.Description `json:"description"`
-	OperatorAddress sdk.ValAddress           `json:"operator_address"`
-	ConsensusPubKey string                   `json:"consensus_pubkey"`
-	Power           int64                    `json:"power"`
-	Jailed          bool                     `json:"jailed"`
-	JailedReason    string                   `json:"jailed_reason,omitempty"`
+	Description     Description    `json:"description"`             // description of the validator
+	OperatorAddress sdk.ValAddress `json:"operator_address"`        // address of the validator's operator
+	ConsensusPubKey string         `json:"consensus_pubkey"`        // the consensus public key of the validator
+	Power           int64          `json:"power"`                   // validator consensus power
+	Jailed          bool           `json:"jailed"`                  // has the validator been removed from validator set
+	JailedReason    string         `json:"jailed_reason,omitempty"` // the reason of validator jailing
 }
 
-func NewValidator(address sdk.ValAddress, pubKey string, description stakingtypes.Description) Validator {
+func NewValidator(address sdk.ValAddress, pubKey string, description Description) Validator {
 	return Validator{
 		Description:     description,
 		OperatorAddress: address,
@@ -46,7 +46,7 @@ func (v Validator) GetConsPubKey() crypto.PubKey {
 
 func (v Validator) GetPower() int64 { return v.Power }
 
-func (v Validator) GetMoniker() string { return v.Description.Moniker }
+func (v Validator) GetName() string { return v.Description.Name }
 
 func (v Validator) IsJailed() bool { return v.Jailed }
 
@@ -108,12 +108,58 @@ func NewLastValidatorPower(address sdk.ValAddress) LastValidatorPower {
 }
 
 /*
+	Description of Validator
+*/
+type Description struct {
+	Name     string `json:"name"`     // name
+	Identity string `json:"identity"` // optional identity signature
+	Website  string `json:"website"`  // optional website link
+	Details  string `json:"details"`  // optional details
+}
+
+// NewDescription returns a new Description with the provided values.
+func NewDescription(name, identity, website, details string) Description {
+	return Description{
+		Name:     name,
+		Identity: identity,
+		Website:  website,
+		Details:  details,
+	}
+}
+
+const (
+	MaxNameLength     = 70
+	MaxIdentityLength = 3000
+	MaxWebsiteLength  = 140
+	MaxDetailsLength  = 280
+)
+
+// Ensure the length of a validator's description.
+func (d Description) Validate() sdk.Error {
+	if len(d.Name) == 0 {
+		return sdk.ErrUnknownRequest("Invalid Description Name: it cannot be empty")
+	}
+	if len(d.Name) > MaxNameLength {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Name: received string of lenght %v, max is %v", len(d.Name), MaxNameLength))
+	}
+	if len(d.Identity) > MaxIdentityLength {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Identity: received string of lenght %v, max is %v", len(d.Identity), MaxIdentityLength))
+	}
+	if len(d.Website) > MaxWebsiteLength {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Identity: received string of lenght %v, max is %v", len(d.Website), MaxWebsiteLength))
+	}
+	if len(d.Details) > MaxDetailsLength {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Details: received string of lenght %v, max is %v", len(d.Details), MaxDetailsLength))
+	}
+	return nil
+}
+
+/*
 	Validator Signing info
 */
-// Signing info for a validator
 type ValidatorSigningInfo struct {
 	Address             sdk.ConsAddress `json:"address"`                          // validator consensus address
-	StartHeight         int64           `json:"start_height" yaml:"start_height"` // height at which validator was first a candidate OR was unjailed
+	StartHeight         int64           `json:"start_height" yaml:"start_height"` // height at which validator was added
 	IndexOffset         int64           `json:"index_offset"`                     // index offset into signed block bit array
 	MissedBlocksCounter int64           `json:"missed_blocks_counter"`            // missed blocks counter (to avoid scanning the array every time)
 }

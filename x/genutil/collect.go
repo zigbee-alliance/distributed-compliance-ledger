@@ -64,7 +64,7 @@ func GenAppStateFromConfig(cdc *codec.Codec, config *cfg.Config,
 
 // CollectStdTxs processes and validates application's genesis StdTxs and returns
 // the list of appGenTxs, and persistent peers required to generate genesis.json.
-func CollectStdTxs(cdc *codec.Codec, moniker, genTxsDir string,
+func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 	genDoc tmtypes.GenesisDoc, genAccIterator types.GenesisAccountsIterator,
 ) (appGenTxs []authtypes.StdTx, persistentPeers string, err error) {
 
@@ -136,7 +136,7 @@ func CollectStdTxs(cdc *codec.Codec, moniker, genTxsDir string,
 		}
 
 		// exclude itself from persistent peers
-		if msg.Description.Moniker != moniker {
+		if msg.Description.Name != name {
 			addressesIPs = append(addressesIPs, nodeAddrIP)
 		}
 	}

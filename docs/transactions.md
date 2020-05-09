@@ -117,7 +117,12 @@ A summary of KV store and paths used:
       - `3:<address>` : `<account info> + <list of approvers>`
 - KV store name: `validator`
     - Validators
-    - Proposed but not approved accounts to be removed
+      - `1:<Validator Address>` : `<Validator>` - main index to store validators (active/jailed)
+      - `2:<Consensus Address>` : `<Validator Address>` - helper index used for signature processing
+      - `3:<Validator Address>` : `<Validator Address>` - helper index to track the last active validator set
+      - `6:<Consensus Address>` : `<Signing Info>` - index to track validator signatures
+      - `7:<Consensus Address:index>` : `<Address>` - index to track validator signatures over blocks window
+    - Proposed but not approved validators to be removed
    
 ## X509 PKI
 
@@ -1234,8 +1239,21 @@ Gets all proposed but not approved accounts to be revoked.
 #### ADD_VALIDATOR_NODE
 Adds a new Validator node.
 
-- Parameters: Same as in `cosmos-sdk/MsgCreateValidator`
-- In State: Same as in Tendermint/Cosmos-sdk
+- Parameters:
+    - `validator_address`: string // address of the validator's operator; bech encoded
+    - `pubkey`: string // the consensus public key of the validator; bech encoded
+    - `description`: json
+        - `name`: string // name
+        - `identity`: string (optional) // identity signature
+        - `website`: string (optional) // website link
+        - `details`: string (optional) // details
+- In State:
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator>` - main index to store validators (active/jailed)
+  - `2:<Consensus Address>` : `<Validator Address>` - helper index used for signature processing
+  - `3:<Validator Address>` : `<Validator Address>` - helper index to track the last active validator set
+  - `6:<Consensus Address>` : `<Signing Info>` - index to track validator signatures
+  - `7:<Consensus Address:index>` : `<Address>` - index to track validator signatures over blocks window
 - Who can send: 
     - NodeAdmin
 - CLI command: 
@@ -1321,7 +1339,10 @@ Gets a validator node.
 #### GET_ALL_PROPOSED_VALIDATORS_TO_REMOVE
 Gets all proposed but not approved validator nodes to be removed.
 
-- Parameters: No
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
+  - `state`: string (optional) - state of the validator (active/jailed)
 - CLI command: 
     -   `zblcli query validator all-proposed-nodes-to-remove .... `
 - REST API: 

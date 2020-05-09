@@ -3,11 +3,13 @@ package cli
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // GetQueryCmd returns the cli query commands for this module
@@ -54,13 +56,25 @@ func GetCmdQueryValidator(storeName string, cdc *codec.Codec) *cobra.Command {
 
 // GetCmdQueryValidators implements the query all validators command.
 func GetCmdQueryValidators(storeName string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "all-nodes",
 		Short: "Query for all validators",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
-			return cliCtx.QueryList(fmt.Sprintf("custom/%s/validators", storeName), nil)
+
+			state := viper.GetString(FlagState)
+
+			paginationParams := pagination.ParsePaginationParamsFromFlags()
+			params := types.NewListValidatorsParams(paginationParams, types.ValidatorState(state))
+
+			return cliCtx.QueryList(fmt.Sprintf("custom/%s/validators", storeName), params)
 		},
 	}
+
+	cmd.Flags().String(FlagState, "", "state of the validator (active/jailed)")
+	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of validators to skip")
+	cmd.Flags().Int(pagination.FlagTake, 0, "amount of validators to take")
+
+	return cmd
 }

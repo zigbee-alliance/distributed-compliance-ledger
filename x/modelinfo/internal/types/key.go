@@ -1,6 +1,8 @@
 package types
 
-import "fmt"
+import (
+	"encoding/binary"
+)
 
 const (
 	// ModuleName is the name of the module
@@ -17,10 +19,16 @@ var (
 
 // Key builder for Model Info
 func GetModelInfoKey(vid uint16, pid uint16) []byte {
-	return append(ModelInfoPrefix, []byte(fmt.Sprintf("%v:%v", vid, pid))...)
+	v := make([]byte, 2)
+	binary.LittleEndian.PutUint16(v, vid)
+	p := make([]byte, 2)
+	binary.LittleEndian.PutUint16(p, pid)
+	return append(ModelInfoPrefix, append(v, p...)...)
 }
 
 // Key builder for Vendor Products
 func GetVendorProductsKey(vid uint16) []byte {
-	return append(VendorProductsPrefix, []byte(fmt.Sprintf("%v", vid))...)
+	b := make([]byte, 2)
+	binary.LittleEndian.PutUint16(b, vid)
+	return append(VendorProductsPrefix, b...)
 }

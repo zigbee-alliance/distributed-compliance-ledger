@@ -30,8 +30,7 @@ func TestKeeper_Validator_SetGet(t *testing.T) {
 	require.Equal(t, validator, receivedValidator)
 
 	// get all validators
-	validators, total := setup.ValidatorKeeper.GetAllValidators(setup.Ctx)
-	require.Equal(t, 1, total)
+	validators := setup.ValidatorKeeper.GetAllValidators(setup.Ctx)
 	require.Equal(t, 1, len(validators))
 	require.Equal(t, validator, validators[0])
 }

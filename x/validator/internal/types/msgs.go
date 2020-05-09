@@ -3,17 +3,16 @@ package types
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/tendermint/tendermint/crypto"
 )
 
 type MsgCreateValidator struct {
-	ValidatorAddress sdk.ValAddress           `json:"validator_address"`
-	PubKey           string                   `json:"pubkey"`
-	Description      stakingtypes.Description `json:"description"`
+	ValidatorAddress sdk.ValAddress `json:"validator_address"`
+	PubKey           string         `json:"pubkey"`
+	Description      Description    `json:"description"`
 }
 
-func NewMsgCreateValidator(valAddr sdk.ValAddress, pubKey string, description stakingtypes.Description) MsgCreateValidator {
+func NewMsgCreateValidator(valAddr sdk.ValAddress, pubKey string, description Description) MsgCreateValidator {
 	return MsgCreateValidator{
 		ValidatorAddress: valAddr,
 		PubKey:           pubKey,
@@ -32,10 +31,10 @@ func (m MsgCreateValidator) ValidateBasic() sdk.Error {
 	if _, err := sdk.GetConsPubKeyBech32(m.PubKey); err != nil {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Validator Public Key: %v", err))
 	}
-	if m.Description == (stakingtypes.Description{}) {
-		return sdk.ErrUnknownRequest("Invalid Description: it cannot be empty")
+	if len(m.Description.Name) == 0 {
+		return sdk.ErrUnknownRequest("Invalid Validator Name: it cannot be empty")
 	}
-	if _, err := m.Description.EnsureLength(); err != nil {
+	if err := m.Description.Validate(); err != nil {
 		return err
 	}
 	return nil

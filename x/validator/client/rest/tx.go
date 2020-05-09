@@ -8,14 +8,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 type CreateValidatorRequest struct {
-	BaseReq          restTypes.BaseReq        `json:"base_req"`
-	ValidatorAddress sdk.ValAddress           `json:"validator_address"`
-	Pubkey           string                   `json:"pubkey"`
-	Description      stakingtypes.Description `json:"description"`
+	BaseReq          restTypes.BaseReq `json:"base_req"`
+	ValidatorAddress sdk.ValAddress    `json:"validator_address"`
+	Pubkey           string            `json:"pubkey"`
+	Description      types.Description `json:"description"`
 }
 
 func createValidatorHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {

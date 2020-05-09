@@ -22,7 +22,7 @@ Here are steps for setting up a new validator node.
 
 * Add validator node to the network:
     * Get your `pubkey` that can be used to create a new validator: `zbld tendermint show-validator`
-    * Add validator node: `zblcli tx validator add-node --pubkey=<pubkey> --moniker=<node name> --chain-id=<chain id> --from=<name>`
+    * Add validator node: `zblcli tx validator add-node --pubkey=<pubkey> --name=<node name> --from=<name>`
     * Start node: `zbld start`
 
 * Congrats! You are an owner of the validator node.

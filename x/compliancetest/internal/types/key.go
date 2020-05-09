@@ -1,6 +1,8 @@
 package types
 
-import "fmt"
+import (
+	"encoding/binary"
+)
 
 const (
 	// ModuleName is the name of the module
@@ -16,5 +18,9 @@ var (
 
 // Key builder for Testing Results
 func GetTestingResultsKey(vid uint16, pid uint16) []byte {
-	return append(TestingResultsPrefix, []byte(fmt.Sprintf("%v:%v", vid, pid))...)
+	v := make([]byte, 2)
+	binary.LittleEndian.PutUint16(v, vid)
+	p := make([]byte, 2)
+	binary.LittleEndian.PutUint16(p, pid)
+	return append(TestingResultsPrefix, append(v, p...)...)
 }

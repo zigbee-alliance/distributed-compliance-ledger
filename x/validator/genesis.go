@@ -76,7 +76,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 // GenesisState will contain the pool, params, validators, and bonds found in
 // the keeper.
 func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
-	validators, _ := keeper.GetAllValidators(ctx)
+	validators := keeper.GetAllValidators(ctx)
 	lastValidators := keeper.GetLastValidatorPowers(ctx)
 
 	signingInfos := make(map[string]types.ValidatorSigningInfo)
@@ -121,7 +121,7 @@ func validateGenesisStateValidators(validators []Validator) (err error) {
 		val := validators[i]
 		strKey := string(val.GetConsPubKey().Bytes())
 		if _, ok := addrMap[strKey]; ok {
-			return fmt.Errorf("duplicate validator in genesis state: moniker %v, address %v", val.Description.Moniker, val.GetOperatorAddress())
+			return fmt.Errorf("duplicate validator in genesis state: name %v, address %v", val.GetName(), val.GetOperatorAddress())
 		}
 		addrMap[strKey] = true
 	}
@@ -134,7 +134,7 @@ func WriteValidators(ctx sdk.Context, keeper Keeper) (vals []tmtypes.GenesisVali
 		vals = append(vals, tmtypes.GenesisValidator{
 			PubKey: validator.GetConsPubKey(),
 			Power:  validator.GetPower(),
-			Name:   validator.GetMoniker(),
+			Name:   validator.GetName(),
 		})
 
 		return false

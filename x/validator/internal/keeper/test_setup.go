@@ -52,7 +52,7 @@ func DefaultValidator() types.Validator {
 	return types.NewValidator(
 		test_constants.ValAddress1,
 		test_constants.ConsensusPubKey1,
-		test_constants.ValidatorDescription1,
+		types.Description{Name: test_constants.Name},
 	)
 }
 
@@ -61,10 +61,10 @@ func DefaultValidatorPower() types.LastValidatorPower {
 }
 
 func StoreTwoValidators(setup TestSetup) (types.Validator, types.Validator) {
-	validator1 := types.NewValidator(test_constants.ValAddress1, test_constants.ConsensusPubKey1, test_constants.ValidatorDescription1)
+	validator1 := types.NewValidator(test_constants.ValAddress1, test_constants.ConsensusPubKey1, types.Description{Name: "Validator 1"})
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator1)
 
-	validator2 := types.NewValidator(test_constants.ValAddress2, test_constants.ConsensusPubKey2, test_constants.ValidatorDescription2)
+	validator2 := types.NewValidator(test_constants.ValAddress2, test_constants.ConsensusPubKey2, types.Description{Name: "Validator 2"})
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator2)
 
 	return validator1, validator2

@@ -282,14 +282,50 @@ Queries:
 
   Example: `zblcli query compliance all-compliance-info-records`
 
+### Validator
+
+Validator type:
+- `validator_address`: `string` - address of the validator's operator; bech encoded
+- `pubkey`: `string` - the consensus public key of the validator; bech encoded
+- `description`: 
+    - `name`: `string` - name
+    - `identity`:(optional) `string` - identity signature
+    - `website`:(optional) `string` - website link
+    - `details`:(optional) `string` - details
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Signer must have `NodeAdmin` role. See `Authorization` module for details.
+
+Transactions:
+- ` zblcli tx validator add-node --pubkey=<pubkey> --name=<node name> --from=<name>` - Add a new Validator node.
+  - Signature is required. Use `--from` flag.
+  - Optional flags: 
+    - `--website` string -  optional validator's website
+    - `--identity` string -  optional identity signature
+    - `--details` string -  optional validator's details
+    - `--node-id` string -  optional node's ID
+    - `--ip` string -  node's public IP. It takes effect only when used in combination with `--generate-only` flag
+
+  Example: `zblcli tx validator add-node --pubkey=cosmosvalconspub1zcjduepq3dr464kyrty82e93u9r6f6hphd4x03axzzjcyu8sqsvzjhlqwfjqquhn07 --name=node1 --from=jack`
+ 
+Queries:
+- `zblcli query validator node [operator-address]` - Query validator node by given operator address.
+
+  Example: `zblcli query validator node cosmosvaloper1jnr3hcrvcpvqm5fdcafg70azkg0awf96tvu79z`
+  
+- `zblcli query validator all-nodes` - Query all validator nodes.
+
+  Example: `zblcli query validator all-nodes`
+  
 ### Authorization
 
 Roles:
-- `Administrator` - Is able to assign or revoke roles.
+- `Administrator` - Is able to assign or revoke roles
 - `Vendor` - Is able to add models
 - `TestHouse` - Is able to add testing results for an model
 - `ZBCertificationCenter` - Is able to certify models
 - `Trustee` - Is able to approve root certificates
+- `NodeAdmin` - Is able to add nodes to validator pool
 
 Transactions:
 - `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.

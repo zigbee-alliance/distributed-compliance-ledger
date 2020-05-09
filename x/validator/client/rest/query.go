@@ -2,6 +2,7 @@ package rest
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
@@ -14,7 +15,10 @@ import (
 func getValidatorsHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
-		restCtx.QueryList(fmt.Sprintf("custom/%s/validators", storeName), nil)
+		state := r.FormValue(state)
+		paginationParams := pagination.ParsePaginationParamsFromFlags()
+		params := types.NewListValidatorsParams(paginationParams, types.ValidatorState(state))
+		restCtx.QueryList(fmt.Sprintf("custom/%s/validators", storeName), params)
 	}
 }
 

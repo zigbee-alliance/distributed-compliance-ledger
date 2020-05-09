@@ -24,8 +24,8 @@ var (
 	ValidatorByConsAddrPrefix = []byte{0x02} // prefix for each key to a validator index, by pubkey
 	ValidatorLastPowerPrefix  = []byte{0x03} // prefix for each key to a validator index, by last power
 
-	ValidatorSigningInfoPrefix         = []byte{0x11} // prefix for validator signing info
-	ValidatorMissedBlockBitArrayPrefix = []byte{0x12} // prefix for validator missed blocks
+	ValidatorSigningInfoPrefix         = []byte{0x06} // prefix for validator signing info
+	ValidatorMissedBlockBitArrayPrefix = []byte{0x07} // prefix for validator missed blocks
 
 )
 

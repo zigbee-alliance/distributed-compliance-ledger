@@ -19,7 +19,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -60,14 +59,14 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagPubKey, "", "The Bech32 encoded ConsensusPubkey of the validator")
 	cmd.Flags().String(FlagIP, "", fmt.Sprintf("The node's public IP. It takes effect only when used in combination with --%s", flags.FlagGenerateOnly))
 	cmd.Flags().String(FlagNodeID, "", "The node's ID")
-	cmd.Flags().String(FlagMoniker, "", "The validator's name")
+	cmd.Flags().String(FlagName, "", "The validator's name")
 	cmd.Flags().String(FlagIdentity, "", "The optional identity signature (ex. UPort or Keybase)")
 	cmd.Flags().String(FlagWebsite, "", "The validator's (optional) website")
 	cmd.Flags().String(FlagDetails, "", "The validator's (optional) details")
 
 	cmd.MarkFlagRequired(flags.FlagFrom)
 	cmd.MarkFlagRequired(FlagPubKey)
-	cmd.MarkFlagRequired(FlagMoniker)
+	cmd.MarkFlagRequired(FlagName)
 
 	return cmd
 }
@@ -109,13 +108,13 @@ func PrepareFlagsForTxCreateValidator(
 	viper.Set(FlagNodeID, nodeID)
 	viper.Set(FlagIP, ip)
 	viper.Set(FlagPubKey, sdk.MustBech32ifyConsPub(valPubKey))
-	viper.Set(FlagMoniker, config.Moniker)
+	viper.Set(FlagName, config.Moniker)
 	viper.Set(FlagWebsite, website)
 	viper.Set(FlagDetails, details)
 	viper.Set(FlagIdentity, identity)
 
 	if config.Moniker == "" {
-		viper.Set(FlagMoniker, viper.GetString(flags.FlagName))
+		viper.Set(FlagName, viper.GetString(flags.FlagName))
 	}
 }
 
@@ -130,8 +129,8 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (
 		return txBldr, nil, err
 	}
 
-	description := stakingtypes.NewDescription(
-		viper.GetString(FlagMoniker),
+	description := types.NewDescription(
+		viper.GetString(FlagName),
 		viper.GetString(FlagIdentity),
 		viper.GetString(FlagWebsite),
 		viper.GetString(FlagDetails),

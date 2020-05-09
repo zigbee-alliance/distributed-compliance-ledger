@@ -27,18 +27,18 @@ const (
 )
 
 type printInfo struct {
-	Moniker    string          `json:"moniker" yaml:"moniker"`
+	Name       string          `json:"name" yaml:"name"`
 	ChainID    string          `json:"chain_id" yaml:"chain_id"`
 	NodeID     string          `json:"node_id" yaml:"node_id"`
 	GenTxsDir  string          `json:"gentxs_dir" yaml:"gentxs_dir"`
 	AppMessage json.RawMessage `json:"app_message" yaml:"app_message"`
 }
 
-func newPrintInfo(moniker, chainID, nodeID, genTxsDir string,
+func newPrintInfo(name, chainID, nodeID, genTxsDir string,
 	appMessage json.RawMessage) printInfo {
 
 	return printInfo{
-		Moniker:    moniker,
+		Name:       name,
 		ChainID:    chainID,
 		NodeID:     nodeID,
 		GenTxsDir:  genTxsDir,
@@ -61,7 +61,7 @@ func displayInfo(cdc *codec.Codec, info printInfo) error {
 func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 	defaultNodeHome string) *cobra.Command { // nolint: golint
 	cmd := &cobra.Command{
-		Use:   "init [moniker]",
+		Use:   "init [name]",
 		Short: "Initialize private validator, p2p, genesis, and application configuration files",
 		Long:  `Initialize validators's and node's configuration files.`,
 		Args:  cobra.ExactArgs(1),

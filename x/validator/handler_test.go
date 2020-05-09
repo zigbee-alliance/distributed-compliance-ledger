@@ -15,7 +15,7 @@ func TestHandler_CreateValidator(t *testing.T) {
 	setup := Setup()
 
 	// create validator
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress1, constants.ConsensusPubKey1, constants.ValidatorDescription1)
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress1, constants.ConsensusPubKey1, types.Description{Name: constants.Name})
 	result := setup.Handler(setup.Ctx, msgCreateValidator)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -41,7 +41,7 @@ func TestHandler_CreateValidator(t *testing.T) {
 func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	setup := Setup()
 
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress2, constants.ConsensusPubKey1, constants.ValidatorDescription1)
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress2, constants.ConsensusPubKey1, types.Description{Name: constants.Name})
 
 	for _, role := range []authz.AccountRole{authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor, authz.Trustee} {
 		// assign role
@@ -57,7 +57,7 @@ func TestHandler_CreateValidator_Twice(t *testing.T) {
 	setup := Setup()
 
 	// create validator
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress1, constants.ConsensusPubKey1, constants.ValidatorDescription1)
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress1, constants.ConsensusPubKey1, types.Description{Name: constants.Name})
 	result := setup.Handler(setup.Ctx, msgCreateValidator)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
