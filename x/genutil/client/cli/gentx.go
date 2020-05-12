@@ -39,16 +39,13 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 	cmd := &cobra.Command{
 		Use:   "gentx",
-		Short: "Generate a genesis tx",
+		Short: "Generate a genesis transaction to create a validator",
 		Args:  cobra.NoArgs,
-		Long: fmt.Sprintf(`This command is an alias of the 'tx validator add-node' command'.
-
-		It creates a genesis transaction to create a validator.`),
-
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			config := ctx.Config
 			config.SetRoot(viper.GetString(client.FlagHome))
+
 			nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(ctx.Config)
 			if err != nil {
 				return err
@@ -85,8 +82,8 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 				return err
 			}
 
-			name := viper.GetString(client.FlagName)
-			key, err := kb.Get(name)
+			from := viper.GetString(client.FlagFrom)
+			key, err := kb.Get(from)
 			if err != nil {
 				return err
 			}
@@ -104,10 +101,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 			cliCtx := client.NewCLIContext().WithCodec(cdc)
 
 			// Set the generate-only flag here after the CLI context has
-			// been created. This allows the from name/key to be correctly populated.
-			//
-			// TODO: Consider removing the manual setting of generate-only in
-			// favor of a 'gentx' flag in the create-validator command.
+			// been created. This allows the from from/key to be correctly populated.
 			viper.Set(client.FlagGenerateOnly, true)
 
 			// create a 'create-validator' message
@@ -116,7 +110,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 				return errors.Wrap(err, "failed to build create-validator message")
 			}
 
-			info, err := txBldr.Keybase().Get(name)
+			info, err := txBldr.Keybase().Get(from)
 			if err != nil {
 				return errors.Wrap(err, "failed to read from tx builder keybase")
 			}
@@ -141,12 +135,12 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 			}
 
 			// sign the transaction and write it to the output file
-			signedTx, err := utils.SignStdTx(txBldr, cliCtx, name, stdTx, false, true)
+			signedTx, err := utils.SignStdTx(txBldr, cliCtx, from, stdTx, false, true)
 			if err != nil {
 				return errors.Wrap(err, "failed to sign std tx")
 			}
 
-			// Fetch output file name
+			// Fetch output file from
 			outputDocument := viper.GetString(flags.FlagOutputDocument)
 			if outputDocument == "" {
 				outputDocument, err = makeOutputFilepath(config.RootDir, nodeID)
@@ -167,14 +161,14 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 	cmd.Flags().String(flags.FlagHome, defaultNodeHome, "node's home directory")
 	cmd.Flags().String(flagClientHome, defaultCLIHome, "client's home directory")
-	cmd.Flags().String(flags.FlagName, "", "name of private key with which to sign the gentx")
+	cmd.Flags().String(flags.FlagFrom, "", "Name or address of private key with which to sign the gentx")
 	cmd.Flags().String(flags.FlagOutputDocument, "",
 		"write the genesis transaction JSON document to the given file instead of the default location")
 
 	ipDefault, _ := server.ExternalIP()
 	cmd.Flags().AddFlagSet(validator.InitValidatorFlags(ipDefault))
 
-	cmd.MarkFlagRequired(flags.FlagName)
+	cmd.MarkFlagRequired(flags.FlagFrom)
 	return cmd
 }
 

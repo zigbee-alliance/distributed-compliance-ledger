@@ -28,11 +28,13 @@ func CollectGenTxsCmd(ctx *server.Context, cdc *codec.Codec,
 		RunE: func(_ *cobra.Command, _ []string) error {
 			config := ctx.Config
 			config.SetRoot(viper.GetString(cli.HomeFlag))
-			name := viper.GetString(client.FlagName)
+
 			nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(config)
 			if err != nil {
 				return err
 			}
+
+			name := viper.GetString(client.FlagName)
 
 			genDoc, err := tmtypes.GenesisDocFromFile(config.GenesisFile())
 			if err != nil {

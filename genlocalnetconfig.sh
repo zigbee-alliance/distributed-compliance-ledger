@@ -35,7 +35,7 @@ zbld add-genesis-account $anna_address 1000nametoken,100000000stake
 # Update genesis transactions to set roles
 sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
-echo 'test1234' | zbld gentx --name jack
+echo 'test1234' | zbld gentx --from jack
 
 mv ~/.zbld/* localnet/node0
 
@@ -51,7 +51,7 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 # Update genesis transactions to set jack as admin
 sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
-echo 'test1234' | zbld gentx --name alice
+echo 'test1234' | zbld gentx --from alice
 
 mv ~/.zbld/* localnet/node1
 
@@ -67,7 +67,7 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 # Update genesis transactions to set jack as admin
 sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
-echo 'test1234' | zbld gentx --name bob
+echo 'test1234' | zbld gentx --from bob
 
 mv ~/.zbld/* localnet/node2
 
@@ -83,7 +83,7 @@ zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stak
 # Update genesis transactions to set jack as admin
 sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
-echo 'test1234' | zbld gentx --name anna
+echo 'test1234' | zbld gentx --from anna
 
 cp -r ~/.zbld/* localnet/node3
 

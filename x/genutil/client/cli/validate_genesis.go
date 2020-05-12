@@ -29,7 +29,7 @@ func ValidateGenesisCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicM
 				genesis = args[0]
 			}
 
-			fmt.Fprintf(os.Stderr, "validating genesis file at %s\n", genesis)
+			fmt.Fprintf(os.Stderr, "Validating genesis file at %s\n", genesis)
 
 			var genDoc *tmtypes.GenesisDoc
 			if genDoc, err = tmtypes.GenesisDocFromFile(genesis); err != nil {

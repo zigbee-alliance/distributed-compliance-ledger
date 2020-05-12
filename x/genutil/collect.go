@@ -125,13 +125,12 @@ func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 		}
 
 		msg := msgs[0].(validator.MsgCreateValidator)
-		// validate delegator and validator addresses and funds against the accounts in the state
-		valAddr := msg.Signer.String()
+		account := msg.Signer.String()
 
-		_, valOk := addrMap[valAddr]
+		_, valOk := addrMap[account]
 		if !valOk {
 			return appGenTxs, persistentPeers, fmt.Errorf(
-				"account %v not in genesis.json: %+v", valAddr, addrMap)
+				"account %v not in genesis.json: %+v", account, addrMap)
 		}
 
 		// exclude itself from persistent peers

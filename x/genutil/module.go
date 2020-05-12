@@ -59,9 +59,9 @@ func (AppModuleBasic) GetQueryCmd(_ *codec.Codec) *cobra.Command { return nil }
 // app module
 type AppModule struct {
 	AppModuleBasic
-	accountKeeper types.AccountKeeper
-	validatorKeeper     types.ValidatorKeeper
-	deliverTx     deliverTxfn
+	accountKeeper   types.AccountKeeper
+	validatorKeeper types.ValidatorKeeper
+	deliverTx       deliverTxfn
 }
 
 // NewAppModule creates a new AppModule object
@@ -69,10 +69,10 @@ func NewAppModule(accountKeeper types.AccountKeeper,
 	validatorKeeper types.ValidatorKeeper, deliverTx deliverTxfn) module.AppModule {
 
 	return module.NewGenesisOnlyAppModule(AppModule{
-		AppModuleBasic: AppModuleBasic{},
-		accountKeeper:  accountKeeper,
-		validatorKeeper:      validatorKeeper,
-		deliverTx:      deliverTx,
+		AppModuleBasic:  AppModuleBasic{},
+		accountKeeper:   accountKeeper,
+		validatorKeeper: validatorKeeper,
+		deliverTx:       deliverTx,
 	})
 }
 

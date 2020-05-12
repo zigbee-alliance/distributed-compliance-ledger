@@ -10,20 +10,16 @@ import (
 )
 
 const (
-	ModuleName = types.ModuleName
+	ModuleName = "genutil"
 )
 
 var (
 	// functions aliases
-	NewGenesisState              = cosmosgenutil.NewGenesisState
-	NewGenesisStateFromStdTx     = cosmosgenutil.NewGenesisStateFromStdTx
 	GenesisStateFromGenDoc       = cosmosgenutil.GenesisStateFromGenDoc
-	GetGenesisStateFromAppState  = cosmosgenutil.GetGenesisStateFromAppState
-	SetGenesisStateInAppState    = cosmosgenutil.SetGenesisStateInAppState
 	InitializeNodeValidatorFiles = cosmosgenutil.InitializeNodeValidatorFiles
 	SetGenTxsInAppGenesisState   = cosmosgenutil.SetGenTxsInAppGenesisState
 	ExportGenesisFile            = cosmosgenutil.ExportGenesisFile
-	NewInitConfig                = types.NewInitConfig
+	NewInitConfig                = cosmosgenutil.NewInitConfig
 	ValidateGenesis              = types.ValidateGenesis
 
 	// variable aliases
@@ -32,6 +28,6 @@ var (
 
 type (
 	GenesisState      = cosmosgenutil.GenesisState
-	AppMap            = types.AppMap
-	InitConfig        = types.InitConfig
+	AppMap            = cosmosgenutil.AppMap
+	InitConfig        = cosmosgenutil.InitConfig
 )

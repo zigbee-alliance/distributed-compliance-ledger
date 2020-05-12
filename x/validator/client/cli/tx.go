@@ -58,8 +58,6 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagName, "", "The validator's name")
-
 	fsCreateValidator := InitValidatorFlags("")
 	cmd.Flags().AddFlagSet(fsCreateValidator)
 
@@ -78,6 +76,7 @@ func InitValidatorFlags(ipDefault string) (fs *flag.FlagSet) {
 	fsCreateValidator.String(FlagPubKey, "", "The Bech32 encoded ConsensusPubkey of the validator")
 	fsCreateValidator.String(FlagIP, ipDefault, "The node's public IP")
 	fsCreateValidator.String(FlagNodeID, "", "The node's NodeID")
+	fsCreateValidator.String(FlagName, "", "The validator's name")
 	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
 	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
 	fsCreateValidator.String(FlagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
@@ -100,7 +99,6 @@ func PrepareFlagsForTxCreateValidator(
 	identity := viper.GetString(FlagIdentity)
 
 	viper.Set(flags.FlagChainID, chainID)
-	viper.Set(flags.FlagFrom, viper.GetString(flags.FlagName))
 	viper.Set(FlagNodeID, nodeID)
 	viper.Set(FlagIP, ip)
 	viper.Set(FlagAddress, sdk.ConsAddress(valPubKey.Address()).String())

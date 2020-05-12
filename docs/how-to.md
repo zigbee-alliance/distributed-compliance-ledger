@@ -36,8 +36,8 @@ Here are steps for setting up a new validator node.
 
 * Congrats! You are an owner of the validator node.
 
-##### Restrictions
-- Maximum number of nodes (`MaxEvidenceAge`): 100 
+##### Policy
+- Maximum number of nodes (`MaxNodes`): 100 
 - Size (number of blocks) of the sliding window used to track validator liveness (`SignedBlocksWindow`): 100
 - Minimal number of blocks must have been signed per window (`MinSignedPerWindow`): 50
 
@@ -45,5 +45,7 @@ Node will be jailed and removed from the active validator set in the following c
 - Node passed minimum height: `node start height + SignedBlocksWindow`
 - Node exceeded the maximum number of unsigned blocks withing the window: `SignedBlocksWindow - MinSignedPerWindow`
 
-In order to unjail the node and return to the active tendermint validator set the sufficient number of Trustee's approvals is needed.
-(see authorization rules)
+Note that jailed node will not be removed from the main index to track validator nodes. 
+So it is not possible to create a new node with the same `address`.
+In order to unjail the node and return it to the active tendermint validator set the sufficient number of Trustee's approvals is needed 
+(see authorization rules).

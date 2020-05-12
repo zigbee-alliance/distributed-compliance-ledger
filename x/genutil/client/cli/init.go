@@ -13,12 +13,12 @@ import (
 	"github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/types"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
 )
 
 const (
@@ -62,17 +62,14 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 	defaultNodeHome string) *cobra.Command { // nolint: golint
 	cmd := &cobra.Command{
 		Use:   "init [name]",
-		Short: "Initialize private validator, p2p, genesis, and application configuration files",
-		Long:  `Initialize validators's and node's configuration files.`,
+		Short: "Initialize validators's and node's configuration files (private validator, p2p, " +
+			"genesis, and application configuration files)",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			config := ctx.Config
 			config.SetRoot(viper.GetString(cli.HomeFlag))
 
 			chainID := viper.GetString(client.FlagChainID)
-			if chainID == "" {
-				chainID = fmt.Sprintf("test-chain-%v", common.RandStr(6))
-			}
 
 			nodeID, _, err := genutil.InitializeNodeValidatorFiles(config)
 			if err != nil {
@@ -118,7 +115,9 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 	cmd.Flags().String(cli.HomeFlag, defaultNodeHome, "node's home directory")
 	cmd.Flags().BoolP(flagOverwrite, "o", false, "overwrite the genesis.json file")
-	cmd.Flags().String(client.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
+	cmd.Flags().String(client.FlagChainID, "", "genesis file chain-id")
+
+	cmd.MarkFlagRequired(client.FlagChainID)
 
 	return cmd
 }
