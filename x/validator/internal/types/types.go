@@ -14,26 +14,24 @@ import (
 	Validator
 */
 type Validator struct {
-	Description     Description    `json:"description"`             // description of the validator
-	OperatorAddress sdk.ValAddress `json:"operator_address"`        // address of the validator's operator
-	ConsensusPubKey string         `json:"consensus_pubkey"`        // the consensus public key of the validator
-	Power           int64          `json:"power"`                   // validator consensus power
-	Jailed          bool           `json:"jailed"`                  // has the validator been removed from validator set
-	JailedReason    string         `json:"jailed_reason,omitempty"` // the reason of validator jailing
+	Description  Description     `json:"description"`             // description of the validator
+	Address      sdk.ConsAddress `json:"address"`                 // the consensus address of the validator's operator
+	PubKey       string          `json:"pubkey"`                  // the consensus public key of the validator
+	Power        int64           `json:"power"`                   // validator consensus power
+	Jailed       bool            `json:"jailed"`                  // has the validator been removed from validator set
+	JailedReason string          `json:"jailed_reason,omitempty"` // the reason of validator jailing
+	Owner        sdk.AccAddress  `json:"owner"`                   // validator owner
 }
 
-func NewValidator(address sdk.ValAddress, pubKey string, description Description) Validator {
+func NewValidator(address sdk.ConsAddress, pubKey string, description Description, owner sdk.AccAddress) Validator {
 	return Validator{
-		Description:     description,
-		OperatorAddress: address,
-		ConsensusPubKey: pubKey,
-		Power:           Power,
-		Jailed:          false,
+		Description: description,
+		Address:     address,
+		PubKey:      pubKey,
+		Power:       Power,
+		Jailed:      false,
+		Owner:       owner,
 	}
-}
-
-func (v Validator) GetOperatorAddress() sdk.ValAddress {
-	return v.OperatorAddress
 }
 
 func (v Validator) GetConsAddress() sdk.ConsAddress {
@@ -41,10 +39,12 @@ func (v Validator) GetConsAddress() sdk.ConsAddress {
 }
 
 func (v Validator) GetConsPubKey() crypto.PubKey {
-	return sdk.MustGetConsPubKeyBech32(v.ConsensusPubKey)
+	return sdk.MustGetConsPubKeyBech32(v.PubKey)
 }
 
 func (v Validator) GetPower() int64 { return v.Power }
+
+func (v Validator) GeOwner() sdk.AccAddress { return v.Owner }
 
 func (v Validator) GetName() string { return v.Description.Name }
 
@@ -96,14 +96,14 @@ func UnmarshalBinaryBareValidator(cdc *codec.Codec, value []byte) (v Validator, 
 	Last Validator power. needed for taking validator set updates
 */
 type LastValidatorPower struct {
-	OperatorAddress sdk.ValAddress `json:"operator_address"`
-	Power           int64          `json:"power"`
+	ConsensusAddress sdk.ConsAddress `json:"address"`
+	Power            int64           `json:"power"`
 }
 
-func NewLastValidatorPower(address sdk.ValAddress) LastValidatorPower {
+func NewLastValidatorPower(address sdk.ConsAddress) LastValidatorPower {
 	return LastValidatorPower{
-		OperatorAddress: address,
-		Power:           Power,
+		ConsensusAddress: address,
+		Power:            Power,
 	}
 }
 
@@ -111,10 +111,10 @@ func NewLastValidatorPower(address sdk.ValAddress) LastValidatorPower {
 	Description of Validator
 */
 type Description struct {
-	Name     string `json:"name"`     // name
-	Identity string `json:"identity"` // optional identity signature
-	Website  string `json:"website"`  // optional website link
-	Details  string `json:"details"`  // optional details
+	Name     string `json:"name"`               // name
+	Identity string `json:"identity,omitempty"` // optional identity signature
+	Website  string `json:"website,omitempty"`  // optional website link
+	Details  string `json:"details,omitempty"`  // optional details
 }
 
 // NewDescription returns a new Description with the provided values.
@@ -171,6 +171,12 @@ func NewValidatorSigningInfo(condAddr sdk.ConsAddress, startHeight int64) Valida
 		IndexOffset:         0,
 		MissedBlocksCounter: 0,
 	}
+}
+
+func (v ValidatorSigningInfo) Reset() ValidatorSigningInfo {
+	v.MissedBlocksCounter = 0
+	v.IndexOffset = 0
+	return v
 }
 
 func (v ValidatorSigningInfo) String() string {

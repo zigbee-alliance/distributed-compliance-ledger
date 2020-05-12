@@ -51,8 +51,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(validatorKeeper)
 	handler := NewHandler(validatorKeeper, authzKeeper)
 
-	nodeAdmin := sdk.AccAddress(test_constants.ValAddress1)
-	authzKeeper.AssignRole(ctx, nodeAdmin, authz.NodeAdmin)
+	authzKeeper.AssignRole(ctx, test_constants.Address1, authz.NodeAdmin)
 
 	setup := TestSetup{
 		Cdc:             cdc,
@@ -61,7 +60,7 @@ func Setup() TestSetup {
 		AuthzKeeper:     authzKeeper,
 		Handler:         handler,
 		Querier:         querier,
-		NodeAdmin:       nodeAdmin,
+		NodeAdmin:       test_constants.Address1,
 	}
 
 	return setup

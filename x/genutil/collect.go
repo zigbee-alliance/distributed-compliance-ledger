@@ -16,7 +16,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
@@ -127,7 +126,7 @@ func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 
 		msg := msgs[0].(validator.MsgCreateValidator)
 		// validate delegator and validator addresses and funds against the accounts in the state
-		valAddr := sdk.AccAddress(msg.ValidatorAddress).String()
+		valAddr := msg.Signer.String()
 
 		_, valOk := addrMap[valAddr]
 		if !valOk {

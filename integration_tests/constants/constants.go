@@ -46,11 +46,10 @@ var (
 	Address3, _       = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
 	PubKey            = "cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3"
 	Signer            = Address1
-	ValAddress1, _    = sdk.ValAddressFromBech32("cosmosvaloper18gcwk73gtt84aeatqdh7yfesmz9956l0zw8lfw")
-	ValAddress2, _    = sdk.ValAddressFromBech32("cosmosvaloper1c8jtz9fgcswhg9sq6x4h3vfz8c2mtvssf6kjth")
 	ConsensusPubKey1  = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
 	ConsensusPubKey2  = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
 	ConsensusAddress1 = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ConsensusPubKey1).Address())
+	ConsensusAddress2 = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ConsensusPubKey2).Address())
 )
 
 /*

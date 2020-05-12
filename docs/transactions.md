@@ -118,11 +118,12 @@ A summary of KV store and paths used:
 - KV store name: `validator`
     - Validators
       - `1:<Validator Address>` : `<Validator>` - main index to store validators (active/jailed)
-      - `2:<Consensus Address>` : `<Validator Address>` - helper index used for signature processing
-      - `3:<Validator Address>` : `<Validator Address>` - helper index to track the last active validator set
-      - `6:<Consensus Address>` : `<Signing Info>` - index to track validator signatures
-      - `7:<Consensus Address:index>` : `<Address>` - index to track validator signatures over blocks window
-    - Proposed but not approved validators to be removed
+    - Helper index to map `Consensus Address` on `Validator` (used for signature processing)
+      - `2:<Validator Address>` : `<Validator Last Power>`
+    - Helper index to track validator signatures
+      - `6:<Validator Address>` : `<Signing Info>`
+    - Helper index to track whether validator signed a block
+      - `7:<Validator Address:index>` : `<bool>`
    
 ## X509 PKI
 
@@ -1240,26 +1241,25 @@ Gets all proposed but not approved accounts to be revoked.
 Adds a new Validator node.
 
 - Parameters:
-    - `validator_address`: string // address of the validator's operator; bech encoded
+    - `address`: string // the consensus address of the validator; bech encoded
     - `pubkey`: string // the consensus public key of the validator; bech encoded
     - `description`: json
-        - `name`: string // name
+        - `name`: string // validator name
         - `identity`: string (optional) // identity signature
         - `website`: string (optional) // website link
         - `details`: string (optional) // details
 - In State:
   - `validator` store  
-  - `1:<Validator Address>` : `<Validator>` - main index to store validators (active/jailed)
-  - `2:<Consensus Address>` : `<Validator Address>` - helper index used for signature processing
-  - `3:<Validator Address>` : `<Validator Address>` - helper index to track the last active validator set
-  - `6:<Consensus Address>` : `<Signing Info>` - index to track validator signatures
-  - `7:<Consensus Address:index>` : `<Address>` - index to track validator signatures over blocks window
+  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
+  - `2:<Validator Address>` : `<Validator Last Power>` - helper index to track the last active validator set
+  - `6:<Consensus Address>` : `<Signing Info>` - helper index to track validator signatures
+  - `7:<Consensus Address>:<index>` : `<bool>` - helper index to track validator signatures over blocks window
 - Who can send: 
     - NodeAdmin
 - CLI command: 
     -   `zblcli tx validator add-node .... `
 - REST API: 
-    -   PUT `/validators/<address>`
+    -   POST `/validators/<address>`
     
 #### UPDATE_VALIDATOR_NODE
 Updates the Validator node by the owner.
@@ -1320,7 +1320,13 @@ The account is not removed until sufficient number of Trustees approve it.
 #### GET_ALL_VALIDATORS
 Gets all validator nodes.
 
-- Parameters: No
+Note: All validators (active and jailed) are be returned by default. 
+In order to get an active validator set use `state` query parameter.
+
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
+  - `state`: string (optional) - state of the validator (active/jailed)
 - CLI command: 
     -   `zblcli query validator all-nodes .... `
 - REST API: 
@@ -1339,10 +1345,7 @@ Gets a validator node.
 #### GET_ALL_PROPOSED_VALIDATORS_TO_REMOVE
 Gets all proposed but not approved validator nodes to be removed.
 
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
-  - `state`: string (optional) - state of the validator (active/jailed)
+- Parameters: No
 - CLI command: 
     -   `zblcli query validator all-proposed-nodes-to-remove .... `
 - REST API: 

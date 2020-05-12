@@ -15,7 +15,8 @@ func TestHandler_CreateValidator(t *testing.T) {
 	setup := Setup()
 
 	// create validator
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress1, constants.ConsensusPubKey1, types.Description{Name: constants.Name})
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ConsensusAddress1, constants.ConsensusPubKey1,
+		types.Description{Name: constants.Name}, constants.Address1)
 	result := setup.Handler(setup.Ctx, msgCreateValidator)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -25,27 +26,27 @@ func TestHandler_CreateValidator(t *testing.T) {
 	require.Equal(t, sdk.EventTypeMessage, events[1].Type)
 
 	// check corresponding records are created
-	require.True(t, setup.ValidatorKeeper.IsValidatorPresent(setup.Ctx, msgCreateValidator.ValidatorAddress))
-	require.True(t, setup.ValidatorKeeper.IsValidatorByConsAddrPresent(setup.Ctx, sdk.ConsAddress(msgCreateValidator.GetPubKey().Address())))
+	require.True(t, setup.ValidatorKeeper.IsValidatorPresent(setup.Ctx, msgCreateValidator.Address))
 
 	// this record will be added in the end block handler
-	require.False(t, setup.ValidatorKeeper.IsLastValidatorPowerPresent(setup.Ctx, msgCreateValidator.ValidatorAddress))
+	require.False(t, setup.ValidatorKeeper.IsLastValidatorPowerPresent(setup.Ctx, msgCreateValidator.Address))
 
 	// query validator
-	validator, _ := queryValidator(setup, msgCreateValidator.ValidatorAddress)
-	require.Equal(t, msgCreateValidator.ValidatorAddress, validator.OperatorAddress)
-	require.Equal(t, msgCreateValidator.PubKey, validator.ConsensusPubKey)
+	validator, _ := queryValidator(setup, msgCreateValidator.Address)
+	require.Equal(t, msgCreateValidator.Address, validator.Address)
+	require.Equal(t, msgCreateValidator.PubKey, validator.PubKey)
 	require.Equal(t, msgCreateValidator.Description, validator.Description)
 }
 
 func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	setup := Setup()
 
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress2, constants.ConsensusPubKey1, types.Description{Name: constants.Name})
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ConsensusAddress1, constants.ConsensusPubKey1,
+		types.Description{Name: constants.Name}, constants.Address2)
 
 	for _, role := range []authz.AccountRole{authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor, authz.Trustee} {
 		// assign role
-		setup.AuthzKeeper.AssignRole(setup.Ctx, sdk.AccAddress(constants.ValAddress2), role)
+		setup.AuthzKeeper.AssignRole(setup.Ctx, msgCreateValidator.Signer, role)
 
 		// try to create validator
 		result := setup.Handler(setup.Ctx, msgCreateValidator)
@@ -57,7 +58,8 @@ func TestHandler_CreateValidator_Twice(t *testing.T) {
 	setup := Setup()
 
 	// create validator
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ValAddress1, constants.ConsensusPubKey1, types.Description{Name: constants.Name})
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ConsensusAddress1, constants.ConsensusPubKey1,
+		types.Description{Name: constants.Name}, constants.Address1)
 	result := setup.Handler(setup.Ctx, msgCreateValidator)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -66,7 +68,7 @@ func TestHandler_CreateValidator_Twice(t *testing.T) {
 	require.Equal(t, types.CodeValidatorOperatorAddressExist, result.Code)
 }
 
-func queryValidator(setup TestSetup, address sdk.ValAddress) (*types.Validator, sdk.Error) {
+func queryValidator(setup TestSetup, address sdk.ConsAddress) (*types.Validator, sdk.Error) {
 	// query validator
 	result, err := setup.Querier(
 		setup.Ctx,

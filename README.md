@@ -285,10 +285,11 @@ Queries:
 ### Validator
 
 Validator type:
-- `validator_address`: `string` - address of the validator's operator; bech encoded
-- `pubkey`: `string` - the consensus public key of the validator; bech encoded
+- `address`: `bech32 encoded address` - address of the validator's operator
+- `pubkey`: `bech32 encoded pubkey` - the consensus public key of the validator
+- `owner`: `bech32 encoded address` - the address used for sending the original message
 - `description`: 
-    - `name`: `string` - name
+    - `name`: `string` - validator name
     - `identity`:(optional) `string` - identity signature
     - `website`:(optional) `string` - website link
     - `details`:(optional) `string` - details

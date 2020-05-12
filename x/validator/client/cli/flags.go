@@ -2,6 +2,7 @@ package cli
 
 // nolint
 const (
+	FlagAddress  = "address"
 	FlagPubKey   = "pubkey"
 	FlagName     = "name"
 	FlagIdentity = "identity"

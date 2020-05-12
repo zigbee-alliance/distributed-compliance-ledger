@@ -11,10 +11,10 @@ import (
 )
 
 type CreateValidatorRequest struct {
-	BaseReq          restTypes.BaseReq `json:"base_req"`
-	ValidatorAddress sdk.ValAddress    `json:"validator_address"`
-	Pubkey           string            `json:"pubkey"`
-	Description      types.Description `json:"description"`
+	BaseReq     restTypes.BaseReq `json:"base_req"`
+	Address     sdk.ConsAddress   `json:"address"`
+	Pubkey      string            `json:"pubkey"`
+	Description types.Description `json:"description"`
 }
 
 func createValidatorHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
@@ -31,13 +31,18 @@ func createValidatorHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
 		_, err = sdk.GetConsPubKeyBech32(req.Pubkey)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
 		}
 
-		msg := types.NewMsgCreateValidator(req.ValidatorAddress, req.Pubkey, req.Description)
+		msg := types.NewMsgCreateValidator(req.Address, req.Pubkey, req.Description, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

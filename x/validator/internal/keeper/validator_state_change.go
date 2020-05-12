@@ -46,6 +46,11 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 	height := ctx.BlockHeight()
 	consAddr := sdk.ConsAddress(addr)
 
+	if !k.IsValidatorPresent(ctx, consAddr) {
+		logger.Error(fmt.Sprintf("Validator by consensus address %s not found", consAddr))
+		return
+	}
+
 	// fetch signing info
 	signInfo := k.GetValidatorSigningInfo(ctx, consAddr)
 
@@ -73,7 +78,6 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 	}
 
 	if missed {
-		println("Missed signature: ", signInfo.MissedBlocksCounter)
 		ctx.EventManager().EmitEvent(
 			sdk.NewEvent(
 				slashing.EventTypeLiveness,
@@ -92,7 +96,7 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 
 	// if we are past the minimum height and the validator has missed too many blocks, jail it
 	if height > minHeight && signInfo.MissedBlocksCounter > maxMissed {
-		validator := k.GetValidatorByConsAddr(ctx, consAddr)
+		validator := k.GetValidator(ctx, consAddr)
 
 		if !validator.IsJailed() {
 
@@ -115,8 +119,7 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 			k.Jail(ctx, consAddr, reason)
 
 			// We need to reset the counter & array so that the validator won't be immediately slashed for downtime upon rebonding.
-			signInfo.MissedBlocksCounter = 0
-			signInfo.IndexOffset = 0
+			signInfo = signInfo.Reset()
 			k.ClearValidatorMissedBlockBitArray(ctx, consAddr)
 		} else {
 			// Validator already jailed, don't jail again
@@ -137,7 +140,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address, infractio
 
 	consAddr := sdk.ConsAddress(addr)
 
-	if !k.IsValidatorByConsAddrPresent(ctx, consAddr) {
+	if !k.IsValidatorPresent(ctx, consAddr) {
 		logger.Error(fmt.Sprintf("Validator by consensus address %s not found", consAddr))
 		return
 	}
@@ -181,14 +184,14 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 	// Iterate over validators
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		// power on the last height
-		lastValidatorPower := k.GetLastValidatorPower(ctx, validator.OperatorAddress)
+		lastValidatorPower := k.GetLastValidatorPower(ctx, validator.Address)
 
 		// if last power was more then 0 and potential power 0 it means that validator was jailed or removed within the block.
 		if lastValidatorPower.Power > 0 && validator.GetPower() == 0 {
 			updates = append(updates, validator.ABCIValidatorUpdateZero())
 
 			// set validator power on lookup index
-			k.DeleteLastValidatorPower(ctx, validator.OperatorAddress)
+			k.DeleteLastValidatorPower(ctx, validator.Address)
 
 			return false
 		}
@@ -198,7 +201,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 			updates = append(updates, validator.ABCIValidatorUpdate())
 
 			// set validator power on lookup index
-			k.SetLastValidatorPower(ctx, types.NewLastValidatorPower(validator.OperatorAddress))
+			k.SetLastValidatorPower(ctx, types.NewLastValidatorPower(validator.Address))
 
 			// init signing info for validator
 			signingInfo := types.NewValidatorSigningInfo(validator.GetConsAddress(), ctx.BlockHeight())

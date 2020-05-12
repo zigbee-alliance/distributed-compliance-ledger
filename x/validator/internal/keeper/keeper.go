@@ -30,11 +30,11 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 /*
-	Validator by Validator address
+	Validator by Validator Consensus Address
 */
 
 // Gets the entire Validator record associated with a validator address
-func (k Keeper) GetValidator(ctx sdk.Context, addr sdk.ValAddress) (validator types.Validator) {
+func (k Keeper) GetValidator(ctx sdk.Context, addr sdk.ConsAddress) (validator types.Validator) {
 	store := ctx.KVStore(k.storeKey)
 	value := store.Get(types.GetValidatorKey(addr))
 	if value == nil {
@@ -49,11 +49,11 @@ func (k Keeper) GetValidator(ctx sdk.Context, addr sdk.ValAddress) (validator ty
 func (k Keeper) SetValidator(ctx sdk.Context, validator types.Validator) {
 	store := ctx.KVStore(k.storeKey)
 	bz := types.MustMarshalValidator(k.cdc, validator)
-	store.Set(types.GetValidatorKey(validator.OperatorAddress), bz)
+	store.Set(types.GetValidatorKey(validator.Address), bz)
 }
 
 // Check if the Validator record associated with a validator address is present in the store or not
-func (k Keeper) IsValidatorPresent(ctx sdk.Context, addr sdk.ValAddress) bool {
+func (k Keeper) IsValidatorPresent(ctx sdk.Context, addr sdk.ConsAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GetValidatorKey(addr))
 }
@@ -91,7 +91,7 @@ func (k Keeper) IterateValidators(ctx sdk.Context, process func(validator types.
 
 // Slash a validator for an infraction. So it will be removed from Tendermint validator set
 func (k Keeper) Slash(ctx sdk.Context, consAddr sdk.ConsAddress) {
-	validator := k.GetValidatorByConsAddr(ctx, consAddr)
+	validator := k.GetValidator(ctx, consAddr)
 
 	// Zeroing validator's weight
 	validator.Power = types.ZeroPower
@@ -100,7 +100,7 @@ func (k Keeper) Slash(ctx sdk.Context, consAddr sdk.ConsAddress) {
 
 // jail a validator
 func (k Keeper) Jail(ctx sdk.Context, consAddr sdk.ConsAddress, reason string) {
-	validator := k.GetValidatorByConsAddr(ctx, consAddr)
+	validator := k.GetValidator(ctx, consAddr)
 
 	if validator.Jailed {
 		k.Logger(ctx).Error(fmt.Sprintf("Cannot jail already jailed validator, validator: %v\n", validator))
@@ -114,7 +114,7 @@ func (k Keeper) Jail(ctx sdk.Context, consAddr sdk.ConsAddress, reason string) {
 
 // unjail a validator
 func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
-	validator := k.GetValidatorByConsAddr(ctx, consAddr)
+	validator := k.GetValidator(ctx, consAddr)
 
 	if !validator.Jailed {
 		k.Logger(ctx).Error(fmt.Sprintf("Cannot unjail already unjailed validator, validator: %v\n", validator))
@@ -126,36 +126,10 @@ func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
 }
 
 /*
-	Validator Address by Consensus address
-*/
-// Gets the entire Validator record associated with a consensus address
-func (k Keeper) GetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress) (validator types.Validator) {
-	store := ctx.KVStore(k.storeKey)
-	opAddr := store.Get(types.GetValidatorByConsAddrKey(consAddr))
-	if opAddr == nil {
-		panic(fmt.Errorf("validator with consensus-OperatorAddress %s not found", consAddr))
-	}
-	return k.GetValidator(ctx, opAddr)
-}
-
-// Sets a consensus address to validator address mapping record
-func (k Keeper) SetValidatorByConsAddr(ctx sdk.Context, validator types.Validator) {
-	store := ctx.KVStore(k.storeKey)
-	consAddr := sdk.ConsAddress(validator.GetConsPubKey().Address())
-	store.Set(types.GetValidatorByConsAddrKey(consAddr), validator.OperatorAddress)
-}
-
-// Check if the Validator record associated with a consensus address is present in the store or not
-func (k Keeper) IsValidatorByConsAddrPresent(ctx sdk.Context, consAddr sdk.ConsAddress) bool {
-	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.GetValidatorByConsAddrKey(consAddr))
-}
-
-/*
 	Last state Validator Index
 */
 // Gets validator power in the last state by the given validator address
-func (k Keeper) GetLastValidatorPower(ctx sdk.Context, address sdk.ValAddress) (power types.LastValidatorPower) {
+func (k Keeper) GetLastValidatorPower(ctx sdk.Context, address sdk.ConsAddress) (power types.LastValidatorPower) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GetValidatorLastPowerKey(address))
 	if bz == nil {
@@ -169,17 +143,17 @@ func (k Keeper) GetLastValidatorPower(ctx sdk.Context, address sdk.ValAddress) (
 func (k Keeper) SetLastValidatorPower(ctx sdk.Context, validator types.LastValidatorPower) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(validator)
-	store.Set(types.GetValidatorLastPowerKey(validator.OperatorAddress), bz)
+	store.Set(types.GetValidatorLastPowerKey(validator.ConsensusAddress), bz)
 }
 
 // Check if the validator power record associated with validator address is present in the store or not
-func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, address sdk.ValAddress) bool {
+func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, address sdk.ConsAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GetValidatorLastPowerKey(address))
 }
 
 // Delete validator power
-func (k Keeper) DeleteLastValidatorPower(ctx sdk.Context, address sdk.ValAddress) {
+func (k Keeper) DeleteLastValidatorPower(ctx sdk.Context, address sdk.ConsAddress) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GetValidatorLastPowerKey(address))
 }
@@ -228,7 +202,7 @@ func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator ty
 			return
 		}
 
-		addr := sdk.ValAddress(iter.Key()[1:])
+		addr := sdk.ConsAddress(iter.Key()[1:])
 		validator := k.GetValidator(ctx, addr)
 
 		if process(validator) {

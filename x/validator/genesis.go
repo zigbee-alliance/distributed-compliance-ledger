@@ -46,7 +46,6 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 
 	for _, validator := range data.Validators {
 		keeper.SetValidator(ctx, validator)
-		keeper.SetValidatorByConsAddr(ctx, validator)
 	}
 
 	for _, address := range data.LastValidators {
@@ -72,9 +71,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 	return res
 }
 
-// ExportGenesis returns a GenesisState for a given context and keeper. The
-// GenesisState will contain the pool, params, validators, and bonds found in
-// the keeper.
+// ExportGenesis returns a GenesisState for a given context and keeper.
 func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
 	validators := keeper.GetAllValidators(ctx)
 	lastValidators := keeper.GetLastValidatorPowers(ctx)
@@ -105,7 +102,7 @@ func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
 }
 
 // ValidateGenesis validates the provided validator genesis state to ensure the
-// expected invariants holds. (i.e. params in correct bounds, no duplicate validators)
+// expected invariants holds.
 func ValidateGenesis(data GenesisState) error {
 	err := validateGenesisStateValidators(data.Validators)
 	if err != nil {
@@ -121,7 +118,7 @@ func validateGenesisStateValidators(validators []Validator) (err error) {
 		val := validators[i]
 		strKey := string(val.GetConsPubKey().Bytes())
 		if _, ok := addrMap[strKey]; ok {
-			return fmt.Errorf("duplicate validator in genesis state: name %v, address %v", val.GetName(), val.GetOperatorAddress())
+			return fmt.Errorf("duplicate validator in genesis state: name %v, address %v", val.GetName(), val.Address)
 		}
 		addrMap[strKey] = true
 	}

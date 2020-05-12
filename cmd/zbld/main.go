@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
 	genutilcli "git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/client/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"io"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -45,8 +44,7 @@ func main() {
 		genutilcli.InitCmd(ctx, cdc, app.ModuleBasics, app.DefaultNodeHome),
 		genutilcli.CollectGenTxsCmd(ctx, cdc, genaccounts.AppModuleBasic{}, app.DefaultNodeHome),
 		genutilcli.GenTxCmd(
-			ctx, cdc, app.ModuleBasics, validator.AppModuleBasic{},
-			genaccounts.AppModuleBasic{}, app.DefaultNodeHome, app.DefaultCLIHome,
+			ctx, cdc, app.ModuleBasics, genaccounts.AppModuleBasic{}, app.DefaultNodeHome, app.DefaultCLIHome,
 		),
 		genutilcli.ValidateGenesisCmd(ctx, cdc, app.ModuleBasics),
 		// AddGenesisAccountCmd allows users to add accounts to the genesis file

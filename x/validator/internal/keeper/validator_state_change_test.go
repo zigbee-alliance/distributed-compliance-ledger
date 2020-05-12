@@ -23,7 +23,7 @@ func TestValidatorStateChange_ApplyAndReturnValidatorSetUpdates_ForAddedNewValid
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
 
 	// ensure last validator power is zero
-	require.Equal(t, types.ZeroPower, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator.OperatorAddress).Power)
+	require.Equal(t, types.ZeroPower, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator.Address).Power)
 
 	// check for updates
 	updates := setup.ValidatorKeeper.ApplyAndReturnValidatorSetUpdates(setup.Ctx)
@@ -31,7 +31,7 @@ func TestValidatorStateChange_ApplyAndReturnValidatorSetUpdates_ForAddedNewValid
 	require.Equal(t, validator.ABCIValidatorUpdate(), updates[0])
 
 	// ensure last validator record is set
-	require.Equal(t, types.Power, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator.OperatorAddress).Power)
+	require.Equal(t, types.Power, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator.Address).Power)
 
 	// check for updates second time
 	updates = setup.ValidatorKeeper.ApplyAndReturnValidatorSetUpdates(setup.Ctx)
@@ -51,8 +51,8 @@ func TestValidatorStateChange_ApplyAndReturnValidatorSetUpdates_TwoValidators(t 
 	require.Equal(t, validator2.ABCIValidatorUpdate(), updates[1])
 
 	// ensure last validator record is set
-	require.Equal(t, types.Power, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator1.OperatorAddress).Power)
-	require.Equal(t, types.Power, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator2.OperatorAddress).Power)
+	require.Equal(t, types.Power, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator1.Address).Power)
+	require.Equal(t, types.Power, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator2.Address).Power)
 
 	// check for updates second time
 	updates = setup.ValidatorKeeper.ApplyAndReturnValidatorSetUpdates(setup.Ctx)
@@ -67,10 +67,9 @@ func TestValidatorStateChange_HandleDoubleSign(t *testing.T) {
 	// create validator
 	validator := DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
-	receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+	receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 	require.False(t, receivedValidator.Jailed)
 	require.Equal(t, types.Power, receivedValidator.Power)
 
@@ -81,7 +80,7 @@ func TestValidatorStateChange_HandleDoubleSign(t *testing.T) {
 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, validator.GetConsPubKey().Address(), 5, timestamp, types.Power)
 
 	// check validator is slashed
-	receivedValidator = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+	receivedValidator = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 	require.True(t, receivedValidator.Jailed)
 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
 
@@ -98,10 +97,9 @@ func TestValidatorStateChange_HandleDoubleSign_ForOutdated(t *testing.T) {
 	// create validator
 	validator := DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
-	receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+	receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 	require.False(t, receivedValidator.Jailed)
 	require.Equal(t, types.Power, receivedValidator.Power)
 
@@ -112,7 +110,7 @@ func TestValidatorStateChange_HandleDoubleSign_ForOutdated(t *testing.T) {
 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, validator.GetConsPubKey().Address(), 5, timestamp, types.Power)
 
 	// check validator is not slashed
-	receivedValidator = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+	receivedValidator = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 	require.False(t, receivedValidator.Jailed)
 	require.Equal(t, types.Power, receivedValidator.Power)
 }
@@ -125,8 +123,7 @@ func TestValidatorStateChange_ApplyAndReturnValidatorSetUpdates_ForJailedValidat
 	// create validator
 	validator := DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetLastValidatorPower(setup.Ctx, types.NewLastValidatorPower(validator.OperatorAddress))
+	setup.ValidatorKeeper.SetLastValidatorPower(setup.Ctx, types.NewLastValidatorPower(validator.Address))
 
 	// imitate double sign for validator
 	setup.Ctx = setup.Ctx.WithBlockHeader(abci.Header{
@@ -140,7 +137,7 @@ func TestValidatorStateChange_ApplyAndReturnValidatorSetUpdates_ForJailedValidat
 	require.Equal(t, validator.ABCIValidatorUpdateZero(), updates[0])
 
 	// ensure last validator record is zeroed
-	require.Equal(t, types.ZeroPower, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator.OperatorAddress).Power)
+	require.Equal(t, types.ZeroPower, setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator.Address).Power)
 
 	// check for updates second time
 	updates = setup.ValidatorKeeper.ApplyAndReturnValidatorSetUpdates(setup.Ctx)
@@ -163,7 +160,7 @@ func TestValidatorStateChange_HandleValidatorSignature_ForSignedBlock(t *testing
 		require.Equal(t, int64(0), signInfo.MissedBlocksCounter)
 
 		// check validator is not slashed
-		receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+		receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 		require.False(t, receivedValidator.Jailed)
 		require.Equal(t, types.Power, receivedValidator.Power)
 	}
@@ -185,7 +182,7 @@ func TestValidatorStateChange_HandleValidatorSignature_ForMissedBlock(t *testing
 		require.Equal(t, i, signInfo.MissedBlocksCounter)
 
 		// check validator is not slashed
-		receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+		receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 		require.False(t, receivedValidator.Jailed)
 		require.Equal(t, types.Power, receivedValidator.Power)
 	}
@@ -232,7 +229,7 @@ func TestValidatorStateChange_HandleValidatorSignature_ForMissedToManyBlocks_Pas
 	}
 
 	// check validator is not slashed yet
-	receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+	receivedValidator := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 	require.False(t, receivedValidator.Jailed)
 	require.Equal(t, types.Power, receivedValidator.Power)
 
@@ -240,7 +237,7 @@ func TestValidatorStateChange_HandleValidatorSignature_ForMissedToManyBlocks_Pas
 	setup.ValidatorKeeper.HandleValidatorSignature(setup.Ctx, validator.GetConsPubKey().Address(), types.Power, false)
 
 	// check validator is slashed
-	receivedValidator = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.OperatorAddress)
+	receivedValidator = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.Address)
 	require.True(t, receivedValidator.Jailed)
 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
 
@@ -263,7 +260,6 @@ func createValidator(setup TestSetup) types.Validator {
 	// create validator
 	validator := DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 	setup.ValidatorKeeper.SetValidatorSigningInfo(setup.Ctx, types.NewValidatorSigningInfo(validator.GetConsAddress(), 0))
 	return validator
 }

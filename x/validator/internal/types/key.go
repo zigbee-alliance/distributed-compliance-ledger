@@ -20,9 +20,8 @@ const (
 )
 
 var (
-	ValidatorPrefix           = []byte{0x01} // prefix for each key to a validator
-	ValidatorByConsAddrPrefix = []byte{0x02} // prefix for each key to a validator index, by pubkey
-	ValidatorLastPowerPrefix  = []byte{0x03} // prefix for each key to a validator index, by last power
+	ValidatorPrefix          = []byte{0x01} // prefix for each key to a validator
+	ValidatorLastPowerPrefix = []byte{0x02} // prefix for each key to a validator index, by last power
 
 	ValidatorSigningInfoPrefix         = []byte{0x06} // prefix for validator signing info
 	ValidatorMissedBlockBitArrayPrefix = []byte{0x07} // prefix for validator missed blocks
@@ -30,17 +29,12 @@ var (
 )
 
 // Key builder for Validator record
-func GetValidatorKey(addr sdk.ValAddress) []byte {
+func GetValidatorKey(addr sdk.ConsAddress) []byte {
 	return append(ValidatorPrefix, addr.Bytes()...)
 }
 
-// Key builder for Consensus Address to Validator Address mapping record
-func GetValidatorByConsAddrKey(addr sdk.ConsAddress) []byte {
-	return append(ValidatorByConsAddrPrefix, addr.Bytes()...)
-}
-
 // Key builder for Last Validator Power record
-func GetValidatorLastPowerKey(addr sdk.ValAddress) []byte {
+func GetValidatorLastPowerKey(addr sdk.ConsAddress) []byte {
 	return append(ValidatorLastPowerPrefix, addr.Bytes()...)
 }
 

@@ -15,9 +15,11 @@ import (
 func getValidatorsHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
 		state := r.FormValue(state)
 		paginationParams := pagination.ParsePaginationParamsFromFlags()
 		params := types.NewListValidatorsParams(paginationParams, types.ValidatorState(state))
+
 		restCtx.QueryList(fmt.Sprintf("custom/%s/validators", storeName), params)
 	}
 }
@@ -30,7 +32,7 @@ func getValidatorHandlerFn(cliCtx context.CLIContext, storeName string) http.Han
 		vars := restCtx.Variables()
 		bech32validatorAddr := vars[validatorAddr]
 
-		validatorAddr, err := sdk.ValAddressFromBech32(bech32validatorAddr)
+		validatorAddr, err := sdk.ConsAddressFromBech32(bech32validatorAddr)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return

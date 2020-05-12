@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -42,50 +43,50 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-node",
-		Short: "Adds a new Validator node",
+		Short: "Adds a new validator node",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
-			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			txBldr, msg, err := BuildCreateValidatorMsg(cliCtx, txBldr)
+			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+
+			txBldr, msg, err := BuildCreateValidatorMsg(cliCtx.Context(), txBldr)
 			if err != nil {
 				return err
 			}
 
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			err = msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx.Context(), txBldr, []sdk.Msg{msg})
 		},
 	}
 
-	cmd.Flags().String(FlagPubKey, "", "The Bech32 encoded ConsensusPubkey of the validator")
-	cmd.Flags().String(FlagIP, "", fmt.Sprintf("The node's public IP. It takes effect only when used in combination with --%s", flags.FlagGenerateOnly))
-	cmd.Flags().String(FlagNodeID, "", "The node's ID")
 	cmd.Flags().String(FlagName, "", "The validator's name")
-	cmd.Flags().String(FlagIdentity, "", "The optional identity signature (ex. UPort or Keybase)")
-	cmd.Flags().String(FlagWebsite, "", "The validator's (optional) website")
-	cmd.Flags().String(FlagDetails, "", "The validator's (optional) details")
+
+	fsCreateValidator := InitValidatorFlags("")
+	cmd.Flags().AddFlagSet(fsCreateValidator)
 
 	cmd.MarkFlagRequired(flags.FlagFrom)
+	cmd.MarkFlagRequired(FlagAddress)
 	cmd.MarkFlagRequired(FlagPubKey)
 	cmd.MarkFlagRequired(FlagName)
 
 	return cmd
 }
 
-//__________________________________________________________
-
-// Return the flagset, particular flags, and a description of defaults
-// this is anticipated to be used with the gen-tx
-func CreateValidatorMsgHelpers(ipDefault string) (fs *flag.FlagSet, nodeIDFlag, pubkeyFlag, defaultsDesc string) {
-
+// Return the flagset for create validator command
+func InitValidatorFlags(ipDefault string) (fs *flag.FlagSet) {
 	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
+	fsCreateValidator.String(FlagAddress, "", "The Bech32 encoded Address of the validator")
 	fsCreateValidator.String(FlagPubKey, "", "The Bech32 encoded ConsensusPubkey of the validator")
 	fsCreateValidator.String(FlagIP, ipDefault, "The node's public IP")
 	fsCreateValidator.String(FlagNodeID, "", "The node's NodeID")
 	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
 	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
 	fsCreateValidator.String(FlagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
-
-	return fsCreateValidator, FlagNodeID, FlagPubKey, ""
+	return fsCreateValidator
 }
 
 // prepare flags in config
@@ -107,6 +108,7 @@ func PrepareFlagsForTxCreateValidator(
 	viper.Set(flags.FlagFrom, viper.GetString(flags.FlagName))
 	viper.Set(FlagNodeID, nodeID)
 	viper.Set(FlagIP, ip)
+	viper.Set(FlagAddress, sdk.ConsAddress(valPubKey.Address()).String())
 	viper.Set(FlagPubKey, sdk.MustBech32ifyConsPub(valPubKey))
 	viper.Set(FlagName, config.Moniker)
 	viper.Set(FlagWebsite, website)
@@ -121,12 +123,21 @@ func PrepareFlagsForTxCreateValidator(
 // BuildCreateValidatorMsg makes a new MsgCreateValidator.
 func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (auth.TxBuilder, sdk.Msg, error) {
 
-	valAddr := cliCtx.GetFromAddress()
-	pkStr := viper.GetString(FlagPubKey)
+	signer := cliCtx.GetFromAddress()
 
-	_, err := sdk.GetConsPubKeyBech32(pkStr)
+	valConsAddr, err := sdk.ConsAddressFromBech32(viper.GetString(FlagAddress))
 	if err != nil {
 		return txBldr, nil, err
+	}
+
+	valConsPubkeyStr := viper.GetString(FlagPubKey)
+	valConsPubkey, err := sdk.GetConsPubKeyBech32(valConsPubkeyStr)
+	if err != nil {
+		return txBldr, nil, err
+	}
+
+	if !valConsAddr.Equals(sdk.ConsAddress(valConsPubkey.Address())) {
+		return txBldr, nil, sdk.ErrUnknownRequest("Validator Consensus Pubkey does not match to Validator Address.")
 	}
 
 	description := types.NewDescription(
@@ -136,7 +147,7 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (
 		viper.GetString(FlagDetails),
 	)
 
-	msg := types.NewMsgCreateValidator(sdk.ValAddress(valAddr), pkStr, description)
+	msg := types.NewMsgCreateValidator(valConsAddr, valConsPubkeyStr, description, signer)
 
 	if viper.GetBool(client.FlagGenerateOnly) {
 		ip := viper.GetString(FlagIP)

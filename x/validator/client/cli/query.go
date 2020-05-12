@@ -27,16 +27,16 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return validatorQueryCmd
 }
 
-// GetCmdQueryValidator implements the validator query command.
+// GetCmdQueryValidator implements the node query command.
 func GetCmdQueryValidator(storeName string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "node [node-addr]",
-		Short: "Query a validator",
+		Use:   "node [address]",
+		Short: "Query a validator node",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr, err := sdk.ValAddressFromBech32(args[0])
+			addr, err := sdk.ConsAddressFromBech32(args[0])
 			if err != nil {
 				return err
 			}
@@ -54,7 +54,7 @@ func GetCmdQueryValidator(storeName string, cdc *codec.Codec) *cobra.Command {
 	}
 }
 
-// GetCmdQueryValidators implements the query all validators command.
+// GetCmdQueryValidators implements the query all nodes command.
 func GetCmdQueryValidators(storeName string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-nodes",
@@ -72,7 +72,7 @@ func GetCmdQueryValidators(storeName string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagState, "", "state of the validator (active/jailed)")
+	cmd.Flags().String(FlagState, "", "state of a validator (active/jailed)")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of validators to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of validators to take")
 

@@ -14,16 +14,12 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
-	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	cfg "github.com/tendermint/tendermint/config"
-	"github.com/tendermint/tendermint/crypto"
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	kbkeys "github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -32,22 +28,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-)
 
-// ValidatorMsgBuildingHelpers helpers for message building gen-tx command
-type ValidatorMsgBuildingHelpers interface {
-	CreateValidatorMsgHelpers(ipDefault string) (fs *flag.FlagSet, nodeIDFlag, pubkeyFlag, defaultsDesc string)
-	PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeID, chainID string, valPubKey crypto.PubKey)
-	BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (auth.TxBuilder, sdk.Msg, error)
-}
+	validator "git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
+)
 
 // GenTxCmd builds the application's gentx command.
 // nolint: errcheck
-func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, pmbh ValidatorMsgBuildingHelpers,
+func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 	genAccIterator types.GenesisAccountsIterator, defaultNodeHome, defaultCLIHome string) *cobra.Command {
-
-	ipDefault, _ := server.ExternalIP()
-	fsCreateValidator, flagNodeID, flagPubKey, defaultsDesc := pmbh.CreateValidatorMsgHelpers(ipDefault)
 
 	cmd := &cobra.Command{
 		Use:   "gentx",
@@ -55,9 +43,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, pm
 		Args:  cobra.NoArgs,
 		Long: fmt.Sprintf(`This command is an alias of the 'tx validator add-node' command'.
 
-		It creates a genesis transaction to create a validator. 
-		The following default parameters are included: 
-		    %s`, defaultsDesc),
+		It creates a genesis transaction to create a validator.`),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
 
@@ -69,11 +55,11 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, pm
 			}
 
 			// Read --nodeID, if empty take it from priv_validator.json
-			if nodeIDString := viper.GetString(flagNodeID); nodeIDString != "" {
+			if nodeIDString := viper.GetString(validator.FlagNodeID); nodeIDString != "" {
 				nodeID = nodeIDString
 			}
 			// Read --pubkey, if empty take it from priv_validator.json
-			if valPubKeyString := viper.GetString(flagPubKey); valPubKeyString != "" {
+			if valPubKeyString := viper.GetString(validator.FlagPubKey); valPubKeyString != "" {
 				valPubKey, err = sdk.GetConsPubKeyBech32(valPubKeyString)
 				if err != nil {
 					return err
@@ -107,7 +93,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, pm
 
 			// Set flags for creating gentx
 			viper.Set(client.FlagHome, viper.GetString(flagClientHome))
-			pmbh.PrepareFlagsForTxCreateValidator(config, nodeID, genDoc.ChainID, valPubKey)
+			validator.PrepareFlagsForTxCreateValidator(config, nodeID, genDoc.ChainID, valPubKey)
 
 			err = genutil.ValidateAccountInGenesis(genesisState, genAccIterator, key.GetAddress(), cdc)
 			if err != nil {
@@ -125,7 +111,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, pm
 			viper.Set(client.FlagGenerateOnly, true)
 
 			// create a 'create-validator' message
-			txBldr, msg, err := pmbh.BuildCreateValidatorMsg(cliCtx, txBldr)
+			txBldr, msg, err := validator.BuildCreateValidatorMsg(cliCtx, txBldr)
 			if err != nil {
 				return errors.Wrap(err, "failed to build create-validator message")
 			}
@@ -184,7 +170,9 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager, pm
 	cmd.Flags().String(flags.FlagName, "", "name of private key with which to sign the gentx")
 	cmd.Flags().String(flags.FlagOutputDocument, "",
 		"write the genesis transaction JSON document to the given file instead of the default location")
-	cmd.Flags().AddFlagSet(fsCreateValidator)
+
+	ipDefault, _ := server.ExternalIP()
+	cmd.Flags().AddFlagSet(validator.InitValidatorFlags(ipDefault))
 
 	cmd.MarkFlagRequired(flags.FlagName)
 	return cmd

@@ -3,21 +3,15 @@ package validator
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
-	"github.com/gorilla/mux"
-	"github.com/spf13/cobra"
-	flag "github.com/spf13/pflag"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-	cfg "github.com/tendermint/tendermint/config"
-	"github.com/tendermint/tendermint/crypto"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/gorilla/mux"
+	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // type check to ensure the interface is properly implemented
@@ -65,27 +59,6 @@ func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 // Get the root tx command of this module
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	return cli.GetTxCmd(StoreKey, cdc)
-}
-
-//_____________________________________
-// extra helpers
-
-// CreateValidatorMsgHelpers - used for gen-tx
-func (AppModuleBasic) CreateValidatorMsgHelpers(ipDefault string) (
-	fs *flag.FlagSet, nodeIDFlag, pubkeyFlag, defaultsDesc string) {
-	return cli.CreateValidatorMsgHelpers(ipDefault)
-}
-
-// PrepareFlagsForTxCreateValidator - used for gen-tx
-func (AppModuleBasic) PrepareFlagsForTxCreateValidator(config *cfg.Config, nodeID,
-	chainID string, valPubKey crypto.PubKey) {
-	cli.PrepareFlagsForTxCreateValidator(config, nodeID, chainID, valPubKey)
-}
-
-// BuildCreateValidatorMsg - used for gen-tx
-func (AppModuleBasic) BuildCreateValidatorMsg(cliCtx context.CLIContext,
-	txBldr authtypes.TxBuilder) (authtypes.TxBuilder, sdk.Msg, error) {
-	return cli.BuildCreateValidatorMsg(cliCtx, txBldr)
 }
 
 //____________________________________________________________________________

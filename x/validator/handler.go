@@ -26,17 +26,13 @@ func NewHandler(k Keeper, authzKeeper authz.Keeper) sdk.Handler {
 
 func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator, k Keeper, authzKeeper authz.Keeper) sdk.Result {
 	// check if sender has enough rights to create a validator node
-	if !authzKeeper.HasRole(ctx, sdk.AccAddress(msg.ValidatorAddress), authz.NodeAdmin) {
+	if !authzKeeper.HasRole(ctx, msg.Signer, authz.NodeAdmin) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgCreateValidator transaction should be signed by an account with the %s role", authz.NodeAdmin)).Result()
 	}
 
-	// check if a validator with a given validator_address or pubkey already exists
-	if k.IsValidatorPresent(ctx, msg.ValidatorAddress) {
-		return types.ErrValidatorOperatorAddressExists(msg.ValidatorAddress).Result()
-	}
-
-	if k.IsValidatorByConsAddrPresent(ctx, sdk.GetConsAddress(msg.GetPubKey())) {
-		return types.ErrValidatorPubKeyExists(msg.GetPubKey()).Result()
+	// check if a validator with a given address already exists
+	if k.IsValidatorPresent(ctx, msg.Address) {
+		return types.ErrValidatorExists(msg.Address).Result()
 	}
 
 	// check key type
@@ -50,15 +46,14 @@ func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator, k K
 	}
 
 	// create and store validator
-	validator := NewValidator(msg.ValidatorAddress, msg.PubKey, msg.Description)
+	validator := NewValidator(msg.Address, msg.PubKey, msg.Description, msg.Signer)
 
 	k.SetValidator(ctx, validator)
-	k.SetValidatorByConsAddr(ctx, validator)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCreateValidator,
-			sdk.NewAttribute(types.AttributeKeyValidator, msg.ValidatorAddress.String()),
+			sdk.NewAttribute(types.AttributeKeyValidator, msg.Address.String()),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,

@@ -7,16 +7,19 @@ import (
 )
 
 type MsgCreateValidator struct {
-	ValidatorAddress sdk.ValAddress `json:"validator_address"`
-	PubKey           string         `json:"pubkey"`
-	Description      Description    `json:"description"`
+	Address     sdk.ConsAddress `json:"address"`
+	PubKey      string          `json:"pubkey"`
+	Description Description     `json:"description"`
+	Signer      sdk.AccAddress  `json:"signer"`
 }
 
-func NewMsgCreateValidator(valAddr sdk.ValAddress, pubKey string, description Description) MsgCreateValidator {
+func NewMsgCreateValidator(address sdk.ConsAddress, pubKey string,
+	description Description, signer sdk.AccAddress) MsgCreateValidator {
 	return MsgCreateValidator{
-		ValidatorAddress: valAddr,
-		PubKey:           pubKey,
-		Description:      description,
+		Address:     address,
+		PubKey:      pubKey,
+		Description: description,
+		Signer:      signer,
 	}
 }
 
@@ -25,12 +28,23 @@ func (m MsgCreateValidator) Route() string { return RouterKey }
 func (m MsgCreateValidator) Type() string { return EventTypeCreateValidator }
 
 func (m MsgCreateValidator) ValidateBasic() sdk.Error {
-	if m.ValidatorAddress.Empty() {
-		return sdk.ErrUnknownRequest("Invalid Validator OperatorAddress: it cannot be empty")
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
-	if _, err := sdk.GetConsPubKeyBech32(m.PubKey); err != nil {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Validator Public Key: %v", err))
+
+	if m.Address.Empty() {
+		return sdk.ErrUnknownRequest("Invalid Validator Consensus Address: it cannot be empty")
 	}
+
+	pubkey, err := sdk.GetConsPubKeyBech32(m.PubKey)
+	if err != nil {
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Validator Consensus Public Key: %v", err))
+	}
+
+	if !m.Address.Equals(sdk.ConsAddress(pubkey.Address())) {
+		return sdk.ErrUnknownRequest("Validator Consensus Pubkey does not match to Validator Address")
+	}
+
 	if len(m.Description.Name) == 0 {
 		return sdk.ErrUnknownRequest("Invalid Validator Name: it cannot be empty")
 	}
@@ -41,7 +55,7 @@ func (m MsgCreateValidator) ValidateBasic() sdk.Error {
 }
 
 func (m MsgCreateValidator) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.AccAddress(m.ValidatorAddress)}
+	return []sdk.AccAddress{m.Signer}
 }
 
 func (m MsgCreateValidator) GetSignBytes() []byte {

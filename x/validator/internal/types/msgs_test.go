@@ -12,11 +12,12 @@ import (
 */
 
 func TestNewMsgCreateValidator(t *testing.T) {
-	var msg = NewMsgCreateValidator(test_constants.ValAddress1, test_constants.ConsensusPubKey1, Description{Name: test_constants.Name})
+	var msg = NewMsgCreateValidator(test_constants.ConsensusAddress1, test_constants.ConsensusPubKey1,
+		Description{Name: test_constants.Name}, test_constants.Owner)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "create_validator")
-	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{sdk.AccAddress(test_constants.ValAddress1)})
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{msg.Signer})
 }
 
 func TestValidateMsgCreateValidator(t *testing.T) {
@@ -24,10 +25,16 @@ func TestValidateMsgCreateValidator(t *testing.T) {
 		valid bool
 		msg   MsgCreateValidator
 	}{
-		{true, NewMsgCreateValidator(test_constants.ValAddress1, test_constants.ConsensusPubKey1, Description{Name: test_constants.Name})},
-		{false, NewMsgCreateValidator(nil, test_constants.PubKey, Description{Name: test_constants.Name})},
-		{false, NewMsgCreateValidator(test_constants.ValAddress1, "", Description{Name: test_constants.Name})},
-		{false, NewMsgCreateValidator(test_constants.ValAddress1, test_constants.PubKey, Description{})},
+		{true, NewMsgCreateValidator(test_constants.ConsensusAddress1, test_constants.ConsensusPubKey1,
+			Description{Name: test_constants.Name}, test_constants.Owner)},
+		{false, NewMsgCreateValidator(nil, test_constants.PubKey,
+			Description{Name: test_constants.Name}, test_constants.Owner)},
+		{false, NewMsgCreateValidator(test_constants.ConsensusAddress1, "",
+			Description{Name: test_constants.Name}, test_constants.Owner)},
+		{false, NewMsgCreateValidator(test_constants.ConsensusAddress1, test_constants.PubKey,
+			Description{}, test_constants.Owner)},
+		{false, NewMsgCreateValidator(test_constants.ConsensusAddress1, test_constants.PubKey,
+			Description{Name: test_constants.Name}, nil)},
 	}
 
 	for _, tc := range cases {
@@ -41,11 +48,12 @@ func TestValidateMsgCreateValidator(t *testing.T) {
 }
 
 func TestMsgCreateValidatorGetSignBytes(t *testing.T) {
-	var msg = NewMsgCreateValidator(test_constants.ValAddress1, test_constants.ConsensusPubKey1, Description{Name: "Test"})
+	var msg = NewMsgCreateValidator(test_constants.ConsensusAddress1, test_constants.ConsensusPubKey1,
+		Description{Name: "Test"}, test_constants.Owner)
 	res := msg.GetSignBytes()
 
-	expected := `{"type":"validator/CreateValidator","value":{"description":{"details":"","identity":"",` +
-		`"name":"Test","website":""},"pubkey":"cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3",` +
-		`"validator_address":"cosmosvaloper18gcwk73gtt84aeatqdh7yfesmz9956l0zw8lfw"}}`
+	expected := `{"type":"validator/CreateValidator","value":{"address":"cosmosvalcons158uwzeqeu7zg332ztuzc5xh9k5uy3h5ttegzxd",` +
+		`"description":{"name":"Test"},"pubkey":"cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3",` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
 	require.Equal(t, expected, string(res))
 }

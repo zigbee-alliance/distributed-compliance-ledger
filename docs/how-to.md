@@ -2,6 +2,13 @@
 
 This document contains tutorials demonstrating how to accomplish common tasks.
 
+### Configure CLI
+* zblcli config chain-id <chain id> - Chain ID of pool node
+* zblcli config output <type> - Output format (text/json)
+* zblcli config indent <bool> - Add indent to JSON response
+* zblcli config trust-node <bool> - Trust connected full node (don't verify proofs for responses). The `false` value is recommended.
+* zblcli config node <node-ip> - <host>:<port> of node to connect. 
+
 ### Setting up a Validator Node
 
 Validators are responsible for committing of new blocks to the ledger.
@@ -21,8 +28,9 @@ Here are steps for setting up a new validator node.
     `<node1 id>@<node1 listen_addr>,<node2 id>@<node2 listen_addr>,.....`
 
 * Add validator node to the network:
-    * Get your `pubkey` that can be used to create a new validator: `zbld tendermint show-validator`
-    * Add validator node: `zblcli tx validator add-node --pubkey=<pubkey> --name=<node name> --from=<name>`
+    * Get this node's tendermint validator *consensus address*: `zbld tendermint show-address`
+    * Get this node's tendermint validator *consensus pubkey*: `zbld tendermint show-validator`
+    * Add validator node: `zblcli tx validator add-node --address=<address> --pubkey=<pubkey> --name=<node name> --from=<name>`
     * Start node: `zbld start`
 
 * Congrats! You are an owner of the validator node.
