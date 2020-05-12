@@ -1241,8 +1241,8 @@ Gets all proposed but not approved accounts to be revoked.
 Adds a new Validator node.
 
 - Parameters:
-    - `address`: string // the consensus address of the validator; bech encoded
-    - `pubkey`: string // the consensus public key of the validator; bech encoded
+    - `address`: string // the consensus address of the validator; bech32 encoded
+    - `pubkey`: string // the consensus public key of the validator; bech32 encoded
     - `description`: json
         - `name`: string // validator name
         - `identity`: string (optional) // identity signature
@@ -1257,7 +1257,7 @@ Adds a new Validator node.
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `zblcli tx validator add-node .... `
+    -   `zblcli tx validator add-node --pubkey=<pubkey> --name=<node name> --from=<name> .... `
 - REST API: 
     -   POST `/validators/<address>`
     

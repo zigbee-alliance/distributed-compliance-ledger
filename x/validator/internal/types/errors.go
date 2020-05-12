@@ -10,6 +10,7 @@ const (
 
 	CodeValidatorOperatorAddressExist sdk.CodeType = 601
 	CodeValidatorDoesNotExist         sdk.CodeType = 602
+	CodePoolIsFull                    sdk.CodeType = 603
 )
 
 func ErrValidatorExists(address interface{}) sdk.Error {
@@ -20,4 +21,9 @@ func ErrValidatorExists(address interface{}) sdk.Error {
 func ErrValidatorDoesNotExist(address interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeValidatorDoesNotExist,
 		fmt.Sprintf("No validator associated with the operator_address=%v on the ledger", address))
+}
+
+func ErrPoolIsFull() sdk.Error {
+	return sdk.NewError(Codespace, CodePoolIsFull,
+		fmt.Sprintf("Pool ledger already contains maximum number of active nodes: \"%v\"", MaxNodes))
 }

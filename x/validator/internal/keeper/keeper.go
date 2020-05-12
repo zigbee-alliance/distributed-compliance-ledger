@@ -89,7 +89,7 @@ func (k Keeper) IterateValidators(ctx sdk.Context, process func(validator types.
 	}
 }
 
-// Slash a validator for an infraction. So it will be removed from Tendermint validator set
+// slash a validator for an infraction. So it will be removed from Tendermint validator set
 func (k Keeper) Slash(ctx sdk.Context, consAddr sdk.ConsAddress) {
 	validator := k.GetValidator(ctx, consAddr)
 
@@ -126,9 +126,9 @@ func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
 }
 
 /*
-	Last state Validator Index
+	Helper index to track the last set of validators
 */
-// Gets validator power in the last state by the given validator address
+// Gets the last validator power by the given validator address
 func (k Keeper) GetLastValidatorPower(ctx sdk.Context, address sdk.ConsAddress) (power types.LastValidatorPower) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GetValidatorLastPowerKey(address))
@@ -183,6 +183,20 @@ func (k Keeper) GetLastValidatorPowers(ctx sdk.Context) []types.LastValidatorPow
 	return lastValidators
 }
 
+// count total number of active validators
+func (k Keeper) CountLastValidators(ctx sdk.Context) (count int) {
+	store := ctx.KVStore(k.storeKey)
+	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerPrefix)
+	defer iter.Close()
+
+	for ; iter.Valid(); iter.Next() {
+		count++
+	}
+
+	return count
+}
+
+// get all active validator set
 func (k Keeper) GetAllLastValidators(ctx sdk.Context) (validators []types.Validator) {
 	k.IterateLastValidators(ctx, func(validator types.Validator) (stop bool) {
 		validators = append(validators, validator)
@@ -191,7 +205,7 @@ func (k Keeper) GetAllLastValidators(ctx sdk.Context) (validators []types.Valida
 	return validators
 }
 
-// Iterate through the active validator set and perform the provided function
+// iterate through the active validator set and perform the provided function
 func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator types.Validator) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerPrefix)

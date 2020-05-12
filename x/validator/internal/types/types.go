@@ -158,15 +158,15 @@ func (d Description) Validate() sdk.Error {
 	Validator Signing info
 */
 type ValidatorSigningInfo struct {
-	Address             sdk.ConsAddress `json:"address"`                          // validator consensus address
-	StartHeight         int64           `json:"start_height" yaml:"start_height"` // height at which validator was added
-	IndexOffset         int64           `json:"index_offset"`                     // index offset into signed block bit array
-	MissedBlocksCounter int64           `json:"missed_blocks_counter"`            // missed blocks counter (to avoid scanning the array every time)
+	Address             sdk.ConsAddress `json:"address"`               // validator consensus address
+	StartHeight         int64           `json:"start_height"`          // height at which validator was added
+	IndexOffset         int64           `json:"index_offset"`          // index offset into signed block bit array
+	MissedBlocksCounter int64           `json:"missed_blocks_counter"` // missed blocks counter (to avoid scanning the array every time)
 }
 
-func NewValidatorSigningInfo(condAddr sdk.ConsAddress, startHeight int64) ValidatorSigningInfo {
+func NewValidatorSigningInfo(address sdk.ConsAddress, startHeight int64) ValidatorSigningInfo {
 	return ValidatorSigningInfo{
-		Address:             condAddr,
+		Address:             address,
 		StartHeight:         startHeight,
 		IndexOffset:         0,
 		MissedBlocksCounter: 0,

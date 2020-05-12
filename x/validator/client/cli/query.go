@@ -29,14 +29,14 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 // GetCmdQueryValidator implements the node query command.
 func GetCmdQueryValidator(storeName string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "node [address]",
+	cmd := &cobra.Command{
+		Use:   "node",
 		Short: "Query a validator node",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr, err := sdk.ConsAddressFromBech32(args[0])
+			addr, err := sdk.ConsAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
@@ -52,6 +52,13 @@ func GetCmdQueryValidator(storeName string, cdc *codec.Codec) *cobra.Command {
 			return cliCtx.EncodeAndPrintWithHeight(certificate, height)
 		},
 	}
+
+	cmd.Flags().String(FlagAddress, "", "The Bech32 encoded Address of the validator")
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+
+	cmd.MarkFlagRequired(FlagAddress)
+
+	return cmd
 }
 
 // GetCmdQueryValidators implements the query all nodes command.

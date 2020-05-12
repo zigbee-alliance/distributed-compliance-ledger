@@ -7,7 +7,7 @@ This document contains tutorials demonstrating how to accomplish common tasks.
 * zblcli config output <type> - Output format (text/json)
 * zblcli config indent <bool> - Add indent to JSON response
 * zblcli config trust-node <bool> - Trust connected full node (don't verify proofs for responses). The `false` value is recommended.
-* zblcli config node <node-ip> - <host>:<port> of node to connect. 
+* zblcli config node <node-ip> - Address `<host>:<port>` of the node to connect. 
 
 ### Setting up a Validator Node
 
@@ -30,7 +30,20 @@ Here are steps for setting up a new validator node.
 * Add validator node to the network:
     * Get this node's tendermint validator *consensus address*: `zbld tendermint show-address`
     * Get this node's tendermint validator *consensus pubkey*: `zbld tendermint show-validator`
+    * Note that *consensus address* and *consensus pubkey* are not the same as `address` and `pubkey` were used for account creation.
     * Add validator node: `zblcli tx validator add-node --address=<address> --pubkey=<pubkey> --name=<node name> --from=<name>`
     * Start node: `zbld start`
 
 * Congrats! You are an owner of the validator node.
+
+##### Restrictions
+- Maximum number of nodes (`MaxEvidenceAge`): 100 
+- Size (number of blocks) of the sliding window used to track validator liveness (`SignedBlocksWindow`): 100
+- Minimal number of blocks must have been signed per window (`MinSignedPerWindow`): 50
+
+Node will be jailed and removed from the active validator set in the following conditions are met:
+- Node passed minimum height: `node start height + SignedBlocksWindow`
+- Node exceeded the maximum number of unsigned blocks withing the window: `SignedBlocksWindow - MinSignedPerWindow`
+
+In order to unjail the node and return to the active tendermint validator set the sufficient number of Trustee's approvals is needed.
+(see authorization rules)

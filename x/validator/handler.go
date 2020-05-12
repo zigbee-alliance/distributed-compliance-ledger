@@ -27,13 +27,20 @@ func NewHandler(k Keeper, authzKeeper authz.Keeper) sdk.Handler {
 func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator, k Keeper, authzKeeper authz.Keeper) sdk.Result {
 	// check if sender has enough rights to create a validator node
 	if !authzKeeper.HasRole(ctx, msg.Signer, authz.NodeAdmin) {
-		return sdk.ErrUnauthorized(fmt.Sprintf("MsgCreateValidator transaction should be signed by an account with the %s role", authz.NodeAdmin)).Result()
+		return sdk.ErrUnauthorized(fmt.Sprintf("CreateValidator transaction should be signed by an account with the \"%s\" role", authz.NodeAdmin)).Result()
+	}
+
+	// check if we has not reached the limit of nodes
+	if k.CountLastValidators(ctx) == types.MaxNodes {
+		return types.ErrPoolIsFull().Result()
 	}
 
 	// check if a validator with a given address already exists
 	if k.IsValidatorPresent(ctx, msg.Address) {
 		return types.ErrValidatorExists(msg.Address).Result()
 	}
+
+	// TODO: can one account (msg.Signer) posses several nodes?
 
 	// check key type
 	if ctx.ConsensusParams() != nil {

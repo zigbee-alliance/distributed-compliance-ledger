@@ -54,11 +54,6 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			err = msg.ValidateBasic()
-			if err != nil {
-				return err
-			}
-
 			return utils.GenerateOrBroadcastMsgs(cliCtx.Context(), txBldr, []sdk.Msg{msg})
 		},
 	}
@@ -125,20 +120,12 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (
 
 	signer := cliCtx.GetFromAddress()
 
-	valConsAddr, err := sdk.ConsAddressFromBech32(viper.GetString(FlagAddress))
+	address, err := sdk.ConsAddressFromBech32(viper.GetString(FlagAddress))
 	if err != nil {
 		return txBldr, nil, err
 	}
 
-	valConsPubkeyStr := viper.GetString(FlagPubKey)
-	valConsPubkey, err := sdk.GetConsPubKeyBech32(valConsPubkeyStr)
-	if err != nil {
-		return txBldr, nil, err
-	}
-
-	if !valConsAddr.Equals(sdk.ConsAddress(valConsPubkey.Address())) {
-		return txBldr, nil, sdk.ErrUnknownRequest("Validator Consensus Pubkey does not match to Validator Address.")
-	}
+	pubkey := viper.GetString(FlagPubKey)
 
 	description := types.NewDescription(
 		viper.GetString(FlagName),
@@ -147,7 +134,7 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (
 		viper.GetString(FlagDetails),
 	)
 
-	msg := types.NewMsgCreateValidator(valConsAddr, valConsPubkeyStr, description, signer)
+	msg := types.NewMsgCreateValidator(address, pubkey, description, signer)
 
 	if viper.GetBool(client.FlagGenerateOnly) {
 		ip := viper.GetString(FlagIP)
@@ -155,6 +142,11 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (
 		if nodeID != "" && ip != "" {
 			txBldr = txBldr.WithMemo(fmt.Sprintf("%s@%s:26656", nodeID, ip))
 		}
+	}
+
+	err = msg.ValidateBasic()
+	if err != nil {
+		return txBldr, nil, err
 	}
 
 	return txBldr, msg, nil

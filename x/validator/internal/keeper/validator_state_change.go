@@ -101,8 +101,8 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 		if !validator.IsJailed() {
 
 			// jail the validator
-			reason := fmt.Sprintf("Validator %s past min height of %d and below signed blocks threshold of %d",
-				consAddr, minHeight, types.MinSignedPerWindow)
+			reason := fmt.Sprintf("Validator \"%v\" passed minimum height \"%v\" and exceeded the maximum number of unsigned blocks \"%v\" within the window in %v",
+				consAddr, minHeight, maxMissed, types.SignedBlocksWindow)
 
 			logger.Info(reason)
 
@@ -118,7 +118,7 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 			k.Slash(ctx, consAddr)
 			k.Jail(ctx, consAddr, reason)
 
-			// We need to reset the counter & array so that the validator won't be immediately slashed for downtime upon rebonding.
+			// We need to reset the counter & array so that the validator won't be immediately slashed upon rebonding.
 			signInfo = signInfo.Reset()
 			k.ClearValidatorMissedBlockBitArray(ctx, consAddr)
 		} else {
@@ -174,12 +174,9 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address, infractio
 }
 
 // Apply and return accumulated updates to the bonded validator set.
-// It gets called once after genesis, another time maybe after genesis transactions,
-// then once at every EndBlock.
+// It gets called once after genesis and at every EndBlock.
 //
-// CONTRACT: Only validators with non-zero power or zero-power that were bonded
-// at the previous block height or were removed from the validator set entirely
-// are returned to Tendermint.
+// Only validators that were added or were removed from the validator set are returned to Tendermint.
 func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []abci.ValidatorUpdate) {
 	// Iterate over validators
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {

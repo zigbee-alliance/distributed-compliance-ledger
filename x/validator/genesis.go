@@ -20,12 +20,6 @@ type MissedBlock struct {
 	Missed bool  `json:"missed"`
 }
 
-func NewGenesisState(validators []Validator) GenesisState {
-	return GenesisState{
-		Validators: validators,
-	}
-}
-
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
 		Validators:     []Validator{},

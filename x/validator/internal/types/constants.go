@@ -11,8 +11,8 @@ const (
 	// Zero power is used to demote validator
 	ZeroPower int64 = 0
 
-	// Maximum number of validators
-	MaxValidators uint16 = 100
+	// Maximum number of nodes
+	MaxNodes = 100
 
 	// Maximum time to accept double-sign evidence
 	MaxEvidenceAge = 60 * 2 * time.Second

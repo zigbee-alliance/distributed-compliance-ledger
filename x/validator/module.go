@@ -100,7 +100,7 @@ func (am AppModule) NewHandler() sdk.Handler {
 
 // QuerierRoute returns the module's querier route name.
 func (AppModule) QuerierRoute() string {
-	return QuerierRoute
+	return RouterKey
 }
 
 // NewQuerierHandler returns the validator module sdk.Querier.
