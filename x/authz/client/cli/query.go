@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -26,23 +27,21 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 }
 
 func GetCmdAccountRoles(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "account-roles [addr]",
+	cmd := &cobra.Command{
+		Use:   "account-roles",
 		Short: "Query roles assigned to account",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr := args[0]
-
-			address, err := sdk.AccAddressFromBech32(addr)
+			address, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
-				return sdk.ErrInvalidAddress(addr)
+				return sdk.ErrInvalidAddress(address.String())
 			}
 
 			res, height, err := cliCtx.Context().QueryStore(address.Bytes(), queryRoute)
 			if err != nil {
-				fmt.Printf("could not query AccountRoles - %s \n", addr)
+				fmt.Printf("could not query AccountRoles - %s \n", address.String())
 				return nil
 			}
 
@@ -52,4 +51,10 @@ func GetCmdAccountRoles(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			return cliCtx.EncodeAndPrintWithHeight(accountRoles, height)
 		},
 	}
+
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+
+	cmd.MarkFlagRequired(FlagAddress)
+
+	return cmd
 }

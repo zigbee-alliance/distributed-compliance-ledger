@@ -57,24 +57,21 @@ Permissions:
 - Add Leaf Certificate: Any Role.
 
 Transactions:
-- ` zblcli tx pki propose-add-x509-root-cert [certificate-path-or-pem-string]` - Proposes a new self-signed root certificate.
-  - Signature is required. Use `--from` flag.
+- `zblcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>` - Proposes a new self-signed root certificate.
 
-  Example: `zblcli tx pki propose-add-x509-root-cert "/path/to/certificate/file" --from jack`
+  Example: `zblcli tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `zblcli tx pki propose-add-x509-root-cert "----BEGIN CERTIFICATE----- ......" --from jack`
+  Example: `zblcli tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
 
-- ` zblcli tx pki approve-add-x509-root-cert [subject] [subject-key-id]` - Approves the proposed root certificate.
-  - Signature is required. Use `--from` flag.
+- `zblcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>` - Approves the proposed root certificate.
 
-  Example: `zblcli tx pki approve-add-x509-root-cert "CN=dsr-corporation.com" "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C" --from jack`
+  Example: `zblcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C" --from=jack`
   
-- ` zblcli tx pki add-x509-cert [certificate-path-or-pem-string]` - Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
-  - Signature is required. Use `--from` flag.
+- `zblcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>` - Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
 
-  Example: `zblcli tx pki add-x509-cert "/path/to/certificate/file" --from jack`
+  Example: `zblcli tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `zblcli tx pki add-x509-cert "----BEGIN CERTIFICATE----- ......" --from jack`  
+  Example: `zblcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
 Queries:
 - `zblcli query pki all-proposed-x509-root-certs` - Gets all proposed but not approved root certificates.
@@ -84,9 +81,9 @@ Queries:
     
   Example: `zblcli query pki all-proposed-x509-root-certs`
   
-- `zblcli query pki proposed-x509-root-cert [subject] [subject-key-id]` - Gets a proposed but not approved root certificate.
+- `zblcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string>` - Gets a proposed but not approved root certificate.
 
-  Example: `zblcli query pki proposed-x509-root-cert "CN=dsr-corporation.com" "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki proposed-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
 
 - `zblcli query pki all-x509-root-certs` - Gets all approved root certificates.
   - Optional flags: 
@@ -95,9 +92,9 @@ Queries:
 
   Example: `zblcli query pki all-x509-root-certs`
   
-- `zblcli query pki x509-cert [subject] [subject-key-id]` - Gets a certificates (either root, intermediate or leaf).
+- `zblcli query pki x509-cert --subject=<string> --subject-key-id=<hex string>` - Gets a certificates (either root, intermediate or leaf).
 
-  Example: `zblcli query pki x509-certs "CN=dsr-corporation.com" "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki x509-certs --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
   
 - `zblcli query pki all-x509-certs` - Gets all certificates (root, intermediate and leaf).
   - Optional flags: 
@@ -108,22 +105,22 @@ Queries:
 
   Example: `zblcli query pki x509-certs`
   
-  Example: `zblcli query pki x509-certs --root-subject-key-id "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki x509-certs --root-subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
   
-  Example: `zblcli query pki x509-certs --root-subject "CN=dsr-corporation.com"`
+  Example: `zblcli query pki x509-certs --root-subject="CN=dsr-corporation.com"`
   
-- `zblcli query pki all-subject-x509-certs` - Gets all certificates (root, intermediate and leaf) associated with subject.
+- `zblcli query pki all-subject-x509-certs --subject=<subject>` - Gets all certificates (root, intermediate and leaf) associated with subject.
   - Optional flags: 
     - `--skip` int
     - `--take` int
     - `--root-subject` string
     - `--root-subject-key-id` string
 
-  Example: `zblcli query pki all-subject-x509-certs`
+  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr"`
 
-  Example: `zblcli query pki all-subject-x509-certs --root-subject-key-id "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
   
-  Example: `zblcli query pki all-subject-x509-certs --root-subject "CN=dsr-corporation.com"`
+  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject="CN=dsr-corporation.com"`
 
 ### Model Info
 
@@ -145,33 +142,31 @@ Permissions:
 - Signer must have `Vendor` role. See `Authorization` module for details.
 
 Transactions:
-- `zblcli tx modelinfo add-model [vid:uint16] [pid:uint16] [name:string] [description:string] [sku:string] 
-[firmware-version:string] [hardware-version:string] [tis-or-trp-testing-completed:bool]` - Add new ModelInfo.
-  - Signature is required. Use `--from` flag.
+- `zblcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
+--firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account>` - Add new ModelInfo.
   - Optional flags: 
     - `--cid` uint16
     - `--custom` string
 
-  Example: `zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from jack`
+  Example: `zblcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`
   
-  Example: `zblcli tx modelinfo add-model 1 2 "Device #2" "Device Description" "SKU324S" "2.0" "2.0" true --from jack --cid 1 --custom "Some Custom information" --certificate-id "ID123" --certified-date "2020-01-01T00:00:00Z"`
+  Example: `--vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
 
-- `zblcli tx modelinfo update-model [vid:uint16] [pid:uint16] [tis-or-trp-testing-completed:bool]` - Update
+- `zblcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account>` - Update
   existing ModelInfo.
-  - Signature is required. Use `--from` flag.
   - Optional flags: 
     - `--cid` uint16
     - `--custom` string
     - `--description` string
     
-  Example: `zblcli tx modelinfo update-model 1 1 true --from jack --description "New Description"`
+  Example: `zblcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --description="New Description"`
   
-  Example: `zblcli tx modelinfo update-model 1 1 true --from jack --custom "Custom Data"`
+  Example: `zblcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --custom="Custom Data"`
 
 Queries:
-- `zblcli query modelinfo model [vid] [pid]` - Query single ModelInfo.
+- `zblcli query modelinfo model --vid=<uint16> --pid=<uint16>` - Query single ModelInfo.
 
-  Example: `zblcli query modelinfo model 1 1`
+  Example: `zblcli query modelinfo model --vid=1 --pid=1`
   
 - `zblcli query modelinfo all-models` - Query list of ModelInfos. Optional flags: 
     - `--skip` int
@@ -185,11 +180,11 @@ Queries:
     
   Example: `zblcli query modelinfo vendors`
   
-- `zblcli query modelinfo vendor-models [vid]` - Query list of ModelInfos for the given Vendor. Optional flags: 
+- `zblcli query modelinfo vendor-models --vid=<uint16>` - Query list of ModelInfos for the given Vendor. Optional flags: 
     - `--skip` int
     - `--take` int
 
-  Example: `zblcli query modelinfo vendor-models 1`
+  Example: `zblcli query modelinfo vendor-models --vid=1`
 
 Genesis:
 
@@ -209,17 +204,16 @@ Permissions:
 - Signer must have `TestHouse` role. See `Authorization` module for details.
 
 Transactions:
-- ` zblcli tx compliancetest add-test-result [vid] [pid] [test-result] [test_date]` - Add new Testing Result.
-  - Signature is required. Use `--from` flag.
+- ` zblcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>` - Add new Testing Result.
 
-  Example: `zblcli tx compliancetest add-test-result 1 1 "Test Document" "2020-04-16T06:04:57.05Z" --from jack`
+  Example: `zblcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `zblcli tx compliancetest add-test-result 1 1 "path/to/document" "2020-04-16T06:04:57.05Z" --from jack`
+  Example: `zblcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
 Queries:
-- `zblcli query compliancetest test-result [vid] [pid]` - Query Testing Results associated with VID/PID.
+- `zblcli query compliancetest test-result --vid=<uint16> --pid=<uint16>` - Query Testing Results associated with VID/PID.
 
-  Example: `zblcli query compliancetest test-result 1 1`
+  Example: `zblcli query compliancetest test-result --vid=1 --pid=1`
 
 ### Compliance
 
@@ -241,48 +235,51 @@ Permissions:
 - Only owner can update an existing record. 
 
 Transactions:
-- ` zblcli tx compliance certify-model [vid] [pid] [certification-type] [certification-date]` - Certify model.
-  - Signature is required. Use `--from` flag.
-  - Optional flags: 
+- ` zblcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>` - Certify model.
+    - Optional flags: 
     - `--reason` string -  an optional comment describing the reason of certification
 
-  Example: `zblcli tx compliance certify-model 1 1 "zb" "2020-04-16T06:04:57.05Z" --from jack`
+  Example: `zblcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date=<"2020-04-16T06:04:57.05Z" --from=jack`
  
-- ` zblcli tx compliance revoke-model [vid] [pid] [certification-type] [revocation-date]` - Revoke certification for a model.
+- ` zblcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>` - Revoke certification for a model.
   - Signature is required. Use `--from` flag.
   - Optional flags: 
     - `--reason` string -  an optional comment describing the reason of revocation
 
-  Example: `zblcli tx compliance revoke-model 1 1 "zb" "2020-04-16T06:04:57.05Z" --from jack`
+  Example: `zblcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `zblcli tx compliance revoke-model 1 1 "zb" "2020-04-16T06:04:57.05Z" --reason "Some Reason" --from jack`
+  Example: `zblcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
 Queries:
-- `zblcli query compliance certified-model [vid] [pid] [certification-type]` - Query certification data for model associated with VID/PID.
+- `zblcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>` - Query certification data for model associated with VID/PID.
 
-  Example: `zblcli query compliance certified-model 1 1 "zb"`
+  Example: `zblcli query compliance certified-model --vid=1 --pid=1 --certification-type="zb"`
   
 - `zblcli query compliance all-certified-models` - Query all certified models.
 
   Example: `zblcli query compliance all-certified-models`
   
-- `zblcli query compliance revoked-model [vid] [pid] [certification-type]` - Query revocation data for model associated with VID/PID.
+- `zblcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>` - Query revocation data for model associated with VID/PID.
 
-  Example: `zblcli query compliance revoked-model 1 1 "zb"`
+  Example: `zblcli query compliance revoked-model --vid=1 --pid=1 --certification-type="zb"`
   
 - `zblcli query compliance all-revoked-models` - Query all revoked models.
 
   Example: `zblcli query compliance all-revoked-models`
   
-- `zblcli query compliance compliance-info [vid] [pid] [certification-type]` - Query compliance info for model associated with VID/PID.
+- `zblcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb>` - Query compliance info for model associated with VID/PID.
 
-  Example: `zblcli query compliance compliance-info 1 1 "zb"`
+  Example: `zblcli query compliance compliance-info --vid=1 --pid=1 --certification-type="zb"`
   
 - `zblcli query compliance all-compliance-info-records` - Query all compliance-infos.
 
   Example: `zblcli query compliance all-compliance-info-records`
 
 ### Authorization
+
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Signer must have `Trustee` role. 
 
 Roles:
 - `Administrator` - Is able to assign or revoke roles.
@@ -292,21 +289,20 @@ Roles:
 - `Trustee` - Is able to approve root certificates
 
 Transactions:
-- `zblcli tx authz assign-role [address] [role]` - Assign role to specified account.
-  - Trustee's signature is required. Use `--from` flag.
+- `zblcli tx authz assign-role --address=<bench32 address> --role=<string> --from=<account>` - Assign role to specified account.
 
-  Example: `zblcli tx authz assign-role cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 Vendor --from jack`
+  Example: `zblcli tx authz assign-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
   
-- `zblcli tx authz revoke-role [address] [role]` - Revoke role from specified account.
-  - Trustee's signature is required. Use `--from` flag.
+- `zblcli tx authz revoke-role --address=<bench32 address> --role=<string> --from=<account>` - Revoke role from specified account.
+  - Trustee's signature is required.
 
-  Example: `zblcli tx authz revoke-role cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 Vendor --from jack`
+  Example: `zblcli tx authz revoke-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
 
 Queries:
 
-- `zblcli query authz account-roles [account]` - The command to query roles by account address.
+- `zblcli query authz account-roles --address=<bench32 address>` - The command to query roles by account address.
 
-  Example: `zblcli query authz account-roles cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+  Example: `zblcli query authz account-roles --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
 Genesis template:
 ```json
@@ -326,18 +322,21 @@ Genesis template:
 
 ### Authentication extensions
 
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Signer must have `Trustee` role. See `Authorization` module for details.
+
 Transactions:
 
-- `zblcli tx authnext create-account [account] [public-key]` - The command to creates a new account.
-  - Signature is required. Use `--from` flag.
+- `zblcli tx authnext create-account --address=<bench32 address> --pubkey=<bench32 pubkey> --from=<account>` - The command to creates a new account.
 
-  Example: `zblcli tx authnext create-account cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from jack`
+  Example: `zblcli tx authnext create-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from=jack`
 
 Queries:
 
-- `zblcli query authnext account [account]` - The command to query single account.
+- `zblcli query authnext account --address=<bench32 address>` - The command to query single account.
 
-  Example: `zblcli query authnext account cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+  Example: `zblcli query authnext account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
 - `zblcli query authnext accounts --skip [x] --take [y]` - The command to list account headers with roles. Flags
  are optional.

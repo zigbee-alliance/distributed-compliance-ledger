@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -17,25 +18,25 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	complianceTxCmd.AddCommand(client.PostCommands(
+	complianceTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
 		GetCmdProposeAddX509RootCertificate(cdc),
 		GetCmdApproveAddX509RootCertificate(cdc),
 		GetCmdAddX509Certificate(cdc),
-	)...)
+	)...)...)
 
 	return complianceTxCmd
 }
 
 //nolint dupl
 func GetCmdProposeAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "propose-add-x509-root-cert [certificate-path-or-pem-string]",
+	cmd := &cobra.Command{
+		Use:   "propose-add-x509-root-cert",
 		Short: "Proposes a new self-signed root certificate",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			cert, err := cliCtx.ReadFromFile(args[0])
+			cert, err := cliCtx.ReadFromFile(viper.GetString(FlagCertificate))
 			if err != nil {
 				return err
 			}
@@ -45,37 +46,50 @@ func GetCmdProposeAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
+
+	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "", "PEM encoded certificate (string or path to file containing data)")
+
+	cmd.MarkFlagRequired(FlagCertificate)
+
+	return cmd
 }
 
 //nolint dupl
 func GetCmdApproveAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "approve-add-x509-root-cert [subject] [subject-key-id]",
+	cmd := &cobra.Command{
+		Use:   "approve-add-x509-root-cert",
 		Short: "Approves the proposed root certificate correspondent to combination of subject and subject-key-id",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			subject := args[0]
-			subjectKeyId := args[1]
+			subject := viper.GetString(FlagSubject)
+			subjectKeyId := viper.GetString(FlagSubjectKeyId)
 
 			msg := types.NewMsgApproveAddX509RootCert(subject, subjectKeyId, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
+
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "","Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyId, FlagSubjectKeyIdShortcut, "", "Certificate's subject key id (hex)")
+
+	cmd.MarkFlagRequired(FlagSubject)
+	cmd.MarkFlagRequired(FlagSubjectKeyId)
+	return cmd
 }
 
 //nolint dupl
 func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "add-x509-cert [certificate-path-or-pem-string]",
+	cmd := &cobra.Command{
+		Use:   "add-x509-cert",
 		Short: "Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			cert, err := cliCtx.ReadFromFile(args[0])
+			cert, err := cliCtx.ReadFromFile(viper.GetString(FlagCertificate))
 			if err != nil {
 				return err
 			}
@@ -85,4 +99,10 @@ func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
+
+	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "", "PEM encoded certificate (string or path to file containing data)")
+
+	cmd.MarkFlagRequired(FlagCertificate)
+
+	return cmd
 }

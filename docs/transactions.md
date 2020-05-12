@@ -135,7 +135,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - The current number of required approvals: 
     - 2
 - CLI command: 
-    -   `zblcli tx pki propose-add-x509-root-cert .... `
+    -   `zblcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - REST API: 
     -   POST `/pki/certs/proposed/root`
 - Validation:
@@ -165,7 +165,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - The current number of required approvals: 
     - 2
 - CLI command: 
-    -   `zblcli tx pki approve-add-x509-root-cert .... `
+    -   `zblcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PATCH `/pki/certs/proposed/root/<subject>/<subject_key_id>`
 - Validation:
@@ -187,7 +187,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - Who can send: 
     - Any role
 - CLI command: 
-    -   `zblcli tx pki add-x509-cert .... `
+    -   `zblcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 - REST API: 
     -   POST `/pki/certs`
 - Validation:
@@ -220,7 +220,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - Who can send: 
     - Any role; owner
 - CLI command: 
-    -   `zblcli tx pki revoke-x509-cert .... `
+    -   `zblcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   DELETE `/pki/certs/<subject>/<subject_key_id>`
 
@@ -241,7 +241,7 @@ then the certificate will be in a pending state until sufficient number of other
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx pki propose-revoke-x509-cert .... `
+    -   `zblcli tx pki propose-revoke-x509-cert .--subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PUT `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
     
@@ -265,7 +265,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx pki approve-revoke-x509-cert .... `
+    -   `zblcli tx pki approve-revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PATCH `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
         
@@ -276,7 +276,7 @@ Gets all proposed but not approved root certificates.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query pki all-proposed-x509-root-certs .... `
+    -   `zblcli query pki all-proposed-x509-root-certs ... `
 - REST API: 
     -   GET `/pki/certs/proposed/root`
 - Result:
@@ -307,7 +307,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query pki proposed-x509-root-cert .... `
+    -   `zblcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/proposed/root/<subject>/<subject_key_id>`
 ```json
@@ -363,7 +363,7 @@ subject and subject key id attributes.
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query pki x509-cert .... `
+    -   `zblcli query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/<subject>/<subject_key_id>`
 ```json
@@ -439,7 +439,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
-    -   `zblcli query pki all-subject-x509-certs .... `
+    -   `zblcli query pki all-subject-x509-certs --subject=<string> .... `
 - REST API: 
     -   GET `/pki/certs/<subject>`
     -   GET `/pki/certs/<subject>?root_subject=<>`
@@ -478,7 +478,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id` 
 - CLI command: 
-    -   `zblcli query pki all-x509-certs-delta .... `
+    -   `zblcli query pki all-x509-certs-delta --since=<integer>.... `
 - REST API: 
     -   GET `/pki/certs?since=<>`
     -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
@@ -502,7 +502,7 @@ Gets a proposed but not approved certificate to be revoked.
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
 - CLI command: 
-    -   `zblcli query pki proposed-x509-cert-to-revoke ....`
+    -   `zblcli query pki proposed-x509-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
 - REST API: 
     -   GET `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
 
@@ -542,7 +542,8 @@ a new model info with a new `vid` or `pid` can be created.
 - Who can send: 
     - Vendor
 - CLI command: 
-    -   `zblcli tx modelinfo add-model .... `
+    -   `zblcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
+    --firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
 - REST API: 
     -   POST `/modelinfo/models`
 
@@ -569,7 +570,7 @@ All non-edited fields remain the same.
 - Who can send: 
     - Vendor; owner
 - CLI command: 
-    -   `zblcli tx modelinfo edit-model .... `
+    -   `zblcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
 - REST API: 
     -   PUT `/modelinfo/models/vid/pid`
 
@@ -609,7 +610,7 @@ Gets all Model Info by the given Vendor (`vid`).
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `zblcli query modelinfo vendor-models .... `
+    -   `zblcli query modelinfo vendor-models --vid=<uint16>`
 - REST API: 
     -   GET `/modelinfo/models/vid`
 - Result
@@ -638,7 +639,7 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
     - `pid`: 16 bits int
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query modelinfo model.... `
+    -   `zblcli query modelinfo model --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
     -   GET `/modelinfo/models/vid/pid`
 - Result
@@ -708,7 +709,7 @@ Another test result can be submitted instead.
 - Who can send: 
     - TestHouse
 - CLI command: 
-    -   `zblcli tx compliancetest add-test-result .... `
+    -   `zblcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 - REST API: 
     -   POST `/compliancetest/testresults`
 
@@ -720,7 +721,7 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
     - `pid`: 16 bits int
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliancetest test-result .... `
+    -   `zblcli query compliancetest test-result --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
     -   GET `/compliancetest/testresults/vid/pid`
 - Result:
@@ -770,7 +771,7 @@ from the revocation list.
 - Who can send: 
     - ZBCertificationCenter
 - CLI command: 
-    -   `zblcli tx compliance certify-model .... `
+    -   `zblcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/certified/vid/pid/certification_type`
     
@@ -798,7 +799,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Who can send: 
     - ZBCertificationCenter
 - CLI command: 
-    -   `zblcli tx compliance revoke-model-certification .... `
+    -   `zblcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/revoked/vid/pid/certification_type`    
     
@@ -821,7 +822,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliance certified-model .... `
+    -   `zblcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
     -   GET `/compliance/certified/vid/pid/certification_type`
 - Result
@@ -852,7 +853,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliance revoked-model .... `
+    -   `zblcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
     -   GET `/compliance/revoked/vid/pid/certification_type`
 - Result:
@@ -878,7 +879,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliance compliance-info .... `
+    -   `zblcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
     -   GET `/compliance/vid/pid/certification_type`
 - Result:
@@ -928,7 +929,7 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `zblcli query compliance certified-vendor-models.... `
+    -   `zblcli query compliance certified-vendor-models --vid=<uint16> .... `
 - REST API: 
     -   GET `/compliance/certified/vid`
     
@@ -942,7 +943,7 @@ It contains information about revocation only, so  it should be used in cases
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `zblcli query compliance revoked-vendor-models .... `
+    -   `zblcli query compliance revoked-vendor-models --vid=<uint16>  .... `
 - REST API: 
     -   GET `/compliance/revoked/vid`
 

@@ -29,7 +29,7 @@ create_account_with_name(){
   pubkey=$(zblcli keys show $name -p)
 
   echo "Jack creates account for $name"
-  result=$(echo "test1234" | zblcli tx authnext create-account "$address" "$pubkey" --from jack --yes)
+  result=$(echo "test1234" | zblcli tx authnext create-account --address="$address" --pubkey="$pubkey" --from=jack --yes)
   check_response "$result" "\"success\": true"
   echo "$result"
 }

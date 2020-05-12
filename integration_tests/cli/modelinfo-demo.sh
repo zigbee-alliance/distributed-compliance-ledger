@@ -13,7 +13,7 @@ check_response "$result" "\"account_number\":"
 echo "$result"
 
 echo "Assign Vendor role to Jack"
-result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -a) "Vendor" --from jack --yes)
+result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -21,12 +21,12 @@ vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | zblcli tx modelinfo add-model $vid $pid "$name" "Device Description" "SKU12FS" "1.0" "2.0" true --from jack --yes)
+result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get Model with VID: $vid PID: $pid"
-result=$(zblcli query modelinfo model $vid $pid)
+result=$(zblcli query modelinfo model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"name\": \"$name\""
@@ -44,18 +44,18 @@ check_response "$result" "\"vid\": $vid"
 echo "$result"
 
 echo "Get Vendor Models with VID: ${vid}"
-result=$(zblcli query modelinfo vendor-models $vid)
+result=$(zblcli query modelinfo vendor-models --vid=$vid)
 check_response "$result" "\"pid\": $pid"
 echo "$result"
 
 echo "Update Model with VID: ${vid} PID: ${pid}"
 description="New Device Description"
-result=$(echo "test1234" | zblcli tx modelinfo update-model $vid $pid true --from jack --yes --description "$description")
+result=$(echo "test1234" | zblcli tx modelinfo update-model --vid=$vid --pid=$pid --tis-or-trp-testing-completed=true --from jack --yes --description "$description")
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get Model with VID: ${vid} PID: ${pid}"
-result=$(zblcli query modelinfo model $vid $pid)
+result=$(zblcli query modelinfo model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"description\": \"$description\""
