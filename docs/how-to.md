@@ -36,6 +36,13 @@ Here are steps for setting up a new validator node.
 
 * Congrats! You are an owner of the validator node.
 
+* Check node is alive and participate in consensus:
+    * Get the list of all nodes: `zblcli query validator all-nodes`. 
+    The node must present in the list and has the following params: `power:10` and `jailed:false`.
+    * Get the list of nodes participating in the consensus for the last block: `zblcli tendermint-validator-set`
+        * You can pass the additional value to get the result for a specific height: `zblcli tendermint-validator-set 100`  
+    * Get the node status: `zblcli status --node <node ip>`
+
 ##### Policy
 - Maximum number of nodes (`MaxNodes`): 100 
 - Size (number of blocks) of the sliding window used to track validator liveness (`SignedBlocksWindow`): 100

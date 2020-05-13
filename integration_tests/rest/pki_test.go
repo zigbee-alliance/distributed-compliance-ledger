@@ -18,7 +18,7 @@ import (
 	TODO: provide tests for error cases
 */
 
-func /*Test*/ PkiDemo(t *testing.T) {
+func TestPkiDemo(t *testing.T) {
 	// Get key info for Jack
 	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.JackAccount)
 

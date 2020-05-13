@@ -22,6 +22,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/go-bip39"
+	"github.com/tendermint/tendermint/libs/common"
 	"net/http"
 	"time"
 )
@@ -551,8 +552,8 @@ func getProposedCertificates(uri string) (ProposedCertificatesHeadersResult, int
 
 func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 	return modelinfo.NewMsgAddModelInfo(
-		uint16(RandInt()),
-		uint16(RandInt()),
+		common.RandUint16(),
+		common.RandUint16(),
 		constants.CID,
 		RandString(),
 		RandString(),

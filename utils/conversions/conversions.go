@@ -7,7 +7,7 @@ import (
 )
 
 func ParseUInt16FromString(str string) (uint16, sdk.Error) {
-	val, err := strconv.ParseInt(str, 10, 16)
+	val, err := strconv.ParseUint(str, 10, 16)
 	if err != nil || val < 0 {
 		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: \"%v\" must be 16 bit unsigned integer", str))
 	}

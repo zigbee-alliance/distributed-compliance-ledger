@@ -7,6 +7,7 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/libs/common"
 	"net/http"
 	"testing"
 )
@@ -129,16 +130,16 @@ func Test_AddModelinfo_Twice(t *testing.T) {
 }
 
 func Test_GetModelinfo_ForUnknown(t *testing.T) {
-	_, code := utils.GetModelInfo(uint16(utils.RandInt()), uint16(utils.RandInt()))
+	_, code := utils.GetModelInfo(common.RandUint16(), common.RandUint16())
 	require.Equal(t, http.StatusNotFound, code)
 }
 
 func Test_GetModelinfo_ForInvalidVidPid(t *testing.T) {
 	// zero vid
-	_, code := utils.GetModelInfo(0, uint16(utils.RandInt()))
+	_, code := utils.GetModelInfo(0, common.RandUint16())
 	require.Equal(t, http.StatusBadRequest, code)
 
 	// zero pid
-	_, code = utils.GetModelInfo(uint16(utils.RandInt()), 0)
+	_, code = utils.GetModelInfo(common.RandUint16(), 0)
 	require.Equal(t, http.StatusBadRequest, code)
 }
