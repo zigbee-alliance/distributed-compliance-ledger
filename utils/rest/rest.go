@@ -42,6 +42,10 @@ func (ctx RestContext) Codec() *codec.Codec {
 	return ctx.context.Codec
 }
 
+func (ctx RestContext) Context() client.CLIContext {
+	return ctx.context
+}
+
 func (ctx RestContext) Variables() map[string]string {
 	return mux.Vars(ctx.request)
 }
@@ -62,8 +66,29 @@ func (ctx RestContext) ResponseWriter() *http.ResponseWriter {
 	return &ctx.responseWriter
 }
 
+func (ctx RestContext) NodeStatus() (*ctypes.ResultStatus, error) {
+	node, err := ctx.context.GetNode()
+	if err != nil {
+		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
+		return nil, err
+	}
+
+	status, err := node.Status()
+	if err != nil {
+		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
+		return nil, err
+	}
+
+	return status, nil
+}
+
 func (ctx RestContext) WithCodec(cdc *codec.Codec) RestContext {
 	ctx.context = ctx.context.WithCodec(cdc)
+	return ctx
+}
+
+func (ctx RestContext) WithNodeURI(nodeURI string) RestContext {
+	ctx.context = ctx.context.WithNodeURI(nodeURI)
 	return ctx
 }
 
@@ -78,15 +103,8 @@ func (ctx RestContext) WithHeight(height int64) RestContext {
 }
 
 func (ctx RestContext) WithFormerHeight() (RestContext, error) {
-	node, err := ctx.context.GetNode()
+	status, err := ctx.NodeStatus()
 	if err != nil {
-		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
-		return RestContext{}, err
-	}
-
-	status, err := node.Status()
-	if err != nil {
-		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
 		return RestContext{}, err
 	}
 
