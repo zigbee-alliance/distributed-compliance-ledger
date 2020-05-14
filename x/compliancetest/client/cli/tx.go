@@ -6,6 +6,7 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -22,40 +23,40 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	complianceTxCmd.AddCommand(client.PostCommands(
+	complianceTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
 		GetCmdAddTestingResult(cdc),
-	)...)
+	)...)...)
 
 	return complianceTxCmd
 }
 
 //nolint dupl
 func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "add-test-result [vid] [pid] [test-result-string-or-path] [test-date]",
+	cmd := &cobra.Command{
+		Use:   "add-test-result",
 		Short: "Add new testing result for Model (identified by the `vid` and `pid`)",
-		Args:  cobra.ExactArgs(4),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vid, err := conversions.ParseVID(args[0])
+			vid, err := conversions.ParseVID(viper.GetString(FlagVID))
 			if err != nil {
 				return err
 			}
 
-			pid, err := conversions.ParsePID(args[1])
+			pid, err := conversions.ParsePID(viper.GetString(FlagPID))
 			if err != nil {
 				return err
 			}
 
-			testResult, err_ := cliCtx.ReadFromFile(args[2])
+			testResult, err_ := cliCtx.ReadFromFile(viper.GetString(FlagTestResult))
 			if err_ != nil {
 				return err_
 			}
 
-			testDate, err_ := time.Parse(time.RFC3339, args[3])
+			testDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagTestDate))
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestDate \"%v\": it must be RFC3339 encoded date", args[3]))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestDate \"%v\": it must be RFC3339 encoded date", viper.GetString(FlagTestDate)))
 			}
 
 			msg := types.NewMsgAddTestingResult(vid, pid, testResult, testDate, cliCtx.FromAddress())
@@ -63,4 +64,16 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
+
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().StringP(FlagTestResult, FlagTestResultShortcut, "", "Test result (string or path to file containing data)")
+	cmd.Flags().StringP(FlagTestDate, FlagTestDateShortcut, "", "Date of test result (rfc3339 encoded)")
+
+	cmd.MarkFlagRequired(FlagVID)
+	cmd.MarkFlagRequired(FlagPID)
+	cmd.MarkFlagRequired(FlagTestResult)
+	cmd.MarkFlagRequired(FlagTestDate)
+
+	return cmd
 }

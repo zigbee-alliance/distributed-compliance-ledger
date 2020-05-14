@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"io/ioutil"
 	"os"
@@ -151,4 +153,11 @@ func (ctx CliContext) ReadFromFile(target string) (string, error) {
 	} else { // else return as is
 		return target, nil
 	}
+}
+
+func SignedCommands(cmds ...*cobra.Command) []*cobra.Command {
+	for _, c := range cmds {
+		_ = c.MarkFlagRequired(flags.FlagFrom)
+	}
+	return cmds
 }
