@@ -8,7 +8,7 @@ check_response "$result" "\"name\": \"jack\""
 echo "$result"
 
 echo "Get account info for Jack"
-result=$(zblcli query account $(zblcli keys show jack -a))
+result=$(zblcli query auth account $(zblcli keys show jack -a))
 check_response "$result" "\"account_number\":"
 echo "$result"
 

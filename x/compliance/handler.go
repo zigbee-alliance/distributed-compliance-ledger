@@ -3,7 +3,7 @@ package compliance
 //nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
@@ -12,7 +12,7 @@ import (
 )
 
 func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
-	compliancetestKeeper compliancetest.Keeper, authzKeeper authz.Keeper) sdk.Handler {
+	compliancetestKeeper compliancetest.Keeper, authzKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 		case types.MsgCertifyModel:
@@ -27,7 +27,7 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
 }
 
 func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
-	compliancetestKeeper compliancetest.Keeper, authzKeeper authz.Keeper,
+	compliancetestKeeper compliancetest.Keeper, authzKeeper auth.Keeper,
 	msg types.MsgCertifyModel) sdk.Result {
 	// check if sender has enough rights to certify model
 	if err := checkZbCertificationRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
@@ -82,7 +82,7 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	return sdk.Result{}
 }
 
-func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
+func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper auth.Keeper,
 	msg types.MsgRevokeModel) sdk.Result {
 	// check if sender has enough rights to revoke model
 	if err := checkZbCertificationRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {

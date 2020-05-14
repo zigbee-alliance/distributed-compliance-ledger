@@ -1,9 +1,9 @@
-package authz
+package auth
 
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz/client/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/client/cli"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -93,7 +93,7 @@ func (a AppModule) NewHandler() sdk.Handler {
 }
 
 func (a AppModule) QuerierRoute() string {
-	return RouterKey
+	return StoreKey
 }
 
 func (a AppModule) NewQuerierHandler() sdk.Querier {

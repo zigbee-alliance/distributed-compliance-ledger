@@ -5,7 +5,7 @@ package compliance
 import (
 	"fmt"
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
@@ -46,10 +46,10 @@ func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
 	vid, pid := addModel(setup, constants.VID, constants.PID)
 	addTestingResult(setup, vid, pid)
 
-	cases := []authz.AccountRole{
-		authz.Administrator,
-		authz.Vendor,
-		authz.TestHouse,
+	cases := []auth.AccountRole{
+		auth.Administrator,
+		auth.Vendor,
+		auth.TestHouse,
 	}
 
 	for _, tc := range cases {
@@ -212,10 +212,10 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 	setup := Setup()
 
-	cases := []authz.AccountRole{
-		authz.Administrator,
-		authz.Vendor,
-		authz.TestHouse,
+	cases := []auth.AccountRole{
+		auth.Administrator,
+		auth.Vendor,
+		auth.TestHouse,
 	}
 
 	for _, tc := range cases {

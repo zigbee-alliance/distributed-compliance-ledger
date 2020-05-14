@@ -3,7 +3,7 @@ package validator
 //nolint:goimports
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -68,11 +68,11 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 	keeper      Keeper
-	authzKeeper authz.Keeper
+	authzKeeper auth.Keeper
 }
 
 // NewAppModule creates a new AppModule object.
-func NewAppModule(keeper Keeper, authzKeeper authz.Keeper) AppModule {
+func NewAppModule(keeper Keeper, authzKeeper auth.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         keeper,

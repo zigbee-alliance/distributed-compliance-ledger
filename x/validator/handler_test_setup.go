@@ -3,7 +3,7 @@ package validator
 //nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -17,7 +17,7 @@ type TestSetup struct {
 	Cdc             *amino.Codec
 	Ctx             sdk.Context
 	ValidatorKeeper Keeper
-	AuthzKeeper     authz.Keeper
+	AuthzKeeper     auth.Keeper
 	Handler         sdk.Handler
 	Querier         sdk.Querier
 	NodeAdmin       sdk.AccAddress
@@ -36,14 +36,14 @@ func Setup() TestSetup {
 	validatorKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(validatorKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(authz.StoreKey)
+	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
 	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	validatorKeeper := NewKeeper(validatorKey, cdc)
-	authzKeeper := authz.NewKeeper(authzKey, cdc)
+	authzKeeper := auth.NewKeeper(authzKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())

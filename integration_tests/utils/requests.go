@@ -7,7 +7,6 @@ import (
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	extRest "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	complianceRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
@@ -277,9 +276,9 @@ func GetTestingResult(vid uint16, pid uint16) (compliancetest.TestingResults, in
 	return result, code
 }
 
-func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role authz.AccountRole) {
+func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role auth.AccountRole) {
 	// Assign TestHouse role to Jack
-	newMsgAssignRole := authz.NewMsgAssignRole(
+	newMsgAssignRole := auth.NewMsgAssignRole(
 		targetAddress,
 		role,
 		sender.Address,

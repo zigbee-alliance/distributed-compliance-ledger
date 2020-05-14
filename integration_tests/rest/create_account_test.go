@@ -35,7 +35,7 @@ func Test_CreateNewAccount(t *testing.T) {
 	require.Equal(t, testAccountKeyInfo.PublicKey, testAccountInfo.PublicKey)
 
 	// Assign Vendor role to test account
-	utils.AssignRole(testAccountKeyInfo.Address, jackKeyInfo, authz.Vendor)
+	utils.AssignRole(testAccountKeyInfo.Address, jackKeyInfo, auth.Vendor)
 
 	// Publish model info by test account
 	modelInfo := utils.NewMsgAddModelInfo(testAccountKeyInfo.Address)

@@ -1,16 +1,18 @@
-package authz
+package auth
 
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func NewHandler(keeper keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
+		case types.MsgAddAccount:
+			return handleMsgAddAccount(ctx, keeper, msg)
 		case types.MsgAssignRole:
 			return handleMsgAssignRole(ctx, keeper, msg)
 		case types.MsgRevokeRole:
@@ -20,6 +22,30 @@ func NewHandler(keeper keeper.Keeper) sdk.Handler {
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}
+}
+
+func handleMsgAddAccount(ctx sdk.Context, keeper Keeper, msg types.MsgAddAccount) sdk.Result {
+	// check if sender has enough rights to create account
+	if !keeper.HasRole(ctx, msg.Signer, types.Trustee) {
+		return sdk.ErrUnauthorized(
+			fmt.Sprintf("MsgAddAccount transaction should be signed by an account with the %s role", types.Trustee)).Result()
+	}
+
+	// check if account already exists
+	if keeper.IsAccountPresent(ctx, msg.Address) {
+		return types.ErrAccountAlreadyExistExist(msg.Address).Result()
+	}
+
+	pubKey, err := sdk.GetAccPubKeyBech32(msg.PublicKey)
+	if err != nil {
+		return sdk.ErrInvalidPubKey(err.Error()).Result()
+	}
+
+	// create and store account
+	account := keeper.NewAccount(ctx, types.NewAccount(msg.Address, pubKey, msg.Roles))
+	keeper.SetAccount(ctx, account)
+
+	return sdk.Result{}
 }
 
 func handleMsgAssignRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAssignRole) sdk.Result {
@@ -49,7 +75,7 @@ func handleMsgRevokeRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRev
 	}
 
 	// at least one trustee must be on the ledger
-	if msg.Role == Trustee && keeper.CountAccounts(ctx, Trustee) < 2 {
+	if msg.Role == Trustee && keeper.CountAccountsWithRole(ctx, Trustee) < 2 {
 		return sdk.ErrUnauthorized("there must be at least one Trustee").Result()
 	}
 

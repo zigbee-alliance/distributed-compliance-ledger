@@ -5,7 +5,7 @@ package modelinfo
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

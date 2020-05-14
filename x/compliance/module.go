@@ -3,7 +3,7 @@ package compliance
 //nolint:goimports
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
@@ -71,7 +71,7 @@ type AppModule struct {
 	keeper               Keeper
 	modelinfoKeeper      modelinfo.Keeper
 	compliancetestKeeper compliancetest.Keeper
-	authzKeeper          authz.Keeper
+	authzKeeper          auth.Keeper
 }
 
 func NewAppModule(keeper Keeper, modelinfoKeeper modelinfo.Keeper,

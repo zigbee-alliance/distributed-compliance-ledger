@@ -28,15 +28,15 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 	// Register new Vendor account
 	vendor, _ := utils.RegisterNewAccount()
-	utils.AssignRole(vendor.Address, jackKeyInfo, authz.Vendor)
+	utils.AssignRole(vendor.Address, jackKeyInfo, auth.Vendor)
 
 	// Register new TestHouse account
 	testHouse, _ := utils.RegisterNewAccount()
-	utils.AssignRole(testHouse.Address, jackKeyInfo, authz.TestHouse)
+	utils.AssignRole(testHouse.Address, jackKeyInfo, auth.TestHouse)
 
 	// Register new ZBCertificationCenter account
 	zb, _ := utils.RegisterNewAccount()
-	utils.AssignRole(zb.Address, jackKeyInfo, authz.ZBCertificationCenter)
+	utils.AssignRole(zb.Address, jackKeyInfo, auth.ZBCertificationCenter)
 
 	// Get all compliance infos
 	inputComplianceInfos, _ := utils.GetComplianceInfos()
@@ -122,7 +122,7 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 
 	// Register new ZBCertificationCenter account
 	zb, _ := utils.RegisterNewAccount()
-	utils.AssignRole(zb.Address, jackKeyInfo, authz.ZBCertificationCenter)
+	utils.AssignRole(zb.Address, jackKeyInfo, auth.ZBCertificationCenter)
 
 	vid, pid := common.RandUint16(), common.RandUint16()
 

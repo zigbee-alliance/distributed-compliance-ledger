@@ -4,7 +4,7 @@ package validator
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/functions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	"strings"
@@ -12,7 +12,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func NewHandler(k Keeper, authzKeeper authz.Keeper) sdk.Handler {
+func NewHandler(k Keeper, authzKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
@@ -29,7 +29,7 @@ func NewHandler(k Keeper, authzKeeper authz.Keeper) sdk.Handler {
 func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator,
 	k Keeper, authzKeeper authz.Keeper) sdk.Result {
 	// check if sender has enough rights to create a validator node
-	if !authzKeeper.HasRole(ctx, msg.Signer, authz.NodeAdmin) {
+	if !authzKeeper.HasRole(ctx, msg.Signer, auth.NodeAdmin) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("CreateValidator transaction should be "+
 			"signed by an account with the \"%s\" role", authz.NodeAdmin)).Result()
 	}

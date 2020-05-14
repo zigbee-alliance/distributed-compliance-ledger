@@ -35,10 +35,10 @@ func TestPkiDemo(t *testing.T) {
 	bobKeyInfo, _ := utils.GetKeyInfo(testconstants.BobAccount)
 
 	// Assign Trustee role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Trustee)
+	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, auth.Trustee)
 
 	// Assign Trustee role to Alice
-	utils.AssignRole(aliceKeyInfo.Address, jackKeyInfo, authz.Trustee)
+	utils.AssignRole(aliceKeyInfo.Address, jackKeyInfo, auth.Trustee)
 
 	// Query all proposed certificates
 	proposedCertificates, _ := utils.GetAllProposedX509RootCerts()

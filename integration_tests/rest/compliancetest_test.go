@@ -24,15 +24,15 @@ func TestCompliancetestDemo(t *testing.T) {
 
 	// Register new Vendor account
 	vendor, _ := utils.RegisterNewAccount()
-	utils.AssignRole(vendor.Address, jackKeyInfo, authz.Vendor)
+	utils.AssignRole(vendor.Address, jackKeyInfo, auth.Vendor)
 
 	// Register new TestHouse account
 	testHouse, _ := utils.RegisterNewAccount()
-	utils.AssignRole(testHouse.Address, jackKeyInfo, authz.TestHouse)
+	utils.AssignRole(testHouse.Address, jackKeyInfo, auth.TestHouse)
 
 	// Register new TestHouse account
 	secondTestHouse, _ := utils.RegisterNewAccount()
-	utils.AssignRole(secondTestHouse.Address, jackKeyInfo, authz.TestHouse)
+	utils.AssignRole(secondTestHouse.Address, jackKeyInfo, auth.TestHouse)
 
 	// Publish model info
 	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)

@@ -20,6 +20,7 @@ var (
 	SetGenTxsInAppGenesisState   = cosmosgenutil.SetGenTxsInAppGenesisState
 	ExportGenesisFile            = cosmosgenutil.ExportGenesisFile
 	NewInitConfig                = cosmosgenutil.NewInitConfig
+	GenesisStateFromGenFile      = cosmosgenutil.GenesisStateFromGenFile
 	ValidateGenesis              = types.ValidateGenesis
 
 	// variable aliases
@@ -27,7 +28,7 @@ var (
 )
 
 type (
-	GenesisState      = cosmosgenutil.GenesisState
-	AppMap            = cosmosgenutil.AppMap
-	InitConfig        = cosmosgenutil.InitConfig
+	GenesisState = cosmosgenutil.GenesisState
+	AppMap       = cosmosgenutil.AppMap
+	InitConfig   = cosmosgenutil.InitConfig
 )

@@ -3,7 +3,7 @@ package compliancetest
 //nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
@@ -11,7 +11,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKeeper authz.Keeper) sdk.Handler {
+func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 		case types.MsgAddTestingResult:
@@ -49,7 +49,7 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoK
 	return sdk.Result{}
 }
 
-func checkAddTestingResultRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
+func checkAddTestingResultRights(ctx sdk.Context, authzKeeper auth.Keeper, signer sdk.AccAddress) sdk.Error {
 	// sender must have TestHouse role to add new model
 	if !authzKeeper.HasRole(ctx, signer, authz.TestHouse) {
 		return sdk.ErrUnauthorized(fmt.Sprintf(

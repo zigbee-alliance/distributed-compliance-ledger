@@ -12,43 +12,44 @@ result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys s
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Tony generates keys"
-result=$(echo 'test1234' | zblcli keys add tony)
+user=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+echo "$user generates keys"
+result=$(echo 'test1234' | zblcli keys add $user)
 echo "$result"
 
-echo "Get key info for Tony"
-result=$(zblcli keys show tony)
-check_response "$result" "\"name\": \"tony\""
+echo "Get key info for $user"
+result=$(zblcli keys show $user)
+check_response "$result" "\"name\": \"$user\""
 echo "$result"
 
-tony_address=$(zblcli keys show tony -a)
-tony_pubkey=$(zblcli keys show tony -p)
+user_address=$(zblcli keys show $user -a)
+user_pubkey=$(zblcli keys show $user -p)
 
-echo "Jack creates account for Tony"
-result=$(echo "test1234" | zblcli tx authnext create-account --address="$tony_address" --pubkey="$tony_pubkey" --from jack --yes)
+echo "Jack creates account for $user"
+result=$(echo "test1234" | zblcli tx auth create-account --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get all accouts"
-result=$(zblcli query authnext accounts)
-check_response "$result" "\"address\": \"$tony_address\""
-check_response "$result" "\"public_key\": \"$tony_pubkey\""
+result=$(zblcli query auth accounts)
+check_response "$result" "\"address\": \"$user_address\""
+check_response "$result" "\"public_key\": \"$user_pubkey\""
 echo "$result"
 
-echo "Get Tony accout"
-result=$(zblcli query authnext account --address=$tony_address)
-check_response "$result" "\"address\": \"$tony_address\""
-check_response "$result" "\"public_key\": \"$tony_pubkey\""
+echo "Get $user accout"
+check_response "$result" "\"address\": \"$user_address\""
+check_response "$result" "\"public_key\": \"$user_pubkey\""
+result=$(zblcli query auth account $user_address)
 check_response "$result" "\"roles\": []"
 echo "$result"
 
 echo "Jack assigns Vendor role to Tony"
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$tony_address --role="Vendor" --from jack --yes)
+result=$(echo "test1234" | zblcli tx authz assign-role $tony_address "Vendor" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get account roles for Tony"
-result=$(zblcli query authz account-roles --address=$tony_address)
+result=$(zblcli query authz account-roles $tony_address)
 check_response "$result" "\"Vendor\""
 echo "$result"
 
@@ -56,8 +57,8 @@ vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
 
-echo "Tony adds Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from tony --yes)
+echo "$user adds Model with VID: $vid PID: $pid"
+result=$(echo "test1234" | zblcli tx modelinfo add-model $vid $pid "$name" "Device Description" "SKU12FS" "1.0" "2.0" true --from $user --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

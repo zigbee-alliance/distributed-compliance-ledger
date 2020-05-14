@@ -4,7 +4,7 @@ package genutil
 import (
 	"encoding/json"
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -17,7 +17,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"github.com/cosmos/cosmos-sdk/codec"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
@@ -84,11 +83,10 @@ func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 		return appGenTxs, persistentPeers, err
 	}
 
-	addrMap := make(map[string]authexported.Account)
-
+	addrMap := make(map[string]auth.Account)
 	genAccIterator.IterateGenesisAccounts(cdc, appState,
-		func(acc authexported.Account) (stop bool) {
-			addrMap[acc.GetAddress().String()] = acc
+		func(acc auth.Account) (stop bool) {
+			addrMap[acc.Address.String()] = acc
 			return false
 		},
 	)

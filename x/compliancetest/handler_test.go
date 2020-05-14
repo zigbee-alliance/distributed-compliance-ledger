@@ -5,7 +5,7 @@ package compliancetest
 import (
 	"fmt"
 	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
@@ -67,7 +67,7 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
 	for i, th := range []sdk.AccAddress{test_constants.Address1, test_constants.Address2, test_constants.Address3} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, th, authz.TestHouse)
+		setup.AuthzKeeper.AssignRole(setup.Ctx, th, auth.TestHouse)
 
 		// add new testing result
 		testingResult := TestMsgAddTestingResult(th, vid, pid)

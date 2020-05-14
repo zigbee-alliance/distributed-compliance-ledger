@@ -3,7 +3,7 @@ package modelinfo
 //nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -17,7 +17,7 @@ type TestSetup struct {
 	Cdc             *amino.Codec
 	Ctx             sdk.Context
 	ModelinfoKeeper Keeper
-	AuthzKeeper     authz.Keeper
+	AuthzKeeper     auth.Keeper
 	Handler         sdk.Handler
 	Querier         sdk.Querier
 	Vendor          sdk.AccAddress
@@ -36,14 +36,14 @@ func Setup() TestSetup {
 	modelinfoKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(authz.StoreKey)
+	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
 	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	modelinfoKeeper := NewKeeper(modelinfoKey, cdc)
-	authzKeeper := authz.NewKeeper(authzKey, cdc)
+	authzKeeper := auth.NewKeeper(authzKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
@@ -53,7 +53,7 @@ func Setup() TestSetup {
 	handler := NewHandler(modelinfoKeeper, authzKeeper)
 
 	account := testconstants.Address1
-	authzKeeper.AssignRole(ctx, account, authz.Vendor)
+	authzKeeper.AssignRole(ctx, account, auth.Vendor)
 
 	setup := TestSetup{
 		Cdc:             cdc,

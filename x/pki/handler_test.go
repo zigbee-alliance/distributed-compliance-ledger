@@ -4,7 +4,7 @@ package pki
 // nolint:goimports
 import (
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -155,7 +155,7 @@ func TestHandler_ApproveAddX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// set second Trustee
-	setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, authz.Trustee)
+	setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, auth.Trustee)
 
 	// second Trustee approve
 	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(

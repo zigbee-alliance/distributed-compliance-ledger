@@ -6,11 +6,13 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
+	authutils "github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/params"
 	"os"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -24,11 +26,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cosmos/cosmos-sdk/x/genaccounts"
-	"github.com/cosmos/cosmos-sdk/x/params"
-	"github.com/cosmos/cosmos-sdk/x/supply"
 )
 
 const appName = "zb-ledger"
@@ -46,24 +43,13 @@ var (
 	ModuleBasics = module.NewBasicManager(
 		genaccounts.AppModuleBasic{},
 		auth.AppModuleBasic{},
-		bank.AppModuleBasic{},
 		validator.AppModuleBasic{},
-		params.AppModuleBasic{},
-		supply.AppModuleBasic{},
-
 		genutil.AppModuleBasic{},
-
 		modelinfo.AppModuleBasic{},
 		compliance.AppModuleBasic{},
 		compliancetest.AppModuleBasic{},
-		authnext.AppModuleBasic{},
-		authz.AppModuleBasic{},
 		pki.AppModuleBasic{},
 	)
-	// account permissions
-	maccPerms = map[string][]string{
-		auth.FeeCollectorName: nil,
-	}
 )
 
 // MakeCodec generates the necessary codecs for Amino.
@@ -86,16 +72,12 @@ type zbLedgerApp struct {
 	tkeys map[string]*sdk.TransientStoreKey
 
 	// Keepers
+	authKeeper           auth.Keeper
 	validatorKeeper      validator.Keeper
-	accountKeeper        auth.AccountKeeper
-	bankKeeper           bank.Keeper
-	supplyKeeper         supply.Keeper
-	paramsKeeper         params.Keeper
 	modelinfoKeeper      modelinfo.Keeper
 	pkiKeeper            pki.Keeper
 	complianceKeeper     compliance.Keeper
 	compliancetestKeeper compliancetest.Keeper
-	authzKeeper          authz.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -106,14 +88,13 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
 
-	// BaseApp handles interactions with Tendermint through the ABCI protocol.
-	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
+	// BaseApp handles interactions with Tendermint through the ABCI protocol
+	bApp := bam.NewBaseApp(appName, logger, db, authutils.DefaultTxDecoder(cdc), baseAppOptions...)
 
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, validator.StoreKey,
-		supply.StoreKey, params.StoreKey, modelinfo.StoreKey, authz.StoreKey,
-		compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey)
+		modelinfo.StoreKey, compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -125,7 +106,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 		tkeys:   tkeys,
 	}
 
-	InitKeepers(app, keys, tkeys)
+	InitKeepers(app, keys)
 
 	InitModuleManager(app)
 
@@ -137,8 +118,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	// The AnteHandler handles signature verification and transaction pre-processing.
 	app.SetAnteHandler(
 		auth.NewAnteHandler(
-			app.accountKeeper,
-			app.supplyKeeper,
+			app.authKeeper,
 			auth.DefaultSigVerificationGasConsumer,
 		),
 	)
@@ -157,19 +137,14 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 func InitModuleManager(app *zbLedgerApp) {
 	app.mm = module.NewManager(
-		genaccounts.NewAppModule(app.accountKeeper),
-		genutil.NewAppModule(app.accountKeeper, app.validatorKeeper, app.BaseApp.DeliverTx),
-		auth.NewAppModule(app.accountKeeper),
-		bank.NewAppModule(app.bankKeeper, app.accountKeeper),
-		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
-		validator.NewAppModule(app.validatorKeeper, app.authzKeeper),
-
-		modelinfo.NewAppModule(app.modelinfoKeeper, app.authzKeeper),
-		compliance.NewAppModule(app.complianceKeeper, app.modelinfoKeeper, app.compliancetestKeeper, app.authzKeeper),
-		compliancetest.NewAppModule(app.compliancetestKeeper, app.authzKeeper, app.modelinfoKeeper),
-		authnext.NewAppModule(app.accountKeeper, app.authzKeeper, app.cdc),
-		authz.NewAppModule(app.authzKeeper),
-		pki.NewAppModule(app.pkiKeeper, app.authzKeeper),
+		genaccounts.NewAppModule(app.authKeeper),
+		genutil.NewAppModule(app.authKeeper, app.validatorKeeper, app.BaseApp.DeliverTx),
+		auth.NewAppModule(app.authKeeper),
+		validator.NewAppModule(app.validatorKeeper, app.authKeeper),
+		modelinfo.NewAppModule(app.modelinfoKeeper, app.authKeeper),
+		compliance.NewAppModule(app.complianceKeeper, app.modelinfoKeeper, app.compliancetestKeeper, app.authKeeper),
+		compliancetest.NewAppModule(app.compliancetestKeeper, app.authKeeper, app.modelinfoKeeper),
+		pki.NewAppModule(app.pkiKeeper, app.authKeeper),
 	)
 
 	app.mm.SetOrderBeginBlockers(validator.ModuleName)
@@ -179,14 +154,10 @@ func InitModuleManager(app *zbLedgerApp) {
 		genaccounts.ModuleName,
 		auth.ModuleName,
 		validator.ModuleName,
-		bank.ModuleName,
 		modelinfo.ModuleName,
 		compliance.ModuleName,
 		compliancetest.ModuleName,
-		authnext.ModuleName,
-		authz.ModuleName,
 		pki.ModuleName,
-		supply.ModuleName,
 		genutil.ModuleName,
 	)
 
@@ -194,23 +165,7 @@ func InitModuleManager(app *zbLedgerApp) {
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 }
 
-func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[string]*sdk.TransientStoreKey) {
-	// The ParamsKeeper handles parameter storage for the application
-	app.paramsKeeper = MakeParamKeeper(app, keys, tkeys)
-
-	// Set specific supspaces
-	authSubspace := app.paramsKeeper.Subspace(auth.DefaultParamspace)
-	bankSupspace := app.paramsKeeper.Subspace(bank.DefaultParamspace)
-
-	// The AccountKeeper handles address -> account lookups
-	app.accountKeeper = MakeAccountKeeper(app, keys, authSubspace)
-
-	// The BankKeeper allows you perform sdk.Coins interactions
-	app.bankKeeper = MakeBankKeeper(app, bankSupspace)
-
-	// The SupplyKeeper collects transaction fees and renders them to the fee distribution module
-	app.supplyKeeper = MakeSupplyKeeper(app, keys)
-
+func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey) {
 	// The Validator keeper
 	app.validatorKeeper = MakeValidatorKeeper(keys, app)
 
@@ -226,13 +181,13 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey, tkeys map[st
 	// The PKI keeper
 	app.pkiKeeper = MakePkiKeeper(keys, app)
 
-	// The AuthzKeeper keeper
-	app.authzKeeper = MakeAuthzKeeper(keys, app)
+	// The AuthKeeper keeper
+	app.authKeeper = MakeAuthKeeper(keys, app)
 }
 
-func MakeAuthzKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) authz.Keeper {
-	return authz.NewKeeper(
-		keys[authz.StoreKey],
+func MakeAuthKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) auth.Keeper {
+	return auth.NewKeeper(
+		keys[auth.StoreKey],
 		app.cdc,
 	)
 }
@@ -272,44 +227,6 @@ func MakeValidatorKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) vali
 	)
 }
 
-func MakeSupplyKeeper(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey) supply.Keeper {
-	return supply.NewKeeper(
-		app.cdc,
-		keys[supply.StoreKey],
-		app.accountKeeper,
-		app.bankKeeper,
-		maccPerms,
-	)
-}
-
-func MakeBankKeeper(app *zbLedgerApp, bankSupspace params.Subspace) bank.Keeper {
-	return bank.NewBaseKeeper(
-		app.accountKeeper,
-		bankSupspace,
-		bank.DefaultCodespace,
-		app.ModuleAccountAddrs(),
-	)
-}
-
-func MakeAccountKeeper(app *zbLedgerApp,
-	keys map[string]*sdk.KVStoreKey, authSubspace params.Subspace) auth.AccountKeeper {
-	return auth.NewAccountKeeper(
-		app.cdc,
-		keys[auth.StoreKey],
-		authSubspace,
-		auth.ProtoBaseAccount,
-	)
-}
-
-func MakeParamKeeper(app *zbLedgerApp,
-	keys map[string]*sdk.KVStoreKey, tkeys map[string]*sdk.TransientStoreKey) params.Keeper {
-	return params.NewKeeper(
-		app.cdc, keys[params.StoreKey],
-		tkeys[params.TStoreKey],
-		params.DefaultCodespace,
-	)
-}
-
 // GenesisState represents chain state at the start of the chain. Any initial state (account balances) are stored here.
 type GenesisState map[string]json.RawMessage
 
@@ -336,16 +253,6 @@ func (app *zbLedgerApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) ab
 }
 func (app *zbLedgerApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
-}
-
-// ModuleAccountAddrs returns all the app's module account addresses.
-func (app *zbLedgerApp) ModuleAccountAddrs() map[string]bool {
-	modAccAddrs := make(map[string]bool)
-	for acc := range maccPerms {
-		modAccAddrs[supply.NewModuleAddress(acc).String()] = true
-	}
-
-	return modAccAddrs
 }
 
 //_________________________________________________________

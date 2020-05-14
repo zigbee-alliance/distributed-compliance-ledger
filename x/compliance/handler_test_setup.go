@@ -3,7 +3,7 @@ package compliance
 //nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,7 +20,7 @@ type TestSetup struct {
 	Ctx                  sdk.Context
 	CompliancetKeeper    Keeper
 	CompliancetestKeeper compliancetest.Keeper
-	AuthzKeeper          authz.Keeper
+	AuthzKeeper          auth.Keeper
 	ModelinfoKeeper      modelinfo.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
@@ -40,7 +40,7 @@ func Setup() TestSetup {
 	complianceKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(authz.StoreKey)
+	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
 	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
 
 	modelinfoKey := sdk.NewKVStoreKey(modelinfo.StoreKey)
@@ -54,7 +54,7 @@ func Setup() TestSetup {
 	// Init Keepers
 	compliancetKeeper := NewKeeper(complianceKey, cdc)
 	compliancetestKeeper := compliancetest.NewKeeper(compliancetestKey, cdc)
-	authzKeeper := authz.NewKeeper(authzKey, cdc)
+	authzKeeper := auth.NewKeeper(authzKey, cdc)
 	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
 
 	// Create context
@@ -65,7 +65,7 @@ func Setup() TestSetup {
 	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authzKeeper)
 
 	certificationCenter := testconstants.Address1
-	authzKeeper.AssignRole(ctx, certificationCenter, authz.ZBCertificationCenter)
+	authzKeeper.AssignRole(ctx, certificationCenter, auth.ZBCertificationCenter)
 
 	setup := TestSetup{
 		Cdc:                  cdc,

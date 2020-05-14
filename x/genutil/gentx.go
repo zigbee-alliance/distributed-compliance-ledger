@@ -3,6 +3,7 @@ package genutil
 import (
 	"encoding/json"
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
@@ -11,7 +12,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
@@ -34,10 +34,8 @@ func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
 
 	cdc.MustUnmarshalJSON(genUtilDataBz, &genesisState)
 
-	genAccIterator.IterateGenesisAccounts(cdc, appGenesisState, func(acc authexported.Account) (stop bool) {
-		accAddress := acc.GetAddress()
-
-		if accAddress.Equals(key) {
+	genAccIterator.IterateGenesisAccounts(cdc, appGenesisState, func(acc auth.Account) (stop bool) {
+		if acc.Address.Equals(key) {
 			accountIsInGenesis = true
 			return true
 		}

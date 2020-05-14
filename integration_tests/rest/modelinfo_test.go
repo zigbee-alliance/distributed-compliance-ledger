@@ -36,7 +36,7 @@ func TestModelinfoDemo(t *testing.T) {
 	jackAccountInfo, _ := utils.GetAccountInfo(jackKeyInfo.Address)
 
 	// Assign Vendor role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Vendor)
+	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, auth.Vendor)
 
 	// Prepare model info
 	firstModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
@@ -83,7 +83,7 @@ func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
 
 	// Register new Vendor account
 	vendor, _ := utils.RegisterNewAccount()
-	utils.AssignRole(vendor.Address, jackKeyInfo, authz.Vendor)
+	utils.AssignRole(vendor.Address, jackKeyInfo, auth.Vendor)
 
 	// Prepare model info
 	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
@@ -119,7 +119,7 @@ func Test_AddModelinfo_Twice(t *testing.T) {
 	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.JackAccount)
 
 	// Assign Vendor role to test account
-	utils.AssignRole(testAccount.Address, jackKeyInfo, authz.Vendor)
+	utils.AssignRole(testAccount.Address, jackKeyInfo, auth.Vendor)
 
 	// publish model info
 	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)

@@ -4,7 +4,7 @@ package validator
 //nolint:goimports
 import (
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"

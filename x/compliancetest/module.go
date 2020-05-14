@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/rest"
@@ -70,7 +70,7 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 	keeper          Keeper
-	authzKeeper     authz.Keeper
+	authzKeeper     auth.Keeper
 	modelinfoKeeper modelinfo.Keeper
 }
 

@@ -2,13 +2,15 @@ package rest
 
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
-func accountHeadersHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func accountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
@@ -28,7 +30,13 @@ func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		vars := restCtx.Variables()
 		accAddr := vars[addrKey]
 
-		res, height, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/account/%s", storeName, accAddr), nil)
+		address, err := sdk.AccAddressFromBech32(accAddr)
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, sdk.ErrInvalidAddress(accAddr).Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryStore(types.GetAccountKey(address), storeName)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
 			return

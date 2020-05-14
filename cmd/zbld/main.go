@@ -4,13 +4,13 @@ package main
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts"
+	genaccountscli "git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts/client/cli"
 	genutilcli "git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/client/cli"
 	"io"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/cosmos/cosmos-sdk/x/genaccounts"
-	genaccscli "github.com/cosmos/cosmos-sdk/x/genaccounts/client/cli"
 	"github.com/spf13/cobra"
 	"github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
@@ -49,7 +49,7 @@ func main() {
 		),
 		genutilcli.ValidateGenesisCmd(ctx, cdc, app.ModuleBasics),
 		// AddGenesisAccountCmd allows users to add accounts to the genesis file
-		genaccscli.AddGenesisAccountCmd(ctx, cdc, app.DefaultNodeHome, app.DefaultCLIHome),
+		genaccountscli.AddGenesisAccountCmd(ctx, cdc, app.DefaultNodeHome, app.DefaultCLIHome),
 	)
 
 	server.AddCommands(ctx, cdc, rootCmd, newApp, exportAppStateAndTMValidators)

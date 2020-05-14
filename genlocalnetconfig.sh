@@ -23,17 +23,21 @@ cp -r ~/.zblcli/* localnet/client
 zbld init node0 --chain-id zblchain
 
 jack_address=$(zblcli keys show jack -a)
+jack_pubkey=$(zblcli keys show jack -p)
+
 alice_address=$(zblcli keys show alice -a)
+alice_pubkey=$(zblcli keys show alice -p)
+
 bob_address=$(zblcli keys show bob -a)
+bob_pubkey=$(zblcli keys show bob -p)
+
 anna_address=$(zblcli keys show anna -a)
+anna_pubkey=$(zblcli keys show anna -p)
 
-zbld add-genesis-account $jack_address 1000nametoken,100000000stake
-zbld add-genesis-account $alice_address 1000nametoken,100000000stake
-zbld add-genesis-account $bob_address 1000nametoken,100000000stake
-zbld add-genesis-account $anna_address 1000nametoken,100000000stake
-
-# Update genesis transactions to set roles
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
+zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from jack
 
@@ -43,13 +47,10 @@ mv ~/.zbld/* localnet/node0
 
 zbld init node1 --chain-id zblchain
 
-zbld add-genesis-account $(zblcli keys show jack -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
-
-# Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
+zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from alice
 
@@ -59,13 +60,10 @@ mv ~/.zbld/* localnet/node1
 
 zbld init node2 --chain-id zblchain
 
-zbld add-genesis-account $(zblcli keys show jack -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
-
-# Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
+zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from bob
 
@@ -75,13 +73,10 @@ mv ~/.zbld/* localnet/node2
 
 zbld init node3 --chain-id zblchain
 
-zbld add-genesis-account $(zblcli keys show jack -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
-
-# Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
+zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from anna
 
