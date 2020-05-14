@@ -58,8 +58,8 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 	result := setup.Handler(setup.Ctx, msgAddModelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	for _, role := range []authz.AccountRole{authz.Trustee, authz.TestHouse, authz.Administrator, authz.Vendor} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.Administrator, auth.Vendor} {
+		setup.authKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
 
 		// update existing model by not owner
 		msgUpdatedModelInfo := TestMsgUpdatedModelInfo(testconstants.Address3)
@@ -95,8 +95,8 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 func TestHandler_AddModelByNonVendor(t *testing.T) {
 	setup := Setup()
 
-	for _, role := range []authz.AccountRole{authz.Trustee, authz.TestHouse, authz.Administrator} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.Administrator} {
+		setup.authKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
 
 		// add new model
 		modelInfo := TestMsgAddModelInfo(testconstants.Address3)

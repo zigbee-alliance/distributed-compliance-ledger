@@ -15,7 +15,7 @@ const (
 
 func ErrAccountAlreadyExistExist(address interface{}) sdk.Error {
 	return sdk.NewError(DefaultCodespace, CodeAccountAlreadyExist,
-		fmt.Sprintf(fmt.Sprintf("Account associated with the address=%v already exists on the ledger", address)))
+		fmt.Sprintf("Account associated with the address=%v already exists on the ledger", address))
 }
 
 func ErrAccountDoesNotExist(address interface{}) sdk.Error {

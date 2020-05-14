@@ -5,7 +5,7 @@ source integration_tests/cli/common.sh
 # Preparation of Actors
 
 echo "Assign Vendor role to Jack"
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -15,7 +15,7 @@ create_account_with_name $test_house_account
 
 test_house_address=$(zblcli keys show "$test_house_account" -a)
 
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$test_house_address --role="TestHouse" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$test_house_address --role="TestHouse" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -25,7 +25,7 @@ create_account_with_name $zb_account
 
 zb_address=$(zblcli keys show "$zb_account" -a)
 
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$zb_address --role="ZBCertificationCenter" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$zb_address --role="ZBCertificationCenter" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

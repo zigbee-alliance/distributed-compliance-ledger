@@ -10,7 +10,6 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -19,8 +18,7 @@ import (
 const flagGenTxDir = "gentx-dir"
 
 // CollectGenTxsCmd - return the cobra command to collect genesis transactions.
-func CollectGenTxsCmd(ctx *server.Context, cdc *codec.Codec,
-	genAccIterator types.GenesisAccountsIterator, defaultNodeHome string) *cobra.Command {
+func CollectGenTxsCmd(ctx *server.Context, cdc *codec.Codec, defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "collect-gentxs",
 		Short: "Collect genesis txs and output a genesis.json file",
@@ -48,7 +46,7 @@ func CollectGenTxsCmd(ctx *server.Context, cdc *codec.Codec,
 			toPrint := newPrintInfo(config.Moniker, genDoc.ChainID, nodeID, genTxsDir, json.RawMessage(""))
 			initCfg := genutil.NewInitConfig(genDoc.ChainID, genTxsDir, name, nodeID, valPubKey)
 
-			appMessage, err := genutil.GenAppStateFromConfig(cdc, config, initCfg, *genDoc, genAccIterator)
+			appMessage, err := genutil.GenAppStateFromConfig(cdc, config, initCfg, *genDoc)
 			if err != nil {
 				return err
 			}

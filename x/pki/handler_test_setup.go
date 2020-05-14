@@ -14,13 +14,13 @@ import (
 )
 
 type TestSetup struct {
-	Cdc         *amino.Codec
-	Ctx         sdk.Context
-	PkiKeeper   Keeper
-	AuthzKeeper auth.Keeper
-	Handler     sdk.Handler
-	Querier     sdk.Querier
-	Trustee     sdk.AccAddress
+	Cdc        *amino.Codec
+	Ctx        sdk.Context
+	PkiKeeper  Keeper
+	authKeeper auth.Keeper
+	Handler    sdk.Handler
+	Querier    sdk.Querier
+	Trustee    sdk.AccAddress
 }
 
 func Setup() TestSetup {
@@ -36,33 +36,33 @@ func Setup() TestSetup {
 	pkiKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(pkiKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, db)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	pkiKeeper := NewKeeper(pkiKey, cdc)
-	authzKeeper := auth.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(pkiKeeper)
-	handler := NewHandler(pkiKeeper, authzKeeper)
+	handler := NewHandler(pkiKeeper, authKeeper)
 
 	trustee := testconstants.Address2
-	authzKeeper.AssignRole(ctx, trustee, auth.Trustee)
+	authKeeper.AssignRole(ctx, trustee, auth.Trustee)
 
 	setup := TestSetup{
-		Cdc:         cdc,
-		Ctx:         ctx,
-		PkiKeeper:   pkiKeeper,
-		AuthzKeeper: authzKeeper,
-		Handler:     handler,
-		Querier:     querier,
-		Trustee:     trustee,
+		Cdc:        cdc,
+		Ctx:        ctx,
+		PkiKeeper:  pkiKeeper,
+		authKeeper: authKeeper,
+		Handler:    handler,
+		Querier:    querier,
+		Trustee:    trustee,
 	}
 
 	return setup

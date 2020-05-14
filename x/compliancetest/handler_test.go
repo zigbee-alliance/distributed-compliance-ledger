@@ -40,9 +40,9 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	setup := Setup()
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
-	for _, role := range []authz.AccountRole{authz.Vendor, authz.Administrator,
-		authz.ZBCertificationCenter, authz.Administrator} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
+	for _, role := range []auth.AccountRole{auth.Vendor, auth.Administrator,
+		auth.ZBCertificationCenter, auth.Administrator} {
+		setup.authKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
 
 		// add new testing result by non TestHouse
 		testingResult := TestMsgAddTestingResult(test_constants.Address3, vid, pid)
@@ -67,7 +67,7 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
 	for i, th := range []sdk.AccAddress{test_constants.Address1, test_constants.Address2, test_constants.Address3} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, th, auth.TestHouse)
+		setup.authKeeper.AssignRole(setup.Ctx, th, auth.TestHouse)
 
 		// add new testing result
 		testingResult := TestMsgAddTestingResult(th, vid, pid)

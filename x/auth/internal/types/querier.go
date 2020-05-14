@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,13 +22,13 @@ func NewQueryAccountParams(addr sdk.AccAddress) QueryAccountParams {
 /*
 	Response Payload
 */
-// Result Payload for an accounts list query
+// Result Payload for an accounts list query.
 type ListAccountItems struct {
 	Total int       `json:"total"`
 	Items []Account `json:"items"`
 }
 
-// Implement fmt.Stringer
+// Implement fmt.Stringer.
 func (n ListAccountItems) String() string {
 	res, err := json.Marshal(n)
 

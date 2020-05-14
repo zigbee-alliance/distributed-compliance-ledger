@@ -1,6 +1,6 @@
 package types
 
-// Default parameter values
+// Default parameter values.
 const (
 	DefaultMaxMemoCharacters      uint64 = 256
 	DefaultTxSizeCostPerByte      uint64 = 10

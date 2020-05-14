@@ -7,7 +7,7 @@ import (
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	extRest "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	complianceRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
@@ -55,7 +55,7 @@ func GetKeyInfo(accountName string) (KeyInfo, int) {
 func CreateAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	println("Create Account for: ", keyInfo.Name)
 
-	msgAddAccount := authnext.NewMsgAddAccount(keyInfo.Address, keyInfo.PublicKey, signer.Address)
+	msgAddAccount := auth.NewMsgAddAccount(keyInfo.Address, keyInfo.PublicKey, signer.Address)
 
 	return SignAndBroadcastMessage(signer, msgAddAccount)
 }
@@ -63,7 +63,7 @@ func CreateAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 func GetAccountInfo(address sdk.AccAddress) (AccountInfo, int) {
 	println("Get Account Info")
 
-	uri := fmt.Sprintf("%s/account/%s", authnext.RouterKey, address)
+	uri := fmt.Sprintf("%s/account/%s", auth.RouterKey, address)
 	response, code := SendGetRequest(uri)
 
 	var result AccountInfo

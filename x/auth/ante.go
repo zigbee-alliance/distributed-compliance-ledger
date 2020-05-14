@@ -1,5 +1,6 @@
 package auth
 
+//nolint:goimports
 import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -14,17 +15,17 @@ import (
 )
 
 // SignatureVerificationGasConsumer is the type of function that is used to both consume gas when verifying signatures
-// and also to accept or reject different types of PubKey's. This is where apps can define their own PubKey
+// and also to accept or reject different types of PubKey's. This is where apps can define their own PubKey.
 type SignatureVerificationGasConsumer = func(meter sdk.GasMeter, pubkey crypto.PubKey) sdk.Result
 
 // NewAnteHandler returns an AnteHandler that checks and increments sequence
 // numbers, checks signatures & account numbers.
+//nolint:funlen
 func NewAnteHandler(ak Keeper, sigGasConsumer SignatureVerificationGasConsumer) sdk.AnteHandler {
 	return func(
 		ctx sdk.Context, tx sdk.Tx, simulate bool,
 	) (newCtx sdk.Context, res sdk.Result, abort bool) {
-
-		// all transactions must be of type auth.StdTx
+		// all transactions must be of type auth.StdTx.
 		stdTx, ok := tx.(auth.StdTx)
 		if !ok {
 			// Set a gas meter with limit 0 as to prevent an infinite gas meter attack
@@ -80,9 +81,10 @@ func NewAnteHandler(ak Keeper, sigGasConsumer SignatureVerificationGasConsumer) 
 				return newCtx, res, true
 			}
 
-			// check signature, return account with incremented nonce
+			// check signature, return account with incremented nonce.
 			signBytes := GetSignBytes(newCtx.ChainID(), stdTx, account, isGenesis)
 			account, res = processSig(newCtx, account, signature, signBytes, simulate, sigGasConsumer)
+
 			if !res.IsOK() {
 				return newCtx, res, true
 			}
@@ -94,13 +96,14 @@ func NewAnteHandler(ak Keeper, sigGasConsumer SignatureVerificationGasConsumer) 
 	}
 }
 
-// GetSignerAcc returns an account for a given address that is expected to sign
-// a transaction.
+// GetSignerAcc returns an account for a given address that is expected to sign a transaction.
 func GetSignerAcc(ctx sdk.Context, keeper Keeper, address sdk.AccAddress) (acc types.Account, res sdk.Result) {
 	if !keeper.IsAccountPresent(ctx, address) {
 		return acc, types.ErrAccountDoesNotExist(address).Result()
 	}
+
 	acc = keeper.GetAccount(ctx, address)
+
 	return acc, sdk.Result{}
 }
 
@@ -129,10 +132,11 @@ func processSig(
 	}
 
 	if !simulate && !acc.PubKey.VerifyBytes(signBytes, sig.Signature) {
-		return acc, sdk.ErrUnauthorized("Signature verification failed; verify correct account sequence and chain-id").Result()
+		return acc, sdk.ErrUnauthorized(
+			"Signature verification failed; verify correct account sequence and chain-id").Result()
 	}
 
-	acc.Sequence = acc.Sequence + 1
+	acc.Sequence++
 
 	return acc, res
 }

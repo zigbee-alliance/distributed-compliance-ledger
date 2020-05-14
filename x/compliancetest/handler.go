@@ -11,11 +11,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKeeper auth.Keeper) sdk.Handler {
+func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 		case types.MsgAddTestingResult:
-			return handleMsgAddTestingResult(ctx, keeper, modelinfoKeeper, authzKeeper, msg)
+			return handleMsgAddTestingResult(ctx, keeper, modelinfoKeeper, authKeeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized compliancetest Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -24,9 +24,9 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKee
 }
 
 func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
-	authzKeeper authz.Keeper, msg types.MsgAddTestingResult) sdk.Result {
+	authKeeper auth.Keeper, msg types.MsgAddTestingResult) sdk.Result {
 	// check if sender has enough rights to add testing results
-	if err := checkAddTestingResultRights(ctx, authzKeeper, msg.Signer); err != nil {
+	if err := checkAddTestingResultRights(ctx, authKeeper, msg.Signer); err != nil {
 		return err.Result()
 	}
 
@@ -49,11 +49,11 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoK
 	return sdk.Result{}
 }
 
-func checkAddTestingResultRights(ctx sdk.Context, authzKeeper auth.Keeper, signer sdk.AccAddress) sdk.Error {
+func checkAddTestingResultRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress) sdk.Error {
 	// sender must have TestHouse role to add new model
-	if !authzKeeper.HasRole(ctx, signer, authz.TestHouse) {
+	if !authKeeper.HasRole(ctx, signer, auth.TestHouse) {
 		return sdk.ErrUnauthorized(fmt.Sprintf(
-			"MsgAddTestingResult transaction should be signed by an account with the %s role", authz.TestHouse))
+			"MsgAddTestingResult transaction should be signed by an account with the %s role", auth.TestHouse))
 	}
 
 	return nil

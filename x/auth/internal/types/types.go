@@ -1,8 +1,8 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/tendermint/tendermint/crypto"
 	"time"
@@ -28,8 +28,10 @@ func (lt AccountRole) Validate() sdk.Error {
 	case Administrator, Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin:
 		return nil
 	}
+
 	return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Account Role: \"%v\". Supported roles: [%v]", lt, Roles))
 }
+
 //
 //func (lt *AccountRole) UnmarshalJSON(b []byte) error {
 //	accountRole := AccountRole(strings.Trim(string(b), `"`))
@@ -44,13 +46,14 @@ func (lt AccountRole) Validate() sdk.Error {
 
 type AccountRoles []AccountRole
 
-// Validate checks for errors on the account roles
+// Validate checks for errors on the account roles.
 func (acc AccountRoles) Validate() sdk.Error {
 	for _, role := range acc {
 		if err := role.Validate(); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -65,7 +68,7 @@ type Account struct {
 	Roles         AccountRoles   `json:"roles"`
 }
 
-// NewAccount creates a new Account object
+// NewAccount creates a new Account object.
 func NewAccount(address sdk.AccAddress, pubKey crypto.PubKey, roles AccountRoles) Account {
 	return Account{
 		Address: address,
@@ -74,7 +77,7 @@ func NewAccount(address sdk.AccAddress, pubKey crypto.PubKey, roles AccountRoles
 	}
 }
 
-// String implements fmt.Stringer
+// String implements fmt.Stringer.
 func (acc Account) String() string {
 	bytes, err := json.Marshal(acc)
 	if err != nil {
@@ -84,14 +87,16 @@ func (acc Account) String() string {
 	return string(bytes)
 }
 
-// Validate checks for errors on the vesting and module account parameters
+// Validate checks for errors on the vesting and module account parameters.
 func (acc Account) Validate() error {
 	if acc.Address == nil {
-		return fmt.Errorf("invalid Accounts: Value: %s. Error: Missing Address", acc.Address)
+		return sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid Accounts: Value: %s. Error: Missing Address", acc.Address))
 	}
 
 	if acc.PubKey == nil {
-		return fmt.Errorf("invalid Accounts: Value: %s. Error: Missing PubKey", acc.PubKey)
+		return sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid Accounts: Value: %s. Error: Missing PubKey", acc.PubKey))
 	}
 
 	if err := acc.Roles.Validate(); err != nil {
@@ -108,9 +113,11 @@ func (acc Account) GetAddress() sdk.AccAddress {
 // SetAddress - Implements sdk.Account.
 func (acc *Account) SetAddress(addr sdk.AccAddress) error {
 	if len(acc.Address) != 0 {
-		return errors.New("cannot override BaseAccount address")
+		return sdk.ErrInvalidAddress("Cannot override Account address")
 	}
+
 	acc.Address = addr
+
 	return nil
 }
 
@@ -135,12 +142,12 @@ func (acc *Account) SetCoins(coins sdk.Coins) error {
 	return nil
 }
 
-// GetAccountNumber - Implements Account
+// GetAccountNumber - Implements Account.
 func (acc *Account) GetAccountNumber() uint64 {
 	return acc.AccountNumber
 }
 
-// SetAccountNumber - Implements Account
+// SetAccountNumber - Implements Account.
 func (acc *Account) SetAccountNumber(accNumber uint64) error {
 	acc.AccountNumber = accNumber
 	return nil

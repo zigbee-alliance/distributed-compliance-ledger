@@ -71,17 +71,17 @@ type AppModule struct {
 	keeper               Keeper
 	modelinfoKeeper      modelinfo.Keeper
 	compliancetestKeeper compliancetest.Keeper
-	authzKeeper          auth.Keeper
+	authKeeper           auth.Keeper
 }
 
 func NewAppModule(keeper Keeper, modelinfoKeeper modelinfo.Keeper,
-	compliancetestKeeper compliancetest.Keeper, authzKeeper authz.Keeper) AppModule {
+	compliancetestKeeper compliancetest.Keeper, authKeeper auth.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic:       AppModuleBasic{},
 		keeper:               keeper,
 		modelinfoKeeper:      modelinfoKeeper,
 		compliancetestKeeper: compliancetestKeeper,
-		authzKeeper:          authzKeeper,
+		authKeeper:           authKeeper,
 	}
 }
 
@@ -105,7 +105,7 @@ func (a AppModule) Route() string {
 }
 
 func (a AppModule) NewHandler() sdk.Handler {
-	return NewHandler(a.keeper, a.modelinfoKeeper, a.compliancetestKeeper, a.authzKeeper)
+	return NewHandler(a.keeper, a.modelinfoKeeper, a.compliancetestKeeper, a.authKeeper)
 }
 
 func (a AppModule) QuerierRoute() string {

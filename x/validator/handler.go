@@ -12,13 +12,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func NewHandler(k Keeper, authzKeeper auth.Keeper) sdk.Handler {
+func NewHandler(k Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
 		case MsgCreateValidator:
-			return handleMsgCreateValidator(ctx, msg, k, authzKeeper)
+			return handleMsgCreateValidator(ctx, msg, k, authKeeper)
 		default:
 			errMsg := fmt.Sprintf("unrecognized validator Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -27,11 +27,11 @@ func NewHandler(k Keeper, authzKeeper auth.Keeper) sdk.Handler {
 }
 
 func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator,
-	k Keeper, authzKeeper authz.Keeper) sdk.Result {
+	k Keeper, authKeeper auth.Keeper) sdk.Result {
 	// check if sender has enough rights to create a validator node
-	if !authzKeeper.HasRole(ctx, msg.Signer, auth.NodeAdmin) {
+	if !authKeeper.HasRole(ctx, msg.Signer, auth.NodeAdmin) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("CreateValidator transaction should be "+
-			"signed by an account with the \"%s\" role", authz.NodeAdmin)).Result()
+			"signed by an account with the \"%s\" role", auth.NodeAdmin)).Result()
 	}
 
 	if k.AccountHasValidator(ctx, msg.Signer) {

@@ -12,7 +12,6 @@ import (
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -41,7 +40,6 @@ var (
 var (
 	// NewBasicManager is in charge of setting up basic module elemnets
 	ModuleBasics = module.NewBasicManager(
-		genaccounts.AppModuleBasic{},
 		auth.AppModuleBasic{},
 		validator.AppModuleBasic{},
 		genutil.AppModuleBasic{},
@@ -137,7 +135,6 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 func InitModuleManager(app *zbLedgerApp) {
 	app.mm = module.NewManager(
-		genaccounts.NewAppModule(app.authKeeper),
 		genutil.NewAppModule(app.authKeeper, app.validatorKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.authKeeper),
 		validator.NewAppModule(app.validatorKeeper, app.authKeeper),
@@ -151,7 +148,6 @@ func InitModuleManager(app *zbLedgerApp) {
 	app.mm.SetOrderEndBlockers(validator.ModuleName)
 
 	app.mm.SetOrderInitGenesis(
-		genaccounts.ModuleName,
 		auth.ModuleName,
 		validator.ModuleName,
 		modelinfo.ModuleName,

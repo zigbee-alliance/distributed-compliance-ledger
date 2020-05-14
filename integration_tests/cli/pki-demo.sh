@@ -15,7 +15,7 @@ leaf_cert_subject_key_id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4
 leaf_cert_serial_number="312128364102099997394566658874957944692446"
 
 echo "Assign Trustee role to Jack"
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Trustee" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$(zblcli keys show jack -a) --role="Trustee" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -23,7 +23,7 @@ trustee_account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
 echo "Create Trustee account with address: $trustee_account"
 create_account_with_name $trustee_account
 trustee_address=$(zblcli keys show "$trustee_account" -a)
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$trustee_address --role="Trustee" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$trustee_address --role="Trustee" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

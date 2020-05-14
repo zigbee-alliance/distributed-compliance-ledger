@@ -21,7 +21,7 @@ type TestSetup struct {
 	Cdc                  *amino.Codec
 	Ctx                  sdk.Context
 	CompliancetestKeeper Keeper
-	AuthzKeeper          auth.Keeper
+	authKeeper           auth.Keeper
 	ModelinfoKeeper      modelinfo.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
@@ -41,8 +41,8 @@ func Setup() TestSetup {
 	complianceKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, db)
 
 	modelinfoKey := sdk.NewKVStoreKey(modelinfo.StoreKey)
 	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
@@ -51,7 +51,7 @@ func Setup() TestSetup {
 
 	// Init Keepers
 	compliancetestKeeper := NewKeeper(complianceKey, cdc)
-	authzKeeper := auth.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
 
 	// Create context
@@ -59,17 +59,17 @@ func Setup() TestSetup {
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetestKeeper)
-	handler := NewHandler(compliancetestKeeper, modelinfoKeeper, authzKeeper)
+	handler := NewHandler(compliancetestKeeper, modelinfoKeeper, authKeeper)
 
 	account := testconstants.Address1
-	authzKeeper.AssignRole(ctx, account, authz.TestHouse)
+	authKeeper.AssignRole(ctx, account, auth.TestHouse)
 
 	setup := TestSetup{
 		Cdc:                  cdc,
 		Ctx:                  ctx,
 		CompliancetestKeeper: compliancetestKeeper,
 		ModelinfoKeeper:      modelinfoKeeper,
-		AuthzKeeper:          authzKeeper,
+		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,
 		TestHouse:            account,

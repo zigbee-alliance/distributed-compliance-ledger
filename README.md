@@ -348,26 +348,26 @@ Roles:
 - `NodeAdmin` - Is able to add nodes to validator pool.
 
 Transactions:
-- `zblcli tx authz assign-role --address=<bench32 address> --role=<string> --from=<account>` - Assign role to specified account.
+- `zblcli tx auth assign-role --address=<bench32 address> --role=<string> --from=<account>` - Assign role to specified account.
 
-  Example: `zblcli tx authz assign-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
+  Example: `zblcli tx auth assign-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
   
-- `zblcli tx authz revoke-role --address=<bench32 address> --role=<string> --from=<account>` - Revoke role from specified account.
+- `zblcli tx auth revoke-role --address=<bench32 address> --role=<string> --from=<account>` - Revoke role from specified account.
   - Trustee's signature is required.
 
-  Example: `zblcli tx authz revoke-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
+  Example: `zblcli tx auth revoke-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
 
 Queries:
 
-- `zblcli query authz account-roles --address=<bench32 address>` - The command to query roles by account address.
+- `zblcli query auth account-roles --address=<bench32 address>` - The command to query roles by account address.
 
-  Example: `zblcli query authz account-roles --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+  Example: `zblcli query auth account-roles --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
 Genesis template:
 ```json
 {
   "app_state": {
-    "authz": {
+    "auth": {
       "account_roles": [{
         "address": "cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2",
         "roles": [
@@ -387,18 +387,18 @@ Permissions:
 
 Transactions:
 
-- `zblcli tx authnext create-account --address=<bench32 address> --pubkey=<bench32 pubkey> --from=<account>` - The command to creates a new account.
+- `zblcli tx auth create-account --address=<bench32 address> --pubkey=<bench32 pubkey> --from=<account>` - The command to creates a new account.
 
-  Example: `zblcli tx authnext create-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from=jack`
+  Example: `zblcli tx auth create-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from=jack`
 
 Queries:
 
-- `zblcli query authnext account --address=<bench32 address>` - The command to query single account.
+- `zblcli query auth account --address=<bench32 address>` - The command to query single account.
 
-  Example: `zblcli query authnext account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+  Example: `zblcli query auth account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
-- `zblcli query authnext accounts --skip [x] --take [y]` - The command to list account headers with roles. Flags
+- `zblcli query auth accounts --skip [x] --take [y]` - The command to list account headers with roles. Flags
  are optional.
  
-  Example: `zblcli query authnext accounts`
+  Example: `zblcli query auth accounts`
 

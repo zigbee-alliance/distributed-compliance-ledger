@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"

@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -14,7 +15,7 @@ import (
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
-	authzTxCmd := &cobra.Command{
+	authTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "Authorization subcommands",
 		DisableFlagParsing:         true,
@@ -22,13 +23,13 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	authzTxCmd.AddCommand(client.PostCommands(
+	authTxCmd.AddCommand(client.PostCommands(
 		GetCmdCreateAccount(cdc),
 		GetCmdAddAssignRole(cdc),
 		GetCmdRevokeRole(cdc),
 	)...)
 
-	return authzTxCmd
+	return authTxCmd
 }
 
 func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
@@ -47,7 +48,7 @@ func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
 			authtypes.NewBaseAccountWithAddress(addr)
 
 			var roles types.AccountRoles
-			if rolesStr:= viper.GetString(FlagRoles); len(rolesStr) > 0 {
+			if rolesStr := viper.GetString(FlagRoles); len(rolesStr) > 0 {
 				for _, role := range strings.Split(rolesStr, ",") {
 					roles = append(roles, types.AccountRole(role))
 				}
@@ -61,10 +62,12 @@ func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	cmd.Flags().String(FlagPubKey, "", "Bench32 encoded account public key")
-	cmd.Flags().String(FlagRoles, "", fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)", types.Roles))
+	cmd.Flags().String(FlagRoles, "",
+		fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)",
+			types.Roles))
 
-	cmd.MarkFlagRequired(FlagAddress)
-	cmd.MarkFlagRequired(FlagPubKey)
+	_ = cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagPubKey)
 
 	return cmd
 }

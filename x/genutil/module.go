@@ -45,7 +45,7 @@ func (AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
 		return err
 	}
 
-	return ValidateGenesis(data)
+	return types.ValidateGenesis(data)
 }
 
 // register rest routes.
@@ -83,7 +83,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.Va
 
 	ModuleCdc.MustUnmarshalJSON(data, &genesisState)
 
-	return InitGenesis(ctx, ModuleCdc, am.validatorKeeper, am.deliverTx, genesisState)
+	return InitGenesis(ctx, ModuleCdc, am.authKeeper, am.validatorKeeper, am.deliverTx, genesisState)
 }
 
 // module export genesis.

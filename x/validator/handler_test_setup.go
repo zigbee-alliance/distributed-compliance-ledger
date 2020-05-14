@@ -17,7 +17,7 @@ type TestSetup struct {
 	Cdc             *amino.Codec
 	Ctx             sdk.Context
 	ValidatorKeeper Keeper
-	AuthzKeeper     auth.Keeper
+	authKeeper      auth.Keeper
 	Handler         sdk.Handler
 	Querier         sdk.Querier
 	NodeAdmin       sdk.AccAddress
@@ -36,29 +36,29 @@ func Setup() TestSetup {
 	validatorKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(validatorKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, db)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	validatorKeeper := NewKeeper(validatorKey, cdc)
-	authzKeeper := auth.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(validatorKeeper)
-	handler := NewHandler(validatorKeeper, authzKeeper)
+	handler := NewHandler(validatorKeeper, authKeeper)
 
-	authzKeeper.AssignRole(ctx, testconstants.Address1, authz.NodeAdmin)
+	authKeeper.AssignRole(ctx, testconstants.Address1, auth.NodeAdmin)
 
 	setup := TestSetup{
 		Cdc:             cdc,
 		Ctx:             ctx,
 		ValidatorKeeper: validatorKeeper,
-		AuthzKeeper:     authzKeeper,
+		authKeeper:      authKeeper,
 		Handler:         handler,
 		Querier:         querier,
 		NodeAdmin:       testconstants.Address1,

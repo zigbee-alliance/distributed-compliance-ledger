@@ -17,7 +17,7 @@ type TestSetup struct {
 	Cdc             *amino.Codec
 	Ctx             sdk.Context
 	ModelinfoKeeper Keeper
-	AuthzKeeper     auth.Keeper
+	authKeeper      auth.Keeper
 	Handler         sdk.Handler
 	Querier         sdk.Querier
 	Vendor          sdk.AccAddress
@@ -36,30 +36,30 @@ func Setup() TestSetup {
 	modelinfoKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, db)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	modelinfoKeeper := NewKeeper(modelinfoKey, cdc)
-	authzKeeper := auth.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(modelinfoKeeper)
-	handler := NewHandler(modelinfoKeeper, authzKeeper)
+	handler := NewHandler(modelinfoKeeper, authKeeper)
 
 	account := testconstants.Address1
-	authzKeeper.AssignRole(ctx, account, auth.Vendor)
+	authKeeper.AssignRole(ctx, account, auth.Vendor)
 
 	setup := TestSetup{
 		Cdc:             cdc,
 		Ctx:             ctx,
 		ModelinfoKeeper: modelinfoKeeper,
-		AuthzKeeper:     authzKeeper,
+		authKeeper:      authKeeper,
 		Handler:         handler,
 		Querier:         querier,
 		Vendor:          account,

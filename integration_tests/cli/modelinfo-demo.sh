@@ -8,12 +8,12 @@ check_response "$result" "\"name\": \"jack\""
 echo "$result"
 
 echo "Get account info for Jack"
-result=$(zblcli query auth account $(zblcli keys show jack -a))
+result=$(zblcli query auth account --address=$(zblcli keys show jack -a))
 check_response "$result" "\"account_number\":"
 echo "$result"
 
 echo "Assign Vendor role to Jack"
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

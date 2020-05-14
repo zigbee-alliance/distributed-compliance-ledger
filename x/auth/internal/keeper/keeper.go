@@ -29,13 +29,16 @@ func (k Keeper) NewAccount(ctx sdk.Context, account types.Account) types.Account
 func (k Keeper) GetAccount(ctx sdk.Context, addr sdk.AccAddress) (acc types.Account) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GetAccountKey(addr))
+
 	if bz == nil {
 		panic("Account does not exist")
 	}
+
 	err := k.cdc.UnmarshalBinaryBare(bz, &acc)
 	if err != nil {
 		panic(err)
 	}
+
 	return
 }
 
@@ -46,6 +49,7 @@ func (k Keeper) GetAllAccounts(ctx sdk.Context) (accounts []types.Account) {
 		return false
 	}
 	k.IterateAccounts(ctx, appendAccount)
+
 	return accounts
 }
 
@@ -63,19 +67,24 @@ func (k Keeper) IsAccountPresent(ctx sdk.Context, acc sdk.AccAddress) bool {
 func (k Keeper) IterateAccounts(ctx sdk.Context, process func(types.Account) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, types.AccountPrefix)
+
 	defer iter.Close()
+
 	for {
 		if !iter.Valid() {
 			return
 		}
+
 		val := iter.Value()
 
 		var account types.Account
+
 		k.cdc.MustUnmarshalBinaryBare(val, &account)
 
 		if process(account) {
 			return
 		}
+
 		iter.Next()
 	}
 }
@@ -104,6 +113,7 @@ func (k Keeper) AssignRole(ctx sdk.Context, addr sdk.AccAddress, roleToAdd types
 
 func (k Keeper) RevokeRole(ctx sdk.Context, addr sdk.AccAddress, roleToRevoke types.AccountRole) {
 	account := k.GetAccount(ctx, addr)
+
 	var filteredRoles []types.AccountRole
 
 	for _, role := range account.Roles {
@@ -116,7 +126,7 @@ func (k Keeper) RevokeRole(ctx sdk.Context, addr sdk.AccAddress, roleToRevoke ty
 	k.SetAccount(ctx, account)
 }
 
-// Check if the AccountRoles is present in the store or not
+// Check if the AccountRoles is present in the store or not.
 func (k Keeper) IsAccountRolesPresent(ctx sdk.Context, addr sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(addr.Bytes())
@@ -145,6 +155,7 @@ func (k Keeper) CountAccountsWithRole(ctx sdk.Context, roleToCount types.Account
 func (k Keeper) GetNextAccountNumber(ctx sdk.Context) (accNumber uint64) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.AccountNumberCounterKey)
+
 	if bz == nil {
 		accNumber = 0
 	} else {

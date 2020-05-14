@@ -57,7 +57,7 @@ The delivery consists of the following components:
     * Copy generated `address` and `pubkey` and share them to any `Trustee`. 
     * `Trustee` will register the account on the ledger and assign `NodeAdmin` role.
     * In order to ensure that account is created and has assigned role you can use the command: 
-    `zblcli query authnext account --address=<address>`.
+    `zblcli query auth account --address=<address>`.
     Expected output format: 
         ```json
         {

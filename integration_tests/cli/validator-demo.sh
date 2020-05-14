@@ -18,8 +18,8 @@ address=$(docker exec $container zblcli keys show $account -a)
 pubkey=$(docker exec $container zblcli keys show $account -p)
 
 echo "Create account for $account and Assign NodeAdmin role"
-echo $passphrase | zblcli tx authnext create-account --address="$address" --pubkey="$pubkey" --from jack --yes
-echo $passphrase | zblcli tx authz assign-role --address=$address --role="NodeAdmin" --from jack --yes
+echo $passphrase | zblcli tx auth create-account --address="$address" --pubkey="$pubkey" --from jack --yes
+echo $passphrase | zblcli tx auth assign-role --address=$address --role="NodeAdmin" --from jack --yes
 
 echo "$account Preapare Node configuration files"
 docker exec $container zbld init $node --chain-id $chain_id
@@ -62,7 +62,7 @@ echo "$result"
 
 echo "Sent transactions using node \"$node\""
 echo "Assign Vendor role to jack"
-echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes
+echo "test1234" | zblcli tx auth assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes
 
 echo "Publish Model"
 vid=$RANDOM

@@ -44,7 +44,7 @@ This is useful to avoid correlation by the sender's IP address.
     - Example
         ```json
         CLI 2: zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
-        CLI 2: zblcli query authnext accounts
+        CLI 2: zblcli query auth accounts
         CLI 1: zblcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
         CLI 2: zblcli tx broadcast /home/artem/zb-ledger/txn.json
         ```

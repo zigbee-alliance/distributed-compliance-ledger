@@ -4,8 +4,6 @@ package main
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts"
-	genaccountscli "git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts/client/cli"
 	genutilcli "git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/client/cli"
 	"io"
 
@@ -43,13 +41,13 @@ func main() {
 	// CLI commands to initialize the chain
 	rootCmd.AddCommand(
 		genutilcli.InitCmd(ctx, cdc, app.ModuleBasics, app.DefaultNodeHome),
-		genutilcli.CollectGenTxsCmd(ctx, cdc, genaccounts.AppModuleBasic{}, app.DefaultNodeHome),
+		genutilcli.CollectGenTxsCmd(ctx, cdc, app.DefaultNodeHome),
 		genutilcli.GenTxCmd(
-			ctx, cdc, app.ModuleBasics, genaccounts.AppModuleBasic{}, app.DefaultNodeHome, app.DefaultCLIHome,
+			ctx, cdc, app.ModuleBasics, app.DefaultNodeHome, app.DefaultCLIHome,
 		),
 		genutilcli.ValidateGenesisCmd(ctx, cdc, app.ModuleBasics),
 		// AddGenesisAccountCmd allows users to add accounts to the genesis file
-		genaccountscli.AddGenesisAccountCmd(ctx, cdc, app.DefaultNodeHome, app.DefaultCLIHome),
+		genutilcli.AddGenesisAccountCmd(ctx, cdc, app.DefaultNodeHome, app.DefaultCLIHome),
 	)
 
 	server.AddCommands(ctx, cdc, rootCmd, newApp, exportAppStateAndTMValidators)

@@ -25,6 +25,7 @@ func ValidateGenesis(data GenesisState) error {
 			return err
 		}
 	}
+
 	return nil
 }
 

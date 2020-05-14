@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"

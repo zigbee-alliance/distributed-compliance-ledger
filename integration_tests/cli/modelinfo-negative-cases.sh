@@ -17,7 +17,7 @@ check_response "$result" "\"code\": 4"
 echo "$result"
 
 echo "Jack assigns Vendor role to $account"
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show "$account" -a) --role="Vendor" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$(zblcli keys show "$account" -a) --role="Vendor" --from jack --yes)
 
 echo "Add Model with VID: $vid PID: $pid: Twice"
 result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $account --yes)

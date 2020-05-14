@@ -8,7 +8,7 @@ check_response "$result" "\"name\": \"jack\""
 echo "$result"
 
 echo "Jack assigns Trustee role to Jack"
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Trustee" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$(zblcli keys show jack -a) --role="Trustee" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -39,17 +39,17 @@ echo "$result"
 echo "Get $user accout"
 check_response "$result" "\"address\": \"$user_address\""
 check_response "$result" "\"public_key\": \"$user_pubkey\""
-result=$(zblcli query auth account $user_address)
+result=$(zblcli query auth account --address=$user_address)
 check_response "$result" "\"roles\": []"
 echo "$result"
 
 echo "Jack assigns Vendor role to Tony"
-result=$(echo "test1234" | zblcli tx authz assign-role $tony_address "Vendor" --from jack --yes)
+result=$(echo "test1234" | zblcli tx auth assign-role --address=$tony_address --role="Vendor" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get account roles for Tony"
-result=$(zblcli query authz account-roles $tony_address)
+result=$(zblcli query auth account-roles --address=$tony_address)
 check_response "$result" "\"Vendor\""
 echo "$result"
 

@@ -1,16 +1,16 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genaccounts"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -19,13 +19,13 @@ import (
 )
 
 const (
-	flagClientHome = "home-client"
-	FlagAddress    = "address"
-	FlagPubKey     = "pubkey"
-	FlagRoles      = "roles"
+	FlagAddress = "address"
+	FlagPubKey  = "pubkey"
+	FlagRoles   = "roles"
 )
 
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
+//nolint:funlen
 func AddGenesisAccountCmd(ctx *server.Context, cdc *codec.Codec,
 	defaultNodeHome, defaultClientHome string) *cobra.Command {
 	cmd := &cobra.Command{
@@ -57,7 +57,7 @@ func AddGenesisAccountCmd(ctx *server.Context, cdc *codec.Codec,
 			}
 
 			var roles auth.AccountRoles
-			if rolesStr:= viper.GetString(FlagRoles); len(rolesStr) > 0 {
+			if rolesStr := viper.GetString(FlagRoles); len(rolesStr) > 0 {
 				for _, role := range strings.Split(rolesStr, ",") {
 					roles = append(roles, auth.AccountRole(role))
 				}
@@ -76,18 +76,18 @@ func AddGenesisAccountCmd(ctx *server.Context, cdc *codec.Codec,
 			}
 
 			// add genesis account to the app state
-			genesisAccounts := types.GenesisAccounts{}
+			var genesisState types.GenesisState
 
-			cdc.MustUnmarshalJSON(appState[genaccounts.ModuleName], &genesisAccounts)
+			cdc.MustUnmarshalJSON(appState[genutil.ModuleName], &genesisState)
 
-			if genesisAccounts.Contains(addr) {
-				return fmt.Errorf("cannot add account at existing address %v", addr)
+			if genesisState.Accounts.Contains(addr) {
+				return sdk.ErrUnknownRequest(fmt.Sprintf("cannot add account at existing address %v", addr))
 			}
 
-			genesisAccounts = append(genesisAccounts, account)
+			genesisState.Accounts = append(genesisState.Accounts, account)
 
-			genesisStateBz := cdc.MustMarshalJSON(genaccounts.GenesisState(genesisAccounts))
-			appState[genaccounts.ModuleName] = genesisStateBz
+			genesisStateBz := cdc.MustMarshalJSON(genesisState)
+			appState[genutil.ModuleName] = genesisStateBz
 
 			appStateJSON, err := cdc.MarshalJSON(appState)
 			if err != nil {
@@ -103,11 +103,13 @@ func AddGenesisAccountCmd(ctx *server.Context, cdc *codec.Codec,
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	cmd.Flags().String(FlagPubKey, "", "Bench32 encoded account public key")
-	cmd.Flags().String(FlagRoles, "", fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)", auth.Roles))
+	cmd.Flags().String(FlagRoles, "",
+		fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)", auth.Roles))
 	cmd.Flags().String(cli.HomeFlag, defaultNodeHome, "node's home directory")
 	cmd.Flags().String(flagClientHome, defaultClientHome, "client's home directory")
 
-	cmd.MarkFlagRequired(FlagAddress)
-	cmd.MarkFlagRequired(FlagPubKey)
+	_ = cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagPubKey)
+
 	return cmd
 }

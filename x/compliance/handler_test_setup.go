@@ -20,7 +20,7 @@ type TestSetup struct {
 	Ctx                  sdk.Context
 	CompliancetKeeper    Keeper
 	CompliancetestKeeper compliancetest.Keeper
-	AuthzKeeper          auth.Keeper
+	authKeeper           auth.Keeper
 	ModelinfoKeeper      modelinfo.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
@@ -40,8 +40,8 @@ func Setup() TestSetup {
 	complianceKey := sdk.NewKVStoreKey(StoreKey)
 	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, db)
 
-	authzKey := sdk.NewKVStoreKey(auth.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, db)
 
 	modelinfoKey := sdk.NewKVStoreKey(modelinfo.StoreKey)
 	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
@@ -54,7 +54,7 @@ func Setup() TestSetup {
 	// Init Keepers
 	compliancetKeeper := NewKeeper(complianceKey, cdc)
 	compliancetestKeeper := compliancetest.NewKeeper(compliancetestKey, cdc)
-	authzKeeper := auth.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
 
 	// Create context
@@ -62,10 +62,10 @@ func Setup() TestSetup {
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetKeeper)
-	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authzKeeper)
+	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authKeeper)
 
 	certificationCenter := testconstants.Address1
-	authzKeeper.AssignRole(ctx, certificationCenter, auth.ZBCertificationCenter)
+	authKeeper.AssignRole(ctx, certificationCenter, auth.ZBCertificationCenter)
 
 	setup := TestSetup{
 		Cdc:                  cdc,
@@ -73,7 +73,7 @@ func Setup() TestSetup {
 		CompliancetKeeper:    compliancetKeeper,
 		CompliancetestKeeper: compliancetestKeeper,
 		ModelinfoKeeper:      modelinfoKeeper,
-		AuthzKeeper:          authzKeeper,
+		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,
 		CertificationCenter:  certificationCenter,

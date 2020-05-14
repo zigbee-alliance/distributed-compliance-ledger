@@ -46,10 +46,10 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.Name}, constants.Address2)
 
-	for _, role := range []authz.AccountRole{authz.Administrator, authz.TestHouse,
-		authz.ZBCertificationCenter, authz.Vendor, authz.Trustee} {
+	for _, role := range []auth.AccountRole{auth.Administrator, auth.TestHouse,
+		auth.ZBCertificationCenter, auth.Vendor, auth.Trustee} {
 		// assign role
-		setup.AuthzKeeper.AssignRole(setup.Ctx, msgCreateValidator.Signer, role)
+		setup.authKeeper.AssignRole(setup.Ctx, msgCreateValidator.Signer, role)
 
 		// try to create validator
 		result := setup.Handler(setup.Ctx, msgCreateValidator)
@@ -67,7 +67,7 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// create validator
-	setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address2, authz.NodeAdmin)
+	setup.authKeeper.AssignRole(setup.Ctx, constants.Address2, auth.NodeAdmin)
 	msgCreateValidator = types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.Name}, constants.Address2)
 	result = setup.Handler(setup.Ctx, msgCreateValidator)

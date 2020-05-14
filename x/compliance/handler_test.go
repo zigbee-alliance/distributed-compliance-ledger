@@ -54,7 +54,7 @@ func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
 
 	for _, tc := range cases {
 		address := constants.Address2
-		setup.AuthzKeeper.AssignRole(setup.Ctx, address, tc)
+		setup.authKeeper.AssignRole(setup.Ctx, address, tc)
 
 		// try to certify model
 		certifyModelMsg := msgCertifyModel(address, vid, pid)
@@ -220,7 +220,7 @@ func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 
 	for _, tc := range cases {
 		address := constants.Address2
-		setup.AuthzKeeper.AssignRole(setup.Ctx, address, tc)
+		setup.authKeeper.AssignRole(setup.Ctx, address, tc)
 
 		// try to certify model
 		revokeModelMsg := msgRevokedModel(address, constants.VID, constants.PID)

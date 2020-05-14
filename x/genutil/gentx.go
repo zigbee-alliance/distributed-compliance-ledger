@@ -1,5 +1,6 @@
 package genutil
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -18,7 +19,6 @@ import (
 // ValidateAccountInGenesis checks that the provided key has sufficient
 // coins in the genesis accounts.
 func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
-	genAccIterator types.GenesisAccountsIterator,
 	key sdk.Address, cdc *codec.Codec) error {
 	accountIsInGenesis := false
 
@@ -34,7 +34,7 @@ func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
 
 	cdc.MustUnmarshalJSON(genUtilDataBz, &genesisState)
 
-	genAccIterator.IterateGenesisAccounts(cdc, appGenesisState, func(acc auth.Account) (stop bool) {
+	IterateGenesisAccounts(cdc, appGenesisState, func(acc auth.Account) (stop bool) {
 		if acc.Address.Equals(key) {
 			accountIsInGenesis = true
 			return true
