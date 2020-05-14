@@ -5,6 +5,7 @@ import (
 	"fmt"
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	extRest "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
@@ -79,14 +80,67 @@ func RegisterNewAccount() (KeyInfo, int) {
 }
 
 func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) (TxnResponse, int) {
-	senderAccountInfo, _ := GetAccountInfo(sender.Address) // Refresh account info
-	signResponse, _ := SignMessage(sender.Name, senderAccountInfo, message)
+	txn := types.StdTx{
+		Msgs: []sdk.Msg{message},
+		Fee:  types.StdFee{Gas: 2000000},
+	}
+	signResponse, _ := SignMessage(sender, txn)
 	return BroadcastMessage(signResponse)
+}
+
+func SignAndBroadcastTransaction(sender KeyInfo, txn types.StdTx) (TxnResponse, int) {
+	signResponse, _ := SignMessage(sender, txn)
+	return BroadcastMessage(signResponse)
+}
+
+func SignMessage(sender KeyInfo, txn types.StdTx) (json.RawMessage, int) {
+	println("Sign prepared transaction")
+
+	stdSigMsg := extRest.SignMessageRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainId,
+			From:    sender.Address.String(),
+		},
+		Txn: extRest.Txn{
+			Value: txn,
+		},
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
+
+	uri := fmt.Sprintf("%s/%s", "tx", "sign")
+	response, code := SendPostRequest(uri, body, sender.Name, constants.Passphrase)
+	if code != http.StatusOK {
+		return json.RawMessage{}, code
+	}
+
+	return removeResponseWrapper(response), code
+}
+
+func BroadcastMessage(message interface{}) (TxnResponse, int) {
+	println("Broadcast Message")
+
+	body, _ := json.Marshal(message)
+
+	uri := fmt.Sprintf("%s/%s", "tx", "broadcast")
+	response, code := SendPostRequest(uri, body, "", "")
+
+	return parseWriteTxnResponse(response, code)
 }
 
 func PublishModelInfo(model modelinfo.MsgAddModelInfo, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Model Info")
+	response, code := SendModelInfoRequest(model, sender.Name)
+	return parseWriteTxnResponse(response, code)
+}
 
+func PrepareModelInfoTransaction(model modelinfo.MsgAddModelInfo) (types.StdTx, int) {
+	println("Prepare Model Info Transaction")
+	response, code := SendModelInfoRequest(model, "")
+	return parseStdTxn(response, code)
+}
+
+func SendModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]byte, int) {
 	request := modelinfoRest.ModelInfoRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: constants.ChainId,
@@ -107,42 +161,7 @@ func PublishModelInfo(model modelinfo.MsgAddModelInfo, sender KeyInfo) (TxnRespo
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
-	response, code := SendPostRequest(uri, body, sender.Name, constants.Passphrase)
-
-	return parseWriteTxnResponse(response, code)
-}
-
-func SignMessage(accountName string, accountInfo AccountInfo, message sdk.Msg) (json.RawMessage, int) {
-	println("Sign Message")
-
-	stdSigMsg := types.StdSignMsg{
-		ChainID:       constants.ChainId,
-		AccountNumber: ParseUint(accountInfo.AccountNumber),
-		Sequence:      ParseUint(accountInfo.Sequence),
-		Fee:           types.StdFee{Gas: 200000},
-		Msgs:          []sdk.Msg{message},
-	}
-
-	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), stdSigMsg)
-
-	uri := fmt.Sprintf("%s/%s?name=%s&passphrase=%s", "tx", "sign", accountName, constants.Passphrase)
-	response, code := SendPostRequest(uri, body, "", "")
-	if code != http.StatusOK {
-		return json.RawMessage{}, code
-	}
-
-	return removeResponseWrapper(response), code
-}
-
-func BroadcastMessage(message interface{}) (TxnResponse, int) {
-	println("Broadcast Message")
-
-	body, _ := json.Marshal(message)
-
-	uri := fmt.Sprintf("%s/%s", "tx", "broadcast")
-	response, code := SendPostRequest(uri, body, "", "")
-
-	return parseWriteTxnResponse(response, code)
+	return SendPostRequest(uri, body, account, constants.Passphrase)
 }
 
 func GetModelInfo(vid uint16, pid uint16) (modelinfo.ModelInfo, int) {
@@ -195,7 +214,17 @@ func GetVendorModels(vid uint16) (modelinfo.VendorProducts, int) {
 
 func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Testing Result")
+	response, code := SendTestingResultRequest(testingResult, sender.Name)
+	return parseWriteTxnResponse(response, code)
+}
 
+func PrepareTestingResultTransaction(testingResult compliancetest.MsgAddTestingResult) (types.StdTx, int) {
+	println("Prepare Testing Result Transaction")
+	response, code := SendTestingResultRequest(testingResult, "")
+	return parseStdTxn(response, code)
+}
+
+func SendTestingResultRequest(testingResult compliancetest.MsgAddTestingResult, name string) ([]byte, int) {
 	request := compliancetestRest.TestingResultRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: constants.ChainId,
@@ -210,9 +239,7 @@ func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult, send
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", compliancetest.RouterKey, "testresults")
-	response, code := SendPostRequest(uri, body, sender.Name, constants.Passphrase)
-
-	return parseWriteTxnResponse(response, code)
+	return SendPostRequest(uri, body, name, constants.Passphrase)
 }
 
 func GetTestingResult(vid uint16, pid uint16) (compliancetest.TestingResults, int) {
@@ -241,7 +268,17 @@ func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role authz.Account
 
 func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Certified Model")
+	response, code := SendCertifiedModelRequest(certifyModel, sender.Name)
+	return parseWriteTxnResponse(response, code)
+}
 
+func PrepareCertifiedModelTransaction(certifyModel compliance.MsgCertifyModel) (types.StdTx, int) {
+	println("Prepare Certified Model Transaction")
+	response, code := SendCertifiedModelRequest(certifyModel, "")
+	return parseStdTxn(response, code)
+}
+
+func SendCertifiedModelRequest(certifyModel compliance.MsgCertifyModel, name string) ([]byte, int) {
 	request := complianceRest.CertifyModelRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: constants.ChainId,
@@ -256,14 +293,22 @@ func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel, sender KeyIn
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "certified", certifyModel.VID, certifyModel.PID, certifyModel.CertificationType)
-	response, code := SendPutRequest(uri, body, sender.Name, constants.Passphrase)
-
-	return parseWriteTxnResponse(response, code)
+	return SendPutRequest(uri, body, name, constants.Passphrase)
 }
 
 func PublishRevokedModel(revokeModel compliance.MsgRevokeModel, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Revoked Model")
+	response, code := SendRevokedModelRequest(revokeModel, sender.Name)
+	return parseWriteTxnResponse(response, code)
+}
 
+func PrepareRevokedModelTransaction(revokeModel compliance.MsgRevokeModel) (types.StdTx, int) {
+	println("Prepare Revoked Model Transaction")
+	response, code := SendRevokedModelRequest(revokeModel, "")
+	return parseStdTxn(response, code)
+}
+
+func SendRevokedModelRequest(revokeModel compliance.MsgRevokeModel, name string) ([]byte, int) {
 	request := complianceRest.RevokeModelRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: constants.ChainId,
@@ -279,9 +324,7 @@ func PublishRevokedModel(revokeModel compliance.MsgRevokeModel, sender KeyInfo) 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "revoked", revokeModel.VID, revokeModel.PID, revokeModel.CertificationType)
-	response, code := SendPutRequest(uri, body, sender.Name, constants.Passphrase)
-
-	return parseWriteTxnResponse(response, code)
+	return SendPutRequest(uri, body, name, constants.Passphrase)
 }
 
 func GetComplianceInfo(vid uint16, pid uint16, certificationType compliance.CertificationType) (compliance.ComplianceInfo, int) {
@@ -354,7 +397,17 @@ func GetAllComplianceInfos(state string) (ComplianceInfosHeadersResult, int) {
 
 func ProposeAddX509RootCert(proposeAddX509RootCert pki.MsgProposeAddX509RootCert, account string, passphrase string) (TxnResponse, int) {
 	println("Propose X509 Root Certificate")
+	response, code := SendProposeAddX509RootCertRequest(proposeAddX509RootCert, account, passphrase)
+	return parseWriteTxnResponse(response, code)
+}
 
+func PrepareProposeAddX509RootCertTransaction(proposeAddX509RootCert pki.MsgProposeAddX509RootCert) (types.StdTx, int) {
+	println("Prepare Propose X509 Root Certificate Transaction")
+	response, code := SendProposeAddX509RootCertRequest(proposeAddX509RootCert, "", "")
+	return parseStdTxn(response, code)
+}
+
+func SendProposeAddX509RootCertRequest(proposeAddX509RootCert pki.MsgProposeAddX509RootCert, account string, passphrase string) ([]byte, int) {
 	request := pkiRest.AddCertificateRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: constants.ChainId,
@@ -366,15 +419,22 @@ func ProposeAddX509RootCert(proposeAddX509RootCert pki.MsgProposeAddX509RootCert
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", pki.RouterKey, "certs/proposed/root")
-
-	response, code := SendPostRequest(uri, body, account, passphrase)
-
-	return parseWriteTxnResponse(response, code)
+	return SendPostRequest(uri, body, account, passphrase)
 }
 
 func ApproveAddX509RootCert(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert, account string, passphrase string) (TxnResponse, int) {
 	println(fmt.Sprintf("Approve X509 Root Cert with subject=%s and subjectKeyId=%s", msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyId))
+	response, code := SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert, account, passphrase)
+	return parseWriteTxnResponse(response, code)
+}
 
+func PrepareApproveAddX509RootCertTransaction(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert) (types.StdTx, int) {
+	println("Prepare Approve X509 Root Certificate Transaction")
+	response, code := SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert, "", "")
+	return parseStdTxn(response, code)
+}
+
+func SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert, account string, passphrase string) ([]byte, int) {
 	request := pkiRest.ApproveCertificateRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: constants.ChainId,
@@ -385,17 +445,23 @@ func ApproveAddX509RootCert(msgApproveAddX509RootCert pki.MsgApproveAddX509RootC
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
-
 	uri := fmt.Sprintf("%s/%s", pki.RouterKey, fmt.Sprintf("certs/proposed/root/%s/%s", msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyId))
-
-	response, code := SendPatchRequest(uri, body, account, passphrase)
-
-	return parseWriteTxnResponse(response, code)
+	return SendPatchRequest(uri, body, account, passphrase)
 }
 
 func AddX509Cert(addX509Cert pki.MsgAddX509Cert, account string, passphrase string) (TxnResponse, int) {
 	println("Add X509 Certificate")
+	response, code := SendAddX509CertRequest(addX509Cert, account, passphrase)
+	return parseWriteTxnResponse(response, code)
+}
 
+func PrepareAddX509CertTransaction(addX509Cert pki.MsgAddX509Cert) (types.StdTx, int) {
+	println("Prepare Add X509 Certificate Transaction")
+	response, code := SendAddX509CertRequest(addX509Cert, "", "")
+	return parseStdTxn(response, code)
+}
+
+func SendAddX509CertRequest(addX509Cert pki.MsgAddX509Cert, account string, passphrase string) ([]byte, int) {
 	request := pkiRest.AddCertificateRequest{
 		BaseReq: rest.BaseReq{
 			ChainID: constants.ChainId,
@@ -407,10 +473,7 @@ func AddX509Cert(addX509Cert pki.MsgAddX509Cert, account string, passphrase stri
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", pki.RouterKey, "certs")
-
-	response, code := SendPostRequest(uri, body, account, passphrase)
-
-	return parseWriteTxnResponse(response, code)
+	return SendPostRequest(uri, body, account, passphrase)
 }
 
 func GetAllX509RootCerts() (CertificatesHeadersResult, int) {
@@ -510,6 +573,17 @@ func parseWriteTxnResponse(response []byte, code int) (TxnResponse, int) {
 	_ = json.Unmarshal(removeResponseWrapper(response), &result)
 
 	return result, code
+}
+
+func parseStdTxn(response []byte, code int) (types.StdTx, int) {
+	if code != http.StatusOK {
+		return types.StdTx{}, code
+	}
+
+	var txn types.StdTx
+	_ = app.MakeCodec().UnmarshalJSON(response, &txn)
+
+	return txn, code
 }
 
 func parseGetReqResponse(response []byte, entity interface{}, code int) {

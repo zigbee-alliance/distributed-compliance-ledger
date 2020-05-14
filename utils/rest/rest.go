@@ -3,7 +3,6 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
-	authutils "git.dsr-corporation.com/zb-ledger/zb-ledger/utils/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -12,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 	"net/http"
@@ -184,6 +184,10 @@ func (ctx RestContext) PostProcessResponse(body interface{}) {
 	rest.PostProcessResponse(ctx.responseWriter, ctx.context, body)
 }
 
+func (ctx RestContext) BasicAuth() (username, password string, ok bool) {
+	return ctx.request.BasicAuth()
+}
+
 func (ctx RestContext) HandleWriteRequest(msg sdk.Msg) {
 	err := msg.ValidateBasic()
 	if err != nil {
@@ -191,14 +195,14 @@ func (ctx RestContext) HandleWriteRequest(msg sdk.Msg) {
 		return
 	}
 
-	account, passphrase, err_ := authutils.GetCredentialsFromRequest(ctx.request)
-	if err_ != nil { // No credentials - just generate request message
+	account, passphrase, ok := ctx.BasicAuth()
+	if !ok { // No credentials - just generate request message
 		utils.WriteGenerateStdTxResponse(ctx.responseWriter, ctx.context, ctx.baseReq, []sdk.Msg{msg})
 		return
 	}
 
 	// Credentials are found - sign and broadcast message
-	res, err_ := ctx.SignAndBroadcastMessage(ctx.baseReq.ChainID, account, passphrase, []sdk.Msg{msg})
+	res, err_ := ctx.SignAndBroadcastMessage(account, passphrase, []sdk.Msg{msg})
 	if err_ != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err_.Error())
 		return
@@ -216,18 +220,36 @@ func (ctx RestContext) WriteErrorResponse(status int, err string) {
 	rest.WriteErrorResponse(ctx.responseWriter, status, err)
 }
 
-func (ctx RestContext) SignMessage(chainId string, name string, passphrase string, msg []sdk.Msg) ([]byte, error) {
-	acc, err := auth.NewAccountRetriever(ctx.context).GetAccount(ctx.signer)
+func (ctx RestContext) TxnBuilder() (types.TxBuilder, error) {
+	txBldr := auth.NewTxBuilderFromCLI()
+
+	accountNumber := ctx.baseReq.AccountNumber
+	sequence := ctx.baseReq.Sequence
+
+	if accountNumber == 0 && sequence == 0 {
+		acc, err := auth.NewAccountRetriever(ctx.context).GetAccount(ctx.signer)
+		if err != nil {
+			return txBldr, err
+		}
+
+		accountNumber = acc.GetAccountNumber()
+		sequence = acc.GetSequence()
+	}
+
+	txBldr = txBldr.
+		WithTxEncoder(utils.GetTxEncoder(ctx.Codec())).
+		WithAccountNumber(accountNumber).
+		WithSequence(sequence).
+		WithChainID(ctx.baseReq.ChainID)
+
+	return txBldr, nil
+}
+
+func (ctx RestContext) SignMessage(name string, passphrase string, msg []sdk.Msg) ([]byte, error) {
+	txBldr, err := ctx.TxnBuilder()
 	if err != nil {
 		return nil, err
 	}
-
-	txBldr := auth.NewTxBuilderFromCLI().
-		WithTxEncoder(utils.GetTxEncoder(ctx.Codec())).
-		WithAccountNumber(acc.GetAccountNumber()).
-		WithSequence(acc.GetSequence()).
-		WithChainID(chainId)
-
 	return txBldr.BuildAndSign(name, passphrase, msg)
 }
 
@@ -245,8 +267,8 @@ func (ctx RestContext) BroadcastMessage(message []byte) ([]byte, error) {
 	return txBytes, nil
 }
 
-func (ctx RestContext) SignAndBroadcastMessage(chainId string, account string, passphrase string, msg []sdk.Msg) ([]byte, error) {
-	signedMsg, err := ctx.SignMessage(chainId, account, passphrase, msg)
+func (ctx RestContext) SignAndBroadcastMessage(account string, passphrase string, msg []sdk.Msg) ([]byte, error) {
+	signedMsg, err := ctx.SignMessage(account, passphrase, msg)
 	if err != nil {
 		return nil, err
 	}

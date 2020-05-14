@@ -3,12 +3,11 @@ package rest
 import (
 	"encoding/base64"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
+	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"io/ioutil"
 	"net/http"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -73,9 +72,24 @@ func decodeTx(cdc *codec.Codec, base64str string) (tx auth.StdTx, err error) {
 	return res, nil
 }
 
-func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+type SignMessageRequest struct {
+	BaseReq restTypes.BaseReq `json:"base_req"`
+	Txn     Txn               `json:"txn"`
+}
+
+type Txn struct {
+	Type_ string      `json:"type"`
+	Value types.StdTx `json:"value"`
+}
+
+func SignMessageHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		var req SignMessageRequest
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
 
 		err := r.ParseForm()
 		if err != nil {
@@ -84,28 +98,29 @@ func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		name, passphrase := r.FormValue("name"), r.FormValue("passphrase")
-
-		var signMsg types.StdSignMsg
-		if !restCtx.ReadRESTReq(&signMsg) {
+		account, passphrase, ok := restCtx.BasicAuth()
+		if !ok {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, "Could not find credentials to use")
 			return
 		}
 
-		txBldr := auth.NewTxBuilderFromCLI().
-			WithTxEncoder(utils.GetTxEncoder(restCtx.Codec())).
-			WithAccountNumber(signMsg.AccountNumber).
-			WithSequence(signMsg.Sequence).
-			WithChainID(signMsg.ChainID)
-
-		stdTx := auth.StdTx{
-			Msgs:       signMsg.Msgs,
-			Fee:        signMsg.Fee,
-			Signatures: nil,
-			Memo:       signMsg.Memo,
+		restCtx, err = restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
 		}
 
-		signedStdTx, err := txBldr.SignStdTx(name, passphrase, stdTx, false)
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
 
+		txBldr, err := restCtx.TxnBuilder()
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		signedStdTx, err := txBldr.SignStdTx(account, passphrase, req.Txn.Value, false)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
