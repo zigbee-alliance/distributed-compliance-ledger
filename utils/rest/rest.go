@@ -82,6 +82,14 @@ func (ctx RestContext) NodeStatus() (*ctypes.ResultStatus, error) {
 	return status, nil
 }
 
+func (ctx RestContext) GetChainHeight() (int64, error) {
+	status, err := ctx.NodeStatus()
+	if err != nil {
+		return 0, err
+	}
+	return status.SyncInfo.LatestBlockHeight, nil
+}
+
 func (ctx RestContext) WithCodec(cdc *codec.Codec) RestContext {
 	ctx.context = ctx.context.WithCodec(cdc)
 	return ctx

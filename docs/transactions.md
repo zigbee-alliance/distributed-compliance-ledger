@@ -1316,6 +1316,37 @@ The account is not removed until sufficient number of Trustees approve it.
     -   `zblcli tx validator approve-remove-node .... `
 - REST API: 
     -   PATCH `/validators/proposed/removed/<address>`
+           
+#### PROPOSE_UNJAIL_VALIDATOR_NODE
+Proposes removing the Validator node from jailed state and returning to active validator state. 
+
+If more than 1 Trustee signature is required to unjail a node, the node
+will be in a pending state until sufficient number of approvals is received.
+
+- Parameters:
+    - `address`
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx validator propose-unjail-node .... `
+- REST API: 
+    -   POST `/validators/unjailed`
+
+#### APPROVE_UNJAIL_VALIDATOR_NODE
+Approves unjail of the Validator node by a Trustee. 
+
+The validator is not unjailed until sufficient number of Trustees approve it. 
+
+- Parameters:
+    - `address`
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx validator approve-unjail-node .... `
+- REST API: 
+    -   PATCH `/validators/unjailed/<address>`
             
 #### GET_ALL_VALIDATORS
 Gets all validator nodes.
@@ -1331,6 +1362,28 @@ In order to get an active validator set use `state` query parameter.
     -   `zblcli query validator all-nodes .... `
 - REST API: 
     -   GET `/validators`   
+- Result:
+    ```json
+    {
+      "height": string,
+      "result": {
+        "total": string,
+        "items": [
+          {
+            "description": {
+              "name": string
+            },
+            "address": string,
+            "pubkey": string,
+            "power": string,
+            "jailed": bool,
+            "owner": string
+          },
+          ...
+        ]
+      }
+    }
+    ```
      
 #### GET_VALIDATOR
 Gets a validator node.
@@ -1341,6 +1394,22 @@ Gets a validator node.
     -   `zblcli query validator node .... `
 - REST API: 
     -   GET `/validators/<address>`   
+- Result:
+    ```json
+    {
+      "height": string,
+      "result": {
+        "description": {
+          "name": string
+        },
+        "address": string,
+        "pubkey": string,
+        "power": string,
+        "jailed": bool,
+        "owner": string
+      }
+    }
+    ```
     
 #### GET_ALL_PROPOSED_VALIDATORS_TO_REMOVE
 Gets all proposed but not approved validator nodes to be removed.
@@ -1350,3 +1419,79 @@ Gets all proposed but not approved validator nodes to be removed.
     -   `zblcli query validator all-proposed-nodes-to-remove .... `
 - REST API: 
     -   GET `/validators/proposed/removed`   
+    
+## Extensions
+
+#### STATUS
+Query status of a node.
+
+- Parameters:
+    - `node`: optional(string) - node to query (by default queries the node specified in CLI config file or else "tcp://localhost:26657")
+- CLI command: 
+    -   `zblcli status [--node=<node ip>]`
+        ```
+- REST API: 
+    - GET `/status?node=<node ip>`  
+- Result:
+    ```json
+    {
+      "node_info": {
+        "protocol_version": {
+          "p2p": string
+          "block": string,
+          "app": string
+        },
+        "id": string,
+        "listen_addr": string,
+        "network": string,
+        "version": string,
+        "channels": string,
+        "moniker": string,
+        "other": {
+          "tx_index": string,
+          "rpc_address": string
+        }
+      },
+      "sync_info": {
+        "latest_block_hash": string,
+        "latest_app_hash": string,
+        "latest_block_height": string,
+        "latest_block_time": string,
+        "catching_up": bool
+      },
+      "validator_info": {
+        "address": string,
+        "pub_key": {
+          "type": string,
+          "value": string
+        },
+        "voting_power": string
+      }
+    }
+    ```
+
+#### VALIDATOR_SET
+Get the list of tendermint validators participating in the consensus at given height.
+
+- Parameters:
+    - `height`: optional(uint) - height to query (the latest by default)
+- CLI command: 
+    -   `zblcli tendermint-validator-set [height]`
+        ```
+- REST API: 
+    - GET `/validator-set?height=<height ip>`
+- Result:
+    ```json
+    {
+      "block_height": string,
+      "validators": [
+        {
+          "address": string,
+          "pub_key": string,
+          "proposer_priority": string,
+          "voting_power": string
+        },
+        ...
+      ]
+    }
+    ```
