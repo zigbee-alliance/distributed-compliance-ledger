@@ -32,24 +32,29 @@ This is useful to avoid correlation by the sender's IP address.
         zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
         ```
 - CLI (keys at the edge)
-    - CLI is started in a CLI mode.
-    - A private key is generated and stored off-server (in the user's private wallet).
-    - Register account containing generated `Address` and `PubKey` on the ledger.
-    - Build transaction using the account (`--from`) and `--generate-only` flag.
-    - Sign the transaction manually. `zblcli tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
-    - Broadcast signed transaction using CLI (`broadcast command)
+    - There are two CLIs are started in a CLI mode.
+        - CLI 1: Stores private key. Does not have a connection to pool.
+        - CLI 2: Is connected to pool. Doesn't has access to private key.
+    - CLI 1: A private key is generated and stored off-server (in the user's private wallet).
+    - CLI 2: Register account containing generated `Address` and `PubKey` on the ledger.
+    - CLI 2: Build transaction using the account (`--from`) and `--generate-only` flag.
+    - CLI 2: Fetch `account number` and `sequence`
+    - CLI 1: Sign the transaction manually. `zblcli tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
+    - CLI 2: Broadcast signed transaction using CLI (`broadcast command)
     - Example
         ```json
-        zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
-        zblcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
-        zblcli tx broadcast /home/artem/zb-ledger/txn.json
+        CLI 2: zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
+        CLI 2: zblcli query authnext accounts
+        CLI 1: zblcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
+        CLI 2: zblcli tx broadcast /home/artem/zb-ledger/txn.json
         ```
 - Non-trusted REST API (keys at the edge):
     - CLI is started in a server mode.
     - A private key is generated and stored off-server (in the user's private wallet).
-    - Build transaction
+    - Build transaction one of the following ways
         - The user builds the transaction manually (see `Extensions` section to find transactions format):.
         - The user does a `POST` to the server specifying the transaction parameters. The server builds the transaction.
+        - The user uses corresponding CLI commands with specifying of `--generate-only` flag.
     - Sign the transaction manually using CLI or `tx/sign` endpoint.
     - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`.     
     - Example
@@ -1354,7 +1359,11 @@ Gets all proposed but not approved validator nodes to be removed.
 Sign transaction by the given key.
 
 - Parameters:
-    - `txn` - transaction to sign
+    - `txn` - transaction to sign.
+    - `from` -  name or address of private key to use to sign.
+    - `account-number` - (optional) the account number of the signing account.
+    - `sequence` - (optional) the sequence number of the signing account.
+    - `chain-id` - (optional) chain id.
 - CLI command: 
     -   `zblcli tx sign [path-to-txn-file] --from [address]`
     - Transaction:
@@ -1367,7 +1376,7 @@ Sign transaction by the given key.
                 ],
                 "fee":{
                     "amount":[],
-                    "gas":"200000"
+                    "gas":string
                 },
                 "signatures":null,
                 "memo":""
@@ -1399,7 +1408,7 @@ Sign transaction by the given key.
             }
         }
     ```
-   Note: if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  
+Note: if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  
    
 #### Broadcast
 Broadcast transaction to the ledger.
