@@ -1359,26 +1359,8 @@ The account is not removed until sufficient number of Trustees approve it.
     -   `zblcli tx validator approve-remove-node .... `
 - REST API: 
     -   PATCH `/validators/proposed/removed/<validator_address>`
-           
-#### PROPOSE_UNJAIL_VALIDATOR_NODE
-Proposes removing the Validator node from jailed state and returning to active validator state. 
-
-If more than 1 Trustee signature is required to unjail a node, the node
-will be in a pending state until sufficient number of approvals is received.
-
-- Parameters:
-    - `validator_address`: string // the tendermint validator address; bech32 encoded
-- In State:
-  - `validator` store  
-  - `1:<Validator Address>` : `<Validator + List of Approvals>`
-- Who can send: 
-    - Trustee
-- CLI command: 
-    -   `zblcli tx validator propose-unjail-node --validator-address=<validator address> --from=<trustee>.... `
-- REST API: 
-    -   POST `/validators/unjailed`
-           
-#### APPROVE_UNJAIL_VALIDATOR_NODE
+                      
+#### UNJAIL_VALIDATOR_NODE
 Approves unjail of the Validator node from jailed state and returning to the active validator state. 
 
 If more than 1 Trustee approval is required to unjail a node, the node still
@@ -1395,9 +1377,9 @@ the node will be unjailed and returned to the active validator set.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx validator approve-unjail-node --validator-address=<validator address> --from=<trustee>.... `
+    -   `zblcli tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
 - REST API: 
-    -   PATCH `/validators/unjailed/<validator_address>`
+    -   PATCH `/validators/<validator_address>`
             
 #### GET_ALL_VALIDATORS
 Gets the list of all validator nodes from the store.

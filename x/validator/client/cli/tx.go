@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
-	"os"
-
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -49,7 +47,7 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 
 			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			txBldr, msg, err := BuildCreateValidatorMsg(cliCtx.Context(), txBldr)
+			txBldr, msg, err := BuildCreateValidatorMsg(cliCtx.Context(), txBldr, false)
 			if err != nil {
 				return err
 			}
@@ -58,7 +56,7 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	fsCreateValidator := InitValidatorFlags("")
+	fsCreateValidator := InitValidatorFlags()
 	cmd.Flags().AddFlagSet(fsCreateValidator)
 
 	cmd.MarkFlagRequired(flags.FlagFrom)
@@ -70,12 +68,10 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 }
 
 // Return the flagset for create validator command
-func InitValidatorFlags(ipDefault string) (fs *flag.FlagSet) {
+func InitValidatorFlags() (fs *flag.FlagSet) {
 	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
 	fsCreateValidator.String(FlagAddress, "", "The Bech32 encoded Address of the validator")
 	fsCreateValidator.String(FlagPubKey, "", "The Bech32 encoded ConsensusPubkey of the validator")
-	fsCreateValidator.String(FlagIP, ipDefault, "The node's public IP")
-	fsCreateValidator.String(FlagNodeID, "", "The node's NodeID")
 	fsCreateValidator.String(FlagName, "", "The validator's name")
 	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
 	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
@@ -87,26 +83,11 @@ func InitValidatorFlags(ipDefault string) (fs *flag.FlagSet) {
 func PrepareFlagsForTxCreateValidator(
 	config *cfg.Config, nodeID, chainID string, valPubKey crypto.PubKey,
 ) {
-
-	ip := viper.GetString(FlagIP)
-	if ip == "" {
-		fmt.Fprintf(os.Stderr, "couldn't retrieve an external IP; "+
-			"the tx's memo field will be unset")
-	}
-
-	website := viper.GetString(FlagWebsite)
-	details := viper.GetString(FlagDetails)
-	identity := viper.GetString(FlagIdentity)
-
 	viper.Set(flags.FlagChainID, chainID)
 	viper.Set(FlagNodeID, nodeID)
-	viper.Set(FlagIP, ip)
 	viper.Set(FlagAddress, sdk.ConsAddress(valPubKey.Address()).String())
 	viper.Set(FlagPubKey, sdk.MustBech32ifyConsPub(valPubKey))
 	viper.Set(FlagName, config.Moniker)
-	viper.Set(FlagWebsite, website)
-	viper.Set(FlagDetails, details)
-	viper.Set(FlagIdentity, identity)
 
 	if config.Moniker == "" {
 		viper.Set(FlagName, viper.GetString(flags.FlagName))
@@ -114,7 +95,7 @@ func PrepareFlagsForTxCreateValidator(
 }
 
 // BuildCreateValidatorMsg makes a new MsgCreateValidator.
-func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (auth.TxBuilder, sdk.Msg, error) {
+func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder, isGenesis bool) (auth.TxBuilder, sdk.Msg, error) {
 
 	signer := cliCtx.GetFromAddress()
 
@@ -134,7 +115,7 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder) (
 
 	msg := types.NewMsgCreateValidator(address, pubkey, description, signer)
 
-	if viper.GetBool(client.FlagGenerateOnly) {
+	if isGenesis {
 		ip := viper.GetString(FlagIP)
 		nodeID := viper.GetString(FlagNodeID)
 		if nodeID != "" && ip != "" {
