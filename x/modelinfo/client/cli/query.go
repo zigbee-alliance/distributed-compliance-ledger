@@ -5,7 +5,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -49,7 +48,7 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err_
 			}
 
-			res, height, err := cliCtx.QueryStore(keeper.ModelInfoId(vid, pid), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetModelInfoKey(vid, pid), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrModelInfoDoesNotExist(vid, pid)
 			}
@@ -120,7 +119,7 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err_
 			}
 
-			res, height, err := cliCtx.QueryStore(keeper.VendorProductsId(vid), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetVendorProductsKey(vid), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrVendorProductsDoNotExist(vid)
 			}

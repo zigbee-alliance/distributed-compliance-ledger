@@ -87,21 +87,21 @@ func (ctx CliContext) WithFormerHeight() (CliContext, error) {
 	return ctx, nil
 }
 
-func (ctx CliContext) QueryStore(key string, storeName string) ([]byte, int64, error) {
+func (ctx CliContext) QueryStore(key []byte, storeName string) ([]byte, int64, error) {
 	if viper.GetBool(FlagPreviousHeight) { // Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1
 		ctx, err := ctx.WithFormerHeight()
 		if err != nil {
 			return nil, 0, err
 		}
 
-		res, height, err := ctx.context.QueryStore([]byte(key), storeName)
+		res, height, err := ctx.context.QueryStore(key, storeName)
 		if res != nil {
 			return res, height, err
 		}
 	}
 	// request on the current height
 	ctx.context = ctx.context.WithHeight(0)
-	return ctx.context.QueryStore([]byte(key), storeName)
+	return ctx.context.QueryStore(key, storeName)
 }
 
 func (ctx CliContext) QueryWithData(path string, data interface{}) ([]byte, int64, error) {

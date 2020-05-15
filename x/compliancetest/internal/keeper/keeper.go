@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,10 +14,6 @@ type Keeper struct {
 	cdc *codec.Codec
 }
 
-const (
-	testingResultsPrefix = "1"
-)
-
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{storeKey: storeKey, cdc: cdc}
 }
@@ -30,7 +25,7 @@ func (k Keeper) GetTestingResults(ctx sdk.Context, vid uint16, pid uint16) types
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get([]byte(TestingResultId(vid, pid)))
+	bz := store.Get(types.GetTestingResultsKey(vid, pid))
 
 	var testingResults types.TestingResults
 	k.cdc.MustUnmarshalBinaryBare(bz, &testingResults)
@@ -40,7 +35,7 @@ func (k Keeper) GetTestingResults(ctx sdk.Context, vid uint16, pid uint16) types
 // Sets the entire TestingResults record for a VID/PID combination
 func (k Keeper) SetTestingResults(ctx sdk.Context, testingResult types.TestingResults) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(TestingResultId(testingResult.VID, testingResult.PID)), k.cdc.MustMarshalBinaryBare(testingResult))
+	store.Set(types.GetTestingResultsKey(testingResult.VID, testingResult.PID), k.cdc.MustMarshalBinaryBare(testingResult))
 }
 
 // Add single TestingResult for an existing TestingResults record
@@ -50,20 +45,20 @@ func (k Keeper) AddTestingResult(ctx sdk.Context, testingResult types.TestingRes
 	testingResults.AddTestingResult(testingResult)
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(TestingResultId(testingResult.VID, testingResult.PID)), k.cdc.MustMarshalBinaryBare(testingResults))
+	store.Set(types.GetTestingResultsKey(testingResult.VID, testingResult.PID), k.cdc.MustMarshalBinaryBare(testingResults))
 }
 
 // Check if the TestingResults record is present in the store or not
 func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid uint16, pid uint16) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has([]byte(TestingResultId(vid, pid)))
+	return store.Has(types.GetTestingResultsKey(vid, pid))
 }
 
 // Iterate over all TestingResults records
 func (k Keeper) IterateTestingResults(ctx sdk.Context, process func(info types.TestingResults) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iter := sdk.KVStorePrefixIterator(store, []byte(testingResultsPrefix))
+	iter := sdk.KVStorePrefixIterator(store, types.TestingResultsPrefix)
 	defer iter.Close()
 
 	for {
@@ -83,9 +78,4 @@ func (k Keeper) IterateTestingResults(ctx sdk.Context, process func(info types.T
 
 		iter.Next()
 	}
-}
-
-// Id builder for TestingResults
-func TestingResultId(vid interface{}, pid interface{}) string {
-	return fmt.Sprintf("%s:%v:%v", testingResultsPrefix, vid, pid)
 }

@@ -17,10 +17,6 @@ func RandString() string {
 	return b.String()
 }
 
-func RandInt() int {
-	return time.Now().Second() * time.Now().Second()
-}
-
 func ParseUint(num string) uint64 {
 	val, _ := strconv.ParseUint(num, 10, 64)
 	return val

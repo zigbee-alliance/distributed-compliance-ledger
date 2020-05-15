@@ -3,7 +3,6 @@ package cli
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -44,7 +43,7 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err_
 			}
 
-			res, height, err := cliCtx.QueryStore(keeper.TestingResultId(vid, pid), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetTestingResultsKey(vid, pid), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrTestingResultDoesNotExist(vid, pid)
 			}

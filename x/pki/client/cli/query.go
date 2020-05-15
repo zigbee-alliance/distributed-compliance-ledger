@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/spf13/viper"
 
@@ -59,7 +58,7 @@ func GetCmdProposedX509RootCert(queryRoute string, cdc *codec.Codec) *cobra.Comm
 			subject := viper.GetString(FlagSubject)
 			subjectKeyId := viper.GetString(FlagSubjectKeyId)
 
-			res, height, err := cliCtx.QueryStore(keeper.ProposedCertificateId(subject, subjectKeyId), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetProposedCertificateKey(subject, subjectKeyId), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId)
 			}
@@ -106,7 +105,7 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			subject := viper.GetString(FlagSubject)
 			subjectKeyId := viper.GetString(FlagSubjectKeyId)
 
-			res, height, err := cliCtx.QueryStore(keeper.CertificateId(subject, subjectKeyId), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyId), queryRoute)
 			if err != nil || res == nil {
 				return types.ErrCertificateDoesNotExist(subject, subjectKeyId)
 			}
@@ -150,7 +149,7 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 		Short: "Gets all certificates (root, intermediate and leaf) associated with subject",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			subject := args[0]
+			subject := viper.GetString(FlagSubject)
 			return getAllCertificates(cdc, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s", queryRoute, subject))
 		},
 	}

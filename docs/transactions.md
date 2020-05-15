@@ -141,8 +141,16 @@ A summary of KV store and paths used:
     - Proposed but not approved accounts to be revoked
       - `3:<address>` : `<account info> + <list of approvers>`
 - KV store name: `validator`
-    - Validators
-    - Proposed but not approved accounts to be removed
+    - Main index to store validators (active/jailed)
+      - `1:<Validator Address>` : `<Validator>`
+    - Helper index to track the last active validator set
+      - `2:<Validator Address>` : `<Validator Last Power>`
+    - Helper index to track that each validator owner has only one node
+      - `5:<Account Address>` : `<Validator Address>`
+    - Helper index to track validator signatures
+      - `6:<Validator Address>` : `<Signing Info>`
+    - Helper index to track whether validator signed a block
+      - `7:<Validator Address:index>` : `<bool>`
    
 ## X509 PKI
 
@@ -1260,39 +1268,66 @@ Gets all proposed but not approved accounts to be revoked.
 #### ADD_VALIDATOR_NODE
 Adds a new Validator node.
 
-- Parameters: Same as in `cosmos-sdk/MsgCreateValidator`
-- In State: Same as in Tendermint/Cosmos-sdk
+- Parameters:
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+    - `validator_pubkey`: string // the tendermint validator public key; bech32 encoded
+    - `description`: json
+        - `name`: string // validator name
+        - `identity`: string (optional) // identity signature (ex. UPort or Keybase)
+        - `website`: string (optional) // website link
+        - `details`: string (optional) // details
+- In State:
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
+  - `2:<Validator Address>` : `<Validator Last Power>` - helper index to track the last active validator set
+  - `5:<Account Address>` : `<Validator Address>` - helper index to track that each validator owner has only one node
+  - `6:<Validator Address>` : `<Signing Info>` - helper index to track validator signatures
+  - `7:<Validator Address>:<index>` : `<bool>` - helper index to track validator signatures over blocks window
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `zblcli tx validator add-node .... `
+    -   `zblcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
 - REST API: 
-    -   PUT `/validators/<address>`
+    -   POST `/validators`
     
 #### UPDATE_VALIDATOR_NODE
 Updates the Validator node by the owner.
 
-- Parameters: Same as in `cosmos-sdk/MsgCreateValidator`
-- In State: Same as in Tendermint/Cosmos-sdk
+- Parameters: 
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+    - `description`: json
+        - `name`: string // validator name
+        - `identity`: string (optional) // identity signature (ex. UPort or Keybase)
+        - `website`: string (optional) // website link
+        - `details`: string (optional) // details
+- In State: 
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `zblcli tx validator update-node .... `
+    -   `zblcli tx validator update-node --validator-address=<validator address> --from=<owner>.... `
 - REST API: 
-    -   PUT `/validators/<address>`    
+    -   PUT `/validators/<validator_address>`    
 
 #### REMOVE_VALIDATOR_NODE
 Deletes the Validator node (removes from the validator set) by the owner.
 
 - Parameters:
-    - `address`
-- In State: Same as in Tendermint/Cosmos-sdk
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+- In State: 
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
+  - `2:<Validator Address>` : `<Validator Last Power>` - helper index to track the last active validator set
+  - `5:<Account Address>` : `<Validator Address>` - helper index to track that each validator owner has only one node
+  - `6:<Validator Address>` : `<Signing Info>` - helper index to track validator signatures
+  - `7:<Validator Address>:<index>` : `<bool>` - helper index to track validator signatures over blocks window
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `zblcli tx validator remove-node .... `
+    -   `zblcli tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
 - REST API: 
-    -   DELETE `/validators/<address>`
+    -   DELETE `/validators/<validator_address>`
 
 #### PROPOSE_REMOVE_VALIDATOR_NODE
 Proposes removing the Validator node from the validator set by a Trustee. 
@@ -1301,7 +1336,7 @@ If more than 1 Trustee signature is required to remove a node, the removal
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-    - `address`
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
 - In State: Same as in Tendermint/Cosmos-sdk
 - Who can send: 
     - Trustee
@@ -1316,33 +1351,106 @@ Approves removing of the Validator node by a Trustee.
 The account is not removed until sufficient number of Trustees approve it. 
 
 - Parameters:
-    - `address`
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
 - In State: Same as in Tendermint/Cosmos-sdk
 - Who can send: 
     - Trustee
 - CLI command: 
     -   `zblcli tx validator approve-remove-node .... `
 - REST API: 
-    -   PATCH `/validators/proposed/removed/<address>`
+    -   PATCH `/validators/proposed/removed/<validator_address>`
+                      
+#### UNJAIL_VALIDATOR_NODE
+Approves unjail of the Validator node from jailed state and returning to the active validator state. 
+
+If more than 1 Trustee approval is required to unjail a node, the node still
+will be in a jailed state until sufficient number of approvals is received.
+
+If 1 Trustee approval is required to unjail a nod or sufficient number of approvals is received,
+the node will be unjailed and returned to the active validator set.
+
+- Parameters:
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+- In State:
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator + List of Approvals>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `zblcli tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
+- REST API: 
+    -   PATCH `/validators/<validator_address>`
             
 #### GET_ALL_VALIDATORS
-Gets all validator nodes.
+Gets the list of all validator nodes from the store.
 
-- Parameters: No
+Note: All stored validator nodes (`active` and `jailed`) will be returned by default.
+In order to get an active validator set use `state` query parameter or specific command [validator set](#validator-set).
+
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
+  - `state`: string (optional) - state of the validator (active/jailed)
 - CLI command: 
     -   `zblcli query validator all-nodes .... `
 - REST API: 
     -   GET `/validators`   
+- Result:
+    ```json
+    {
+      "height": string,
+      "result": {
+        "total": string,
+        "items": [
+          {
+            "description": {
+              "name": string // validator name
+              "identity": optional(string) // identity signature (ex. UPort or Keybase)
+              "website": optional(string) // website link
+              "details": optional(string) // additional details
+            },
+            "validator_address": string, // the tendermint validator address
+            "validator_pubkey": string, // the tendermint validator public key
+            "power": string, // validator consensus power
+            "jailed": bool, // has the validator been removed from validator set because of cheating
+            "jailed_reason": optional(string), // the reason of validator jailing
+            "owner": string // the account address of validator owner (original sender of transaction)
+          },
+          ...
+        ]
+      }
+    }
+    ```
      
 #### GET_VALIDATOR
 Gets a validator node.
 
 - Parameters:
-    - `address`
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
 - CLI command: 
-    -   `zblcli query validator node .... `
+    -   `zblcli query validator node --validator-address=<validator address>.... `
 - REST API: 
-    -   GET `/validators/<address>`   
+    -   GET `/validators/<validator_address>`   
+- Result:
+    ```json
+    {
+      "height": string,
+      "result": {
+        "description": {
+          "name": string // validator name
+          "identity": optional(string) // identity signature (ex. UPort or Keybase)
+          "website": optional(string) // website link
+          "details": optional(string) // additional details
+        },
+        "validator_address": string, // the tendermint validator address
+        "validator_pubkey": string, // the tendermint validator public key
+        "power": string, // validator consensus power
+        "jailed": bool, // has the validator been removed from validator set because of cheating
+        "jailed_reason": optional(string), // the reason of validator jailing
+        "owner": string // the account address of validator owner (original sender of transaction)
+      }
+    }
+    ```
     
 #### GET_ALL_PROPOSED_VALIDATORS_TO_REMOVE
 Gets all proposed but not approved validator nodes to be removed.
@@ -1356,7 +1464,7 @@ Gets all proposed but not approved validator nodes to be removed.
     
 ## Extensions    
 
-#### SIGN
+#### Sign
 Sign transaction by the given key.
 
 - Parameters:
@@ -1443,5 +1551,79 @@ Broadcast transaction to the ledger.
             ],
             "memo":""
         }
+    }
+    ```
+  
+#### Status
+Query status of a node.
+
+- Parameters:
+    - `node`: optional(string) - node physical address to query (by default queries the node specified in CLI config file or else "tcp://localhost:26657")
+- CLI command: 
+    -   `zblcli status [--node=<node ip>]`
+        ```
+- REST API: 
+    - GET `/status?node=<node ip>`  
+- Result:
+    ```json
+    {
+      "node_info": {
+        "protocol_version": {
+          "p2p": string
+          "block": string,
+          "app": string
+        },
+        "id": string,
+        "listen_addr": string,
+        "network": string,
+        "version": string,
+        "channels": string,
+        "moniker": string,
+        "other": {
+          "tx_index": string,
+          "rpc_address": string
+        }
+      },
+      "sync_info": {
+        "latest_block_hash": string,
+        "latest_app_hash": string,
+        "latest_block_height": string,
+        "latest_block_time": string,
+        "catching_up": bool
+      },
+      "validator_info": {
+        "address": string,
+        "pub_key": {
+          "type": string,
+          "value": string
+        },
+        "voting_power": string
+      }
+    }
+    ```
+
+#### Validator set
+Get the list of tendermint validators participating in the consensus at given height.
+
+- Parameters:
+    - `height`: optional(uint) - height to query (the latest by default)
+- CLI command: 
+    -   `zblcli tendermint-validator-set [height]`
+        ```
+- REST API: 
+    - GET `/validator-set?height=<height>`
+- Result:
+    ```json
+    {
+      "block_height": string,
+      "validators": [
+        {
+          "address": string,
+          "pub_key": string,
+          "proposer_priority": string,
+          "voting_power": string
+        },
+        ...
+      ]
     }
     ```

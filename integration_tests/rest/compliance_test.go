@@ -6,6 +6,7 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"github.com/stretchr/testify/require"
+	"github.com/tendermint/tendermint/libs/common"
 	"testing"
 	"time"
 )
@@ -120,7 +121,7 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	zb, _ := utils.RegisterNewAccount()
 	utils.AssignRole(zb.Address, jackKeyInfo, authz.ZBCertificationCenter)
 
-	vid, pid := test_constants.VID, test_constants.PID
+	vid, pid := common.RandUint16(), common.RandUint16()
 
 	// Revoke model
 	revocationTime := time.Now().UTC()

@@ -3,7 +3,6 @@ package rest
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"net/http"
@@ -51,7 +50,7 @@ func getProposedX509RootCertHandler(cliCtx context.CLIContext, storeName string)
 		subject := vars[subject]
 		subjectKeyId := vars[subjectKeyId]
 
-		res, height, err := restCtx.QueryStore(keeper.ProposedCertificateId(subject, subjectKeyId), storeName)
+		res, height, err := restCtx.QueryStore(types.GetProposedCertificateKey(subject, subjectKeyId), storeName)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId).Error())
 			return
@@ -72,7 +71,7 @@ func getX509CertHandler(cliCtx context.CLIContext, storeName string) http.Handle
 		subject := vars[subject]
 		subjectKeyId := vars[subjectKeyId]
 
-		res, height, err := restCtx.QueryStore(keeper.CertificateId(subject, subjectKeyId), storeName)
+		res, height, err := restCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyId), storeName)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrCertificateDoesNotExist(subject, subjectKeyId).Error())
 			return

@@ -5,7 +5,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -164,7 +163,7 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec) error {
 
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
-	res, height, err := cliCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), queryRoute)
+	res, height, err := cliCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), queryRoute)
 	if err != nil || res == nil {
 		return types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
 	}
@@ -192,7 +191,7 @@ func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, state types.C
 
 	isInState := types.ComplianceInfoInState{Value: false}
 
-	res, height, err := cliCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), queryRoute)
+	res, height, err := cliCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), queryRoute)
 	if res != nil {
 		var complianceInfo types.ComplianceInfo
 		cdc.MustUnmarshalBinaryBare(res, &complianceInfo)

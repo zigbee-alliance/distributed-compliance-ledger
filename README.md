@@ -275,6 +275,45 @@ Queries:
 
   Example: `zblcli query compliance all-compliance-info-records`
 
+### Validator
+
+Validator type:
+- `validator_address`: `bech32 encoded address` - the tendermint validator address
+- `validator_pubkey`: `bech32 encoded pubkey` - the tendermint validator public key
+- `owner`: `bech32 encoded address` - the account address of validator owner (original sender of transaction)
+- `power`: `int` - validator consensus power
+- `jailed`: `bool` - has the validator been removed from validator set because of cheating
+- `jailed_reason`: (optional) `string` - the reason of validator jailing
+- `description`: 
+    - `name`: `string` - validator name
+    - `identity`:(optional) `string` - identity signature (ex. UPort or Keybase)
+    - `website`:(optional) `string` - website link
+    - `details`:(optional) `string` - additional details
+Permissions:
+- All the transactions below must be signed. Use `--from` flag.
+- Signer must have `NodeAdmin` role. See `Authorization` module for details.
+
+Transactions:
+- ` zblcli tx validator add-node --validator-address=<address> --validator-pubkey=<pubkey> --name=<node name> --from=<account>` - Add a new Validator node.
+  - Signature is required. Use `--from` flag.
+  - Optional flags: 
+    - `--website` string -  optional validator's website
+    - `--identity` string -  optional identity signature
+    - `--details` string -  optional validator's details
+    - `--node-id` string -  optional node's ID
+    - `--ip` string -  node's public IP. It takes effect only when used in combination with `--generate-only` flag
+
+  Example: `zblcli tx validator add-node --validator-address=cosmosvalcons1tl46nm39xtuutvw2wqaeyyd6csknfe0a7xqnrw --validator-pubkey=cosmosvalconspub1zcjduepqn5nz4c8n5jwfmgd6tqfqzu8arpne3au4g7tfsz33g8y6dcvhkf4sw054j8 --name=node1 --from=jack`
+ 
+Queries:
+- `zblcli query validator node --validator-address=<address>` - Query validator node by given validator address.
+
+  Example: `zblcli query validator node --validator-address=cosmosvaloper1jnr3hcrvcpvqm5fdcafg70azkg0awf96tvu79z`
+  
+- `zblcli query validator all-nodes` - Query all validator nodes.
+
+  Example: `zblcli query validator all-nodes`
+  
 ### Authorization
 
 Permissions:
@@ -282,11 +321,12 @@ Permissions:
 - Signer must have `Trustee` role. 
 
 Roles:
-- `Administrator` - Is able to assign or revoke roles.
+- `Administrator` - Is able to assign or revoke roles
 - `Vendor` - Is able to add models
 - `TestHouse` - Is able to add testing results for an model
 - `ZBCertificationCenter` - Is able to certify models
 - `Trustee` - Is able to approve root certificates
+- `NodeAdmin` - Is able to add nodes to validator pool
 
 Transactions:
 - `zblcli tx authz assign-role --address=<bench32 address> --role=<string> --from=<account>` - Assign role to specified account.
@@ -343,4 +383,3 @@ Queries:
  
   Example: `zblcli query authnext accounts`
 
- 

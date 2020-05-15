@@ -22,16 +22,20 @@ cp -r ~/.zblcli/* localnet/client
 
 zbld init node0 --chain-id zblchain
 
-zbld add-genesis-account $(zblcli keys show jack -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show alice -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
-zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
-
-# Update genesis transactions to set jack as admin
 jack_address=$(zblcli keys show jack -a)
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
+alice_address=$(zblcli keys show alice -a)
+bob_address=$(zblcli keys show bob -a)
+anna_address=$(zblcli keys show anna -a)
 
-echo 'test1234' | zbld gentx --name jack
+zbld add-genesis-account $jack_address 1000nametoken,100000000stake
+zbld add-genesis-account $alice_address 1000nametoken,100000000stake
+zbld add-genesis-account $bob_address 1000nametoken,100000000stake
+zbld add-genesis-account $anna_address 1000nametoken,100000000stake
+
+# Update genesis transactions to set roles
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
+
+echo 'test1234' | zbld gentx --from jack
 
 mv ~/.zbld/* localnet/node0
 
@@ -45,9 +49,9 @@ zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
 # Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
-echo 'test1234' | zbld gentx --name alice
+echo 'test1234' | zbld gentx --from alice
 
 mv ~/.zbld/* localnet/node1
 
@@ -61,9 +65,9 @@ zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
 # Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
-echo 'test1234' | zbld gentx --name bob
+echo 'test1234' | zbld gentx --from bob
 
 mv ~/.zbld/* localnet/node2
 
@@ -77,9 +81,9 @@ zbld add-genesis-account $(zblcli keys show bob -a) 1000nametoken,100000000stake
 zbld add-genesis-account $(zblcli keys show anna -a) 1000nametoken,100000000stake
 
 # Update genesis transactions to set jack as admin
-sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\["Trustee"\]}\]/' ~/.zbld/config/genesis.json
+sed -i 's/"account_roles": \[\]/"account_roles": \[{"address":'\""$jack_address\""',"roles":\[\"Trustee"\,\"NodeAdmin\"]},{"address":'\""$alice_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$bob_address\""',"roles":\[\"NodeAdmin\"]},{"address":'\""$anna_address\""',"roles":\[\"NodeAdmin\"]}\]/' ~/.zbld/config/genesis.json
 
-echo 'test1234' | zbld gentx --name anna
+echo 'test1234' | zbld gentx --from anna
 
 cp -r ~/.zbld/* localnet/node3
 

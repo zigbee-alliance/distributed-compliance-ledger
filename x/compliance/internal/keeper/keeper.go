@@ -1,7 +1,6 @@
 package keeper
 
 import (
-	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,10 +14,6 @@ type Keeper struct {
 	cdc *codec.Codec
 }
 
-const (
-	complianceInfoPrefix = "1"
-)
-
 func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{storeKey: storeKey, cdc: cdc}
 }
@@ -30,7 +25,7 @@ func (k Keeper) GetComplianceInfo(ctx sdk.Context, certificationType types.Certi
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get([]byte(ComplianceInfoId(certificationType, vid, pid)))
+	bz := store.Get(types.GetComplianceInfoKey(certificationType, vid, pid))
 
 	var device types.ComplianceInfo
 
@@ -42,14 +37,14 @@ func (k Keeper) GetComplianceInfo(ctx sdk.Context, certificationType types.Certi
 // Sets the entire ComplianceInfo metadata struct for a ComplianceInfoID
 func (k Keeper) SetComplianceInfo(ctx sdk.Context, model types.ComplianceInfo) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set([]byte(ComplianceInfoId(model.CertificationType, model.VID, model.PID)), k.cdc.MustMarshalBinaryBare(model))
+	store.Set(types.GetComplianceInfoKey(model.CertificationType, model.VID, model.PID), k.cdc.MustMarshalBinaryBare(model))
 }
 
 // Iterate over all ComplianceInfos
 func (k Keeper) IterateComplianceInfos(ctx sdk.Context, certificationType types.CertificationType, process func(info types.ComplianceInfo) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iter := sdk.KVStorePrefixIterator(store, []byte(prefix(certificationType)))
+	iter := sdk.KVStorePrefixIterator(store, types.GetCertificationPrefix(certificationType))
 	defer iter.Close()
 
 	for {
@@ -72,36 +67,27 @@ func (k Keeper) IterateComplianceInfos(ctx sdk.Context, certificationType types.
 }
 
 func (k Keeper) CountTotalComplianceInfo(ctx sdk.Context, certificationType types.CertificationType) int {
-	return k.countTotal(ctx, prefix(certificationType))
+	return k.countTotal(ctx, types.GetCertificationPrefix(certificationType))
 }
 
 // Check if the ComplianceInfo is present in the store or not
 func (k Keeper) IsComplianceInfoPresent(ctx sdk.Context, certificationType types.CertificationType, vid uint16, pid uint16) bool {
-	return k.isRecordPresent(ctx, ComplianceInfoId(certificationType, vid, pid))
-}
-
-// Id builder for ComplianceInfo
-func ComplianceInfoId(certificationType types.CertificationType, vid interface{}, pid interface{}) string {
-	return fmt.Sprintf("%s:%v:%v", prefix(certificationType), vid, pid)
-}
-
-func prefix(certificationType types.CertificationType) string {
-	return fmt.Sprintf("%s:%v", complianceInfoPrefix, certificationType)
+	return k.isRecordPresent(ctx, types.GetComplianceInfoKey(certificationType, vid, pid))
 }
 
 // Check if the record is present in the store or not
-func (k Keeper) isRecordPresent(ctx sdk.Context, id string) bool {
+func (k Keeper) isRecordPresent(ctx sdk.Context, id []byte) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has([]byte(id))
+	return store.Has(id)
 }
 
 //  TODO: Is iteration the only way to calculate the total number of elements?
 //  It looks like that in a non-pagination case we iterate twice: to get the total number of elements and to get the real content.
-func (k Keeper) countTotal(ctx sdk.Context, prefix string) int {
+func (k Keeper) countTotal(ctx sdk.Context, prefix []byte) int {
 	store := ctx.KVStore(k.storeKey)
 	res := 0
 
-	iter := sdk.KVStorePrefixIterator(store, []byte(prefix))
+	iter := sdk.KVStorePrefixIterator(store, prefix)
 	defer iter.Close()
 
 	for ; iter.Valid(); iter.Next() {

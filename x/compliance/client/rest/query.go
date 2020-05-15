@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"net/http"
@@ -53,13 +52,13 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 
 	vid, err_ := conversions.ParseVID(vars[vid])
 	if err_ != nil {
-		restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 		return
 	}
 
 	pid, err_ := conversions.ParsePID(vars[pid])
 	if err_ != nil {
-		restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 		return
 	}
 
@@ -67,7 +66,7 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 
 	isInState := types.ComplianceInfoInState{Value: false}
 
-	res, height, err := restCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), storeName)
+	res, height, err := restCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), storeName)
 	if res != nil {
 		var complianceInfo types.ComplianceInfo
 		restCtx.Codec().MustUnmarshalBinaryBare(res, &complianceInfo)
@@ -89,19 +88,19 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 
 	vid, err_ := conversions.ParseVID(vars[vid])
 	if err_ != nil {
-		restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 		return
 	}
 
 	pid, err_ := conversions.ParsePID(vars[pid])
 	if err_ != nil {
-		restCtx.WriteErrorResponse( http.StatusBadRequest, err_.Error())
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 		return
 	}
 
 	certificationType := types.CertificationType(vars[certificationType])
 
-	res, height, err := restCtx.QueryStore(keeper.ComplianceInfoId(certificationType, vid, pid), storeName)
+	res, height, err := restCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), storeName)
 	if err != nil || res == nil {
 		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
 		return

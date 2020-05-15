@@ -4,7 +4,7 @@ const (
 	FlagVID                = "vid"
 	FlagPID                = "pid"
 	FlagTestResult         = "test-result"
-	FlagTestResultShortcut = "tr"
+	FlagTestResultShortcut = "r"
 	FlagTestDate           = "test-date"
-	FlagTestDateShortcut   = "td"
+	FlagTestDateShortcut   = "d"
 )
