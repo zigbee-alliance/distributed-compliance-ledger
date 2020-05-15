@@ -9,8 +9,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -74,87 +72,21 @@ func decodeTx(cdc *codec.Codec, base64str string) (tx auth.StdTx, err error) {
 	return res, nil
 }
 
-func SignTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
-
-		err := r.ParseForm()
-		if err != nil {
-			restCtx.WriteErrorResponse(http.StatusBadRequest,
-				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
-			return
-		}
-
-		account, passphrase, ok := restCtx.BasicAuth()
-		if !ok {
-			restCtx.WriteErrorResponse(http.StatusBadRequest, "Could not find credentials to use")
-			return
-		}
-
-		var signMsg types.StdSignMsg
-		if !restCtx.ReadRESTReq(&signMsg) {
-			return
-		}
-
-		txBldr := auth.NewTxBuilderFromCLI().
-			WithTxEncoder(utils.GetTxEncoder(restCtx.Codec())).
-			WithAccountNumber(signMsg.AccountNumber).
-			WithSequence(signMsg.Sequence).
-			WithChainID(signMsg.ChainID)
-
-		stdTx := auth.StdTx{
-			Msgs:       signMsg.Msgs,
-			Fee:        signMsg.Fee,
-			Signatures: nil,
-			Memo:       signMsg.Memo,
-		}
-
-		signedStdTx, err := txBldr.SignStdTx(account, passphrase, stdTx, false)
-
-		if err != nil {
-			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		restCtx.PostProcessResponse(signedStdTx)
-	}
-}
-
-func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
-
-		var stdTx types.StdTx
-		if !restCtx.ReadRESTReq(&stdTx) {
-			return
-		}
-
-		txBytes, err := restCtx.Codec().MarshalBinaryLengthPrefixed(stdTx)
-		if err != nil {
-			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		res, err := restCtx.BroadcastMessage(txBytes)
-		if err != nil {
-			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
-			return
-		}
-
-		restCtx.PostProcessResponse(res)
-	}
-}
-
-type SignStdTxnRequest struct {
+type SignMessageRequest struct {
 	BaseReq restTypes.BaseReq `json:"base_req"`
-	Txn     types.StdTx       `json:"txn"`
+	Txn     Txn               `json:"txn"`
 }
 
-func SignStdTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+type Txn struct {
+	Type_ string      `json:"type"`
+	Value types.StdTx `json:"value"`
+}
+
+func SignMessageHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		var req SignStdTxnRequest
+		var req SignMessageRequest
 		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
@@ -188,12 +120,37 @@ func SignStdTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		signedStdTx, err := txBldr.SignStdTx(account, passphrase, req.Txn, false)
+		signedStdTx, err := txBldr.SignStdTx(account, passphrase, req.Txn.Value, false)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
 			return
 		}
 
 		restCtx.PostProcessResponse(signedStdTx)
+	}
+}
+
+func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		var stdTx types.StdTx
+		if !restCtx.ReadRESTReq(&stdTx) {
+			return
+		}
+
+		txBytes, err := restCtx.Codec().MarshalBinaryLengthPrefixed(stdTx)
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		res, err := restCtx.BroadcastMessage(txBytes)
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+			return
+		}
+
+		restCtx.PostProcessResponse(res)
 	}
 }

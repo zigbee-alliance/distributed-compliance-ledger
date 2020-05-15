@@ -4,6 +4,7 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz/internal/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -19,50 +20,66 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	authzTxCmd.AddCommand(client.PostCommands(
+	authzTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
 		GetCmdAddAssignRole(cdc),
 		GetCmdRevokeRole(cdc),
-	)...)
+	)...)...)
 
 	return authzTxCmd
 }
 
 func GetCmdAddAssignRole(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "assign-role [addr] [role]",
+	cmd := &cobra.Command{
+		Use:   "assign-role",
 		Short: "Assign new role to the account",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr, err := sdk.AccAddressFromBech32(args[0])
+			addr, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgAssignRole(addr, types.AccountRole(args[1]), cliCtx.FromAddress())
+			msg := types.NewMsgAssignRole(addr, types.AccountRole(viper.GetString(FlagRole)), cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
+
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagRole, "", "Role to assign")
+
+	cmd.MarkFlagRequired(FlagAddress)
+	cmd.MarkFlagRequired(FlagRole)
+
+	return cmd
 }
 
 func GetCmdRevokeRole(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "revoke-role [addr] [role]",
+	cmd := &cobra.Command{
+		Use:   "revoke-role",
 		Short: "Revoke role from the account",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr, err := sdk.AccAddressFromBech32(args[0])
+			addr, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgRevokeRole(addr, types.AccountRole(args[1]), cliCtx.FromAddress())
+			msg := types.NewMsgRevokeRole(addr, types.AccountRole(viper.GetString(FlagRole)), cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
+
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagRole, "", "Role to assign")
+
+	cmd.MarkFlagRequired(FlagAddress)
+	cmd.MarkFlagRequired(FlagRole)
+
+	return cmd
 }

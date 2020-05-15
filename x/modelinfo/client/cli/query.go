@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -31,18 +32,18 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "model [vid] [pid]",
+		Use:   "model",
 		Short: "Query Model by combination of Vendor ID and Product ID",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vid, err_ := conversions.ParseVID(args[0])
+			vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
 			if err_ != nil {
 				return err_
 			}
 
-			pid, err_ := conversions.ParsePID(args[1])
+			pid, err_ := conversions.ParsePID(viper.GetString(FlagPID))
 			if err_ != nil {
 				return err_
 			}
@@ -59,7 +60,13 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+
+	cmd.MarkFlagRequired(FlagVID)
+	cmd.MarkFlagRequired(FlagPID)
+
 	return cmd
 }
 
@@ -101,13 +108,13 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "vendor-models [vid]",
+		Use:   "vendor-models",
 		Short: "Query the list of Models for the given Vendor",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vid, err_ := conversions.ParseVID(args[0])
+			vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
 			if err_ != nil {
 				return err_
 			}
@@ -124,6 +131,10 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+
+	cmd.MarkFlagRequired(FlagVID)
+
 	return cmd
 }

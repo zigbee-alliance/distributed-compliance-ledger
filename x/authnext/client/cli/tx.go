@@ -6,6 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,31 +21,44 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	authnextTxCmd.AddCommand(client.PostCommands(
+	authnextTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
 		GetCmdCreateAccount(cdc),
-	)...)
+	)...)...)
 
 	return authnextTxCmd
 }
 
 func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "create-account [addr] [pub-key]",
+	cmd := &cobra.Command{
+		Use:   "create-account",
 		Short: "Create new account for specified address",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr, err := sdk.AccAddressFromBech32(args[0])
+			addr, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+			if err != nil {
+				return err
+			}
+
+			_, err = sdk.GetAccPubKeyBech32(viper.GetString(FlagPubkey))
 			if err != nil {
 				return err
 			}
 
 			authtypes.NewBaseAccountWithAddress(addr)
 
-			msg := types.NewMsgAddAccount(addr, args[1], cliCtx.FromAddress())
+			msg := types.NewMsgAddAccount(addr, viper.GetString(FlagPubkey), cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
+
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagPubkey, "", "Bench32 encoded public key")
+
+	cmd.MarkFlagRequired(FlagAddress)
+	cmd.MarkFlagRequired(FlagPubkey)
+
+	return cmd
 }

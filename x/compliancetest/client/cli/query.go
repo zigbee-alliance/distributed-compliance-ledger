@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -26,18 +27,18 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 
 func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "test-result [vid] [pid]",
+		Use:   "test-result",
 		Short: "Query testing results for Model (identified by the `vid` and `pid`)",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vid, err_ := conversions.ParseVID(args[0])
+			vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
 			if err_ != nil {
 				return err_
 			}
 
-			pid, err_ := conversions.ParsePID(args[1])
+			pid, err_ := conversions.ParsePID(viper.GetString(FlagPID))
 			if err_ != nil {
 				return err_
 			}
@@ -54,6 +55,12 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+
+	cmd.MarkFlagRequired(FlagVID)
+	cmd.MarkFlagRequired(FlagPID)
+
 	return cmd
 }

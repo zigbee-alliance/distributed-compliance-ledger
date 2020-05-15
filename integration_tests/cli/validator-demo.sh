@@ -18,8 +18,8 @@ address=$(docker exec $container zblcli keys show $account -a)
 pubkey=$(docker exec $container zblcli keys show $account -p)
 
 echo "Create account for $account and Assign NodeAdmin role"
-echo $passphrase | zblcli tx authnext create-account "$address" "$pubkey" --from jack --yes
-echo $passphrase | zblcli tx authz assign-role $address "NodeAdmin" --from jack --yes
+echo $passphrase | zblcli tx authnext create-account --address="$address" --pubkey="$pubkey" --from jack --yes
+echo $passphrase | zblcli tx authz assign-role --address=$address --role="NodeAdmin" --from jack --yes
 
 echo "$account Preapare Node configuration files"
 docker exec $container zbld init $node --chain-id $chain_id
@@ -62,14 +62,14 @@ echo "$result"
 
 echo "Sent transactions using node \"$node\""
 echo "Assign Vendor role to jack"
-echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -a) "Vendor" --from jack --yes
+echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes
 
 echo "Publish Model"
 vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | zblcli tx modelinfo add-model $vid $pid "$name" "Device Description" "SKU12FS" "1.0" "2.0" true --from jack --yes)
+result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -83,7 +83,7 @@ echo "$result"
 
 echo "Query Model using node0 node"
 echo "Get Model with VID: $vid PID: $pid"
-result=$(zblcli query modelinfo model $vid $pid)
+result=$(zblcli query modelinfo model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"name\": \"$name\""

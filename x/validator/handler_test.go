@@ -64,6 +64,9 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// create validator
+	setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address2, authz.NodeAdmin)
+	msgCreateValidator = types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
+		types.Description{Name: constants.Name}, constants.Address2)
 	result = setup.Handler(setup.Ctx, msgCreateValidator)
 	require.Equal(t, types.CodeValidatorAlreadyExist, result.Code)
 }

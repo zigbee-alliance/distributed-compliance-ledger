@@ -15,23 +15,31 @@ leaf_cert_subject_key_id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4
 leaf_cert_serial_number="312128364102099997394566658874957944692446"
 
 echo "Assign Trustee role to Jack"
-result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show jack -a) "Trustee" --from jack --yes)
+result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Trustee" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Assign Trustee role to Alice"
-result=$(echo "test1234" | zblcli tx authz assign-role $(zblcli keys show alice -a) "Trustee" --from jack --yes)
+trustee_account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+echo "Create Trustee account with address: $trustee_account"
+create_account_with_name $trustee_account
+trustee_address=$(zblcli keys show "$trustee_account" -a)
+result=$(echo "test1234" | zblcli tx authz assign-role --address=$trustee_address --role="Trustee" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Anna (Not Trustee) propose Root certificate"
+user_account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+echo "Create regular account with address: $user_account"
+create_account_with_name $user_account
+user_address=$(zblcli keys show "$user_account" -a)
+
+echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
-result=$(echo "test1234" | zblcli tx pki propose-add-x509-root-cert "$root_path" --from anna --yes)
+result=$(echo "test1234" | zblcli tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Request proposed Root certificate"
-result=$(zblcli query pki proposed-x509-root-cert "$root_cert_subject" "$root_cert_subject_key_id")
+result=$(zblcli query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -56,12 +64,12 @@ check_response "$result" "\"total\": \"0\""
 echo "$result"
 
 echo "Jack (Trustee) approve Root certificate"
-result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert "$root_cert_subject" "$root_cert_subject_key_id" --from jack --yes)
+result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Certificate mut be still in Proposed state. Request proposed Root certificate"
-result=$(zblcli query pki proposed-x509-root-cert "$root_cert_subject" "$root_cert_subject_key_id")
+result=$(zblcli query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -73,13 +81,13 @@ result=$(zblcli query pki all-x509-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
 
-echo "Alice (Trustee) approve Root certificate"
-result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert "$root_cert_subject" "$root_cert_subject_key_id" --from alice --yes)
+echo "$trustee_account (Trustee) approve Root certificate"
+result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Certificate mut be Approved. Request Root certificate"
-result=$(zblcli query pki x509-cert "$root_cert_subject" "$root_cert_subject_key_id")
+result=$(zblcli query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -96,14 +104,14 @@ check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
-echo "Bob (Not Trustee) add intermediate certificate"
+echo "$user_account (Not Trustee) add intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "test1234" | zblcli tx pki add-x509-cert "$intermediate_path" --from bob --yes)
+result=$(echo "test1234" | zblcli tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Request intermediate certificate"
-result=$(zblcli query pki x509-cert "$intermediate_cert_subject" "$intermediate_cert_subject_key_id")
+result=$(zblcli query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
@@ -126,14 +134,14 @@ check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
-echo "Alice (Trustee) add leaf certificate"
+echo "$trustee_account (Trustee) add leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
-result=$(echo "test1234" | zblcli tx pki add-x509-cert "$leaf_path" --from alice --yes)
+result=$(echo "test1234" | zblcli tx pki add-x509-cert --certificate="$leaf_path" --from $trustee_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Request leaf certificate"
-result=$(zblcli query pki x509-cert "$leaf_cert_subject" "$leaf_cert_subject_key_id")
+result=$(zblcli query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
@@ -158,7 +166,7 @@ check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
 echo "Request all subject certificates"
-result=$(zblcli query pki all-subject-x509-certs "$leaf_cert_subject")
+result=$(zblcli query pki all-subject-x509-certs --subject="$leaf_cert_subject")
 check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
 echo "$result"
