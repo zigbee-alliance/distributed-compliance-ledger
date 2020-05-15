@@ -1,6 +1,8 @@
 ## Running Node
 
-This document describes in details how to configure and run validator node to a from scratch.
+This document describes in details how to configure a validator node, and add it to the existing pool.
+
+The following instructions are given for running node on Linux machine.
 
 1. Assume we have the following artifacts:
     * Binary artifacts:
@@ -14,8 +16,8 @@ This document describes in details how to configure and run validator node to a 
 
 3. Configure zblcli:
     * `zblcli config chain-id zblchain`
-    * `zblcli config output json` - Output format (text/json)
-    * `zblcli config indent true` - Add indent to JSON response
+    * `zblcli config output json` - Output format (text/json).
+    * `zblcli config indent true` - Add indent to JSON response.
     * `zblcli config trust-node false` - Verify proofs for node responses.
     * `zblcli config node <ip address>` - Address of a node to connect.
 
@@ -33,7 +35,8 @@ This document describes in details how to configure and run validator node to a 
         ```
     * Copy generated `address` and `pubkey` and share them to any `Trustee`. 
     * `Trustee` will register the account on the ledger and assign `NodeAdmin` role.
-    * In order to ensure that account is created and has assigned role you can use the command: `zblcli query authnext account --address=<address>`
+    * In order to ensure that account is created and has assigned role you can use the command: 
+    `zblcli query authnext account --address=<address>`.
     Expected output format: 
         ```json
         {
@@ -54,22 +57,22 @@ This document describes in details how to configure and run validator node to a 
 5. Initialize the node and create the necessary config files:
     * Init Node: `zbld init <node name> --chain-id zblchain`.
     * Put `genesis.json` into zbld's config directory (usually `$HOME/.zbld/config/`).
-    * Edit `persistent_peers` field of `$HOME/.zbld/config/config.toml` file.
-    Set it value into the body of `peers.txt`
+    * Open `$HOME/.zbld/config/config.toml` file in your favorite text redactor and 
+    set into the value of `persistent_peers` filed the content of `persistent_peers.txt` file.
     * Open `26656` (p2p) and `26657` (RPC) ports. 
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
-    * Copy service configuration
+    * Copy service configuration.
         * `cp zbld.service /etc/systemd/system/`
     * Optionally, edit `$HOME/.zbld/config/config.toml` in order to set different setting (like listen address).
 
 6. Add validator node to the network:
-   * Get this node's tendermint validator address: `zbld tendermint show-address`
+   * Get this node's tendermint validator address: `zbld tendermint show-address`.
        Expected output format: 
            ```
            cosmosvalcons1yrs697lxpwugy7h465wskwu2a5w9dgklx608f0
            ```
-   * Get this node's tendermint validator pubkey: `zbld tendermint show-validator`
+   * Get this node's tendermint validator pubkey: `zbld tendermint show-validator`.
        Expected output format: 
            ```
            cosmosvalconspub1zcjduepqcwg4eenpcxgs0269xuup5jlzj3pdquxlvj494cjxtqtcathsq7esfrsapa
@@ -81,11 +84,13 @@ This document describes in details how to configure and run validator node to a 
    
    * Start node: `sudo service zbld start`
 
-7. Check node is running and participate in consensus:
+7. Check the node is running and participates in consensus:
     * Get the list of all nodes: `zblcli query validator all-nodes`. 
     The node must present in the list and has the following params: `power:10` and `jailed:false`.
 
-    * Get the node status: `zblcli status --node <node ip>`
+    * Get the node status: `zblcli status --node <node ip>`. 
+    The value of `node ip` matches to `[rpc] laddr` filed in `$HOME/.zbld/config/config.toml`
+    (TCP or UNIX socket address for the RPC server to listen on).  
        Expected output format: 
         ```json
         {
@@ -124,7 +129,7 @@ This document describes in details how to configure and run validator node to a 
         }
         ```
     
-    * Get the list of nodes participating in the consensus for the last block: `zblcli tendermint-validator-set`
-        * You can pass the additional value to get the result for a specific height: `zblcli tendermint-validator-set 100`  
+    * Get the list of nodes participating in the consensus for the last block: `zblcli tendermint-validator-set`.
+        * You can pass the additional value to get the result for a specific height: `zblcli tendermint-validator-set 100`  .
       
 8. Congrats! You are an owner of the validator node.
