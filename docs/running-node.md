@@ -9,7 +9,7 @@ The following instructions are given for running node on Linux machine.
         * zbld: The binary used for running a node.
         * zblcli: The binary that allow users to interact with pool ledger.
     * Genesis transactions file: `genesis.json`
-    * The list of alive peers: `persistent_peers.txt`
+    * The list of alive peers: `persistent_peers.txt`. It has the following format: `<node id>@<node ip>,<node2 id>@<node2 ip>,...`.
     * The service configuration file `zblcli.service`
 
 2. Put `zbld` and `zblcli` binaries to `/usr/bin/` and configure permissions.
@@ -19,7 +19,9 @@ The following instructions are given for running node on Linux machine.
     * `zblcli config output json` - Output format (text/json).
     * `zblcli config indent true` - Add indent to JSON response.
     * `zblcli config trust-node false` - Verify proofs for node responses.
-    * `zblcli config node <ip address>` - Address of a node to connect.
+    * `zblcli config node <ip address>` - Address of a node to connect. 
+    Choose one of the listed in `persistent_peers.txt` file. 
+    Example: `tcp://18.157.114.34:26657`.
 
 4. Prepare keys and account:
     * zblcli keys add <name> - Derive a new private key and encrypt to disk.
@@ -57,8 +59,8 @@ The following instructions are given for running node on Linux machine.
 5. Initialize the node and create the necessary config files:
     * Init Node: `zbld init <node name> --chain-id zblchain`.
     * Put `genesis.json` into zbld's config directory (usually `$HOME/.zbld/config/`).
-    * Open `$HOME/.zbld/config/config.toml` file in your favorite text redactor and 
-    set into the value of `persistent_peers` filed the content of `persistent_peers.txt` file.
+    * Open `$HOME/.zbld/config/config.toml` file in your favorite text editor and 
+    set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
     * Open `26656` (p2p) and `26657` (RPC) ports. 
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
@@ -89,7 +91,7 @@ The following instructions are given for running node on Linux machine.
     The node must present in the list and has the following params: `power:10` and `jailed:false`.
 
     * Get the node status: `zblcli status --node <node ip>`. 
-    The value of `node ip` matches to `[rpc] laddr` filed in `$HOME/.zbld/config/config.toml`
+    The value of `node ip` matches to `[rpc] laddr` field in `$HOME/.zbld/config/config.toml`
     (TCP or UNIX socket address for the RPC server to listen on).  
        Expected output format: 
         ```json

@@ -2,6 +2,10 @@
   user: ubuntu
   become: yes
   tasks:
+    - name: Remove existing config
+      file:
+        path: "/etc/systemd/system/zblcli.service"
+        state: absent
     - name: Copy service configuration
       copy:
         src: "./../templates/zblcli.service"
