@@ -39,7 +39,7 @@ docker exec $container /bin/sh -c "
 echo "$account Add Node \"$node\" to validator set"
 vaddress=$(docker exec $container zbld tendermint show-address)
 vpubkey=$(docker exec $container zbld tendermint show-validator)
-result=$(docker exec $container /bin/sh -c "echo test1234 | zblcli tx validator add-node --address=$vaddress --pubkey=$vpubkey --name=$node --from=$account --yes")
+result=$(docker exec $container /bin/sh -c "echo test1234 | zblcli tx validator add-node --validator-address=$vaddress --validator-pubkey=$vpubkey --name=$node --from=$account --yes")
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -50,8 +50,8 @@ sleep 10
 echo "Check node \"$node\" is in the validator set"
 result=$(zblcli query validator all-nodes)
 check_response "$result" "\"name\": \"$node\""
-check_response "$result" "\"address\": \"$vaddress\""
-check_response "$result" "\"pubkey\": \"$vpubkey\""
+check_response "$result" "\"validator_address\": \"$vaddress\""
+check_response "$result" "\"validator_pubkey\": \"$vpubkey\""
 echo "$result"
 
 echo "Connect CLI to node \"$node\" and ckeck status"

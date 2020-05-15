@@ -15,7 +15,7 @@ func TestHandler_CreateValidator(t *testing.T) {
 	setup := Setup()
 
 	// create validator
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ConsensusAddress1, constants.ConsensusPubKey1,
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.Name}, constants.Address1)
 	result := setup.Handler(setup.Ctx, msgCreateValidator)
 	require.Equal(t, sdk.CodeOK, result.Code)
@@ -41,7 +41,7 @@ func TestHandler_CreateValidator(t *testing.T) {
 func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	setup := Setup()
 
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ConsensusAddress1, constants.ConsensusPubKey1,
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.Name}, constants.Address2)
 
 	for _, role := range []authz.AccountRole{authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor, authz.Trustee} {
@@ -54,18 +54,34 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	}
 }
 
-func TestHandler_CreateValidator_Twice(t *testing.T) {
+func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	setup := Setup()
 
 	// create validator
-	msgCreateValidator := types.NewMsgCreateValidator(constants.ConsensusAddress1, constants.ConsensusPubKey1,
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.Name}, constants.Address1)
 	result := setup.Handler(setup.Ctx, msgCreateValidator)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// create validator
 	result = setup.Handler(setup.Ctx, msgCreateValidator)
-	require.Equal(t, types.CodeValidatorOperatorAddressExist, result.Code)
+	require.Equal(t, types.CodeValidatorAlreadyExist, result.Code)
+}
+
+func TestHandler_CreateValidator_TwiceForSameValidatorOwner(t *testing.T) {
+	setup := Setup()
+
+	// create validator
+	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
+		types.Description{Name: constants.Name}, constants.Address1)
+	result := setup.Handler(setup.Ctx, msgCreateValidator)
+	require.Equal(t, sdk.CodeOK, result.Code)
+
+	// create validator with different address
+	msgCreateValidator2 := types.NewMsgCreateValidator(constants.ValidatorAddress2, constants.ValidatorPubKey2,
+		types.Description{Name: constants.Name}, constants.Address1)
+	result = setup.Handler(setup.Ctx, msgCreateValidator2)
+	require.Equal(t, types.CodeAccountAlreadyHasNode, result.Code)
 }
 
 func queryValidator(setup TestSetup, address sdk.ConsAddress) (*types.Validator, sdk.Error) {

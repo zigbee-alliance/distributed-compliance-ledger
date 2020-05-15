@@ -11,11 +11,11 @@ func TestKeeper_Validator_SetGet(t *testing.T) {
 	setup := Setup()
 
 	// check if validator present
-	require.False(t, setup.ValidatorKeeper.IsValidatorPresent(setup.Ctx, test_constants.ConsensusAddress1))
+	require.False(t, setup.ValidatorKeeper.IsValidatorPresent(setup.Ctx, test_constants.ValidatorAddress1))
 
 	// no validator before its created
 	require.Panics(t, func() {
-		setup.ValidatorKeeper.GetValidator(setup.Ctx, test_constants.ConsensusAddress1)
+		setup.ValidatorKeeper.GetValidator(setup.Ctx, test_constants.ValidatorAddress1)
 	})
 
 	// create validator
@@ -39,7 +39,7 @@ func TestKeeper_LastValidatorPower_SetGet(t *testing.T) {
 	setup := Setup()
 
 	// empty validator power before it set
-	receivedValidatorPower := setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, test_constants.ConsensusAddress1)
+	receivedValidatorPower := setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, test_constants.ValidatorAddress1)
 	require.Equal(t, types.ZeroPower, receivedValidatorPower.Power)
 
 	// set validator and power

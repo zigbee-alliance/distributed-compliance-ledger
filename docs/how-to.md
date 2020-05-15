@@ -27,9 +27,9 @@ In order to send write transactions to the ledger you need:
 Here is steps for getting an account:
 * Generate keys and local account: `zblcli keys add <name>`.
 * Share generated `address` and `pubkey` to any `Trustee`. 
-* `Trustee` registers the account on the ledger: `zblcli tx authnext create-account <address> <pubkey> --from <trustee>`
-* Optionally, `Trustee` can assign some role to the account: `zblcli tx authz assign-role <address> <role> --from <trustee>`
-* Check account is created: `zblcli query authnext account <address>`
+* `Trustee` registers the account on the ledger: `zblcli tx authnext create-account <account address> <account pubkey> --from <trustee>`
+* Optionally, `Trustee` can assign some role to the account: `zblcli tx authz assign-role <account address> <role> --from <trustee>`
+* Check account is created: `zblcli query authnext account <account address>`
 
 Example:
 * `zblcli keys add jack`
@@ -56,7 +56,7 @@ Here are steps for setting up a new validator node.
     * Get this node's tendermint validator *consensus address*: `zbld tendermint show-address`
     * Get this node's tendermint validator *consensus pubkey*: `zbld tendermint show-validator`
     * Note that *consensus address* and *consensus pubkey* are not the same as `address` and `pubkey` were used for account creation.
-    * Add validator node: `zblcli tx validator add-node --address=<address> --pubkey=<pubkey> --name=<node name> --from=<name>`
+    * Add validator node: `zblcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name>`
     * Start node: `zbld start`
 
 * Congrats! You are an owner of the validator node.
@@ -74,7 +74,7 @@ Example:
 * `sed -i "s/persistent_peers = \"\"/<node id>@<node ip>,<node2 id>@<node2 ip>/g" $HOME/.zbld/config/config.toml`
 * `sudo ufw allow 26656/tcp`
 * `sudo ufw allow 26657/tcp`
-* `zblcli tx validator add-node --address=$(zbld tendermint show-address) --pubkey=$(zbld tendermint show-validator) --name=node-name --from=node_admin`
+* `zblcli tx validator add-node --validator-address=$(zbld tendermint show-address) --validator-pubkey=$(zbld tendermint show-validator) --name=node-name --from=node_admin`
 * `zbld start`
 * `zblcli query validator all-nodes`
 
@@ -88,6 +88,6 @@ Node will be jailed and removed from the active validator set in the following c
 - Node exceeded the maximum number of unsigned blocks withing the window: `SignedBlocksWindow - MinSignedPerWindow`
 
 Note that jailed node will not be removed from the main index to track validator nodes. 
-So it is not possible to create a new node with the same `address`.
+So it is not possible to create a new node with the same `validator address`.
 In order to unjail the node and return it to the active tendermint validator set the sufficient number of Trustee's approvals is needed 
 (see authorization rules).

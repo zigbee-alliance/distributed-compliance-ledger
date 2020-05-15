@@ -36,7 +36,7 @@ func TestQuerier_QueryValidator_ForUnknown(t *testing.T) {
 	// query validator
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryValidator, test_constants.ConsensusAddress1.String()},
+		[]string{QueryValidator, test_constants.ValidatorAddress1.String()},
 		abci.RequestQuery{},
 	)
 

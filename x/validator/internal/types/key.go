@@ -23,6 +23,7 @@ var (
 	ValidatorPrefix          = []byte{0x01} // prefix for each key to a validator
 	ValidatorLastPowerPrefix = []byte{0x02} // prefix for each key to a validator index, by last power
 
+	ValidatorOwnerPrefix               = []byte{0x05} // prefix for validator owner
 	ValidatorSigningInfoPrefix         = []byte{0x06} // prefix for validator signing info
 	ValidatorMissedBlockBitArrayPrefix = []byte{0x07} // prefix for validator missed blocks
 
@@ -41,6 +42,11 @@ func GetValidatorLastPowerKey(addr sdk.ConsAddress) []byte {
 // Key builder for Validator signing info record
 func GetValidatorSigningInfoKey(addr sdk.ConsAddress) []byte {
 	return append(ValidatorSigningInfoPrefix, addr.Bytes()...)
+}
+
+// Key builder for Validator owner record
+func GetValidatorOwnerKey(addr sdk.AccAddress) []byte {
+	return append(ValidatorOwnerPrefix, addr.Bytes()...)
 }
 
 func GetValidatorMissedBlockBitArrayPrefixKey(v sdk.ConsAddress) []byte {

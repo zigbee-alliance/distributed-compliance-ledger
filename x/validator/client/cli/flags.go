@@ -2,8 +2,8 @@ package cli
 
 // nolint
 const (
-	FlagAddress  = "address"
-	FlagPubKey   = "pubkey"
+	FlagAddress  = "validator-address"
+	FlagPubKey   = "validator-pubkey"
 	FlagName     = "name"
 	FlagIdentity = "identity"
 	FlagWebsite  = "website"

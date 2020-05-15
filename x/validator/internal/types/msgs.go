@@ -7,8 +7,8 @@ import (
 )
 
 type MsgCreateValidator struct {
-	Address     sdk.ConsAddress `json:"address"`
-	PubKey      string          `json:"pubkey"`
+	Address     sdk.ConsAddress `json:"validator_address"`
+	PubKey      string          `json:"validator_pubkey"`
 	Description Description     `json:"description"`
 	Signer      sdk.AccAddress  `json:"signer"`
 }
@@ -33,16 +33,16 @@ func (m MsgCreateValidator) ValidateBasic() sdk.Error {
 	}
 
 	if m.Address.Empty() {
-		return sdk.ErrUnknownRequest("Invalid Validator Consensus Address: it cannot be empty")
+		return sdk.ErrUnknownRequest("Invalid Validator Address: it cannot be empty")
 	}
 
 	pubkey, err := sdk.GetConsPubKeyBech32(m.PubKey)
 	if err != nil {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Validator Consensus Public Key: %v", err))
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Validator Public Key: %v", err))
 	}
 
 	if !m.Address.Equals(sdk.ConsAddress(pubkey.Address())) {
-		return sdk.ErrUnknownRequest("Validator Consensus Pubkey does not match to Validator Address")
+		return sdk.ErrUnknownRequest("Validator Pubkey does not match to Validator Address")
 	}
 
 	if len(m.Description.Name) == 0 {

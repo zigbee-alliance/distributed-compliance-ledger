@@ -12,8 +12,8 @@ import (
 
 type CreateValidatorRequest struct {
 	BaseReq     restTypes.BaseReq `json:"base_req"`
-	Address     sdk.ConsAddress   `json:"address"`
-	Pubkey      string            `json:"pubkey"`
+	Address     sdk.ConsAddress   `json:"validator_address"`
+	Pubkey      string            `json:"validator_pubkey"`
 	Description types.Description `json:"description"`
 }
 

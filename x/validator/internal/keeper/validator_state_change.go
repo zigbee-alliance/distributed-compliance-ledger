@@ -47,7 +47,7 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 	consAddr := sdk.ConsAddress(addr)
 
 	if !k.IsValidatorPresent(ctx, consAddr) {
-		logger.Error(fmt.Sprintf("Validator by consensus address %s not found", consAddr))
+		logger.Error(fmt.Sprintf("Validator by validator address %s not found", consAddr))
 		return
 	}
 
@@ -141,7 +141,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address, infractio
 	consAddr := sdk.ConsAddress(addr)
 
 	if !k.IsValidatorPresent(ctx, consAddr) {
-		logger.Error(fmt.Sprintf("Validator by consensus address %s not found", consAddr))
+		logger.Error(fmt.Sprintf("Validator by validator address %s not found", consAddr))
 		return
 	}
 

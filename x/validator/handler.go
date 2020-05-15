@@ -30,6 +30,10 @@ func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator, k K
 		return sdk.ErrUnauthorized(fmt.Sprintf("CreateValidator transaction should be signed by an account with the \"%s\" role", authz.NodeAdmin)).Result()
 	}
 
+	if k.AccountHasValidator(ctx, msg.Signer){
+		return types.ErrAccountAlreadyHasNode(msg.Signer).Result()
+	}
+
 	// check if we has not reached the limit of nodes
 	if k.CountLastValidators(ctx) == types.MaxNodes {
 		return types.ErrPoolIsFull().Result()
@@ -39,8 +43,6 @@ func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator, k K
 	if k.IsValidatorPresent(ctx, msg.Address) {
 		return types.ErrValidatorExists(msg.Address).Result()
 	}
-
-	// TODO: can one account (msg.Signer) posses several nodes?
 
 	// check key type
 	if ctx.ConsensusParams() != nil {
@@ -56,6 +58,7 @@ func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator, k K
 	validator := NewValidator(msg.Address, msg.PubKey, msg.Description, msg.Signer)
 
 	k.SetValidator(ctx, validator)
+	k.SetValidatorOwner(ctx, msg.Signer, msg.Address)
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(

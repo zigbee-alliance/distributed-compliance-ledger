@@ -30,7 +30,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 /*
-	Validator by Validator Consensus Address
+	Validator by Validator Address
 */
 
 // Gets the entire Validator record associated with a validator address
@@ -122,6 +122,7 @@ func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
 	}
 
 	validator.Jailed = false
+	validator.JailedReason = ""
 	k.SetValidator(ctx, validator)
 }
 
@@ -225,4 +226,20 @@ func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator ty
 
 		iter.Next()
 	}
+}
+
+/*
+	Helper Index to track that Account has only one node
+*/
+// Sets the helper record to track that account has stored node
+func (k Keeper) SetValidatorOwner(ctx sdk.Context, account sdk.AccAddress, validatorAddress sdk.ConsAddress) {
+	store := ctx.KVStore(k.storeKey)
+	bz := k.cdc.MustMarshalBinaryLengthPrefixed(validatorAddress)
+	store.Set(types.GetValidatorOwnerKey(account), bz)
+}
+
+// Check if the account has stored node
+func (k Keeper) AccountHasValidator(ctx sdk.Context, addr sdk.AccAddress) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.GetValidatorOwnerKey(addr))
 }

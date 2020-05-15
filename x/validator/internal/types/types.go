@@ -15,12 +15,12 @@ import (
 */
 type Validator struct {
 	Description  Description     `json:"description"`             // description of the validator
-	Address      sdk.ConsAddress `json:"address"`                 // the consensus address of the validator's operator
-	PubKey       string          `json:"pubkey"`                  // the consensus public key of the validator
+	Address      sdk.ConsAddress `json:"validator_address"`       // the consensus address of the tendermint validator
+	PubKey       string          `json:"validator_pubkey"`        // the consensus public key of the tendermint validator
 	Power        int64           `json:"power"`                   // validator consensus power
 	Jailed       bool            `json:"jailed"`                  // has the validator been removed from validator set
 	JailedReason string          `json:"jailed_reason,omitempty"` // the reason of validator jailing
-	Owner        sdk.AccAddress  `json:"owner"`                   // validator owner
+	Owner        sdk.AccAddress  `json:"owner"`                   // the account address of validator owner
 }
 
 func NewValidator(address sdk.ConsAddress, pubKey string, description Description, owner sdk.AccAddress) Validator {
@@ -54,7 +54,7 @@ func (v Validator) IsJailed() bool { return v.Jailed }
 func (v Validator) ABCIValidatorUpdate() abci.ValidatorUpdate {
 	return abci.ValidatorUpdate{
 		PubKey: tmtypes.TM2PB.PubKey(v.GetConsPubKey()),
-		Power:  Power,
+		Power:  v.GetPower(),
 	}
 }
 
@@ -146,7 +146,7 @@ func (d Description) Validate() sdk.Error {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Identity: received string of lenght %v, max is %v", len(d.Identity), MaxIdentityLength))
 	}
 	if len(d.Website) > MaxWebsiteLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Identity: received string of lenght %v, max is %v", len(d.Website), MaxWebsiteLength))
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Website: received string of lenght %v, max is %v", len(d.Website), MaxWebsiteLength))
 	}
 	if len(d.Details) > MaxDetailsLength {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Details: received string of lenght %v, max is %v", len(d.Details), MaxDetailsLength))
