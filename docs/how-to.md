@@ -27,15 +27,15 @@ In order to send write transactions to the ledger you need:
 Here is steps for getting an account:
 * Generate keys and local account: `zblcli keys add <name>`.
 * Share generated `address` and `pubkey` to any `Trustee`. 
-* `Trustee` registers the account on the ledger: `zblcli tx authnext create-account <account address> <account pubkey> --from <trustee>`
-* Optionally, `Trustee` can assign some role to the account: `zblcli tx authz assign-role <account address> <role> --from <trustee>`
-* Check account is created: `zblcli query authnext account <account address>`
+* `Trustee` registers the account on the ledger: `zblcli tx authnext create-account --address=<account address> --pubkey=<account pubkey> --from <trustee>`
+* Optionally, `Trustee` can assign some role to the account: `zblcli tx authz assign-role --address=<account address> --role=<role> --from <trustee>`
+* Check account is created: `zblcli query authnext account --address=<account address>`
 
 Example:
 * `zblcli keys add jack`
-* `zblcli tx authnext create-account cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --from trustee`
-* `zblcli tx authz assign-role cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv "NodeAdmin" --from trustee`
-* `zblcli query authnext account cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
+* `zblcli tx authnext create-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --from trustee`
+* `zblcli tx authz assign-role --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --role="NodeAdmin" --from trustee`
+* `zblcli query authnext account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
 ### Setting up a new Validator Node
 
