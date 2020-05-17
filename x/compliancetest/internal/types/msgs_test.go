@@ -1,5 +1,7 @@
+//nolint:testpackage
 package types
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,12 +11,12 @@ import (
 )
 
 func TestNewMsgAddTestingResult(t *testing.T) {
-	var msg = NewMsgAddTestingResult(test_constants.VID, test_constants.PID, test_constants.TestResult,
-		test_constants.TestDate, test_constants.Signer)
+	var msg = NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
+		testconstants.TestDate, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "add_testing_result")
-	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{test_constants.Signer})
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
 
 func TestMsgAddTestingResultValidation(t *testing.T) {
@@ -23,21 +25,22 @@ func TestMsgAddTestingResultValidation(t *testing.T) {
 		msg   MsgAddTestingResult
 	}{
 		{true, NewMsgAddTestingResult(
-			test_constants.VID, test_constants.PID, test_constants.TestResult, test_constants.TestDate, test_constants.Signer)},
+			testconstants.VID, testconstants.PID, testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			0, test_constants.PID, test_constants.TestResult, test_constants.TestDate, test_constants.Signer)},
+			0, testconstants.PID, testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			test_constants.VID, 0, test_constants.TestResult, test_constants.TestDate, test_constants.Signer)},
+			testconstants.VID, 0, testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			test_constants.VID, test_constants.PID, "", test_constants.TestDate, test_constants.Signer)},
+			testconstants.VID, testconstants.PID, "", testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			test_constants.VID, test_constants.PID, test_constants.TestResult, time.Time{}, test_constants.Signer)},
+			testconstants.VID, testconstants.PID, testconstants.TestResult, time.Time{}, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			test_constants.VID, test_constants.PID, test_constants.TestResult, test_constants.TestDate, nil)},
+			testconstants.VID, testconstants.PID, testconstants.TestResult, testconstants.TestDate, nil)},
 	}
 
 	for _, tc := range cases {
 		err := tc.msg.ValidateBasic()
+
 		if tc.valid {
 			require.Nil(t, err)
 		} else {
@@ -47,12 +50,12 @@ func TestMsgAddTestingResultValidation(t *testing.T) {
 }
 
 func TestMsgAddTestingResultGetSignBytes(t *testing.T) {
-	var msg = NewMsgAddTestingResult(test_constants.VID, test_constants.PID, test_constants.TestResult,
-		test_constants.TestDate, test_constants.Signer)
-	res := msg.GetSignBytes()
+	var msg = NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
+		testconstants.TestDate, testconstants.Signer)
 
-	expected := `{"type":"compliancetest/AddTestingResult","value":{"pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+	expected := `{"type":"compliancetest/AddTestingResult","value":{"pid":22,"signer":` +
+		`"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"test_date":"2020-02-02T02:00:00Z","test_result":"http://test.result.com","vid":1}}`
 
-	require.Equal(t, expected, string(res))
+	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

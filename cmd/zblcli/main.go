@@ -1,5 +1,6 @@
 package main
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
@@ -51,7 +52,8 @@ func main() {
 	}
 
 	rootCmd.PersistentFlags().String(client.FlagBroadcastMode, settings.DefaultBroadcastMode,
-		fmt.Sprintf("Transaction broadcast mode to use (%s, %s, %s)", flags.BroadcastBlock, flags.BroadcastSync, flags.BroadcastAsync))
+		fmt.Sprintf("Transaction broadcast mode to use (%s, %s, %s)",
+			flags.BroadcastBlock, flags.BroadcastSync, flags.BroadcastAsync))
 
 	viper.SetDefault(client.FlagBroadcastMode, settings.DefaultBroadcastMode)
 

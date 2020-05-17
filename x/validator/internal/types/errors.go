@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,5 +32,6 @@ func ErrPoolIsFull() sdk.Error {
 
 func ErrAccountAlreadyHasNode(address interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeAccountAlreadyHasNode,
-		fmt.Sprintf("There is already node stored on the ledger managed by an account associated with the address=\"%v\"", address))
+		fmt.Sprintf("There is already node stored on the ledger managed by an account"+
+			" associated with the address=\"%v\"", address))
 }

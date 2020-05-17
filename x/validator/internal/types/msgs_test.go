@@ -1,5 +1,7 @@
+//nolint:testpackage
 package types
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,8 +14,8 @@ import (
 */
 
 func TestNewMsgCreateValidator(t *testing.T) {
-	var msg = NewMsgCreateValidator(test_constants.ValidatorAddress1, test_constants.ValidatorPubKey1,
-		Description{Name: test_constants.Name}, test_constants.Owner)
+	var msg = NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
+		Description{Name: testconstants.Name}, testconstants.Owner)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "create_validator")
@@ -25,20 +27,21 @@ func TestValidateMsgCreateValidator(t *testing.T) {
 		valid bool
 		msg   MsgCreateValidator
 	}{
-		{true, NewMsgCreateValidator(test_constants.ValidatorAddress1, test_constants.ValidatorPubKey1,
-			Description{Name: test_constants.Name}, test_constants.Owner)},
-		{false, NewMsgCreateValidator(nil, test_constants.PubKey,
-			Description{Name: test_constants.Name}, test_constants.Owner)},
-		{false, NewMsgCreateValidator(test_constants.ValidatorAddress1, "",
-			Description{Name: test_constants.Name}, test_constants.Owner)},
-		{false, NewMsgCreateValidator(test_constants.ValidatorAddress1, test_constants.PubKey,
-			Description{}, test_constants.Owner)},
-		{false, NewMsgCreateValidator(test_constants.ValidatorAddress1, test_constants.PubKey,
-			Description{Name: test_constants.Name}, nil)},
+		{true, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
+			Description{Name: testconstants.Name}, testconstants.Owner)},
+		{false, NewMsgCreateValidator(nil, testconstants.PubKey,
+			Description{Name: testconstants.Name}, testconstants.Owner)},
+		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, "",
+			Description{Name: testconstants.Name}, testconstants.Owner)},
+		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.PubKey,
+			Description{}, testconstants.Owner)},
+		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.PubKey,
+			Description{Name: testconstants.Name}, nil)},
 	}
 
 	for _, tc := range cases {
 		err := tc.msg.ValidateBasic()
+
 		if tc.valid {
 			require.Nil(t, err)
 		} else {
@@ -48,13 +51,12 @@ func TestValidateMsgCreateValidator(t *testing.T) {
 }
 
 func TestMsgCreateValidatorGetSignBytes(t *testing.T) {
-	var msg = NewMsgCreateValidator(test_constants.ValidatorAddress1, test_constants.ValidatorPubKey1,
-		Description{Name: "Test"}, test_constants.Owner)
-	res := msg.GetSignBytes()
+	var msg = NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
+		Description{Name: "Test"}, testconstants.Owner)
 
 	expected := `{"type":"validator/CreateValidator","value":{` +
 		`"description":{"name":"Test"},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"validator_address":"cosmosvalcons158uwzeqeu7zg332ztuzc5xh9k5uy3h5ttegzxd",` +
 		`"validator_pubkey":"cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"}}`
-	require.Equal(t, expected, string(res))
+	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

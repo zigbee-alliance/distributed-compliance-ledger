@@ -1,5 +1,7 @@
+//nolint:testpackage
 package validator
 
+//nolint:goimports
 import (
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
@@ -44,7 +46,8 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.Name}, constants.Address2)
 
-	for _, role := range []authz.AccountRole{authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor, authz.Trustee} {
+	for _, role := range []authz.AccountRole{authz.Administrator, authz.TestHouse,
+		authz.ZBCertificationCenter, authz.Vendor, authz.Trustee} {
 		// assign role
 		setup.AuthzKeeper.AssignRole(setup.Ctx, msgCreateValidator.Signer, role)
 
@@ -100,6 +103,7 @@ func queryValidator(setup TestSetup, address sdk.ConsAddress) (*types.Validator,
 	}
 
 	var validator types.Validator
+
 	setup.Cdc.MustUnmarshalJSON(result, &validator)
 
 	return &validator, nil

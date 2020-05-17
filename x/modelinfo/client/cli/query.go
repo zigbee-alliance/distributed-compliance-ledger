@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -64,8 +65,8 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
 
 	return cmd
 }
@@ -134,7 +135,7 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
-	cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagVID)
 
 	return cmd
 }

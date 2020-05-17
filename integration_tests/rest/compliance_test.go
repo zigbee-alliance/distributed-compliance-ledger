@@ -1,5 +1,6 @@
-package rest
+package rest_test
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
@@ -11,6 +12,7 @@ import (
 	"time"
 )
 
+//nolint:godox
 /*
 	To Run test you need:
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
@@ -19,9 +21,10 @@ import (
 	TODO: provide tests for error cases
 */
 
+//nolint:funlen
 func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Get key info for Jack (Trustee)
-	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
+	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
 
 	// Register new Vendor account
 	vendor, _ := utils.RegisterNewAccount()
@@ -61,7 +64,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 	// Certify model
 	certifyModelMsg := compliance.NewMsgCertifyModel(modelInfo.VID, modelInfo.PID, time.Now().UTC(),
-		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, zb.Address)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zb.Address)
 	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zb)
 
 	// Check model is certified
@@ -78,7 +81,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Revoke model certification
 	revocationTime := certifyModelMsg.CertificationDate.AddDate(0, 0, 1)
 	revokeModelMsg := compliance.NewMsgRevokeModel(modelInfo.VID, modelInfo.PID, revocationTime,
-		compliance.CertificationType(test_constants.CertificationType), test_constants.RevocationReason, zb.Address)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zb.Address)
 	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
 
 	// Check model is revoked
@@ -109,7 +112,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
+	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
 
 	// Get all certified models
 	inputCertifiedModels, _ := utils.GetAllCertifiedModels()
@@ -126,14 +129,16 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Revoke model
 	revocationTime := time.Now().UTC()
 	revokeModelMsg := compliance.NewMsgRevokeModel(vid, pid, revocationTime,
-		compliance.CertificationType(test_constants.CertificationType), test_constants.RevocationReason, zb.Address)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zb.Address)
 	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
 
 	// Check model is revoked
-	modelIsRevoked, _ := utils.GetRevokedModel(revokeModelMsg.VID, revokeModelMsg.PID, revokeModelMsg.CertificationType)
+	modelIsRevoked, _ := utils.GetRevokedModel(revokeModelMsg.VID,
+		revokeModelMsg.PID, revokeModelMsg.CertificationType)
 	require.True(t, modelIsRevoked.Value)
 
-	modelIsCertified, _ := utils.GetCertifiedModel(revokeModelMsg.VID, revokeModelMsg.PID, revokeModelMsg.CertificationType)
+	modelIsCertified, _ := utils.GetCertifiedModel(revokeModelMsg.VID,
+		revokeModelMsg.PID, revokeModelMsg.CertificationType)
 	require.False(t, modelIsCertified.Value)
 
 	// Get all revoked models
@@ -143,14 +148,16 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Certify model
 	certificationTime := revocationTime.AddDate(0, 0, 1)
 	certifyModelMsg := compliance.NewMsgCertifyModel(vid, pid, certificationTime,
-		compliance.CertificationType(test_constants.CertificationType), test_constants.EmptyString, zb.Address)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zb.Address)
 	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zb)
 
 	// Check model is certified
-	modelIsRevoked, _ = utils.GetRevokedModel(certifyModelMsg.VID, certifyModelMsg.PID, certifyModelMsg.CertificationType)
+	modelIsRevoked, _ = utils.GetRevokedModel(certifyModelMsg.VID,
+		certifyModelMsg.PID, certifyModelMsg.CertificationType)
 	require.False(t, modelIsRevoked.Value)
 
-	modelIsCertified, _ = utils.GetCertifiedModel(certifyModelMsg.VID, certifyModelMsg.PID, certifyModelMsg.CertificationType)
+	modelIsCertified, _ = utils.GetCertifiedModel(certifyModelMsg.VID,
+		certifyModelMsg.PID, certifyModelMsg.CertificationType)
 	require.True(t, modelIsCertified.Value)
 
 	// Get all certified models

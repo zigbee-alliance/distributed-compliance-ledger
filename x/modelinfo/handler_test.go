@@ -1,5 +1,7 @@
+//nolint:testpackage
 package modelinfo
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
@@ -57,10 +59,10 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	for _, role := range []authz.AccountRole{authz.Trustee, authz.TestHouse, authz.Administrator, authz.Vendor} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
+		setup.AuthzKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
 
 		// update existing model by not owner
-		msgUpdatedModelInfo := TestMsgUpdatedModelInfo(test_constants.Address3)
+		msgUpdatedModelInfo := TestMsgUpdatedModelInfo(testconstants.Address3)
 		result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
 		require.Equal(t, sdk.CodeUnauthorized, result.Code)
 	}
@@ -83,7 +85,7 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query model
-	receivedModelInfo := queryModelInfo(setup, test_constants.VID, test_constants.PID)
+	receivedModelInfo := queryModelInfo(setup, testconstants.VID, testconstants.PID)
 
 	// check
 	require.Equal(t, receivedModelInfo.CID, uint16(0))
@@ -94,10 +96,10 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 	setup := Setup()
 
 	for _, role := range []authz.AccountRole{authz.Trustee, authz.TestHouse, authz.Administrator} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
+		setup.AuthzKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
 
 		// add new model
-		modelInfo := TestMsgAddModelInfo(test_constants.Address3)
+		modelInfo := TestMsgAddModelInfo(testconstants.Address3)
 		result := setup.Handler(setup.Ctx, modelInfo)
 		require.Equal(t, sdk.CodeUnauthorized, result.Code)
 	}
@@ -136,5 +138,6 @@ func queryModelInfo(setup TestSetup, vid uint16, pid uint16) types.ModelInfo {
 
 	var receivedModelInfo types.ModelInfo
 	_ = setup.Cdc.UnmarshalJSON(result, &receivedModelInfo)
+
 	return receivedModelInfo
 }

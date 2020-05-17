@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
@@ -39,7 +40,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(compliancetestKeeper)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	setup := TestSetup{
 		Cdc:                  cdc,
@@ -47,20 +48,22 @@ func Setup() TestSetup {
 		CompliancetestKeeper: compliancetestKeeper,
 		Querier:              querier,
 	}
+
 	return setup
 }
 
 func DefaultTestingResult() types.TestingResult {
 	return types.TestingResult{
-		VID:        test_constants.VID,
-		PID:        test_constants.PID,
-		TestResult: test_constants.TestResult,
-		TestDate:   test_constants.TestDate,
-		Owner:      test_constants.Owner,
+		VID:        testconstants.VID,
+		PID:        testconstants.PID,
+		TestResult: testconstants.TestResult,
+		TestDate:   testconstants.TestDate,
+		Owner:      testconstants.Owner,
 	}
 }
 
-func CheckTestingResult(t *testing.T, receivedTestingResult types.TestingResultItem, expectedTestingResult types.TestingResult) {
+func CheckTestingResult(t *testing.T, receivedTestingResult types.TestingResultItem,
+	expectedTestingResult types.TestingResult) {
 	require.Equal(t, receivedTestingResult.Owner, expectedTestingResult.Owner)
 	require.Equal(t, receivedTestingResult.TestResult, expectedTestingResult.TestResult)
 	require.Equal(t, receivedTestingResult.TestDate, expectedTestingResult.TestDate)

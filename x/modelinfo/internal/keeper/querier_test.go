@@ -1,5 +1,7 @@
+//nolint:testpackage
 package keeper
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
@@ -41,7 +43,7 @@ func TestQuerier_QueryModelForUnknown(t *testing.T) {
 	// query model
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryModel, fmt.Sprintf("%v", test_constants.VID), fmt.Sprintf("%v", test_constants.PID)},
+		[]string{QueryModel, fmt.Sprintf("%v", testconstants.VID), fmt.Sprintf("%v", testconstants.PID)},
 		abci.RequestQuery{},
 	)
 
@@ -56,7 +58,7 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	count := 5
 
 	// add 5 models
-	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
+	firstID := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	// query all models
 	params := pagination.NewPaginationParams(0, 0)
@@ -67,8 +69,8 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	require.Equal(t, count, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, uint16(i)+firstId, item.VID)
-		require.Equal(t, uint16(i)+firstId, item.PID)
+		require.Equal(t, uint16(i)+firstID, item.VID)
+		require.Equal(t, uint16(i)+firstID, item.PID)
 	}
 }
 
@@ -77,7 +79,7 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	count := 5
 
 	// add 5 models
-	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
+	firstID := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	// query all models skip=1 take=2
 	skip := 1
@@ -90,7 +92,7 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	require.Equal(t, take, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.VID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstID, item.VID)
 	}
 }
 
@@ -100,7 +102,7 @@ func TestQuerier_QueryVendorsForModelsHaveDifferentVendors(t *testing.T) {
 	count := 5
 
 	// add 5 models with different vendors
-	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
+	firstID := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	params := pagination.NewPaginationParams(0, 0)
 
@@ -112,7 +114,7 @@ func TestQuerier_QueryVendorsForModelsHaveDifferentVendors(t *testing.T) {
 	require.Equal(t, count, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, uint16(i)+firstId, item.VID)
+		require.Equal(t, uint16(i)+firstID, item.VID)
 	}
 }
 
@@ -121,7 +123,7 @@ func TestQuerier_QueryVendorsForModelsHaveSameVendor(t *testing.T) {
 	count := 5
 
 	// add 5 models with same vendors
-	firstId := PopulateStoreWithModelsHavingSameVendor(setup, count)
+	firstID := PopulateStoreWithModelsHavingSameVendor(setup, count)
 
 	params := pagination.NewPaginationParams(0, 0)
 
@@ -132,7 +134,7 @@ func TestQuerier_QueryVendorsForModelsHaveSameVendor(t *testing.T) {
 	expectedCount := 1
 	require.Equal(t, expectedCount, receiveModelInfos.Total)
 	require.Equal(t, expectedCount, len(receiveModelInfos.Items))
-	require.Equal(t, firstId, receiveModelInfos.Items[0].VID)
+	require.Equal(t, firstID, receiveModelInfos.Items[0].VID)
 }
 
 func TestQuerier_QueryVendorsWithPaginationHeaders(t *testing.T) {
@@ -140,7 +142,7 @@ func TestQuerier_QueryVendorsWithPaginationHeaders(t *testing.T) {
 	count := 5
 
 	// add 5 models with different vendor
-	firstId := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
+	firstID := PopulateStoreWithModelsHavingDifferentVendor(setup, count)
 
 	skip := 1
 	take := 2
@@ -154,7 +156,7 @@ func TestQuerier_QueryVendorsWithPaginationHeaders(t *testing.T) {
 	require.Equal(t, take, len(receiveModelInfos.Items))
 
 	for i, item := range receiveModelInfos.Items {
-		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.VID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstID, item.VID)
 	}
 }
 
@@ -163,16 +165,16 @@ func TestQuerier_QueryVendorModels(t *testing.T) {
 	count := 5
 
 	// add 5 models with same vendors
-	firstId := PopulateStoreWithModelsHavingSameVendor(setup, count)
+	firstID := PopulateStoreWithModelsHavingSameVendor(setup, count)
 
 	// query all models
-	receivedVendorModels := getVendorModels(setup, firstId)
+	receivedVendorModels := getVendorModels(setup, firstID)
 
 	// check
 	require.Equal(t, count, len(receivedVendorModels.Products))
 
 	for i, item := range receivedVendorModels.Products {
-		require.Equal(t, uint16(i)+firstId, item.PID)
+		require.Equal(t, uint16(i)+firstID, item.PID)
 	}
 }
 
@@ -211,5 +213,6 @@ func getVendorModels(setup TestSetup, vid uint16) types.VendorProducts {
 
 	var receivedVendorModels types.VendorProducts
 	_ = setup.Cdc.UnmarshalJSON(result, &receivedVendorModels)
+
 	return receivedVendorModels
 }

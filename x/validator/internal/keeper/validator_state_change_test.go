@@ -1,5 +1,7 @@
+//nolint:testpackage
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
@@ -261,5 +263,6 @@ func createValidator(setup TestSetup) types.Validator {
 	validator := DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
 	setup.ValidatorKeeper.SetValidatorSigningInfo(setup.Ctx, types.NewValidatorSigningInfo(validator.GetConsAddress(), 0))
+
 	return validator
 }

@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"time"
@@ -15,7 +16,8 @@ type MsgAddTestingResult struct {
 	Signer     sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddTestingResult(vid uint16, pid uint16, testResult string, testDate time.Time, signer sdk.AccAddress) MsgAddTestingResult {
+func NewMsgAddTestingResult(vid uint16, pid uint16, testResult string,
+	testDate time.Time, signer sdk.AccAddress) MsgAddTestingResult {
 	return MsgAddTestingResult{
 		VID:        vid,
 		PID:        pid,
@@ -41,6 +43,7 @@ func (m MsgAddTestingResult) ValidateBasic() sdk.Error {
 	if m.VID == 0 {
 		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
+
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}

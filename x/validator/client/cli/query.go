@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -12,7 +13,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// GetQueryCmd returns the cli query commands for this module
+// GetQueryCmd returns the cli query commands for this module.
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	validatorQueryCmd := &cobra.Command{
 		Use:                        types.ModuleName,
@@ -24,6 +25,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	validatorQueryCmd.AddCommand(client.GetCommands(
 		GetCmdQueryValidator(queryRoute, cdc),
 		GetCmdQueryValidators(queryRoute, cdc))...)
+
 	return validatorQueryCmd
 }
 
@@ -56,7 +58,7 @@ func GetCmdQueryValidator(storeName string, cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagAddress, "", "The Bech32 encoded Address of the validator")
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
-	cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

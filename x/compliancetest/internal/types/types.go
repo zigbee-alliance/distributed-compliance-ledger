@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,7 +15,8 @@ type TestingResult struct {
 	TestDate   time.Time      `json:"test_date"` // rfc3339 encoded date
 }
 
-func NewTestingResult(vid uint16, pid uint16, owner sdk.AccAddress, testResult string, testDate time.Time) TestingResult {
+func NewTestingResult(vid uint16, pid uint16, owner sdk.AccAddress,
+	testResult string, testDate time.Time) TestingResult {
 	return TestingResult{
 		VID:        vid,
 		PID:        pid,

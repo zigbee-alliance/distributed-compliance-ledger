@@ -1,5 +1,6 @@
 package main
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"

@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	ModuleName   = types.ModuleName
-	StoreKey     = types.StoreKey
-	RouterKey    = types.RouterKey
+	ModuleName = types.ModuleName
+	StoreKey   = types.StoreKey
+	RouterKey  = types.RouterKey
 )
 
 var (

@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"fmt"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -9,13 +10,13 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// query endpoints supported by the validator Querier
+// query endpoints supported by the validator Querier.
 const (
 	QueryValidators = "validators"
 	QueryValidator  = "validator"
 )
 
-// creates a querier for validator module
+// creates a querier for validator module.
 func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err sdk.Error) {
 		switch path[0] {

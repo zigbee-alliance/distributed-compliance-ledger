@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -32,7 +33,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return modelinfoTxCmd
 }
 
-//nolint dupl
+//nolint:funlen
 func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-model",
@@ -64,7 +65,8 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 
 			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(viper.GetString(FlagTisOrTrpTestingCompleted))
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Tis-or-trp-testing-completed: Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Tis-or-trp-testing-completed: "+
+					"Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
 			}
 
 			custom, err_ := cliCtx.ReadFromFile(viper.GetString(FlagCustom))
@@ -91,25 +93,30 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().String(FlagCID, "", "Model category ID")
 	cmd.Flags().StringP(FlagName, FlagNameShortcut, "", "Model name")
-	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "", "Model description (string or path to file containing data)")
+	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "",
+		"Model description (string or path to file containing data)")
 	cmd.Flags().String(FlagSKU, "", "Model stock keeping unit")
-	cmd.Flags().StringP(FlagFirmwareVersion, FlagFirmwareVersionShortcut, "", "Version of model firmware")
-	cmd.Flags().StringP(FlagHardwareVersion, FlagHardwareVersionShortcut,"", "Version of model hardware")
-	cmd.Flags().StringP(FlagCustom, FlagCustomShortcut, "", "Custom information (string or path to file containing data)")
-	cmd.Flags().StringP(FlagTisOrTrpTestingCompleted, FlagTisOrTrpTestingCompletedShortcut, "", "Whether model has successfully completed TIS/TRP testing")
+	cmd.Flags().StringP(FlagFirmwareVersion, FlagFirmwareVersionShortcut, "",
+		"Version of model firmware")
+	cmd.Flags().StringP(FlagHardwareVersion, FlagHardwareVersionShortcut, "",
+		"Version of model hardware")
+	cmd.Flags().StringP(FlagCustom, FlagCustomShortcut, "",
+		"Custom information (string or path to file containing data)")
+	cmd.Flags().StringP(FlagTisOrTrpTestingCompleted, FlagTisOrTrpTestingCompletedShortcut, "",
+		"Whether model has successfully completed TIS/TRP testing")
 
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
-	cmd.MarkFlagRequired(FlagName)
-	cmd.MarkFlagRequired(FlagSKU)
-	cmd.MarkFlagRequired(FlagFirmwareVersion)
-	cmd.MarkFlagRequired(FlagHardwareVersion)
-	cmd.MarkFlagRequired(FlagTisOrTrpTestingCompleted)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagName)
+	_ = cmd.MarkFlagRequired(FlagSKU)
+	_ = cmd.MarkFlagRequired(FlagFirmwareVersion)
+	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
+	_ = cmd.MarkFlagRequired(FlagTisOrTrpTestingCompleted)
 
 	return cmd
 }
 
-//nolint dupl
+//nolint:funlen
 func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update-model",
@@ -130,7 +137,8 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 
 			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(viper.GetString(FlagTisOrTrpTestingCompleted))
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid tis-or-trp-testing-completed: Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid tis-or-trp-testing-completed: "+
+					"Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
 			}
 
 			description, err_ := cliCtx.ReadFromFile(viper.GetString(FlagDescription))
@@ -151,7 +159,8 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid custom:\"%v\"", err_))
 			}
 
-			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description, custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
+			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description,
+				custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -160,14 +169,16 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().String(FlagCID, "", "Model category ID")
-	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "", "Model description (string or path to file containing data)")
-	cmd.Flags().StringP(FlagCustom, FlagCustomShortcut, "", "Custom information (string or path to file containing data)")
-	cmd.Flags().StringP(FlagTisOrTrpTestingCompleted, FlagTisOrTrpTestingCompletedShortcut, "", "Whether model has successfully completed TIS/TRP testing")
+	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "",
+		"Model description (string or path to file containing data)")
+	cmd.Flags().StringP(FlagCustom, FlagCustomShortcut, "",
+		"Custom information (string or path to file containing data)")
+	cmd.Flags().StringP(FlagTisOrTrpTestingCompleted, FlagTisOrTrpTestingCompletedShortcut, "",
+		"Whether model has successfully completed TIS/TRP testing")
 
-
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
-	cmd.MarkFlagRequired(FlagTisOrTrpTestingCompleted)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagTisOrTrpTestingCompleted)
 
 	return cmd
 }
@@ -199,8 +210,8 @@ func GetCmdDeleteModel(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
 
 	return cmd
 }

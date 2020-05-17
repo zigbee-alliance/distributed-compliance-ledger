@@ -16,19 +16,22 @@ import (
 )
 
 // ValidateAccountInGenesis checks that the provided key has sufficient
-// coins in the genesis accounts
+// coins in the genesis accounts.
 func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
 	genAccIterator types.GenesisAccountsIterator,
-	key sdk.AccAddress, cdc *codec.Codec) error {
-
+	key sdk.Address, cdc *codec.Codec) error {
 	accountIsInGenesis := false
 
 	validatorDataBz := appGenesisState[validator.ModuleName]
+
 	var validatorData validator.GenesisState
+
 	cdc.MustUnmarshalJSON(validatorDataBz, &validatorData)
 
 	genUtilDataBz := appGenesisState[validator.ModuleName]
+
 	var genesisState GenesisState
+
 	cdc.MustUnmarshalJSON(genUtilDataBz, &genesisState)
 
 	genAccIterator.IterateGenesisAccounts(cdc, appGenesisState, func(acc authexported.Account) (stop bool) {
@@ -42,7 +45,8 @@ func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
 	})
 
 	if !accountIsInGenesis {
-		return fmt.Errorf("account %s in not in the app_state.accounts array of genesis.json", key)
+		return sdk.ErrUnknownRequest(
+			fmt.Sprintf("Error account %s in not in the app_state.accounts array of genesis.json", key))
 	}
 
 	return nil
@@ -50,18 +54,21 @@ func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
 
 type deliverTxfn func(abci.RequestDeliverTx) abci.ResponseDeliverTx
 
-// DeliverGenTxs - deliver a genesis transaction
+// DeliverGenTxs - deliver a genesis transaction.
 func DeliverGenTxs(ctx sdk.Context, cdc *codec.Codec, genTxs []json.RawMessage,
 	validatorKeeper types.ValidatorKeeper, deliverTx deliverTxfn) []abci.ValidatorUpdate {
-
 	for _, genTx := range genTxs {
 		var tx authtypes.StdTx
+
 		cdc.MustUnmarshalJSON(genTx, &tx)
+
 		bz := cdc.MustMarshalBinaryLengthPrefixed(tx)
 		res := deliverTx(abci.RequestDeliverTx{Tx: bz})
+
 		if !res.IsOK() {
 			panic(res.Log)
 		}
 	}
+
 	return validatorKeeper.ApplyAndReturnValidatorSetUpdates(ctx)
 }

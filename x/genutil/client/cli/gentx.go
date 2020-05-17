@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"bytes"
 	"encoding/json"
@@ -33,16 +34,14 @@ import (
 )
 
 // GenTxCmd builds the application's gentx command.
-// nolint: errcheck
+//nolint:gocognit,funlen
 func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 	genAccIterator types.GenesisAccountsIterator, defaultNodeHome, defaultCLIHome string) *cobra.Command {
-
 	cmd := &cobra.Command{
 		Use:   "gentx",
 		Short: "Generate a genesis transaction to create a validator",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-
 			config := ctx.Config
 			config.SetRoot(viper.GetString(client.FlagHome))
 
@@ -151,7 +150,6 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 			fmt.Fprintf(os.Stderr, "Genesis transaction written to %q\n", outputDocument)
 			return nil
-
 		},
 	}
 
@@ -166,7 +164,8 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 	cmd.Flags().AddFlagSet(validator.InitValidatorFlags())
 
-	cmd.MarkFlagRequired(flags.FlagFrom)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
+
 	return cmd
 }
 
@@ -175,16 +174,21 @@ func makeOutputFilepath(rootDir, nodeID string) (string, error) {
 	if err := common.EnsureDir(writePath, 0700); err != nil {
 		return "", err
 	}
+
 	return filepath.Join(writePath, fmt.Sprintf("gentx-%v.json", nodeID)), nil
 }
 
 func readUnsignedGenTxFile(cdc *codec.Codec, r io.Reader) (auth.StdTx, error) {
 	var stdTx auth.StdTx
+
 	bytes, err := ioutil.ReadAll(r)
+
 	if err != nil {
 		return stdTx, err
 	}
+
 	err = cdc.UnmarshalJSON(bytes, &stdTx)
+
 	return stdTx, err
 }
 
@@ -194,10 +198,14 @@ func writeSignedGenTx(cdc *codec.Codec, outputDocument string, tx auth.StdTx) er
 		return err
 	}
 	defer outputFile.Close()
+
 	json, err := cdc.MarshalJSON(tx)
+
 	if err != nil {
 		return err
 	}
+
 	_, err = fmt.Fprintf(outputFile, "%s\n", json)
+
 	return err
 }

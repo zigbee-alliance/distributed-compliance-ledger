@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -20,7 +21,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 )
 
-// GetTxCmd returns the transaction commands for this module
+// GetTxCmd returns the transaction commands for this module.
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	validatorTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
@@ -59,15 +60,15 @@ func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
 	fsCreateValidator := InitValidatorFlags()
 	cmd.Flags().AddFlagSet(fsCreateValidator)
 
-	cmd.MarkFlagRequired(flags.FlagFrom)
-	cmd.MarkFlagRequired(FlagAddress)
-	cmd.MarkFlagRequired(FlagPubKey)
-	cmd.MarkFlagRequired(FlagName)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
+	_ = cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagPubKey)
+	_ = cmd.MarkFlagRequired(FlagName)
 
 	return cmd
 }
 
-// Return the flagset for create validator command
+// Return the flagset for create validator command.
 func InitValidatorFlags() (fs *flag.FlagSet) {
 	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
 	fsCreateValidator.String(FlagAddress, "", "The Bech32 encoded Address of the validator")
@@ -76,10 +77,11 @@ func InitValidatorFlags() (fs *flag.FlagSet) {
 	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
 	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
 	fsCreateValidator.String(FlagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
+
 	return fsCreateValidator
 }
 
-// prepare flags in config
+// prepare flags in config.
 func PrepareFlagsForTxCreateValidator(
 	config *cfg.Config, nodeID, chainID string, valPubKey crypto.PubKey,
 ) {
@@ -95,8 +97,8 @@ func PrepareFlagsForTxCreateValidator(
 }
 
 // BuildCreateValidatorMsg makes a new MsgCreateValidator.
-func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder, isGenesis bool) (auth.TxBuilder, sdk.Msg, error) {
-
+func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder,
+	isGenesis bool) (auth.TxBuilder, sdk.Msg, error) {
 	signer := cliCtx.GetFromAddress()
 
 	address, err := sdk.ConsAddressFromBech32(viper.GetString(FlagAddress))
@@ -118,6 +120,7 @@ func BuildCreateValidatorMsg(cliCtx context.CLIContext, txBldr auth.TxBuilder, i
 	if isGenesis {
 		ip := viper.GetString(FlagIP)
 		nodeID := viper.GetString(FlagNodeID)
+
 		if nodeID != "" && ip != "" {
 			txBldr = txBldr.WithMemo(fmt.Sprintf("%s@%s:26656", nodeID, ip))
 		}

@@ -57,8 +57,8 @@ func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	cmd.Flags().String(FlagPubkey, "", "Bench32 encoded public key")
 
-	cmd.MarkFlagRequired(FlagAddress)
-	cmd.MarkFlagRequired(FlagPubkey)
+	_ = cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagPubkey)
 
 	return cmd
 }

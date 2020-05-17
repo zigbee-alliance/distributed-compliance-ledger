@@ -1,5 +1,6 @@
 package rest
 
+// nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
@@ -16,7 +17,7 @@ type AddCertificateRequest struct {
 type ApproveCertificateRequest struct {
 	BaseReq      restTypes.BaseReq `json:"base_req"`
 	Subject      string            `json:"subject"`
-	SubjectKeyId string            `json:"subject_key_id"`
+	SubjectKeyID string            `json:"subject_key_id"`
 }
 
 func proposeAddX509RootCertHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -63,7 +64,7 @@ func approveAddX509RootCertHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgApproveAddX509RootCert(req.Subject, req.SubjectKeyId, restCtx.Signer())
+		msg := types.NewMsgApproveAddX509RootCert(req.Subject, req.SubjectKeyID, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

@@ -1,5 +1,7 @@
+//nolint:testpackage
 package authnext
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/keeper"
@@ -13,10 +15,10 @@ import (
 
 func TestHandler_CreateAccount(t *testing.T) {
 	setup := Setup()
-	setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address1, authz.Trustee)
+	setup.AuthzKeeper.AssignRole(setup.Ctx, testconstants.Address1, authz.Trustee)
 
 	// add new account
-	msgAddAccount := types.NewMsgAddAccount(test_constants.Address2, test_constants.PubKey, test_constants.Address1)
+	msgAddAccount := types.NewMsgAddAccount(testconstants.Address2, testconstants.PubKey, testconstants.Address1)
 	result := setup.Handler(setup.Ctx, msgAddAccount)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -33,9 +35,9 @@ func TestHandler_ByNonTrustee(t *testing.T) {
 	setup := Setup()
 
 	for _, role := range []authz.AccountRole{authz.Administrator, authz.Vendor, authz.TestHouse} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address1, role)
+		setup.AuthzKeeper.AssignRole(setup.Ctx, testconstants.Address1, role)
 
-		msgAddAccount := types.NewMsgAddAccount(test_constants.Address2, test_constants.PubKey, test_constants.Address1)
+		msgAddAccount := types.NewMsgAddAccount(testconstants.Address2, testconstants.PubKey, testconstants.Address1)
 
 		// add new account
 		result := setup.Handler(setup.Ctx, msgAddAccount)
@@ -46,17 +48,16 @@ func TestHandler_ByNonTrustee(t *testing.T) {
 func TestHandler_CreateAccount_Twice(t *testing.T) {
 	setup := Setup()
 
-	setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address1, authz.Trustee)
+	setup.AuthzKeeper.AssignRole(setup.Ctx, testconstants.Address1, authz.Trustee)
 
 	// add new account
-	msgAddAccount := types.NewMsgAddAccount(test_constants.Address2, test_constants.PubKey, test_constants.Address1)
+	msgAddAccount := types.NewMsgAddAccount(testconstants.Address2, testconstants.PubKey, testconstants.Address1)
 	result := setup.Handler(setup.Ctx, msgAddAccount)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// add same account second time
 	result = setup.Handler(setup.Ctx, msgAddAccount)
 	require.Equal(t, sdk.CodeInvalidAddress, result.Code)
-
 }
 
 func queryAccount(setup TestSetup, account sdk.AccAddress) types.AccountHeader {
@@ -67,6 +68,8 @@ func queryAccount(setup TestSetup, account sdk.AccAddress) types.AccountHeader {
 	)
 
 	var accountHeader types.AccountHeader
+
 	_ = setup.Cdc.UnmarshalJSON(result, &accountHeader)
+
 	return accountHeader
 }

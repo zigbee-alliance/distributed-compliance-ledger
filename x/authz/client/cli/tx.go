@@ -50,8 +50,8 @@ func GetCmdAddAssignRole(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	cmd.Flags().String(FlagRole, "", "Role to assign")
 
-	cmd.MarkFlagRequired(FlagAddress)
-	cmd.MarkFlagRequired(FlagRole)
+	_ = cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagRole)
 
 	return cmd
 }
@@ -78,8 +78,8 @@ func GetCmdRevokeRole(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	cmd.Flags().String(FlagRole, "", "Role to assign")
 
-	cmd.MarkFlagRequired(FlagAddress)
-	cmd.MarkFlagRequired(FlagRole)
+	_ = cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagRole)
 
 	return cmd
 }

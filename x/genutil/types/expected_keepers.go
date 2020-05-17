@@ -10,19 +10,19 @@ import (
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 )
 
-// ValidatorKeeper defines the expected validator keeper (noalias)
+// ValidatorKeeper defines the expected validator keeper.
 type ValidatorKeeper interface {
 	ApplyAndReturnValidatorSetUpdates(sdk.Context) (updates []abci.ValidatorUpdate)
 }
 
-// AccountKeeper defines the expected account keeper (noalias)
+// AccountKeeper defines the expected account keeper.
 type AccountKeeper interface {
 	NewAccount(sdk.Context, authexported.Account) authexported.Account
 	SetAccount(sdk.Context, authexported.Account)
 	IterateAccounts(ctx sdk.Context, process func(authexported.Account) (stop bool))
 }
 
-// GenesisAccountsIterator defines the expected iterating genesis accounts object (noalias)
+// GenesisAccountsIterator defines the expected iterating genesis accounts object.
 type GenesisAccountsIterator interface {
 	IterateGenesisAccounts(
 		cdc *codec.Codec,

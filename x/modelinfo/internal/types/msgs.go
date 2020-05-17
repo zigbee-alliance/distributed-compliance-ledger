@@ -7,9 +7,6 @@ import (
 const RouterKey = ModuleName
 
 type MsgAddModelInfo struct {
-	VID                      uint16         `json:"vid"`
-	PID                      uint16         `json:"pid"`
-	CID                      uint16         `json:"cid,omitempty"`
 	Name                     string         `json:"name"`
 	Description              string         `json:"description"`
 	SKU                      string         `json:"sku"`
@@ -17,6 +14,9 @@ type MsgAddModelInfo struct {
 	HardwareVersion          string         `json:"hardware_version"`
 	Custom                   string         `json:"custom,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
+	VID                      uint16         `json:"vid"`
+	PID                      uint16         `json:"pid"`
+	CID                      uint16         `json:"cid,omitempty"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
@@ -54,6 +54,7 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 	if m.VID == 0 {
 		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
+
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
@@ -90,12 +91,12 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 }
 
 type MsgUpdateModelInfo struct {
-	VID                      uint16         `json:"vid"`
-	PID                      uint16         `json:"pid"`
-	CID                      uint16         `json:"cid"`
 	Description              string         `json:"description"`
 	Custom                   string         `json:"custom,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
+	VID                      uint16         `json:"vid"`
+	PID                      uint16         `json:"pid"`
+	CID                      uint16         `json:"cid"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
@@ -128,9 +129,11 @@ func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 	if m.VID == 0 {
 		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
+
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
+
 	return nil
 }
 
@@ -172,6 +175,7 @@ func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
 	if m.VID == 0 {
 		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
+
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}

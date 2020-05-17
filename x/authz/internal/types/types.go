@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -29,7 +28,7 @@ func (lt *AccountRole) UnmarshalJSON(b []byte) error {
 		return nil
 	}
 
-	return errors.New(fmt.Sprintf("invalid account role: %s", accountRole))
+	return sdk.ErrUnknownRequest(fmt.Sprintf("invalid account role: %s", accountRole))
 }
 
 type AccountRoles struct {

@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -33,7 +34,7 @@ func NewReadResult(result json.RawMessage, height int64) ReadResult {
 	}
 }
 
-// Implement fmt.Stringer
+// Implement fmt.Stringer.
 func (n ReadResult) String() string {
 	res, err := json.Marshal(n)
 
@@ -84,11 +85,13 @@ func (ctx CliContext) WithFormerHeight() (CliContext, error) {
 	}
 
 	ctx.context = ctx.context.WithHeight(status.SyncInfo.LatestBlockHeight - 1)
+
 	return ctx, nil
 }
 
 func (ctx CliContext) QueryStore(key []byte, storeName string) ([]byte, int64, error) {
-	if viper.GetBool(FlagPreviousHeight) { // Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1
+	// Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1.
+	if viper.GetBool(FlagPreviousHeight) {
 		ctx, err := ctx.WithFormerHeight()
 		if err != nil {
 			return nil, 0, err
@@ -101,6 +104,7 @@ func (ctx CliContext) QueryStore(key []byte, storeName string) ([]byte, int64, e
 	}
 	// request on the current height
 	ctx.context = ctx.context.WithHeight(0)
+
 	return ctx.context.QueryStore(key, storeName)
 }
 
@@ -124,6 +128,7 @@ func (ctx CliContext) HandleWriteMessage(msg sdk.Msg) error {
 	}
 
 	txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(ctx.context.Codec))
+
 	return utils.GenerateOrBroadcastMsgs(ctx.context, txBldr, []sdk.Msg{msg})
 }
 
@@ -138,6 +143,7 @@ func (ctx CliContext) EncodeAndPrintWithHeight(data interface{}, height int64) (
 
 func (ctx CliContext) PrintWithHeight(out []byte, height int64) (err error) {
 	var value json.RawMessage
+
 	ctx.context.Codec.MustUnmarshalJSON(out, &value)
 
 	return ctx.context.PrintOutput(NewReadResult(value, height))
@@ -149,6 +155,7 @@ func (ctx CliContext) ReadFromFile(target string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+
 		return string(bytes), nil
 	} else { // else return as is
 		return target, nil
@@ -159,5 +166,6 @@ func SignedCommands(cmds ...*cobra.Command) []*cobra.Command {
 	for _, c := range cmds {
 		_ = c.MarkFlagRequired(flags.FlagFrom)
 	}
+
 	return cmds
 }

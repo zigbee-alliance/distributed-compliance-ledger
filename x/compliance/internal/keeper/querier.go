@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
@@ -39,7 +40,8 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
-func queryComplianceInfo(ctx sdk.Context, path []string, keeper Keeper, requestedState types.ComplianceState) (res []byte, err sdk.Error) {
+func queryComplianceInfo(ctx sdk.Context, path []string, keeper Keeper,
+	requestedState types.ComplianceState) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err
@@ -104,7 +106,8 @@ func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keepe
 	return res, nil
 }
 
-func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, requestedState types.ComplianceState) (res []byte, err sdk.Error) {
+func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery, keeper Keeper,
+	requestedState types.ComplianceState) (res []byte, err sdk.Error) {
 	var params types.ListQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))

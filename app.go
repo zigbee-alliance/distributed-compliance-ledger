@@ -1,5 +1,6 @@
 package app
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
@@ -61,11 +62,11 @@ var (
 	)
 	// account permissions
 	maccPerms = map[string][]string{
-		auth.FeeCollectorName:     nil,
+		auth.FeeCollectorName: nil,
 	}
 )
 
-// MakeCodec generates the necessary codecs for Amino
+// MakeCodec generates the necessary codecs for Amino.
 func MakeCodec() *codec.Codec {
 	var cdc = codec.New()
 
@@ -85,7 +86,7 @@ type zbLedgerApp struct {
 	tkeys map[string]*sdk.TransientStoreKey
 
 	// Keepers
-	validatorKeeper            validator.Keeper
+	validatorKeeper      validator.Keeper
 	accountKeeper        auth.AccountKeeper
 	bankKeeper           bank.Keeper
 	supplyKeeper         supply.Keeper
@@ -100,12 +101,12 @@ type zbLedgerApp struct {
 	mm *module.Manager
 }
 
-// NewZbLedgerApp is a constructor function for zbLedgerApp
+// NewZbLedgerApp is a constructor function for zbLedgerApp.
 func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *zbLedgerApp {
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
 
-	// BaseApp handles interactions with Tendermint through the ABCI protocol
+	// BaseApp handles interactions with Tendermint through the ABCI protocol.
 	bApp := bam.NewBaseApp(appName, logger, db, auth.DefaultTxDecoder(cdc), baseAppOptions...)
 
 	bApp.SetAppVersion(version.Version)
@@ -116,7 +117,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
-	// Here you initialize your application with the store keys it requires
+	// Here you initialize your application with the store keys it requires.
 	var app = &zbLedgerApp{
 		BaseApp: bApp,
 		cdc:     cdc,
@@ -128,12 +129,12 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 
 	InitModuleManager(app)
 
-	// The initChainer handles translating the genesis.json file into initial state for the network
+	// The initChainer handles translating the genesis.json file into initial state for the network.
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 	app.SetEndBlocker(app.EndBlocker)
 
-	// The AnteHandler handles signature verification and transaction pre-processing
+	// The AnteHandler handles signature verification and transaction pre-processing.
 	app.SetAnteHandler(
 		auth.NewAnteHandler(
 			app.accountKeeper,

@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -48,9 +49,11 @@ func (m MsgCreateValidator) ValidateBasic() sdk.Error {
 	if len(m.Description.Name) == 0 {
 		return sdk.ErrUnknownRequest("Invalid Validator Name: it cannot be empty")
 	}
+
 	if err := m.Description.Validate(); err != nil {
 		return err
 	}
+
 	return nil
 }
 

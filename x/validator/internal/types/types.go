@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -50,7 +51,7 @@ func (v Validator) GetName() string { return v.Description.Name }
 
 func (v Validator) IsJailed() bool { return v.Jailed }
 
-// ABCI ValidatorUpdate message to add new validator to validator set
+// ABCI ValidatorUpdate message to add new validator to validator set.
 func (v Validator) ABCIValidatorUpdate() abci.ValidatorUpdate {
 	return abci.ValidatorUpdate{
 		PubKey: tmtypes.TM2PB.PubKey(v.GetConsPubKey()),
@@ -58,7 +59,7 @@ func (v Validator) ABCIValidatorUpdate() abci.ValidatorUpdate {
 	}
 }
 
-// ABCI ValidatorUpdate message to remove validator from validator set
+// ABCI ValidatorUpdate message to remove validator from validator set.
 func (v Validator) ABCIValidatorUpdateZero() abci.ValidatorUpdate {
 	return abci.ValidatorUpdate{
 		PubKey: tmtypes.TM2PB.PubKey(v.GetConsPubKey()),
@@ -84,6 +85,7 @@ func MustUnmarshalBinaryBareValidator(cdc *codec.Codec, value []byte) Validator 
 	if err != nil {
 		panic(err)
 	}
+
 	return validator
 }
 
@@ -111,10 +113,14 @@ func NewLastValidatorPower(address sdk.ConsAddress) LastValidatorPower {
 	Description of Validator
 */
 type Description struct {
-	Name     string `json:"name"`               // name
-	Identity string `json:"identity,omitempty"` // optional identity signature
-	Website  string `json:"website,omitempty"`  // optional website link
-	Details  string `json:"details,omitempty"`  // optional details
+	// name.
+	Name string `json:"name"`
+	// optional identity signature.
+	Identity string `json:"identity,omitempty"`
+	// optional website link.
+	Website string `json:"website,omitempty"`
+	// optional details.
+	Details string `json:"details,omitempty"`
 }
 
 // NewDescription returns a new Description with the provided values.
@@ -139,18 +145,29 @@ func (d Description) Validate() sdk.Error {
 	if len(d.Name) == 0 {
 		return sdk.ErrUnknownRequest("Invalid Description Name: it cannot be empty")
 	}
+
 	if len(d.Name) > MaxNameLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Name: received string of lenght %v, max is %v", len(d.Name), MaxNameLength))
+		return sdk.ErrUnknownRequest(fmt.Sprintf(
+			"Invalid Description Name: received string of length %v, max is %v", len(d.Name), MaxNameLength))
 	}
+
 	if len(d.Identity) > MaxIdentityLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Identity: received string of lenght %v, max is %v", len(d.Identity), MaxIdentityLength))
+		return sdk.ErrUnknownRequest(fmt.Sprintf(
+			"Invalid Description Identity: "+
+				"received string of length %v, max is %v", len(d.Identity), MaxIdentityLength))
 	}
+
 	if len(d.Website) > MaxWebsiteLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Website: received string of lenght %v, max is %v", len(d.Website), MaxWebsiteLength))
+		return sdk.ErrUnknownRequest(fmt.Sprintf(
+			"Invalid Description Website: "+
+				"received string of length %v, max is %v", len(d.Website), MaxWebsiteLength))
 	}
+
 	if len(d.Details) > MaxDetailsLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Details: received string of lenght %v, max is %v", len(d.Details), MaxDetailsLength))
+		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Details: "+
+			"received string of length %v, max is %v", len(d.Details), MaxDetailsLength))
 	}
+
 	return nil
 }
 
@@ -158,10 +175,14 @@ func (d Description) Validate() sdk.Error {
 	Validator Signing info
 */
 type ValidatorSigningInfo struct {
-	Address             sdk.ConsAddress `json:"address"`               // validator consensus address
-	StartHeight         int64           `json:"start_height"`          // height at which validator was added
-	IndexOffset         int64           `json:"index_offset"`          // index offset into signed block bit array
-	MissedBlocksCounter int64           `json:"missed_blocks_counter"` // missed blocks counter (to avoid scanning the array every time)
+	// validator consensus address.
+	Address sdk.ConsAddress `json:"address"`
+	// height at which validator was added.
+	StartHeight int64 `json:"start_height"`
+	// index offset into signed block bit array.
+	IndexOffset int64 `json:"index_offset"`
+	// missed blocks counter (to avoid scanning the array every time).
+	MissedBlocksCounter int64 `json:"missed_blocks_counter"`
 }
 
 func NewValidatorSigningInfo(address sdk.ConsAddress, startHeight int64) ValidatorSigningInfo {
@@ -176,6 +197,7 @@ func NewValidatorSigningInfo(address sdk.ConsAddress, startHeight int64) Validat
 func (v ValidatorSigningInfo) Reset() ValidatorSigningInfo {
 	v.MissedBlocksCounter = 0
 	v.IndexOffset = 0
+
 	return v
 }
 

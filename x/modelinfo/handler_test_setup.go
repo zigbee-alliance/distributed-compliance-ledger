@@ -1,5 +1,6 @@
 package modelinfo
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
@@ -45,13 +46,13 @@ func Setup() TestSetup {
 	authzKeeper := authz.NewKeeper(authzKey, cdc)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(modelinfoKeeper)
 	handler := NewHandler(modelinfoKeeper, authzKeeper)
 
-	account := test_constants.Address1
+	account := testconstants.Address1
 	authzKeeper.AssignRole(ctx, account, authz.Vendor)
 
 	setup := TestSetup{
@@ -69,28 +70,28 @@ func Setup() TestSetup {
 
 func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
-		VID:                      test_constants.VID,
-		PID:                      test_constants.PID,
-		CID:                      test_constants.CID,
-		Name:                     test_constants.Name,
-		Description:              test_constants.Description,
-		SKU:                      test_constants.Sku,
-		FirmwareVersion:          test_constants.FirmwareVersion,
-		HardwareVersion:          test_constants.HardwareVersion,
-		Custom:                   test_constants.Custom,
-		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
+		VID:                      testconstants.VID,
+		PID:                      testconstants.PID,
+		CID:                      testconstants.CID,
+		Name:                     testconstants.Name,
+		Description:              testconstants.Description,
+		SKU:                      testconstants.Sku,
+		FirmwareVersion:          testconstants.FirmwareVersion,
+		HardwareVersion:          testconstants.HardwareVersion,
+		Custom:                   testconstants.Custom,
+		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
 }
 
 func TestMsgUpdatedModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
-		VID:                      test_constants.VID,
-		PID:                      test_constants.PID,
-		CID:                      test_constants.CID + 1,
+		VID:                      testconstants.VID,
+		PID:                      testconstants.PID,
+		CID:                      testconstants.CID + 1,
 		Description:              "New Description",
 		Custom:                   "New Custom Data",
-		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
+		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
 }

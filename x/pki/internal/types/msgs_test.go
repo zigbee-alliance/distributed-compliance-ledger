@@ -1,5 +1,7 @@
+//nolint:testpackage
 package types
 
+// nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,11 +14,11 @@ import (
 */
 
 func TestNewMsgProposeAddX509RootCert(t *testing.T) {
-	var msg = NewMsgProposeAddX509RootCert(test_constants.RootCertPem, test_constants.Signer)
+	var msg = NewMsgProposeAddX509RootCert(testconstants.RootCertPem, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "propose_add_x509_root_cert")
-	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{test_constants.Signer})
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
 
 func TestValidateMsgProposeAddX509RootCert(t *testing.T) {
@@ -25,15 +27,16 @@ func TestValidateMsgProposeAddX509RootCert(t *testing.T) {
 		msg   MsgProposeAddX509RootCert
 	}{
 		{true, NewMsgProposeAddX509RootCert(
-			test_constants.RootCertPem, test_constants.Signer)},
+			testconstants.RootCertPem, testconstants.Signer)},
 		{false, NewMsgProposeAddX509RootCert(
-			"", test_constants.Signer)},
+			"", testconstants.Signer)},
 		{false, NewMsgProposeAddX509RootCert(
-			test_constants.RootCertPem, nil)},
+			testconstants.RootCertPem, nil)},
 	}
 
 	for _, tc := range cases {
 		err := tc.msg.ValidateBasic()
+
 		if tc.valid {
 			require.Nil(t, err)
 		} else {
@@ -43,10 +46,11 @@ func TestValidateMsgProposeAddX509RootCert(t *testing.T) {
 }
 
 func TestMsgProposeAddX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgProposeAddX509RootCert(test_constants.StubCert, test_constants.Signer)
+	var msg = NewMsgProposeAddX509RootCert(testconstants.StubCert, testconstants.Signer)
 	res := msg.GetSignBytes()
 
-	expected := `{"type":"pki/ProposeAddX509RootCert","value":{"cert":"pem certificate","signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	expected := `{"type":"pki/ProposeAddX509RootCert","value":{"cert":` +
+		`"pem certificate","signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
 	require.Equal(t, expected, string(res))
 }
 
@@ -55,11 +59,12 @@ func TestMsgProposeAddX509RootCertGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveAddX509RootCert(t *testing.T) {
-	var msg = NewMsgApproveAddX509RootCert(test_constants.LeafSubject, test_constants.LeafSubjectKeyId, test_constants.Signer)
+	var msg = NewMsgApproveAddX509RootCert(testconstants.LeafSubject,
+		testconstants.LeafSubjectKeyID, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_add_x509_root_cert")
-	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{test_constants.Signer})
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
 
 func TestValidateMsgApproveAddX509RootCert(t *testing.T) {
@@ -68,17 +73,18 @@ func TestValidateMsgApproveAddX509RootCert(t *testing.T) {
 		msg   MsgApproveAddX509RootCert
 	}{
 		{true, NewMsgApproveAddX509RootCert(
-			test_constants.LeafSubject, test_constants.LeafSubjectKeyId, test_constants.Signer)},
+			testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)},
 		{false, NewMsgApproveAddX509RootCert(
-			"", test_constants.LeafSubjectKeyId, test_constants.Signer)},
+			"", testconstants.LeafSubjectKeyID, testconstants.Signer)},
 		{false, NewMsgApproveAddX509RootCert(
-			test_constants.LeafSubject, "", test_constants.Signer)},
+			testconstants.LeafSubject, "", testconstants.Signer)},
 		{false, NewMsgApproveAddX509RootCert(
-			test_constants.LeafSubject, test_constants.LeafSubjectKeyId, nil)},
+			testconstants.LeafSubject, testconstants.LeafSubjectKeyID, nil)},
 	}
 
 	for _, tc := range cases {
 		err := tc.msg.ValidateBasic()
+
 		if tc.valid {
 			require.Nil(t, err)
 		} else {
@@ -88,12 +94,14 @@ func TestValidateMsgApproveAddX509RootCert(t *testing.T) {
 }
 
 func TestMsgApproveAddX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgApproveAddX509RootCert(test_constants.LeafSubject, test_constants.LeafSubjectKeyId, test_constants.Signer)
-	res := msg.GetSignBytes()
+	var msg = NewMsgApproveAddX509RootCert(testconstants.LeafSubject,
+		testconstants.LeafSubjectKeyID, testconstants.Signer)
 
-	expected := `{"type":"pki/ApproveAddX509RootCert","value":{"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"subject":"CN=dsr-corporation.com","subject_key_id":"8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"}}`
-	require.Equal(t, expected, string(res))
+	expected := `{"type":"pki/ApproveAddX509RootCert","value":{"signer":` +
+		`"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"subject":"CN=dsr-corporation.com","subject_key_id":` +
+		`"8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"}}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
 /*
@@ -101,11 +109,11 @@ func TestMsgApproveAddX509RootCertGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgAddX509Cert(t *testing.T) {
-	var msg = NewMsgAddX509Cert(test_constants.LeafCertPem, test_constants.Signer)
+	var msg = NewMsgAddX509Cert(testconstants.LeafCertPem, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "add_x509_cert")
-	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{test_constants.Signer})
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
 
 func TestValidateMsgAddX509Cert(t *testing.T) {
@@ -114,15 +122,16 @@ func TestValidateMsgAddX509Cert(t *testing.T) {
 		msg   MsgAddX509Cert
 	}{
 		{true, NewMsgAddX509Cert(
-			test_constants.LeafCertPem, test_constants.Signer)},
+			testconstants.LeafCertPem, testconstants.Signer)},
 		{false, NewMsgAddX509Cert(
-			"", test_constants.Signer)},
+			"", testconstants.Signer)},
 		{false, NewMsgAddX509Cert(
-			test_constants.LeafCertPem, nil)},
+			testconstants.LeafCertPem, nil)},
 	}
 
 	for _, tc := range cases {
 		err := tc.msg.ValidateBasic()
+
 		if tc.valid {
 			require.Nil(t, err)
 		} else {
@@ -132,9 +141,10 @@ func TestValidateMsgAddX509Cert(t *testing.T) {
 }
 
 func TestMsgMsgAddX509Cert(t *testing.T) {
-	var msg = NewMsgAddX509Cert(test_constants.StubCert, test_constants.Signer)
+	var msg = NewMsgAddX509Cert(testconstants.StubCert, testconstants.Signer)
 	res := msg.GetSignBytes()
 
-	expected := `{"type":"pki/AddX509Cert","value":{"cert":"pem certificate","signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	expected := `{"type":"pki/AddX509Cert","value":{"cert":"pem certificate",` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
 	require.Equal(t, expected, string(res))
 }

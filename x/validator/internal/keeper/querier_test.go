@@ -1,5 +1,7 @@
+//nolint:testpackage
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
@@ -24,6 +26,7 @@ func TestQuerier_QueryValidator(t *testing.T) {
 	)
 
 	var receivedValidator types.Validator
+
 	setup.Cdc.MustUnmarshalJSON(result, &receivedValidator)
 
 	// check
@@ -36,7 +39,7 @@ func TestQuerier_QueryValidator_ForUnknown(t *testing.T) {
 	// query validator
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryValidator, test_constants.ValidatorAddress1.String()},
+		[]string{QueryValidator, testconstants.ValidatorAddress1.String()},
 		abci.RequestQuery{},
 	)
 
@@ -90,6 +93,7 @@ func getValidators(setup TestSetup, state types.ValidatorState) types.ListValida
 	)
 
 	var listValidators types.ListValidatorItems
+
 	setup.Cdc.MustUnmarshalJSON(result, &listValidators)
 
 	return listValidators

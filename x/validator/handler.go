@@ -1,5 +1,6 @@
 package validator
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/functions"
@@ -14,6 +15,7 @@ import (
 func NewHandler(k Keeper, authzKeeper authz.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
 		case MsgCreateValidator:
 			return handleMsgCreateValidator(ctx, msg, k, authzKeeper)
@@ -24,13 +26,15 @@ func NewHandler(k Keeper, authzKeeper authz.Keeper) sdk.Handler {
 	}
 }
 
-func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator, k Keeper, authzKeeper authz.Keeper) sdk.Result {
+func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator,
+	k Keeper, authzKeeper authz.Keeper) sdk.Result {
 	// check if sender has enough rights to create a validator node
 	if !authzKeeper.HasRole(ctx, msg.Signer, authz.NodeAdmin) {
-		return sdk.ErrUnauthorized(fmt.Sprintf("CreateValidator transaction should be signed by an account with the \"%s\" role", authz.NodeAdmin)).Result()
+		return sdk.ErrUnauthorized(fmt.Sprintf("CreateValidator transaction should be "+
+			"signed by an account with the \"%s\" role", authz.NodeAdmin)).Result()
 	}
 
-	if k.AccountHasValidator(ctx, msg.Signer){
+	if k.AccountHasValidator(ctx, msg.Signer) {
 		return types.ErrAccountAlreadyHasNode(msg.Signer).Result()
 	}
 

@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
@@ -45,7 +46,8 @@ func getRevokedModelHandler(cliCtx context.CLIContext, storeName string) http.Ha
 	}
 }
 
-func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request, storeName string, state types.ComplianceState) {
+func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, r *http.Request,
+	storeName string, state types.ComplianceState) {
 	restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
 	vars := restCtx.Variables()
@@ -69,12 +71,15 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 	res, height, err := restCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), storeName)
 	if res != nil {
 		var complianceInfo types.ComplianceInfo
+
 		restCtx.Codec().MustUnmarshalBinaryBare(res, &complianceInfo)
 
 		isInState.Value = complianceInfo.State == state
 	}
+
 	if err != nil {
-		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+		restCtx.WriteErrorResponse(http.StatusNotFound,
+			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
 		return
 	}
 
@@ -102,11 +107,13 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 
 	res, height, err := restCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), storeName)
 	if err != nil || res == nil {
-		restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+		restCtx.WriteErrorResponse(http.StatusNotFound,
+			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
 		return
 	}
 
 	var complianceInfo types.ComplianceInfo
+
 	restCtx.Codec().MustUnmarshalBinaryBare(res, &complianceInfo)
 
 	restCtx.EncodeAndRespondWithHeight(complianceInfo, height)

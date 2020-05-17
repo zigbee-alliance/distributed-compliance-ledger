@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -69,7 +70,7 @@ func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 
-	cmd.MarkFlagRequired(FlagAddress)
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

@@ -27,7 +27,6 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return complianceTxCmd
 }
 
-//nolint dupl
 func GetCmdProposeAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "propose-add-x509-root-cert",
@@ -47,14 +46,14 @@ func GetCmdProposeAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "", "PEM encoded certificate (string or path to file containing data)")
+	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
+		"PEM encoded certificate (string or path to file containing data)")
 
-	cmd.MarkFlagRequired(FlagCertificate)
+	_ = cmd.MarkFlagRequired(FlagCertificate)
 
 	return cmd
 }
 
-//nolint dupl
 func GetCmdApproveAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "approve-add-x509-root-cert",
@@ -64,28 +63,30 @@ func GetCmdApproveAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			subject := viper.GetString(FlagSubject)
-			subjectKeyId := viper.GetString(FlagSubjectKeyId)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 
-			msg := types.NewMsgApproveAddX509RootCert(subject, subjectKeyId, cliCtx.FromAddress())
+			msg := types.NewMsgApproveAddX509RootCert(subject, subjectKeyID, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 
-	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "","Certificate's subject")
-	cmd.Flags().StringP(FlagSubjectKeyId, FlagSubjectKeyIdShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "",
+		"Certificate's subject key id (hex)")
 
-	cmd.MarkFlagRequired(FlagSubject)
-	cmd.MarkFlagRequired(FlagSubjectKeyId)
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+
 	return cmd
 }
 
-//nolint dupl
 func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-x509-cert",
-		Short: "Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger",
-		Args:  cobra.ExactArgs(0),
+		Use: "add-x509-cert",
+		Short: "Adds an intermediate or leaf X509 certificate signed by a chain " +
+			"of certificates which must be already present on the ledger",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -100,9 +101,10 @@ func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "", "PEM encoded certificate (string or path to file containing data)")
+	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
+		"PEM encoded certificate (string or path to file containing data)")
 
-	cmd.MarkFlagRequired(FlagCertificate)
+	_ = cmd.MarkFlagRequired(FlagCertificate)
 
 	return cmd
 }
