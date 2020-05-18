@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
@@ -11,7 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/context"
 )
 
-// HTTP request handler to query list of validators
+// HTTP request handler to query list of validators.
 func getValidatorsHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -24,7 +25,7 @@ func getValidatorsHandlerFn(cliCtx context.CLIContext, storeName string) http.Ha
 	}
 }
 
-// HTTP request handler to query the validator information from a given validator address
+// HTTP request handler to query the validator information from a given validator address.
 func getValidatorHandlerFn(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)

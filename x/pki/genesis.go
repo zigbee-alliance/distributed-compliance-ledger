@@ -24,48 +24,97 @@ func NewGenesisState() GenesisState {
 }
 
 func ValidateGenesis(data GenesisState) error {
-	for _, record := range data.ApprovedCertificateRecords {
+	if err := validateApprovedCertificates(data.ApprovedCertificateRecords); err != nil {
+		return err
+	}
+
+	if err := validatePendingCertificates(data.PendingCertificateRecords); err != nil {
+		return err
+	}
+
+	if err := validateChildCertificatesRecords(data.ChildCertificatesRecords); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func validateApprovedCertificates(approvedCertificateRecords []types.Certificates) error {
+	for _, record := range approvedCertificateRecords {
 		for _, certificate := range record.Items {
 			if len(certificate.PemCert) == 0 {
-				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty X509 Certificate", certificate.PemCert)
+				return sdk.ErrUnknownRequest(
+					fmt.Sprintf("Invalid ApprovedCertificateRecords: value: %s."+
+						" Error: Empty X509 Certificate", certificate.PemCert))
 			}
+
 			if certificate.Type != types.RootCertificate && certificate.Type != types.IntermediateCertificate {
 				return sdk.ErrUnknownRequest(
-					fmt.Sprintf("invalid ApprovedCertificateRecords: value: %v. Error: Invalid Certificate Type: unknown type; supported types: [%s,%s]", certificate.Type, types.RootCertificate, types.IntermediateCertificate))
+					fmt.Sprintf("invalid ApprovedCertificateRecords: value: %v. Error: Invalid Certificate Type: "+
+						"unknown type; supported types: [%s,%s]",
+						certificate.Type, types.RootCertificate, types.IntermediateCertificate))
 			}
+
 			if len(certificate.Subject) == 0 {
-				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty Subject", certificate.Subject)
+				return sdk.ErrUnknownRequest(
+					fmt.Sprintf("Invalid ApprovedCertificateRecords: value: %s. "+
+						"Error: Empty Subject", certificate.Subject))
 			}
-			if len(certificate.SubjectKeyId) == 0 {
-				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty SubjectKeyId", certificate.SubjectKeyId)
+
+			if len(certificate.SubjectKeyID) == 0 {
+				return sdk.ErrUnknownRequest(
+					fmt.Sprintf("Invalid ApprovedCertificateRecords: value: %s. Error: "+
+						"Empty SubjectKeyID", certificate.SubjectKeyID))
 			}
+
 			if len(certificate.SerialNumber) == 0 {
-				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty SerialNumber", certificate.SerialNumber)
+				return sdk.ErrUnknownRequest(
+					fmt.Sprintf("Invalid ApprovedCertificateRecords: value: %s. "+
+						"Error: Empty SerialNumber", certificate.SerialNumber))
 			}
-			if len(certificate.RootSubjectKeyId) == 0 {
-				return fmt.Errorf("invalid ApprovedCertificateRecords: value: %s. Error: Empty RootSubjectId", certificate.RootSubjectKeyId)
+
+			if len(certificate.RootSubjectKeyID) == 0 {
+				return sdk.ErrUnknownRequest(
+					fmt.Sprintf("Invalid ApprovedCertificateRecords: value: %s. "+
+						"Error: Empty RootSubjectId", certificate.RootSubjectKeyID))
 			}
 		}
 	}
 
-	for _, record := range data.PendingCertificateRecords {
+	return nil
+}
+
+func validatePendingCertificates(pendingCertificateRecords []types.ProposedCertificate) error {
+	for _, record := range pendingCertificateRecords {
 		if len(record.PemCert) == 0 {
-			return fmt.Errorf("invalid PendingCertificateRecords: value: %s. Error: Empty X509 Certificate", record.PemCert)
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid PendingCertificateRecords: value: %s. Error: Empty X509 Certificate", record.PemCert))
 		}
+
 		if len(record.Subject) == 0 {
-			return fmt.Errorf("invalid PendingCertificateRecords: value: %s. Error: Empty Subject", record.Subject)
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid PendingCertificateRecords: value: %s. Error: Empty Subject", record.Subject))
 		}
-		if len(record.SubjectKeyId) == 0 {
-			return fmt.Errorf("invalid PendingCertificateRecords: value: %s. Error: Empty SubjectKeyId", record.SubjectKeyId)
+
+		if len(record.SubjectKeyID) == 0 {
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid PendingCertificateRecords: value: %s. Error: Empty SubjectKeyID", record.SubjectKeyID))
 		}
 	}
 
-	for _, record := range data.ChildCertificatesRecords {
+	return nil
+}
+
+func validateChildCertificatesRecords(childCertificatesRecords []types.ChildCertificates) error {
+	for _, record := range childCertificatesRecords {
 		if len(record.Subject) == 0 {
-			return fmt.Errorf("invalid ChildCertificatesRecords: value: %s. Error: Empty Subject", record.Subject)
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid ChildCertificatesRecords: value: %s. Error: Empty Subject", record.Subject))
 		}
-		if len(record.SubjectKeyId) == 0 {
-			return fmt.Errorf("invalid ChildCertificatesRecords: value: %s. Error: Empty SubjectKeyId", record.SubjectKeyId)
+
+		if len(record.SubjectKeyID) == 0 {
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid ChildCertificatesRecords: value: %s. Error: Empty SubjectKeyID", record.SubjectKeyID))
 		}
 	}
 
@@ -77,14 +126,13 @@ func DefaultGenesisState() GenesisState {
 }
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-
 	for _, record := range data.PendingCertificateRecords {
 		keeper.SetProposedCertificate(ctx, record)
 	}
 
 	for _, record := range data.ApprovedCertificateRecords {
 		if len(record.Items) > 0 {
-			keeper.SetCertificates(ctx, record.Items[0].Subject, record.Items[0].SubjectKeyId, record)
+			keeper.SetCertificates(ctx, record.Items[0].Subject, record.Items[0].SubjectKeyID, record)
 		}
 	}
 
@@ -97,7 +145,9 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	var approvedCertificates []types.Certificates
+
 	var pendingCertificates []types.ProposedCertificate
+
 	var childCertificatesList []types.ChildCertificates
 
 	k.IterateCertificates(ctx, "", func(certificates types.Certificates) (stop bool) {

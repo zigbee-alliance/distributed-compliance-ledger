@@ -1,5 +1,6 @@
 package validator
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
@@ -45,13 +46,13 @@ func Setup() TestSetup {
 	authzKeeper := authz.NewKeeper(authzKey, cdc)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(validatorKeeper)
 	handler := NewHandler(validatorKeeper, authzKeeper)
 
-	authzKeeper.AssignRole(ctx, test_constants.Address1, authz.NodeAdmin)
+	authzKeeper.AssignRole(ctx, testconstants.Address1, authz.NodeAdmin)
 
 	setup := TestSetup{
 		Cdc:             cdc,
@@ -60,7 +61,7 @@ func Setup() TestSetup {
 		AuthzKeeper:     authzKeeper,
 		Handler:         handler,
 		Querier:         querier,
-		NodeAdmin:       test_constants.Address1,
+		NodeAdmin:       testconstants.Address1,
 	}
 
 	return setup

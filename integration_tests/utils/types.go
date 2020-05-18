@@ -1,5 +1,6 @@
 package utils
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
@@ -55,7 +56,7 @@ type CertificatesHeadersResult struct {
 }
 
 type TxnResponse struct {
-	Height    string `json:"height"`
-	TxHash    string `json:"txhash"`
-	Code      int    `json:"code"`
+	Height string `json:"height"`
+	TxHash string `json:"txhash"`
+	Code   int    `json:"code"`
 }

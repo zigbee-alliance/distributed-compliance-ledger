@@ -9,11 +9,15 @@ import (
 
 func RandString() string {
 	rand.Seed(time.Now().UnixNano())
+
 	chars := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+
 	var b strings.Builder
+
 	for i := 0; i < 5; i++ {
 		b.WriteRune(chars[rand.Intn(len(chars))])
 	}
+
 	return b.String()
 }
 

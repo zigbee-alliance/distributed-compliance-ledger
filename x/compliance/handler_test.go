@@ -1,5 +1,7 @@
+//nolint:testpackage
 package compliance
 
+//nolint:goimports
 import (
 	"fmt"
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
@@ -35,7 +37,6 @@ func TestHandler_CertifyModel(t *testing.T) {
 
 	certified, _ := queryCertifiedModel(setup, vid, pid)
 	require.True(t, certified)
-
 }
 
 func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
@@ -380,7 +381,8 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{keeper.QueryComplianceInfo, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
+		[]string{keeper.QueryComplianceInfo, fmt.Sprintf("%v", vid),
+			fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
 		abci.RequestQuery{},
 	)
 
@@ -390,6 +392,7 @@ func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16) (types.Complia
 
 	var model types.ComplianceInfo
 	_ = setup.Cdc.UnmarshalJSON(result, &model)
+
 	return model, nil
 }
 
@@ -414,6 +417,7 @@ func queryComplianceInfoInState(setup TestSetup, vid uint16, pid uint16, state s
 
 	var model types.ComplianceInfoInState
 	_ = setup.Cdc.UnmarshalJSON(result, &model)
+
 	return model.Value, nil
 }
 
@@ -433,6 +437,7 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	}
 
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
+
 	return vid, pid
 }
 
@@ -445,6 +450,7 @@ func addTestingResult(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) 
 	}
 
 	setup.CompliancetestKeeper.AddTestingResult(setup.Ctx, testingResult)
+
 	return vid, pid
 }
 

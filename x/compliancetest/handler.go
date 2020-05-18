@@ -1,5 +1,6 @@
 package compliancetest
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
@@ -22,8 +23,8 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKee
 	}
 }
 
-func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authzKeeper authz.Keeper,
-	msg types.MsgAddTestingResult) sdk.Result {
+func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
+	authzKeeper authz.Keeper, msg types.MsgAddTestingResult) sdk.Result {
 	// check if sender has enough rights to add testing results
 	if err := checkAddTestingResultRights(ctx, authzKeeper, msg.Signer); err != nil {
 		return err.Result()
@@ -51,7 +52,8 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoK
 func checkAddTestingResultRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
 	// sender must have TestHouse role to add new model
 	if !authzKeeper.HasRole(ctx, signer, authz.TestHouse) {
-		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddTestingResult transaction should be signed by an account with the %s role", authz.TestHouse))
+		return sdk.ErrUnauthorized(fmt.Sprintf(
+			"MsgAddTestingResult transaction should be signed by an account with the %s role", authz.TestHouse))
 	}
 
 	return nil

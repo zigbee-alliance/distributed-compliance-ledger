@@ -7,7 +7,7 @@ import (
 
 const (
 	// Default broadcast mode used for write transactions
-	DefaultBroadcastMode  = flags.BroadcastBlock
+	DefaultBroadcastMode = flags.BroadcastBlock
 )
 
 var (

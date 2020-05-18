@@ -1,5 +1,6 @@
 package compliancetest
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
@@ -54,13 +55,13 @@ func Setup() TestSetup {
 	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetestKeeper)
 	handler := NewHandler(compliancetestKeeper, modelinfoKeeper, authzKeeper)
 
-	account := test_constants.Address1
+	account := testconstants.Address1
 	authzKeeper.AssignRole(ctx, account, authz.TestHouse)
 
 	setup := TestSetup{
@@ -81,13 +82,14 @@ func TestMsgAddTestingResult(signer sdk.AccAddress, vid uint16, pid uint16) MsgA
 	return MsgAddTestingResult{
 		VID:        vid,
 		PID:        pid,
-		TestResult: test_constants.TestResult,
-		TestDate:   test_constants.TestDate,
+		TestResult: testconstants.TestResult,
+		TestDate:   testconstants.TestDate,
 		Signer:     signer,
 	}
 }
 
-func CheckTestingResult(t *testing.T, receivedTestingResult types.TestingResultItem, expectedTestingResult types.MsgAddTestingResult) {
+func CheckTestingResult(t *testing.T, receivedTestingResult types.TestingResultItem,
+	expectedTestingResult types.MsgAddTestingResult) {
 	require.Equal(t, receivedTestingResult.Owner, expectedTestingResult.Signer)
 	require.Equal(t, receivedTestingResult.TestResult, expectedTestingResult.TestResult)
 	require.Equal(t, receivedTestingResult.TestDate, expectedTestingResult.TestDate)

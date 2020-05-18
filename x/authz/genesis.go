@@ -1,5 +1,6 @@
 package authz
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz/internal/types"
@@ -19,11 +20,13 @@ func NewGenesisState() GenesisState {
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.AccountRoles {
 		if record.Address == nil {
-			return fmt.Errorf("invalid AccountRoles: Value: %s. Error: Missing Address", record.Address)
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid AccountRoles: Value: %s. "+
+				"Error: Missing Address", record.Address))
 		}
 
 		if record.Roles == nil {
-			return fmt.Errorf("invalid AccountRoles: Value: %s. Error: Missing Roles", record.Roles)
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid AccountRoles: Value: %s. "+
+				"Error: Missing Roles", record.Roles))
 		}
 	}
 

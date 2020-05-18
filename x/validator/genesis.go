@@ -1,5 +1,6 @@
 package validator
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
@@ -30,7 +31,6 @@ func DefaultGenesisState() GenesisState {
 }
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.ValidatorUpdate) {
-
 	// We need to pretend to be "n blocks before genesis", where "n" is the
 	// validator update delay, so that e.g. slashing periods are correctly
 	// initialized for the validator set e.g. with a one-block offset - the
@@ -52,9 +52,11 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 
 	for addr, array := range data.MissedBlocks {
 		address, err := sdk.ConsAddressFromBech32(addr)
+
 		if err != nil {
 			panic(err)
 		}
+
 		for _, missed := range array {
 			keeper.SetValidatorMissedBlockBitArray(ctx, address, missed.Index, missed.Missed)
 		}
@@ -108,14 +110,19 @@ func ValidateGenesis(data GenesisState) error {
 
 func validateGenesisStateValidators(validators []Validator) (err error) {
 	addrMap := make(map[string]bool, len(validators))
+
 	for i := 0; i < len(validators); i++ {
 		val := validators[i]
 		strKey := string(val.GetConsPubKey().Bytes())
+
 		if _, ok := addrMap[strKey]; ok {
-			return fmt.Errorf("duplicate validator in genesis state: name %v, address %v", val.GetName(), val.Address)
+			return sdk.ErrUnknownRequest(fmt.Sprintf(
+				"duplicate validator in genesis state: name %v, address %v", val.GetName(), val.Address))
 		}
+
 		addrMap[strKey] = true
 	}
+
 	return
 }
 
@@ -130,5 +137,6 @@ func WriteValidators(ctx sdk.Context, keeper Keeper) (vals []tmtypes.GenesisVali
 
 		return false
 	})
+
 	return
 }

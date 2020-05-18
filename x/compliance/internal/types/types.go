@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -33,7 +34,8 @@ type ComplianceInfo struct {
 	History           []ComplianceHistoryItem `json:"history,omitempty"`
 }
 
-func NewCertifiedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+func NewCertifiedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType,
+	date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
@@ -46,7 +48,8 @@ func NewCertifiedComplianceInfo(vid uint16, pid uint16, certificationType Certif
 	}
 }
 
-func NewRevokedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType, date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
+func NewRevokedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType,
+	date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,

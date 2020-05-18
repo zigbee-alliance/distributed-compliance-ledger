@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"encoding/base64"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"

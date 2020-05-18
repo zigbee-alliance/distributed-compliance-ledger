@@ -59,8 +59,8 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
 
 	return cmd
 }

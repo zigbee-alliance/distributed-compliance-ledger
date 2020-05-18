@@ -1,5 +1,7 @@
+//nolint:testpackage
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
@@ -12,24 +14,24 @@ func TestKeeper_ModelInfoGetSet(t *testing.T) {
 	setup := Setup()
 
 	// check if model present
-	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
 
 	// no model before its created
 	require.Panics(t, func() {
-		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
 	})
 
 	// create model
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, DefaultModelInfo())
 
 	// check if model present
-	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
 
 	// get model info
-	modelInfo := setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+	modelInfo := setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
 	require.NotNil(t, modelInfo)
-	require.Equal(t, test_constants.Name, modelInfo.Name)
-	require.Equal(t, test_constants.Owner, modelInfo.Owner)
+	require.Equal(t, testconstants.Name, modelInfo.Name)
+	require.Equal(t, testconstants.Owner, modelInfo.Owner)
 }
 
 func TestKeeper_ModelInfoIterator(t *testing.T) {
@@ -61,17 +63,17 @@ func TestKeeper_ModelInfoDelete(t *testing.T) {
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, DefaultModelInfo())
 
 	// check if model present
-	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
 
 	// delete model
-	setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+	setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
 
 	// check if model present
-	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, test_constants.VID, test_constants.PID))
+	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
 
 	// try to get model info
 	require.Panics(t, func() {
-		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, test_constants.VID, test_constants.PID)
+		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
 	})
 }
 
@@ -80,10 +82,10 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 	count := 10
 
 	// check if vendor products present
-	require.False(t, setup.ModelinfoKeeper.IsVendorProductsPresent(setup.Ctx, test_constants.VID))
+	require.False(t, setup.ModelinfoKeeper.IsVendorProductsPresent(setup.Ctx, testconstants.VID))
 
 	// get vendor products
-	vendorProducts := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, test_constants.VID)
+	vendorProducts := setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, testconstants.VID)
 	require.True(t, vendorProducts.IsEmpty())
 
 	var PIDs []types.Product
@@ -104,7 +106,7 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 		PIDs = append(PIDs, vendorProduct)
 
 		// check vendor products
-		vendorProducts = setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, test_constants.VID)
+		vendorProducts = setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, testconstants.VID)
 		require.Equal(t, PIDs, vendorProducts.Products)
 	}
 
@@ -116,15 +118,15 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 		PIDs = append(PIDs[:index], PIDs[index+1:]...)
 
 		// remove second model
-		setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, test_constants.VID, pid.PID)
+		setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, testconstants.VID, pid.PID)
 
 		// check vendor products
-		vendorProducts = setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, test_constants.VID)
+		vendorProducts = setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, testconstants.VID)
 		require.Equal(t, PIDs, vendorProducts.Products)
 	}
 
 	// check if vendor products present
-	require.False(t, setup.ModelinfoKeeper.IsVendorProductsPresent(setup.Ctx, test_constants.VID))
+	require.False(t, setup.ModelinfoKeeper.IsVendorProductsPresent(setup.Ctx, testconstants.VID))
 }
 
 func TestKeeper_VendorProductsOverTwoModelsWithDifferentVendor(t *testing.T) {
@@ -148,6 +150,7 @@ func TestKeeper_VendorProductsIteratorOverOneVendor(t *testing.T) {
 
 	// add 10 model infos with same Vendor
 	expectedLen := 1
+
 	PopulateStoreWithModelsHavingSameVendor(setup, 10)
 
 	// get total count

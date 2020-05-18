@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
@@ -17,7 +18,7 @@ const (
 	Jailed ValidatorState = "jailed"
 )
 
-// Request Payload for QueryValidators (pagination and filtering) query
+// Request Payload for QueryValidators (pagination and filtering) query.
 type ListValidatorsParams struct {
 	Skip  int
 	Take  int
@@ -36,7 +37,7 @@ func NewListValidatorsParams(pagination pagination.PaginationParams, status Vali
 	Result Payload
 */
 
-// Response Payload for QueryValidators query
+// Response Payload for QueryValidators query.
 type ListValidatorItems struct {
 	Total int         `json:"total"`
 	Items []Validator `json:"items"`
@@ -49,7 +50,7 @@ func NewListValidatorItems() ListValidatorItems {
 	}
 }
 
-// Implement fmt.Stringer
+// Implement fmt.Stringer.
 func (n ListValidatorItems) String() string {
 	res, err := json.Marshal(n)
 

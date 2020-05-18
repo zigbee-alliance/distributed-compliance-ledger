@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -9,17 +10,17 @@ import (
 	Model Info stored in KVStore
 */
 type ModelInfo struct {
-	VID                      uint16         `json:"vid"`
-	PID                      uint16         `json:"pid"`
-	CID                      uint16         `json:"cid,omitempty"`
 	Name                     string         `json:"name"`
-	Owner                    sdk.AccAddress `json:"owner"`
 	Description              string         `json:"description"`
 	SKU                      string         `json:"sku"`
 	FirmwareVersion          string         `json:"firmware_version"`
 	HardwareVersion          string         `json:"hardware_version"`
 	Custom                   string         `json:"custom,omitempty"`
 	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
+	VID                      uint16         `json:"vid"`
+	PID                      uint16         `json:"pid"`
+	CID                      uint16         `json:"cid,omitempty"`
+	Owner                    sdk.AccAddress `json:"owner"`
 }
 
 func NewModelInfo(vid uint16, pid uint16, cid uint16, name string, owner sdk.AccAddress,
@@ -90,7 +91,7 @@ func (d VendorProducts) String() string {
 	return string(bytes)
 }
 
-// Single Vendor Product
+// Single Vendor Product.
 type Product struct {
 	PID   uint16         `json:"pid"`
 	Name  string         `json:"name"`

@@ -7,10 +7,10 @@ import (
 )
 
 type Keeper struct {
-	// Unexposed key to access store from sdk.Context
+	// Unexposed key to access store from sdk.Context.
 	storeKey sdk.StoreKey
 
-	// The wire codec for binary encoding/decoding
+	// The wire codec for binary encoding/decoding.
 	cdc *codec.Codec
 }
 
@@ -18,7 +18,7 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 	return Keeper{storeKey: storeKey, cdc: cdc}
 }
 
-// Gets the entire AccountRoles struct
+// Gets the entire AccountRoles struct.
 func (k Keeper) GetAccountRoles(ctx sdk.Context, addr sdk.AccAddress) types.AccountRoles {
 	if !k.IsAccountRolesPresent(ctx, addr) {
 		return types.NewAccountRoles(addr, []types.AccountRole{})
@@ -34,7 +34,7 @@ func (k Keeper) GetAccountRoles(ctx sdk.Context, addr sdk.AccAddress) types.Acco
 	return accountRoles
 }
 
-// Sets the entire AccountRoles struct
+// Sets the entire AccountRoles struct.
 func (k Keeper) SetAccountRoles(ctx sdk.Context, accountRoles types.AccountRoles) {
 	if len(accountRoles.Roles) == 0 {
 		k.DeleteAccountRoles(ctx, accountRoles.Address)
@@ -45,13 +45,13 @@ func (k Keeper) SetAccountRoles(ctx sdk.Context, accountRoles types.AccountRoles
 	store.Set(accountRoles.Address.Bytes(), k.cdc.MustMarshalBinaryBare(accountRoles))
 }
 
-// Deletes the AccountRoles from the store
+// Deletes the AccountRoles from the store.
 func (k Keeper) DeleteAccountRoles(ctx sdk.Context, addr sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(addr.Bytes())
 }
 
-// Iterate over all AccountRoles
+// Iterate over all AccountRoles.
 func (k Keeper) IterateAccountRoles(ctx sdk.Context, process func(accountRoles types.AccountRoles) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
@@ -101,6 +101,7 @@ func (k Keeper) AssignRole(ctx sdk.Context, addr sdk.AccAddress, roleToAdd types
 
 func (k Keeper) RevokeRole(ctx sdk.Context, addr sdk.AccAddress, roleToRevoke types.AccountRole) {
 	accountRoles := k.GetAccountRoles(ctx, addr)
+
 	var filteredRoles []types.AccountRole
 
 	for _, role := range accountRoles.Roles {
@@ -113,7 +114,7 @@ func (k Keeper) RevokeRole(ctx sdk.Context, addr sdk.AccAddress, roleToRevoke ty
 	k.SetAccountRoles(ctx, accountRoles)
 }
 
-// Check if the AccountRoles is present in the store or not
+// Check if the AccountRoles is present in the store or not.
 func (k Keeper) IsAccountRolesPresent(ctx sdk.Context, addr sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(addr.Bytes())

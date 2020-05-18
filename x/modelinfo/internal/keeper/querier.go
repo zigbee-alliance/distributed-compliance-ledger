@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
@@ -27,7 +28,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 		case QueryVendors:
 			return queryVendors(ctx, req, keeper)
 		case QueryVendorModels:
-			return queryVendorModels(ctx, path[1:], req, keeper)
+			return queryVendorModels(ctx, path[1:], keeper)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown modelinfo query endpoint")
 		}
@@ -132,7 +133,7 @@ func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []
 	return res, nil
 }
 
-func queryVendorModels(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+func queryVendorModels(ctx sdk.Context, path []string, keeper Keeper) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err

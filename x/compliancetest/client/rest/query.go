@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
@@ -33,6 +34,7 @@ func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.H
 		}
 
 		var testingResult types.TestingResults
+
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &testingResult)
 
 		restCtx.EncodeAndRespondWithHeight(testingResult, height)

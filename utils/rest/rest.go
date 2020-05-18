@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -87,6 +88,7 @@ func (ctx RestContext) GetChainHeight() (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return status.SyncInfo.LatestBlockHeight, nil
 }
 
@@ -117,16 +119,20 @@ func (ctx RestContext) WithFormerHeight() (RestContext, error) {
 	}
 
 	ctx.context = ctx.context.WithHeight(status.SyncInfo.LatestBlockHeight - 1)
+
 	return ctx, nil
 }
 
 func (ctx RestContext) WithSigner() (RestContext, error) {
 	from, err := sdk.AccAddressFromBech32(ctx.baseReq.From)
 	if err != nil {
-		rest.WriteErrorResponse(ctx.responseWriter, http.StatusBadRequest, fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
+		rest.WriteErrorResponse(ctx.responseWriter, http.StatusBadRequest,
+			fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
 		return RestContext{}, err
 	}
+
 	ctx.signer = from
+
 	return ctx, nil
 }
 
@@ -135,6 +141,7 @@ func (ctx RestContext) WithBaseRequest(baseReq rest.BaseReq) (RestContext, error
 	if !baseReq.ValidateBasic(ctx.responseWriter) {
 		return RestContext{}, sdk.ErrUnknownRequest("Base request validation failed")
 	}
+
 	return ctx, nil
 }
 
@@ -144,16 +151,19 @@ func (ctx RestContext) ReadRESTReq(req interface{}) bool {
 
 func (ctx RestContext) QueryStore(key []byte, storeName string) ([]byte, int64, error) {
 	requestPrevState := false
+
 	var err error
 
 	if flag := ctx.request.FormValue(FlagPreviousHeight); len(flag) > 0 {
 		requestPrevState, err = strconv.ParseBool(flag)
+
 		if err != nil {
 			return nil, 0, err
 		}
 	}
 
-	if requestPrevState { // Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1
+	// Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1.
+	if requestPrevState {
 		ctx, err := ctx.WithFormerHeight()
 		if err != nil {
 			return nil, 0, err
@@ -166,6 +176,7 @@ func (ctx RestContext) QueryStore(key []byte, storeName string) ([]byte, int64, 
 	}
 	// request on the current height
 	ctx.context = ctx.context.WithHeight(0)
+
 	return ctx.context.QueryStore(key, storeName)
 }
 
@@ -199,6 +210,7 @@ func (ctx RestContext) ParsePaginationParams() (pagination.PaginationParams, err
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusBadRequest, err.Error())
 		return pagination.PaginationParams{}, err
 	}
+
 	return paginationParams, nil
 }
 
@@ -276,6 +288,7 @@ func (ctx RestContext) SignMessage(name string, passphrase string, msg []sdk.Msg
 	if err != nil {
 		return nil, err
 	}
+
 	return txBldr.BuildAndSign(name, passphrase, msg)
 }
 

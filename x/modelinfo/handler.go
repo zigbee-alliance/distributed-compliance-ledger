@@ -108,6 +108,7 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 	return sdk.Result{}
 }
 
+//nolint:unused,deadcode
 func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
 	msg types.MsgDeleteModelInfo) sdk.Result {
 	// check if model exists
@@ -131,7 +132,8 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
 	// sender must have Vendor role to add new model
 	if !authzKeeper.HasRole(ctx, signer, authz.Vendor) {
-		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddModelInfo transaction should be signed by an account with the %s role", authz.Vendor))
+		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddModelInfo transaction should be "+
+			"signed by an account with the %s role", authz.Vendor))
 	}
 
 	return nil

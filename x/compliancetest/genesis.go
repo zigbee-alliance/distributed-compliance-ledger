@@ -20,15 +20,18 @@ func NewGenesisState() GenesisState {
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.TestingResultRecords {
 		if record.VID == 0 {
-			return fmt.Errorf("invalid TestingResultRecord: value: %d. Error: Invalid VID", record.VID)
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestingResultRecord: value: %v. "+
+				"Error: Invalid VID", record.VID))
 		}
 
 		if record.PID == 0 {
-			return fmt.Errorf("invalid TestingResultRecord: value: %d. Error: Invalid PID", record.PID)
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestingResultRecord: value: %v. "+
+				"Error: Invalid PID", record.PID))
 		}
 
 		if len(record.Results) == 0 {
-			return fmt.Errorf("invalid TestingResultRecord: value: %s. Error: Missing TestResult", record.Results)
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestingResultRecord: value: %s. "+
+				"Error: Missing TestResult", record.Results))
 		}
 	}
 

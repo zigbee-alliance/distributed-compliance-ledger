@@ -1,5 +1,6 @@
-package rest
+package rest_test
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
@@ -12,6 +13,7 @@ import (
 	"testing"
 )
 
+//nolint:godox
 /*
 	To Run test you need:
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
@@ -28,7 +30,7 @@ func TestModelinfoDemo(t *testing.T) {
 	inputVendors, _ := utils.GetVendors()
 
 	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
+	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
 
 	// Get account info for Jack
 	jackAccountInfo, _ := utils.GetAccountInfo(jackKeyInfo.Address)
@@ -77,7 +79,7 @@ func TestModelinfoDemo(t *testing.T) {
 
 func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
 	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
+	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
 
 	// Register new Vendor account
 	vendor, _ := utils.RegisterNewAccount()
@@ -114,7 +116,7 @@ func Test_AddModelinfo_Twice(t *testing.T) {
 	testAccount, _ := utils.RegisterNewAccount()
 
 	// get jack account
-	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.JackAccount)
+	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.JackAccount)
 
 	// Assign Vendor role to test account
 	utils.AssignRole(testAccount.Address, jackKeyInfo, authz.Vendor)

@@ -44,7 +44,8 @@ func handleMsgRevokeRole(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRev
 
 	// check if target account has role to revoke
 	if !keeper.HasRole(ctx, msg.Address, msg.Role) {
-		return sdk.ErrUnauthorized(fmt.Sprintf("Account %s doesn't have role %s to revoke", msg.Address.String(), msg.Role)).Result()
+		return sdk.ErrUnauthorized(fmt.Sprintf("Account %s doesn't have role %s to revoke",
+			msg.Address.String(), msg.Role)).Result()
 	}
 
 	// at least one trustee must be on the ledger

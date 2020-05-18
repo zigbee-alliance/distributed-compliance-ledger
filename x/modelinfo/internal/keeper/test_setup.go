@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
@@ -45,51 +46,54 @@ func Setup() TestSetup {
 		ModelinfoKeeper: modelinfoKeeper,
 		Querier:         querier,
 	}
+
 	return setup
 }
 
 func DefaultModelInfo() types.ModelInfo {
 	return types.ModelInfo{
-		VID:                      test_constants.VID,
-		PID:                      test_constants.PID,
-		CID:                      test_constants.CID,
-		Name:                     test_constants.Name,
-		Owner:                    test_constants.Owner,
-		Description:              test_constants.Description,
-		SKU:                      test_constants.Sku,
-		FirmwareVersion:          test_constants.FirmwareVersion,
-		HardwareVersion:          test_constants.HardwareVersion,
-		Custom:                   test_constants.Custom,
-		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
+		VID:                      testconstants.VID,
+		PID:                      testconstants.PID,
+		CID:                      testconstants.CID,
+		Name:                     testconstants.Name,
+		Owner:                    testconstants.Owner,
+		Description:              testconstants.Description,
+		SKU:                      testconstants.Sku,
+		FirmwareVersion:          testconstants.FirmwareVersion,
+		HardwareVersion:          testconstants.HardwareVersion,
+		Custom:                   testconstants.Custom,
+		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
 	}
 }
 
-// add 10 models with same VID and check associated products {VID: 1, PID: 1..count}
+// add 10 models with same VID and check associated products {VID: 1, PID: 1..count}.
 func PopulateStoreWithModelsHavingSameVendor(setup TestSetup, count int) uint16 {
-	firstId := uint16(1)
+	firstID := uint16(1)
 
 	modelInfo := DefaultModelInfo()
-	modelInfo.VID = firstId
+	modelInfo.VID = firstID
 
-	for i := firstId; i <= uint16(count); i++ {
+	for i := firstID; i <= uint16(count); i++ {
 		// add model info {VID: 1, PID: i}
 		modelInfo.PID = i
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 	}
-	return firstId
+
+	return firstID
 }
 
-// add 10 models with same VID and check associated products {VID: 1..count, PID: 1..count}
+// add 10 models with same VID and check associated products {VID: 1..count, PID: 1..count}.
 func PopulateStoreWithModelsHavingDifferentVendor(setup TestSetup, count int) uint16 {
-	firstId := uint16(1)
+	firstID := uint16(1)
 
 	modelInfo := DefaultModelInfo()
 
-	for i := firstId; i <= uint16(count); i++ {
+	for i := firstID; i <= uint16(count); i++ {
 		// add model info {VID: i, PID: i}
 		modelInfo.VID = i
 		modelInfo.PID = i
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 	}
-	return firstId
+
+	return firstID
 }

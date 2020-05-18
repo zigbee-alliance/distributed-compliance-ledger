@@ -20,24 +20,32 @@ func NewGenesisState() GenesisState {
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ComplianceInfoRecords {
 		if record.VID == 0 {
-			return fmt.Errorf("invalid CertifiedModelRecord: value: %d. Error: Invalid VID: it cannot be 0", record.VID)
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid CertifiedModelRecord: value: %d. "+
+					"Error: Invalid VID: it cannot be 0", record.VID))
 		}
 
 		if record.PID == 0 {
-			return fmt.Errorf("invalid CertifiedModelRecord: value: %d. Error: Invalid PID: it cannot be 0", record.PID)
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid CertifiedModelRecord: value: %d. "+
+					"Error: Invalid PID: it cannot be 0", record.PID))
 		}
 
 		if len(record.State) == 0 {
-			return fmt.Errorf("invalid CertifiedModelRecord: value: %d. Error: Invalid State: it cannot be empty", record.PID)
+			return sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid CertifiedModelRecord: value: %d."+
+					" Error: Invalid State: it cannot be empty", record.PID))
 		}
 
 		if record.Date.IsZero() {
-			return sdk.ErrUnknownRequest("invalid Date: it cannot be empty")
+			return sdk.ErrUnknownRequest("Invalid Date: it cannot be empty")
 		}
 
 		if record.CertificationType != "" && record.CertificationType != types.ZbCertificationType {
 			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("invalid CertifiedModelRecord: value: %v. Error: Invalid CertificationType: unknown type; supported types: [%s]", record.CertificationType, types.ZbCertificationType))
+				fmt.Sprintf("Invalid CertifiedModelRecord: value: %v."+
+					" Error: Invalid CertificationType: "+
+					"unknown type; supported types: [%s]", record.CertificationType, types.ZbCertificationType))
 		}
 	}
 

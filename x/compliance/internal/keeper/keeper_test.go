@@ -1,5 +1,7 @@
+//nolint:testpackage
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
@@ -12,12 +14,12 @@ func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
 
 	// check if compliance info present
 	require.False(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
-		types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID))
+		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID))
 
 	// no compliance info before its created
 	require.Panics(t, func() {
 		setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-			types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID)
+			types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID)
 	})
 
 	// create compliance info
@@ -26,11 +28,11 @@ func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
 
 	// check if compliance info present
 	require.True(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
-		types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID))
+		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID))
 
 	// get compliance info
 	receivedComplianceInfo := setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-		types.CertificationType(test_constants.CertificationType), test_constants.VID, test_constants.PID)
+		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID)
 	CheckComplianceInfo(t, certifiedModel, receivedComplianceInfo)
 }
 
@@ -43,13 +45,14 @@ func TestKeeper_ComplianceInfoIterator(t *testing.T) {
 	PopulateStoreWithMixedModels(setup, count)
 
 	// get total count
-	totalModes := setup.CompliancetKeeper.CountTotalComplianceInfo(setup.Ctx, types.CertificationType(test_constants.CertificationType))
+	totalModes := setup.CompliancetKeeper.CountTotalComplianceInfo(
+		setup.Ctx, types.CertificationType(testconstants.CertificationType))
 	require.Equal(t, count, totalModes)
 
 	// get iterator
 	var expectedRecords []types.ComplianceInfo
 
-	setup.CompliancetKeeper.IterateComplianceInfos(setup.Ctx, types.CertificationType(test_constants.CertificationType),
+	setup.CompliancetKeeper.IterateComplianceInfos(setup.Ctx, types.CertificationType(testconstants.CertificationType),
 		func(modelInfo types.ComplianceInfo) (stop bool) {
 			expectedRecords = append(expectedRecords, modelInfo)
 			return false

@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	BaseUrl = "http://127.0.0.1:1317"
+	BaseURL = "http://127.0.0.1:1317"
 )
 
-func BuildUrl(uri string) string {
-	return BaseUrl + "/" + uri
+func BuildURL(uri string) string {
+	return BaseURL + "/" + uri
 }
 
 func SendGetRequest(uri string) ([]byte, int) {
@@ -36,7 +36,8 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 	}
 
 	client := &http.Client{}
-	req, err := http.NewRequest(method, BuildUrl(uri), bytes.NewBuffer(body))
+	req, err := http.NewRequest(method, BuildURL(uri), bytes.NewBuffer(body))
+
 	if err != nil {
 		return nil, http.StatusInternalServerError
 	}
@@ -64,5 +65,6 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 func ReadResponseBody(resp *http.Response) []byte {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
+
 	return body
 }

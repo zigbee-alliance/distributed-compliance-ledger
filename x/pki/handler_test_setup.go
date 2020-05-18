@@ -1,5 +1,6 @@
 package pki
 
+// nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
@@ -45,13 +46,13 @@ func Setup() TestSetup {
 	authzKeeper := authz.NewKeeper(authzKey, cdc)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(pkiKeeper)
 	handler := NewHandler(pkiKeeper, authzKeeper)
 
-	trustee := test_constants.Address2
+	trustee := testconstants.Address2
 	authzKeeper.AssignRole(ctx, trustee, authz.Trustee)
 
 	setup := TestSetup{

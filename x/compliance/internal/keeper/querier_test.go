@@ -1,5 +1,7 @@
+//nolint:testpackage
 package keeper
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
@@ -34,12 +36,11 @@ func TestQuerier_QueryComplianceInfoForUnknownModel(t *testing.T) {
 	setup := Setup()
 
 	// query compliance info and check
-	_, err := getComplianceInfo(setup, test_constants.VID, test_constants.PID)
+	_, err := getComplianceInfo(setup, testconstants.VID, testconstants.PID)
 
 	// check
 	require.NotNil(t, err)
 	require.Equal(t, types.CodeComplianceInfoDoesNotExist, err.Code())
-
 }
 
 func TestQuerier_QueryCertifiedModel(t *testing.T) {
@@ -60,7 +61,7 @@ func TestQuerier_QueryCertifiedModelForUnknown(t *testing.T) {
 	setup := Setup()
 
 	// query certified model
-	_, err := getCertifiedModel(setup, test_constants.VID, test_constants.PID)
+	_, err := getCertifiedModel(setup, testconstants.VID, testconstants.PID)
 
 	// check
 	require.NotNil(t, err)
@@ -100,7 +101,7 @@ func TestQuerier_QueryRevokedModelForUnknown(t *testing.T) {
 	setup := Setup()
 
 	// query revoked model
-	_, err := getRevokedModel(setup, test_constants.VID, test_constants.PID)
+	_, err := getRevokedModel(setup, testconstants.VID, testconstants.PID)
 
 	// check
 	require.NotNil(t, err)
@@ -127,7 +128,7 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	count := 8
 
 	// add 4 certified and 4 revoked models
-	firstId := PopulateStoreWithMixedModels(setup, count)
+	firstID := PopulateStoreWithMixedModels(setup, count)
 
 	params := types.NewListQueryParams("", 0, 0)
 
@@ -138,8 +139,8 @@ func TestQuerier_QueryAllModels(t *testing.T) {
 	require.Equal(t, count, len(receivedInfos.Items))
 
 	for i, item := range receivedInfos.Items {
-		require.Equal(t, uint16(i)+firstId, item.VID)
-		require.Equal(t, uint16(i)+firstId, item.PID)
+		require.Equal(t, uint16(i)+firstID, item.VID)
+		require.Equal(t, uint16(i)+firstID, item.PID)
 	}
 }
 
@@ -148,17 +149,17 @@ func TestQuerier_QueryAllModelsInState(t *testing.T) {
 	count := 8
 
 	// add 4 certified and 4 revoked models
-	firstId := PopulateStoreWithMixedModels(setup, count)
+	firstID := PopulateStoreWithMixedModels(setup, count)
 
 	params := types.NewListQueryParams("", 0, 0)
 
 	cases := []struct {
-		firstId       uint16
+		firstID       uint16
 		count         int
 		receivedInfos types.ListComplianceInfoKeyItems
 	}{
-		{firstId, count / 2, getCertifiedModels(setup, params)},                 // query certified model
-		{firstId + uint16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
+		{firstID, count / 2, getCertifiedModels(setup, params)},                 // query certified model
+		{firstID + uint16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
 	}
 
 	for _, tc := range cases {
@@ -167,8 +168,8 @@ func TestQuerier_QueryAllModelsInState(t *testing.T) {
 		require.Equal(t, tc.count, len(tc.receivedInfos.Items))
 
 		for i, item := range tc.receivedInfos.Items {
-			require.Equal(t, uint16(i)+tc.firstId, item.VID)
-			require.Equal(t, uint16(i)+tc.firstId, item.PID)
+			require.Equal(t, uint16(i)+tc.firstID, item.VID)
+			require.Equal(t, uint16(i)+tc.firstID, item.PID)
 		}
 	}
 }
@@ -178,7 +179,7 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	count := 8
 
 	// add 4 certified and 4 revoked models
-	firstId := PopulateStoreWithMixedModels(setup, count)
+	firstID := PopulateStoreWithMixedModels(setup, count)
 
 	// query all certified models skip=1 take=2
 	skip := 1
@@ -193,8 +194,8 @@ func TestQuerier_QueryAllModelsWithPaginationHeaders(t *testing.T) {
 	require.Equal(t, take, len(receivedInfos.Items))
 
 	for i, item := range receivedInfos.Items {
-		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.VID)
-		require.Equal(t, uint16(skip)+uint16(i)+firstId, item.PID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstID, item.VID)
+		require.Equal(t, uint16(skip)+uint16(i)+firstID, item.PID)
 	}
 }
 
@@ -203,7 +204,7 @@ func TestQuerier_QueryAllModelsInStateWithPaginationHeaders(t *testing.T) {
 	count := 8
 
 	// add 4 certified and 4 revoked models
-	firstId := PopulateStoreWithMixedModels(setup, count)
+	firstID := PopulateStoreWithMixedModels(setup, count)
 
 	// query all certified models skip=1 take=2
 	skip := 1
@@ -211,12 +212,12 @@ func TestQuerier_QueryAllModelsInStateWithPaginationHeaders(t *testing.T) {
 	params := types.NewListQueryParams("", skip, take)
 
 	cases := []struct {
-		firstId       uint16
+		firstID       uint16
 		count         int
 		receivedInfos types.ListComplianceInfoKeyItems
 	}{
-		{firstId, count / 2, getCertifiedModels(setup, params)},                 // query certified model
-		{firstId + uint16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
+		{firstID, count / 2, getCertifiedModels(setup, params)},                 // query certified model
+		{firstID + uint16(count/2), count / 2, getRevokedModels(setup, params)}, // query revoked models
 	}
 
 	for _, tc := range cases {
@@ -225,8 +226,8 @@ func TestQuerier_QueryAllModelsInStateWithPaginationHeaders(t *testing.T) {
 		require.Equal(t, take, len(tc.receivedInfos.Items))
 
 		for i, item := range tc.receivedInfos.Items {
-			require.Equal(t, uint16(skip)+uint16(i)+tc.firstId, item.VID)
-			require.Equal(t, uint16(skip)+uint16(i)+tc.firstId, item.PID)
+			require.Equal(t, uint16(skip)+uint16(i)+tc.firstID, item.VID)
+			require.Equal(t, uint16(skip)+uint16(i)+tc.firstID, item.PID)
 		}
 	}
 }

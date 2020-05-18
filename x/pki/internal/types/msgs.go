@@ -56,14 +56,15 @@ func (m MsgProposeAddX509RootCert) GetSigners() []sdk.AccAddress {
 
 type MsgApproveAddX509RootCert struct {
 	Subject      string         `json:"subject"`
-	SubjectKeyId string         `json:"subject_key_id"`
+	SubjectKeyID string         `json:"subject_key_id"`
 	Signer       sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgApproveAddX509RootCert(subject string, subjectKeyId string, signer sdk.AccAddress) MsgApproveAddX509RootCert {
+func NewMsgApproveAddX509RootCert(subject string, subjectKeyID string,
+	signer sdk.AccAddress) MsgApproveAddX509RootCert {
 	return MsgApproveAddX509RootCert{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyID: subjectKeyID,
 		Signer:       signer,
 	}
 }
@@ -85,8 +86,8 @@ func (m MsgApproveAddX509RootCert) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid Subject: it cannot be empty")
 	}
 
-	if len(m.SubjectKeyId) == 0 {
-		return sdk.ErrUnknownRequest("Invalid SubjectKeyId: it cannot be empty")
+	if len(m.SubjectKeyID) == 0 {
+		return sdk.ErrUnknownRequest("Invalid SubjectKeyID: it cannot be empty")
 	}
 
 	return nil

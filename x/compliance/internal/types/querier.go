@@ -8,7 +8,8 @@ import (
 	Request Payload
 */
 
-// Request Payload for QueryAllComplianceInfoRecords/QueryAllCertifiedModels/QueryAllRevokedModels (pagination and filtering) query
+// Request Payload for QueryAllComplianceInfoRecords/QueryAllCertifiedModels/QueryAllRevokedModels
+//(pagination and filtering) query.
 type ListQueryParams struct {
 	CertificationType CertificationType
 	Skip              int
@@ -27,13 +28,13 @@ func NewListQueryParams(certificationType CertificationType, skip int, take int)
 	Response Payload
 */
 
-// Response Payload for QueryAllComplianceInfoRecords query
+// Response Payload for QueryAllComplianceInfoRecords query.
 type ListComplianceInfoItems struct {
 	Total int              `json:"total"`
 	Items []ComplianceInfo `json:"items"`
 }
 
-// Implement fmt.Stringer
+// Implement fmt.Stringer.
 func (n ListComplianceInfoItems) String() string {
 	res, err := json.Marshal(n)
 
@@ -44,13 +45,13 @@ func (n ListComplianceInfoItems) String() string {
 	return string(res)
 }
 
-// Response Payload for QueryAllCertifiedModels/QueryAllRevokedModels queries
+// Response Payload for QueryAllCertifiedModels/QueryAllRevokedModels queries.
 type ListComplianceInfoKeyItems struct {
 	Total int                 `json:"total"`
 	Items []ComplianceInfoKey `json:"items"`
 }
 
-// Implement fmt.Stringer
+// Implement fmt.Stringer.
 func (n ListComplianceInfoKeyItems) String() string {
 	res, err := json.Marshal(n)
 
@@ -61,7 +62,7 @@ func (n ListComplianceInfoKeyItems) String() string {
 	return string(res)
 }
 
-// Response Payload for QueryCertifiedModel/QueryRevokedModel queries
+// Response Payload for QueryCertifiedModel/QueryRevokedModel queries.
 type ComplianceInfoInState struct {
 	Value bool `json:"value"`
 }

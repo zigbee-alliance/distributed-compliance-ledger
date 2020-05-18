@@ -1,5 +1,6 @@
 package keeper
 
+// nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
@@ -70,13 +71,13 @@ func queryAllProposedX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keepe
 
 func queryProposedX509RootCert(ctx sdk.Context, path []string, keeper Keeper) (res []byte, err sdk.Error) {
 	subject := path[0]
-	subjectKeyId := path[1]
+	subjectKeyID := path[1]
 
-	if !keeper.IsProposedCertificatePresent(ctx, subject, subjectKeyId) {
-		return nil, types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId)
+	if !keeper.IsProposedCertificatePresent(ctx, subject, subjectKeyID) {
+		return nil, types.ErrProposedCertificateDoesNotExist(subject, subjectKeyID)
 	}
 
-	certificate := keeper.GetProposedCertificate(ctx, subject, subjectKeyId)
+	certificate := keeper.GetProposedCertificate(ctx, subject, subjectKeyID)
 
 	res = codec.MustMarshalJSONIndent(keeper.cdc, certificate)
 
@@ -85,13 +86,13 @@ func queryProposedX509RootCert(ctx sdk.Context, path []string, keeper Keeper) (r
 
 func queryX509Cert(ctx sdk.Context, path []string, keeper Keeper) (res []byte, err sdk.Error) {
 	subject := path[0]
-	subjectKeyId := path[1]
+	subjectKeyID := path[1]
 
-	if !keeper.IsCertificatePresent(ctx, subject, subjectKeyId) {
-		return nil, types.ErrCertificateDoesNotExist(subject, subjectKeyId)
+	if !keeper.IsCertificatePresent(ctx, subject, subjectKeyID) {
+		return nil, types.ErrCertificateDoesNotExist(subject, subjectKeyID)
 	}
 
-	certificate := keeper.GetCertificates(ctx, subject, subjectKeyId)
+	certificate := keeper.GetCertificates(ctx, subject, subjectKeyID)
 
 	res = codec.MustMarshalJSONIndent(keeper.cdc, certificate)
 
@@ -102,54 +103,59 @@ func queryAllX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper
 	return queryX509Certs(ctx, req, keeper, types.RootCertificate, "")
 }
 
-func queryAllX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, ) ([]byte, sdk.Error) {
+func queryAllX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	return queryX509Certs(ctx, req, keeper, "", "")
 }
 
-func queryAllSubjectX509Certs(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper, ) ([]byte, sdk.Error) {
+func queryAllSubjectX509Certs(ctx sdk.Context, path []string,
+	req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	subject := path[0]
 	return queryX509Certs(ctx, req, keeper, "", subject)
 }
 
-func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper, certificateType types.CertificateType, iteratorPrefix string) (res []byte, err sdk.Error) {
+func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper,
+	certificateType types.CertificateType, iteratorPrefix string) (res []byte, err sdk.Error) {
 	var params types.ListCertificatesQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("Failed to parse request params: %s", err))
 	}
+
 	result := types.NewListCertificates()
+
 	skipped := 0
 
-	keeper.IterateCertificates(ctx, iteratorPrefix, func(certificates types.Certificates) (stop bool) {
-		for _, certificate := range certificates.Items {
-			// filter by certificate type (Root/Any)
-			if len(certificateType) != 0 && certificate.Type != certificateType {
-				return false
-			}
+	keeper.IterateCertificates(ctx, iteratorPrefix,
+		func(certificates types.Certificates) (stop bool) {
+			for _, certificate := range certificates.Items {
+				// filter by certificate type (Root/Any)
+				if len(certificateType) != 0 && certificate.Type != certificateType {
+					return false
+				}
 
-			// filter by root subject
-			if len(params.RootSubject) > 0 && params.RootSubject != certificate.RootSubject {
-				return false
-			}
+				// filter by root subject
+				if len(params.RootSubject) > 0 && params.RootSubject != certificate.RootSubject {
+					return false
+				}
 
-			// filter by root subject ky id
-			if len(params.RootSubjectKeyId) > 0 && params.RootSubjectKeyId != certificate.RootSubjectKeyId {
-				return false
-			}
+				// filter by root subject ky id
+				if len(params.RootSubjectKeyID) > 0 && params.RootSubjectKeyID != certificate.RootSubjectKeyID {
+					return false
+				}
 
-			result.Total++
+				result.Total++
 
-			if skipped < params.Skip {
-				skipped++
-				return false
-			}
+				if skipped < params.Skip {
+					skipped++
+					return false
+				}
 
-			if len(result.Items) < params.Take || params.Take == 0 {
-				result.Items = append(result.Items, certificate)
-				return false
+				if len(result.Items) < params.Take || params.Take == 0 {
+					result.Items = append(result.Items, certificate)
+					return false
+				}
 			}
-		}
-		return false
-	})
+			return false
+		})
 
 	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
 

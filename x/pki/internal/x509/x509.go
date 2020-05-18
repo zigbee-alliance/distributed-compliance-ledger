@@ -1,5 +1,6 @@
 package x509
 
+// nolint:goimports
 import (
 	"crypto/x509"
 	"encoding/pem"
@@ -13,8 +14,8 @@ type X509Certificate struct {
 	Issuer         string
 	SerialNumber   string
 	Subject        string
-	SubjectKeyId   string
-	AuthorityKeyId string
+	SubjectKeyID   string
+	AuthorityKeyID string
 	Certificate    *x509.Certificate
 }
 
@@ -33,8 +34,8 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, sdk.Error) 
 		Issuer:         cert.Issuer.String(),
 		SerialNumber:   cert.SerialNumber.String(),
 		Subject:        cert.Subject.String(),
-		SubjectKeyId:   BytesToHex(cert.SubjectKeyId),
-		AuthorityKeyId: BytesToHex(cert.AuthorityKeyId),
+		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
+		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
 	}
 
@@ -46,9 +47,9 @@ func BytesToHex(bytes []byte) string {
 		return ""
 	}
 
-	var bytesHex []string
-	for _, byte_ := range bytes {
-		bytesHex = append(bytesHex, fmt.Sprintf("%X", byte_))
+	bytesHex := make([]string, len(bytes))
+	for i, byte_ := range bytes {
+		bytesHex[i] = fmt.Sprintf("%X", byte_)
 	}
 
 	return strings.Join(bytesHex, ":")
@@ -68,8 +69,8 @@ func (c X509Certificate) VerifyX509Certificate(parent *x509.Certificate) sdk.Err
 }
 
 func (c X509Certificate) IsRootCertificate() bool {
-	if len(c.AuthorityKeyId) > 0 {
-		return c.Subject == c.Issuer && c.AuthorityKeyId == c.SubjectKeyId
+	if len(c.AuthorityKeyID) > 0 {
+		return c.Subject == c.Issuer && c.AuthorityKeyID == c.SubjectKeyID
 	} else {
 		return c.Subject == c.Issuer
 	}

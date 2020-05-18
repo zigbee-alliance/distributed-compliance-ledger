@@ -1,6 +1,7 @@
 package cli
 
 import (
+	//nolint:goimports
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
@@ -56,11 +57,11 @@ func GetCmdProposedX509RootCert(queryRoute string, cdc *codec.Codec) *cobra.Comm
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			subject := viper.GetString(FlagSubject)
-			subjectKeyId := viper.GetString(FlagSubjectKeyId)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 
-			res, height, err := cliCtx.QueryStore(types.GetProposedCertificateKey(subject, subjectKeyId), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetProposedCertificateKey(subject, subjectKeyID), queryRoute)
 			if err != nil || res == nil {
-				return types.ErrProposedCertificateDoesNotExist(subject, subjectKeyId)
+				return types.ErrProposedCertificateDoesNotExist(subject, subjectKeyID)
 			}
 
 			var proposedCertificate types.ProposedCertificate
@@ -71,10 +72,10 @@ func GetCmdProposedX509RootCert(queryRoute string, cdc *codec.Codec) *cobra.Comm
 	}
 
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
-	cmd.Flags().StringP(FlagSubjectKeyId, FlagSubjectKeyIdShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 
-	cmd.MarkFlagRequired(FlagSubject)
-	cmd.MarkFlagRequired(FlagSubjectKeyId)
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }
@@ -96,18 +97,19 @@ func GetCmdGetAllX509RootCerts(queryRoute string, cdc *codec.Codec) *cobra.Comma
 
 func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "x509-cert",
-		Short: "Gets a certificates (either root, intermediate or leaf) by the given combination of subject and subject-key-id",
-		Args:  cobra.ExactArgs(0),
+		Use: "x509-cert",
+		Short: "Gets a certificates (either root, intermediate or leaf) " +
+			"by the given combination of subject and subject-key-id",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 			subject := viper.GetString(FlagSubject)
-			subjectKeyId := viper.GetString(FlagSubjectKeyId)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 
-			res, height, err := cliCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyId), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyID), queryRoute)
 			if err != nil || res == nil {
-				return types.ErrCertificateDoesNotExist(subject, subjectKeyId)
+				return types.ErrCertificateDoesNotExist(subject, subjectKeyID)
 			}
 
 			var certificate types.Certificates
@@ -118,10 +120,10 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
-	cmd.Flags().StringP(FlagSubjectKeyId, FlagSubjectKeyIdShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 
-	cmd.MarkFlagRequired(FlagSubject)
-	cmd.MarkFlagRequired(FlagSubjectKeyId)
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }
@@ -135,8 +137,12 @@ func GetCmdGetAllX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP(FlagRootSubject, FlagRootSubjectShortcut, "", "filter certificates by `Subject` of root certificate (only the certificates started with the given root certificate are returned)")
-	cmd.Flags().StringP(FlagRootSubjectKeyId, FlagRootSubjectKeyIdShortcut, "", "filter certificates by `Subject Key Id` of root certificate (only the certificates started with the given root certificate are returned)")
+	cmd.Flags().StringP(FlagRootSubject, FlagRootSubjectShortcut, "",
+		"filter certificates by `Subject` of root certificate "+
+			"(only the certificates started with the given root certificate are returned)")
+	cmd.Flags().StringP(FlagRootSubjectKeyID, FlagRootSubjectKeyIDShortcut, "",
+		"filter certificates by `Subject Key Id` of root certificate "+
+			"(only the certificates started with the given root certificate are returned)")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
 
@@ -155,12 +161,16 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 	}
 
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
-	cmd.Flags().StringP(FlagRootSubject, FlagRootSubjectShortcut, "", "filter certificates by `Subject` of root certificate (only the certificates started with the given root certificate are returned)")
-	cmd.Flags().StringP(FlagRootSubjectKeyId, FlagRootSubjectKeyIdShortcut, "", "filter certificates by `Subject Key Id` of root certificate (only the certificates started with the given root certificate are returned)")
+	cmd.Flags().StringP(FlagRootSubject, FlagRootSubjectShortcut, "",
+		"filter certificates by `Subject` of root certificate "+
+			"(only the certificates started with the given root certificate are returned)")
+	cmd.Flags().StringP(FlagRootSubjectKeyID, FlagRootSubjectKeyIDShortcut, "",
+		"filter certificates by `Subject Key Id` of root certificate "+
+			"(only the certificates started with the given root certificate are returned)")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
 
-	cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubject)
 
 	return cmd
 }
@@ -169,10 +179,10 @@ func getAllCertificates(cdc *codec.Codec, route string) error {
 	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 	rootSubject := viper.GetString(FlagRootSubject)
-	rootSubjectKeyId := viper.GetString(FlagRootSubjectKeyId)
+	rootSubjectKeyID := viper.GetString(FlagRootSubjectKeyID)
 
 	paginationParams := pagination.ParsePaginationParamsFromFlags()
-	params := types.NewListCertificatesQueryParams(paginationParams, rootSubject, rootSubjectKeyId)
+	params := types.NewListCertificatesQueryParams(paginationParams, rootSubject, rootSubjectKeyID)
 
 	return cliCtx.QueryList(route, params)
 }

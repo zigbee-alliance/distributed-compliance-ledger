@@ -1,5 +1,7 @@
+//nolint:testpackage
 package compliancetest
 
+//nolint:goimports
 import (
 	"fmt"
 	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
@@ -38,7 +40,8 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	setup := Setup()
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
-	for _, role:= range []authz.AccountRole{authz.Vendor, authz.Administrator, authz.ZBCertificationCenter, authz.Administrator} {
+	for _, role := range []authz.AccountRole{authz.Vendor, authz.Administrator,
+		authz.ZBCertificationCenter, authz.Administrator} {
 		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
 
 		// add new testing result by non TestHouse
@@ -137,6 +140,7 @@ func queryTestingResult(setup TestSetup, vid uint16, pid uint16) types.TestingRe
 
 	var receivedTestingResult types.TestingResults
 	_ = setup.Cdc.UnmarshalJSON(result, &receivedTestingResult)
+
 	return receivedTestingResult
 }
 
@@ -156,5 +160,6 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	}
 
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
+
 	return vid, pid
 }

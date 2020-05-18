@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
@@ -38,7 +39,8 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCertifyModel(req.VID, req.PID, req.CertificationDate, req.CertificationType, req.Reason, restCtx.Signer())
+		msg := types.NewMsgCertifyModel(req.VID, req.PID, req.CertificationDate,
+			req.CertificationType, req.Reason, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}
@@ -72,7 +74,8 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRevokeModel(req.VID, req.PID, req.RevocationDate, req.CertificationType, req.Reason, restCtx.Signer())
+		msg := types.NewMsgRevokeModel(req.VID, req.PID, req.RevocationDate,
+			req.CertificationType, req.Reason, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

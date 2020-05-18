@@ -1,5 +1,6 @@
 package types
 
+//nolint:goimports
 import (
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -45,6 +46,7 @@ func (m MsgCertifyModel) ValidateBasic() sdk.Error {
 	if m.VID == 0 {
 		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
+
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}
@@ -78,7 +80,8 @@ type MsgRevokeModel struct {
 	Signer            sdk.AccAddress    `json:"signer"`
 }
 
-func NewMsgRevokeModel(vid uint16, pid uint16, revocationDate time.Time, certificationType CertificationType, revocationReason string, signer sdk.AccAddress) MsgRevokeModel {
+func NewMsgRevokeModel(vid uint16, pid uint16, revocationDate time.Time, certificationType CertificationType,
+	revocationReason string, signer sdk.AccAddress) MsgRevokeModel {
 	return MsgRevokeModel{
 		VID:               vid,
 		PID:               pid,
@@ -105,6 +108,7 @@ func (m MsgRevokeModel) ValidateBasic() sdk.Error {
 	if m.VID == 0 {
 		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
 	}
+
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
 	}

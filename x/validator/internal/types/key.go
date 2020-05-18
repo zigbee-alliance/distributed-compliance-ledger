@@ -1,21 +1,22 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/binary"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
-	// ModuleNa,e is the name of the validator module
+	// ModuleName is the name of the validator module.
 	ModuleName = "validator"
 
-	// StoreKey is the string store representation
+	// StoreKey is the string store representation.
 	StoreKey = ModuleName
 
-	// QuerierRoute is the querier route for the validator module
+	// QuerierRoute is the querier route for the validator module.
 	QuerierRoute = ModuleName
 
-	// RouterKey is the msg router key for validator module
+	// RouterKey is the msg router key for validator module.
 	RouterKey = ModuleName
 )
 
@@ -29,22 +30,22 @@ var (
 
 )
 
-// Key builder for Validator record
+// Key builder for Validator record.
 func GetValidatorKey(addr sdk.ConsAddress) []byte {
 	return append(ValidatorPrefix, addr.Bytes()...)
 }
 
-// Key builder for Last Validator Power record
+// Key builder for Last Validator Power record.
 func GetValidatorLastPowerKey(addr sdk.ConsAddress) []byte {
 	return append(ValidatorLastPowerPrefix, addr.Bytes()...)
 }
 
-// Key builder for Validator signing info record
+// Key builder for Validator signing info record.
 func GetValidatorSigningInfoKey(addr sdk.ConsAddress) []byte {
 	return append(ValidatorSigningInfoPrefix, addr.Bytes()...)
 }
 
-// Key builder for Validator owner record
+// Key builder for Validator owner record.
 func GetValidatorOwnerKey(addr sdk.AccAddress) []byte {
 	return append(ValidatorOwnerPrefix, addr.Bytes()...)
 }
@@ -53,9 +54,10 @@ func GetValidatorMissedBlockBitArrayPrefixKey(v sdk.ConsAddress) []byte {
 	return append(ValidatorMissedBlockBitArrayPrefix, v.Bytes()...)
 }
 
-// Key builder for Validator Missed blocks
+// Key builder for Validator Missed blocks.
 func GetValidatorMissedBlockBitArrayKey(v sdk.ConsAddress, i int64) []byte {
 	b := make([]byte, 8)
 	binary.LittleEndian.PutUint64(b, uint64(i))
+
 	return append(GetValidatorMissedBlockBitArrayPrefixKey(v), b...)
 }

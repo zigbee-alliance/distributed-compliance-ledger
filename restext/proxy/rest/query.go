@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"fmt"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
@@ -68,7 +69,7 @@ func NodeStatusHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-// Validator Set at a height REST handler
+// Validator Set at a height REST handler.
 func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -97,7 +98,8 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		if height_ > chainHeight {
-			restCtx.WriteErrorResponse(http.StatusNotFound, fmt.Sprintf("Invalid height: It must not be bigger then the chain height: \"%v\"", chainHeight))
+			restCtx.WriteErrorResponse(http.StatusNotFound,
+				fmt.Sprintf("Invalid height: It must not be bigger then the chain height: \"%v\"", chainHeight))
 			return
 		}
 

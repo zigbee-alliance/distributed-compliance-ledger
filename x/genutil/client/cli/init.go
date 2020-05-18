@@ -36,7 +36,6 @@ type printInfo struct {
 
 func newPrintInfo(name, chainID, nodeID, genTxsDir string,
 	appMessage json.RawMessage) printInfo {
-
 	return printInfo{
 		Name:       name,
 		ChainID:    chainID,
@@ -53,18 +52,20 @@ func displayInfo(cdc *codec.Codec, info printInfo) error {
 	}
 
 	_, err = fmt.Fprintf(os.Stderr, "%s\n", string(sdk.MustSortJSON(out)))
+
 	return err
 }
 
 // InitCmd returns a command that initializes all files needed for Tendermint
 // and the respective application.
+//nolint:funlen
 func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 	defaultNodeHome string) *cobra.Command { // nolint: golint
 	cmd := &cobra.Command{
-		Use:   "init [name]",
+		Use: "init [name]",
 		Short: "Initialize validators's and node's configuration files (private validator, p2p, " +
 			"genesis, and application configuration files)",
-		Args:  cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(1),
 		RunE: func(_ *cobra.Command, args []string) error {
 			config := ctx.Config
 			config.SetRoot(viper.GetString(cli.HomeFlag))
@@ -80,7 +81,8 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 			genFile := config.GenesisFile()
 			if !viper.GetBool(flagOverwrite) && common.FileExists(genFile) {
-				return fmt.Errorf("genesis.json file already exists: %v", genFile)
+				return sdk.ErrUnknownRequest(
+					fmt.Sprintf("Error genesis.json file already exists: %v", genFile))
 			}
 			appState, err := codec.MarshalJSONIndent(cdc, mbm.DefaultGenesis())
 			if err != nil {
@@ -109,6 +111,7 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 			toPrint := newPrintInfo(config.Moniker, chainID, nodeID, "", appState)
 
 			cfg.WriteConfigFile(filepath.Join(config.RootDir, "config", "config.toml"), config)
+
 			return displayInfo(cdc, toPrint)
 		},
 	}
@@ -117,7 +120,7 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 	cmd.Flags().BoolP(flagOverwrite, "o", false, "overwrite the genesis.json file")
 	cmd.Flags().String(client.FlagChainID, "", "genesis file chain-id")
 
-	cmd.MarkFlagRequired(client.FlagChainID)
+	_ = cmd.MarkFlagRequired(client.FlagChainID)
 
 	return cmd
 }

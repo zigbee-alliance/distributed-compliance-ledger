@@ -7,5 +7,6 @@ func StringInSlice(a string, list []string) bool {
 			return true
 		}
 	}
+
 	return false
 }

@@ -1,5 +1,6 @@
 package compliancetest
 
+//nolint:goimports
 import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
@@ -19,13 +20,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// type check to ensure the interface is properly implemented
+// type check to ensure the interface is properly implemented.
 var (
 	_ module.AppModule      = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
 )
 
-// app module Basics object
+// app module Basics object.
 type AppModuleBasic struct{}
 
 func (a AppModuleBasic) Name() string {
@@ -47,21 +48,21 @@ func (a AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
 	if err != nil {
 		return err
 	}
-	// Once json successfully marshalled, passes along to genesis.go
+	// Once json successfully marshalled, passes along to genesis.go.
 	return ValidateGenesis(data)
 }
 
-// Register rest routes
+// Register rest routes.
 func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
 	rest.RegisterRoutes(ctx, rtr, StoreKey)
 }
 
-// Get the root query command of this module
+// Get the root query command of this module.
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
 	return cli.GetQueryCmd(StoreKey, cdc)
 }
 
-// Get the root tx command of this module
+// Get the root tx command of this module.
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	return cli.GetTxCmd(StoreKey, cdc)
 }
@@ -74,7 +75,8 @@ type AppModule struct {
 }
 
 func NewAppModule(keeper Keeper, authzKeeper authz.Keeper, modelinfoKeeper modelinfo.Keeper) AppModule {
-	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper, authzKeeper: authzKeeper, modelinfoKeeper: modelinfoKeeper}
+	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper,
+		authzKeeper: authzKeeper, modelinfoKeeper: modelinfoKeeper}
 }
 
 func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {

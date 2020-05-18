@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
@@ -47,6 +48,7 @@ func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 		}
 
 		var modelInfo types.ModelInfo
+
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &modelInfo)
 
 		restCtx.EncodeAndRespondWithHeight(modelInfo, height)
@@ -85,6 +87,7 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 		}
 
 		var vendorProducts types.VendorProducts
+
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &vendorProducts)
 
 		restCtx.EncodeAndRespondWithHeight(vendorProducts, height)

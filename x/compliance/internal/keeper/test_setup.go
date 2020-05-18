@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
@@ -39,7 +40,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(complianceKeeper)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	setup := TestSetup{
 		Cdc:               cdc,
@@ -47,54 +48,56 @@ func Setup() TestSetup {
 		CompliancetKeeper: complianceKeeper,
 		Querier:           querier,
 	}
+
 	return setup
 }
 
 func DefaultCertifiedModel() types.ComplianceInfo {
 	return types.NewCertifiedComplianceInfo(
-		test_constants.VID,
-		test_constants.PID,
-		types.CertificationType(test_constants.CertificationType),
-		test_constants.CertificationDate,
-		test_constants.EmptyString,
-		test_constants.Owner,
+		testconstants.VID,
+		testconstants.PID,
+		types.CertificationType(testconstants.CertificationType),
+		testconstants.CertificationDate,
+		testconstants.EmptyString,
+		testconstants.Owner,
 	)
 }
 
 func DefaultRevokedModel() types.ComplianceInfo {
 	return types.NewRevokedComplianceInfo(
-		test_constants.VID,
-		test_constants.PID,
-		types.CertificationType(test_constants.CertificationType),
-		test_constants.RevocationDate,
-		test_constants.RevocationReason,
-		test_constants.Owner,
+		testconstants.VID,
+		testconstants.PID,
+		types.CertificationType(testconstants.CertificationType),
+		testconstants.RevocationDate,
+		testconstants.RevocationReason,
+		testconstants.Owner,
 	)
 }
 
-// add n=count/2 certified and count-n revoked models {VID: 1, PID: 1..count}
+// add n=count/2 certified and count-n revoked models {VID: 1, PID: 1..count}.
 func PopulateStoreWithMixedModels(setup TestSetup, count int) uint16 {
-	firstId := uint16(1)
+	firstID := uint16(1)
 	n := count / 2
 
 	certifiedModel := DefaultCertifiedModel()
-	PopulateStoreWithModels(setup, firstId, n, certifiedModel)
+	PopulateStoreWithModels(setup, firstID, n, certifiedModel)
 
 	revokedModel := DefaultRevokedModel()
-	PopulateStoreWithModels(setup, firstId+uint16(n), count, revokedModel)
+	PopulateStoreWithModels(setup, firstID+uint16(n), count, revokedModel)
 
-	return firstId
+	return firstID
 }
 
-// add n models {VID: 1, PID: 1..count}
-func PopulateStoreWithModels(setup TestSetup, firstId uint16, count int, complianceInfo types.ComplianceInfo) uint16 {
-	for i := firstId; i <= uint16(count); i++ {
+// add n models {VID: 1, PID: 1..count}.
+func PopulateStoreWithModels(setup TestSetup, firstID uint16, count int, complianceInfo types.ComplianceInfo) uint16 {
+	for i := firstID; i <= uint16(count); i++ {
 		// add model {VID: 1, PID: i}
 		complianceInfo.PID = i
 		complianceInfo.VID = i
 		setup.CompliancetKeeper.SetComplianceInfo(setup.Ctx, complianceInfo)
 	}
-	return firstId
+
+	return firstID
 }
 
 func CheckComplianceInfo(t *testing.T, expected types.ComplianceInfo, received types.ComplianceInfo) {

@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -31,12 +32,12 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return complianceTxCmd
 }
 
-//nolint dupl
 func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "certify-model",
-		Short: "Certify an existing model. Note that the corresponding model info and test results must be present on ledger",
-		Args:  cobra.ExactArgs(0),
+		Use: "certify-model",
+		Short: "Certify an existing model. Note that the corresponding model info and " +
+			"test results must be present on ledger",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -54,7 +55,8 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 			certificationDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagCertificationDate))
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CertificationDate \"%v\": it must be RFC3339 date. Error: %v", viper.GetString(FlagRevocationDate), err_.Error()))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CertificationDate \"%v\": "+
+					"it must be RFC3339 date. Error: %v", viper.GetString(FlagRevocationDate), err_.Error()))
 			}
 
 			reason := viper.GetString(FlagReason)
@@ -67,19 +69,21 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut,"", "Certification type (zb` is the only supported value now)")
-	cmd.Flags().StringP(FlagCertificationDate, FlagCertificationDateShortcut, "", "The date of model certification (rfc3339 encoded)")
-	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "", "Optional comment describing the reason of certification")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
+		"Certification type (zb` is the only supported value now)")
+	cmd.Flags().StringP(FlagCertificationDate, FlagCertificationDateShortcut, "",
+		"The date of model certification (rfc3339 encoded)")
+	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
+		"Optional comment describing the reason of certification")
 
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
-	cmd.MarkFlagRequired(FlagCertificationType)
-	cmd.MarkFlagRequired(FlagCertificationDate)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagCertificationType)
+	_ = cmd.MarkFlagRequired(FlagCertificationDate)
 
 	return cmd
 }
 
-//nolint dupl
 func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revoke-model",
@@ -102,7 +106,8 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 			revocationDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagRevocationDate))
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CertificationDate \"%v\": it must be RFC3339 date. Error: %v", viper.GetString(FlagRevocationDate), err_.Error()))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CertificationDate \"%v\": "+
+					"it must be RFC3339 date. Error: %v", viper.GetString(FlagRevocationDate), err_.Error()))
 			}
 
 			reason := viper.GetString(FlagReason)
@@ -115,14 +120,17 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", "Certification type (zb` is the only supported value now)")
-	cmd.Flags().StringP(FlagRevocationDate, FlagCertificationDateShortcut,"", "The date of model revocation (rfc3339 encoded)")
-	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "", "Optional comment describing the reason of revocation")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
+		"Certification type (zb` is the only supported value now)")
+	cmd.Flags().StringP(FlagRevocationDate, FlagCertificationDateShortcut, "",
+		"The date of model revocation (rfc3339 encoded)")
+	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
+		"Optional comment describing the reason of revocation")
 
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
-	cmd.MarkFlagRequired(FlagCertificationType)
-	cmd.MarkFlagRequired(FlagRevocationDate)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagCertificationType)
+	_ = cmd.MarkFlagRequired(FlagRevocationDate)
 
 	return cmd
 }

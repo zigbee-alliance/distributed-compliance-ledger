@@ -1,6 +1,7 @@
 package types
 
 import (
+	// nolint:goimports
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -15,20 +16,24 @@ const (
 	CodeInvalidCertificate             sdk.CodeType = 405
 )
 
-func ErrCertificateAlreadyExists(subject string, subjectKeyId string, serialNumber string) sdk.Error {
+func ErrCertificateAlreadyExists(subject string, subjectKeyID string, serialNumber string) sdk.Error {
 	return sdk.NewError(Codespace, CodeCertificateAlreadyExists,
-		fmt.Sprintf("X509 certificate associated with the combination of subject=%v, subjectKeyId=%v and serialNumber=%v already exists on the ledger", subject, subjectKeyId, serialNumber))
+		fmt.Sprintf("X509 certificate associated with the combination "+
+			"of subject=%v, subjectKeyID=%v and serialNumber=%v already"+
+			" exists on the ledger", subject, subjectKeyID, serialNumber))
 }
 
-func ErrProposedCertificateDoesNotExist(subject string, subjectKeyId string) sdk.Error {
+func ErrProposedCertificateDoesNotExist(subject string, subjectKeyID string) sdk.Error {
 	return sdk.NewError(Codespace, CodePendingCertificateDoesNotExist,
-		fmt.Sprintf("No proposed X509 root certificate associated with the combination of subject=%v and subjectKeyId=%v on the ledger."+
-			"The cerificate either does not exists or already approved.", subject, subjectKeyId))
+		fmt.Sprintf("No proposed X509 root certificate associated "+
+			"with the combination of subject=%v and subjectKeyID=%v on the ledger."+
+			"The cerificate either does not exists or already approved.", subject, subjectKeyID))
 }
 
-func ErrCertificateDoesNotExist(subject string, subjectKeyId string) sdk.Error {
+func ErrCertificateDoesNotExist(subject string, subjectKeyID string) sdk.Error {
 	return sdk.NewError(Codespace, CodeCertificateDoesNotExist,
-		fmt.Sprintf("No X509 certificate associated with the combination of subject=%v and subjectKeyId=%v on the ledger", subject, subjectKeyId))
+		fmt.Sprintf("No X509 certificate associated with the "+
+			"combination of subject=%v and subjectKeyID=%v on the ledger", subject, subjectKeyID))
 }
 
 func ErrInappropriateCertificateType(error interface{}) sdk.Error {

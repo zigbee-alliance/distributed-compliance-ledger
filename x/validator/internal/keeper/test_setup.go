@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
@@ -37,7 +38,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(validatorKeeper)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	setup := TestSetup{
 		Cdc:             cdc,
@@ -45,29 +46,30 @@ func Setup() TestSetup {
 		ValidatorKeeper: validatorKeeper,
 		Querier:         querier,
 	}
+
 	return setup
 }
 
 func DefaultValidator() types.Validator {
 	return types.NewValidator(
-		test_constants.ValidatorAddress1,
-		test_constants.ValidatorPubKey1,
-		types.Description{Name: test_constants.Name},
-		test_constants.Owner,
+		testconstants.ValidatorAddress1,
+		testconstants.ValidatorPubKey1,
+		types.Description{Name: testconstants.Name},
+		testconstants.Owner,
 	)
 }
 
 func DefaultValidatorPower() types.LastValidatorPower {
-	return types.NewLastValidatorPower(test_constants.ValidatorAddress1)
+	return types.NewLastValidatorPower(testconstants.ValidatorAddress1)
 }
 
 func StoreTwoValidators(setup TestSetup) (types.Validator, types.Validator) {
-	validator1 := types.NewValidator(test_constants.ValidatorAddress1, test_constants.ValidatorPubKey1,
-		types.Description{Name: "Validator 1"}, test_constants.Address1)
+	validator1 := types.NewValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
+		types.Description{Name: "Validator 1"}, testconstants.Address1)
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator1)
 
-	validator2 := types.NewValidator(test_constants.ValidatorAddress2, test_constants.ValidatorPubKey2,
-		types.Description{Name: "Validator 2"}, test_constants.Address2)
+	validator2 := types.NewValidator(testconstants.ValidatorAddress2, testconstants.ValidatorPubKey2,
+		types.Description{Name: "Validator 2"}, testconstants.Address2)
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator2)
 
 	return validator1, validator2

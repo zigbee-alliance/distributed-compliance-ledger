@@ -1,5 +1,6 @@
 package compliance
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
@@ -57,13 +58,13 @@ func Setup() TestSetup {
 	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: test_constants.ChainId}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetKeeper)
 	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authzKeeper)
 
-	certificationCenter := test_constants.Address1
+	certificationCenter := testconstants.Address1
 	authzKeeper.AssignRole(ctx, certificationCenter, authz.ZBCertificationCenter)
 
 	setup := TestSetup{

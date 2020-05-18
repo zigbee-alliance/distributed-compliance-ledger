@@ -1,5 +1,6 @@
 package authnext
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authnext/internal/types"
@@ -22,19 +23,23 @@ func NewHandler(accKeeper AccountKeeper, authzKeeper authz.Keeper, cdc *codec.Co
 	}
 }
 
-func handleMsgAddAccount(ctx sdk.Context, keeper AccountKeeper, authzKeeper authz.Keeper, msg types.MsgAddAccount) sdk.Result {
+func handleMsgAddAccount(ctx sdk.Context, keeper AccountKeeper,
+	authzKeeper authz.Keeper, msg types.MsgAddAccount) sdk.Result {
 	// check if sender has enough rights to create account
 	if !authzKeeper.HasRole(ctx, msg.Signer, authz.Trustee) {
 		return sdk.ErrUnauthorized(
-			fmt.Sprintf("MsgAddAccount transaction should be signed by an account with the %s role", authz.Trustee)).Result()
+			fmt.Sprintf("MsgAddAccount transaction should be signed by an account with the %s role",
+				authz.Trustee)).Result()
 	}
 
 	// check if account already exists
 	if account := keeper.GetAccount(ctx, msg.Address); account != nil {
-		return sdk.ErrInvalidAddress(fmt.Sprintf("Account associated with the address=%v already exists on the ledger", msg.Address)).Result()
+		return sdk.ErrInvalidAddress(fmt.Sprintf("Account associated with the address=%v "+
+			"already exists on the ledger", msg.Address)).Result()
 	}
 
 	pubKey, err := sdk.GetAccPubKeyBech32(msg.PublicKey)
+
 	if err != nil {
 		return sdk.ErrInvalidPubKey(err.Error()).Result()
 	}
@@ -42,6 +47,7 @@ func handleMsgAddAccount(ctx sdk.Context, keeper AccountKeeper, authzKeeper auth
 	// create account and fill key
 	account := keeper.NewAccountWithAddress(ctx, msg.Address)
 	err = account.SetPubKey(pubKey)
+
 	if err != nil {
 		return sdk.ErrInvalidPubKey(err.Error()).Result()
 	}

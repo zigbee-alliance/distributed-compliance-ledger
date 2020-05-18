@@ -1,5 +1,6 @@
-package rest
+package rest_test
 
+//nolint:goimports
 import (
 	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
@@ -8,6 +9,7 @@ import (
 	"testing"
 )
 
+//nolint:godox
 /*
 	To Run test you need:
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`

@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
@@ -8,12 +9,12 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 )
 
-// keeper of the validator store
+// keeper of the validator store.
 type Keeper struct {
-	// Unexposed key to access store from sdk.Context
+	// Unexposed key to access store from sdk.Context.
 	storeKey sdk.StoreKey
 
-	// The wire codec for binary encoding/decoding
+	// The wire codec for binary encoding/decoding.
 	cdc *codec.Codec
 }
 
@@ -33,41 +34,44 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	Validator by Validator Address
 */
 
-// Gets the entire Validator record associated with a validator address
+// Gets the entire Validator record associated with a validator address.
 func (k Keeper) GetValidator(ctx sdk.Context, addr sdk.ConsAddress) (validator types.Validator) {
 	store := ctx.KVStore(k.storeKey)
 	value := store.Get(types.GetValidatorKey(addr))
+
 	if value == nil {
 		panic(fmt.Sprintf("validator record not found for address: %X\n", addr))
 	}
 
 	validator = types.MustUnmarshalBinaryBareValidator(k.cdc, value)
+
 	return validator
 }
 
-// Sets the entire Validator record for a validator address
+// Sets the entire Validator record for a validator address.
 func (k Keeper) SetValidator(ctx sdk.Context, validator types.Validator) {
 	store := ctx.KVStore(k.storeKey)
 	bz := types.MustMarshalValidator(k.cdc, validator)
 	store.Set(types.GetValidatorKey(validator.Address), bz)
 }
 
-// Check if the Validator record associated with a validator address is present in the store or not
+// Check if the Validator record associated with a validator address is present in the store or not.
 func (k Keeper) IsValidatorPresent(ctx sdk.Context, addr sdk.ConsAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GetValidatorKey(addr))
 }
 
-// get the set of all validators
+// get the set of all validators.
 func (k Keeper) GetAllValidators(ctx sdk.Context) (validators []types.Validator) {
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		validators = append(validators, validator)
 		return false
 	})
+
 	return validators
 }
 
-// iterate over validators and apply function
+// iterate over validators and apply function.
 func (k Keeper) IterateValidators(ctx sdk.Context, process func(validator types.Validator) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
@@ -89,7 +93,7 @@ func (k Keeper) IterateValidators(ctx sdk.Context, process func(validator types.
 	}
 }
 
-// slash a validator for an infraction. So it will be removed from Tendermint validator set
+// slash a validator for an infraction. So it will be removed from Tendermint validator set.
 func (k Keeper) Slash(ctx sdk.Context, consAddr sdk.ConsAddress) {
 	validator := k.GetValidator(ctx, consAddr)
 
@@ -98,7 +102,7 @@ func (k Keeper) Slash(ctx sdk.Context, consAddr sdk.ConsAddress) {
 	k.SetValidator(ctx, validator)
 }
 
-// jail a validator
+// jail a validator.
 func (k Keeper) Jail(ctx sdk.Context, consAddr sdk.ConsAddress, reason string) {
 	validator := k.GetValidator(ctx, consAddr)
 
@@ -112,7 +116,7 @@ func (k Keeper) Jail(ctx sdk.Context, consAddr sdk.ConsAddress, reason string) {
 	k.SetValidator(ctx, validator)
 }
 
-// unjail a validator
+// unjail a validator.
 func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
 	validator := k.GetValidator(ctx, consAddr)
 
@@ -129,40 +133,44 @@ func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
 /*
 	Helper index to track the last set of validators
 */
-// Gets the last validator power by the given validator address
+// Gets the last validator power by the given validator address.
 func (k Keeper) GetLastValidatorPower(ctx sdk.Context, address sdk.ConsAddress) (power types.LastValidatorPower) {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GetValidatorLastPowerKey(address))
+
 	if bz == nil {
 		return power
 	}
+
 	k.cdc.MustUnmarshalBinaryLengthPrefixed(bz, &power)
+
 	return power
 }
 
-// Sets validator power
+// Sets validator power.
 func (k Keeper) SetLastValidatorPower(ctx sdk.Context, validator types.LastValidatorPower) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(validator)
 	store.Set(types.GetValidatorLastPowerKey(validator.ConsensusAddress), bz)
 }
 
-// Check if the validator power record associated with validator address is present in the store or not
+// Check if the validator power record associated with validator address is present in the store or not.
 func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, address sdk.ConsAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GetValidatorLastPowerKey(address))
 }
 
-// Delete validator power
+// Delete validator power.
 func (k Keeper) DeleteLastValidatorPower(ctx sdk.Context, address sdk.ConsAddress) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GetValidatorLastPowerKey(address))
 }
 
-// Get active validator set
+// Get active validator set.
 func (k Keeper) GetLastValidatorPowers(ctx sdk.Context) []types.LastValidatorPower {
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerPrefix)
+
 	defer iter.Close()
 
 	var lastValidators []types.LastValidatorPower
@@ -184,10 +192,11 @@ func (k Keeper) GetLastValidatorPowers(ctx sdk.Context) []types.LastValidatorPow
 	return lastValidators
 }
 
-// count total number of active validators
+// count total number of active validators.
 func (k Keeper) CountLastValidators(ctx sdk.Context) (count int) {
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerPrefix)
+
 	defer iter.Close()
 
 	for ; iter.Valid(); iter.Next() {
@@ -197,21 +206,23 @@ func (k Keeper) CountLastValidators(ctx sdk.Context) (count int) {
 	return count
 }
 
-// get all active validator set
+// get all active validator set.
 func (k Keeper) GetAllLastValidators(ctx sdk.Context) (validators []types.Validator) {
 	k.IterateLastValidators(ctx, func(validator types.Validator) (stop bool) {
 		validators = append(validators, validator)
 		return false
 	})
+
 	return validators
 }
 
-// iterate through the active validator set and perform the provided function
+// iterate through the active validator set and perform the provided function.
 func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator types.Validator) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 	iter := sdk.KVStorePrefixIterator(store, types.ValidatorLastPowerPrefix)
 
 	defer iter.Close()
+
 	for {
 		if !iter.Valid() {
 			return
@@ -231,14 +242,14 @@ func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator ty
 /*
 	Helper Index to track that Account has only one node
 */
-// Sets the helper record to track that account has stored node
+// Sets the helper record to track that account has stored node.
 func (k Keeper) SetValidatorOwner(ctx sdk.Context, account sdk.AccAddress, validatorAddress sdk.ConsAddress) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(validatorAddress)
 	store.Set(types.GetValidatorOwnerKey(account), bz)
 }
 
-// Check if the account has stored node
+// Check if the account has stored node.
 func (k Keeper) AccountHasValidator(ctx sdk.Context, addr sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GetValidatorOwnerKey(addr))

@@ -1,5 +1,6 @@
 package cli
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -30,7 +31,6 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return complianceTxCmd
 }
 
-//nolint dupl
 func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-test-result",
@@ -56,7 +56,8 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 
 			testDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagTestDate))
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestDate \"%v\": it must be RFC3339 encoded date", viper.GetString(FlagTestDate)))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid TestDate \"%v\": "+
+					"it must be RFC3339 encoded date", viper.GetString(FlagTestDate)))
 			}
 
 			msg := types.NewMsgAddTestingResult(vid, pid, testResult, testDate, cliCtx.FromAddress())
@@ -67,13 +68,14 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
-	cmd.Flags().StringP(FlagTestResult, FlagTestResultShortcut, "", "Test result (string or path to file containing data)")
+	cmd.Flags().StringP(FlagTestResult, FlagTestResultShortcut, "",
+		"Test result (string or path to file containing data)")
 	cmd.Flags().StringP(FlagTestDate, FlagTestDateShortcut, "", "Date of test result (rfc3339 encoded)")
 
-	cmd.MarkFlagRequired(FlagVID)
-	cmd.MarkFlagRequired(FlagPID)
-	cmd.MarkFlagRequired(FlagTestResult)
-	cmd.MarkFlagRequired(FlagTestDate)
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagTestResult)
+	_ = cmd.MarkFlagRequired(FlagTestDate)
 
 	return cmd
 }

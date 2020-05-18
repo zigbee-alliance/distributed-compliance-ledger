@@ -1,5 +1,6 @@
 package rest
 
+//nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"net/http"

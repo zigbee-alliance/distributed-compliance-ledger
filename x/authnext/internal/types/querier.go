@@ -17,7 +17,7 @@ type AccountHeader struct {
 	Sequence      uint64              `json:"sequence"`
 }
 
-// Request Payload for a account headers query
+// Request Payload for a account headers query.
 type QueryAccountHeadersParams struct {
 	Skip int
 	Take int
@@ -27,13 +27,13 @@ func NewQueryAccountHeadersParams(skip int, take int) QueryAccountHeadersParams 
 	return QueryAccountHeadersParams{Skip: skip, Take: take}
 }
 
-// Result Payload for a account headers query
+// Result Payload for a account headers query.
 type QueryAccountHeadersResult struct {
 	Total int             `json:"total"`
 	Items []AccountHeader `json:"items"`
 }
 
-// Implement fmt.Stringer
+// Implement fmt.Stringer.
 func (n QueryAccountHeadersResult) String() string {
 	res, err := json.Marshal(n)
 

@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/keys"
 )
 
-// Lists all keys in the local keychain
+// Lists all keys in the local keychain.
 func KeysHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -45,7 +45,7 @@ func KeysHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-// Lists all keys in the local keychain
+// Lists all keys in the local keychain.
 func KeyHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)

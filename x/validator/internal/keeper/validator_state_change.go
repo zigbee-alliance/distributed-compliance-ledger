@@ -1,5 +1,6 @@
 package keeper
 
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
@@ -12,7 +13,7 @@ import (
 )
 
 // Calculate the Validators signatures
-// Called in each BeginBlock
+// Called in each BeginBlock.
 func (k Keeper) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) {
 	// Iterate over all the validators which *should* have signed this block
 	// store whether or not they have actually signed it and jail any
@@ -22,7 +23,7 @@ func (k Keeper) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) {
 	}
 
 	// Iterate through any newly discovered evidence of infraction
-	// Slash all validators who contributed to infractions
+	// Slash all validators who contributed to infractions.
 	for _, evidence := range req.ByzantineValidators {
 		switch evidence.Type {
 		case tmtypes.ABCIEvidenceTypeDuplicateVote:
@@ -34,12 +35,13 @@ func (k Keeper) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) {
 }
 
 // Calculate the ValidatorUpdates for the current block
-// Called in each EndBlock
+// Called in each EndBlock.
 func (k Keeper) BlockValidatorUpdates(ctx sdk.Context) []abci.ValidatorUpdate {
 	return k.ApplyAndReturnValidatorSetUpdates(ctx)
 }
 
-// handle a validator signature, must be called once per validator per block
+// handle a validator signature, must be called once per validator per block.
+//nolint:funlen
 func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, power int64, signed bool) {
 	logger := k.Logger(ctx)
 
@@ -51,31 +53,31 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 		return
 	}
 
-	// fetch signing info
+	// fetch signing info.
 	signInfo := k.GetValidatorSigningInfo(ctx, consAddr)
 
 	// this is a relative index, so it counts blocks the validator *should* have signed
-	// will use the 0-value default signing info if not present, except for start height
+	// will use the 0-value default signing info if not present, except for start height.
 	index := signInfo.IndexOffset % types.SignedBlocksWindow
 	signInfo.IndexOffset++
 
 	// Update signed block bit array & counter
 	// This counter just tracks the sum of the bit array
-	// That way we avoid needing to read/write the whole array each time
+	// That way we avoid needing to read/write the whole array each time.
 	lastValue := k.GetValidatorMissedBlockBitArray(ctx, consAddr, index)
 	missed := !signed
+
 	switch {
 	case !lastValue && missed:
-		// Array value has changed from not missed to missed, increment counter
+		// Array value has changed from not missed to missed, increment counter.
 		k.SetValidatorMissedBlockBitArray(ctx, consAddr, index, missed)
 		signInfo.MissedBlocksCounter++
 	case lastValue && !missed:
-		// Array value has changed from missed to not missed, decrement counter
+		// Array value has changed from missed to not missed, decrement counter.
 		k.SetValidatorMissedBlockBitArray(ctx, consAddr, index, missed)
 		signInfo.MissedBlocksCounter--
-	default:
-		// Array value at this index has not changed, no need to update counter
 	}
+	// Else array value at this index has not changed, no need to update counter.
 
 	if missed {
 		ctx.EventManager().EmitEvent(
@@ -88,20 +90,21 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 		)
 
 		logger.Info(
-			fmt.Sprintf("Absent validator %s at height %d, %d missed, threshold %d", consAddr, height, signInfo.MissedBlocksCounter, types.MinSignedPerWindow))
+			fmt.Sprintf("Absent validator %s at height %d, %d missed, threshold %d",
+				consAddr, height, signInfo.MissedBlocksCounter, types.MinSignedPerWindow))
 	}
 
 	minHeight := signInfo.StartHeight + types.SignedBlocksWindow
 	maxMissed := types.SignedBlocksWindow - types.MinSignedPerWindow
 
-	// if we are past the minimum height and the validator has missed too many blocks, jail it
+	// if we are past the minimum height and the validator has missed too many blocks, jail it.
 	if height > minHeight && signInfo.MissedBlocksCounter > maxMissed {
 		validator := k.GetValidator(ctx, consAddr)
 
 		if !validator.IsJailed() {
-
 			// jail the validator
-			reason := fmt.Sprintf("Validator \"%v\" passed minimum height \"%v\" and exceeded the maximum number of unsigned blocks \"%v\" within the window in %v",
+			reason := fmt.Sprintf("Validator \"%v\" passed minimum height \"%v\" and exceeded "+
+				"the maximum number of unsigned blocks \"%v\" within the window in %v",
 				consAddr, minHeight, maxMissed, types.SignedBlocksWindow)
 
 			logger.Info(reason)
@@ -120,11 +123,13 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 
 			// We need to reset the counter & array so that the validator won't be immediately slashed upon rebonding.
 			signInfo = signInfo.Reset()
+
 			k.ClearValidatorMissedBlockBitArray(ctx, consAddr)
 		} else {
-			// Validator already jailed, don't jail again
+			// Validator already jailed, don't jail again.
 			logger.Info(
-				fmt.Sprintf("Validator %s would have been slashed for downtime, but was either not found in store or already jailed", consAddr),
+				fmt.Sprintf("Validator %s would have been slashed for downtime, "+
+					"but was either not found in store or already jailed", consAddr),
 			)
 		}
 	}
@@ -134,8 +139,10 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 }
 
 // handle a validator signing two blocks at the same height
-// Zeros validator power and jail it. So validator will be removed from validator set at the end of the block
-func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address, infractionHeight int64, timestamp time.Time, power int64) {
+// Zeros validator power and jail it. So validator will be removed from validator
+//set at the end of the block.
+func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address,
+	infractionHeight int64, timestamp time.Time, power int64) {
 	logger := k.Logger(ctx)
 
 	consAddr := sdk.ConsAddress(addr)
@@ -145,7 +152,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address, infractio
 		return
 	}
 
-	// calculate the age of the evidence
+	// calculate the age of the evidence.
 	age := ctx.BlockHeader().Time.Sub(timestamp)
 
 	// Reject evidence if the double-sign is too old
@@ -155,11 +162,11 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address, infractio
 		return
 	}
 
-	// double sign confirmed
+	// double sign confirmed.
 	reason := fmt.Sprintf("Confirmed double sign from %s at height %d, age of %d", consAddr, infractionHeight, age)
 	logger.Info(reason)
 
-	// Slash validator
+	// Slash validator.
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			slashing.EventTypeSlash,
@@ -178,16 +185,17 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address, infractio
 //
 // Only validators that were added or were removed from the validator set are returned to Tendermint.
 func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []abci.ValidatorUpdate) {
-	// Iterate over validators
+	// Iterate over validators.
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
-		// power on the last height
+		// power on the last height.
 		lastValidatorPower := k.GetLastValidatorPower(ctx, validator.Address)
 
-		// if last power was more then 0 and potential power 0 it means that validator was jailed or removed within the block.
+		// if last power was more then 0 and potential power 0 it
+		//means that validator was jailed or removed within the block.
 		if lastValidatorPower.Power > 0 && validator.GetPower() == 0 {
 			updates = append(updates, validator.ABCIValidatorUpdateZero())
 
-			// set validator power on lookup index
+			// set validator power on lookup index.
 			k.DeleteLastValidatorPower(ctx, validator.Address)
 
 			return false
@@ -197,10 +205,10 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 		if lastValidatorPower.Power == 0 && validator.GetPower() > 0 {
 			updates = append(updates, validator.ABCIValidatorUpdate())
 
-			// set validator power on lookup index
+			// set validator power on lookup index.
 			k.SetLastValidatorPower(ctx, types.NewLastValidatorPower(validator.Address))
 
-			// init signing info for validator
+			// init signing info for validator.
 			signingInfo := types.NewValidatorSigningInfo(validator.GetConsAddress(), ctx.BlockHeight())
 			k.SetValidatorSigningInfo(ctx, signingInfo)
 
