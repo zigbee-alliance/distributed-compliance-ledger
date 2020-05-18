@@ -30,6 +30,30 @@ Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
 Some of the modules are being refactored against [transactions.md](docs/transactions.md) and may look
 a bit different than specified below.
 
+### Keys
+
+The set of commands that allows you to manage your local keystore.
+
+Commands:
+- `zblcli keys add <key name>` - Derive a new private key and encrypt to disk. 
+You will be prompted to enter encryption passphrase. 
+This passphrase will be requested each time you send write requests on the ledger using this key.
+
+  Example: `zblcli keys add jack`
+
+- `zblcli keys add <key name> --recover` - Recover existing key using seed instead of creating a new one.
+You will be prompted to enter encryption passphrase and seed.
+
+  Example: `zblcli keys add jack --recover`
+
+- `zblcli keys list` - Get a list of all public keys stored by this key manager.
+
+  Example: `zblcli keys list`
+
+- `zblcli keys show <key name>` - Get details for key.
+
+  Example: `zblcli keys show jack`
+
 ### PKI
 
 Proposed Certificate type:
@@ -150,7 +174,7 @@ Transactions:
 
   Example: `zblcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`
   
-  Example: `--vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
+  Example: `zblcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
 
 - `zblcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account>` - Update
   existing ModelInfo.
@@ -185,10 +209,6 @@ Queries:
     - `--take` int
 
   Example: `zblcli query modelinfo vendor-models --vid=1`
-
-Genesis:
-
-- Use `nsd add-genesis-account` to add users to genesis.
 
 ### Compliance Test
 
@@ -239,7 +259,7 @@ Transactions:
     - Optional flags: 
     - `--reason` string -  an optional comment describing the reason of certification
 
-  Example: `zblcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date=<"2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `zblcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
  
 - ` zblcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>` - Revoke certification for a model.
   - Signature is required. Use `--from` flag.
