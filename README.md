@@ -341,12 +341,11 @@ Permissions:
 - Signer must have `Trustee` role. 
 
 Roles:
-- `Administrator` - Is able to assign or revoke roles
-- `Vendor` - Is able to add models
-- `TestHouse` - Is able to add testing results for an model
-- `ZBCertificationCenter` - Is able to certify models
-- `Trustee` - Is able to approve root certificates
-- `NodeAdmin` - Is able to add nodes to validator pool
+- `Trustee` - Is able to create accounts, assign roles, approve root certificates.
+- `Vendor` - Is able to add models.
+- `TestHouse` - Is able to add testing results for a model.
+- `ZBCertificationCenter` - Is able to certify and revoke models.
+- `NodeAdmin` - Is able to add nodes to validator pool.
 
 Transactions:
 - `zblcli tx authz assign-role --address=<bench32 address> --role=<string> --from=<account>` - Assign role to specified account.
