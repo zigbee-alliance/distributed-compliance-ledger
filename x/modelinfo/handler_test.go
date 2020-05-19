@@ -59,7 +59,9 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.Vendor} {
-		setup.authKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
+		// store account
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// update existing model by not owner
 		msgUpdatedModelInfo := TestMsgUpdatedModelInfo(testconstants.Address3)
@@ -96,7 +98,9 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 	setup := Setup()
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse} {
-		setup.authKeeper.AssignRole(setup.Ctx, testconstants.Address3, role)
+		// store account
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new model
 		modelInfo := TestMsgAddModelInfo(testconstants.Address3)

@@ -27,6 +27,7 @@ func Setup() TestSetup {
 	// Init Codec
 	cdc := codec.New()
 	sdk.RegisterCodec(cdc)
+	codec.RegisterCrypto(cdc)
 
 	// Init KVSore
 	db := dbm.NewMemDB()
@@ -53,7 +54,7 @@ func Setup() TestSetup {
 	handler := NewHandler(validatorKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.NodeAdmin})
-	authKeeper.AssignNumberAndStoreAccount(ctx, account)
+	authKeeper.SetAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:             cdc,

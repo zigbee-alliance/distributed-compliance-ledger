@@ -32,6 +32,7 @@ func Setup() TestSetup {
 	// Init Codec
 	cdc := codec.New()
 	sdk.RegisterCodec(cdc)
+	codec.RegisterCrypto(cdc)
 
 	// Init KVSore
 	db := dbm.NewMemDB()
