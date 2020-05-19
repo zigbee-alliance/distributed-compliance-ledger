@@ -56,8 +56,17 @@ Here are steps for setting up a new validator node.
     * Get this node's tendermint validator *consensus address*: `zbld tendermint show-address`
     * Get this node's tendermint validator *consensus pubkey*: `zbld tendermint show-validator`
     * Note that *consensus address* and *consensus pubkey* are not the same as `address` and `pubkey` were used for account creation.
-    * Add validator node: `zblcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name>`
     * Start node: `zbld start`
+    * In the output, you can notice that `height` increases quickly over time. 
+    This means that the node is in updating to the latest network state (it takes some time).
+    
+        You can also check node status by connecting CLI to your local node `zblcli config node tcp://0.0.0.0:26657`
+        and executing the command `zblcli status` to get the current status.
+        The `true` value for `catching_up` field means that the node is in the updating process.
+        The value of `latest_block_height` reflects the current node height.
+
+    * Wait until the value of `catching_up` field gets to `false` value.
+    * Add validator node: `zblcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name>`
 
 * Congrats! You are an owner of the validator node.
 
@@ -74,8 +83,9 @@ Example:
 * `sed -i "s/persistent_peers = \"\"/<node id>@<node ip>,<node2 id>@<node2 ip>/g" $HOME/.zbld/config/config.toml`
 * `sudo ufw allow 26656/tcp`
 * `sudo ufw allow 26657/tcp`
-* `zblcli tx validator add-node --validator-address=$(zbld tendermint show-address) --validator-pubkey=$(zbld tendermint show-validator) --name=node-name --from=node_admin`
 * `zbld start`
+* `zbld status`
+* `zblcli tx validator add-node --validator-address=$(zbld tendermint show-address) --validator-pubkey=$(zbld tendermint show-validator) --name=node-name --from=node_admin`
 * `zblcli query validator all-nodes`
 
 ##### Policy
