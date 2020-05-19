@@ -24,7 +24,6 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(auth.StdTx{}, "cosmos-sdk/StdTx", nil)
 
 	// register custom types
-	cdc.RegisterConcrete(MsgAddAccount{}, ModuleName+"/AddAccount", nil)
-	cdc.RegisterConcrete(MsgAssignRole{}, ModuleName+"/AssignRole", nil)
-	cdc.RegisterConcrete(MsgRevokeRole{}, ModuleName+"/RevokeRole", nil)
+	cdc.RegisterConcrete(MsgProposeAddAccount{}, ModuleName+"/ProposeAddAccount", nil)
+	cdc.RegisterConcrete(MsgApproveAddAccount{}, ModuleName+"/ApproveAddAccount", nil)
 }

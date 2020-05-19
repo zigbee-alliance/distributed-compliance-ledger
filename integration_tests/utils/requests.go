@@ -8,6 +8,7 @@ import (
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	extRest "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
+	authRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	complianceRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
@@ -52,18 +53,51 @@ func GetKeyInfo(accountName string) (KeyInfo, int) {
 	return keyInfo, code
 }
 
-func CreateAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
-	println("Create Account for: ", keyInfo.Name)
+func ProposeAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles) (TxnResponse, int) {
+	println("Propose Account for: ", keyInfo.Name)
 
-	msgAddAccount := auth.NewMsgAddAccount(keyInfo.Address, keyInfo.PublicKey, signer.Address)
+	request := authRest.ProposeAddAccountRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainID,
+			From:    signer.Address.String(),
+		},
+		Address: keyInfo.Address,
+		Pubkey:  keyInfo.PublicKey,
+		Roles:   roles,
+	}
 
-	return SignAndBroadcastMessage(signer, msgAddAccount)
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", auth.RouterKey, "accounts/proposed")
+
+	response, code := SendPostRequest(uri, body, signer.Name, constants.Passphrase)
+
+	return parseWriteTxnResponse(response, code)
 }
 
-func GetAccountInfo(address sdk.AccAddress) (AccountInfo, int) {
-	println("Get Account Info")
+func ApproveAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
+	println("Approve Account for: ", keyInfo.Name)
 
-	uri := fmt.Sprintf("%s/account/%s", auth.RouterKey, address)
+	request := authRest.ApproveAddAccountRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainID,
+			From:    signer.Address.String(),
+		},
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", auth.RouterKey, fmt.Sprintf("accounts/proposed/%v", keyInfo.Address.String()))
+
+	response, code := SendPatchRequest(uri, body, signer.Name, constants.Passphrase)
+
+	return parseWriteTxnResponse(response, code)
+}
+
+func GetAccount(address sdk.AccAddress) (AccountInfo, int) {
+	println("Get Account for: ", address)
+
+	uri := fmt.Sprintf("%s/accounts/%s", auth.RouterKey, address.String())
 	response, code := SendGetRequest(uri)
 
 	var result AccountInfo
@@ -73,15 +107,45 @@ func GetAccountInfo(address sdk.AccAddress) (AccountInfo, int) {
 	return result, code
 }
 
-func RegisterNewAccount() (KeyInfo, int) {
+func GetAccounts() (AccountHeadersResult, int) {
+	println("Get Accounts")
+
+	uri := fmt.Sprintf("%s/accounts", auth.RouterKey)
+	response, code := SendGetRequest(uri)
+
+	var result AccountHeadersResult
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func GetProposedAccounts() (AccountHeadersResult, int) {
+	println("Get Accounts")
+
+	uri := fmt.Sprintf("%s/accounts/proposed", auth.RouterKey)
+	response, code := SendGetRequest(uri)
+
+	var result AccountHeadersResult
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func CreateNewAccount(roles auth.AccountRoles) KeyInfo {
 	name := RandString()
 	println("Register new account on the ledger: ", name)
 
 	jackKeyInfo, _ := GetKeyInfo(constants.JackAccount)
-	testAccountKeyInfo, _ := CreateKey(name)
-	_, code := CreateAccount(testAccountKeyInfo, jackKeyInfo)
+	aliceKeyInfo, _ := GetKeyInfo(constants.AliceAccount)
 
-	return testAccountKeyInfo, code
+	keyInfo, _ := CreateKey(name)
+
+	ProposeAccount(keyInfo, jackKeyInfo, roles)
+	ApproveAccount(keyInfo, aliceKeyInfo)
+
+	return keyInfo
 }
 
 func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) (TxnResponse, int) {
@@ -274,18 +338,6 @@ func GetTestingResult(vid uint16, pid uint16) (compliancetest.TestingResults, in
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
 	return result, code
-}
-
-func AssignRole(targetAddress sdk.AccAddress, sender KeyInfo, role auth.AccountRole) {
-	// Assign TestHouse role to Jack
-	newMsgAssignRole := auth.NewMsgAssignRole(
-		targetAddress,
-		role,
-		sender.Address,
-	)
-
-	// Sign and Broadcast AssignRole message
-	SignAndBroadcastMessage(sender, newMsgAssignRole)
 }
 
 func PublishCertifiedModel(certifyModel compliance.MsgCertifyModel, sender KeyInfo) (TxnResponse, int) {

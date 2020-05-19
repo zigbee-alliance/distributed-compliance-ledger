@@ -16,7 +16,7 @@ func InitGenesis(ctx sdk.Context, cdc *codec.Codec, authKeeper types.AuthKeeper,
 	deliverTx deliverTxfn, genesisState GenesisState) []abci.ValidatorUpdate {
 	// load the accounts
 	for _, acc := range genesisState.Accounts {
-		acc = authKeeper.NewAccount(ctx, acc) // set account number
+		acc = authKeeper.NewAccountWithNumber(ctx, acc) // set account number
 		authKeeper.SetAccount(ctx, acc)
 	}
 

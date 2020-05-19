@@ -17,7 +17,7 @@ type ValidatorKeeper interface {
 
 // AccountKeeper defines the expected account keeper.
 type AuthKeeper interface {
-	NewAccount(sdk.Context, auth.Account) auth.Account
+	NewAccountWithNumber(sdk.Context, auth.Account) auth.Account
 	SetAccount(sdk.Context, auth.Account)
 	IterateAccounts(ctx sdk.Context, process func(auth.Account) (stop bool))
 }

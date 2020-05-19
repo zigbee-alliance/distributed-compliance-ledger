@@ -24,12 +24,25 @@ func accountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 	}
 }
 
+func proposedAccountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		params, err := restCtx.ParsePaginationParams()
+		if err != nil {
+			return
+		}
+
+		restCtx.QueryList(fmt.Sprintf("custom/%s/proposed_accounts", storeName), params)
+	}
+}
+
 func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
 		vars := restCtx.Variables()
-		accAddr := vars[addrKey]
+		accAddr := vars[address]
 
 		address, err := sdk.AccAddressFromBech32(accAddr)
 		if err != nil {
@@ -43,6 +56,9 @@ func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 			return
 		}
 
-		restCtx.RespondWithHeight(res, height)
+		var account types.Account
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &account)
+
+		restCtx.RespondWithHeight(types.ZBAccount(account), height)
 	}
 }

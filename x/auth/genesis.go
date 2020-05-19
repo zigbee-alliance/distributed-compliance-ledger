@@ -8,7 +8,8 @@ import (
 )
 
 type GenesisState struct {
-	Accounts []Account `json:"accounts"`
+	Accounts        []Account              `json:"accounts"`
+	PendingAccounts []types.PendingAccount `json:"pending_accounts"`
 }
 
 func NewGenesisState() GenesisState {
@@ -26,6 +27,12 @@ func ValidateGenesis(data GenesisState) error {
 		}
 	}
 
+	for _, record := range data.PendingAccounts {
+		if err := record.Validate(); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -34,16 +41,26 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 		keeper.SetAccount(ctx, record)
 	}
 
+	for _, record := range data.PendingAccounts {
+		keeper.SetProposedAccount(ctx, record)
+	}
+
 	return []abci.ValidatorUpdate{}
 }
 
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	var records []Account
+	var accounts []Account
+	var pendingAccounts []PendingAccount
 
 	k.IterateAccounts(ctx, func(account types.Account) (stop bool) {
-		records = append(records, account)
+		accounts = append(accounts, account)
 		return false
 	})
 
-	return GenesisState{Accounts: records}
+	k.IterateProposedAccounts(ctx, func(account types.PendingAccount) (stop bool) {
+		pendingAccounts = append(pendingAccounts, account)
+		return false
+	})
+
+	return GenesisState{Accounts: accounts, PendingAccounts: pendingAccounts}
 }

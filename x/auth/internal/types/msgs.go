@@ -5,17 +5,17 @@ import sdk "github.com/cosmos/cosmos-sdk/types"
 const RouterKey = ModuleName
 
 /*
-	Msg to add a new Account
+	PROPOSE_ADD_ACCOUNT Message
 */
-type MsgAddAccount struct {
+type MsgProposeAddAccount struct {
 	Address   sdk.AccAddress `json:"address"`
 	PublicKey string         `json:"pub_key"`
 	Roles     AccountRoles   `json:"roles"`
 	Signer    sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddAccount(address sdk.AccAddress, pubKey string, roles AccountRoles, signer sdk.AccAddress) MsgAddAccount {
-	return MsgAddAccount{
+func NewMsgProposeAddAccount(address sdk.AccAddress, pubKey string, roles AccountRoles, signer sdk.AccAddress) MsgProposeAddAccount {
+	return MsgProposeAddAccount{
 		Address:   address,
 		PublicKey: pubKey,
 		Roles:     roles,
@@ -23,17 +23,17 @@ func NewMsgAddAccount(address sdk.AccAddress, pubKey string, roles AccountRoles,
 	}
 }
 
-func (m MsgAddAccount) Route() string {
+func (m MsgProposeAddAccount) Route() string {
 	return RouterKey
 }
 
-func (m MsgAddAccount) Type() string {
-	return "add_account"
+func (m MsgProposeAddAccount) Type() string {
+	return "propose_add_account"
 }
 
-func (m MsgAddAccount) ValidateBasic() sdk.Error {
+func (m MsgProposeAddAccount) ValidateBasic() sdk.Error {
 	if m.Address.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
+		return sdk.ErrInvalidAddress("Invalid Account Address: it cannot be empty")
 	}
 
 	if len(m.PublicKey) == 0 {
@@ -44,88 +44,47 @@ func (m MsgAddAccount) ValidateBasic() sdk.Error {
 		return err
 	}
 
-	return nil
-}
-
-func (m MsgAddAccount) GetSignBytes() []byte {
-	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
-}
-
-func (m MsgAddAccount) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Signer}
-}
-
-/*
-	Msg to assign Account Role
-*/
-
-type MsgAssignRole struct {
-	Address sdk.AccAddress `json:"address"`
-	Role    AccountRole    `json:"role"`
-	Signer  sdk.AccAddress `json:"signer"`
-}
-
-func NewMsgAssignRole(address sdk.AccAddress, role AccountRole, signer sdk.AccAddress) MsgAssignRole {
-	return MsgAssignRole{Address: address, Role: role, Signer: signer}
-}
-
-func (m MsgAssignRole) Route() string {
-	return RouterKey
-}
-
-func (m MsgAssignRole) Type() string {
-	return "assign_role"
-}
-
-func (m MsgAssignRole) ValidateBasic() sdk.Error {
-	if m.Address.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Address: it cannot be empty")
-	}
-
 	if m.Signer.Empty() {
 		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
-	if err := m.Role.Validate(); err != nil {
-		return err
-	}
-
 	return nil
 }
 
-func (m MsgAssignRole) GetSignBytes() []byte {
+func (m MsgProposeAddAccount) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
 }
 
-func (m MsgAssignRole) GetSigners() []sdk.AccAddress {
+func (m MsgProposeAddAccount) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
 }
 
 /*
-	Msg to revoke Account Role
+	APPROVE_ADD_ACCOUNT Message
 */
-
-type MsgRevokeRole struct {
+type MsgApproveAddAccount struct {
 	Address sdk.AccAddress `json:"address"`
-	Role    AccountRole    `json:"role"`
 	Signer  sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgRevokeRole(address sdk.AccAddress, role AccountRole, signer sdk.AccAddress) MsgRevokeRole {
-	return MsgRevokeRole{Address: address, Role: role, Signer: signer}
+func NewMsgApproveAddAccount(address sdk.AccAddress, signer sdk.AccAddress) MsgApproveAddAccount {
+	return MsgApproveAddAccount{
+		Address: address,
+		Signer:  signer,
+	}
 }
 
-func (m MsgRevokeRole) Route() string {
+func (m MsgApproveAddAccount) Route() string {
 	return RouterKey
 }
 
-func (m MsgRevokeRole) Type() string {
-	return "revoke_role"
+func (m MsgApproveAddAccount) Type() string {
+	return "approve_add_account"
 }
 
-func (m MsgRevokeRole) ValidateBasic() sdk.Error {
+func (m MsgApproveAddAccount) ValidateBasic() sdk.Error {
 	if m.Address.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Address: it cannot be empty")
+		return sdk.ErrInvalidAddress("Invalid Account Address: it cannot be empty")
 	}
 
 	if m.Signer.Empty() {
@@ -135,10 +94,10 @@ func (m MsgRevokeRole) ValidateBasic() sdk.Error {
 	return nil
 }
 
-func (m MsgRevokeRole) GetSignBytes() []byte {
+func (m MsgApproveAddAccount) GetSignBytes() []byte {
 	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
 }
 
-func (m MsgRevokeRole) GetSigners() []sdk.AccAddress {
+func (m MsgApproveAddAccount) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
 }

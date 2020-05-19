@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	QueryAccount  = "account"
-	QueryAccounts = "accounts"
+	QueryAccount          = "account"
+	QueryAccounts         = "accounts"
+	QueryProposedAccounts = "proposed_accounts"
 )
 
 func NewQuerier(keeper Keeper) sdk.Querier {
@@ -22,6 +23,8 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryAccount(ctx, req, keeper)
 		case QueryAccounts:
 			return queryAccounts(ctx, req, keeper)
+		case QueryProposedAccounts:
+			return queryProposedAccounts(ctx, req, keeper)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown auth query endpoint")
 		}
@@ -58,6 +61,39 @@ func queryAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res [
 	skipped := 0
 
 	keeper.IterateAccounts(ctx, func(account types.Account) (stop bool) {
+		result.Total++
+
+		if skipped < params.Skip {
+			skipped++
+			return false
+		}
+
+		if len(result.Items) < params.Take || params.Take == 0 {
+			result.Items = append(result.Items, account)
+			return false
+		}
+
+		return false
+	})
+
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
+
+	return res, nil
+}
+
+func queryProposedAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+	var params pagination.PaginationParams
+	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
+	}
+
+	result := types.ListProposedAccountItems{
+		Total: 0,
+		Items: []types.PendingAccount{},
+	}
+	skipped := 0
+
+	keeper.IterateProposedAccounts(ctx, func(account types.PendingAccount) (stop bool) {
 		result.Total++
 
 		if skipped < params.Skip {

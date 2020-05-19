@@ -52,7 +52,8 @@ func Setup() TestSetup {
 	querier := NewQuerier(validatorKeeper)
 	handler := NewHandler(validatorKeeper, authKeeper)
 
-	authKeeper.AssignRole(ctx, testconstants.Address1, auth.NodeAdmin)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.NodeAdmin})
+	authKeeper.AssignNumberAndStoreAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:             cdc,
@@ -61,7 +62,7 @@ func Setup() TestSetup {
 		authKeeper:      authKeeper,
 		Handler:         handler,
 		Querier:         querier,
-		NodeAdmin:       testconstants.Address1,
+		NodeAdmin:       account.Address,
 	}
 
 	return setup

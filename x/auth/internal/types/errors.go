@@ -9,8 +9,8 @@ import (
 const (
 	DefaultCodespace sdk.CodespaceType = ModuleName
 
-	CodeAccountAlreadyExist sdk.CodeType = 101
-	CodeAccountDoesNotExist sdk.CodeType = 102
+	CodeAccountAlreadyExist        sdk.CodeType = 101
+	CodeAccountDoesNotExist        sdk.CodeType = 102
 )
 
 func ErrAccountAlreadyExistExist(address interface{}) sdk.Error {

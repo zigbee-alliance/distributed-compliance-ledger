@@ -23,20 +23,14 @@ import (
 
 //nolint:funlen
 func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
-	// Get key info for Jack (Trustee)
-	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
-
 	// Register new Vendor account
-	vendor, _ := utils.RegisterNewAccount()
-	utils.AssignRole(vendor.Address, jackKeyInfo, auth.Vendor)
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
 
 	// Register new TestHouse account
-	testHouse, _ := utils.RegisterNewAccount()
-	utils.AssignRole(testHouse.Address, jackKeyInfo, auth.TestHouse)
+	testHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse})
 
 	// Register new ZBCertificationCenter account
-	zb, _ := utils.RegisterNewAccount()
-	utils.AssignRole(zb.Address, jackKeyInfo, auth.ZBCertificationCenter)
+	zb := utils.CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter})
 
 	// Get all compliance infos
 	inputComplianceInfos, _ := utils.GetComplianceInfos()
@@ -111,9 +105,6 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 }
 
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
-	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
-
 	// Get all certified models
 	inputCertifiedModels, _ := utils.GetAllCertifiedModels()
 
@@ -121,8 +112,7 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	inputRevokedModels, _ := utils.GetAllRevokedModels()
 
 	// Register new ZBCertificationCenter account
-	zb, _ := utils.RegisterNewAccount()
-	utils.AssignRole(zb.Address, jackKeyInfo, auth.ZBCertificationCenter)
+	zb := utils.CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter})
 
 	vid, pid := common.RandUint16(), common.RandUint16()
 

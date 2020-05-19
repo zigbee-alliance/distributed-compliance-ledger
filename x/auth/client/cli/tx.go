@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"strings"
@@ -23,29 +22,32 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	authTxCmd.AddCommand(client.PostCommands(
-		GetCmdCreateAccount(cdc),
-		GetCmdAddAssignRole(cdc),
-		GetCmdRevokeRole(cdc),
-	)...)
+	authTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
+		GetCmdProposeAddAccount(cdc),
+		GetCmdApproveAddAccount(cdc),
+	)...)...)
 
 	return authTxCmd
 }
 
-func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
+func GetCmdProposeAddAccount(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-account",
-		Short: "Create new account for specified address",
+		Use:   "propose-add-account",
+		Short: "Propose a new account with the given address, public key and roles",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+			address, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
 
-			authtypes.NewBaseAccountWithAddress(addr)
+			pubkey := viper.GetString(FlagPubKey)
+			_, err = sdk.GetAccPubKeyBech32(pubkey)
+			if err != nil {
+				return err
+			}
 
 			var roles types.AccountRoles
 			if rolesStr := viper.GetString(FlagRoles); len(rolesStr) > 0 {
@@ -54,7 +56,7 @@ func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			msg := types.NewMsgAddAccount(addr, viper.GetString(FlagPubKey), roles, cliCtx.FromAddress())
+			msg := types.NewMsgProposeAddAccount(address, pubkey, roles, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -63,7 +65,7 @@ func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	cmd.Flags().String(FlagPubKey, "", "Bench32 encoded account public key")
 	cmd.Flags().String(FlagRoles, "",
-		fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)",
+		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
 			types.Roles))
 
 	_ = cmd.MarkFlagRequired(FlagAddress)
@@ -72,42 +74,28 @@ func GetCmdCreateAccount(cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
-func GetCmdAddAssignRole(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "assign-role [addr] [role]",
-		Short: "Assign new role to the account",
-		Args:  cobra.ExactArgs(2),
+func GetCmdApproveAddAccount(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "approve-add-account",
+		Short: "Approve the proposed account associated with the given address",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			addr, err := sdk.AccAddressFromBech32(args[0])
+			address, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgAssignRole(addr, types.AccountRole(args[1]), cliCtx.FromAddress())
+			msg := types.NewMsgApproveAddAccount(address, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
-}
 
-func GetCmdRevokeRole(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
-		Use:   "revoke-role [addr] [role]",
-		Short: "Revoke role from the account",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 
-			addr, err := sdk.AccAddressFromBech32(args[0])
-			if err != nil {
-				return err
-			}
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
-			msg := types.NewMsgRevokeRole(addr, types.AccountRole(args[1]), cliCtx.FromAddress())
-
-			return cliCtx.HandleWriteMessage(msg)
-		},
-	}
+	return cmd
 }

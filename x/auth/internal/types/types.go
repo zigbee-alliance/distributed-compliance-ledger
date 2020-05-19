@@ -10,6 +10,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+/*
+	Roles assigning to Account
+*/
+
 type AccountRole string
 
 const (
@@ -32,17 +36,9 @@ func (lt AccountRole) Validate() sdk.Error {
 	return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Account Role: \"%v\". Supported roles: [%v]", lt, Roles))
 }
 
-//
-//func (lt *AccountRole) UnmarshalJSON(b []byte) error {
-//	accountRole := AccountRole(strings.Trim(string(b), `"`))
-//
-//	if err := accountRole.Validate(); err != nil {
-//		return err
-//	}
-//
-//	*lt = accountRole
-//	return nil
-//}
+/*
+	List of Roles
+*/
 
 type AccountRoles []AccountRole
 
@@ -55,6 +51,65 @@ func (acc AccountRoles) Validate() sdk.Error {
 	}
 
 	return nil
+}
+
+/*
+	Pending Account
+*/
+type PendingAccount struct {
+	Address   sdk.AccAddress   `json:"address"`
+	PubKey    crypto.PubKey    `json:"public_key"`
+	Roles     AccountRoles     `json:"roles"`
+	Approvals []sdk.AccAddress `json:"approvals"`
+}
+
+// NewPendingAccount creates a new PendingAccount object
+func NewPendingAccount(address sdk.AccAddress, pubKey crypto.PubKey,
+	roles AccountRoles, approval sdk.AccAddress) PendingAccount {
+	return PendingAccount{
+		Address:   address,
+		PubKey:    pubKey,
+		Roles:     roles,
+		Approvals: []sdk.AccAddress{approval},
+	}
+}
+
+// String implements fmt.Stringer
+func (acc PendingAccount) String() string {
+	bytes, err := json.Marshal(acc)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+// Validate checks for errors on the vesting and module account parameters.
+func (acc PendingAccount) Validate() error {
+	if acc.Address == nil {
+		return sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid Account: Value: %s. Error: Missing Address", acc.Address))
+	}
+
+	if acc.PubKey == nil {
+		return sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid Account: Value: %s. Error: Missing PubKey", acc.PubKey))
+	}
+
+	if err := acc.Roles.Validate(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
+	for _, approval := range acc.Approvals {
+		if approval.Equals(address) {
+			return true
+		}
+	}
+	return false
 }
 
 /*
@@ -104,6 +159,15 @@ func (acc Account) Validate() error {
 	}
 
 	return nil
+}
+
+func (acc Account) HasRole(targetRole AccountRole) bool {
+	for _, role := range acc.Roles {
+		if role == targetRole {
+			return true
+		}
+	}
+	return false
 }
 
 func (acc Account) GetAddress() sdk.AccAddress {

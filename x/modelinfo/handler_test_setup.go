@@ -52,8 +52,8 @@ func Setup() TestSetup {
 	querier := NewQuerier(modelinfoKeeper)
 	handler := NewHandler(modelinfoKeeper, authKeeper)
 
-	account := testconstants.Address1
-	authKeeper.AssignRole(ctx, account, auth.Vendor)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.Vendor})
+	authKeeper.AssignNumberAndStoreAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:             cdc,
@@ -62,7 +62,7 @@ func Setup() TestSetup {
 		authKeeper:      authKeeper,
 		Handler:         handler,
 		Querier:         querier,
-		Vendor:          account,
+		Vendor:          account.Address,
 	}
 
 	return setup

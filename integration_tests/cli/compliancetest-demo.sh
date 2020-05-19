@@ -4,37 +4,21 @@ source integration_tests/cli/common.sh
 
 # Preparation of Actors
 
-echo "Assign Vendor role to Jack"
-result=$(echo "test1234" | zblcli tx auth assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
+echo "Create Vendor account"
+create_new_account vendor_account "Vendor"
 
-test_house_account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
-echo "Create TestHouse account with address: $test_house_account"
-create_account_with_name $test_house_account
+echo "Create TestHouse account"
+create_new_account test_house_account "TestHouse"
 
-test_house_address=$(zblcli keys show "$test_house_account" -a)
-
-result=$(echo "test1234" | zblcli tx auth assign-role --address=$test_house_address --role="TestHouse" --from jack --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
-
-second_test_house_account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
-echo "Create second TestHouse account with address: $second_test_house_account"
-create_account_with_name $second_test_house_account
-
-second_test_house_address=$(zblcli keys show "$second_test_house_account" -a)
-
-result=$(echo "test1234" | zblcli tx auth assign-role --address=$second_test_house_address --role="TestHouse" --from jack --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
+echo "Create second TestHouse account"
+create_new_account second_test_house_account "TestHouse"
 
 # Body
 
 vid=$RANDOM
 pid=$RANDOM
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from jack --yes)
+result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -65,7 +49,7 @@ echo "$result"
 vid=$RANDOM
 pid=$RANDOM
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from jack --yes)
+result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

@@ -42,10 +42,15 @@ var (
 	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
 
 	//
-	Address1, _       = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
-	Address2, _       = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
-	Address3, _       = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	PubKey            = "cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3"
+	Address1, _ = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
+	Address2, _ = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
+	Address3, _ = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
+	PubKey1, _  = sdk.GetAccPubKeyBech32(
+		"cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h")
+	PubKey2, _ = sdk.GetAccPubKeyBech32(
+		"cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng")
+	PubKey3, _ = sdk.GetAccPubKeyBech32(
+		"cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn")
 	Signer            = Address1
 	ValidatorPubKey1  = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
 	ValidatorPubKey2  = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"

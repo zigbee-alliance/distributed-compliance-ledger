@@ -18,8 +18,8 @@ address=$(docker exec $container zblcli keys show $account -a)
 pubkey=$(docker exec $container zblcli keys show $account -p)
 
 echo "Create account for $account and Assign NodeAdmin role"
-echo $passphrase | zblcli tx auth create-account --address="$address" --pubkey="$pubkey" --from jack --yes
-echo $passphrase | zblcli tx auth assign-role --address=$address --role="NodeAdmin" --from jack --yes
+echo $passphrase | zblcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
+echo $passphrase | zblcli tx auth approve-add-account --address="$address" --from alice --yes
 
 echo "$account Preapare Node configuration files"
 docker exec $container zbld init $node --chain-id $chain_id

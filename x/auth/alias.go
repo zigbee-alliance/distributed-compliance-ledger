@@ -19,21 +19,18 @@ const (
 )
 
 var (
-	NewKeeper        = keeper.NewKeeper
-	NewQuerier       = keeper.NewQuerier
-	NewMsgAssignRole = types.NewMsgAssignRole
-	NewMsgRevokeRole = types.NewMsgRevokeRole
-	NewAccount       = types.NewAccount
-	ModuleCdc        = types.ModuleCdc
-	RegisterCodec    = types.RegisterCodec
-	Roles            = types.Roles
+	NewKeeper     = keeper.NewKeeper
+	NewQuerier    = keeper.NewQuerier
+	NewAccount    = types.NewAccount
+	ModuleCdc     = types.ModuleCdc
+	RegisterCodec = types.RegisterCodec
+	Roles         = types.Roles
 )
 
 type (
-	Keeper        = keeper.Keeper
-	MsgAssignRole = types.MsgAssignRole
-	MsgRevokeRole = types.MsgRevokeRole
-	Account       = types.Account
-	AccountRole   = types.AccountRole
-	AccountRoles  = types.AccountRoles
+	Keeper         = keeper.Keeper
+	Account        = types.Account
+	PendingAccount = types.PendingAccount
+	AccountRole    = types.AccountRole
+	AccountRoles   = types.AccountRoles
 )

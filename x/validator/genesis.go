@@ -40,6 +40,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 
 	for _, validator := range data.Validators {
 		keeper.SetValidator(ctx, validator)
+		keeper.SetValidatorOwner(ctx, validator.Owner, validator.Address)
 	}
 
 	for _, address := range data.LastValidators {

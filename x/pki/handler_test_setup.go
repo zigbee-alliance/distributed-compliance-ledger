@@ -52,8 +52,8 @@ func Setup() TestSetup {
 	querier := NewQuerier(pkiKeeper)
 	handler := NewHandler(pkiKeeper, authKeeper)
 
-	trustee := testconstants.Address2
-	authKeeper.AssignRole(ctx, trustee, auth.Trustee)
+	account := auth.NewAccount(testconstants.Address2, testconstants.PubKey2, auth.AccountRoles{auth.Trustee})
+	authKeeper.AssignNumberAndStoreAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:        cdc,
@@ -62,7 +62,7 @@ func Setup() TestSetup {
 		authKeeper: authKeeper,
 		Handler:    handler,
 		Querier:    querier,
-		Trustee:    trustee,
+		Trustee:    account.Address,
 	}
 
 	return setup

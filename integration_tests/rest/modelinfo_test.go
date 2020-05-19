@@ -2,7 +2,6 @@ package rest_test
 
 //nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
@@ -23,27 +22,21 @@ import (
 */
 
 func TestModelinfoDemo(t *testing.T) {
+	// Register new Vendor account
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
+
 	// Get all model infos
 	inputModelInfos, _ := utils.GetModelInfos()
 
 	// Get all vendors
 	inputVendors, _ := utils.GetVendors()
 
-	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
-
-	// Get account info for Jack
-	jackAccountInfo, _ := utils.GetAccountInfo(jackKeyInfo.Address)
-
-	// Assign Vendor role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, auth.Vendor)
-
 	// Prepare model info
-	firstModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
+	firstModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
 	VID := firstModelInfo.VID
 
 	// Sign and Broadcast AddModelInfo message
-	utils.SignAndBroadcastMessage(jackKeyInfo, firstModelInfo)
+	utils.SignAndBroadcastMessage(vendor, firstModelInfo)
 
 	// Check model is created
 	receivedModelInfo, _ := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
@@ -52,9 +45,9 @@ func TestModelinfoDemo(t *testing.T) {
 	require.Equal(t, receivedModelInfo.Name, firstModelInfo.Name)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
-	secondModelInfo := utils.NewMsgAddModelInfo(jackAccountInfo.Address)
+	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
 	secondModelInfo.VID = VID // Set same Vendor as for the first model
-	_, _ = utils.PublishModelInfo(secondModelInfo, jackKeyInfo)
+	_, _ = utils.PublishModelInfo(secondModelInfo, vendor)
 
 	// Check model is created
 	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
@@ -78,12 +71,8 @@ func TestModelinfoDemo(t *testing.T) {
 }
 
 func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
-	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
-
 	// Register new Vendor account
-	vendor, _ := utils.RegisterNewAccount()
-	utils.AssignRole(vendor.Address, jackKeyInfo, auth.Vendor)
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
 
 	// Prepare model info
 	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
@@ -103,7 +92,7 @@ func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
 
 func Test_AddModelinfo_ByNonVendor(t *testing.T) {
 	// register new account
-	testAccount, _ := utils.RegisterNewAccount()
+	testAccount := utils.CreateNewAccount(auth.AccountRoles{})
 
 	// try to publish model info
 	modelInfo := utils.NewMsgAddModelInfo(testAccount.Address)
@@ -113,21 +102,15 @@ func Test_AddModelinfo_ByNonVendor(t *testing.T) {
 
 func Test_AddModelinfo_Twice(t *testing.T) {
 	// register new account
-	testAccount, _ := utils.RegisterNewAccount()
-
-	// get jack account
-	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.JackAccount)
-
-	// Assign Vendor role to test account
-	utils.AssignRole(testAccount.Address, jackKeyInfo, auth.Vendor)
+	testAccount := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
 
 	// publish model info
-	modelInfo := utils.NewMsgAddModelInfo(jackKeyInfo.Address)
-	res, _ := utils.PublishModelInfo(modelInfo, jackKeyInfo)
+	modelInfo := utils.NewMsgAddModelInfo(testAccount.Address)
+	res, _ := utils.PublishModelInfo(modelInfo, testAccount)
 	require.Equal(t, sdk.CodeOK, sdk.CodeType(res.Code))
 
 	// publish second time
-	res, _ = utils.PublishModelInfo(modelInfo, jackKeyInfo)
+	res, _ = utils.PublishModelInfo(modelInfo, testAccount)
 	require.Equal(t, modelinfo.CodeModelInfoAlreadyExists, sdk.CodeType(res.Code))
 }
 

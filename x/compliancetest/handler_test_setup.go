@@ -61,8 +61,8 @@ func Setup() TestSetup {
 	querier := NewQuerier(compliancetestKeeper)
 	handler := NewHandler(compliancetestKeeper, modelinfoKeeper, authKeeper)
 
-	account := testconstants.Address1
-	authKeeper.AssignRole(ctx, account, auth.TestHouse)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.TestHouse})
+	authKeeper.AssignNumberAndStoreAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:                  cdc,
@@ -72,7 +72,7 @@ func Setup() TestSetup {
 		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,
-		TestHouse:            account,
+		TestHouse:            account.Address,
 	}
 
 	return setup

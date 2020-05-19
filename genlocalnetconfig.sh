@@ -35,8 +35,8 @@ anna_address=$(zblcli keys show anna -a)
 anna_pubkey=$(zblcli keys show anna -p)
 
 zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from jack
@@ -48,8 +48,8 @@ mv ~/.zbld/* localnet/node0
 zbld init node1 --chain-id zblchain
 
 zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from alice
@@ -61,8 +61,8 @@ mv ~/.zbld/* localnet/node1
 zbld init node2 --chain-id zblchain
 
 zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from bob
@@ -74,8 +74,8 @@ mv ~/.zbld/* localnet/node2
 zbld init node3 --chain-id zblchain
 
 zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="NodeAdmin"
+zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
 echo 'test1234' | zbld gentx --from anna
