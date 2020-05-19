@@ -141,6 +141,9 @@ func (k Keeper) CountAccountsWithRole(ctx sdk.Context, roleToCount types.Account
 func (k Keeper) GetProposedAccount(ctx sdk.Context, address sdk.AccAddress) types.PendingAccount {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GetPendingAccountKey(address))
+	if bz == nil {
+		panic("Proposed Account does not exist")
+	}
 
 	var cert types.PendingAccount
 	k.cdc.MustUnmarshalBinaryBare(bz, &cert)

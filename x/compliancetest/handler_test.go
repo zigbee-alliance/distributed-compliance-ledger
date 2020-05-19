@@ -40,8 +40,7 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	setup := Setup()
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
-	for _, role := range []auth.AccountRole{auth.Vendor, auth.Administrator,
-		auth.ZBCertificationCenter, auth.Administrator} {
+	for _, role := range []auth.AccountRole{auth.Vendor, auth.ZBCertificationCenter, auth.NodeAdmin} {
 		setup.authKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
 
 		// add new testing result by non TestHouse

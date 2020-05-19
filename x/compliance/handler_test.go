@@ -47,7 +47,6 @@ func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
 	addTestingResult(setup, vid, pid)
 
 	cases := []auth.AccountRole{
-		auth.Administrator,
 		auth.Vendor,
 		auth.TestHouse,
 	}
@@ -213,7 +212,6 @@ func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 	setup := Setup()
 
 	cases := []auth.AccountRole{
-		auth.Administrator,
 		auth.Vendor,
 		auth.TestHouse,
 	}

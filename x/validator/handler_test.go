@@ -46,8 +46,7 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.Name}, constants.Address2)
 
-	for _, role := range []auth.AccountRole{auth.Administrator, auth.TestHouse,
-		auth.ZBCertificationCenter, auth.Vendor, auth.Trustee} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor, auth.Trustee} {
 		// assign role
 		setup.authKeeper.AssignRole(setup.Ctx, msgCreateValidator.Signer, role)
 

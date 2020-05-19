@@ -1138,10 +1138,9 @@ If more than 1 Trustee signature is required to add the account, the account
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-    - `address`
-    - `pub_key`
-    - `pub_key_type`
-    - `role` 
+    - `address`: string // account address; bench32 encoded
+    - `pub_key` string // account public key; bech32 encoded
+    - `roles`: array<string> // the list of roles to assign to account 
 - In State:
   - `auth` store  
   - `1:<address>` : `<account info> + <list of approvers>`
@@ -1149,7 +1148,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-add-account .... `
+    -   `zblcli tx auth propose-add-account --address=<string> --pubkey=<string> --from=<account>`
 - REST API: 
     -   POST `/auth/accounts/proposed`
     
@@ -1243,7 +1242,7 @@ Gets all accounts.
 - REST API: 
     -   GET `/auth/accounts`           
 
-#### GET_ACCOUNTS
+#### GET_ACCOUNT
 Gets an accounts by the address.
 
 - Parameters:

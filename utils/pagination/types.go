@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	FlagSkip = "skip"
-	FlagTake = "take"
+	FlagSkip      = "skip"
+	FlagSkipUsage = "amount of records to skip"
+	FlagTake      = "take"
+	FlagTakeUsage = "take of records to take"
 )
 
 // request Payload for a list query with pagination.

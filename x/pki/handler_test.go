@@ -18,8 +18,7 @@ const SerialNumber = "12345678"
 func TestHandler_ProposeAddX509RootCertByNotTrustee(t *testing.T) {
 	setup := Setup()
 
-	for _, role := range []auth.AccountRole{auth.Administrator,
-		auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
 		setup.authKeeper.AssignRole(setup.Ctx, constants.Address1, role)
 
@@ -110,8 +109,7 @@ func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	for _, role := range []auth.AccountRole{auth.Trustee,
-		auth.Administrator, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
 		setup.authKeeper.AssignRole(setup.Ctx, constants.Address1, role)
 
@@ -194,8 +192,7 @@ func TestHandler_ApproveAddX509RootCert_ForNotTrustee(t *testing.T) {
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	for _, role := range []auth.AccountRole{
-		auth.Administrator, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
 		setup.authKeeper.AssignRole(setup.Ctx, constants.Address1, role)
 
@@ -233,8 +230,7 @@ func TestHandler_AddX509Cert(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee)
 	setup.PkiKeeper.SetCertificate(setup.Ctx, rootCertificate)
 
-	for _, role := range []auth.AccountRole{auth.Trustee,
-		auth.Administrator, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
 		setup.authKeeper.AssignRole(setup.Ctx, constants.Address1, role)
 

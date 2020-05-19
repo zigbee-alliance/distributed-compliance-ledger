@@ -10,7 +10,6 @@ const (
 	RouterKey  = types.RouterKey
 	StoreKey   = types.StoreKey
 
-	Administrator         = types.Administrator
 	Vendor                = types.Vendor
 	TestHouse             = types.TestHouse
 	ZBCertificationCenter = types.ZBCertificationCenter

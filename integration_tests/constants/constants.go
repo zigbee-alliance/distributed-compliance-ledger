@@ -3,6 +3,8 @@ package testconstants
 //nolint:goimports
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 	"time"
 )
 
@@ -42,15 +44,15 @@ var (
 	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
 
 	//
-	Address1, _ = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
-	Address2, _ = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
-	Address3, _ = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	PubKey1, _  = sdk.GetAccPubKeyBech32(
-		"cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h")
-	PubKey2, _ = sdk.GetAccPubKeyBech32(
-		"cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng")
-	PubKey3, _ = sdk.GetAccPubKeyBech32(
-		"cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn")
+	Address1, _       = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
+	Address2, _       = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
+	Address3, _       = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
+	Pubkey1Str        = "cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h"
+	PubKey1, _        = sdk.GetAccPubKeyBech32(Pubkey1Str)
+	PubKey2Str        = "cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng"
+	PubKey2, _        = sdk.GetAccPubKeyBech32(PubKey2Str)
+	PubKey3Str        = "cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn"
+	PubKey3, _        = sdk.GetAccPubKeyBech32(PubKey3Str)
 	Signer            = Address1
 	ValidatorPubKey1  = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
 	ValidatorPubKey2  = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
@@ -168,3 +170,11 @@ nKzrbFlTU4d9Cmib
 	LeafSubjectKeyID = "8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"
 	LeafSerialNumber = "312128364102099997394566658874957944692446"
 )
+
+func TestAddress() (sdk.AccAddress, crypto.PubKey, string) {
+	key := secp256k1.GenPrivKey()
+	pub := key.PubKey()
+	addr := sdk.AccAddress(pub.Address())
+	pubStr := sdk.MustBech32ifyAccPub(pub)
+	return addr, pub, pubStr
+}

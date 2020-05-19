@@ -51,22 +51,18 @@ func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			var account types.Account
 			cdc.MustUnmarshalBinaryBare(res, &account)
 
+			// the trick to prevent appending of `type` field by cdc
 			out := cdc.MustMarshalJSON(types.ZBAccount(account))
 
 			return cliCtx.PrintWithHeight(out, height)
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagAddress, "", FlagAddressUsage)
 
 	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
-}
-
-type AccountWithHeight struct {
-	Result types.Account `json:"result"`
-	Height int64         `json:"height"`
 }
 
 func GetCmdProposedAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
@@ -81,8 +77,8 @@ func GetCmdProposedAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command 
 		},
 	}
 
-	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of accounts to skip")
-	cmd.Flags().Int(pagination.FlagTake, 0, "amount of accounts to take")
+	cmd.Flags().Int(pagination.FlagSkip, 0, pagination.FlagSkipUsage)
+	cmd.Flags().Int(pagination.FlagTake, 0, pagination.FlagTakeUsage)
 
 	return cmd
 }

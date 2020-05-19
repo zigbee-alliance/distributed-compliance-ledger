@@ -17,7 +17,6 @@ import (
 type AccountRole string
 
 const (
-	Administrator         AccountRole = "Administrator"
 	Vendor                AccountRole = "Vendor"
 	TestHouse             AccountRole = "TestHouse"
 	ZBCertificationCenter AccountRole = "ZBCertificationCenter"
@@ -25,11 +24,11 @@ const (
 	NodeAdmin             AccountRole = "NodeAdmin"
 )
 
-var Roles = AccountRoles{Administrator, Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin}
+var Roles = AccountRoles{Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin}
 
 func (lt AccountRole) Validate() sdk.Error {
 	switch lt {
-	case Administrator, Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin:
+	case Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin:
 		return nil
 	}
 

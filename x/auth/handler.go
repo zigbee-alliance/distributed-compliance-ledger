@@ -35,6 +35,13 @@ func handleMsgProposeAddAccount(ctx sdk.Context, keeper Keeper, msg types.MsgPro
 		return types.ErrAccountAlreadyExistExist(msg.Address).Result()
 	}
 
+	// check if pending account already exists.
+	if keeper.IsProposedAccountPresent(ctx, msg.Address) {
+		return sdk.NewError(types.DefaultCodespace, types.CodeAccountAlreadyExist,
+			fmt.Sprintf("Proposed Account associated with the address=%v " +
+				"already exists on the ledger", msg.Address)).Result()
+	}
+
 	// parse the key.
 	pubKey, err := sdk.GetAccPubKeyBech32(msg.PublicKey)
 	if err != nil {
@@ -64,7 +71,7 @@ func handleMsgApproveAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 
 	// check if pending account exists
 	if !keeper.IsProposedAccountPresent(ctx, msg.Address) {
-		return types.ErrAccountDoesNotExist(msg.Address).Result()
+		return types.ErrPendingAccountDoesNotExist(msg.Address).Result()
 	}
 
 	// get account

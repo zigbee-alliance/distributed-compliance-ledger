@@ -7,7 +7,7 @@ const (
 	ModuleName = "auth"
 
 	// StoreKey to be used when creating the KVStore.
-	StoreKey = "acc" // it differs from ModuleName to be compatible with cosmos transaction builder and processor.
+	StoreKey = "acc" // it differs from ModuleName to be compatible with cosmos transaction builder and handler.
 )
 
 var (
