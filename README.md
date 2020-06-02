@@ -1,404 +1,139 @@
 # ZB Ledger
 
-## Build and run the app
+## Overview
+ZB Ledger is a public permissioned Ledger which can be used for two main use cases:
+ - ZB compliance certification of device models
+ - Public key infrastructure (PKI)
+ 
+More information about use cases can be found in [ZB Ledger Overview](docs/ZB_Ledger_overview.pdf) and [Use Case Diagrams](docs/use_cases).
 
-To build and run, follow the tutorial: https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial/21-build-run.md
+ZB Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](https://cosmos.network/sdk).
 
+#### Main Components
+The ledger consists of
+ - A pool of Tendermint-based validator nodes maintaining the ledger.
+  Every validator node runs ZB Ledger application code (based on Cosmos SDK) implementing the use cases.
+ - The client to be used for interactions with the pool (sending write and read requests).
+ The following clients are supported: 
+    - CLI to communicate with the pool (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)).
+    The CLI is based on the Cosmos SDK. See [CLI Usage](#cli-usage) section for details.
+    - REST API which can be deployed as a server. The server can communicate with the pool
+     (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)). 
+    The REST API is based on the Cosmos SDK. See [REST Usage](#rest-usage) section for details.
+    - Tendermint's Light Client can be used for a direct communication on API level. 
+    There are currently no ZB Ledger specific API libraries for various platforms and languages, 
+    but they may be provided in future.
+    These libraries can be based on the following Light Client implementations: 
+        - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)
+        - [Rust Light Client implementation](https://docs.rs/tendermint/0.13.0/tendermint/lite/index.html)  
+ - Public UI
+    - http://18.197.220.188.
+    - based onf the REST API
+    - can be used to browse the ledger
+        - please note that it doesn't show all the accounts on the ledger
+        - it shows only the default (demo) accounts created on the UI server
+    - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
+
+#### Public Permissioned Ledger
+ZB Ledger is a public permissioned ledger in the following sense:
+ - Anyone can read from the ledger (that's why it's public). See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
+-  Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
+In order to send write transactions to the ledger you need: 
+      - Have a private/public key pair
+      - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
+          - The Account stores the public part of the key
+          - The Account has an associated role. The role is used for authorization policies.
+      - Sign every transaction by the private key.
+ - PoA (proof of authority) approach is used for adding new validator nodes to the pool 
+ (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
+  [Running Node Instructions](docs/running-node.md).
+
+
+
+## How To
+
+#### CLI Usage
+A full list of all CLI commands can be found there: [cli-help.md](docs/cli-help.md).
+
+Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
+
+If write requests to the Ledger needs to be sent, please make sure that you have
+an Account created on the Ledger with an appropriate role (see [how-to.md](docs/how-to.md#getting-account)).
+
+Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
+
+#### REST Usage
+A REST API server is a CLI run in a REST mode: 
+`zblcli rest-server --chain-id <chain_id>`.
+ 
+Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
+
+A list of all REST API calls can be found in [transactions.md](docs/transactions.md).
+
+Details on how a REST API can be used for write and read requests can be found in
+[How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger)
+and [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
+
+If write requests to the Ledger needs to be sent, please make sure that you have
+an Account created on the Ledger with an appropriate role (see [how-to.md](docs/how-to.md#getting-account)).
+
+Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
+
+#### Instructions
+After the CLI or REST API is configured and Account with an appropriate role is created,
+the following instructions from [how-to.md](docs/how-to.md) can be used for every role 
+(see [Use Case Diagrams](docs/use_cases)):
+- [Trustee](docs/how-to.md#trustee-instructions) 
+    - create new accounts
+    - assign roles to the account
+    - revoke roles from the account
+    - publish X509 certificates
+    - assign a role to the account    
+- [CA](docs/how-to.md#ca-instructions)
+    - propose X509 root certificates
+    - publish X509 certificates    
+- [Vendor](docs/how-to.md#vendor-instructions) 
+    - publish device model info
+    - publish X509 certificates
+- [Test House](docs/how-to.md#test-house-instructions) 
+    - publish compliance test results
+    - publish X509 certificates
+- [ZB Certification Center](docs/how-to.md#certification-center-instructions)
+    - certify or revoke certification of device models
+    - publish X509 certificates
+- [Node Admin](docs/how-to.md#node-admin-instructions-setting-up-a-new-validator-node) 
+    - add a new Validator node
+    - publish X509 certificates
+
+#### Build and run the app locally
+- To build and run, follow the [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial/22-build-run.md).
 Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
-
-## Localnet
-
 - To start localnet using docker-compose run `make install && make localnet_init && make localnet_start`
   - 4 nodes will be started and will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26662`
 - To stop localnet run `make localnet_stop`
+#### Deploy a pool of validator nodes 
+One can either deploy its own pool of validator nodes or join the ZB Ledger Network 
+(currently the network is in a Demo mode).
+
+Read more about deployment in [ansible/readme.md](ansible/README.md)
+and [Running a Validator Node](docs/running-node.md).
+
+## Useful Links 
+- [Use Case Diagrams](docs/use_cases)
+    - [PKI](docs/use_cases/use_cases_pki.png)
+    - [Device on-ledger certification](docs/use_cases/use_cases_device_on_ledger_certification.png)
+    - [Device off-ledger certification](docs/use_cases/use_cases_device_off_ledger_certification.png)
+    - [Auth](docs/use_cases/use_cases_txn_auth.png)
+    - [Validators](docs/use_cases/use_cases_add_validator_node.png)
+- [ZB Ledger Overview](docs/ZB_Ledger_overview.pdf)
+- [List of Transactions](docs/transactions.md)
+- [How To Guide](docs/how-to.md)
+- [CLI Help](docs/cli-help.md)
+- [Deployment](ansible/README.md)
+- [Running a Validator Node](docs/running-node.md)
+- [Tendermint](https://tendermint.com/)
+- [Cosmos SDK](https://cosmos.network/sdk)
+     
 
-## Deployment
 
-- Read more about deployment in `ansible/readme.md`.
-
-## Docs
-- Requests and transactions: [transactions.md](docs/transactions.md)
-- Use cases:
-    - [PKI](docs/use_cases_pki.png)
-    - [Device on-ledger certification](docs/use_cases_device_on_ledger_certification.png)
-    - [Device off-ledger certification](docs/use_cases_device_off_ledger_certification.png)
-    - [Auth](docs/use_cases_txn_auth.png)
-    - [Validators](docs/use_cases_add_validator_node.png)
-
-## Modules
-
-Some of the modules are being refactored against [transactions.md](docs/transactions.md) and may look
-a bit different than specified below.
-
-### Keys
-
-The set of commands that allows you to manage your local keystore.
-
-Commands:
-- `zblcli keys add <key name>` - Derive a new private key and encrypt to disk. 
-You will be prompted to enter encryption passphrase. 
-This passphrase will be requested each time you send write requests on the ledger using this key.
-
-  Example: `zblcli keys add jack`
-
-- `zblcli keys add <key name> --recover` - Recover existing key using seed instead of creating a new one.
-You will be prompted to enter encryption passphrase and seed.
-
-  Example: `zblcli keys add jack --recover`
-
-- `zblcli keys list` - Get a list of all public keys stored by this key manager.
-
-  Example: `zblcli keys list`
-
-- `zblcli keys show <key name>` - Get details for key.
-
-  Example: `zblcli keys show jack`
-
-### PKI
-
-Proposed Certificate type:
-- pem_cert: `string` - pem encoded certificate
-- subject: `string` - certificates's `Subject`
-- subject_key_id: `string` - certificates's `Subject Key Id`
-- serial_number: `string` - certificates's `Serial Number`
-- approvals: `string` - Trustees addresses who approved root certificate
-- owner: `bech32 encoded address` - the address used for sending the original message
-
-Certificate type:
-- pem_cert: `string` - pem encoded certificate
-- subject: `string` - certificates's `Subject`
-- subject_key_id: `string` - certificates's `Subject Key Id`
-- serial_number: `string` - certificates's `Serial Number`
-- root_subject: `string` - root certificates's `Subject`
-- root_subject_key_id: `string` - root certificates's `Subject Key Id`
-- type: `string` - certificate type: either root or intermediate
-- owner: `bech32 encoded address` - the address used for sending the original message
-
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Propose Root Certificate: Any Role.
-- Approve Root Certificate: Signer must have `Trustee` role. See `Authorization` module for details.
-- Add Leaf Certificate: Any Role.
-
-Transactions:
-- `zblcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>` - Proposes a new self-signed root certificate.
-
-  Example: `zblcli tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
-  
-  Example: `zblcli tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
-
-- `zblcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>` - Approves the proposed root certificate.
-
-  Example: `zblcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C" --from=jack`
-  
-- `zblcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>` - Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
-
-  Example: `zblcli tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
-  
-  Example: `zblcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
-    
-Queries:
-- `zblcli query pki all-proposed-x509-root-certs` - Gets all proposed but not approved root certificates.
-  - Optional flags: 
-    - `--skip` int
-    - `--take` int
-    
-  Example: `zblcli query pki all-proposed-x509-root-certs`
-  
-- `zblcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string>` - Gets a proposed but not approved root certificate.
-
-  Example: `zblcli query pki proposed-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
-
-- `zblcli query pki all-x509-root-certs` - Gets all approved root certificates.
-  - Optional flags: 
-    - `--skip` int
-    - `--take` int
-
-  Example: `zblcli query pki all-x509-root-certs`
-  
-- `zblcli query pki x509-cert --subject=<string> --subject-key-id=<hex string>` - Gets a certificates (either root, intermediate or leaf).
-
-  Example: `zblcli query pki x509-certs --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
-  
-- `zblcli query pki all-x509-certs` - Gets all certificates (root, intermediate and leaf).
-  - Optional flags: 
-    - `--skip` int
-    - `--take` int
-    - `--root-subject` string
-    - `--root-subject-key-id` string
-
-  Example: `zblcli query pki x509-certs`
-  
-  Example: `zblcli query pki x509-certs --root-subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
-  
-  Example: `zblcli query pki x509-certs --root-subject="CN=dsr-corporation.com"`
-  
-- `zblcli query pki all-subject-x509-certs --subject=<subject>` - Gets all certificates (root, intermediate and leaf) associated with subject.
-  - Optional flags: 
-    - `--skip` int
-    - `--take` int
-    - `--root-subject` string
-    - `--root-subject-key-id` string
-
-  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr"`
-
-  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
-  
-  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject="CN=dsr-corporation.com"`
-
-### Model Info
-
-ModelInfo type:
-- vid: `uint16`
-- pid: `uint16`
-- cid: `uint16` (optional)
-- name: `string`
-- owner: `bech32 encoded address`
-- description: `string`
-- sku: `string`
-- firmware_version: `string`
-- hardware_version: `string`
-- custom: `string` (optional)
-- tis_or_trp_testing_completed: `bool`
-
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `Vendor` role. See `Authorization` module for details.
-
-Transactions:
-- `zblcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
---firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account>` - Add new ModelInfo.
-  - Optional flags: 
-    - `--cid` uint16
-    - `--custom` string
-
-  Example: `zblcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`
-  
-  Example: `zblcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
-
-- `zblcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account>` - Update
-  existing ModelInfo.
-  - Optional flags: 
-    - `--cid` uint16
-    - `--custom` string
-    - `--description` string
-    
-  Example: `zblcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --description="New Description"`
-  
-  Example: `zblcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --custom="Custom Data"`
-
-Queries:
-- `zblcli query modelinfo model --vid=<uint16> --pid=<uint16>` - Query single ModelInfo.
-
-  Example: `zblcli query modelinfo model --vid=1 --pid=1`
-  
-- `zblcli query modelinfo all-models` - Query list of ModelInfos. Optional flags: 
-    - `--skip` int
-    - `--take` int
-    
-  Example: `zblcli query modelinfo all-models`
-
-- `zblcli query modelinfo vendors` - Query list of Vendors. Optional flags: 
-    - `--skip` int
-    - `--take` int
-    
-  Example: `zblcli query modelinfo vendors`
-  
-- `zblcli query modelinfo vendor-models --vid=<uint16>` - Query list of ModelInfos for the given Vendor. Optional flags: 
-    - `--skip` int
-    - `--take` int
-
-  Example: `zblcli query modelinfo vendor-models --vid=1`
-
-### Compliance Test
-
-Testing Result type:
-- vid: `uint16` - vendor id
-- pid: `uint16` - product id
-- test_result: `string` - test result report. It can contain url, blob, etc..
-- test_date: `rfc3339 encoded date` - the date of testing
-- owner: `bech32 encoded address` - the address used for sending the original message
-
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `TestHouse` role. See `Authorization` module for details.
-
-Transactions:
-- ` zblcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>` - Add new Testing Result.
-
-  Example: `zblcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
-  
-  Example: `zblcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
-  
-Queries:
-- `zblcli query compliancetest test-result --vid=<uint16> --pid=<uint16>` - Query Testing Results associated with VID/PID.
-
-  Example: `zblcli query compliancetest test-result --vid=1 --pid=1`
-
-### Compliance
-
-Compliance Info type:
-- vid: `uint16` - vendor id
-- pid: `uint16` - product id
-- state: `string` - current compliance state: either `certified` or `revoked`
-- date:(optional) `rfc3339 encoded date` - depending on the state either certification date or revocation date 
-- certification_type: `string`  - `zb` is the default and the only supported value now
-- reason:(optional) `string` - an optional comment describing the reason of action
-- owner: `bech32 encoded address` - the address used for sending the original message
-- history: array of items - contains the history of all state changes
-    - state: `string` - either `certified` or `revoked` - previous state
-    - date:(optional) `rfc3339 encoded date` - previous date
-
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `ZBCertificationCenter` role. See `Authorization` module for details.
-- Only owner can update an existing record. 
-
-Transactions:
-- ` zblcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>` - Certify model.
-    - Optional flags: 
-    - `--reason` string -  an optional comment describing the reason of certification
-
-  Example: `zblcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
- 
-- ` zblcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>` - Revoke certification for a model.
-  - Signature is required. Use `--from` flag.
-  - Optional flags: 
-    - `--reason` string -  an optional comment describing the reason of revocation
-
-  Example: `zblcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --from=jack`
-  
-  Example: `zblcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
-  
-Queries:
-- `zblcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>` - Query certification data for model associated with VID/PID.
-
-  Example: `zblcli query compliance certified-model --vid=1 --pid=1 --certification-type="zb"`
-  
-- `zblcli query compliance all-certified-models` - Query all certified models.
-
-  Example: `zblcli query compliance all-certified-models`
-  
-- `zblcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>` - Query revocation data for model associated with VID/PID.
-
-  Example: `zblcli query compliance revoked-model --vid=1 --pid=1 --certification-type="zb"`
-  
-- `zblcli query compliance all-revoked-models` - Query all revoked models.
-
-  Example: `zblcli query compliance all-revoked-models`
-  
-- `zblcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb>` - Query compliance info for model associated with VID/PID.
-
-  Example: `zblcli query compliance compliance-info --vid=1 --pid=1 --certification-type="zb"`
-  
-- `zblcli query compliance all-compliance-info-records` - Query all compliance-infos.
-
-  Example: `zblcli query compliance all-compliance-info-records`
-
-### Validator
-
-Validator type:
-- `validator_address`: `bech32 encoded address` - the tendermint validator address
-- `validator_pubkey`: `bech32 encoded pubkey` - the tendermint validator public key
-- `owner`: `bech32 encoded address` - the account address of validator owner (original sender of transaction)
-- `power`: `int` - validator consensus power
-- `jailed`: `bool` - has the validator been removed from validator set because of cheating
-- `jailed_reason`: (optional) `string` - the reason of validator jailing
-- `description`: 
-    - `name`: `string` - validator name
-    - `identity`:(optional) `string` - identity signature (ex. UPort or Keybase)
-    - `website`:(optional) `string` - website link
-    - `details`:(optional) `string` - additional details
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `NodeAdmin` role. See `Authorization` module for details.
-
-Transactions:
-- ` zblcli tx validator add-node --validator-address=<address> --validator-pubkey=<pubkey> --name=<node name> --from=<account>` - Add a new Validator node.
-  - Signature is required. Use `--from` flag.
-  - Optional flags: 
-    - `--website` string -  optional validator's website
-    - `--identity` string -  optional identity signature
-    - `--details` string -  optional validator's details
-    - `--node-id` string -  optional node's ID
-    - `--ip` string -  node's public IP. It takes effect only when used in combination with `--generate-only` flag
-
-  Example: `zblcli tx validator add-node --validator-address=cosmosvalcons1tl46nm39xtuutvw2wqaeyyd6csknfe0a7xqnrw --validator-pubkey=cosmosvalconspub1zcjduepqn5nz4c8n5jwfmgd6tqfqzu8arpne3au4g7tfsz33g8y6dcvhkf4sw054j8 --name=node1 --from=jack`
- 
-Queries:
-- `zblcli query validator node --validator-address=<address>` - Query validator node by given validator address.
-
-  Example: `zblcli query validator node --validator-address=cosmosvaloper1jnr3hcrvcpvqm5fdcafg70azkg0awf96tvu79z`
-  
-- `zblcli query validator all-nodes` - Query all validator nodes.
-
-  Example: `zblcli query validator all-nodes`
-  
-### Authorization
-
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `Trustee` role. 
-
-Roles:
-- `Trustee` - Is able to create accounts, assign roles, approve root certificates.
-- `Vendor` - Is able to add models.
-- `TestHouse` - Is able to add testing results for a model.
-- `ZBCertificationCenter` - Is able to certify and revoke models.
-- `NodeAdmin` - Is able to add nodes to validator pool.
-
-Transactions:
-- `zblcli tx authz assign-role --address=<bench32 address> --role=<string> --from=<account>` - Assign role to specified account.
-
-  Example: `zblcli tx authz assign-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
-  
-- `zblcli tx authz revoke-role --address=<bench32 address> --role=<string> --from=<account>` - Revoke role from specified account.
-  - Trustee's signature is required.
-
-  Example: `zblcli tx authz revoke-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
-
-Queries:
-
-- `zblcli query authz account-roles --address=<bench32 address>` - The command to query roles by account address.
-
-  Example: `zblcli query authz account-roles --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
-
-Genesis template:
-```json
-{
-  "app_state": {
-    "authz": {
-      "account_roles": [{
-        "address": "cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2",
-        "roles": [
-          "Trustee"
-        ]
-      }]
-    }
-  }
-}
-```
-
-### Authentication extensions
-
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `Trustee` role. See `Authorization` module for details.
-
-Transactions:
-
-- `zblcli tx authnext create-account --address=<bench32 address> --pubkey=<bench32 pubkey> --from=<account>` - The command to creates a new account.
-
-  Example: `zblcli tx authnext create-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from=jack`
-
-Queries:
-
-- `zblcli query authnext account --address=<bench32 address>` - The command to query single account.
-
-  Example: `zblcli query authnext account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
-
-- `zblcli query authnext accounts --skip [x] --take [y]` - The command to list account headers with roles. Flags
- are optional.
- 
-  Example: `zblcli query authnext accounts`
 
