@@ -26,7 +26,13 @@ The ledger consists of
     These libraries can be based on the following Light Client implementations: 
         - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)
         - [Rust Light Client implementation](https://docs.rs/tendermint/0.13.0/tendermint/lite/index.html)  
-
+ - Public UI
+    - http://18.197.220.188.
+    - based onf the REST API
+    - can be used to browse the ledger
+        - please note that it doesn't show all the accounts on the ledger
+        - it shows only the default (demo) accounts created on the UI server
+    - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
 
 #### Public Permissioned Ledger
 ZB Ledger is a public permissioned ledger in the following sense:
@@ -75,14 +81,17 @@ Sending read requests to the Ledger doesn't require an Account (Ledger is public
 
 #### Instructions
 After the CLI or REST API is configured and Account with an appropriate role is created,
-the following instructions from [how-to.md](docs/how-to.md) can be used for every actor 
+the following instructions from [how-to.md](docs/how-to.md) can be used for every role 
 (see [Use Case Diagrams](docs/use_cases)):
 - [Trustee](docs/how-to.md#trustee-instructions) 
-    - create and approve new accounts
-    - approve X509 root certificates
+    - create new accounts
+    - assign roles to the account
+    - revoke roles from the account
     - publish X509 certificates
+    - assign a role to the account    
 - [CA](docs/how-to.md#ca-instructions)
     - propose X509 root certificates
+    - publish X509 certificates    
 - [Vendor](docs/how-to.md#vendor-instructions) 
     - publish device model info
     - publish X509 certificates

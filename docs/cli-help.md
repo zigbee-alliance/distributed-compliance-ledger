@@ -380,7 +380,7 @@ Permissions:
 - Only owner can update an existing record. 
 
 Transactions:
-- Certify model associated with VID/PID. Note that the corresponding model must present on the ledger.
+- Certify model associated with VID/PID. Note that the corresponding model and the test results must present on the ledger.
 
   Command: `zblcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>`
   
