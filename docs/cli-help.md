@@ -2,6 +2,12 @@
 
 This document contains descriptions and examples of CLI commands.
 
+Please configure the CLI before using (see `CLI Configuration` section in [how-to.md](how-to.md)).
+
+If write requests to the Ledger needs to be sent, please make sure that you have
+an Account created on the Ledger with an appropriate role (see `Getting Account` section in [how-to.md](how-to.md)).
+
+
 ### Keys
 
 The set of commands that allows you to manage your local keystore.

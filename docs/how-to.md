@@ -2,6 +2,32 @@
 
 This document contains tutorials demonstrating how to accomplish common tasks using CLI.
 
+- Please configure the CLI before using (see [CLI Configuration](#cli-configuration) section).
+- If write requests to the Ledger needs to be sent, please make sure that you have
+an Account created on the Ledger with an appropriate role (see [Getting Account](#getting-account) section in [how-to.md](how-to.md)).
+- Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
+- A full list of all CLI commands can be found there: [cli-help](cli-help.md).
+- After the CLI is configured and Account with an appropriate role is created,
+the following instructions can be used for every actor (see [Use Case Diagrams](use_cases)):
+    - [Trustee](#trustee-instructions) 
+        - create and approve new accounts
+        - approve X509 root certificates
+        - publish X509 certificates
+    - [CA](#ca-instructions)
+        - propose X509 root certificates
+    - [Vendor](#vendor-instructions) 
+        - publish device model info
+        - publish X509 certificates
+    - [Test House](#test-house-instructions) 
+        - publish compliance test results
+        - publish X509 certificates
+    - [ZB Certification Center](#certification-center-instructions)
+        - certify or revoke certification of device models
+        - publish X509 certificates
+    - [Node Admin](#node-admin-instructions-setting-up-a-new-validator-node) 
+        - add a new Validator node
+        - publish X509 certificates
+
 ### CLI Configuration
 
 CLI configuration file can be created or updated by executing of the command: `zblcli config <key> [value]`.
@@ -14,15 +40,27 @@ Here is the list of supported settings:
 * trace <bool> - Print out full stack trace on errors.
 * broadcast-mode <mode> - Write transaction broadcast mode to use (one of: `sync`, `async`, `block`. `block` is default).
 
+In order to connect the CLI to the ZB Ledger Demo Pool, the following parameters should be used:
+
+* `zblcli config chain-id zblchain`
+* `zblcli config output json` - Output format (text/json).
+* `zblcli config indent true` - Add indent to JSON response.
+* `zblcli config trust-node false` - Verify proofs for node responses.
+* `zblcli config node <ip address>` - Address of a node to connect. 
+Choose one of the listed in `persistent_peers.txt` file. 
+Example: `tcp://18.157.114.34:26657`.
+
+
 ### Getting Account
 Ledger is public for read which means that anyone can read from the Ledger without a need to have 
 an Account but it is private for write. 
 In order to send write transactions to the ledger you need: 
-    - Have a private/public key pair.
-    - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases_txn_auth.puml)).
-        - The Account stores the public part of the key
-        - The Account has an associated role. The role is used for authorization policies (see [Auth Map](auth_map.md)).
-    - Sign every transaction by the private key.
+
+  - Have a private/public key pair.
+  - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
+      - The Account stores the public part of the key
+      - The Account has an associated role. The role is used for authorization policies.
+  - Sign every transaction by the private key.
 
 Here is steps for getting an account:
 * Generate keys and local account: `zblcli keys add <name>`.
@@ -37,12 +75,27 @@ Example:
 * `zblcli tx authz assign-role --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --role="NodeAdmin" --from trustee`
 * `zblcli query authnext account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
-### Setting up a new Validator Node
+### Trustee Instructions
+
+### CA instructions
+
+### Vendor Instructions
+
+### Test House Instructions
+
+### Certification Center Instructions
+
+
+
+### Node Admin instructions (Setting up a new Validator Node)
 
 Validators are responsible for committing of new blocks to the ledger.
 Here are steps for setting up a new validator node.
 
-* Firstly you have to posses an account with `NodeAdmin` role on the ledger. See [Getting Account](getting-account):
+A more detailed instruction on how to add a validator node to the current ZB Ledger pool
+can be found here: [running-node.md](running-node.md).
+
+* Firstly you have to posses an account with `NodeAdmin` role on the ledger. See [Getting Account](#getting-account):
     
 * Initialize the node and create the necessary config files:
     * Init Node: `zbld init <node name> --chain-id <chain id>`.

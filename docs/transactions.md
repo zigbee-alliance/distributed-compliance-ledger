@@ -4,9 +4,9 @@ See use case sequence diagrams for the examples of how transaction can be used.
 ## General
 - Every writer to the Ledger must  
     - Have a private/public key pair.
-    - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases_txn_auth.puml)).
+    - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
         - The Account stores the public part of the key
-        - The Account has an associated role. The role is used for authorization policies (see [Auth Map](auth_map.md)).
+        - The Account has an associated role. The role is used for authorization policies.
     - Sign every transaction by the private key.
 - Ledger is public for read which means that anyone can read from the Ledger without a need to have 
 an Account or sign the request.  
@@ -83,7 +83,9 @@ This is useful to avoid correlation by the sender's IP address.
 - REST API
     - CLI is started in a server mode.
     - No keys/account is needed as the ledger is public for reads
-    - See `REST API` section for every read request.    
+    - See `REST API` section for every read request.   
+    
+##### Query types     
 - Query single value:
     - By default, all read requests are performed for the last ledger state (height) and 
         then state proof verification is performed for result values.

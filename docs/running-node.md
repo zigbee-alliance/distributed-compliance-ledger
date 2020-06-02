@@ -20,7 +20,7 @@ Current delivery is compiled and tested under `Ubuntu 18.04.3 LTS` so we recomme
 
 ## Components
 
-The delivery consists of the following components:
+The delivery must consist of the following components:
 
 * Binary artifacts:
     * zbld: The binary used for running a node.
