@@ -1,4 +1,4 @@
-## How To
+# How To
 
 This document contains tutorials demonstrating how to accomplish common tasks using CLI.
 
@@ -31,7 +31,7 @@ the following instructions can be used for every role (see [Use Case Diagrams](u
         - add a new Validator node
         - publish X509 certificates
 
-### CLI Configuration
+## CLI Configuration
 
 CLI configuration file can be created or updated by executing of the command: `zblcli config <key> [value]`.
 Here is the list of supported settings:
@@ -54,7 +54,7 @@ Choose one of the listed in `persistent_peers.txt` file.
 Example: `tcp://18.157.114.34:26657`.
 
 
-### Getting Account
+## Getting Account
 Ledger is public for read which means that anyone can read from the Ledger without a need to have 
 an Account but it is private for write. 
 In order to send write transactions to the ledger you need: 
@@ -78,7 +78,7 @@ Example:
 * `zblcli tx authz assign-role --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --role="NodeAdmin" --from trustee`
 * `zblcli query authnext account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
-### Trustee Instructions
+## Trustee Instructions
 ##### 1. Create a new Account for the user
   Command: `zblcli tx authnext create-account --address=<string> --pubkey=<string> --from=<account>`
 
@@ -121,7 +121,7 @@ Example:
 
   Example: `zblcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C" --from=jack`
  
-### CA instructions
+## CA instructions
 Currently any role can propose an X509 root certificate, or publish 
 (intermediate or leaf) X509 certificates. 
 
@@ -150,7 +150,7 @@ Currently any role can propose an X509 root certificate, or publish
   Example: `zblcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
 
-### Vendor Instructions
+## Vendor Instructions
 
 ##### 1. Publish an intermediate or leaf X509 certificate(s) to be used for signing X509 Certificates for every Device
 The certificate must be signed by a chain of certificates which must be already present on the ledger.
@@ -189,7 +189,7 @@ The certificate must be signed by a chain of certificates which must be already 
   Example: `zblcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
 
 
-### Test House Instructions
+## Test House Instructions
 ##### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
 This step is needed for off-ledger certification use case only, see [use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png).
 
@@ -224,7 +224,7 @@ This step is needed for on-ledger certification use case only, see [use_cases_de
   Example: `zblcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
    
-### Certification Center Instructions
+## Certification Center Instructions
 ##### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
 This step is needed for off-ledger certification use case only, see [use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png).
 
@@ -277,7 +277,7 @@ This step can be used in either on-ledger certification use case
   Example: `zblcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
  
-### Node Admin Instructions (Setting up a new Validator Node)
+## Node Admin Instructions (Setting up a new Validator Node)
 
 Validators are responsible for committing of new blocks to the ledger.
 Here are steps for setting up a new validator node.

@@ -106,7 +106,7 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - publish X509 certificates
 
 #### Build and run the app locally
-- To build and run, follow the [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial/21-build-run.md).
+- To build and run, follow the [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial/22-build-run.md).
 Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
 - To start localnet using docker-compose run `make install && make localnet_init && make localnet_start`
   - 4 nodes will be started and will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26662`
