@@ -2,6 +2,12 @@
 
 This document contains descriptions and examples of CLI commands.
 
+Please configure the CLI before using (see `CLI Configuration` section in [how-to.md](how-to.md#cli-configuration)).
+
+If write requests to the Ledger needs to be sent, please make sure that you have
+an Account created on the Ledger with an appropriate role (see `Getting Account` section in [how-to.md](how-to.md#getting-account)).
+
+
 ### Keys
 
 The set of commands that allows you to manage your local keystore.
@@ -374,7 +380,7 @@ Permissions:
 - Only owner can update an existing record. 
 
 Transactions:
-- Certify model associated with VID/PID. Note that the corresponding model must present on the ledger.
+- Certify model associated with VID/PID. Note that the corresponding model and the test results must present on the ledger.
 
   Command: `zblcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>`
   

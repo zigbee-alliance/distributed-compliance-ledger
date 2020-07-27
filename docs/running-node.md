@@ -20,7 +20,7 @@ Current delivery is compiled and tested under `Ubuntu 18.04.3 LTS` so we recomme
 
 ## Components
 
-The delivery consists of the following components:
+The delivery must consist of the following components:
 
 * Binary artifacts:
     * zbld: The binary used for running a node.
@@ -101,15 +101,26 @@ The delivery consists of the following components:
            cosmosvalconspub1zcjduepqcwg4eenpcxgs0269xuup5jlzj3pdquxlvj494cjxtqtcathsq7esfrsapa
            ```
    * Note that *validator address* and *validator pubkey* are not the same as `address` and `pubkey` were used for account creation.
-   
-   * Add validator node: `zblcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<key name>`.
-   If the transaction has been successfully written you would find `"success": true` in the output JSON. 
-   
+
    * Enable the service: `sudo systemctl enable zbld`
    * Start node: `sudo systemctl start zbld`
-   
+    
    * For testing purpose the node can be started in CLI mode: `zbld start` (instead of two previous `systemctl` commands).
    Service mode is recommended for demo and production environment.
+   
+   * Use `systemctl start status` to get the node service status. 
+    In the output, you can notice that `height` increases quickly over time. 
+    This means that the node in updating to the latest network state (it takes some time).
+        
+        You can also check node status by connecting CLI to your local node `zblcli config node tcp://0.0.0.0:26657`
+        and executing the command `zblcli status` to get the current status.
+        The `true` value for `catching_up` field means that the node is in the updating process.
+        The value of `latest_block_height` reflects the current node height.
+       
+   * Wait until the value of `catching_up` field gets to `false` value.
+      
+   * Add validator node: `zblcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<key name>`.
+   If the transaction has been successfully written you would find `"success": true` in the output JSON. 
 
 6. Check the node is running and participates in consensus:
     * Get the list of all nodes: `zblcli query validator all-nodes`. 
