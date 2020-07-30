@@ -43,6 +43,8 @@ type Certificate struct {
 	Subject          string          `json:"subject"`
 	SubjectKeyID     string          `json:"subject_key_id"`
 	SerialNumber     string          `json:"serial_number"`
+	Issuer           string          `json:"issuer,omitempty"`
+	AuthorityKeyID   string          `json:"authority_key_id,omitempty"`
 	RootSubject      string          `json:"root_subject,omitempty"`
 	RootSubjectKeyID string          `json:"root_subject_key_id,omitempty"`
 	Type             CertificateType `json:"type"`
@@ -61,14 +63,17 @@ func NewRootCertificate(pemCert string, subject string, subjectKeyID string,
 	}
 }
 
-func NewIntermediateCertificate(pemCert string, subject string, subjectKeyID string,
-	serialNumber string, rootSubject string, rootSubjectKeyID string,
+func NewIntermediateCertificate(pemCert string, subject string, subjectKeyID string, serialNumber string,
+	issuer string, authorityKeyID string,
+	rootSubject string, rootSubjectKeyID string,
 	owner sdk.AccAddress) Certificate {
 	return Certificate{
 		PemCert:          pemCert,
 		Subject:          subject,
 		SubjectKeyID:     subjectKeyID,
 		SerialNumber:     serialNumber,
+		Issuer:           issuer,
+		AuthorityKeyID:   authorityKeyID,
 		RootSubject:      rootSubject,
 		RootSubjectKeyID: rootSubjectKeyID,
 		Type:             IntermediateCertificate,

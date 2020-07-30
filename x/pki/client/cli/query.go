@@ -1,8 +1,9 @@
 package cli
 
+//nolint:goimports
 import (
-	//nolint:goimports
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
@@ -11,6 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -26,6 +29,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		GetCmdProposedX509RootCert(storeKey, cdc),
 		GetCmdGetAllX509RootCerts(storeKey, cdc),
 		GetCmdX509Cert(storeKey, cdc),
+		GetCmdX509CertChain(storeKey, cdc),
 		GetCmdGetAllX509Certs(storeKey, cdc),
 		GetCmdGetAllSubjectX509Certs(storeKey, cdc),
 	)...)
@@ -128,6 +132,38 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
+func GetCmdX509CertChain(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "x509-cert-chain",
+		Short: "Gets a certificate chain (including root, intermediate and certificate itself) " +
+			"by the given combination of subject and subject-key-id",
+		Args: cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
+
+			chain := types.NewCertificates([]types.Certificate{})
+
+			height, err := chainCertificates(cliCtx, queryRoute, subject, subjectKeyID, &chain)
+			if err != nil {
+				return types.ErrCertificateDoesNotExist(subject, subjectKeyID)
+			}
+
+			return cliCtx.EncodeAndPrintWithHeight(chain, height)
+		},
+	}
+
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+
+	return cmd
+}
+
 func GetCmdGetAllX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-x509-certs",
@@ -173,6 +209,28 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 	_ = cmd.MarkFlagRequired(FlagSubject)
 
 	return cmd
+}
+
+func chainCertificates(cliCtx cli.CliContext, queryRoute string,
+	subject string, subjectKeyID string, chain *types.Certificates) (int64, sdk.Error) {
+
+	res, height, err := cliCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyID), queryRoute)
+	if err != nil || res == nil {
+		return height, types.ErrCertificateDoesNotExist(subject, subjectKeyID)
+	}
+
+	var certificates types.Certificates
+
+	cliCtx.Codec().MustUnmarshalBinaryBare(res, &certificates)
+
+	certificate := certificates.Items[len(certificates.Items)-1]
+	chain.Items = append(chain.Items, certificate)
+
+	if certificate.Type != "root" {
+		return chainCertificates(cliCtx, queryRoute, certificate.Issuer, certificate.AuthorityKeyID, chain)
+	}
+
+	return height, nil
 }
 
 func getAllCertificates(cdc *codec.Codec, route string) error {

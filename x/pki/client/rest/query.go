@@ -3,10 +3,12 @@ package rest
 // nolint:goimports
 import (
 	"fmt"
+	"net/http"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"net/http"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func getAllX509RootCertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
@@ -90,6 +92,49 @@ func getX509CertHandler(cliCtx context.CLIContext, storeName string) http.Handle
 
 		restCtx.EncodeAndRespondWithHeight(certificate, height)
 	}
+}
+
+func getX509CertChainHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+		subject := vars[subject]
+		subjectKeyID := vars[subjectKeyID]
+
+		chain := types.NewCertificates([]types.Certificate{})
+
+		height, err := chainCertificates(restCtx, storeName, subject, subjectKeyID, &chain)
+
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
+			return
+		}
+
+		restCtx.EncodeAndRespondWithHeight(chain, height)
+	}
+}
+
+func chainCertificates(restCtx rest.RestContext, storeName string,
+	subject string, subjectKeyID string, chain *types.Certificates) (int64, sdk.Error) {
+
+	res, height, err := restCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyID), storeName)
+	if err != nil || res == nil {
+		return height, types.ErrCertificateDoesNotExist(subject, subjectKeyID)
+	}
+
+	var certificates types.Certificates
+
+	restCtx.Codec().MustUnmarshalBinaryBare(res, &certificates)
+
+	certificate := certificates.Items[len(certificates.Items)-1]
+	chain.Items = append(chain.Items, certificate)
+
+	if certificate.Type != "root" {
+		return chainCertificates(restCtx, storeName, certificate.Issuer, certificate.AuthorityKeyID, chain)
+	}
+
+	return height, nil
 }
 
 func getListCertificates(restCtx rest.RestContext, path string, rootSubject string, rootSubjectKeyID string) {
