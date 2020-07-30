@@ -79,39 +79,32 @@ Example:
 * `zblcli query auth account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
 ## Trustee Instructions
-##### 1. Create a new Account for the user
-  Command: `zblcli tx authnext create-account --address=<string> --pubkey=<string> --from=<account>`
+
+Account creation consists of two parts. One of the trustees should propose an account by posting `propose-add-account` transaction.
+After this account goes to the proposed accounts set. Then this account must be approved by a majority of trustees (2/3+).
+Once approved the account can be used to send transactions. See [use_case_txn_auth](use_cases/use_cases_txn_auth.png).
+
+##### 1. Create an Account proposal for the user
+  Command: `zblcli tx auth propose-add-account --address=<string> --pubkey=<string> --roles=<roles> --from=<account>`
 
   Flags:
   - address: `string` - bench32 encoded account address
   - pubkey: `string` - bench32 encoded public key
+  - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin)
   - from: `string` - name or address of private key with which to sign
 
-  Example: `zblcli tx authnext create-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from=jack`
+  Example: `zblcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --from=jack`
 
-##### 2. Assign a role to the Account
-  Command: `zblcli tx authz assign-role --address=<string> --role=<string> --from=<account>`
+##### 2. Approve proposed Account
+  Command: `zblcli tx auth approve-add-account --address=<string> --from=<account>`
 
   Flags:
-  - address: `string` - bench32 encoded account address
-  - role: `string` - role to assign
+  - address: `string` - bench32 encoded account address to approve
   - from: `string` - name or address of private key with which to sign
 
-  Example: `zblcli tx authz assign-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
+  Example: `zblcli tx auth approve-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
-##### 3. Revoke a role from specified account.
-
-  Command: `zblcli tx authz revoke-role --address=<string> --role=<string> --from=<account>`
-
-  Flags:
-  - address: `string` - bench32 encoded account address
-  - role: `string` - role to remove
-  - from: `string` - name or address of private key with which to sign
-
-  Example: `zblcli tx authz revoke-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
-
-
-##### 4. Approve proposed X509 root certificate  
+##### 3. Approve proposed X509 root certificate  
   Command: `zblcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:

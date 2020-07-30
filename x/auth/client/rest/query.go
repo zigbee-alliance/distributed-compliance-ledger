@@ -3,6 +3,7 @@ package rest
 //nolint:goimports
 import (
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
@@ -20,7 +21,7 @@ func accountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 			return
 		}
 
-		restCtx.QueryList(fmt.Sprintf("custom/%s/accounts", storeName), params)
+		restCtx.QueryList(fmt.Sprintf("custom/%s/%s", storeName, keeper.QueryAllAccounts), params)
 	}
 }
 
@@ -33,7 +34,7 @@ func proposedAccountsHandler(cliCtx context.CLIContext, storeName string) http.H
 			return
 		}
 
-		restCtx.QueryList(fmt.Sprintf("custom/%s/proposed_accounts", storeName), params)
+		restCtx.QueryList(fmt.Sprintf("custom/%s/%s", storeName, keeper.QueryAllProposedAccounts), params)
 	}
 }
 

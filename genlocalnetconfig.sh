@@ -1,3 +1,5 @@
+#!/bin/bash
+
 rm -rf ~/.zblcli
 rm -rf ~/.zbld
 
