@@ -27,6 +27,8 @@ func TestKeeper_CertificateGetSet(t *testing.T) {
 		testconstants.LeafSubject,
 		testconstants.LeafSubjectKeyID,
 		testconstants.LeafSerialNumber,
+		testconstants.LeafIssuer,
+		testconstants.LeafAuthorityKeyID,
 		testconstants.RootSubject,
 		testconstants.RootSubjectKeyID,
 		testconstants.Address1,

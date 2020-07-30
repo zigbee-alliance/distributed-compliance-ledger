@@ -554,6 +554,8 @@ func intermediateCertificate(address sdk.AccAddress) types.Certificate {
 		constants.IntermediateSubject,
 		constants.IntermediateSubjectKeyID,
 		constants.IntermediateSerialNumber,
+		constants.IntermediateIssuer,
+		constants.IntermediateAuthorityKeyID,
 		constants.RootSubject,
 		constants.RootSubjectKeyID,
 		address,

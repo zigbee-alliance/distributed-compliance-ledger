@@ -144,7 +144,7 @@ Transactions:
     - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
     - from: `string` - Name or address of private key with which to sign.
 
-  Example: `zblcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C" --from=jack`
+  Example: `zblcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
   
 - Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
 
@@ -177,7 +177,7 @@ Queries:
     - subject: `string` - certificates's `Subject`.
     - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
 
-  Example: `zblcli query pki proposed-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki proposed-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
 
 - Gets all approved root certificates.
 
@@ -197,7 +197,7 @@ Queries:
     - subject: `string` - certificates's `Subject`.
     - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
 
-  Example: `zblcli query pki x509-certs --subject="CN=dsr-corporation.com" --subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki x509-certs --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
   
 - Gets all certificates (root, intermediate and leaf).
 
@@ -211,7 +211,7 @@ Queries:
 
   Example: `zblcli query pki x509-certs`
   
-  Example: `zblcli query pki x509-certs --root-subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki x509-certs --root-subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
   
   Example: `zblcli query pki x509-certs --root-subject="CN=dsr-corporation.com"`
   
@@ -228,7 +228,7 @@ Queries:
 
   Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr"`
 
-  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject-key-id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"`
+  Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
   
   Example: `zblcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject="CN=dsr-corporation.com"`
 

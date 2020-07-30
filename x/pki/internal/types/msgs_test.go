@@ -1,12 +1,12 @@
 //nolint:testpackage
 package types
 
-// nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 /*
@@ -100,7 +100,7 @@ func TestMsgApproveAddX509RootCertGetSignBytes(t *testing.T) {
 	expected := `{"type":"pki/ApproveAddX509RootCert","value":{"signer":` +
 		`"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"subject":"CN=dsr-corporation.com","subject_key_id":` +
-		`"8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"}}`
+		`"8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 

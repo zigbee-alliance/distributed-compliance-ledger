@@ -2,7 +2,7 @@ package keeper
 
 //nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -56,6 +56,8 @@ func DefaultIntermediateCertificate() types.Certificate {
 		testconstants.LeafSubject,
 		testconstants.LeafSubjectKeyID,
 		testconstants.LeafSerialNumber,
+		testconstants.LeafIssuer,
+		testconstants.LeafAuthorityKeyID,
 		testconstants.RootSubject,
 		testconstants.RootSubjectKeyID,
 		testconstants.Address1)

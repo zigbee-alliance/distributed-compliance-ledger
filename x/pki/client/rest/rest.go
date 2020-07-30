@@ -46,6 +46,10 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		getX509CertHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/chain/{%s}/{%s}", storeName, subject, subjectKeyID),
+		getX509CertChainHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
 		fmt.Sprintf("/%s/certs/{%s}", storeName, subject),
 		getAllSubjectX509CertsHandler(cliCtx, storeName),
 	).Methods("GET")

@@ -1,6 +1,6 @@
 package pki
 
-// nolint:goimports
+//nolint:goimports
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
@@ -20,7 +20,7 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 		case types.MsgAddX509Cert:
 			return handleMsgAddX509Cert(ctx, keeper, msg)
 		default:
-			errMsg := fmt.Sprintf("unrecognized compliancetest Msg type: %v", msg.Type())
+			errMsg := fmt.Sprintf("unrecognized pki Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}
@@ -198,6 +198,8 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 		certificate.Subject,
 		certificate.SubjectKeyID,
 		certificate.SerialNumber,
+		certificate.Issuer,
+		certificate.AuthorityKeyID,
 		rootCertificateSubject,
 		rootCertificateSubjectKeyID,
 		msg.Signer,
@@ -251,5 +253,5 @@ func VerifyCertificate(ctx sdk.Context, keeper keeper.Keeper,
 
 	return "", "", types.ErrCodeInvalidCertificate(
 		fmt.Sprintf("Certificate verification failed for certificate "+
-			"with sibject=%v and subjectKeyId=%v", certificate.SubjectKeyID, certificate.SubjectKeyID))
+			"with subject=%v and subjectKeyId=%v", certificate.SubjectKeyID, certificate.SubjectKeyID))
 }
