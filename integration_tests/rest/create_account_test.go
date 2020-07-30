@@ -2,9 +2,9 @@ package rest_test
 
 //nolint:goimports
 import (
-	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -19,23 +19,46 @@ import (
 */
 
 func Test_CreateNewAccount(t *testing.T) {
-	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(test_constants.AccountName)
+	// Query all proposed accounts
+	inputProposedAccounts, _ := utils.GetProposedAccounts()
 
-	// Create keys for test account
-	testAccountKeyInfo, _ := utils.CreateKey(utils.RandString())
+	// Query all accounts
+	inputAccounts, _ := utils.GetAccounts()
 
-	// Register test account on the ledger
-	res, _ := utils.CreateAccount(testAccountKeyInfo, jackKeyInfo)
-	require.NotNil(t, res)
+	// Create keys for new account
+	name := utils.RandString()
+	testAccountKeyInfo, _ := utils.CreateKey(name)
+
+	// Jack and Alice are predefined Trustees
+	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.JackAccount)
+	aliceKeyInfo, _ := utils.GetKeyInfo(testconstants.AliceAccount)
+
+	// Jack propose new account
+	utils.ProposeAccount(testAccountKeyInfo, jackKeyInfo, auth.AccountRoles{auth.Vendor})
+
+	// Query all proposed accounts
+	receivedProposedAccounts, _ := utils.GetProposedAccounts()
+	require.Equal(t, len(inputProposedAccounts.Items) + 1, len(receivedProposedAccounts.Items))
+
+	// Query all accounts
+	receivedAccounts, _ := utils.GetAccounts()
+	require.Equal(t, len(inputAccounts.Items), len(receivedAccounts.Items))
+
+	// Alice approve new account
+	utils.ApproveAccount(testAccountKeyInfo, aliceKeyInfo)
+
+	// Query all proposed accounts
+	receivedProposedAccounts, _ = utils.GetProposedAccounts()
+	require.Equal(t, len(inputProposedAccounts.Items), len(receivedProposedAccounts.Items))
+
+	// Query all accounts
+	receivedAccounts, _ = utils.GetAccounts()
+	require.Equal(t, len(inputAccounts.Items) + 1, len(receivedAccounts.Items))
 
 	// Get info for test account
-	testAccountInfo, _ := utils.GetAccountInfo(testAccountKeyInfo.Address)
+	testAccountInfo, _ := utils.GetAccount(testAccountKeyInfo.Address)
 	require.Equal(t, testAccountKeyInfo.Address, testAccountInfo.Address)
-	require.Equal(t, testAccountKeyInfo.PublicKey, testAccountInfo.PublicKey)
-
-	// Assign Vendor role to test account
-	utils.AssignRole(testAccountKeyInfo.Address, jackKeyInfo, authz.Vendor)
+	require.Equal(t, auth.AccountRoles{auth.Vendor}, testAccountInfo.Roles)
 
 	// Publish model info by test account
 	modelInfo := utils.NewMsgAddModelInfo(testAccountKeyInfo.Address)

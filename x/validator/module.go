@@ -3,7 +3,7 @@ package validator
 //nolint:goimports
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -67,16 +67,16 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 // AppModule implements an application module for the validator module.
 type AppModule struct {
 	AppModuleBasic
-	keeper      Keeper
-	authzKeeper authz.Keeper
+	keeper     Keeper
+	authKeeper auth.Keeper
 }
 
 // NewAppModule creates a new AppModule object.
-func NewAppModule(keeper Keeper, authzKeeper authz.Keeper) AppModule {
+func NewAppModule(keeper Keeper, authKeeper auth.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         keeper,
-		authzKeeper:    authzKeeper,
+		authKeeper:     authKeeper,
 	}
 }
 
@@ -95,7 +95,7 @@ func (AppModule) Route() string {
 
 // NewHandler returns an sdk.Handler for the module.
 func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper, am.authzKeeper)
+	return NewHandler(am.keeper, am.authKeeper)
 }
 
 // QuerierRoute returns the module's querier route name.

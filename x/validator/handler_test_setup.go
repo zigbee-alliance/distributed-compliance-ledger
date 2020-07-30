@@ -3,7 +3,7 @@ package validator
 //nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -17,7 +17,7 @@ type TestSetup struct {
 	Cdc             *amino.Codec
 	Ctx             sdk.Context
 	ValidatorKeeper Keeper
-	AuthzKeeper     authz.Keeper
+	authKeeper      auth.Keeper
 	Handler         sdk.Handler
 	Querier         sdk.Querier
 	NodeAdmin       sdk.AccAddress
@@ -27,6 +27,7 @@ func Setup() TestSetup {
 	// Init Codec
 	cdc := codec.New()
 	sdk.RegisterCodec(cdc)
+	codec.RegisterCrypto(cdc)
 
 	// Init KVSore
 	db := dbm.NewMemDB()
@@ -34,34 +35,35 @@ func Setup() TestSetup {
 	dbStore := store.NewCommitMultiStore(db)
 
 	validatorKey := sdk.NewKVStoreKey(StoreKey)
-	dbStore.MountStoreWithDB(validatorKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(validatorKey, sdk.StoreTypeIAVL, nil)
 
-	authzKey := sdk.NewKVStoreKey(authz.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, nil)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	validatorKeeper := NewKeeper(validatorKey, cdc)
-	authzKeeper := authz.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(validatorKeeper)
-	handler := NewHandler(validatorKeeper, authzKeeper)
+	handler := NewHandler(validatorKeeper, authKeeper)
 
-	authzKeeper.AssignRole(ctx, testconstants.Address1, authz.NodeAdmin)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.NodeAdmin})
+	authKeeper.SetAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:             cdc,
 		Ctx:             ctx,
 		ValidatorKeeper: validatorKeeper,
-		AuthzKeeper:     authzKeeper,
+		authKeeper:      authKeeper,
 		Handler:         handler,
 		Querier:         querier,
-		NodeAdmin:       testconstants.Address1,
+		NodeAdmin:       account.Address,
 	}
 
 	return setup

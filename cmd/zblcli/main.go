@@ -22,7 +22,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	authcmd "github.com/cosmos/cosmos-sdk/x/auth/client/cli"
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
-	bankcmd "github.com/cosmos/cosmos-sdk/x/bank/client/cli"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"
@@ -98,8 +97,6 @@ func queryCmd(cdc *amino.Codec) *cobra.Command {
 	}
 
 	queryCmd.AddCommand(
-		authcmd.GetAccountCmd(cdc),
-		client.LineBreak,
 		rpc.ValidatorCommand(cdc),
 		rpc.BlockCommand(),
 		authcmd.QueryTxsByEventsCmd(cdc),
@@ -120,14 +117,9 @@ func txCmd(cdc *amino.Codec) *cobra.Command {
 	}
 
 	txCmd.AddCommand(
-		bankcmd.SendTxCmd(cdc),
-		client.LineBreak,
 		authcmd.GetSignCommand(cdc),
-		authcmd.GetMultiSignCommand(cdc),
-		client.LineBreak,
 		authcmd.GetBroadcastCommand(cdc),
 		authcmd.GetEncodeCommand(cdc),
-		client.LineBreak,
 	)
 
 	// add modules' tx commands

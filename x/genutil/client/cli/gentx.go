@@ -20,7 +20,6 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	kbkeys "github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -36,7 +35,7 @@ import (
 // GenTxCmd builds the application's gentx command.
 //nolint:gocognit,funlen
 func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
-	genAccIterator types.GenesisAccountsIterator, defaultNodeHome, defaultCLIHome string) *cobra.Command {
+	defaultNodeHome, defaultCLIHome string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "gentx",
 		Short: "Generate a genesis transaction to create a validator",
@@ -91,7 +90,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 			viper.Set(client.FlagHome, viper.GetString(flagClientHome))
 			validator.PrepareFlagsForTxCreateValidator(config, nodeID, genDoc.ChainID, valPubKey)
 
-			err = genutil.ValidateAccountInGenesis(genesisState, genAccIterator, key.GetAddress(), cdc)
+			err = genutil.ValidateAccountInGenesis(genesisState, key.GetAddress(), cdc)
 			if err != nil {
 				return err
 			}

@@ -59,69 +59,58 @@ Permissions:
 
 Transactions:
 
-- Create a new account.
+- Propose a new account.
 
-  Command: `zblcli tx authnext create-account --address=<string> --pubkey=<string> --from=<account>`
+  Command: `zblcli tx auth propose-add-account --address=<string> --pubkey=<string> --roles=<roles> --from=<account>`
 
   Flags:
   - address: `string` - bench32 encoded account address
   - pubkey: `string` - bench32 encoded public key
+  - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin)
   - from: `string` - name or address of private key with which to sign
 
-  Example: `zblcli tx authnext create-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3  --from=jack`
+  Example: `zblcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --from=jack`
 
-- Assign a role to specified account.
+- Approve a proposed account.
 
-  Command: `zblcli tx authz assign-role --address=<string> --role=<string> --from=<account>`
+  Command: `zblcli tx auth approve-add-account --address=<string> --from=<account>`
 
   Flags:
-  - address: `string` - bench32 encoded account address
-  - role: `string` - role to assign
+  - address: `string` - bench32 encoded account address to approve
   - from: `string` - name or address of private key with which to sign
 
-  Example: `zblcli tx authz assign-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
-  
-- Revoke a role from specified account.
-
-  Command: `zblcli tx authz revoke-role --address=<string> --role=<string> --from=<account>`
-
-  Flags:
-  - address: `string` - bench32 encoded account address
-  - role: `string` - role to remove
-  - from: `string` - name or address of private key with which to sign
-
-  Example: `zblcli tx authz revoke-role --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --role=Vendor --from=jack`
+  Example: `zblcli tx auth approve-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
 Queries:
 
 - Get a single account.
 
-  Command: `zblcli query authnext account --address=<string>`
+  Command: `zblcli query auth account --address=<string>`
 
   Flags:
   - address: `string` - bench32 encoded account address
 
-  Example: `zblcli query authnext account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+  Example: `zblcli query auth account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
 - Get all accounts.
 
-  Command: `zblcli query authnext accounts`
+  Command: `zblcli query auth all-accounts`
  
   Flags:
   - skip: `optional(int)` - number records to skip (`0` by default)
   - take: `optional(int)` - number records to take (all records are returned by default) 
  
-  Example: `zblcli query authnext accounts`
+  Example: `zblcli query auth accounts`
 
-- Get roles assigned to an account.
+- Get all proposed accounts.
 
-  Command: `zblcli query authz account-roles --address=<string>` 
-
+  Command: `zblcli query auth all-proposed-accounts`
+ 
   Flags:
-  - address: `string` - bench32 encoded account address
-
-  Example: `zblcli query authz account-roles --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
-
+  - skip: `optional(int)` - number records to skip (`0` by default)
+  - take: `optional(int)` - number records to take (all records are returned by default) 
+ 
+  Example: `zblcli query auth all-proposed-accounts`
 
 ### PKI
 

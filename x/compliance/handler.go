@@ -3,7 +3,7 @@ package compliance
 //nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
@@ -12,13 +12,13 @@ import (
 )
 
 func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
-	compliancetestKeeper compliancetest.Keeper, authzKeeper authz.Keeper) sdk.Handler {
+	compliancetestKeeper compliancetest.Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 		case types.MsgCertifyModel:
-			return handleMsgCertifyModel(ctx, keeper, modelinfoKeeper, compliancetestKeeper, authzKeeper, msg)
+			return handleMsgCertifyModel(ctx, keeper, modelinfoKeeper, compliancetestKeeper, authKeeper, msg)
 		case types.MsgRevokeModel:
-			return handleMsgRevokeModel(ctx, keeper, authzKeeper, msg)
+			return handleMsgRevokeModel(ctx, keeper, authKeeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized nameservice Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -27,10 +27,10 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
 }
 
 func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
-	compliancetestKeeper compliancetest.Keeper, authzKeeper authz.Keeper,
+	compliancetestKeeper compliancetest.Keeper, authKeeper auth.Keeper,
 	msg types.MsgCertifyModel) sdk.Result {
 	// check if sender has enough rights to certify model
-	if err := checkZbCertificationRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
+	if err := checkZbCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
 		return err.Result()
 	}
 
@@ -82,10 +82,10 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	return sdk.Result{}
 }
 
-func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
+func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgRevokeModel) sdk.Result {
 	// check if sender has enough rights to revoke model
-	if err := checkZbCertificationRights(ctx, authzKeeper, msg.Signer, msg.CertificationType); err != nil {
+	if err := checkZbCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
 		return err.Result()
 	}
 
@@ -124,14 +124,14 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authzKeeper aut
 	return sdk.Result{}
 }
 
-func checkZbCertificationRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress,
+func checkZbCertificationRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress,
 	certificationType types.CertificationType) sdk.Error {
 	// rights are depend on certification type
 	if certificationType == types.ZbCertificationType {
 		// sender must have ZBCertificationCenter role to certify/revoke model
-		if !authzKeeper.HasRole(ctx, signer, authz.ZBCertificationCenter) {
+		if !authKeeper.HasRole(ctx, signer, auth.ZBCertificationCenter) {
 			return sdk.ErrUnauthorized(fmt.Sprintf("MsgCertifyModel/MsgRevokeMode transaction should be "+
-				"signed by an account with the %s role", authz.ZBCertificationCenter))
+				"signed by an account with the %s role", auth.ZBCertificationCenter))
 		}
 	} else {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Unexpected CertificationType: \"%s\". Supported types: [%s]",

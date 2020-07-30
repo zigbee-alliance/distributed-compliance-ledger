@@ -1,13 +1,13 @@
 package types
 
+//nolint:goimports
 import (
 	"encoding/json"
-
+	"github.com/cosmos/cosmos-sdk/codec"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 )
 
 // ValidatorKeeper defines the expected validator keeper.
@@ -16,10 +16,10 @@ type ValidatorKeeper interface {
 }
 
 // AccountKeeper defines the expected account keeper.
-type AccountKeeper interface {
-	NewAccount(sdk.Context, authexported.Account) authexported.Account
-	SetAccount(sdk.Context, authexported.Account)
-	IterateAccounts(ctx sdk.Context, process func(authexported.Account) (stop bool))
+type AuthKeeper interface {
+	NewAccountWithNumber(sdk.Context, auth.Account) auth.Account
+	SetAccount(sdk.Context, auth.Account)
+	IterateAccounts(ctx sdk.Context, process func(auth.Account) (stop bool))
 }
 
 // GenesisAccountsIterator defines the expected iterating genesis accounts object.
@@ -27,6 +27,6 @@ type GenesisAccountsIterator interface {
 	IterateGenesisAccounts(
 		cdc *codec.Codec,
 		appGenesis map[string]json.RawMessage,
-		iterateFn func(authexported.Account) (stop bool),
+		iterateFn func(auth.Account) (stop bool),
 	)
 }

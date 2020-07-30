@@ -4,6 +4,8 @@ package genutil
 import (
 	"encoding/json"
 	"fmt"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"io/ioutil"
 	"os"
@@ -14,21 +16,18 @@ import (
 	cfg "github.com/tendermint/tendermint/config"
 	tmtypes "github.com/tendermint/tendermint/types"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"github.com/cosmos/cosmos-sdk/codec"
-	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 // GenAppStateFromConfig gets the genesis app state from the config.
 func GenAppStateFromConfig(cdc *codec.Codec, config *cfg.Config,
 	initCfg InitConfig, genDoc tmtypes.GenesisDoc,
-	genAccIterator types.GenesisAccountsIterator,
 ) (appState json.RawMessage, err error) {
 	// process genesis transactions, else create default genesis.json.
 	appGenTxs, persistentPeers, err := CollectStdTxs(
-		cdc, config.Moniker, initCfg.GenTxsDir, genDoc, genAccIterator)
+		cdc, config.Moniker, initCfg.GenTxsDir, genDoc)
 	if err != nil {
 		return appState, err
 	}
@@ -68,7 +67,7 @@ func GenAppStateFromConfig(cdc *codec.Codec, config *cfg.Config,
 // the list of appGenTxs, and persistent peers required to generate genesis.json.
 //nolint:funlen
 func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
-	genDoc tmtypes.GenesisDoc, genAccIterator types.GenesisAccountsIterator,
+	genDoc tmtypes.GenesisDoc,
 ) (appGenTxs []authtypes.StdTx, persistentPeers string, err error) {
 	var fos []os.FileInfo
 	fos, err = ioutil.ReadDir(genTxsDir)
@@ -84,11 +83,11 @@ func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 		return appGenTxs, persistentPeers, err
 	}
 
-	addrMap := make(map[string]authexported.Account)
+	addrMap := make(map[string]auth.Account)
 
-	genAccIterator.IterateGenesisAccounts(cdc, appState,
-		func(acc authexported.Account) (stop bool) {
-			addrMap[acc.GetAddress().String()] = acc
+	IterateGenesisAccounts(cdc, appState,
+		func(acc auth.Account) (stop bool) {
+			addrMap[acc.Address.String()] = acc
 			return false
 		},
 	)
@@ -152,4 +151,34 @@ func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 	persistentPeers = strings.Join(addressesIPs, ",")
 
 	return appGenTxs, persistentPeers, nil
+}
+
+// SetGenTxsInAppGenesisState - sets the genesis transactions in the app genesis state.
+func SetGenTxsInAppGenesisState(cdc *codec.Codec, appGenesisState map[string]json.RawMessage,
+	genTxs []authtypes.StdTx) (map[string]json.RawMessage, error) {
+	genesisState := types.GetGenesisStateFromAppState(cdc, appGenesisState)
+	// convert all the GenTxs to JSON
+	genTxsBz := make([]json.RawMessage, len(genTxs))
+
+	for i, genTx := range genTxs {
+		txBz, err := cdc.MarshalJSON(genTx)
+		if err != nil {
+			return appGenesisState, err
+		}
+
+		genTxsBz[i] = txBz
+	}
+
+	genesisState.GenTxs = genTxsBz
+
+	return SetGenesisStateInAppState(cdc, appGenesisState, genesisState), nil
+}
+
+// SetGenesisStateInAppState sets the genutil genesis state within the expected app state.
+func SetGenesisStateInAppState(cdc *codec.Codec,
+	appState map[string]json.RawMessage, genesisState GenesisState) map[string]json.RawMessage {
+	genesisStateBz := cdc.MustMarshalJSON(genesisState)
+	appState[ModuleName] = genesisStateBz
+
+	return appState
 }

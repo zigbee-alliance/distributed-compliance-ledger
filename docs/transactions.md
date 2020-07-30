@@ -44,7 +44,7 @@ This is useful to avoid correlation by the sender's IP address.
     - Example
         ```json
         CLI 2: zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
-        CLI 2: zblcli query authnext accounts
+        CLI 2: zblcli query auth accounts
         CLI 1: zblcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
         CLI 2: zblcli tx broadcast /home/artem/zb-ledger/txn.json
         ```
@@ -1140,10 +1140,9 @@ If more than 1 Trustee signature is required to add the account, the account
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-    - `address`
-    - `pub_key`
-    - `pub_key_type`
-    - `role` 
+    - `address`: string // account address; bench32 encoded
+    - `pub_key` string // account public key; bech32 encoded
+    - `roles`: array<string> // the list of roles to assign to account 
 - In State:
   - `auth` store  
   - `1:<address>` : `<account info> + <list of approvers>`
@@ -1151,7 +1150,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-add-account .... `
+    -   `zblcli tx auth propose-add-account --address=<string> --pubkey=<string> --from=<account>`
 - REST API: 
     -   POST `/auth/accounts/proposed`
     
@@ -1245,7 +1244,7 @@ Gets all accounts.
 - REST API: 
     -   GET `/auth/accounts`           
 
-#### GET_ACCOUNTS
+#### GET_ACCOUNT
 Gets an accounts by the address.
 
 - Parameters:

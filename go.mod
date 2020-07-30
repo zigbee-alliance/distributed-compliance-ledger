@@ -5,7 +5,6 @@ go 1.13
 require (
 	github.com/cosmos/cosmos-sdk v0.37.4
 	github.com/cosmos/go-bip39 v0.0.0-20180618194314-52158e4697b8
-	github.com/gogo/protobuf v1.3.1
 	github.com/gorilla/mux v1.7.3
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5

@@ -5,7 +5,7 @@ import (
 
 	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -33,17 +33,8 @@ func TestPkiDemo(t *testing.T) {
 	// Get key info for Alice
 	aliceKeyInfo, _ := utils.GetKeyInfo(testconstants.AliceAccount)
 
-	// Get key info for Anna
-	annaKeyInfo, _ := utils.GetKeyInfo(testconstants.AnnaAccount)
-
-	// Get key info for Bob
-	bobKeyInfo, _ := utils.GetKeyInfo(testconstants.BobAccount)
-
-	// Assign Trustee role to Jack
-	utils.AssignRole(jackKeyInfo.Address, jackKeyInfo, authz.Trustee)
-
-	// Assign Trustee role to Alice
-	utils.AssignRole(aliceKeyInfo.Address, jackKeyInfo, authz.Trustee)
+	// Create account for Anna
+	userKeyInfo := utils.CreateNewAccount(auth.AccountRoles{})
 
 	// Query all proposed certificates
 	proposedCertificates, _ := utils.GetAllProposedX509RootCerts()
@@ -53,13 +44,13 @@ func TestPkiDemo(t *testing.T) {
 	certificates, _ := utils.GetAllX509Certs()
 	require.Equal(t, 0, len(certificates.Items))
 
-	// Anna (Not Trustee) propose Root certificate
+	// User (Not Trustee) propose Root certificate
 	msgProposeAddX509RootCert := pki.MsgProposeAddX509RootCert{
 		Cert:   testconstants.RootCertPem,
-		Signer: annaKeyInfo.Address,
+		Signer: userKeyInfo.Address,
 	}
 	_, _ = utils.ProposeAddX509RootCert(msgProposeAddX509RootCert,
-		testconstants.AnnaAccount, testconstants.Passphrase)
+		userKeyInfo.Name, testconstants.Passphrase)
 
 	//Request all proposed Root certificates
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
@@ -89,7 +80,7 @@ func TestPkiDemo(t *testing.T) {
 		Signer:       jackKeyInfo.Address,
 	}
 	_, _ = utils.ApproveAddX509RootCert(msgApproveAddX509RootCert,
-		testconstants.JackAccount, testconstants.Passphrase)
+		jackKeyInfo.Name, testconstants.Passphrase)
 
 	// Certificate must be still in Proposed state. Request proposed Root certificate. 1 Approval received
 	proposedCertificate, _ =
@@ -119,7 +110,7 @@ func TestPkiDemo(t *testing.T) {
 		Signer:       aliceKeyInfo.Address,
 	}
 	_, _ = utils.ApproveAddX509RootCert(secondMsgApproveAddX509RootCert,
-		testconstants.AliceAccount, testconstants.Passphrase)
+		aliceKeyInfo.Name, testconstants.Passphrase)
 
 	// Certificate must be Approved. Request Root certificate
 	certificate, _ := utils.GetX509Cert(testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -150,12 +141,12 @@ func TestPkiDemo(t *testing.T) {
 	require.Equal(t, testconstants.RootSubject, certificates.Items[0].Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
 
-	// Bob (Not Trustee) add Intermediate certificate
+	// User (Not Trustee) add Intermediate certificate
 	msgAddX509Cert := pki.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateCertPem,
-		Signer: bobKeyInfo.Address,
+		Signer: userKeyInfo.Address,
 	}
-	_, _ = utils.AddX509Cert(msgAddX509Cert, testconstants.BobAccount, testconstants.Passphrase)
+	_, _ = utils.AddX509Cert(msgAddX509Cert, userKeyInfo.Name, testconstants.Passphrase)
 
 	// Request all proposed Root certificates must be empty
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
@@ -195,7 +186,7 @@ func TestPkiDemo(t *testing.T) {
 		Cert:   testconstants.LeafCertPem,
 		Signer: aliceKeyInfo.Address,
 	}
-	_, _ = utils.AddX509Cert(secondMsgAddX509Cert, testconstants.AliceAccount, testconstants.Passphrase)
+	_, _ = utils.AddX509Cert(secondMsgAddX509Cert, aliceKeyInfo.Name, testconstants.Passphrase)
 
 	// Request all proposed Root certificates must be empty
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()

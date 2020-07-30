@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/rest"
@@ -70,13 +70,13 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 	keeper          Keeper
-	authzKeeper     authz.Keeper
+	authKeeper      auth.Keeper
 	modelinfoKeeper modelinfo.Keeper
 }
 
-func NewAppModule(keeper Keeper, authzKeeper authz.Keeper, modelinfoKeeper modelinfo.Keeper) AppModule {
+func NewAppModule(keeper Keeper, authKeeper auth.Keeper, modelinfoKeeper modelinfo.Keeper) AppModule {
 	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper,
-		authzKeeper: authzKeeper, modelinfoKeeper: modelinfoKeeper}
+		authKeeper: authKeeper, modelinfoKeeper: modelinfoKeeper}
 }
 
 func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
@@ -99,7 +99,7 @@ func (a AppModule) Route() string {
 }
 
 func (a AppModule) NewHandler() sdk.Handler {
-	return NewHandler(a.keeper, a.modelinfoKeeper, a.authzKeeper)
+	return NewHandler(a.keeper, a.modelinfoKeeper, a.authKeeper)
 }
 
 func (a AppModule) QuerierRoute() string {

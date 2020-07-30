@@ -2,9 +2,8 @@ package rest_test
 
 //nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -19,20 +18,14 @@ import (
 */
 
 func TestCompliancetestDemo(t *testing.T) {
-	// Get key info for Jack
-	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.AccountName)
-
 	// Register new Vendor account
-	vendor, _ := utils.RegisterNewAccount()
-	utils.AssignRole(vendor.Address, jackKeyInfo, authz.Vendor)
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
 
 	// Register new TestHouse account
-	testHouse, _ := utils.RegisterNewAccount()
-	utils.AssignRole(testHouse.Address, jackKeyInfo, authz.TestHouse)
+	testHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse})
 
 	// Register new TestHouse account
-	secondTestHouse, _ := utils.RegisterNewAccount()
-	utils.AssignRole(secondTestHouse.Address, jackKeyInfo, authz.TestHouse)
+	secondTestHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse})
 
 	// Publish model info
 	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)

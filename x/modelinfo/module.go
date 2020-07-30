@@ -3,7 +3,7 @@ package modelinfo
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/rest"
@@ -67,12 +67,12 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 type AppModule struct {
 	AppModuleBasic
-	keeper      Keeper
-	authzKeeper authz.Keeper
+	keeper     Keeper
+	authKeeper auth.Keeper
 }
 
-func NewAppModule(keeper Keeper, authzKeeper authz.Keeper) AppModule {
-	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper, authzKeeper: authzKeeper}
+func NewAppModule(keeper Keeper, authKeeper auth.Keeper) AppModule {
+	return AppModule{AppModuleBasic: AppModuleBasic{}, keeper: keeper, authKeeper: authKeeper}
 }
 
 func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
@@ -95,7 +95,7 @@ func (a AppModule) Route() string {
 }
 
 func (a AppModule) NewHandler() sdk.Handler {
-	return NewHandler(a.keeper, a.authzKeeper)
+	return NewHandler(a.keeper, a.authKeeper)
 }
 
 func (a AppModule) QuerierRoute() string {

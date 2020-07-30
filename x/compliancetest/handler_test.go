@@ -5,7 +5,7 @@ package compliancetest
 import (
 	"fmt"
 	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
@@ -40,9 +40,10 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	setup := Setup()
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
-	for _, role := range []authz.AccountRole{authz.Vendor, authz.Administrator,
-		authz.ZBCertificationCenter, authz.Administrator} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, test_constants.Address3, role)
+	for _, role := range []auth.AccountRole{auth.Vendor, auth.ZBCertificationCenter, auth.NodeAdmin} {
+		// store account
+		account := auth.NewAccount(test_constants.Address3, test_constants.PubKey3, auth.AccountRoles{role})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new testing result by non TestHouse
 		testingResult := TestMsgAddTestingResult(test_constants.Address3, vid, pid)
@@ -67,7 +68,9 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 
 	for i, th := range []sdk.AccAddress{test_constants.Address1, test_constants.Address2, test_constants.Address3} {
-		setup.AuthzKeeper.AssignRole(setup.Ctx, th, authz.TestHouse)
+		// store account
+		account := auth.NewAccount(th, test_constants.PubKey1, auth.AccountRoles{auth.TestHouse})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new testing result
 		testingResult := TestMsgAddTestingResult(th, vid, pid)

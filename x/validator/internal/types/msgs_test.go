@@ -29,13 +29,13 @@ func TestValidateMsgCreateValidator(t *testing.T) {
 	}{
 		{true, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
 			Description{Name: testconstants.Name}, testconstants.Owner)},
-		{false, NewMsgCreateValidator(nil, testconstants.PubKey,
+		{false, NewMsgCreateValidator(nil, testconstants.ValidatorPubKey1,
 			Description{Name: testconstants.Name}, testconstants.Owner)},
 		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, "",
 			Description{Name: testconstants.Name}, testconstants.Owner)},
-		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.PubKey,
+		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
 			Description{}, testconstants.Owner)},
-		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.PubKey,
+		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
 			Description{Name: testconstants.Name}, nil)},
 	}
 

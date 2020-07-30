@@ -3,6 +3,7 @@ package rest
 //nolint:goimports
 import (
 	"encoding/base64"
+	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"io/ioutil"
@@ -91,6 +92,8 @@ func SignMessageHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
+
+		println(fmt.Sprintf("%v", req))
 
 		err := r.ParseForm()
 		if err != nil {

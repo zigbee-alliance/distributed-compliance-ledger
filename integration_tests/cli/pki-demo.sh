@@ -14,23 +14,15 @@ leaf_cert_subject="CN=dsr-corporation.com"
 leaf_cert_subject_key_id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"
 leaf_cert_serial_number="393904870890265262371394210372104514174397"
 
-echo "Assign Trustee role to Jack"
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Trustee" --from jack --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
+# Preparation of Actors
 
-trustee_account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
-echo "Create Trustee account with address: $trustee_account"
-create_account_with_name $trustee_account
-trustee_address=$(zblcli keys show "$trustee_account" -a)
-result=$(echo "test1234" | zblcli tx authz assign-role --address=$trustee_address --role="Trustee" --from jack --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
+trustee_account="jack"
+second_trustee_account="alice"
 
-user_account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
-echo "Create regular account with address: $user_account"
-create_account_with_name $user_account
-user_address=$(zblcli keys show "$user_account" -a)
+echo "Create regular account"
+create_new_account user_account ""
+
+# Body
 
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
@@ -63,8 +55,8 @@ result=$(zblcli query pki all-x509-root-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
 
-echo "Jack (Trustee) approve Root certificate"
-result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from jack --yes)
+echo "$trustee_account (Trustee) approve Root certificate"
+result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -81,8 +73,8 @@ result=$(zblcli query pki all-x509-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
 
-echo "$trustee_account (Trustee) approve Root certificate"
-result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+echo "$second_trustee_account (Trustee) approve Root certificate"
+result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

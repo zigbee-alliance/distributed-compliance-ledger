@@ -4,7 +4,7 @@ package pki
 // nolint:goimports
 import (
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,10 +18,10 @@ const SerialNumber = "12345678"
 func TestHandler_ProposeAddX509RootCertByNotTrustee(t *testing.T) {
 	setup := Setup()
 
-	for _, role := range []authz.AccountRole{authz.Administrator,
-		authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
-		setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, role)
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// propose x509 root certificate
 		proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.RootCertPem, constants.Address1)
@@ -110,10 +110,10 @@ func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	for _, role := range []authz.AccountRole{authz.Trustee,
-		authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor} {
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
-		setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, role)
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// again propose adding of x509 root certificate
 		proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(proposeAddX509RootCert.Cert, constants.Address1)
@@ -125,8 +125,12 @@ func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 func TestHandler_ApproveAddX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	setup := Setup()
 
+	// store account
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{})
+	setup.authKeeper.SetAccount(setup.Ctx, account)
+
 	// propose x509 root certificate
-	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.RootCertPem, constants.Address1)
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.RootCertPem, account.Address)
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -155,7 +159,8 @@ func TestHandler_ApproveAddX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// set second Trustee
-	setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, authz.Trustee)
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	setup.authKeeper.SetAccount(setup.Ctx, account)
 
 	// second Trustee approve
 	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
@@ -194,10 +199,10 @@ func TestHandler_ApproveAddX509RootCert_ForNotTrustee(t *testing.T) {
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	for _, role := range []authz.AccountRole{
-		authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
-		setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, role)
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// approve
 		approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
@@ -209,6 +214,10 @@ func TestHandler_ApproveAddX509RootCert_ForNotTrustee(t *testing.T) {
 
 func TestHandler_ApproveAddX509RootCert_Twice(t *testing.T) {
 	setup := Setup()
+
+	// store account
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{})
+	setup.authKeeper.SetAccount(setup.Ctx, account)
 
 	// propose add x509 root certificate
 	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.RootCertPem, constants.Address1)
@@ -233,10 +242,10 @@ func TestHandler_AddX509Cert(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee)
 	setup.PkiKeeper.SetCertificate(setup.Ctx, rootCertificate)
 
-	for _, role := range []authz.AccountRole{authz.Trustee,
-		authz.Administrator, authz.TestHouse, authz.ZBCertificationCenter, authz.Vendor} {
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
 		// assign role
-		setup.AuthzKeeper.AssignRole(setup.Ctx, constants.Address1, role)
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add x509 certificate
 		addX509Cert := types.NewMsgAddX509Cert(constants.IntermediateCertPem, constants.Address1)

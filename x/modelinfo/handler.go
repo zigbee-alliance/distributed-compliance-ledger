@@ -3,22 +3,22 @@ package modelinfo
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
+func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 		case types.MsgAddModelInfo:
-			return handleMsgAddModelInfo(ctx, keeper, authzKeeper, msg)
+			return handleMsgAddModelInfo(ctx, keeper, authKeeper, msg)
 		case types.MsgUpdateModelInfo:
-			return handleMsgUpdateModelInfo(ctx, keeper, authzKeeper, msg)
+			return handleMsgUpdateModelInfo(ctx, keeper, authKeeper, msg)
 			/*		case type.MsgDeleteModelInfo:
-					return handleMsgDeleteModelInfo(ctx, keeper, authzKeeper, msg)*/
+					return handleMsgDeleteModelInfo(ctx, keeper, authKeeper, msg)*/
 		default:
 			errMsg := fmt.Sprintf("unrecognized nameservice Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -26,7 +26,7 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 	}
 }
 
-func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
+func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgAddModelInfo) sdk.Result {
 	// check if model already exists
 	if keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
@@ -34,7 +34,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 	}
 
 	// check sender has enough rights to add model
-	if err := checkAddModelRights(ctx, authzKeeper, msg.Signer); err != nil {
+	if err := checkAddModelRights(ctx, authKeeper, msg.Signer); err != nil {
 		return err.Result()
 	}
 
@@ -58,7 +58,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper au
 	return sdk.Result{}
 }
 
-func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
+func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgUpdateModelInfo) sdk.Result {
 	// check is model exists
 	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
@@ -109,7 +109,7 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 }
 
 //nolint:unused,deadcode
-func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
+func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgDeleteModelInfo) sdk.Result {
 	// check if model exists
 	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
@@ -129,11 +129,11 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authzKeeper
 	return sdk.Result{}
 }
 
-func checkAddModelRights(ctx sdk.Context, authzKeeper authz.Keeper, signer sdk.AccAddress) sdk.Error {
+func checkAddModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress) sdk.Error {
 	// sender must have Vendor role to add new model
-	if !authzKeeper.HasRole(ctx, signer, authz.Vendor) {
+	if !authKeeper.HasRole(ctx, signer, auth.Vendor) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddModelInfo transaction should be "+
-			"signed by an account with the %s role", authz.Vendor))
+			"signed by an account with the %s role", auth.Vendor))
 	}
 
 	return nil

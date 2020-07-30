@@ -3,20 +3,20 @@ package pki
 //nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/x509"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
+func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		switch msg := msg.(type) {
 		case types.MsgProposeAddX509RootCert:
-			return handleMsgProposeAddX509RootCert(ctx, keeper, authzKeeper, msg)
+			return handleMsgProposeAddX509RootCert(ctx, keeper, authKeeper, msg)
 		case types.MsgApproveAddX509RootCert:
-			return handleMsgApproveAddX509RootCert(ctx, keeper, authzKeeper, msg)
+			return handleMsgApproveAddX509RootCert(ctx, keeper, authKeeper, msg)
 		case types.MsgAddX509Cert:
 			return handleMsgAddX509Cert(ctx, keeper, msg)
 		default:
@@ -27,7 +27,7 @@ func NewHandler(keeper keeper.Keeper, authzKeeper authz.Keeper) sdk.Handler {
 }
 
 // nolint:funlen
-func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
+func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgProposeAddX509RootCert) sdk.Result {
 	// decode pem certificate
 	certificate, err := x509.DecodeX509Certificate(msg.Cert)
@@ -82,7 +82,7 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 	)
 
 	// if signer has `RootCertificateApprovalRole` append approval
-	if authzKeeper.HasRole(ctx, msg.Signer, types.RootCertificateApprovalRole) {
+	if authKeeper.HasRole(ctx, msg.Signer, types.RootCertificateApprovalRole) {
 		pendingCertificate.Approvals = append(pendingCertificate.Approvals, msg.Signer)
 	}
 
@@ -95,7 +95,7 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 	return sdk.Result{}
 }
 
-func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authzKeeper authz.Keeper,
+func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgApproveAddX509RootCert) sdk.Result {
 	// check if corresponding proposed certificate exists
 	if !keeper.IsProposedCertificatePresent(ctx, msg.Subject, msg.SubjectKeyID) {
@@ -103,7 +103,7 @@ func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 	}
 
 	// check if signer has approval role
-	if !authzKeeper.HasRole(ctx, msg.Signer, types.RootCertificateApprovalRole) {
+	if !authKeeper.HasRole(ctx, msg.Signer, types.RootCertificateApprovalRole) {
 		return sdk.ErrUnauthorized(
 			fmt.Sprintf("MsgApproveAddX509RootCert transaction should be signed by "+
 				"an account with the \"%s\" role", types.RootCertificateApprovalRole)).Result()

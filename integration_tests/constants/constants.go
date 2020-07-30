@@ -4,6 +4,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
 var (
@@ -45,7 +47,12 @@ var (
 	Address1, _       = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
 	Address2, _       = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
 	Address3, _       = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	PubKey            = "cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3"
+	Pubkey1Str        = "cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h"
+	PubKey1, _        = sdk.GetAccPubKeyBech32(Pubkey1Str)
+	PubKey2Str        = "cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng"
+	PubKey2, _        = sdk.GetAccPubKeyBech32(PubKey2Str)
+	PubKey3Str        = "cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn"
+	PubKey3, _        = sdk.GetAccPubKeyBech32(PubKey3Str)
 	Signer            = Address1
 	ValidatorPubKey1  = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
 	ValidatorPubKey2  = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
@@ -165,3 +172,11 @@ eTXgtecouKOE6g==
 	LeafSubjectKeyID   = "8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"
 	LeafSerialNumber   = "393904870890265262371394210372104514174397"
 )
+
+func TestAddress() (sdk.AccAddress, crypto.PubKey, string) {
+	key := secp256k1.GenPrivKey()
+	pub := key.PubKey()
+	addr := sdk.AccAddress(pub.Address())
+	pubStr := sdk.MustBech32ifyAccPub(pub)
+	return addr, pub, pubStr
+}

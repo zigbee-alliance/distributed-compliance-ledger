@@ -3,7 +3,7 @@ package pki
 // nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -14,19 +14,20 @@ import (
 )
 
 type TestSetup struct {
-	Cdc         *amino.Codec
-	Ctx         sdk.Context
-	PkiKeeper   Keeper
-	AuthzKeeper authz.Keeper
-	Handler     sdk.Handler
-	Querier     sdk.Querier
-	Trustee     sdk.AccAddress
+	Cdc        *amino.Codec
+	Ctx        sdk.Context
+	PkiKeeper  Keeper
+	authKeeper auth.Keeper
+	Handler    sdk.Handler
+	Querier    sdk.Querier
+	Trustee    sdk.AccAddress
 }
 
 func Setup() TestSetup {
 	// Init Codec
 	cdc := codec.New()
 	sdk.RegisterCodec(cdc)
+	codec.RegisterCrypto(cdc)
 
 	// Init KVSore
 	db := dbm.NewMemDB()
@@ -34,35 +35,35 @@ func Setup() TestSetup {
 	dbStore := store.NewCommitMultiStore(db)
 
 	pkiKey := sdk.NewKVStoreKey(StoreKey)
-	dbStore.MountStoreWithDB(pkiKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(pkiKey, sdk.StoreTypeIAVL, nil)
 
-	authzKey := sdk.NewKVStoreKey(authz.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, nil)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	pkiKeeper := NewKeeper(pkiKey, cdc)
-	authzKeeper := authz.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(pkiKeeper)
-	handler := NewHandler(pkiKeeper, authzKeeper)
+	handler := NewHandler(pkiKeeper, authKeeper)
 
-	trustee := testconstants.Address2
-	authzKeeper.AssignRole(ctx, trustee, authz.Trustee)
+	account := auth.NewAccount(testconstants.Address2, testconstants.PubKey2, auth.AccountRoles{auth.Trustee})
+	authKeeper.AssignNumberAndStoreAccount(ctx, account)
 
 	setup := TestSetup{
-		Cdc:         cdc,
-		Ctx:         ctx,
-		PkiKeeper:   pkiKeeper,
-		AuthzKeeper: authzKeeper,
-		Handler:     handler,
-		Querier:     querier,
-		Trustee:     trustee,
+		Cdc:        cdc,
+		Ctx:        ctx,
+		PkiKeeper:  pkiKeeper,
+		authKeeper: authKeeper,
+		Handler:    handler,
+		Querier:    querier,
+		Trustee:    account.Address,
 	}
 
 	return setup

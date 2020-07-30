@@ -3,7 +3,7 @@ package compliance
 //nolint:goimports
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/authz"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,7 +20,7 @@ type TestSetup struct {
 	Ctx                  sdk.Context
 	CompliancetKeeper    Keeper
 	CompliancetestKeeper compliancetest.Keeper
-	AuthzKeeper          authz.Keeper
+	authKeeper           auth.Keeper
 	ModelinfoKeeper      modelinfo.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
@@ -31,6 +31,7 @@ func Setup() TestSetup {
 	// Init Codec
 	cdc := codec.New()
 	sdk.RegisterCodec(cdc)
+	codec.RegisterCrypto(cdc)
 
 	// Init KVSore
 	db := dbm.NewMemDB()
@@ -38,23 +39,23 @@ func Setup() TestSetup {
 	dbStore := store.NewCommitMultiStore(db)
 
 	complianceKey := sdk.NewKVStoreKey(StoreKey)
-	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, nil)
 
-	authzKey := sdk.NewKVStoreKey(authz.StoreKey)
-	dbStore.MountStoreWithDB(authzKey, sdk.StoreTypeIAVL, db)
+	authKey := sdk.NewKVStoreKey(auth.StoreKey)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, nil)
 
 	modelinfoKey := sdk.NewKVStoreKey(modelinfo.StoreKey)
-	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, nil)
 
 	compliancetestKey := sdk.NewKVStoreKey(compliancetest.StoreKey)
-	dbStore.MountStoreWithDB(compliancetestKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(compliancetestKey, sdk.StoreTypeIAVL, nil)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	compliancetKeeper := NewKeeper(complianceKey, cdc)
 	compliancetestKeeper := compliancetest.NewKeeper(compliancetestKey, cdc)
-	authzKeeper := authz.NewKeeper(authzKey, cdc)
+	authKeeper := auth.NewKeeper(authKey, cdc)
 	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
 
 	// Create context
@@ -62,10 +63,10 @@ func Setup() TestSetup {
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetKeeper)
-	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authzKeeper)
+	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authKeeper)
 
-	certificationCenter := testconstants.Address1
-	authzKeeper.AssignRole(ctx, certificationCenter, authz.ZBCertificationCenter)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.ZBCertificationCenter})
+	authKeeper.AssignNumberAndStoreAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:                  cdc,
@@ -73,10 +74,10 @@ func Setup() TestSetup {
 		CompliancetKeeper:    compliancetKeeper,
 		CompliancetestKeeper: compliancetestKeeper,
 		ModelinfoKeeper:      modelinfoKeeper,
-		AuthzKeeper:          authzKeeper,
+		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,
-		CertificationCenter:  certificationCenter,
+		CertificationCenter:  account.Address,
 	}
 
 	return setup

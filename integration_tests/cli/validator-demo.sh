@@ -10,7 +10,17 @@ ip="192.167.10.6"
 node0="tcp://192.167.10.2:26657"
 passphrase="test1234"
 
-docker run -d --name $container --ip $ip -p "26664-26665:26656-26657" --network zbledger_localnet -i zbledger_node0
+if docker container ls  | grep -q $container; then
+  if docker container inspect $container | grep -q '"Status": "running"'; then
+    echo "Stopping container"
+    docker container kill $container
+  fi
+
+  echo "Removing container"
+  docker container rm "$container"
+fi
+
+docker run -d --name $container --ip $ip -p "26664-26665:26656-26657" --network zb-ledger_localnet -i zbledger
 
 echo "Generate keys for $account"
 docker exec $container /bin/sh -c "echo $passphrase | zblcli keys add $account"
@@ -18,8 +28,8 @@ address=$(docker exec $container zblcli keys show $account -a)
 pubkey=$(docker exec $container zblcli keys show $account -p)
 
 echo "Create account for $account and Assign NodeAdmin role"
-echo $passphrase | zblcli tx authnext create-account --address="$address" --pubkey="$pubkey" --from jack --yes
-echo $passphrase | zblcli tx authz assign-role --address=$address --role="NodeAdmin" --from jack --yes
+echo $passphrase | zblcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
+echo $passphrase | zblcli tx auth approve-add-account --address="$address" --from alice --yes
 
 echo "$account Preapare Node configuration files"
 docker exec $container zbld init $node --chain-id $chain_id
@@ -54,22 +64,21 @@ check_response "$result" "\"validator_address\": \"$vaddress\""
 check_response "$result" "\"validator_pubkey\": \"$vpubkey\""
 echo "$result"
 
-echo "Connect CLI to node \"$node\" and ckeck status"
+echo "Connect CLI to node \"$node\" and check status"
 zblcli config node "tcp://$ip:26657"
 result=$(zblcli status)
 check_response "$result" "\"moniker\": \"$node\""
 echo "$result"
 
 echo "Sent transactions using node \"$node\""
-echo "Assign Vendor role to jack"
-echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Vendor" --from jack --yes
+create_new_account vendor_account "Vendor"
 
 echo "Publish Model"
 vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from jack --yes)
+result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from "$vendor_account" --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

@@ -3,6 +3,7 @@ package utils
 //nolint:goimports
 import (
 	"encoding/json"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
@@ -15,12 +16,8 @@ type ResponseWrapper struct {
 }
 
 type AccountInfo struct {
-	Address       sdk.AccAddress `json:"address"`
-	PublicKey     string         `json:"public_key"`
-	Roles         []string       `json:"roles"`
-	Coins         sdk.Coins      `json:"coins"`
-	AccountNumber string         `json:"account_number"`
-	Sequence      string         `json:"sequence"`
+	Address sdk.AccAddress    `json:"address"`
+	Roles   auth.AccountRoles `json:"roles"`
 }
 
 type KeyInfo struct {
@@ -53,6 +50,11 @@ type ProposedCertificatesHeadersResult struct {
 type CertificatesHeadersResult struct {
 	Total string            `json:"total"`
 	Items []pki.Certificate `json:"items"`
+}
+
+type AccountHeadersResult struct {
+	Total string         `json:"total"`
+	Items []auth.Account `json:"items"`
 }
 
 type TxnResponse struct {
