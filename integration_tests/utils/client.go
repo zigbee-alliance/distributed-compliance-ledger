@@ -48,12 +48,12 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 
 	resp, err := client.Do(req)
 
-	response := ReadResponseBody(resp)
-	println(string(response))
-
 	if err != nil {
 		return nil, http.StatusInternalServerError
 	}
+
+	response := ReadResponseBody(resp)
+	println(string(response))
 
 	if resp.StatusCode != 200 {
 		return nil, resp.StatusCode

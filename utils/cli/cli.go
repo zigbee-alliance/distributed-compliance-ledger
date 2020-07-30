@@ -59,6 +59,10 @@ func (ctx CliContext) Context() client.CLIContext {
 	return ctx.context
 }
 
+func (ctx CliContext) Codec() *codec.Codec {
+	return ctx.context.Codec
+}
+
 func (ctx CliContext) FromAddress() sdk.AccAddress {
 	return ctx.context.GetFromAddress()
 }

@@ -1,9 +1,11 @@
 package utils
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"time"
+
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	extRest "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
@@ -24,8 +26,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/go-bip39"
 	"github.com/tendermint/tendermint/libs/common"
-	"net/http"
-	"time"
 )
 
 func CreateKey(accountName string) (KeyInfo, int) {
@@ -579,6 +579,16 @@ func GetX509Cert(subject string, subjectKeyID string) (pki.Certificate, int) {
 	}
 
 	return result.Items[0], code
+}
+
+func GetX509CertChain(subject string, subjectKeyID string) (pki.Certificates, int) {
+	response, code := SendGetRequest(fmt.Sprintf("%s/certs/chain/%s/%s", pki.RouterKey, subject, subjectKeyID))
+
+	var result pki.Certificates
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
 }
 
 func getCertificates(uri string) (CertificatesHeadersResult, int) {

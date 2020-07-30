@@ -11,8 +11,8 @@ intermediate_cert_subject_key_id="A8:4A:6A:63:4:7D:DD:BA:E6:D1:39:B7:A6:45:65:EF
 intermediate_cert_serial_number="13298795840390663119752826058995181320"
 
 leaf_cert_subject="CN=dsr-corporation.com"
-leaf_cert_subject_key_id="8A:34:B:5C:D8:42:18:F2:C1:2A:AC:7A:B3:8F:6E:90:66:F4:4E:5C"
-leaf_cert_serial_number="312128364102099997394566658874957944692446"
+leaf_cert_subject_key_id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"
+leaf_cert_serial_number="393904870890265262371394210372104514174397"
 
 echo "Assign Trustee role to Jack"
 result=$(echo "test1234" | zblcli tx authz assign-role --address=$(zblcli keys show jack -a) --role="Trustee" --from jack --yes)
@@ -45,7 +45,7 @@ check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
 
-echo "Request all proposed Root certificate"
+echo "Request all proposed Root certificates"
 result=$(zblcli query pki all-proposed-x509-root-certs)
 check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject\": \"$root_cert_subject\""
@@ -68,7 +68,7 @@ result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Certificate mut be still in Proposed state. Request proposed Root certificate"
+echo "Certificate must be still in Proposed state. Request proposed Root certificate"
 result=$(zblcli query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
@@ -86,8 +86,15 @@ result=$(echo "test1234" | zblcli tx pki approve-add-x509-root-cert --subject="$
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Certificate mut be Approved. Request Root certificate"
+echo "Certificate must be Approved. Request Root certificate"
 result=$(zblcli query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
+
+echo "Request certificate chain for Root certificate"
+result=$(zblcli query pki x509-cert-chain --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -104,17 +111,27 @@ check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
-echo "$user_account (Not Trustee) add intermediate certificate"
+echo "$user_account (Not Trustee) add Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
 result=$(echo "test1234" | zblcli tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Request intermediate certificate"
+echo "Request Intermediate certificate"
 result=$(zblcli query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+echo "$result"
+
+echo "Request certificate chain for Intermediate certificate"
+result=$(zblcli query pki x509-cert-chain --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
 
 echo "Request all proposed Root certificates must be empty"
@@ -134,17 +151,30 @@ check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
-echo "$trustee_account (Trustee) add leaf certificate"
+echo "$trustee_account (Trustee) add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
 result=$(echo "test1234" | zblcli tx pki add-x509-cert --certificate="$leaf_path" --from $trustee_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Request leaf certificate"
+echo "Request Leaf certificate"
 result=$(zblcli query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
+echo "$result"
+
+echo "Request certificate chain for Leaf certificate"
+result=$(zblcli query pki x509-cert-chain --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
 
 echo "Request all proposed Root certificates must be empty"
