@@ -6,6 +6,7 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -73,7 +74,7 @@ func GetCmdProposedAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
-			return cliCtx.QueryList(fmt.Sprintf("custom/%s/proposed_accounts", queryRoute), params)
+			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllProposedAccounts), params)
 		},
 	}
 
@@ -91,7 +92,7 @@ func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
-			return cliCtx.QueryList(fmt.Sprintf("custom/%s/accounts", queryRoute), params)
+			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllAccounts), params)
 		},
 	}
 

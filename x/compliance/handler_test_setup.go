@@ -39,16 +39,16 @@ func Setup() TestSetup {
 	dbStore := store.NewCommitMultiStore(db)
 
 	complianceKey := sdk.NewKVStoreKey(StoreKey)
-	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(complianceKey, sdk.StoreTypeIAVL, nil)
 
 	authKey := sdk.NewKVStoreKey(auth.StoreKey)
-	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, nil)
 
 	modelinfoKey := sdk.NewKVStoreKey(modelinfo.StoreKey)
-	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, nil)
 
 	compliancetestKey := sdk.NewKVStoreKey(compliancetest.StoreKey)
-	dbStore.MountStoreWithDB(compliancetestKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(compliancetestKey, sdk.StoreTypeIAVL, nil)
 
 	_ = dbStore.LoadLatestVersion()
 

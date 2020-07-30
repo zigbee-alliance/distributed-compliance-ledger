@@ -28,7 +28,7 @@ func Setup() TestSetup {
 	db := dbm.NewMemDB()
 	dbStore := store.NewCommitMultiStore(db)
 	validatorKey := sdk.NewKVStoreKey(types.StoreKey)
-	dbStore.MountStoreWithDB(validatorKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(validatorKey, sdk.StoreTypeIAVL, nil)
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers

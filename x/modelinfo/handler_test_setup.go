@@ -35,10 +35,10 @@ func Setup() TestSetup {
 	dbStore := store.NewCommitMultiStore(db)
 
 	modelinfoKey := sdk.NewKVStoreKey(StoreKey)
-	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, nil)
 
 	authKey := sdk.NewKVStoreKey(auth.StoreKey)
-	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, db)
+	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, nil)
 
 	_ = dbStore.LoadLatestVersion()
 
