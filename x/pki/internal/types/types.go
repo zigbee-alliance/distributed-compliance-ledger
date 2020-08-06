@@ -1,8 +1,8 @@
 package types
 
-// nolint:goimports
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -47,6 +47,7 @@ type Certificate struct {
 	AuthorityKeyID   string          `json:"authority_key_id,omitempty"`
 	RootSubject      string          `json:"root_subject,omitempty"`
 	RootSubjectKeyID string          `json:"root_subject_key_id,omitempty"`
+	Revoked          bool            `json:"revoked"`
 	Type             CertificateType `json:"type"`
 	Owner            sdk.AccAddress  `json:"owner"`
 }
@@ -139,18 +140,18 @@ func (d ProposedCertificate) HasApprovalFrom(address sdk.Address) bool {
 type ChildCertificates struct {
 	Subject           string                  `json:"subject"`
 	SubjectKeyID      string                  `json:"subject_key_id"`
-	ChildCertificates []CertificateIdentified `json:"child_certificates"`
+	ChildCertificates []CertificateIdentifier `json:"child_certificates"`
 }
 
 func NewChildCertificates(subject string, subjectKeyID string) ChildCertificates {
 	return ChildCertificates{
 		Subject:           subject,
 		SubjectKeyID:      subjectKeyID,
-		ChildCertificates: []CertificateIdentified{},
+		ChildCertificates: []CertificateIdentifier{},
 	}
 }
 
-func (d *ChildCertificates) AddChildCertificate(keyID CertificateIdentified) {
+func (d *ChildCertificates) AddChildCertificate(keyID CertificateIdentifier) {
 	d.ChildCertificates = append(d.ChildCertificates, keyID)
 }
 
@@ -167,13 +168,13 @@ func (d ChildCertificates) String() string {
 	Composed identifier for certificates
 */
 
-type CertificateIdentified struct {
+type CertificateIdentifier struct {
 	Subject      string `json:"subject"`
 	SubjectKeyID string `json:"subject_key_id"`
 }
 
-func NewCertificateIdentifier(subject string, subjectKeyID string) CertificateIdentified {
-	return CertificateIdentified{
+func NewCertificateIdentifier(subject string, subjectKeyID string) CertificateIdentifier {
+	return CertificateIdentifier{
 		Subject:      subject,
 		SubjectKeyID: subjectKeyID,
 	}

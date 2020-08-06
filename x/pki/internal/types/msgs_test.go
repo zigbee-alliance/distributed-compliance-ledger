@@ -140,11 +140,56 @@ func TestValidateMsgAddX509Cert(t *testing.T) {
 	}
 }
 
-func TestMsgMsgAddX509Cert(t *testing.T) {
+func TestMsgAddX509CertGetSignBytes(t *testing.T) {
 	var msg = NewMsgAddX509Cert(testconstants.StubCert, testconstants.Signer)
 	res := msg.GetSignBytes()
 
 	expected := `{"type":"pki/AddX509Cert","value":{"cert":"pem certificate",` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	require.Equal(t, expected, string(res))
+}
+
+/*
+	MsgRevokeX509Cert
+*/
+
+func TestNewMsgRevokeX509Cert(t *testing.T) {
+	var msg = NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
+
+	require.Equal(t, RouterKey, msg.Route())
+	require.Equal(t, "revoke_x509_cert", msg.Type())
+	require.Equal(t, []sdk.AccAddress{testconstants.Signer}, msg.GetSigners())
+}
+
+func TestValidateMsgRevokeX509Cert(t *testing.T) {
+	cases := []struct {
+		valid bool
+		msg   MsgRevokeX509Cert
+	}{
+		{true, NewMsgRevokeX509Cert(testconstants.LeafIssuer, testconstants.LeafSerialNumber, testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert("", testconstants.LeafSerialNumber, testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert(testconstants.LeafIssuer, "", testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert(testconstants.LeafIssuer, testconstants.LeafSerialNumber, nil)},
+	}
+
+	for _, tc := range cases {
+		err := tc.msg.ValidateBasic()
+
+		if tc.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+}
+
+func TestMsgRevokeX509CertGetSignBytes(t *testing.T) {
+	var msg = NewMsgRevokeX509Cert(testconstants.LeafIssuer, testconstants.LeafSerialNumber, testconstants.Signer)
+	res := msg.GetSignBytes()
+
+	expected := `{"type":"pki/RevokeX509Cert","value":{` +
+		`"issuer":"CN=Let's Encrypt Authority X3,O=Let's Encrypt,C=US",` +
+		`"serial_number":"393904870890265262371394210372104514174397",` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
 	require.Equal(t, expected, string(res))
 }

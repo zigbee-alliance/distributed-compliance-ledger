@@ -144,3 +144,53 @@ func (m MsgAddX509Cert) GetSignBytes() []byte {
 func (m MsgAddX509Cert) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
 }
+
+/*
+	REVOKE_X509_CERT
+*/
+
+type MsgRevokeX509Cert struct {
+	Issuer       string         `json:"issuer"`
+	SerialNumber string         `json:"serial_number"`
+	Signer       sdk.AccAddress `json:"signer"`
+}
+
+func NewMsgRevokeX509Cert(issuer string, serialNumber string, signer sdk.AccAddress) MsgRevokeX509Cert {
+	return MsgRevokeX509Cert{
+		Issuer:       issuer,
+		SerialNumber: serialNumber,
+		Signer:       signer,
+	}
+}
+
+func (m MsgRevokeX509Cert) Route() string {
+	return RouterKey
+}
+
+func (m MsgRevokeX509Cert) Type() string {
+	return "revoke_x509_cert"
+}
+
+func (m MsgRevokeX509Cert) ValidateBasic() sdk.Error {
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
+	}
+
+	if len(m.Issuer) == 0 {
+		return sdk.ErrUnknownRequest("Invalid Issuer: it cannot be empty")
+	}
+
+	if len(m.SerialNumber) == 0 {
+		return sdk.ErrUnknownRequest("Invalid SerialNumber: it cannot be empty")
+	}
+
+	return nil
+}
+
+func (m MsgRevokeX509Cert) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
+}
+
+func (m MsgRevokeX509Cert) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Signer}
+}
