@@ -14,7 +14,7 @@ import (
 */
 
 func TestNewMsgProposeAddAccount(t *testing.T) {
-	var msg = NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
+	msg := NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
 		AccountRoles{}, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -53,7 +53,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 }
 
 func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
-	var msg = NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
+	msg := NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
 		AccountRoles{}, testconstants.Signer)
 
 	expected := `{"type":"auth/ProposeAddAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
@@ -67,7 +67,7 @@ func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveAddAccount(t *testing.T) {
-	var msg = NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_add_account")
@@ -96,7 +96,7 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 }
 
 func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
-	var msg = NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
 
 	expected := `{"type":"auth/ApproveAddAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
@@ -108,7 +108,7 @@ func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgProposeRevokeAccount(t *testing.T) {
-	var msg = NewMsgProposeRevokeAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgProposeRevokeAccount(testconstants.Address1, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "propose_revoke_account")
@@ -137,7 +137,7 @@ func TestValidateMsgProposeRevokeAccount(t *testing.T) {
 }
 
 func TestMsgProposeRevokeAccountGetSignBytes(t *testing.T) {
-	var msg = NewMsgProposeRevokeAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgProposeRevokeAccount(testconstants.Address1, testconstants.Signer)
 
 	expected := `{"type":"auth/ProposeRevokeAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
@@ -149,7 +149,7 @@ func TestMsgProposeRevokeAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveRevokeAccount(t *testing.T) {
-	var msg = NewMsgApproveRevokeAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgApproveRevokeAccount(testconstants.Address1, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_revoke_account")
@@ -178,7 +178,7 @@ func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 }
 
 func TestMsgApproveRevokeAccountGetSignBytes(t *testing.T) {
-	var msg = NewMsgApproveRevokeAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgApproveRevokeAccount(testconstants.Address1, testconstants.Signer)
 
 	expected := `{"type":"auth/ApproveRevokeAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`

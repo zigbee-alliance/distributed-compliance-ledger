@@ -533,6 +533,7 @@ func storeAccount(setup TestSetup, role types.AccountRole) sdk.AccAddress {
 	account := types.NewAccount(address, pubkey, types.AccountRoles{role})
 	account.AccountNumber = setup.Keeper.GetNextAccountNumber(setup.Ctx)
 	setup.Keeper.SetAccount(setup.Ctx, account)
+
 	return address
 }
 
@@ -545,13 +546,6 @@ func proposeAddAccount(setup TestSetup, signer sdk.AccAddress) (sdk.Result, sdk.
 		signer,
 	)
 	result := setup.Handler(setup.Ctx, proposeAddAccount)
-	return result, address, pubkey
-}
 
-func proposeRevokeAccount(setup TestSetup, address sdk.AccAddress, signer sdk.AccAddress) sdk.Result {
-	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(
-		address,
-		signer,
-	)
-	return setup.Handler(setup.Ctx, proposeRevokeAccount)
+	return result, address, pubkey
 }

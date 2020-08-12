@@ -62,7 +62,7 @@ type PendingAccount struct {
 	Approvals []sdk.AccAddress `json:"approvals"`
 }
 
-// NewPendingAccount creates a new PendingAccount object
+// NewPendingAccount creates a new PendingAccount object.
 func NewPendingAccount(address sdk.AccAddress, pubKey crypto.PubKey,
 	roles AccountRoles, approval sdk.AccAddress) PendingAccount {
 	return PendingAccount{
@@ -73,7 +73,7 @@ func NewPendingAccount(address sdk.AccAddress, pubKey crypto.PubKey,
 	}
 }
 
-// String implements fmt.Stringer
+// String implements fmt.Stringer.
 func (pendAcc PendingAccount) String() string {
 	bytes, err := json.Marshal(pendAcc)
 	if err != nil {
@@ -102,6 +102,7 @@ func (pendAcc PendingAccount) Validate() sdk.Error {
 	return nil
 }
 
+//nolint:interfacer
 func (pendAcc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 	for _, approval := range pendAcc.Approvals {
 		if approval.Equals(address) {
@@ -167,6 +168,7 @@ func (acc Account) HasRole(targetRole AccountRole) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -242,7 +244,7 @@ type PendingAccountRevocation struct {
 	Approvals []sdk.AccAddress `json:"approvals"`
 }
 
-// NewPendingAccountRevocation creates a new PendingAccountRevocation object
+// NewPendingAccountRevocation creates a new PendingAccountRevocation object.
 func NewPendingAccountRevocation(address sdk.AccAddress, approval sdk.AccAddress) PendingAccountRevocation {
 	return PendingAccountRevocation{
 		Address:   address,
@@ -250,7 +252,7 @@ func NewPendingAccountRevocation(address sdk.AccAddress, approval sdk.AccAddress
 	}
 }
 
-// String implements fmt.Stringer
+// String implements fmt.Stringer.
 func (revoc PendingAccountRevocation) String() string {
 	bytes, err := json.Marshal(revoc)
 	if err != nil {
@@ -270,6 +272,7 @@ func (revoc PendingAccountRevocation) Validate() sdk.Error {
 	return nil
 }
 
+//nolint:interfacer
 func (revoc PendingAccountRevocation) HasApprovalFrom(address sdk.AccAddress) bool {
 	for _, approval := range revoc.Approvals {
 		if approval.Equals(address) {

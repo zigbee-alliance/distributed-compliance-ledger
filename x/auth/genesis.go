@@ -2,7 +2,6 @@ package auth
 
 import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -50,6 +49,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	var accounts []Account
+
 	var pendingAccounts []PendingAccount
 
 	k.IterateAccounts(ctx, func(account types.Account) (stop bool) {

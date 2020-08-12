@@ -1,15 +1,13 @@
 package genutil
 
-//nolint:goimports
 import (
 	"encoding/json"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // InitGenesis - initialize accounts and deliver genesis transactions.

@@ -14,7 +14,8 @@ type MsgProposeAddAccount struct {
 	Signer    sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgProposeAddAccount(address sdk.AccAddress, pubKey string, roles AccountRoles, signer sdk.AccAddress) MsgProposeAddAccount {
+func NewMsgProposeAddAccount(address sdk.AccAddress, pubKey string,
+	roles AccountRoles, signer sdk.AccAddress) MsgProposeAddAccount {
 	return MsgProposeAddAccount{
 		Address:   address,
 		PublicKey: pubKey,

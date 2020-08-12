@@ -1,6 +1,5 @@
 package compliancetest
 
-//nolint:goimports
 import (
 	"testing"
 

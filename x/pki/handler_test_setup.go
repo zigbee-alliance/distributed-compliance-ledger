@@ -1,6 +1,5 @@
 package pki
 
-// nolint:goimports
 import (
 	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"

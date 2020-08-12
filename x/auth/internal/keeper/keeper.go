@@ -136,12 +136,15 @@ func (k Keeper) DeleteAccount(ctx sdk.Context, address sdk.AccAddress) {
 func (k Keeper) GetPendingAccount(ctx sdk.Context, address sdk.AccAddress) types.PendingAccount {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GetPendingAccountKey(address))
+
 	if bz == nil {
 		panic("Pending Account does not exist")
 	}
 
 	var pendAcc types.PendingAccount
+
 	k.cdc.MustUnmarshalBinaryBare(bz, &pendAcc)
+
 	return pendAcc
 }
 
@@ -200,12 +203,15 @@ func (k Keeper) DeletePendingAccount(ctx sdk.Context, address sdk.AccAddress) {
 func (k Keeper) GetPendingAccountRevocation(ctx sdk.Context, address sdk.AccAddress) types.PendingAccountRevocation {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.GetPendingAccountRevocationKey(address))
+
 	if bz == nil {
 		panic("Pending Account Revocation does not exist")
 	}
 
 	var revoc types.PendingAccountRevocation
+
 	k.cdc.MustUnmarshalBinaryBare(bz, &revoc)
+
 	return revoc
 }
 

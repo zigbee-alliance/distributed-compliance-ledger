@@ -1,16 +1,14 @@
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
 	"net/http"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func accountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
@@ -59,8 +57,8 @@ func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		}
 
 		var account types.Account
-		cliCtx.Codec.MustUnmarshalBinaryBare(res, &account)
 
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &account)
 		restCtx.RespondWithHeight(types.ZBAccount(account), height)
 	}
 }
