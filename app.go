@@ -3,12 +3,13 @@ package app
 //nolint:goimports
 import (
 	"encoding/json"
+	"os"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	authutils "github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/params"
-	"os"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"

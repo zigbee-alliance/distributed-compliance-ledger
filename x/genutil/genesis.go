@@ -3,6 +3,7 @@ package genutil
 //nolint:goimports
 import (
 	"encoding/json"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	abci "github.com/tendermint/tendermint/abci/types"
 
@@ -16,7 +17,11 @@ func InitGenesis(ctx sdk.Context, cdc *codec.Codec, authKeeper types.AuthKeeper,
 	deliverTx deliverTxfn, genesisState GenesisState) []abci.ValidatorUpdate {
 	// load the accounts
 	for _, acc := range genesisState.Accounts {
-		acc = authKeeper.NewAccountWithNumber(ctx, acc) // set account number
+		err := acc.SetAccountNumber(authKeeper.GetNextAccountNumber(ctx))
+		if err != nil {
+			panic(err)
+		}
+
 		authKeeper.SetAccount(ctx, acc)
 	}
 

@@ -2,7 +2,7 @@ package pki
 
 // nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -54,7 +54,8 @@ func Setup() TestSetup {
 	handler := NewHandler(pkiKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address2, testconstants.PubKey2, auth.AccountRoles{auth.Trustee})
-	authKeeper.AssignNumberAndStoreAccount(ctx, account)
+	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
+	authKeeper.SetAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:        cdc,

@@ -2,7 +2,7 @@ package compliance
 
 //nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
@@ -66,7 +66,8 @@ func Setup() TestSetup {
 	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.ZBCertificationCenter})
-	authKeeper.AssignNumberAndStoreAccount(ctx, account)
+	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
+	authKeeper.SetAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:                  cdc,

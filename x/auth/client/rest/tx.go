@@ -3,12 +3,13 @@ package rest
 // nolint:goimports
 import (
 	"fmt"
+	"net/http"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
-	"net/http"
 )
 
 type ProposeAddAccountRequest struct {
@@ -77,6 +78,75 @@ func approveAddAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgApproveAddAccount(address, restCtx.Signer())
+
+		restCtx.HandleWriteRequest(msg)
+	}
+}
+
+type ProposeRevokeAccountRequest struct {
+	BaseReq restTypes.BaseReq `json:"base_req"`
+	Address sdk.AccAddress    `json:"address"`
+}
+
+func proposeRevokeAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		var req ProposeRevokeAccountRequest
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
+
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
+		}
+
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
+		msg := types.NewMsgProposeRevokeAccount(req.Address, restCtx.Signer())
+
+		restCtx.HandleWriteRequest(msg)
+	}
+}
+
+type ApproveRevokeAccountRequest struct {
+	BaseReq restTypes.BaseReq `json:"base_req"`
+}
+
+func approveRevokeAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+		addr := vars[address]
+
+		var req ApproveRevokeAccountRequest
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
+
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
+		}
+
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
+		address, err := sdk.AccAddressFromBech32(addr)
+		if err != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest,
+				fmt.Sprintf("Request Parsing Error: %v. valid address must be cpecified", err))
+			return
+		}
+
+		msg := types.NewMsgApproveRevokeAccount(address, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

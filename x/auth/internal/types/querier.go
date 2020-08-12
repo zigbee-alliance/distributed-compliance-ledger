@@ -3,6 +3,7 @@ package types
 //nolint:goimports
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -31,7 +32,6 @@ type ListAccountItems struct {
 // Implement fmt.Stringer.
 func (n ListAccountItems) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}
@@ -39,16 +39,31 @@ func (n ListAccountItems) String() string {
 	return string(res)
 }
 
-// Result Payload for proposed accounts list query.
-type ListProposedAccountItems struct {
+// Result Payload for pending accounts list query.
+type ListPendingAccountItems struct {
 	Total int              `json:"total"`
 	Items []PendingAccount `json:"items"`
 }
 
 // Implement fmt.Stringer.
-func (n ListProposedAccountItems) String() string {
+func (n ListPendingAccountItems) String() string {
 	res, err := json.Marshal(n)
+	if err != nil {
+		panic(err)
+	}
 
+	return string(res)
+}
+
+// Result Payload for pending account revocations list query.
+type ListPendingAccountRevocationItems struct {
+	Total int                        `json:"total"`
+	Items []PendingAccountRevocation `json:"items"`
+}
+
+// Implement fmt.Stringer.
+func (n ListPendingAccountRevocationItems) String() string {
+	res, err := json.Marshal(n)
 	if err != nil {
 		panic(err)
 	}
@@ -64,7 +79,6 @@ type ZBAccount Account
 // Implement fmt.Stringer.
 func (a ZBAccount) String() string {
 	res, err := json.Marshal(a)
-
 	if err != nil {
 		panic(err)
 	}

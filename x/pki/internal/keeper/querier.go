@@ -3,6 +3,7 @@ package keeper
 // nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -47,10 +48,11 @@ func queryAllProposedX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keepe
 
 	result := types.NewListProposedCertificates()
 
-	result.Total = keeper.CountTotalProposedCertificates(ctx)
 	skipped := 0
 
 	keeper.IterateProposedCertificates(ctx, func(certificate types.ProposedCertificate) (stop bool) {
+		result.Total++
+
 		if skipped < params.Skip {
 			skipped++
 			return false

@@ -42,7 +42,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 	}
 
 	for _, record := range data.PendingAccounts {
-		keeper.SetProposedAccount(ctx, record)
+		keeper.SetPendingAccount(ctx, record)
 	}
 
 	return []abci.ValidatorUpdate{}
@@ -57,7 +57,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 		return false
 	})
 
-	k.IterateProposedAccounts(ctx, func(account types.PendingAccount) (stop bool) {
+	k.IteratePendingAccounts(ctx, func(account types.PendingAccount) (stop bool) {
 		pendingAccounts = append(pendingAccounts, account)
 		return false
 	})
