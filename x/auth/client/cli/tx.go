@@ -1,8 +1,9 @@
 package cli
 
-//nolint:goimports
 import (
 	"fmt"
+	"strings"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
@@ -10,7 +11,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -25,6 +25,8 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	authTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
 		GetCmdProposeAddAccount(cdc),
 		GetCmdApproveAddAccount(cdc),
+		GetCmdProposeRevokeAccount(cdc),
+		GetCmdApproveRevokeAccount(cdc),
 	)...)...)
 
 	return authTxCmd
@@ -34,7 +36,7 @@ func GetCmdProposeAddAccount(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "propose-add-account",
 		Short: "Propose a new account with the given address, public key and roles",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -77,8 +79,8 @@ func GetCmdProposeAddAccount(cdc *codec.Codec) *cobra.Command {
 func GetCmdApproveAddAccount(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "approve-add-account",
-		Short: "Approve the proposed account associated with the given address",
-		Args:  cobra.ExactArgs(0),
+		Short: "Approve the proposed account with the given address",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -88,6 +90,58 @@ func GetCmdApproveAddAccount(cdc *codec.Codec) *cobra.Command {
 			}
 
 			msg := types.NewMsgApproveAddAccount(address, cliCtx.FromAddress())
+
+			return cliCtx.HandleWriteMessage(msg)
+		},
+	}
+
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
+
+	return cmd
+}
+
+func GetCmdProposeRevokeAccount(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "propose-revoke-account",
+		Short: "Propose revocation of the account with the given address",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			address, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgProposeRevokeAccount(address, cliCtx.FromAddress())
+
+			return cliCtx.HandleWriteMessage(msg)
+		},
+	}
+
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
+
+	return cmd
+}
+
+func GetCmdApproveRevokeAccount(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "approve-revoke-account",
+		Short: "Approve the proposed revocation of the account with the given address",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			address, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgApproveRevokeAccount(address, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},

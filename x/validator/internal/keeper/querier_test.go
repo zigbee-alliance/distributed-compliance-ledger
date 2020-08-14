@@ -1,14 +1,14 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func TestQuerier_QueryValidator(t *testing.T) {
@@ -83,7 +83,7 @@ func TestQuerier_QueryValidators(t *testing.T) {
 
 func getValidators(setup TestSetup, state types.ValidatorState) types.ListValidatorItems {
 	paginationParams := pagination.NewPaginationParams(0, 0)
-	params, _ := setup.Cdc.MarshalJSON(types.NewListValidatorsParams(paginationParams, state))
+	params := setup.Cdc.MustMarshalJSON(types.NewListValidatorsParams(paginationParams, state))
 
 	// query all validators
 	result, _ := setup.Querier(

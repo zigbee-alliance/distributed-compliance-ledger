@@ -1,13 +1,12 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
-	"github.com/cosmos/cosmos-sdk/codec"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // ValidatorKeeper defines the expected validator keeper.
@@ -17,7 +16,7 @@ type ValidatorKeeper interface {
 
 // AccountKeeper defines the expected account keeper.
 type AuthKeeper interface {
-	NewAccountWithNumber(sdk.Context, auth.Account) auth.Account
+	GetNextAccountNumber(sdk.Context) uint64
 	SetAccount(sdk.Context, auth.Account)
 	IterateAccounts(ctx sdk.Context, process func(auth.Account) (stop bool))
 }

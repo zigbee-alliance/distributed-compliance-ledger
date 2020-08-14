@@ -1,15 +1,15 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func TestQuerier_QueryAccount(t *testing.T) {
@@ -23,7 +23,7 @@ func TestQuerier_QueryAccount(t *testing.T) {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryAccount},
-		abci.RequestQuery{Data: queryAccountParas(setup, account.Address)},
+		abci.RequestQuery{Data: queryAccountParams(setup, account.Address)},
 	)
 
 	var receivedAccount types.Account
@@ -38,11 +38,11 @@ func TestQuerier_QueryAccount(t *testing.T) {
 func TestQuerier_QueryAccount_ForNotFound(t *testing.T) {
 	setup := Setup()
 
-	// query proposed certificate
+	// query pending certificate
 	_, err := setup.Querier(
 		setup.Ctx,
 		[]string{QueryAccount},
-		abci.RequestQuery{Data: queryAccountParas(setup, testconstants.Address1)},
+		abci.RequestQuery{Data: queryAccountParams(setup, testconstants.Address1)},
 	)
 
 	// check
@@ -57,27 +57,27 @@ func TestQuerier_QueryAllAccounts(t *testing.T) {
 	account1 := types.NewAccount(testconstants.Address1, testconstants.PubKey1, types.AccountRoles{types.Trustee})
 	setup.Keeper.SetAccount(setup.Ctx, account1)
 
-	// store active account
+	// store second active account
 	account2 := types.NewAccount(testconstants.Address2, testconstants.PubKey2, types.AccountRoles{types.Vendor})
 	setup.Keeper.SetAccount(setup.Ctx, account2)
 
-	// store second proposed account
-	proposedAccount := types.NewPendingAccount(
+	// store pending account
+	pendAcc := types.NewPendingAccount(
 		testconstants.Address3,
 		testconstants.PubKey3,
 		types.AccountRoles{types.Vendor},
 		testconstants.Address1,
 	)
-	setup.Keeper.SetProposedAccount(setup.Ctx, proposedAccount)
+	setup.Keeper.SetPendingAccount(setup.Ctx, pendAcc)
 
-	// query proposed account
+	// query active accounts
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryAllAccounts},
 		abci.RequestQuery{Data: queryListEmptyQueryParams(setup)},
 	)
 
-	var listAccounts types.ListAccountItems
+	var listAccounts types.ListAccounts
 	_ = setup.Cdc.UnmarshalJSON(result, &listAccounts)
 
 	// check
@@ -86,57 +86,90 @@ func TestQuerier_QueryAllAccounts(t *testing.T) {
 	require.Equal(t, account2, listAccounts.Items[1])
 }
 
-func TestQuerier_QueryAllProposedAccounts(t *testing.T) {
+func TestQuerier_QueryAllPendingAccounts(t *testing.T) {
 	setup := Setup()
 
 	// store active account
 	account := types.NewAccount(testconstants.Address1, testconstants.PubKey1, types.AccountRoles{types.Trustee})
 	setup.Keeper.SetAccount(setup.Ctx, account)
 
-	// store proposed account
-	account1 := types.NewPendingAccount(
+	// store pending account
+	pendAcc1 := types.NewPendingAccount(
 		testconstants.Address2,
 		testconstants.PubKey2,
 		types.AccountRoles{types.Trustee},
 		testconstants.Address1,
 	)
-	setup.Keeper.SetProposedAccount(setup.Ctx, account1)
+	setup.Keeper.SetPendingAccount(setup.Ctx, pendAcc1)
 
-	// store second proposed account
-	account2 := types.NewPendingAccount(
+	// store second pending account
+	pendAcc2 := types.NewPendingAccount(
 		testconstants.Address3,
 		testconstants.PubKey3,
 		types.AccountRoles{types.Vendor},
 		testconstants.Address1,
 	)
-	setup.Keeper.SetProposedAccount(setup.Ctx, account2)
+	setup.Keeper.SetPendingAccount(setup.Ctx, pendAcc2)
 
-	// query proposed account
+	// query pending accounts
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryAllProposedAccounts},
+		[]string{QueryAllPendingAccounts},
 		abci.RequestQuery{Data: queryListEmptyQueryParams(setup)},
 	)
 
-	var listProposedAccounts types.ListProposedAccountItems
-	_ = setup.Cdc.UnmarshalJSON(result, &listProposedAccounts)
+	var listPendingAccounts types.ListPendingAccounts
+	_ = setup.Cdc.UnmarshalJSON(result, &listPendingAccounts)
 
 	// check
-	require.Equal(t, 2, len(listProposedAccounts.Items))
-	require.Equal(t, account1, listProposedAccounts.Items[0])
-	require.Equal(t, account2, listProposedAccounts.Items[1])
+	require.Equal(t, 2, len(listPendingAccounts.Items))
+	require.Equal(t, pendAcc1, listPendingAccounts.Items[0])
+	require.Equal(t, pendAcc2, listPendingAccounts.Items[1])
 }
 
-func queryAccountParas(setup TestSetup, address sdk.AccAddress) []byte {
-	params := types.NewQueryAccountParams(address)
-	res, _ := setup.Cdc.MarshalJSON(params)
+func TestQuerier_QueryAllPendingAccountRevocations(t *testing.T) {
+	setup := Setup()
 
-	return res
+	// store active account
+	account := types.NewAccount(testconstants.Address1, testconstants.PubKey1, types.AccountRoles{types.Trustee})
+	setup.Keeper.SetAccount(setup.Ctx, account)
+
+	// store pending account revocation
+	revocation1 := types.NewPendingAccountRevocation(
+		testconstants.Address2,
+		testconstants.Address1,
+	)
+	setup.Keeper.SetPendingAccountRevocation(setup.Ctx, revocation1)
+
+	// store second pending account revocation
+	revocation2 := types.NewPendingAccountRevocation(
+		testconstants.Address3,
+		testconstants.Address1,
+	)
+	setup.Keeper.SetPendingAccountRevocation(setup.Ctx, revocation2)
+
+	// query pending account revocations
+	result, _ := setup.Querier(
+		setup.Ctx,
+		[]string{QueryAllPendingAccountRevocations},
+		abci.RequestQuery{Data: queryListEmptyQueryParams(setup)},
+	)
+
+	var listPendingAccountRevocations types.ListPendingAccountRevocations
+	_ = setup.Cdc.UnmarshalJSON(result, &listPendingAccountRevocations)
+
+	// check
+	require.Equal(t, 2, len(listPendingAccountRevocations.Items))
+	require.Equal(t, revocation1, listPendingAccountRevocations.Items[0])
+	require.Equal(t, revocation2, listPendingAccountRevocations.Items[1])
+}
+
+func queryAccountParams(setup TestSetup, address sdk.AccAddress) []byte {
+	params := types.NewQueryAccountParams(address)
+	return setup.Cdc.MustMarshalJSON(params)
 }
 
 func queryListEmptyQueryParams(setup TestSetup) []byte {
 	paginationParams := pagination.NewPaginationParams(0, 0)
-	res, _ := setup.Cdc.MarshalJSON(paginationParams)
-
-	return res
+	return setup.Cdc.MustMarshalJSON(paginationParams)
 }

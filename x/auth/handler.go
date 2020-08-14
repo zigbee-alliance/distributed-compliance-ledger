@@ -16,6 +16,10 @@ func NewHandler(keeper keeper.Keeper) sdk.Handler {
 			return handleMsgProposeAddAccount(ctx, keeper, msg)
 		case types.MsgApproveAddAccount:
 			return handleMsgApproveAddAccount(ctx, keeper, msg)
+		case types.MsgProposeRevokeAccount:
+			return handleMsgProposeRevokeAccount(ctx, keeper, msg)
+		case types.MsgApproveRevokeAccount:
+			return handleMsgApproveRevokeAccount(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized auth Msg type: %v", msg.Type())
 			return sdk.ErrUnknownRequest(errMsg).Result()
@@ -27,19 +31,18 @@ func handleMsgProposeAddAccount(ctx sdk.Context, keeper Keeper, msg types.MsgPro
 	// check if sender has enough rights to propose account.
 	if !keeper.HasRole(ctx, msg.Signer, types.Trustee) {
 		return sdk.ErrUnauthorized(
-			fmt.Sprintf("MsgProposeAddAccount transaction should be signed by an account with the %s role", types.Trustee)).Result()
+			fmt.Sprintf("MsgProposeAddAccount transaction should be signed by an account with the %s role",
+				types.Trustee)).Result()
 	}
 
-	// check if account already exists.
+	// check if active account already exists.
 	if keeper.IsAccountPresent(ctx, msg.Address) {
-		return types.ErrAccountAlreadyExistExist(msg.Address).Result()
+		return types.ErrAccountAlreadyExist(msg.Address).Result()
 	}
 
 	// check if pending account already exists.
-	if keeper.IsProposedAccountPresent(ctx, msg.Address) {
-		return sdk.NewError(types.DefaultCodespace, types.CodeAccountAlreadyExist,
-			fmt.Sprintf("Proposed Account associated with the address=%v " +
-				"already exists on the ledger", msg.Address)).Result()
+	if keeper.IsPendingAccountPresent(ctx, msg.Address) {
+		return types.ErrPendingAccountAlreadyExist(msg.Address).Result()
 	}
 
 	// parse the key.
@@ -49,14 +52,15 @@ func handleMsgProposeAddAccount(ctx sdk.Context, keeper Keeper, msg types.MsgPro
 	}
 
 	// if more than 1 trustee's approval is needed, create pending account else create an active account.
-	if CountAccountApprovals(ctx, keeper) > 1 {
+	if AddAccountApprovalsCount(ctx, keeper) > 1 {
 		// create and store pending account.
 		account := types.NewPendingAccount(msg.Address, pubKey, msg.Roles, msg.Signer)
-		keeper.SetProposedAccount(ctx, account)
+		keeper.SetPendingAccount(ctx, account)
 	} else {
 		// create account, assign account number and store it
 		account := types.NewAccount(msg.Address, pubKey, msg.Roles)
-		keeper.SetAccount(ctx, keeper.NewAccountWithNumber(ctx, account))
+		account.AccountNumber = keeper.GetNextAccountNumber(ctx)
+		keeper.SetAccount(ctx, account)
 	}
 
 	return sdk.Result{}
@@ -70,39 +74,118 @@ func handleMsgApproveAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 	}
 
 	// check if pending account exists
-	if !keeper.IsProposedAccountPresent(ctx, msg.Address) {
+	if !keeper.IsPendingAccountPresent(ctx, msg.Address) {
 		return types.ErrPendingAccountDoesNotExist(msg.Address).Result()
 	}
 
-	// get account
-	account := keeper.GetProposedAccount(ctx, msg.Address)
+	// get pending account
+	pendAcc := keeper.GetPendingAccount(ctx, msg.Address)
 
-	// check if account already has approval from signer
-	if account.HasApprovalFrom(msg.Signer) {
+	// check if pending account already has approval from signer
+	if pendAcc.HasApprovalFrom(msg.Signer) {
 		return sdk.ErrUnauthorized(
-			fmt.Sprintf("Account associated with the address=%v already has approval from=%v",
+			fmt.Sprintf("Pending account associated with the address=%v already has approval from=%v",
 				msg.Address, msg.Signer)).Result()
 	}
 
 	// append approval
-	account.Approvals = append(account.Approvals, msg.Signer)
+	pendAcc.Approvals = append(pendAcc.Approvals, msg.Signer)
 
-	// check if account has enough approvals
-	if len(account.Approvals) == CountAccountApprovals(ctx, keeper) {
+	// check if pending account has enough approvals
+	if len(pendAcc.Approvals) == AddAccountApprovalsCount(ctx, keeper) {
 		// create approved account, assign account number and store it
-		account := types.NewAccount(account.Address, account.PubKey, account.Roles)
-		keeper.SetAccount(ctx, keeper.NewAccountWithNumber(ctx, account))
+		account := types.NewAccount(pendAcc.Address, pendAcc.PubKey, pendAcc.Roles)
+		account.AccountNumber = keeper.GetNextAccountNumber(ctx)
+		keeper.SetAccount(ctx, account)
 
 		// delete pending account record
-		keeper.DeleteProposedAccount(ctx, msg.Address)
+		keeper.DeletePendingAccount(ctx, msg.Address)
 	} else {
 		// update pending account record
-		keeper.SetProposedAccount(ctx, account)
+		keeper.SetPendingAccount(ctx, pendAcc)
 	}
 
 	return sdk.Result{}
 }
 
-func CountAccountApprovals(ctx sdk.Context, keeper keeper.Keeper) int {
+func handleMsgProposeRevokeAccount(ctx sdk.Context, keeper keeper.Keeper,
+	msg types.MsgProposeRevokeAccount) sdk.Result {
+	// check that sender has enough rights to propose account revocation
+	if !keeper.HasRole(ctx, msg.Signer, types.Trustee) {
+		return sdk.ErrUnauthorized(
+			fmt.Sprintf("MsgProposeRevokeAccount transaction should be signed by an account with the %s role",
+				types.Trustee)).Result()
+	}
+
+	// check that account exists
+	if !keeper.IsAccountPresent(ctx, msg.Address) {
+		return types.ErrAccountDoesNotExist(msg.Address).Result()
+	}
+
+	// check that pending account revocation does not exist yet
+	if keeper.IsPendingAccountRevocationPresent(ctx, msg.Address) {
+		return types.ErrPendingAccountRevocationAlreadyExist(msg.Address).Result()
+	}
+
+	// if more than 1 trustee's approval is needed, create pending account revocation else delete the account.
+	if RevokeAccountApprovalsCount(ctx, keeper) > 1 {
+		// create and store pending account revocation record
+		revoc := types.NewPendingAccountRevocation(msg.Address, msg.Signer)
+		keeper.SetPendingAccountRevocation(ctx, revoc)
+	} else {
+		// delete account record
+		keeper.DeleteAccount(ctx, msg.Address)
+	}
+
+	return sdk.Result{}
+}
+
+func handleMsgApproveRevokeAccount(ctx sdk.Context, keeper keeper.Keeper,
+	msg types.MsgApproveRevokeAccount) sdk.Result {
+	// check that sender has enough rights to approve account revocation
+	if !keeper.HasRole(ctx, msg.Signer, types.Trustee) {
+		return sdk.ErrUnauthorized(
+			fmt.Sprintf("MsgApproveRevokeAccount transaction should be signed by an account with the %s role",
+				types.Trustee)).Result()
+	}
+
+	// check that pending account revocation exists
+	if !keeper.IsPendingAccountRevocationPresent(ctx, msg.Address) {
+		return types.ErrPendingAccountRevocationDoesNotExist(msg.Address).Result()
+	}
+
+	// get pending account revocation
+	revoc := keeper.GetPendingAccountRevocation(ctx, msg.Address)
+
+	// check if pending account revocation already has approval from signer
+	if revoc.HasApprovalFrom(msg.Signer) {
+		return sdk.ErrUnauthorized(
+			fmt.Sprintf("Pending account revocation associated with the address=%v already has approval from=%v",
+				msg.Address, msg.Signer)).Result()
+	}
+
+	// append approval
+	revoc.Approvals = append(revoc.Approvals, msg.Signer)
+
+	// check if pending account revocation has enough approvals
+	if len(revoc.Approvals) == AddAccountApprovalsCount(ctx, keeper) {
+		// delete account record
+		keeper.DeleteAccount(ctx, msg.Address)
+
+		// delete pending account revocation record
+		keeper.DeletePendingAccountRevocation(ctx, msg.Address)
+	} else {
+		// update pending account revocation record
+		keeper.SetPendingAccountRevocation(ctx, revoc)
+	}
+
+	return sdk.Result{}
+}
+
+func AddAccountApprovalsCount(ctx sdk.Context, keeper keeper.Keeper) int {
 	return int(math.Round(types.DefaultApproveAddAccountPercent * float64(keeper.CountAccountsWithRole(ctx, Trustee))))
+}
+
+func RevokeAccountApprovalsCount(ctx sdk.Context, keeper keeper.Keeper) int {
+	return int(math.Round(types.DefaultApproveRevokeAccountPercent * float64(keeper.CountAccountsWithRole(ctx, Trustee))))
 }

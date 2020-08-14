@@ -1,17 +1,16 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/tendermint/tendermint/crypto"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/crypto"
 )
 
 /*
-	Roles assigning to Account
+	Account Role
 */
 
 type AccountRole string
@@ -26,24 +25,25 @@ const (
 
 var Roles = AccountRoles{Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin}
 
-func (lt AccountRole) Validate() sdk.Error {
-	switch lt {
-	case Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin:
-		return nil
+func (role AccountRole) Validate() sdk.Error {
+	for _, r := range Roles {
+		if role == r {
+			return nil
+		}
 	}
 
-	return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Account Role: \"%v\". Supported roles: [%v]", lt, Roles))
+	return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Account Role: %v. Supported roles: [%v]", role, Roles))
 }
 
 /*
-	List of Roles
+	List of Account Roles
 */
 
 type AccountRoles []AccountRole
 
 // Validate checks for errors on the account roles.
-func (acc AccountRoles) Validate() sdk.Error {
-	for _, role := range acc {
+func (roles AccountRoles) Validate() sdk.Error {
+	for _, role := range roles {
 		if err := role.Validate(); err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ type PendingAccount struct {
 	Approvals []sdk.AccAddress `json:"approvals"`
 }
 
-// NewPendingAccount creates a new PendingAccount object
+// NewPendingAccount creates a new PendingAccount object.
 func NewPendingAccount(address sdk.AccAddress, pubKey crypto.PubKey,
 	roles AccountRoles, approval sdk.AccAddress) PendingAccount {
 	return PendingAccount{
@@ -73,9 +73,9 @@ func NewPendingAccount(address sdk.AccAddress, pubKey crypto.PubKey,
 	}
 }
 
-// String implements fmt.Stringer
-func (acc PendingAccount) String() string {
-	bytes, err := json.Marshal(acc)
+// String implements fmt.Stringer.
+func (pendAcc PendingAccount) String() string {
+	bytes, err := json.Marshal(pendAcc)
 	if err != nil {
 		panic(err)
 	}
@@ -84,30 +84,32 @@ func (acc PendingAccount) String() string {
 }
 
 // Validate checks for errors on the vesting and module account parameters.
-func (acc PendingAccount) Validate() error {
-	if acc.Address == nil {
+func (pendAcc PendingAccount) Validate() sdk.Error {
+	if pendAcc.Address == nil {
 		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid Account: Value: %s. Error: Missing Address", acc.Address))
+			fmt.Sprintf("Invalid Pending Account: Value: %s. Error: Missing Address", pendAcc.Address))
 	}
 
-	if acc.PubKey == nil {
+	if pendAcc.PubKey == nil {
 		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid Account: Value: %s. Error: Missing PubKey", acc.PubKey))
+			fmt.Sprintf("Invalid Pending Account: Value: %s. Error: Missing PubKey", pendAcc.PubKey))
 	}
 
-	if err := acc.Roles.Validate(); err != nil {
+	if err := pendAcc.Roles.Validate(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
-	for _, approval := range acc.Approvals {
+//nolint:interfacer
+func (pendAcc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
+	for _, approval := range pendAcc.Approvals {
 		if approval.Equals(address) {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -145,12 +147,12 @@ func (acc Account) String() string {
 func (acc Account) Validate() error {
 	if acc.Address == nil {
 		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid Accounts: Value: %s. Error: Missing Address", acc.Address))
+			fmt.Sprintf("Invalid Account: Value: %s. Error: Missing Address", acc.Address))
 	}
 
 	if acc.PubKey == nil {
 		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid Accounts: Value: %s. Error: Missing PubKey", acc.PubKey))
+			fmt.Sprintf("Invalid Account: Value: %s. Error: Missing PubKey", acc.PubKey))
 	}
 
 	if err := acc.Roles.Validate(); err != nil {
@@ -166,6 +168,7 @@ func (acc Account) HasRole(targetRole AccountRole) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -231,4 +234,51 @@ func (acc *Account) SetSequence(seq uint64) error {
 // this is simply the base coins.
 func (acc *Account) SpendableCoins(_ time.Time) sdk.Coins {
 	return nil
+}
+
+/*
+	Pending Account Revocation
+*/
+type PendingAccountRevocation struct {
+	Address   sdk.AccAddress   `json:"address"`
+	Approvals []sdk.AccAddress `json:"approvals"`
+}
+
+// NewPendingAccountRevocation creates a new PendingAccountRevocation object.
+func NewPendingAccountRevocation(address sdk.AccAddress, approval sdk.AccAddress) PendingAccountRevocation {
+	return PendingAccountRevocation{
+		Address:   address,
+		Approvals: []sdk.AccAddress{approval},
+	}
+}
+
+// String implements fmt.Stringer.
+func (revoc PendingAccountRevocation) String() string {
+	bytes, err := json.Marshal(revoc)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+// Validate checks for errors on the vesting and module account parameters.
+func (revoc PendingAccountRevocation) Validate() sdk.Error {
+	if revoc.Address == nil {
+		return sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid Pending Account Revocation: Value: %s. Error: Missing Address", revoc.Address))
+	}
+
+	return nil
+}
+
+//nolint:interfacer
+func (revoc PendingAccountRevocation) HasApprovalFrom(address sdk.AccAddress) bool {
+	for _, approval := range revoc.Approvals {
+		if approval.Equals(address) {
+			return true
+		}
+	}
+
+	return false
 }

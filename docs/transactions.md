@@ -1254,7 +1254,7 @@ Gets an accounts by the address.
 - REST API: 
     -   GET `/auth/accounts/<address>`         
     
-#### GET_ALL_PROPOSED__ACCOUNTS_TO_REVOKE
+#### GET_ALL_PROPOSED_ACCOUNTS_TO_REVOKE
 Gets all proposed but not approved accounts to be revoked.
 
 - Parameters: No
