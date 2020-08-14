@@ -26,6 +26,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		GetCmdAccount(storeKey, cdc),
 		GetCmdAccounts(storeKey, cdc),
 		GetCmdProposedAccounts(storeKey, cdc),
+		GetCmdProposedAccountsToRevoke(storeKey, cdc),
 	)...)
 
 	return authQueryCmd
@@ -45,7 +46,7 @@ func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			}
 
 			res, height, err := cliCtx.QueryStore(types.GetAccountKey(address), queryRoute)
-			if err != nil {
+			if err != nil || res == nil {
 				return types.ErrAccountDoesNotExist(address)
 			}
 

@@ -23,13 +23,13 @@ func NewQueryAccountParams(addr sdk.AccAddress) QueryAccountParams {
 	Response Payload
 */
 // Result Payload for accounts list query.
-type ListAccountItems struct {
+type ListAccounts struct {
 	Total int       `json:"total"`
 	Items []Account `json:"items"`
 }
 
 // Implement fmt.Stringer.
-func (n ListAccountItems) String() string {
+func (n ListAccounts) String() string {
 	res, err := json.Marshal(n)
 	if err != nil {
 		panic(err)
@@ -39,13 +39,13 @@ func (n ListAccountItems) String() string {
 }
 
 // Result Payload for pending accounts list query.
-type ListPendingAccountItems struct {
+type ListPendingAccounts struct {
 	Total int              `json:"total"`
 	Items []PendingAccount `json:"items"`
 }
 
 // Implement fmt.Stringer.
-func (n ListPendingAccountItems) String() string {
+func (n ListPendingAccounts) String() string {
 	res, err := json.Marshal(n)
 	if err != nil {
 		panic(err)
@@ -55,13 +55,13 @@ func (n ListPendingAccountItems) String() string {
 }
 
 // Result Payload for pending account revocations list query.
-type ListPendingAccountRevocationItems struct {
+type ListPendingAccountRevocations struct {
 	Total int                        `json:"total"`
 	Items []PendingAccountRevocation `json:"items"`
 }
 
 // Implement fmt.Stringer.
-func (n ListPendingAccountRevocationItems) String() string {
+func (n ListPendingAccountRevocations) String() string {
 	res, err := json.Marshal(n)
 	if err != nil {
 		panic(err)

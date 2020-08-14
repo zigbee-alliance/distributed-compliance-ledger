@@ -25,6 +25,8 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	authTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
 		GetCmdProposeAddAccount(cdc),
 		GetCmdApproveAddAccount(cdc),
+		GetCmdProposeRevokeAccount(cdc),
+		GetCmdApproveRevokeAccount(cdc),
 	)...)...)
 
 	return authTxCmd
@@ -139,7 +141,7 @@ func GetCmdApproveRevokeAccount(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := types.NewMsgProposeRevokeAccount(address, cliCtx.FromAddress())
+			msg := types.NewMsgApproveRevokeAccount(address, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},

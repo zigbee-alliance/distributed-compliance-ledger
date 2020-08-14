@@ -37,6 +37,19 @@ func proposedAccountsHandler(cliCtx context.CLIContext, storeName string) http.H
 	}
 }
 
+func proposedAccountsToRevokeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		params, err := restCtx.ParsePaginationParams()
+		if err != nil {
+			return
+		}
+
+		restCtx.QueryList(fmt.Sprintf("custom/%s/%s", storeName, keeper.QueryAllPendingAccountRevocations), params)
+	}
+}
+
 func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -51,8 +64,8 @@ func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		}
 
 		res, height, err := cliCtx.QueryStore(types.GetAccountKey(address), storeName)
-		if err != nil {
-			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
+		if err != nil || res == nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrAccountDoesNotExist(address).Error())
 			return
 		}
 

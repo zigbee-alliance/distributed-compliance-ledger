@@ -41,4 +41,8 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		fmt.Sprintf("/auth/accounts/proposed/revoked/{%s}", address),
 		approveRevokeAccountHandler(cliCtx),
 	).Methods("PATCH")
+	r.HandleFunc(
+		"/auth/accounts/proposed/revoked",
+		proposedAccountsToRevokeHandler(cliCtx, storeName),
+	).Methods("GET")
 }

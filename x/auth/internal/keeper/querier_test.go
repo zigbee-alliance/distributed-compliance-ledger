@@ -77,7 +77,7 @@ func TestQuerier_QueryAllAccounts(t *testing.T) {
 		abci.RequestQuery{Data: queryListEmptyQueryParams(setup)},
 	)
 
-	var listAccounts types.ListAccountItems
+	var listAccounts types.ListAccounts
 	_ = setup.Cdc.UnmarshalJSON(result, &listAccounts)
 
 	// check
@@ -118,7 +118,7 @@ func TestQuerier_QueryAllPendingAccounts(t *testing.T) {
 		abci.RequestQuery{Data: queryListEmptyQueryParams(setup)},
 	)
 
-	var listPendingAccounts types.ListPendingAccountItems
+	var listPendingAccounts types.ListPendingAccounts
 	_ = setup.Cdc.UnmarshalJSON(result, &listPendingAccounts)
 
 	// check
@@ -155,7 +155,7 @@ func TestQuerier_QueryAllPendingAccountRevocations(t *testing.T) {
 		abci.RequestQuery{Data: queryListEmptyQueryParams(setup)},
 	)
 
-	var listPendingAccountRevocations types.ListPendingAccountRevocationItems
+	var listPendingAccountRevocations types.ListPendingAccountRevocations
 	_ = setup.Cdc.UnmarshalJSON(result, &listPendingAccountRevocations)
 
 	// check
@@ -166,14 +166,10 @@ func TestQuerier_QueryAllPendingAccountRevocations(t *testing.T) {
 
 func queryAccountParams(setup TestSetup, address sdk.AccAddress) []byte {
 	params := types.NewQueryAccountParams(address)
-	res, _ := setup.Cdc.MarshalJSON(params)
-
-	return res
+	return setup.Cdc.MustMarshalJSON(params)
 }
 
 func queryListEmptyQueryParams(setup TestSetup) []byte {
 	paginationParams := pagination.NewPaginationParams(0, 0)
-	res, _ := setup.Cdc.MarshalJSON(paginationParams)
-
-	return res
+	return setup.Cdc.MustMarshalJSON(paginationParams)
 }

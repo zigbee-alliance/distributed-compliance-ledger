@@ -1,8 +1,8 @@
 package types
 
-// nolint:goimports
 import (
 	"encoding/json"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 )
 
@@ -48,7 +48,6 @@ func NewListCertificates() ListCertificates {
 // Implement fmt.Stringer.
 func (n ListCertificates) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}
@@ -72,7 +71,6 @@ func NewListProposedCertificates() ListProposedCertificates {
 // Implement fmt.Stringer.
 func (n ListProposedCertificates) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}

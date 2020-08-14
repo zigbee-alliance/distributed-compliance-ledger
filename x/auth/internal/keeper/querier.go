@@ -57,7 +57,7 @@ func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (re
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
-	result := types.ListAccountItems{
+	result := types.ListAccounts{
 		Total: 0,
 		Items: []types.Account{},
 	}
@@ -90,7 +90,7 @@ func queryAllPendingAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keep
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
-	result := types.ListPendingAccountItems{
+	result := types.ListPendingAccounts{
 		Total: 0,
 		Items: []types.PendingAccount{},
 	}
@@ -123,7 +123,7 @@ func queryAllPendingAccountRevocations(ctx sdk.Context, req abci.RequestQuery, k
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
-	result := types.ListPendingAccountRevocationItems{
+	result := types.ListPendingAccountRevocations{
 		Total: 0,
 		Items: []types.PendingAccountRevocation{},
 	}
