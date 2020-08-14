@@ -12,6 +12,13 @@ check_response() {
   fi
 }
 
+check_response_and_report() {
+  result=$1
+  expected_string=$2
+  check_response "$result" "$expected_string"
+  echo "INFO: Result contains expected substring: $expected_string"
+}
+
 response_does_not_contain() {
   result=$1
   unexpected_string=$2

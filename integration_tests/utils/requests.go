@@ -133,52 +133,52 @@ func ApproveRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	return parseWriteTxnResponse(response, code)
 }
 
-func GetAccount(address sdk.AccAddress) (auth.Account, int) {
+func GetAccount(address sdk.AccAddress) (AccountInfo, int) {
 	println("Get Account for: ", address)
 
 	uri := fmt.Sprintf("%s/accounts/%s", auth.RouterKey, address.String())
 	response, code := SendGetRequest(uri)
 
-	var result auth.Account
+	var result AccountInfo
 
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
 	return result, code
 }
 
-func GetAccounts() (auth.ListAccounts, int) {
+func GetAccounts() (AccountHeadersResult, int) {
 	println("Get Accounts")
 
 	uri := fmt.Sprintf("%s/accounts", auth.RouterKey)
 	response, code := SendGetRequest(uri)
 
-	var result auth.ListAccounts
+	var result AccountHeadersResult
 
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
 	return result, code
 }
 
-func GetProposedAccounts() (auth.ListPendingAccounts, int) {
+func GetProposedAccounts() (ProposedAccountHeadersResult, int) {
 	println("Get Proposed Accounts")
 
 	uri := fmt.Sprintf("%s/accounts/proposed", auth.RouterKey)
 	response, code := SendGetRequest(uri)
 
-	var result auth.ListPendingAccounts
+	var result ProposedAccountHeadersResult
 
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
 	return result, code
 }
 
-func GetProposedAccountsToRevoke() (auth.ListPendingAccountRevocations, int) {
+func GetProposedAccountsToRevoke() (ProposedAccountToRevokeHeadersResult, int) {
 	println("Get Proposed Accounts to Revoke")
 
 	uri := fmt.Sprintf("%s/accounts/proposed/revoked", auth.RouterKey)
 	response, code := SendGetRequest(uri)
 
-	var result auth.ListPendingAccountRevocations
+	var result ProposedAccountToRevokeHeadersResult
 
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 

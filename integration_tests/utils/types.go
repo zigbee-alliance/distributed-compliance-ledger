@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
@@ -19,6 +20,19 @@ type KeyInfo struct {
 	Type      string         `json:"type"`
 	Address   sdk.AccAddress `json:"address"`
 	PublicKey string         `json:"pubkey"`
+}
+
+type AccountInfo struct {
+	Address       sdk.AccAddress    `json:"address"`
+	AccountNumber string            `json:"account_number"`
+	Sequence      string            `json:"sequence"`
+	Roles         auth.AccountRoles `json:"roles"`
+}
+
+type PendingAccountInfo struct {
+	Address   sdk.AccAddress    `json:"address"`
+	Roles     auth.AccountRoles `json:"roles"`
+	Approvals []sdk.AccAddress  `json:"approvals"`
 }
 
 type ModelInfoHeadersResult struct {
@@ -44,6 +58,21 @@ type ProposedCertificatesHeadersResult struct {
 type CertificatesHeadersResult struct {
 	Total string            `json:"total"`
 	Items []pki.Certificate `json:"items"`
+}
+
+type AccountHeadersResult struct {
+	Total string        `json:"total"`
+	Items []AccountInfo `json:"items"`
+}
+
+type ProposedAccountHeadersResult struct {
+	Total string               `json:"total"`
+	Items []PendingAccountInfo `json:"items"`
+}
+
+type ProposedAccountToRevokeHeadersResult struct {
+	Total string                          `json:"total"`
+	Items []auth.PendingAccountRevocation `json:"items"`
 }
 
 type TxnResponse struct {

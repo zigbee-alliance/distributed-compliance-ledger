@@ -119,7 +119,7 @@ func TestAuthDemo(t *testing.T) {
 	require.Equal(t, http.StatusNotFound, code)
 
 	// Try to publish another model info by test account.
-	// Ensure that the request is responded with Unauthorized status code.
+	// Ensure that the request is responded with not OK status code.
 	modelInfo = utils.NewMsgAddModelInfo(testAccountKeyInfo.Address)
 	_, code = utils.PublishModelInfo(modelInfo, testAccountKeyInfo)
 	require.NotEqual(t, http.StatusOK, code)

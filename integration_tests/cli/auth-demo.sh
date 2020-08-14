@@ -116,12 +116,12 @@ response_does_not_contain "$result" "\"address\": \"$user_address\""
 echo "$result"
 
 echo "Get $user account"
-result=$(zblcli query auth account --address=$user_address)
-echo "$result"
+result=$(zblcli query auth account --address=$user_address 2>&1) || true
+check_response_and_report "$result" "No account associated with the address"
 
 vid=$RANDOM
 pid=$RANDOM
 name="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=$user_address --yes)
-echo "$result"
+result=$(echo "test1234" | zblcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=$user_address --yes 2>&1) || true
+check_response_and_report "$result" "No account associated with the address"
