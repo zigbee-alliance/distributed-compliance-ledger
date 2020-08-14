@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-
 	"github.com/gorilla/mux"
 )
 
@@ -33,5 +32,17 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc(
 		fmt.Sprintf("/auth/accounts/{%s}", address),
 		accountHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		"/auth/accounts/proposed/revoked",
+		proposeRevokeAccountHandler(cliCtx),
+	).Methods("POST")
+	r.HandleFunc(
+		fmt.Sprintf("/auth/accounts/proposed/revoked/{%s}", address),
+		approveRevokeAccountHandler(cliCtx),
+	).Methods("PATCH")
+	r.HandleFunc(
+		"/auth/accounts/proposed/revoked",
+		proposedAccountsToRevokeHandler(cliCtx, storeName),
 	).Methods("GET")
 }

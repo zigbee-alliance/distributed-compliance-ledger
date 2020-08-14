@@ -53,8 +53,8 @@ func GetKeyInfo(accountName string) (KeyInfo, int) {
 	return keyInfo, code
 }
 
-func ProposeAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles) (TxnResponse, int) {
-	println("Propose Account for: ", keyInfo.Name)
+func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles) (TxnResponse, int) {
+	println("Propose Add Account for: ", keyInfo.Name)
 
 	request := authRest.ProposeAddAccountRequest{
 		BaseReq: rest.BaseReq{
@@ -75,8 +75,8 @@ func ProposeAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles) (T
 	return parseWriteTxnResponse(response, code)
 }
 
-func ApproveAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
-	println("Approve Account for: ", keyInfo.Name)
+func ApproveAddAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
+	println("Approve Add Account for: ", keyInfo.Name)
 
 	request := authRest.ApproveAddAccountRequest{
 		BaseReq: rest.BaseReq{
@@ -88,6 +88,45 @@ func ApproveAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%s", auth.RouterKey, fmt.Sprintf("accounts/proposed/%v", keyInfo.Address.String()))
+
+	response, code := SendPatchRequest(uri, body, signer.Name, constants.Passphrase)
+
+	return parseWriteTxnResponse(response, code)
+}
+
+func ProposeRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
+	println("Propose Revoke Account for: ", keyInfo.Name)
+
+	request := authRest.ProposeRevokeAccountRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainID,
+			From:    signer.Address.String(),
+		},
+		Address: keyInfo.Address,
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", auth.RouterKey, "accounts/proposed/revoked")
+
+	response, code := SendPostRequest(uri, body, signer.Name, constants.Passphrase)
+
+	return parseWriteTxnResponse(response, code)
+}
+
+func ApproveRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
+	println("Approve Revoke Account for: ", keyInfo.Name)
+
+	request := authRest.ApproveRevokeAccountRequest{
+		BaseReq: rest.BaseReq{
+			ChainID: constants.ChainID,
+			From:    signer.Address.String(),
+		},
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", auth.RouterKey, fmt.Sprintf("accounts/proposed/revoked/%v", keyInfo.Address.String()))
 
 	response, code := SendPatchRequest(uri, body, signer.Name, constants.Passphrase)
 
@@ -120,13 +159,26 @@ func GetAccounts() (AccountHeadersResult, int) {
 	return result, code
 }
 
-func GetProposedAccounts() (AccountHeadersResult, int) {
-	println("Get Accounts")
+func GetProposedAccounts() (ProposedAccountHeadersResult, int) {
+	println("Get Proposed Accounts")
 
 	uri := fmt.Sprintf("%s/accounts/proposed", auth.RouterKey)
 	response, code := SendGetRequest(uri)
 
-	var result AccountHeadersResult
+	var result ProposedAccountHeadersResult
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func GetProposedAccountsToRevoke() (ProposedAccountToRevokeHeadersResult, int) {
+	println("Get Proposed Accounts to Revoke")
+
+	uri := fmt.Sprintf("%s/accounts/proposed/revoked", auth.RouterKey)
+	response, code := SendGetRequest(uri)
+
+	var result ProposedAccountToRevokeHeadersResult
 
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
@@ -142,8 +194,8 @@ func CreateNewAccount(roles auth.AccountRoles) KeyInfo {
 
 	keyInfo, _ := CreateKey(name)
 
-	ProposeAccount(keyInfo, jackKeyInfo, roles)
-	ApproveAccount(keyInfo, aliceKeyInfo)
+	ProposeAddAccount(keyInfo, jackKeyInfo, roles)
+	ApproveAddAccount(keyInfo, aliceKeyInfo)
 
 	return keyInfo
 }

@@ -1,17 +1,14 @@
 package auth
 
-//nolint:goimports
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/x/auth"
-
-	"github.com/tendermint/tendermint/crypto/ed25519"
-
-	"github.com/tendermint/tendermint/crypto"
-	"github.com/tendermint/tendermint/crypto/secp256k1"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/tendermint/tendermint/crypto"
+	"github.com/tendermint/tendermint/crypto/ed25519"
+	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
 // SignatureVerificationGasConsumer is the type of function that is used to both consume gas when verifying signatures

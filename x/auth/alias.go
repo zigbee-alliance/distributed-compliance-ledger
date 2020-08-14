@@ -27,9 +27,13 @@ var (
 )
 
 type (
-	Keeper         = keeper.Keeper
-	Account        = types.Account
-	PendingAccount = types.PendingAccount
-	AccountRole    = types.AccountRole
-	AccountRoles   = types.AccountRoles
+	Keeper                        = keeper.Keeper
+	Account                       = types.Account
+	PendingAccount                = types.PendingAccount
+	PendingAccountRevocation      = types.PendingAccountRevocation
+	AccountRole                   = types.AccountRole
+	AccountRoles                  = types.AccountRoles
+	ListAccounts                  = types.ListAccounts
+	ListPendingAccounts           = types.ListPendingAccounts
+	ListPendingAccountRevocations = types.ListPendingAccountRevocations
 )

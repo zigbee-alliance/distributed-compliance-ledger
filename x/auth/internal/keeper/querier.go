@@ -1,8 +1,8 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	QueryAccount             = "account"
-	QueryAllAccounts         = "all_accounts"
-	QueryAllProposedAccounts = "all_proposed_accounts"
+	QueryAccount                      = "account"
+	QueryAllAccounts                  = "all_accounts"
+	QueryAllPendingAccounts           = "all_pending_accounts"
+	QueryAllPendingAccountRevocations = "all_pending_account_revocations"
 )
 
 func NewQuerier(keeper Keeper) sdk.Querier {
@@ -23,8 +24,10 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryAccount(ctx, req, keeper)
 		case QueryAllAccounts:
 			return queryAllAccounts(ctx, req, keeper)
-		case QueryAllProposedAccounts:
-			return queryAllProposedAccounts(ctx, req, keeper)
+		case QueryAllPendingAccounts:
+			return queryAllPendingAccounts(ctx, req, keeper)
+		case QueryAllPendingAccountRevocations:
+			return queryAllPendingAccountRevocations(ctx, req, keeper)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown auth query endpoint")
 		}
@@ -54,7 +57,7 @@ func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (re
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
-	result := types.ListAccountItems{
+	result := types.ListAccounts{
 		Total: 0,
 		Items: []types.Account{},
 	}
@@ -81,19 +84,19 @@ func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (re
 	return res, nil
 }
 
-func queryAllProposedAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+func queryAllPendingAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
-	result := types.ListProposedAccountItems{
+	result := types.ListPendingAccounts{
 		Total: 0,
 		Items: []types.PendingAccount{},
 	}
 	skipped := 0
 
-	keeper.IterateProposedAccounts(ctx, func(account types.PendingAccount) (stop bool) {
+	keeper.IteratePendingAccounts(ctx, func(pendAcc types.PendingAccount) (stop bool) {
 		result.Total++
 
 		if skipped < params.Skip {
@@ -102,7 +105,40 @@ func queryAllProposedAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Kee
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
-			result.Items = append(result.Items, account)
+			result.Items = append(result.Items, pendAcc)
+			return false
+		}
+
+		return false
+	})
+
+	res = codec.MustMarshalJSONIndent(keeper.cdc, result)
+
+	return res, nil
+}
+
+func queryAllPendingAccountRevocations(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+	var params pagination.PaginationParams
+	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
+		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
+	}
+
+	result := types.ListPendingAccountRevocations{
+		Total: 0,
+		Items: []types.PendingAccountRevocation{},
+	}
+	skipped := 0
+
+	keeper.IteratePendingAccountRevocations(ctx, func(revocation types.PendingAccountRevocation) (stop bool) {
+		result.Total++
+
+		if skipped < params.Skip {
+			skipped++
+			return false
+		}
+
+		if len(result.Items) < params.Take || params.Take == 0 {
+			result.Items = append(result.Items, revocation)
 			return false
 		}
 

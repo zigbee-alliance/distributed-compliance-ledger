@@ -1,12 +1,12 @@
 //nolint:testpackage
 package types
 
-// nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 /*
@@ -14,7 +14,7 @@ import (
 */
 
 func TestNewMsgProposeAddAccount(t *testing.T) {
-	var msg = NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
+	msg := NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
 		AccountRoles{}, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -53,7 +53,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 }
 
 func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
-	var msg = NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
+	msg := NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
 		AccountRoles{}, testconstants.Signer)
 
 	expected := `{"type":"auth/ProposeAddAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
@@ -67,7 +67,7 @@ func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveAddAccount(t *testing.T) {
-	var msg = NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_add_account")
@@ -96,9 +96,91 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 }
 
 func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
-	var msg = NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
+	msg := NewMsgApproveAddAccount(testconstants.Address1, testconstants.Signer)
 
 	expected := `{"type":"auth/ApproveAddAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+/*
+	MsgProposeRevokeAccount
+*/
+
+func TestNewMsgProposeRevokeAccount(t *testing.T) {
+	msg := NewMsgProposeRevokeAccount(testconstants.Address1, testconstants.Signer)
+
+	require.Equal(t, msg.Route(), RouterKey)
+	require.Equal(t, msg.Type(), "propose_revoke_account")
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
+}
+
+func TestValidateMsgProposeRevokeAccount(t *testing.T) {
+	cases := []struct {
+		valid bool
+		msg   MsgProposeRevokeAccount
+	}{
+		{true, NewMsgProposeRevokeAccount(testconstants.Address1, testconstants.Signer)},
+		{false, NewMsgProposeRevokeAccount(nil, testconstants.Signer)},
+		{false, NewMsgProposeRevokeAccount(testconstants.Address1, nil)},
+	}
+
+	for _, tc := range cases {
+		err := tc.msg.ValidateBasic()
+
+		if tc.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+}
+
+func TestMsgProposeRevokeAccountGetSignBytes(t *testing.T) {
+	msg := NewMsgProposeRevokeAccount(testconstants.Address1, testconstants.Signer)
+
+	expected := `{"type":"auth/ProposeRevokeAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+/*
+	MsgApproveRevokeAccount
+*/
+
+func TestNewMsgApproveRevokeAccount(t *testing.T) {
+	msg := NewMsgApproveRevokeAccount(testconstants.Address1, testconstants.Signer)
+
+	require.Equal(t, msg.Route(), RouterKey)
+	require.Equal(t, msg.Type(), "approve_revoke_account")
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
+}
+
+func TestValidateMsgApproveRevokeAccount(t *testing.T) {
+	cases := []struct {
+		valid bool
+		msg   MsgApproveRevokeAccount
+	}{
+		{true, NewMsgApproveRevokeAccount(testconstants.Address1, testconstants.Signer)},
+		{false, NewMsgApproveRevokeAccount(nil, testconstants.Signer)},
+		{false, NewMsgApproveRevokeAccount(testconstants.Address1, nil)},
+	}
+
+	for _, tc := range cases {
+		err := tc.msg.ValidateBasic()
+
+		if tc.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+}
+
+func TestMsgApproveRevokeAccountGetSignBytes(t *testing.T) {
+	msg := NewMsgApproveRevokeAccount(testconstants.Address1, testconstants.Signer)
+
+	expected := `{"type":"auth/ApproveRevokeAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
