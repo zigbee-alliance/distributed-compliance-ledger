@@ -67,21 +67,21 @@ In order to send write transactions to the ledger you need:
 
 Here is steps for getting an account:
 * Generate keys and local account: `zblcli keys add <name>`.
-* Share generated `address` and `pubkey` to any `Trustee`. 
-* `Trustee` registers the account on the ledger: `zblcli tx auth create-account --address=<account address> --pubkey=<account pubkey> --from <trustee>`
-* Optionally, `Trustee` can assign some role to the account: `zblcli tx auth assign-role --address=<account address> --role=<role> --from <trustee>`
-* Check account is created: `zblcli query auth account --address=<account address>`
+* Share generated `address` and `pubkey` with a number of `Trustee`s sufficient for account addition operation.
+* One of `Trustee`s proposes to add the account to the ledger: `zblcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<account>`
+* Sufficient number of other `Trustee`s approve the proposed account: `zblcli tx auth approve-add-account --address=<account address> --from=<account>`
+* Check that the active account exists: `zblcli query auth account --address=<account address>`
 
 Example:
-* `zblcli keys add jack`
-* `zblcli tx auth create-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --from trustee`
-* `zblcli tx auth assign-role --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --role="NodeAdmin" --from trustee`
+* `zblcli keys add steve`
+* `zblcli tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --roles=Vendor,NodeAdmin --from jack`
+* `zblcli tx auth approve-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --from alice`
 * `zblcli query auth account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
 ## Trustee Instructions
 
 Account creation consists of two parts. One of the trustees should propose an account by posting `propose-add-account` transaction.
-After this account goes to the proposed accounts set. Then this account must be approved by a majority of trustees (2/3+).
+After this account goes to the proposed accounts set. Then this account must be approved by a majority of trustees (2/3+ including the trustee who has proposed the account).
 Once approved the account can be used to send transactions. See [use_case_txn_auth](use_cases/use_cases_txn_auth.png).
 
 ##### 1. Create an Account proposal for the user
