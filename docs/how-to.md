@@ -66,10 +66,10 @@ In order to send write transactions to the ledger you need:
   - Sign every transaction by the private key.
 
 Here is steps for getting an account:
-* Generate keys and local account: `zblcli keys add <name>`.
+* Generate keys and local account: `zblcli keys add <account name>`.
 * Share generated `address` and `pubkey` with a number of `Trustee`s sufficient for account addition operation.
-* One of `Trustee`s proposes to add the account to the ledger: `zblcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<account>`
-* Sufficient number of other `Trustee`s approve the proposed account: `zblcli tx auth approve-add-account --address=<account address> --from=<account>`
+* One of `Trustee`s proposes to add the account to the ledger: `zblcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
+* Sufficient number of other `Trustee`s approve the proposed account: `zblcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
 * Check that the active account exists: `zblcli query auth account --address=<account address>`
 
 Example:

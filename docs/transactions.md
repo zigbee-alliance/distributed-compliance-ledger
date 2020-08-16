@@ -1177,8 +1177,8 @@ If more than 1 Trustee signature is required to add the account, the account
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-    - `address`: string // account address; bench32 encoded
-    - `pub_key` string // account public key; bech32 encoded
+    - `address`: string // account address; bech32 encoded
+    - `pub_key`: string // account public key; bech32 encoded
     - `roles`: array<string> // the list of roles to assign to account 
 - In State:
   - `auth` store  
@@ -1187,7 +1187,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-add-account --address=<string> --pubkey=<string> --from=<account>`
+    -   `zblcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
 - REST API: 
     -   POST `/auth/accounts/proposed`
     
@@ -1197,7 +1197,7 @@ Approves the proposed account.
 The account is not active until sufficient number of Trustees approve it. 
 
 - Parameters:
-    - `address`
+    - `address`: string // account address; bech32 encoded
 - In State:
   - `auth` store  
   - `1:<address>` : `<account info> + <list of approvers>`  
@@ -1205,7 +1205,7 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth approve-add-account .... `
+    -   `zblcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   PATCH `/auth/accounts/proposed/<address>`
     
@@ -1233,7 +1233,7 @@ If more than 1 Trustee signature is required to revoke the account, the revocati
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-    - `address`
+    - `address`: string // account address; bech32 encoded
 - In State:
   - `auth` store  
   - `3:<address>` : `<account info> + <list of approvers>`
@@ -1241,9 +1241,9 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-revoke-account .... `
+    -   `zblcli tx auth propose-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
-    -   POST `/auth/accounts/revoked`
+    -   POST `/auth/accounts/proposed/revoked`
     
 #### APPROVE_REVOKE_ACCOUNT
 Approves the proposed revocation of the account.    
@@ -1251,7 +1251,7 @@ Approves the proposed revocation of the account.
 The account is not revoked until sufficient number of Trustees approve it. 
 
 - Parameters:
-    - `address`
+    - `address`: string // account address; bech32 encoded
 - In State:
   - `auth` store  
   - `3:<address>` : `<account info> + <list of approvers>`  
@@ -1259,9 +1259,9 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth approve-revoke-account .... `
+    -   `zblcli tx auth approve-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
-    -   PATCH `/auth/accounts/revoked/<address>`
+    -   PATCH `/auth/accounts/proposed/revoked/<address>`
     
 #### GET_ALL_PROPOSED_ACCOUNTS
 Gets all proposed but not approved accounts.
@@ -1296,7 +1296,7 @@ Gets all proposed but not approved accounts to be revoked.
 
 - Parameters: No
 - CLI command: 
-    -   `zblcli query auth all-proposed-accounts-to-revoke .... `
+    -   `zblcli query auth all-proposed-accounts-to-revoke`
 - REST API: 
     -   GET `/auth/accounts/proposed/revoked`
     
