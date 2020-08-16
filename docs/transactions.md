@@ -398,10 +398,8 @@ Gets all approved root certificates.
 }
 ```
 
-
 #### GET_X509_CERT
-Gets a certificate (either root, intermediate or leaf) by the given 
-subject and subject key id attributes.
+Gets a certificate (either root, intermediate or leaf) by the given subject and subject key id attributes.
 
 - Parameters:
   - `subject`: string  - certificates's `Subject`
@@ -420,7 +418,10 @@ subject and subject key id attributes.
         "subject": string,
         "subject_key_id": string,
         "serial_number": string,
-        "root_subject_key_id": string,
+        "issuer": string, // omitted for root certificates
+        "authority_key_id": string, // omitted for root certificates
+        "root_subject": string, // omitted for root certificates
+        "root_subject_key_id": string, // omitted for root certificates
         "type": string, // root or intermediate
         "owner": string,
       }
@@ -430,6 +431,38 @@ subject and subject key id attributes.
 }
 ```
 
+#### GET_X509_CERT_CHAIN
+Gets the complete chain for a certificate with the given combination of subject and subject-key-id.
+
+- Parameters:
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
+  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+- CLI command: 
+    -   `zblcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
+- REST API: 
+    -   GET `/pki/certs/chain/<subject>/<subject_key_id>`
+```json
+{
+  "result": {
+    "items": [
+      {
+        "pem_cert": string, //pem encoded certificate
+        "subject": string,
+        "subject_key_id": string,
+        "serial_number": string,
+        "issuer": string, // omitted for root certificate (last in the chain)
+        "authority_key_id": string, // omitted for root certificate (last in the chain)
+        "root_subject": string, // omitted for root certificate (last in the chain)
+        "root_subject_key_id": string, // omitted for root certificate (last in the chain)
+        "type": string, // root or intermediate
+        "owner": string,
+      }
+    ]
+  },
+  "height": string
+}
+```
 
 #### GET_ALL_X509_CERTS
 Gets all certificates (root, intermediate and leaf).
@@ -461,8 +494,10 @@ only the certificate chains started with the given root certificate are returned
         "subject": string,
         "subject_key_id": string,
         "serial_number": string,
-        "root_subject": optional(string), // empty for root certificate
-        "root_subject_key_id": optional(string), // empty for root certificate
+        "issuer": string, // omitted for root certificates
+        "authority_key_id": string, // omitted for root certificates
+        "root_subject": string, // omitted for root certificates
+        "root_subject_key_id": string, // omitted for root certificates
         "type": string, // root or intermediate
         "owner": string,
       }
@@ -500,8 +535,10 @@ only the certificate chains started with the given root certificate are returned
         "subject": string,
         "subject_key_id": string,
         "serial_number": string,
-        "root_subject": optional(string), // empty for root certificate
-        "root_subject_key_id": optional(string), // empty for root certificate
+        "issuer": string, // omitted for root certificates
+        "authority_key_id": string, // omitted for root certificates
+        "root_subject": string, // omitted for root certificates
+        "root_subject_key_id": string, // omitted for root certificates
         "type": string, // root or intermediate
         "owner": string,
       }
