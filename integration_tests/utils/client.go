@@ -55,7 +55,7 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 	response := ReadResponseBody(resp)
 	println(string(response))
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		return nil, resp.StatusCode
 	}
 

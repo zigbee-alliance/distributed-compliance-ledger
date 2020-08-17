@@ -26,4 +26,6 @@ func RegisterCodec(cdc *codec.Codec) {
 	// register custom types
 	cdc.RegisterConcrete(MsgProposeAddAccount{}, ModuleName+"/ProposeAddAccount", nil)
 	cdc.RegisterConcrete(MsgApproveAddAccount{}, ModuleName+"/ApproveAddAccount", nil)
+	cdc.RegisterConcrete(MsgProposeRevokeAccount{}, ModuleName+"/ProposeRevokeAccount", nil)
+	cdc.RegisterConcrete(MsgApproveRevokeAccount{}, ModuleName+"/ApproveRevokeAccount", nil)
 }

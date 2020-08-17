@@ -1,30 +1,30 @@
 package app
 
-//nolint:goimports
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
-	authutils "github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	"os"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
-	abci "github.com/tendermint/tendermint/abci/types"
-	cmn "github.com/tendermint/tendermint/libs/common"
-	"github.com/tendermint/tendermint/libs/log"
-	tmtypes "github.com/tendermint/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
+	authutils "github.com/cosmos/cosmos-sdk/x/auth"
+	"github.com/cosmos/cosmos-sdk/x/params"
+
+	abci "github.com/tendermint/tendermint/abci/types"
+	cmn "github.com/tendermint/tendermint/libs/common"
+	"github.com/tendermint/tendermint/libs/log"
+	tmtypes "github.com/tendermint/tendermint/types"
+	dbm "github.com/tendermint/tm-db"
 )
 
 const appName = "zb-ledger"

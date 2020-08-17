@@ -19,14 +19,8 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 }
 
 /*
-	Main Account Index
+	Account
 */
-// Assign sequence number to account object.
-func (k Keeper) NewAccountWithNumber(ctx sdk.Context, account types.Account) types.Account {
-	account.AccountNumber = k.GetNextAccountNumber(ctx)
-	return account
-}
-
 // Get the Account record associated with an address.
 func (k Keeper) GetAccount(ctx sdk.Context, addr sdk.AccAddress) (acc types.Account) {
 	store := ctx.KVStore(k.storeKey)
@@ -60,14 +54,6 @@ func (k Keeper) SetAccount(ctx sdk.Context, acc types.Account) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryBare(acc)
 	store.Set(types.GetAccountKey(acc.Address), bz)
-}
-
-// Assign account number and store it.
-func (k Keeper) AssignNumberAndStoreAccount(ctx sdk.Context, account types.Account) {
-	store := ctx.KVStore(k.storeKey)
-	account.AccountNumber = k.GetNextAccountNumber(ctx)
-	bz := k.cdc.MustMarshalBinaryBare(account)
-	store.Set(types.GetAccountKey(account.Address), bz)
 }
 
 // Check if the Account record associated with an address is present in the store or not.
@@ -133,42 +119,49 @@ func (k Keeper) CountAccountsWithRole(ctx sdk.Context, roleToCount types.Account
 	return res
 }
 
-/*
-	Proposed Account
-*/
-
-// Gets the Proposed Account record associated with an address.
-func (k Keeper) GetProposedAccount(ctx sdk.Context, address sdk.AccAddress) types.PendingAccount {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.GetPendingAccountKey(address))
-	if bz == nil {
-		panic("Proposed Account does not exist")
+// Deletes the Account from the store.
+func (k Keeper) DeleteAccount(ctx sdk.Context, address sdk.AccAddress) {
+	if !k.IsAccountPresent(ctx, address) {
+		panic("Account does not exist")
 	}
 
-	var cert types.PendingAccount
-	k.cdc.MustUnmarshalBinaryBare(bz, &cert)
-	return cert
-}
-
-// Sets Proposed Account record for an address.
-func (k Keeper) SetProposedAccount(ctx sdk.Context, account types.PendingAccount) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.GetPendingAccountKey(account.Address), k.cdc.MustMarshalBinaryBare(account))
+	store.Delete(types.GetAccountKey(address))
 }
 
-// Check if the Proposed Account record associated with an address is present in the store or not.
-func (k Keeper) IsProposedAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
+/*
+	Pending Account
+*/
+// Gets the Pending Account record associated with an address.
+func (k Keeper) GetPendingAccount(ctx sdk.Context, address sdk.AccAddress) types.PendingAccount {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.GetPendingAccountKey(address))
+
+	if bz == nil {
+		panic("Pending Account does not exist")
+	}
+
+	var pendAcc types.PendingAccount
+
+	k.cdc.MustUnmarshalBinaryBare(bz, &pendAcc)
+
+	return pendAcc
+}
+
+// Sets Pending Account record for an address.
+func (k Keeper) SetPendingAccount(ctx sdk.Context, pendAcc types.PendingAccount) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.GetPendingAccountKey(pendAcc.Address), k.cdc.MustMarshalBinaryBare(pendAcc))
+}
+
+// Check if the Pending Account record associated with an address is present in the store or not.
+func (k Keeper) IsPendingAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.GetPendingAccountKey(address))
 }
 
-// Count total Proposed Accounts.
-func (k Keeper) CountTotalProposedAccounts(ctx sdk.Context) int {
-	return k.countTotal(ctx, types.PendingAccountPrefix)
-}
-
-// Iterate over all Proposed Accounts.
-func (k Keeper) IterateProposedAccounts(ctx sdk.Context, process func(info types.PendingAccount) (stop bool)) {
+// Iterate over all Pending Accounts.
+func (k Keeper) IteratePendingAccounts(ctx sdk.Context, process func(info types.PendingAccount) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	iter := sdk.KVStorePrefixIterator(store, types.PendingAccountPrefix)
@@ -181,11 +174,11 @@ func (k Keeper) IterateProposedAccounts(ctx sdk.Context, process func(info types
 
 		val := iter.Value()
 
-		var account types.PendingAccount
+		var pendAcc types.PendingAccount
 
-		k.cdc.MustUnmarshalBinaryBare(val, &account)
+		k.cdc.MustUnmarshalBinaryBare(val, &pendAcc)
 
-		if process(account) {
+		if process(pendAcc) {
 			return
 		}
 
@@ -193,14 +186,82 @@ func (k Keeper) IterateProposedAccounts(ctx sdk.Context, process func(info types
 	}
 }
 
-// Deletes the Proposed Account from the store.
-func (k Keeper) DeleteProposedAccount(ctx sdk.Context, address sdk.AccAddress) {
-	if !k.IsProposedAccountPresent(ctx, address) {
-		panic("Proposed Account does not exist")
+// Deletes the Pending Account from the store.
+func (k Keeper) DeletePendingAccount(ctx sdk.Context, address sdk.AccAddress) {
+	if !k.IsPendingAccountPresent(ctx, address) {
+		panic("Pending Account does not exist")
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GetPendingAccountKey(address))
+}
+
+/*
+	Pending Account Revocation
+*/
+// Gets the Pending Account Revocation record associated with an address.
+func (k Keeper) GetPendingAccountRevocation(ctx sdk.Context, address sdk.AccAddress) types.PendingAccountRevocation {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.GetPendingAccountRevocationKey(address))
+
+	if bz == nil {
+		panic("Pending Account Revocation does not exist")
+	}
+
+	var revoc types.PendingAccountRevocation
+
+	k.cdc.MustUnmarshalBinaryBare(bz, &revoc)
+
+	return revoc
+}
+
+// Sets Pending Account Revocation record for an address.
+func (k Keeper) SetPendingAccountRevocation(ctx sdk.Context, revoc types.PendingAccountRevocation) {
+	store := ctx.KVStore(k.storeKey)
+	store.Set(types.GetPendingAccountRevocationKey(revoc.Address), k.cdc.MustMarshalBinaryBare(revoc))
+}
+
+// Check if the Pending Account Revocation record associated with an address is present in the store or not.
+func (k Keeper) IsPendingAccountRevocationPresent(ctx sdk.Context, address sdk.AccAddress) bool {
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.GetPendingAccountRevocationKey(address))
+}
+
+// Iterate over all Pending Account Revocations.
+func (k Keeper) IteratePendingAccountRevocations(ctx sdk.Context,
+	process func(info types.PendingAccountRevocation) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+
+	iter := sdk.KVStorePrefixIterator(store, types.PendingAccountRevocationPrefix)
+	defer iter.Close()
+
+	for {
+		if !iter.Valid() {
+			return
+		}
+
+		val := iter.Value()
+
+		var revoc types.PendingAccountRevocation
+
+		k.cdc.MustUnmarshalBinaryBare(val, &revoc)
+
+		if process(revoc) {
+			return
+		}
+
+		iter.Next()
+	}
+}
+
+// Deletes the Pending Account Revocation from the store.
+func (k Keeper) DeletePendingAccountRevocation(ctx sdk.Context, address sdk.AccAddress) {
+	if !k.IsPendingAccountRevocationPresent(ctx, address) {
+		panic("Pending Account Revocation does not exist")
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.GetPendingAccountRevocationKey(address))
 }
 
 /*
@@ -220,21 +281,4 @@ func (k Keeper) GetNextAccountNumber(ctx sdk.Context) (accNumber uint64) {
 	store.Set(types.AccountNumberCounterKey, bz)
 
 	return
-}
-
-/*
-	Common functions
-*/
-func (k Keeper) countTotal(ctx sdk.Context, prefix []byte) int {
-	store := ctx.KVStore(k.storeKey)
-	res := 0
-
-	iter := sdk.KVStorePrefixIterator(store, prefix)
-	defer iter.Close()
-
-	for ; iter.Valid(); iter.Next() {
-		res++
-	}
-
-	return res
 }

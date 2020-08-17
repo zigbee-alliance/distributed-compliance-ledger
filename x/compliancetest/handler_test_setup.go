@@ -1,8 +1,9 @@
 package compliancetest
 
-//nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
@@ -14,7 +15,6 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"testing"
 )
 
 type TestSetup struct {
@@ -63,7 +63,8 @@ func Setup() TestSetup {
 	handler := NewHandler(compliancetestKeeper, modelinfoKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.TestHouse})
-	authKeeper.AssignNumberAndStoreAccount(ctx, account)
+	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
+	authKeeper.SetAccount(ctx, account)
 
 	setup := TestSetup{
 		Cdc:                  cdc,

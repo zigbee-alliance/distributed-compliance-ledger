@@ -1,15 +1,14 @@
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func accountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
@@ -34,7 +33,20 @@ func proposedAccountsHandler(cliCtx context.CLIContext, storeName string) http.H
 			return
 		}
 
-		restCtx.QueryList(fmt.Sprintf("custom/%s/%s", storeName, keeper.QueryAllProposedAccounts), params)
+		restCtx.QueryList(fmt.Sprintf("custom/%s/%s", storeName, keeper.QueryAllPendingAccounts), params)
+	}
+}
+
+func proposedAccountsToRevokeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		params, err := restCtx.ParsePaginationParams()
+		if err != nil {
+			return
+		}
+
+		restCtx.QueryList(fmt.Sprintf("custom/%s/%s", storeName, keeper.QueryAllPendingAccountRevocations), params)
 	}
 }
 
@@ -52,14 +64,14 @@ func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		}
 
 		res, height, err := cliCtx.QueryStore(types.GetAccountKey(address), storeName)
-		if err != nil {
-			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
+		if err != nil || res == nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrAccountDoesNotExist(address).Error())
 			return
 		}
 
 		var account types.Account
-		cliCtx.Codec.MustUnmarshalBinaryBare(res, &account)
 
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &account)
 		restCtx.RespondWithHeight(types.ZBAccount(account), height)
 	}
 }

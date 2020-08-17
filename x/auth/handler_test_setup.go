@@ -1,8 +1,7 @@
 package auth
 
-// nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
 	sdk "github.com/cosmos/cosmos-sdk/types"

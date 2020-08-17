@@ -1,12 +1,12 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestKeeper_AccountGetSet(t *testing.T) {
@@ -46,44 +46,86 @@ func TestKeeper_AccountGetSet(t *testing.T) {
 	// count accounts with role
 	require.Equal(t, 1, setup.Keeper.CountAccountsWithRole(setup.Ctx, types.Trustee))
 	require.Equal(t, 0, setup.Keeper.CountAccountsWithRole(setup.Ctx, types.Vendor))
+
+	// delete account
+	setup.Keeper.DeleteAccount(setup.Ctx, testconstants.Address1)
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, testconstants.Address1))
+	require.Panics(t, func() {
+		setup.Keeper.GetAccount(setup.Ctx, testconstants.Address1)
+	})
 }
 
-func TestKeeper_ProposedAccountGetSet(t *testing.T) {
+func TestKeeper_PendingAccountGetSet(t *testing.T) {
 	setup := Setup()
 
 	// check if pending account present
-	require.False(t, setup.Keeper.IsProposedAccountPresent(setup.Ctx, testconstants.Address1))
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, testconstants.Address1))
 
-	// no account before its created
+	// no pending account before its created
 	require.Panics(t, func() {
-		setup.Keeper.GetProposedAccount(setup.Ctx, testconstants.Address1)
+		setup.Keeper.GetPendingAccount(setup.Ctx, testconstants.Address1)
 	})
 
-	// store proposed account
-	account := types.NewPendingAccount(
+	// store pending account
+	pendAcc := types.NewPendingAccount(
 		testconstants.Address1,
 		testconstants.PubKey1,
 		types.AccountRoles{types.Trustee},
 		testconstants.Address2,
 	)
 
-	setup.Keeper.SetProposedAccount(setup.Ctx, account)
+	setup.Keeper.SetPendingAccount(setup.Ctx, pendAcc)
 
-	// check if account present
-	require.True(t, setup.Keeper.IsProposedAccountPresent(setup.Ctx, testconstants.Address1))
+	// check if pending account present
+	require.True(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, testconstants.Address1))
 
-	// get account
-	receivedAccount := setup.Keeper.GetProposedAccount(setup.Ctx, testconstants.Address1)
-	require.Equal(t, account.Address, receivedAccount.Address)
-	require.Equal(t, account.PubKey, receivedAccount.PubKey)
-	require.Equal(t, account.Roles, receivedAccount.Roles)
-	require.Equal(t, account.Approvals, receivedAccount.Approvals)
+	// get pending account
+	receivedPendAcc := setup.Keeper.GetPendingAccount(setup.Ctx, testconstants.Address1)
+	require.Equal(t, pendAcc.Address, receivedPendAcc.Address)
+	require.Equal(t, pendAcc.PubKey, receivedPendAcc.PubKey)
+	require.Equal(t, pendAcc.Roles, receivedPendAcc.Roles)
+	require.Equal(t, pendAcc.Approvals, receivedPendAcc.Approvals)
 
-	// delete account
-	setup.Keeper.DeleteProposedAccount(setup.Ctx, testconstants.Address1)
-	require.False(t, setup.Keeper.IsProposedAccountPresent(setup.Ctx, testconstants.Address1))
+	// delete pending account
+	setup.Keeper.DeletePendingAccount(setup.Ctx, testconstants.Address1)
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, testconstants.Address1))
 	require.Panics(t, func() {
-		setup.Keeper.GetProposedAccount(setup.Ctx, testconstants.Address1)
+		setup.Keeper.GetPendingAccount(setup.Ctx, testconstants.Address1)
+	})
+}
+
+func TestKeeper_PendingAccountRevocationGetSet(t *testing.T) {
+	setup := Setup()
+
+	// check if pending account revocation present
+	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, testconstants.Address1))
+
+	// no pending account revocation before its created
+	require.Panics(t, func() {
+		setup.Keeper.GetPendingAccountRevocation(setup.Ctx, testconstants.Address1)
+	})
+
+	// store pending account revocation
+	revocation := types.NewPendingAccountRevocation(
+		testconstants.Address1,
+		testconstants.Address2,
+	)
+
+	setup.Keeper.SetPendingAccountRevocation(setup.Ctx, revocation)
+
+	// check if pending account revocation present
+	require.True(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, testconstants.Address1))
+
+	// get pending account revocation
+	receivedRevocation := setup.Keeper.GetPendingAccountRevocation(setup.Ctx, testconstants.Address1)
+	require.Equal(t, revocation.Address, receivedRevocation.Address)
+	require.Equal(t, revocation.Approvals, receivedRevocation.Approvals)
+
+	// delete pending account revocation
+	setup.Keeper.DeletePendingAccountRevocation(setup.Ctx, testconstants.Address1)
+	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, testconstants.Address1))
+	require.Panics(t, func() {
+		setup.Keeper.GetPendingAccountRevocation(setup.Ctx, testconstants.Address1)
 	})
 }
 

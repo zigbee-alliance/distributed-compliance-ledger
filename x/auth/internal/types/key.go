@@ -11,8 +11,9 @@ const (
 )
 
 var (
-	PendingAccountPrefix = []byte{0x01} //  prefix for each key to a pending account
-	AccountPrefix = []byte{0x02} //  prefix for each key to an account
+	PendingAccountPrefix           = []byte{0x01} // prefix for each key to a pending account
+	AccountPrefix                  = []byte{0x02} // prefix for each key to an account
+	PendingAccountRevocationPrefix = []byte{0x03} // prefix for each key to a pending account revocation
 
 	AccountNumberCounterKey = []byte("globalAccountNumber") // key for account number counter
 )
@@ -25,4 +26,9 @@ func GetPendingAccountKey(addr sdk.AccAddress) []byte {
 // Key builder for Account.
 func GetAccountKey(addr sdk.AccAddress) []byte {
 	return append(AccountPrefix, addr.Bytes()...)
+}
+
+// Key builder for Pending Account Revocation.
+func GetPendingAccountRevocationKey(addr sdk.AccAddress) []byte {
+	return append(PendingAccountRevocationPrefix, addr.Bytes()...)
 }

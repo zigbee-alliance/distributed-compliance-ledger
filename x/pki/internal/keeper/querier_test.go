@@ -1,14 +1,14 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
+	"testing"
+
 	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func TestQuerier_QueryProposedX509RootCert(t *testing.T) {
@@ -286,7 +286,7 @@ func TestQuerier_QueryAllSubjectX509Certs_Filer(t *testing.T) {
 
 	paginationParams := pagination.NewPaginationParams(0, 0)
 
-	params, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, string(firstRootID+1), ""))
+	params := setup.Cdc.MustMarshalJSON(types.NewListCertificatesQueryParams(paginationParams, string(firstRootID+1), ""))
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -304,14 +304,10 @@ func TestQuerier_QueryAllSubjectX509Certs_Filer(t *testing.T) {
 
 func emptyQueryParams(setup TestSetup) []byte {
 	paginationParams := pagination.NewPaginationParams(0, 0)
-	res, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
-
-	return res
+	return setup.Cdc.MustMarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
 }
 
 func queryParams(setup TestSetup, skip int, take int) []byte {
 	paginationParams := pagination.NewPaginationParams(skip, take)
-	res, _ := setup.Cdc.MarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
-
-	return res
+	return setup.Cdc.MustMarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
 }
