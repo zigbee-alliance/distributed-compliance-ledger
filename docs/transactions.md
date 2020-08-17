@@ -398,10 +398,8 @@ Gets all approved root certificates.
 }
 ```
 
-
 #### GET_X509_CERT
-Gets a certificate (either root, intermediate or leaf) by the given 
-subject and subject key id attributes.
+Gets a certificate (either root, intermediate or leaf) by the given subject and subject key id attributes.
 
 - Parameters:
   - `subject`: string  - certificates's `Subject`
@@ -420,7 +418,10 @@ subject and subject key id attributes.
         "subject": string,
         "subject_key_id": string,
         "serial_number": string,
-        "root_subject_key_id": string,
+        "issuer": string, // omitted for root certificates
+        "authority_key_id": string, // omitted for root certificates
+        "root_subject": string, // omitted for root certificates
+        "root_subject_key_id": string, // omitted for root certificates
         "type": string, // root or intermediate
         "owner": string,
       }
@@ -430,6 +431,38 @@ subject and subject key id attributes.
 }
 ```
 
+#### GET_X509_CERT_CHAIN
+Gets the complete chain for a certificate with the given combination of subject and subject-key-id.
+
+- Parameters:
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
+  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+- CLI command: 
+    -   `zblcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
+- REST API: 
+    -   GET `/pki/certs/chain/<subject>/<subject_key_id>`
+```json
+{
+  "result": {
+    "items": [
+      {
+        "pem_cert": string, //pem encoded certificate
+        "subject": string,
+        "subject_key_id": string,
+        "serial_number": string,
+        "issuer": string, // omitted for root certificate (last in the chain)
+        "authority_key_id": string, // omitted for root certificate (last in the chain)
+        "root_subject": string, // omitted for root certificate (last in the chain)
+        "root_subject_key_id": string, // omitted for root certificate (last in the chain)
+        "type": string, // root or intermediate
+        "owner": string,
+      }
+    ]
+  },
+  "height": string
+}
+```
 
 #### GET_ALL_X509_CERTS
 Gets all certificates (root, intermediate and leaf).
@@ -461,8 +494,10 @@ only the certificate chains started with the given root certificate are returned
         "subject": string,
         "subject_key_id": string,
         "serial_number": string,
-        "root_subject": optional(string), // empty for root certificate
-        "root_subject_key_id": optional(string), // empty for root certificate
+        "issuer": string, // omitted for root certificates
+        "authority_key_id": string, // omitted for root certificates
+        "root_subject": string, // omitted for root certificates
+        "root_subject_key_id": string, // omitted for root certificates
         "type": string, // root or intermediate
         "owner": string,
       }
@@ -500,8 +535,10 @@ only the certificate chains started with the given root certificate are returned
         "subject": string,
         "subject_key_id": string,
         "serial_number": string,
-        "root_subject": optional(string), // empty for root certificate
-        "root_subject_key_id": optional(string), // empty for root certificate
+        "issuer": string, // omitted for root certificates
+        "authority_key_id": string, // omitted for root certificates
+        "root_subject": string, // omitted for root certificates
+        "root_subject_key_id": string, // omitted for root certificates
         "type": string, // root or intermediate
         "owner": string,
       }
@@ -1140,8 +1177,8 @@ If more than 1 Trustee signature is required to add the account, the account
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-    - `address`: string // account address; bench32 encoded
-    - `pub_key` string // account public key; bech32 encoded
+    - `address`: string // account address; bech32 encoded
+    - `pub_key`: string // account public key; bech32 encoded
     - `roles`: array<string> // the list of roles to assign to account 
 - In State:
   - `auth` store  
@@ -1150,7 +1187,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-add-account --address=<string> --pubkey=<string> --from=<account>`
+    -   `zblcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
 - REST API: 
     -   POST `/auth/accounts/proposed`
     
@@ -1160,7 +1197,7 @@ Approves the proposed account.
 The account is not active until sufficient number of Trustees approve it. 
 
 - Parameters:
-    - `address`
+    - `address`: string // account address; bech32 encoded
 - In State:
   - `auth` store  
   - `1:<address>` : `<account info> + <list of approvers>`  
@@ -1168,7 +1205,7 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth approve-add-account .... `
+    -   `zblcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   PATCH `/auth/accounts/proposed/<address>`
     
@@ -1196,7 +1233,7 @@ If more than 1 Trustee signature is required to revoke the account, the revocati
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-    - `address`
+    - `address`: string // account address; bech32 encoded
 - In State:
   - `auth` store  
   - `3:<address>` : `<account info> + <list of approvers>`
@@ -1204,9 +1241,9 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-revoke-account .... `
+    -   `zblcli tx auth propose-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
-    -   POST `/auth/accounts/revoked`
+    -   POST `/auth/accounts/proposed/revoked`
     
 #### APPROVE_REVOKE_ACCOUNT
 Approves the proposed revocation of the account.    
@@ -1214,7 +1251,7 @@ Approves the proposed revocation of the account.
 The account is not revoked until sufficient number of Trustees approve it. 
 
 - Parameters:
-    - `address`
+    - `address`: string // account address; bech32 encoded
 - In State:
   - `auth` store  
   - `3:<address>` : `<account info> + <list of approvers>`  
@@ -1222,9 +1259,9 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth approve-revoke-account .... `
+    -   `zblcli tx auth approve-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
-    -   PATCH `/auth/accounts/revoked/<address>`
+    -   PATCH `/auth/accounts/proposed/revoked/<address>`
     
 #### GET_ALL_PROPOSED_ACCOUNTS
 Gets all proposed but not approved accounts.
@@ -1259,7 +1296,7 @@ Gets all proposed but not approved accounts to be revoked.
 
 - Parameters: No
 - CLI command: 
-    -   `zblcli query auth all-proposed-accounts-to-revoke .... `
+    -   `zblcli query auth all-proposed-accounts-to-revoke`
 - REST API: 
     -   GET `/auth/accounts/proposed/revoked`
     

@@ -135,8 +135,8 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 func GetCmdX509CertChain(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "x509-cert-chain",
-		Short: "Gets a certificate chain (including root, intermediate and certificate itself) " +
-			"by the given combination of subject and subject-key-id",
+		Short: "Gets the complete chain for a certificate with " +
+			"the given combination of subject and subject-key-id",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
