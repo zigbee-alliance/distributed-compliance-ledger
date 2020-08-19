@@ -7,11 +7,11 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func accountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+func accountsHandler(cliCtx CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 

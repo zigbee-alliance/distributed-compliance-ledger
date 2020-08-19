@@ -4,6 +4,8 @@ package cli
 import (
 	"fmt"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/legacy"
+	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -13,16 +15,15 @@ import (
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
+	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 )
 
 // GetTxCmd returns the transaction commands for this module.
-func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
+func GetTxCmd(storeKey string, cdc *codec.LegacyAmino) *cobra.Command {
 	validatorTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
 		Short:                      "validator transaction subcommands",
@@ -31,22 +32,25 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	validatorTxCmd.AddCommand(flags.PostCommands(
-		GetCmdCreateValidator(cdc),
+	cmdCreateValidator := GetCmdCreateValidator(cdc)
+
+
+	validatorTxCmd.AddCommand(legacy.PostCommands(
+		cmdCreateValidator,
 	)...)
 
 	return validatorTxCmd
 }
 
 // GetCmdCreateValidator implements the create validator command handler.
-func GetCmdCreateValidator(cdc *codec.Codec) *cobra.Command {
+func GetCmdCreateValidator(cdc *codec.LegacyAmino) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-node",
 		Short: "Adds a new validator node",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(utils.GetTxEncoder(cdc))
+			txBldr := auth.NewTxBuilderFromCLI().WithTxEncoder(authclient.GetTxEncoder(cdc))
 
 			txBldr, msg, err := BuildCreateValidatorMsg(cliCtx.Context(), txBldr, false)
 			if err != nil {
