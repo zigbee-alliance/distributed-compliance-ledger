@@ -12,12 +12,10 @@ const (
 )
 
 var (
-	NewKeeper               = keeper.NewKeeper
-	NewQuerier              = keeper.NewQuerier
-	ModuleCdc               = types.ModuleCdc
-	RegisterCodec           = types.RegisterCodec
-	RootCertificate         = types.RootCertificate
-	IntermediateCertificate = types.IntermediateCertificate
+	NewKeeper     = keeper.NewKeeper
+	NewQuerier    = keeper.NewQuerier
+	ModuleCdc     = types.ModuleCdc
+	RegisterCodec = types.RegisterCodec
 )
 
 type (

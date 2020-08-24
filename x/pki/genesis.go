@@ -48,13 +48,6 @@ func validateApprovedCertificates(approvedCertificateRecords []types.Certificate
 						" Error: Empty X509 Certificate", certificate.PemCert))
 			}
 
-			if certificate.Type != types.RootCertificate && certificate.Type != types.IntermediateCertificate {
-				return sdk.ErrUnknownRequest(
-					fmt.Sprintf("invalid ApprovedCertificateRecords: value: %v. Error: Invalid Certificate Type: "+
-						"unknown type; supported types: [%s,%s]",
-						certificate.Type, types.RootCertificate, types.IntermediateCertificate))
-			}
-
 			if len(certificate.Subject) == 0 {
 				return sdk.ErrUnknownRequest(
 					fmt.Sprintf("Invalid ApprovedCertificateRecords: value: %s. "+
@@ -107,14 +100,14 @@ func validatePendingCertificates(pendingCertificateRecords []types.ProposedCerti
 
 func validateChildCertificatesRecords(childCertificatesRecords []types.ChildCertificates) error {
 	for _, record := range childCertificatesRecords {
-		if len(record.Subject) == 0 {
+		if len(record.Issuer) == 0 {
 			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid ChildCertificatesRecords: value: %s. Error: Empty Subject", record.Subject))
+				fmt.Sprintf("Invalid ChildCertificatesRecords: value: %s. Error: Empty Issuer", record.Issuer))
 		}
 
-		if len(record.SubjectKeyID) == 0 {
+		if len(record.AuthorityKeyID) == 0 {
 			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid ChildCertificatesRecords: value: %s. Error: Empty SubjectKeyID", record.SubjectKeyID))
+				fmt.Sprintf("Invalid ChildCertificatesRecords: value: %s. Error: Empty AuthorityKeyId", record.AuthorityKeyID))
 		}
 	}
 
@@ -132,12 +125,12 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 
 	for _, record := range data.ApprovedCertificateRecords {
 		if len(record.Items) > 0 {
-			keeper.SetCertificates(ctx, record.Items[0].Subject, record.Items[0].SubjectKeyID, record)
+			keeper.SetApprovedCertificates(ctx, record.Items[0].Subject, record.Items[0].SubjectKeyID, record)
 		}
 	}
 
 	for _, record := range data.ChildCertificatesRecords {
-		keeper.SetChildCertificatesList(ctx, record)
+		keeper.SetChildCertificates(ctx, record)
 	}
 
 	return []abci.ValidatorUpdate{}
@@ -150,7 +143,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	var childCertificatesList []types.ChildCertificates
 
-	k.IterateCertificates(ctx, "", func(certificates types.Certificates) (stop bool) {
+	k.IterateApprovedCertificatesRecords(ctx, "", func(certificates types.Certificates) (stop bool) {
 		approvedCertificates = append(approvedCertificates, certificates)
 		return false
 	})

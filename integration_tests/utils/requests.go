@@ -9,6 +9,7 @@ import (
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	extRest "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	authRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/client/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
@@ -22,7 +23,7 @@ import (
 	keyUtil "github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/go-bip39"
 	"github.com/tendermint/tendermint/libs/common"
@@ -57,7 +58,7 @@ func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles)
 	println("Propose Add Account for: ", keyInfo.Name)
 
 	request := authRest.ProposeAddAccountRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -78,8 +79,8 @@ func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles)
 func ApproveAddAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	println("Approve Add Account for: ", keyInfo.Name)
 
-	request := authRest.ApproveAddAccountRequest{
-		BaseReq: rest.BaseReq{
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -98,7 +99,7 @@ func ProposeRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	println("Propose Revoke Account for: ", keyInfo.Name)
 
 	request := authRest.ProposeRevokeAccountRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -117,8 +118,8 @@ func ProposeRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 func ApproveRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	println("Approve Revoke Account for: ", keyInfo.Name)
 
-	request := authRest.ApproveRevokeAccountRequest{
-		BaseReq: rest.BaseReq{
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -219,7 +220,7 @@ func SignMessage(sender KeyInfo, txn types.StdTx) (json.RawMessage, int) {
 	println("Sign prepared transaction")
 
 	stdSigMsg := extRest.SignMessageRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    sender.Address.String(),
 		},
@@ -269,7 +270,7 @@ func PrepareModelInfoTransaction(model modelinfo.MsgAddModelInfo) (types.StdTx, 
 
 func SendModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]byte, int) {
 	request := modelinfoRest.ModelInfoRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    model.Signer.String(),
 		},
@@ -362,7 +363,7 @@ func PrepareTestingResultTransaction(testingResult compliancetest.MsgAddTestingR
 
 func SendTestingResultRequest(testingResult compliancetest.MsgAddTestingResult, name string) ([]byte, int) {
 	request := compliancetestRest.TestingResultRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    testingResult.Signer.String(),
 		},
@@ -410,14 +411,11 @@ func PrepareCertifiedModelTransaction(certifyModel compliance.MsgCertifyModel) (
 
 func SendCertifiedModelRequest(certifyModel compliance.MsgCertifyModel, name string) ([]byte, int) {
 	request := complianceRest.CertifyModelRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    certifyModel.Signer.String(),
 		},
-		VID:               certifyModel.VID,
-		PID:               certifyModel.PID,
 		CertificationDate: certifyModel.CertificationDate,
-		CertificationType: certifyModel.CertificationType,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -446,15 +444,12 @@ func PrepareRevokedModelTransaction(revokeModel compliance.MsgRevokeModel) (type
 
 func SendRevokedModelRequest(revokeModel compliance.MsgRevokeModel, name string) ([]byte, int) {
 	request := complianceRest.RevokeModelRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    revokeModel.Signer.String(),
 		},
-		VID:               revokeModel.VID,
-		PID:               revokeModel.PID,
-		RevocationDate:    revokeModel.RevocationDate,
-		Reason:            revokeModel.Reason,
-		CertificationType: revokeModel.CertificationType,
+		RevocationDate: revokeModel.RevocationDate,
+		Reason:         revokeModel.Reason,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -560,12 +555,12 @@ func PrepareProposeAddX509RootCertTransaction(proposeAddX509RootCert pki.MsgProp
 
 func SendProposeAddX509RootCertRequest(proposeAddX509RootCert pki.MsgProposeAddX509RootCert,
 	account string, passphrase string) ([]byte, int) {
-	request := pkiRest.AddCertificateRequest{
-		BaseReq: rest.BaseReq{
+	request := pkiRest.ProposeAddRootCertificateRequest{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    proposeAddX509RootCert.Signer.String(),
 		},
-		Certificate: proposeAddX509RootCert.Cert,
+		Cert: proposeAddX509RootCert.Cert,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -596,13 +591,11 @@ func PrepareApproveAddX509RootCertTransaction(
 
 func SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert,
 	account string, passphrase string) ([]byte, int) {
-	request := pkiRest.ApproveCertificateRequest{
-		BaseReq: rest.BaseReq{
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    msgApproveAddX509RootCert.Signer.String(),
 		},
-		Subject:      msgApproveAddX509RootCert.Subject,
-		SubjectKeyID: msgApproveAddX509RootCert.SubjectKeyID,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -630,11 +623,11 @@ func PrepareAddX509CertTransaction(addX509Cert pki.MsgAddX509Cert) (types.StdTx,
 
 func SendAddX509CertRequest(addX509Cert pki.MsgAddX509Cert, account string, passphrase string) ([]byte, int) {
 	request := pkiRest.AddCertificateRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    addX509Cert.Signer.String(),
 		},
-		Certificate: addX509Cert.Cert,
+		Cert: addX509Cert.Cert,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)

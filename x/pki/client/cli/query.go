@@ -26,12 +26,14 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	}
 	complianceQueryCmd.AddCommand(client.GetCommands(
 		GetCmdGetAllProposedX509RootCerts(storeKey, cdc),
-		GetCmdProposedX509RootCert(storeKey, cdc),
+		GetCmdGetProposedX509RootCert(storeKey, cdc),
 		GetCmdGetAllX509RootCerts(storeKey, cdc),
-		GetCmdX509Cert(storeKey, cdc),
-		GetCmdX509CertChain(storeKey, cdc),
+		GetCmdGetX509Cert(storeKey, cdc),
+		GetCmdGetX509CertChain(storeKey, cdc),
 		GetCmdGetAllX509Certs(storeKey, cdc),
 		GetCmdGetAllSubjectX509Certs(storeKey, cdc),
+		GetCmdGetRevokedX509Cert(storeKey, cdc),
+		GetCmdGetAllRevokedX509Certs(storeKey, cdc),
 	)...)
 
 	return complianceQueryCmd
@@ -41,6 +43,7 @@ func GetCmdGetAllProposedX509RootCerts(queryRoute string, cdc *codec.Codec) *cob
 	cmd := &cobra.Command{
 		Use:   "all-proposed-x509-root-certs",
 		Short: "Gets all proposed but not approved root certificates",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return getAllCertificates(cdc, fmt.Sprintf("custom/%s/all_proposed_x509_root_certs", queryRoute))
 		},
@@ -52,11 +55,11 @@ func GetCmdGetAllProposedX509RootCerts(queryRoute string, cdc *codec.Codec) *cob
 	return cmd
 }
 
-func GetCmdProposedX509RootCert(queryRoute string, cdc *codec.Codec) *cobra.Command {
+func GetCmdGetProposedX509RootCert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "proposed-x509-root-cert",
 		Short: "Gets a proposed but not approved root certificate with the given combination of subject and subject-key-id",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -88,6 +91,7 @@ func GetCmdGetAllX509RootCerts(queryRoute string, cdc *codec.Codec) *cobra.Comma
 	cmd := &cobra.Command{
 		Use:   "all-x509-root-certs",
 		Short: "Gets all approved root certificates",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return getAllCertificates(cdc, fmt.Sprintf("custom/%s/all_x509_root_certs", queryRoute))
 		},
@@ -99,12 +103,12 @@ func GetCmdGetAllX509RootCerts(queryRoute string, cdc *codec.Codec) *cobra.Comma
 	return cmd
 }
 
-func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
+func GetCmdGetX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "x509-cert",
-		Short: "Gets a certificates (either root, intermediate or leaf) " +
+		Short: "Gets certificates (either root, intermediate or leaf) " +
 			"by the given combination of subject and subject-key-id",
-		Args: cobra.ExactArgs(0),
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -132,12 +136,12 @@ func GetCmdX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
-func GetCmdX509CertChain(queryRoute string, cdc *codec.Codec) *cobra.Command {
+func GetCmdGetX509CertChain(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "x509-cert-chain",
 		Short: "Gets the complete chain for a certificate with " +
 			"the given combination of subject and subject-key-id",
-		Args: cobra.ExactArgs(0),
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -168,6 +172,7 @@ func GetCmdGetAllX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-x509-certs",
 		Short: "Gets all certificates (root, intermediate and leaf)",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return getAllCertificates(cdc, fmt.Sprintf("custom/%s/all_x509_certs", queryRoute))
 		},
@@ -175,10 +180,10 @@ func GetCmdGetAllX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().StringP(FlagRootSubject, FlagRootSubjectShortcut, "",
 		"filter certificates by `Subject` of root certificate "+
-			"(only the certificates started with the given root certificate are returned)")
+			"(only the certificates originated from the given root certificate are returned)")
 	cmd.Flags().StringP(FlagRootSubjectKeyID, FlagRootSubjectKeyIDShortcut, "",
 		"filter certificates by `Subject Key Id` of root certificate "+
-			"(only the certificates started with the given root certificate are returned)")
+			"(only the certificates originated from the given root certificate are returned)")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
 
@@ -189,7 +194,7 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 	cmd := &cobra.Command{
 		Use:   "all-subject-x509-certs",
 		Short: "Gets all certificates (root, intermediate and leaf) associated with subject",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			subject := viper.GetString(FlagSubject)
 			return getAllCertificates(cdc, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s", queryRoute, subject))
@@ -199,14 +204,69 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
 	cmd.Flags().StringP(FlagRootSubject, FlagRootSubjectShortcut, "",
 		"filter certificates by `Subject` of root certificate "+
-			"(only the certificates started with the given root certificate are returned)")
+			"(only the certificates originated from the given root certificate are returned)")
 	cmd.Flags().StringP(FlagRootSubjectKeyID, FlagRootSubjectKeyIDShortcut, "",
 		"filter certificates by `Subject Key Id` of root certificate "+
-			"(only the certificates started with the given root certificate are returned)")
+			"(only the certificates originated from the given root certificate are returned)")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
 
 	_ = cmd.MarkFlagRequired(FlagSubject)
+
+	return cmd
+}
+
+func GetCmdGetRevokedX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "revoked-x509-cert",
+		Short: "Gets revoked certificates (either root, intermediate or leaf) " +
+			"by the given combination of subject and subject-key-id",
+		Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
+
+			res, height, err := cliCtx.QueryStore(types.GetRevokedCertificateKey(subject, subjectKeyID), queryRoute)
+			if err != nil || res == nil {
+				return types.ErrCertificateDoesNotExist(subject, subjectKeyID)
+			}
+
+			var certificate types.Certificates
+			cdc.MustUnmarshalBinaryBare(res, &certificate)
+
+			return cliCtx.EncodeAndPrintWithHeight(certificate, height)
+		},
+	}
+
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+
+	return cmd
+}
+
+func GetCmdGetAllRevokedX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all-revoked-x509-certs",
+		Short: "Gets all revoked certificates (root, intermediate and leaf)",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return getAllCertificates(cdc, fmt.Sprintf("custom/%s/all_revoked_x509_certs", queryRoute))
+		},
+	}
+
+	cmd.Flags().StringP(FlagRootSubject, FlagRootSubjectShortcut, "",
+		"filter certificates by `Subject` of root certificate "+
+			"(only the certificates originated from the given root certificate are returned)")
+	cmd.Flags().StringP(FlagRootSubjectKeyID, FlagRootSubjectKeyIDShortcut, "",
+		"filter certificates by `Subject Key Id` of root certificate "+
+			"(only the certificates originated from the given root certificate are returned)")
+	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of certificates to skip")
+	cmd.Flags().Int(pagination.FlagTake, 0, "amount of certificates to take")
 
 	return cmd
 }
@@ -226,7 +286,7 @@ func chainCertificates(cliCtx cli.CliContext, queryRoute string,
 	certificate := certificates.Items[len(certificates.Items)-1]
 	chain.Items = append(chain.Items, certificate)
 
-	if certificate.Type != "root" {
+	if !certificate.IsRoot {
 		return chainCertificates(cliCtx, queryRoute, certificate.Issuer, certificate.AuthorityKeyID, chain)
 	}
 

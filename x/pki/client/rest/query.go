@@ -107,11 +107,45 @@ func getX509CertChainHandler(cliCtx context.CLIContext, storeName string) http.H
 		height, err := chainCertificates(restCtx, storeName, subject, subjectKeyID, &chain)
 
 		if err != nil {
-			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
+			restCtx.WriteErrorResponse(http.StatusNotFound,
+				types.ErrCertificateDoesNotExist(subject, subjectKeyID).Error())
 			return
 		}
 
 		restCtx.EncodeAndRespondWithHeight(chain, height)
+	}
+}
+
+func getAllRevokedX509CertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+		rootSubject := r.FormValue(rootSubject)
+		rootSubjectKeyID := r.FormValue(rootSubjectKeyID)
+		getListCertificates(restCtx, fmt.Sprintf("custom/%s/all_revoked_x509_certs", storeName),
+			rootSubject, rootSubjectKeyID)
+	}
+}
+
+func getRevokedX509CertHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+		subject := vars[subject]
+		subjectKeyID := vars[subjectKeyID]
+
+		res, height, err := restCtx.QueryStore(types.GetRevokedCertificateKey(subject, subjectKeyID), storeName)
+		if err != nil || res == nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound,
+				types.ErrCertificateDoesNotExist(subject, subjectKeyID).Error())
+			return
+		}
+
+		var certificate types.Certificates
+
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &certificate)
+
+		restCtx.EncodeAndRespondWithHeight(certificate, height)
 	}
 }
 
@@ -130,7 +164,7 @@ func chainCertificates(restCtx rest.RestContext, storeName string,
 	certificate := certificates.Items[len(certificates.Items)-1]
 	chain.Items = append(chain.Items, certificate)
 
-	if certificate.Type != "root" {
+	if !certificate.IsRoot {
 		return chainCertificates(restCtx, storeName, certificate.Issuer, certificate.AuthorityKeyID, chain)
 	}
 

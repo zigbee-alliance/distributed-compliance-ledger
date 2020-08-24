@@ -50,8 +50,8 @@ func Setup() TestSetup {
 	return setup
 }
 
-func DefaultIntermediateCertificate() types.Certificate {
-	return types.NewIntermediateCertificate(
+func DefaultLeafCertificate() types.Certificate {
+	return types.NewNonRootCertificate(
 		testconstants.LeafCertPem,
 		testconstants.LeafSubject,
 		testconstants.LeafSubjectKeyID,
@@ -89,7 +89,7 @@ func PopulateStoreWithMixedCertificates(setup TestSetup, count int) (int, int, i
 	firstIDLeaf := firstID + n
 	firstIDPending := firstID + n*2
 	populateStoreWithCertificates(setup, n, DefaultRootCertificate(), firstIDRoot)
-	populateStoreWithCertificates(setup, n+n, DefaultIntermediateCertificate(), firstIDLeaf)
+	populateStoreWithCertificates(setup, n+n, DefaultLeafCertificate(), firstIDLeaf)
 	populateStoreWithPendingCertificates(setup, n+n*2, DefaultPendingRootCertificate(), firstIDPending)
 
 	return firstIDRoot, firstIDLeaf, firstIDPending
@@ -103,7 +103,7 @@ func populateStoreWithCertificates(setup TestSetup, count int, certificate types
 		certificate.SerialNumber = string(i)
 		certificate.RootSubject = string(i)
 		certificate.RootSubjectKeyID = string(i)
-		setup.PkiKeeper.SetCertificate(setup.Ctx, certificate)
+		setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, certificate)
 	}
 
 	return firstID

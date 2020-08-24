@@ -3,6 +3,7 @@ package rest
 //nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -43,7 +44,7 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		revokeModelHandler(cliCtx),
 	).Methods("PUT")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/{%s}/{%s}/{%s}/{%s}", storeName, types.Revoked, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Revoked, vid, pid, certificationType),
 		getRevokedModelHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(

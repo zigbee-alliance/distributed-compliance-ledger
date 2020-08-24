@@ -4,6 +4,9 @@ package rest
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -15,13 +18,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
-	"net/http"
-	"strconv"
 )
 
 const (
 	FlagPreviousHeight = "prev_height" // Query data from previous height to avoid delay linked to state proof verification
 )
+
+type BasicReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+}
 
 type RestContext struct {
 	context        client.CLIContext

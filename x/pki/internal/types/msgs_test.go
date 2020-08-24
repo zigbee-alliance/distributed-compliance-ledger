@@ -166,10 +166,10 @@ func TestValidateMsgRevokeX509Cert(t *testing.T) {
 		valid bool
 		msg   MsgRevokeX509Cert
 	}{
-		{true, NewMsgRevokeX509Cert(testconstants.LeafIssuer, testconstants.LeafSerialNumber, testconstants.Signer)},
-		{false, NewMsgRevokeX509Cert("", testconstants.LeafSerialNumber, testconstants.Signer)},
-		{false, NewMsgRevokeX509Cert(testconstants.LeafIssuer, "", testconstants.Signer)},
-		{false, NewMsgRevokeX509Cert(testconstants.LeafIssuer, testconstants.LeafSerialNumber, nil)},
+		{true, NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert("", testconstants.LeafSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert(testconstants.LeafSubject, "", testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, nil)},
 	}
 
 	for _, tc := range cases {
@@ -184,12 +184,12 @@ func TestValidateMsgRevokeX509Cert(t *testing.T) {
 }
 
 func TestMsgRevokeX509CertGetSignBytes(t *testing.T) {
-	var msg = NewMsgRevokeX509Cert(testconstants.LeafIssuer, testconstants.LeafSerialNumber, testconstants.Signer)
+	var msg = NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
 	res := msg.GetSignBytes()
 
 	expected := `{"type":"pki/RevokeX509Cert","value":{` +
-		`"issuer":"CN=Let's Encrypt Authority X3,O=Let's Encrypt,C=US",` +
-		`"serial_number":"393904870890265262371394210372104514174397",` +
+		`"subject":"CN=dsr-corporation.com",` +
+		`"subject_key_id":"8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE",` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
 	require.Equal(t, expected, string(res))
 }

@@ -3,26 +3,27 @@ package keeper
 
 //nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestKeeper_CertificateGetSet(t *testing.T) {
 	setup := Setup()
 
 	// check if certificate present
-	require.False(t, setup.PkiKeeper.IsCertificatePresent(
+	require.False(t, setup.PkiKeeper.IsApprovedCertificatesPresent(
 		setup.Ctx, testconstants.LeafSubject, testconstants.LeafSubjectKeyID))
 
 	// no certificate before its created
-	certificates := setup.PkiKeeper.GetCertificates(
+	certificates := setup.PkiKeeper.GetApprovedCertificates(
 		setup.Ctx, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	require.Equal(t, 0, len(certificates.Items))
 
 	// store certificate
-	certificate := types.NewIntermediateCertificate(
+	certificate := types.NewNonRootCertificate(
 		testconstants.LeafCertPem,
 		testconstants.LeafSubject,
 		testconstants.LeafSubjectKeyID,
@@ -34,14 +35,14 @@ func TestKeeper_CertificateGetSet(t *testing.T) {
 		testconstants.Address1,
 	)
 
-	setup.PkiKeeper.SetCertificate(setup.Ctx, certificate)
+	setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, certificate)
 
 	// check if certificate present
-	require.True(t, setup.PkiKeeper.IsCertificatePresent(
+	require.True(t, setup.PkiKeeper.IsApprovedCertificatesPresent(
 		setup.Ctx, testconstants.LeafSubject, testconstants.LeafSubjectKeyID))
 
 	// get certificate
-	receivedCertificates := setup.PkiKeeper.GetCertificates(
+	receivedCertificates := setup.PkiKeeper.GetApprovedCertificates(
 		setup.Ctx, testconstants.LeafSubject, certificate.SubjectKeyID)
 	require.Equal(t, 1, len(receivedCertificates.Items))
 
@@ -107,14 +108,14 @@ func TestKeeper_ChildCertificatesGetSet(t *testing.T) {
 
 	// no child certificates before its created
 	childCertificates := setup.PkiKeeper.GetChildCertificates(setup.Ctx, certificate.Subject, certificate.SubjectKeyID)
-	require.Equal(t, 0, len(childCertificates.ChildCertificates))
+	require.Equal(t, 0, len(childCertificates.CertIdentifiers))
 
 	// store child certificates
-	certificateChain := types.NewChildCertificates(certificate.Subject, certificate.SubjectKeyID)
-	certificateChain.AddChildCertificate(
+	certificateTree := types.NewChildCertificates(certificate.Subject, certificate.SubjectKeyID)
+	certificateTree.CertIdentifiers = append(certificateTree.CertIdentifiers,
 		types.NewCertificateIdentifier(testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID))
 
-	setup.PkiKeeper.SetChildCertificatesList(setup.Ctx, certificateChain)
+	setup.PkiKeeper.SetChildCertificates(setup.Ctx, certificateTree)
 
 	// check if child certificates present
 	require.True(t,
@@ -123,20 +124,20 @@ func TestKeeper_ChildCertificatesGetSet(t *testing.T) {
 	// get child certificates
 	receivedCertificatesChain :=
 		setup.PkiKeeper.GetChildCertificates(setup.Ctx, certificate.Subject, certificate.SubjectKeyID)
-	require.Equal(t, certificateChain.SubjectKeyID, receivedCertificatesChain.SubjectKeyID)
-	require.Equal(t, certificateChain.ChildCertificates, receivedCertificatesChain.ChildCertificates)
+	require.Equal(t, certificateTree.AuthorityKeyID, receivedCertificatesChain.AuthorityKeyID)
+	require.Equal(t, certificateTree.CertIdentifiers, receivedCertificatesChain.CertIdentifiers)
 
 	// store second child
-	certificateChain.AddChildCertificate(
+	certificateTree.CertIdentifiers = append(certificateTree.CertIdentifiers,
 		types.NewCertificateIdentifier(testconstants.LeafSubject, testconstants.LeafSubjectKeyID))
 
-	setup.PkiKeeper.SetChildCertificatesList(setup.Ctx, certificateChain)
+	setup.PkiKeeper.SetChildCertificates(setup.Ctx, certificateTree)
 
 	// get child certificates
 	receivedCertificatesChain =
 		setup.PkiKeeper.GetChildCertificates(setup.Ctx, certificate.Subject, certificate.SubjectKeyID)
-	require.Equal(t, certificateChain.SubjectKeyID, receivedCertificatesChain.SubjectKeyID)
-	require.Equal(t, certificateChain.ChildCertificates, receivedCertificatesChain.ChildCertificates)
+	require.Equal(t, certificateTree.AuthorityKeyID, receivedCertificatesChain.AuthorityKeyID)
+	require.Equal(t, certificateTree.CertIdentifiers, receivedCertificatesChain.CertIdentifiers)
 }
 
 func TestKeeper_CertificateIterator(t *testing.T) {
@@ -147,14 +148,10 @@ func TestKeeper_CertificateIterator(t *testing.T) {
 	// add 3 leaf / 3 root / 3 pending certificates
 	PopulateStoreWithMixedCertificates(setup, count)
 
-	// get total count
-	totalCertificates := setup.PkiKeeper.CountTotalCertificates(setup.Ctx)
-	require.Equal(t, count/3*2, totalCertificates)
-
 	// get iterator
 	var expectedRecords []types.Certificate
 
-	setup.PkiKeeper.IterateCertificates(setup.Ctx, "", func(certificates types.Certificates) (stop bool) {
+	setup.PkiKeeper.IterateApprovedCertificatesRecords(setup.Ctx, "", func(certificates types.Certificates) (stop bool) {
 		expectedRecords = append(expectedRecords, certificates.Items...)
 		return false
 	})
@@ -168,10 +165,6 @@ func TestKeeper_PendingCertificateIterator(t *testing.T) {
 
 	// add 3 leaf / 3 root / 3 pending certificates
 	PopulateStoreWithMixedCertificates(setup, count)
-
-	// get total count
-	totalCertificates := setup.PkiKeeper.CountTotalProposedCertificates(setup.Ctx)
-	require.Equal(t, count/3, totalCertificates)
 
 	// get iterator
 	var expectedRecords []types.ProposedCertificate

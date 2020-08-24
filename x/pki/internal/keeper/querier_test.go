@@ -46,7 +46,7 @@ func TestQuerier_QueryProposedX509RootCertForNotFound(t *testing.T) {
 
 	// check
 	require.NotNil(t, err)
-	require.Equal(t, types.CodePendingCertificateDoesNotExist, err.Code())
+	require.Equal(t, types.CodeProposedCertificateDoesNotExist, err.Code())
 }
 
 func TestQuerier_QueryX509Cert(t *testing.T) {
@@ -54,7 +54,7 @@ func TestQuerier_QueryX509Cert(t *testing.T) {
 
 	// store certificate
 	certificate := DefaultRootCertificate()
-	setup.PkiKeeper.SetCertificate(setup.Ctx, certificate)
+	setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, certificate)
 
 	// query certificate
 	result, _ := setup.Querier(
@@ -195,7 +195,7 @@ func TestQuerier_QueryAllX509Certs(t *testing.T) {
 	count := 9
 
 	// populate store with different certificates
-	firstRootID, firstIntermediateID, _ := PopulateStoreWithMixedCertificates(setup, count)
+	firstRootID, firstLeafID, _ := PopulateStoreWithMixedCertificates(setup, count)
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -216,12 +216,12 @@ func TestQuerier_QueryAllX509Certs(t *testing.T) {
 	require.Equal(t, string(firstRootID), listCertificates.Items[0].Subject)
 	require.Equal(t, string(firstRootID), listCertificates.Items[0].SubjectKeyID)
 
-	// check first intermediate
+	// check first leaf
 	index := count / 3
-	expectedCertificate = DefaultIntermediateCertificate()
+	expectedCertificate = DefaultLeafCertificate()
 	require.Equal(t, expectedCertificate.PemCert, listCertificates.Items[index].PemCert)
-	require.Equal(t, string(firstIntermediateID), listCertificates.Items[index].Subject)
-	require.Equal(t, string(firstIntermediateID), listCertificates.Items[index].SubjectKeyID)
+	require.Equal(t, string(firstLeafID), listCertificates.Items[index].Subject)
+	require.Equal(t, string(firstLeafID), listCertificates.Items[index].SubjectKeyID)
 }
 
 func TestQuerier_QueryAllX509CertsWithPagination(t *testing.T) {

@@ -150,15 +150,15 @@ func (m MsgAddX509Cert) GetSigners() []sdk.AccAddress {
 */
 
 type MsgRevokeX509Cert struct {
-	Issuer       string         `json:"issuer"`
-	SerialNumber string         `json:"serial_number"`
+	Subject      string         `json:"subject"`
+	SubjectKeyID string         `json:"subject_key_id"`
 	Signer       sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgRevokeX509Cert(issuer string, serialNumber string, signer sdk.AccAddress) MsgRevokeX509Cert {
+func NewMsgRevokeX509Cert(subject string, subjectKeyID string, signer sdk.AccAddress) MsgRevokeX509Cert {
 	return MsgRevokeX509Cert{
-		Issuer:       issuer,
-		SerialNumber: serialNumber,
+		Subject:      subject,
+		SubjectKeyID: subjectKeyID,
 		Signer:       signer,
 	}
 }
@@ -176,12 +176,12 @@ func (m MsgRevokeX509Cert) ValidateBasic() sdk.Error {
 		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
 
-	if len(m.Issuer) == 0 {
-		return sdk.ErrUnknownRequest("Invalid Issuer: it cannot be empty")
+	if len(m.Subject) == 0 {
+		return sdk.ErrUnknownRequest("Invalid Subject: it cannot be empty")
 	}
 
-	if len(m.SerialNumber) == 0 {
-		return sdk.ErrUnknownRequest("Invalid SerialNumber: it cannot be empty")
+	if len(m.SubjectKeyID) == 0 {
+		return sdk.ErrUnknownRequest("Invalid SubjectKeyID: it cannot be empty")
 	}
 
 	return nil
