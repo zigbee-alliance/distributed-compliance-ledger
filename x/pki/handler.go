@@ -392,18 +392,27 @@ func removeChildCertificateEntry(ctx sdk.Context, keeper keeper.Keeper, issuer s
 	certIdentifier types.CertificateIdentifier) {
 	childCertificates := keeper.GetChildCertificates(ctx, issuer, authorityKeyID)
 
+	certIDIndex := -1
+
 	for i, existingIdentifier := range childCertificates.CertIdentifiers {
 		if existingIdentifier == certIdentifier {
-			childCertificates.CertIdentifiers =
-				append(childCertificates.CertIdentifiers[:i], childCertificates.CertIdentifiers[i+1:]...)
-			if len(childCertificates.CertIdentifiers) > 0 {
-				keeper.SetChildCertificates(ctx, childCertificates)
-			} else {
-				keeper.DeleteChildCertificates(ctx, issuer, authorityKeyID)
-			}
+			certIDIndex = i
 
-			return
+			break
 		}
+	}
+
+	if certIDIndex == -1 {
+		return
+	}
+
+	childCertificates.CertIdentifiers =
+		append(childCertificates.CertIdentifiers[:certIDIndex], childCertificates.CertIdentifiers[certIDIndex+1:]...)
+
+	if len(childCertificates.CertIdentifiers) > 0 {
+		keeper.SetChildCertificates(ctx, childCertificates)
+	} else {
+		keeper.DeleteChildCertificates(ctx, issuer, authorityKeyID)
 	}
 }
 
