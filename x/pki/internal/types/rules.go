@@ -7,7 +7,4 @@ import "git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 var (
 	RootCertificateApprovals    = 2
 	RootCertificateApprovalRole = auth.Trustee
-
-	CertificateRevocationApprovals    = 2
-	CertificateRevocationApprovalRole = auth.Trustee
 )

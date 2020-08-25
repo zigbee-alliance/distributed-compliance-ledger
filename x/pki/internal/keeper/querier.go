@@ -250,7 +250,7 @@ func queryRevokedX509Cert(ctx sdk.Context, path []string, keeper Keeper) (res []
 	subjectKeyID := path[1]
 
 	if !keeper.IsRevokedCertificatesPresent(ctx, subject, subjectKeyID) {
-		return nil, types.ErrCertificateDoesNotExist(subject, subjectKeyID)
+		return nil, types.ErrRevokedCertificateDoesNotExist(subject, subjectKeyID)
 	}
 
 	certificate := keeper.GetRevokedCertificates(ctx, subject, subjectKeyID)

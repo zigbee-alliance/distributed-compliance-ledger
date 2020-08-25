@@ -23,6 +23,8 @@ type (
 	MsgProposeAddX509RootCert     = types.MsgProposeAddX509RootCert
 	MsgApproveAddX509RootCert     = types.MsgApproveAddX509RootCert
 	MsgAddX509Cert                = types.MsgAddX509Cert
+	MsgProposeRevokeX509RootCert  = types.MsgProposeRevokeX509RootCert
+	MsgApproveRevokeX509RootCert  = types.MsgApproveRevokeX509RootCert
 	MsgRevokeX509Cert             = types.MsgRevokeX509Cert
 	Certificate                   = types.Certificate
 	Certificates                  = types.Certificates

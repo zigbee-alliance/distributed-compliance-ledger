@@ -60,7 +60,7 @@ func NewAnteHandler(ak Keeper, sigGasConsumer SignatureVerificationGasConsumer) 
 			return newCtx, err.Result(), true
 		}
 
-		newCtx.GasMeter().ConsumeGas(types.DefaultTxSizeCostPerByte*sdk.Gas(len(newCtx.TxBytes())), "txSize")
+		newCtx.GasMeter().ConsumeGas(types.TxSizeCostPerByte*sdk.Gas(len(newCtx.TxBytes())), "txSize")
 
 		if res := ValidateMemo(stdTx); !res.IsOK() {
 			return newCtx, res, true
@@ -107,11 +107,11 @@ func GetSignerAcc(ctx sdk.Context, keeper Keeper, address sdk.AccAddress) (acc t
 // ValidateMemo validates the memo size.
 func ValidateMemo(stdTx auth.StdTx) sdk.Result {
 	memoLength := len(stdTx.GetMemo())
-	if uint64(memoLength) > types.DefaultMaxMemoCharacters {
+	if uint64(memoLength) > types.MaxMemoCharacters {
 		return sdk.ErrMemoTooLarge(
 			fmt.Sprintf(
 				"maximum number of characters is %d but received %d characters",
-				types.DefaultMaxMemoCharacters, memoLength,
+				types.MaxMemoCharacters, memoLength,
 			),
 		).Result()
 	}

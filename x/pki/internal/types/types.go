@@ -180,8 +180,8 @@ type ProposedCertificateRevocation struct {
 }
 
 func NewProposedCertificateRevocation(subject string, subjectKeyID string,
-	approval sdk.AccAddress) ProposedCertificate {
-	return ProposedCertificate{
+	approval sdk.AccAddress) ProposedCertificateRevocation {
+	return ProposedCertificateRevocation{
 		Subject:      subject,
 		SubjectKeyID: subjectKeyID,
 		Approvals:    []sdk.AccAddress{approval},

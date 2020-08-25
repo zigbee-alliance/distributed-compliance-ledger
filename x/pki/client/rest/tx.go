@@ -19,7 +19,7 @@ type AddCertificateRequest struct {
 	Cert    string            `json:"cert"`
 }
 
-type RevokeCertificateRequest struct {
+type ProposeRevokeRootCertificateRequest struct {
 	BaseReq      restTypes.BaseReq `json:"base_req"`
 	Subject      string            `json:"subject"`
 	SubjectKeyID string            `json:"subject_key_id"`
@@ -102,11 +102,11 @@ func addX509CertHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	}
 }
 
-func revokeX509CertHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func proposeRevokeX509RootCertHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		var req RevokeCertificateRequest
+		var req ProposeRevokeRootCertificateRequest
 		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
@@ -121,7 +121,61 @@ func revokeX509CertHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRevokeX509Cert(req.Subject, req.SubjectKeyID, restCtx.Signer())
+		msg := types.NewMsgProposeRevokeX509RootCert(req.Subject, req.SubjectKeyID, restCtx.Signer())
+
+		restCtx.HandleWriteRequest(msg)
+	}
+}
+
+func approveRevokeX509RootCertHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+
+		var req rest.BasicReq
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
+
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
+		}
+
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
+		msg := types.NewMsgApproveRevokeX509RootCert(vars[subject], vars[subjectKeyID], restCtx.Signer())
+
+		restCtx.HandleWriteRequest(msg)
+	}
+}
+
+func revokeX509CertHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+
+		var req rest.BasicReq
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
+
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
+		}
+
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
+		msg := types.NewMsgRevokeX509Cert(vars[subject], vars[subjectKeyID], restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

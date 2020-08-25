@@ -174,7 +174,7 @@ func getRevokedX509CertHandler(cliCtx context.CLIContext, storeName string) http
 		res, height, err := restCtx.QueryStore(types.GetRevokedCertificateKey(subject, subjectKeyID), storeName)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
-				types.ErrCertificateDoesNotExist(subject, subjectKeyID).Error())
+				types.ErrRevokedCertificateDoesNotExist(subject, subjectKeyID).Error())
 			return
 		}
 

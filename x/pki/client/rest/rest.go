@@ -30,9 +30,17 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		addX509CertHandler(cliCtx),
 	).Methods("POST")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/certs/revoked", storeName),
-		revokeX509CertHandler(cliCtx),
+		fmt.Sprintf("/%s/certs/proposed/revoked/root", storeName),
+		proposeRevokeX509RootCertHandler(cliCtx),
 	).Methods("POST")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/proposed/revoked/root/{%s}/{%s}", storeName, subject, subjectKeyID),
+		approveRevokeX509RootCertHandler(cliCtx),
+	).Methods("PATCH")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/{%s}/{%s}", storeName, subject, subjectKeyID),
+		revokeX509CertHandler(cliCtx),
+	).Methods("DELETE")
 	r.HandleFunc(
 		fmt.Sprintf("/%s/certs/root", storeName),
 		getAllX509RootCertsHandler(cliCtx, storeName),

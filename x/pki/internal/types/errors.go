@@ -10,27 +10,16 @@ import (
 const (
 	Codespace sdk.CodespaceType = ModuleName
 
-	CodeCertificateAlreadyExists                   sdk.CodeType = 401
-	CodeCertificateDoesNotExist                    sdk.CodeType = 402
-	CodeProposedCertificateAlreadyExists           sdk.CodeType = 403
-	CodeProposedCertificateDoesNotExist            sdk.CodeType = 404
+	CodeProposedCertificateAlreadyExists           sdk.CodeType = 401
+	CodeProposedCertificateDoesNotExist            sdk.CodeType = 402
+	CodeCertificateAlreadyExists                   sdk.CodeType = 403
+	CodeCertificateDoesNotExist                    sdk.CodeType = 404
 	CodeProposedCertificateRevocationAlreadyExists sdk.CodeType = 405
 	CodeProposedCertificateRevocationDoesNotExist  sdk.CodeType = 406
-	CodeInappropriateCertificateType               sdk.CodeType = 407
-	CodeInvalidCertificate                         sdk.CodeType = 408
+	CodeRevokedCertificateDoesNotExist             sdk.CodeType = 407
+	CodeInappropriateCertificateType               sdk.CodeType = 408
+	CodeInvalidCertificate                         sdk.CodeType = 409
 )
-
-func ErrCertificateAlreadyExists(issuer string, serialNumber string) sdk.Error {
-	return sdk.NewError(Codespace, CodeCertificateAlreadyExists,
-		fmt.Sprintf("X509 certificate associated with the combination of "+
-			"issuer=%v and serialNumber=%v already exists on the ledger", issuer, serialNumber))
-}
-
-func ErrCertificateDoesNotExist(subject string, subjectKeyID string) sdk.Error {
-	return sdk.NewError(Codespace, CodeCertificateDoesNotExist,
-		fmt.Sprintf("No X509 certificate associated with the "+
-			"combination of subject=%v and subjectKeyID=%v on the ledger", subject, subjectKeyID))
-}
 
 func ErrProposedCertificateAlreadyExists(subject string, subjectKeyID string) sdk.Error {
 	return sdk.NewError(Codespace, CodeProposedCertificateAlreadyExists,
@@ -45,6 +34,18 @@ func ErrProposedCertificateDoesNotExist(subject string, subjectKeyID string) sdk
 			"The cerificate either does not exists or already approved.", subject, subjectKeyID))
 }
 
+func ErrCertificateAlreadyExists(issuer string, serialNumber string) sdk.Error {
+	return sdk.NewError(Codespace, CodeCertificateAlreadyExists,
+		fmt.Sprintf("X509 certificate associated with the combination of "+
+			"issuer=%v and serialNumber=%v already exists on the ledger", issuer, serialNumber))
+}
+
+func ErrCertificateDoesNotExist(subject string, subjectKeyID string) sdk.Error {
+	return sdk.NewError(Codespace, CodeCertificateDoesNotExist,
+		fmt.Sprintf("No X509 certificate associated with the "+
+			"combination of subject=%v and subjectKeyID=%v on the ledger", subject, subjectKeyID))
+}
+
 func ErrProposedCertificateRevocationAlreadyExists(subject string, subjectKeyID string) sdk.Error {
 	return sdk.NewError(Codespace, CodeProposedCertificateRevocationAlreadyExists,
 		fmt.Sprintf("Proposed X509 root certificate revocation associated with the combination "+
@@ -55,6 +56,12 @@ func ErrProposedCertificateRevocationDoesNotExist(subject string, subjectKeyID s
 	return sdk.NewError(Codespace, CodeProposedCertificateRevocationDoesNotExist,
 		fmt.Sprintf("No proposed X509 root certificate revocation associated "+
 			"with the combination of subject=%v and subjectKeyID=%v on the ledger.", subject, subjectKeyID))
+}
+
+func ErrRevokedCertificateDoesNotExist(subject string, subjectKeyID string) sdk.Error {
+	return sdk.NewError(Codespace, CodeRevokedCertificateDoesNotExist,
+		fmt.Sprintf("No revoked X509 certificate associated with the "+
+			"combination of subject=%v and subjectKeyID=%v on the ledger", subject, subjectKeyID))
 }
 
 func ErrInappropriateCertificateType(error interface{}) sdk.Error {

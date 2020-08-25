@@ -572,7 +572,7 @@ func SendProposeAddX509RootCertRequest(proposeAddX509RootCert pki.MsgProposeAddX
 
 func ApproveAddX509RootCert(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert,
 	account string, passphrase string) (TxnResponse, int) {
-	println(fmt.Sprintf("Approve X509 Root Cert with subject=%s and subjectKeyId=%s",
+	println(fmt.Sprintf("Approve X509 Root Cert with subject=%s and subjectKeyID=%s",
 		msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyID))
 
 	response, code := SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert, account, passphrase)

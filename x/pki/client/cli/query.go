@@ -281,7 +281,7 @@ func GetCmdGetRevokedX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Comman
 
 			res, height, err := cliCtx.QueryStore(types.GetRevokedCertificateKey(subject, subjectKeyID), queryRoute)
 			if err != nil || res == nil {
-				return types.ErrCertificateDoesNotExist(subject, subjectKeyID)
+				return types.ErrRevokedCertificateDoesNotExist(subject, subjectKeyID)
 			}
 
 			var certificates types.Certificates

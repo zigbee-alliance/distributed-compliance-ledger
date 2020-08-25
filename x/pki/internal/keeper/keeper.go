@@ -199,38 +199,6 @@ func (k Keeper) SetChildCertificates(ctx sdk.Context, childCertificates types.Ch
 		childCertificates.AuthorityKeyID), k.cdc.MustMarshalBinaryBare(childCertificates))
 }
 
-// Adds a certificate identifier to the Child Certificates record associated with the combination Issuer/AuthorityKeyID.
-func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKeyID string,
-	certIdentifier types.CertificateIdentifier) {
-	childCertificates := k.GetChildCertificates(ctx, issuer, authorityKeyID)
-
-	for _, existingIdentifier := range childCertificates.CertIdentifiers {
-		if existingIdentifier == certIdentifier {
-			return
-		}
-	}
-
-	childCertificates.CertIdentifiers = append(childCertificates.CertIdentifiers, certIdentifier)
-	k.SetChildCertificates(ctx, childCertificates)
-}
-
-// Removes a certificate identifier from the Child Certificates record associated
-// with the combination Issuer/AuthorityKeyID.
-func (k Keeper) RemoveChildCertificate(ctx sdk.Context, issuer string, authorityKeyID string,
-	certIdentifier types.CertificateIdentifier) {
-	childCertificates := k.GetChildCertificates(ctx, issuer, authorityKeyID)
-
-	for i, existingIdentifier := range childCertificates.CertIdentifiers {
-		if existingIdentifier == certIdentifier {
-			childCertificates.CertIdentifiers =
-				append(childCertificates.CertIdentifiers[:i], childCertificates.CertIdentifiers[i+1:]...)
-			k.SetChildCertificates(ctx, childCertificates)
-
-			return
-		}
-	}
-}
-
 // Checks if the the list of Child Certificates for a combination Issuer/AuthorityKeyID is present in the store or not.
 func (k Keeper) IsChildCertificatesPresent(ctx sdk.Context, issuer string, authorityKeyID string) bool {
 	store := ctx.KVStore(k.storeKey)
