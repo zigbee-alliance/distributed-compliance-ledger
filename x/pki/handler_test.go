@@ -502,10 +502,10 @@ func queryProposedCertificate(setup TestSetup, subject string,
 		return nil, err
 	}
 
-	var pendingCertificate types.ProposedCertificate
-	_ = setup.Cdc.UnmarshalJSON(result, &pendingCertificate)
+	var proposedCertificate types.ProposedCertificate
+	_ = setup.Cdc.UnmarshalJSON(result, &proposedCertificate)
 
-	return &pendingCertificate, nil
+	return &proposedCertificate, nil
 }
 
 func querySingleCertificate(setup TestSetup, subject string, subjectKeyID string) (*types.Certificate, sdk.Error) {

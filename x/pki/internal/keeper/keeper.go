@@ -146,11 +146,11 @@ func (k Keeper) IterateProposedCertificates(ctx sdk.Context,
 
 		val := iter.Value()
 
-		var pendingCertificate types.ProposedCertificate
+		var proposedCertificate types.ProposedCertificate
 
-		k.cdc.MustUnmarshalBinaryBare(val, &pendingCertificate)
+		k.cdc.MustUnmarshalBinaryBare(val, &proposedCertificate)
 
-		if process(pendingCertificate) {
+		if process(proposedCertificate) {
 			return
 		}
 
@@ -333,7 +333,7 @@ func (k Keeper) IsProposedCertificateRevocationPresent(ctx sdk.Context, subject 
 }
 
 // Iterate over all Proposed Certificate Revocations.
-func (k Keeper) IterateProposedRevocationCertificates(ctx sdk.Context,
+func (k Keeper) IterateProposedCertificateRevocations(ctx sdk.Context,
 	process func(info types.ProposedCertificateRevocation) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 

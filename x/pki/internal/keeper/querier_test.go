@@ -14,8 +14,8 @@ import (
 func TestQuerier_QueryProposedX509RootCert(t *testing.T) {
 	setup := Setup()
 
-	// store pending certificate
-	certificate := DefaultPendingRootCertificate()
+	// store proposed certificate
+	certificate := DefaultProposedRootCertificate()
 	setup.PkiKeeper.SetProposedCertificate(setup.Ctx, certificate)
 
 	// query proposed certificate
@@ -25,13 +25,13 @@ func TestQuerier_QueryProposedX509RootCert(t *testing.T) {
 		abci.RequestQuery{},
 	)
 
-	var pendingCertificate types.ProposedCertificate
-	_ = setup.Cdc.UnmarshalJSON(result, &pendingCertificate)
+	var proposedCertificate types.ProposedCertificate
+	_ = setup.Cdc.UnmarshalJSON(result, &proposedCertificate)
 
 	// check
-	require.Equal(t, pendingCertificate.PemCert, certificate.PemCert)
-	require.Equal(t, pendingCertificate.Subject, certificate.Subject)
-	require.Equal(t, pendingCertificate.SubjectKeyID, certificate.SubjectKeyID)
+	require.Equal(t, proposedCertificate.PemCert, certificate.PemCert)
+	require.Equal(t, proposedCertificate.Subject, certificate.Subject)
+	require.Equal(t, proposedCertificate.SubjectKeyID, certificate.SubjectKeyID)
 }
 
 func TestQuerier_QueryProposedX509RootCertForNotFound(t *testing.T) {
@@ -109,7 +109,7 @@ func TestQuerier_QueryAllProposedX509RootCerts(t *testing.T) {
 
 	// check
 	require.Equal(t, count/3, len(listProposedCertificates.Items))
-	require.Equal(t, DefaultPendingRootCertificate().PemCert, listProposedCertificates.Items[0].PemCert)
+	require.Equal(t, DefaultProposedRootCertificate().PemCert, listProposedCertificates.Items[0].PemCert)
 	require.Equal(t, string(firstID), listProposedCertificates.Items[0].Subject)
 	require.Equal(t, string(firstID), listProposedCertificates.Items[0].SubjectKeyID)
 }
@@ -135,7 +135,7 @@ func TestQuerier_QueryAllProposedX509RootCertsWithPagination(t *testing.T) {
 
 	// check
 	require.Equal(t, take, len(listProposedCertificates.Items))
-	require.Equal(t, DefaultPendingRootCertificate().PemCert, listProposedCertificates.Items[0].PemCert)
+	require.Equal(t, DefaultProposedRootCertificate().PemCert, listProposedCertificates.Items[0].PemCert)
 	require.Equal(t, string(firstID+skip), listProposedCertificates.Items[0].Subject)
 	require.Equal(t, string(firstID+skip), listProposedCertificates.Items[0].SubjectKeyID)
 }
@@ -286,7 +286,7 @@ func TestQuerier_QueryAllSubjectX509Certs_Filer(t *testing.T) {
 
 	paginationParams := pagination.NewPaginationParams(0, 0)
 
-	params := setup.Cdc.MustMarshalJSON(types.NewListCertificatesQueryParams(paginationParams, string(firstRootID+1), ""))
+	params := setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, string(firstRootID+1), ""))
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -304,10 +304,10 @@ func TestQuerier_QueryAllSubjectX509Certs_Filer(t *testing.T) {
 
 func emptyQueryParams(setup TestSetup) []byte {
 	paginationParams := pagination.NewPaginationParams(0, 0)
-	return setup.Cdc.MustMarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
+	return setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, "", ""))
 }
 
 func queryParams(setup TestSetup, skip int, take int) []byte {
 	paginationParams := pagination.NewPaginationParams(skip, take)
-	return setup.Cdc.MustMarshalJSON(types.NewListCertificatesQueryParams(paginationParams, "", ""))
+	return setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, "", ""))
 }

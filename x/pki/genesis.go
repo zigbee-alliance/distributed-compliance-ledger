@@ -11,14 +11,14 @@ import (
 
 type GenesisState struct {
 	ApprovedCertificateRecords []types.Certificates        `json:"approved_certificate_records"`
-	PendingCertificateRecords  []types.ProposedCertificate `json:"pending_certificate_records"`
+	ProposedCertificateRecords []types.ProposedCertificate `json:"proposed_certificate_records"`
 	ChildCertificatesRecords   []types.ChildCertificates   `json:"child_certificates_records"`
 }
 
 func NewGenesisState() GenesisState {
 	return GenesisState{
 		ApprovedCertificateRecords: []types.Certificates{},
-		PendingCertificateRecords:  []types.ProposedCertificate{},
+		ProposedCertificateRecords: []types.ProposedCertificate{},
 		ChildCertificatesRecords:   []types.ChildCertificates{},
 	}
 }
@@ -28,7 +28,7 @@ func ValidateGenesis(data GenesisState) error {
 		return err
 	}
 
-	if err := validatePendingCertificates(data.PendingCertificateRecords); err != nil {
+	if err := validateProposedCertificates(data.ProposedCertificateRecords); err != nil {
 		return err
 	}
 
@@ -77,21 +77,21 @@ func validateApprovedCertificates(approvedCertificateRecords []types.Certificate
 	return nil
 }
 
-func validatePendingCertificates(pendingCertificateRecords []types.ProposedCertificate) error {
-	for _, record := range pendingCertificateRecords {
+func validateProposedCertificates(proposedCertificateRecords []types.ProposedCertificate) error {
+	for _, record := range proposedCertificateRecords {
 		if len(record.PemCert) == 0 {
 			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid PendingCertificateRecords: value: %s. Error: Empty X509 Certificate", record.PemCert))
+				fmt.Sprintf("Invalid ProposedCertificateRecords: value: %s. Error: Empty X509 Certificate", record.PemCert))
 		}
 
 		if len(record.Subject) == 0 {
 			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid PendingCertificateRecords: value: %s. Error: Empty Subject", record.Subject))
+				fmt.Sprintf("Invalid ProposedCertificateRecords: value: %s. Error: Empty Subject", record.Subject))
 		}
 
 		if len(record.SubjectKeyID) == 0 {
 			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid PendingCertificateRecords: value: %s. Error: Empty SubjectKeyID", record.SubjectKeyID))
+				fmt.Sprintf("Invalid ProposedCertificateRecords: value: %s. Error: Empty SubjectKeyID", record.SubjectKeyID))
 		}
 	}
 
@@ -119,7 +119,7 @@ func DefaultGenesisState() GenesisState {
 }
 
 func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-	for _, record := range data.PendingCertificateRecords {
+	for _, record := range data.ProposedCertificateRecords {
 		keeper.SetProposedCertificate(ctx, record)
 	}
 
@@ -139,7 +139,7 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	var approvedCertificates []types.Certificates
 
-	var pendingCertificates []types.ProposedCertificate
+	var proposedCertificates []types.ProposedCertificate
 
 	var childCertificatesList []types.ChildCertificates
 
@@ -149,7 +149,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 	})
 
 	k.IterateProposedCertificates(ctx, func(certificate types.ProposedCertificate) (stop bool) {
-		pendingCertificates = append(pendingCertificates, certificate)
+		proposedCertificates = append(proposedCertificates, certificate)
 		return false
 	})
 
@@ -160,7 +160,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	return GenesisState{
 		ApprovedCertificateRecords: approvedCertificates,
-		PendingCertificateRecords:  pendingCertificates,
+		ProposedCertificateRecords: proposedCertificates,
 		ChildCertificatesRecords:   childCertificatesList,
 	}
 }

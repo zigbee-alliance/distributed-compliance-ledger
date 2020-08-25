@@ -84,7 +84,7 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 	}
 
 	// create new proposed certificate with empty approvals list
-	pendingCertificate := types.NewProposedCertificate(
+	proposedCertificate := types.NewProposedCertificate(
 		msg.Cert,
 		x509Certificate.Subject,
 		x509Certificate.SubjectKeyID,
@@ -94,11 +94,11 @@ func handleMsgProposeAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 
 	// if signer has `RootCertificateApprovalRole` append approval
 	if authKeeper.HasRole(ctx, msg.Signer, types.RootCertificateApprovalRole) {
-		pendingCertificate.Approvals = append(pendingCertificate.Approvals, msg.Signer)
+		proposedCertificate.Approvals = append(proposedCertificate.Approvals, msg.Signer)
 	}
 
 	// store proposed certificate
-	keeper.SetProposedCertificate(ctx, pendingCertificate)
+	keeper.SetProposedCertificate(ctx, proposedCertificate)
 
 	// register the unique certificate key
 	keeper.SetUniqueCertificateKey(ctx, x509Certificate.Issuer, x509Certificate.SerialNumber)
@@ -121,27 +121,27 @@ func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 	}
 
 	// get proposed certificate
-	pendingCertificate := keeper.GetProposedCertificate(ctx, msg.Subject, msg.SubjectKeyID)
+	proposedCertificate := keeper.GetProposedCertificate(ctx, msg.Subject, msg.SubjectKeyID)
 
 	// check if certificate already has approval form signer
-	if pendingCertificate.HasApprovalFrom(msg.Signer) {
+	if proposedCertificate.HasApprovalFrom(msg.Signer) {
 		return sdk.ErrUnauthorized(
 			fmt.Sprintf("Certificate associated with the subject=%v and subjectKeyId=%v "+
 				"combination already has approval from=%v", msg.Subject, msg.SubjectKeyID, msg.Signer)).Result()
 	}
 
 	// append approval
-	pendingCertificate.Approvals = append(pendingCertificate.Approvals, msg.Signer)
+	proposedCertificate.Approvals = append(proposedCertificate.Approvals, msg.Signer)
 
 	// check if certificate has enough approvals
-	if len(pendingCertificate.Approvals) == types.RootCertificateApprovals {
+	if len(proposedCertificate.Approvals) == types.RootCertificateApprovals {
 		// create approved certificate
 		rootCertificate := types.NewRootCertificate(
-			pendingCertificate.PemCert,
-			pendingCertificate.Subject,
-			pendingCertificate.SubjectKeyID,
-			pendingCertificate.SerialNumber,
-			pendingCertificate.Owner,
+			proposedCertificate.PemCert,
+			proposedCertificate.Subject,
+			proposedCertificate.SubjectKeyID,
+			proposedCertificate.SerialNumber,
+			proposedCertificate.Owner,
 		)
 
 		// add approved certificate to stored list of certificates with the same Subject/SubjectKeyId combination
@@ -151,7 +151,7 @@ func handleMsgApproveAddX509RootCert(ctx sdk.Context, keeper keeper.Keeper, auth
 		keeper.DeleteProposedCertificate(ctx, msg.Subject, msg.SubjectKeyID)
 	} else {
 		// update proposed certificate
-		keeper.SetProposedCertificate(ctx, pendingCertificate)
+		keeper.SetProposedCertificate(ctx, proposedCertificate)
 	}
 
 	return sdk.Result{}

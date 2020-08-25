@@ -1,6 +1,5 @@
 package rest
 
-// nolint:goimports
 import (
 	"fmt"
 	"net/http"
@@ -14,7 +13,7 @@ import (
 func getAllX509RootCertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
-		getListCertificates(restCtx,
+		performPkiQuery(restCtx,
 			fmt.Sprintf("custom/%s/all_x509_root_certs", storeName), "", "")
 	}
 }
@@ -22,7 +21,7 @@ func getAllX509RootCertsHandler(cliCtx context.CLIContext, storeName string) htt
 func getAllProposedX509RootCertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
-		getListCertificates(restCtx,
+		performPkiQuery(restCtx,
 			fmt.Sprintf("custom/%s/all_proposed_x509_root_certs", storeName), "", "")
 	}
 }
@@ -32,7 +31,7 @@ func getAllX509CertsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 		rootSubject := r.FormValue(rootSubject)
 		rootSubjectKeyID := r.FormValue(rootSubjectKeyID)
-		getListCertificates(restCtx, fmt.Sprintf("custom/%s/all_x509_certs", storeName), rootSubject, rootSubjectKeyID)
+		performPkiQuery(restCtx, fmt.Sprintf("custom/%s/all_x509_certs", storeName), rootSubject, rootSubjectKeyID)
 	}
 }
 
@@ -43,7 +42,7 @@ func getAllSubjectX509CertsHandler(cliCtx context.CLIContext, storeName string) 
 		subject := vars[subject]
 		rootSubject := r.FormValue(rootSubject)
 		rootSubjectKeyID := r.FormValue(rootSubjectKeyID)
-		getListCertificates(restCtx, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s",
+		performPkiQuery(restCtx, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s",
 			storeName, subject), rootSubject, rootSubjectKeyID)
 	}
 }
@@ -86,11 +85,11 @@ func getX509CertHandler(cliCtx context.CLIContext, storeName string) http.Handle
 			return
 		}
 
-		var certificate types.Certificates
+		var certificates types.Certificates
 
-		cliCtx.Codec.MustUnmarshalBinaryBare(res, &certificate)
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &certificates)
 
-		restCtx.EncodeAndRespondWithHeight(certificate, height)
+		restCtx.EncodeAndRespondWithHeight(certificates, height)
 	}
 }
 
@@ -116,13 +115,51 @@ func getX509CertChainHandler(cliCtx context.CLIContext, storeName string) http.H
 	}
 }
 
+func getAllProposedX509RootCertsToRevokeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+		performPkiQuery(restCtx,
+			fmt.Sprintf("custom/%s/all_proposed_x509_root_cert_revocations", storeName), "", "")
+	}
+}
+
+func getProposedX509RootCertToRevokeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+		subject := vars[subject]
+		subjectKeyID := vars[subjectKeyID]
+
+		res, height, err := restCtx.QueryStore(types.GetProposedCertificateRevocationKey(subject, subjectKeyID), storeName)
+		if err != nil || res == nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound,
+				types.ErrProposedCertificateRevocationDoesNotExist(subject, subjectKeyID).Error())
+			return
+		}
+
+		var revocation types.ProposedCertificateRevocation
+
+		restCtx.Codec().MustUnmarshalBinaryBare(res, &revocation)
+
+		restCtx.EncodeAndRespondWithHeight(revocation, height)
+	}
+}
+
 func getAllRevokedX509CertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 		rootSubject := r.FormValue(rootSubject)
 		rootSubjectKeyID := r.FormValue(rootSubjectKeyID)
-		getListCertificates(restCtx, fmt.Sprintf("custom/%s/all_revoked_x509_certs", storeName),
+		performPkiQuery(restCtx, fmt.Sprintf("custom/%s/all_revoked_x509_certs", storeName),
 			rootSubject, rootSubjectKeyID)
+	}
+}
+
+func getAllRevokedX509RootCertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+		performPkiQuery(restCtx, fmt.Sprintf("custom/%s/all_revoked_x509_root_certs", storeName), "", "")
 	}
 }
 
@@ -141,11 +178,11 @@ func getRevokedX509CertHandler(cliCtx context.CLIContext, storeName string) http
 			return
 		}
 
-		var certificate types.Certificates
+		var certificates types.Certificates
 
-		cliCtx.Codec.MustUnmarshalBinaryBare(res, &certificate)
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &certificates)
 
-		restCtx.EncodeAndRespondWithHeight(certificate, height)
+		restCtx.EncodeAndRespondWithHeight(certificates, height)
 	}
 }
 
@@ -171,12 +208,12 @@ func chainCertificates(restCtx rest.RestContext, storeName string,
 	return height, nil
 }
 
-func getListCertificates(restCtx rest.RestContext, path string, rootSubject string, rootSubjectKeyID string) {
+func performPkiQuery(restCtx rest.RestContext, path string, rootSubject string, rootSubjectKeyID string) {
 	paginationParams, err := restCtx.ParsePaginationParams()
 	if err != nil {
 		return
 	}
 
-	params := types.NewListCertificatesQueryParams(paginationParams, rootSubject, rootSubjectKeyID)
+	params := types.NewPkiQueryParams(paginationParams, rootSubject, rootSubjectKeyID)
 	restCtx.QueryList(path, params)
 }

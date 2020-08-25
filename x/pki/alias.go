@@ -19,12 +19,13 @@ var (
 )
 
 type (
-	Keeper                    = keeper.Keeper
-	MsgProposeAddX509RootCert = types.MsgProposeAddX509RootCert
-	MsgApproveAddX509RootCert = types.MsgApproveAddX509RootCert
-	MsgAddX509Cert            = types.MsgAddX509Cert
-	MsgRevokeX509Cert         = types.MsgRevokeX509Cert
-	Certificate               = types.Certificate
-	Certificates              = types.Certificates
-	ProposedCertificate       = types.ProposedCertificate
+	Keeper                        = keeper.Keeper
+	MsgProposeAddX509RootCert     = types.MsgProposeAddX509RootCert
+	MsgApproveAddX509RootCert     = types.MsgApproveAddX509RootCert
+	MsgAddX509Cert                = types.MsgAddX509Cert
+	MsgRevokeX509Cert             = types.MsgRevokeX509Cert
+	Certificate                   = types.Certificate
+	Certificates                  = types.Certificates
+	ProposedCertificate           = types.ProposedCertificate
+	ProposedCertificateRevocation = types.ProposedCertificateRevocation
 )

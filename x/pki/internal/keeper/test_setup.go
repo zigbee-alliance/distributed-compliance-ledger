@@ -72,7 +72,7 @@ func DefaultRootCertificate() types.Certificate {
 		testconstants.Address1)
 }
 
-func DefaultPendingRootCertificate() types.ProposedCertificate {
+func DefaultProposedRootCertificate() types.ProposedCertificate {
 	return types.NewProposedCertificate(
 		testconstants.RootCertPem,
 		testconstants.RootSubject,
@@ -87,12 +87,12 @@ func PopulateStoreWithMixedCertificates(setup TestSetup, count int) (int, int, i
 	firstID := 1
 	firstIDRoot := firstID
 	firstIDLeaf := firstID + n
-	firstIDPending := firstID + n*2
+	firstIDProposed := firstID + n*2
 	populateStoreWithCertificates(setup, n, DefaultRootCertificate(), firstIDRoot)
 	populateStoreWithCertificates(setup, n+n, DefaultLeafCertificate(), firstIDLeaf)
-	populateStoreWithPendingCertificates(setup, n+n*2, DefaultPendingRootCertificate(), firstIDPending)
+	populateStoreWithProposedCertificates(setup, n+n*2, DefaultProposedRootCertificate(), firstIDProposed)
 
-	return firstIDRoot, firstIDLeaf, firstIDPending
+	return firstIDRoot, firstIDLeaf, firstIDProposed
 }
 
 // add n Certificates into store {SubjectKeyID: "1".."n"}.
@@ -109,8 +109,8 @@ func populateStoreWithCertificates(setup TestSetup, count int, certificate types
 	return firstID
 }
 
-// add n Pending Root Certificates into store {SubjectKeyID: "1".."n"}.
-func populateStoreWithPendingCertificates(setup TestSetup,
+// add n Proposed Root Certificates into store {SubjectKeyID: "1".."n"}.
+func populateStoreWithProposedCertificates(setup TestSetup,
 	count int, certificate types.ProposedCertificate, firstID int) int {
 	for i := firstID; i <= count; i++ {
 		certificate.Subject = string(i)

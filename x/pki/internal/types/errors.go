@@ -10,12 +10,14 @@ import (
 const (
 	Codespace sdk.CodespaceType = ModuleName
 
-	CodeCertificateAlreadyExists         sdk.CodeType = 401
-	CodeCertificateDoesNotExist          sdk.CodeType = 402
-	CodeProposedCertificateAlreadyExists sdk.CodeType = 403
-	CodeProposedCertificateDoesNotExist  sdk.CodeType = 404
-	CodeInappropriateCertificateType     sdk.CodeType = 405
-	CodeInvalidCertificate               sdk.CodeType = 406
+	CodeCertificateAlreadyExists                   sdk.CodeType = 401
+	CodeCertificateDoesNotExist                    sdk.CodeType = 402
+	CodeProposedCertificateAlreadyExists           sdk.CodeType = 403
+	CodeProposedCertificateDoesNotExist            sdk.CodeType = 404
+	CodeProposedCertificateRevocationAlreadyExists sdk.CodeType = 405
+	CodeProposedCertificateRevocationDoesNotExist  sdk.CodeType = 406
+	CodeInappropriateCertificateType               sdk.CodeType = 407
+	CodeInvalidCertificate                         sdk.CodeType = 408
 )
 
 func ErrCertificateAlreadyExists(issuer string, serialNumber string) sdk.Error {
@@ -41,6 +43,18 @@ func ErrProposedCertificateDoesNotExist(subject string, subjectKeyID string) sdk
 		fmt.Sprintf("No proposed X509 root certificate associated "+
 			"with the combination of subject=%v and subjectKeyID=%v on the ledger. "+
 			"The cerificate either does not exists or already approved.", subject, subjectKeyID))
+}
+
+func ErrProposedCertificateRevocationAlreadyExists(subject string, subjectKeyID string) sdk.Error {
+	return sdk.NewError(Codespace, CodeProposedCertificateRevocationAlreadyExists,
+		fmt.Sprintf("Proposed X509 root certificate revocation associated with the combination "+
+			"of subject=%v and subjectKeyID=%v already exists on the ledger", subject, subjectKeyID))
+}
+
+func ErrProposedCertificateRevocationDoesNotExist(subject string, subjectKeyID string) sdk.Error {
+	return sdk.NewError(Codespace, CodeProposedCertificateRevocationDoesNotExist,
+		fmt.Sprintf("No proposed X509 root certificate revocation associated "+
+			"with the combination of subject=%v and subjectKeyID=%v on the ledger.", subject, subjectKeyID))
 }
 
 func ErrInappropriateCertificateType(error interface{}) sdk.Error {

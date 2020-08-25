@@ -55,10 +55,10 @@ func TestKeeper_CertificateGetSet(t *testing.T) {
 	require.Equal(t, certificate.RootSubjectKeyID, receivedCertificate.RootSubjectKeyID)
 }
 
-func TestKeeper_PendingCertificateGetSet(t *testing.T) {
+func TestKeeper_ProposedCertificateGetSet(t *testing.T) {
 	setup := Setup()
 
-	// check if pending certificate present
+	// check if proposed certificate present
 	require.False(t, setup.PkiKeeper.IsProposedCertificatePresent(
 		setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID))
 
@@ -145,7 +145,7 @@ func TestKeeper_CertificateIterator(t *testing.T) {
 
 	count := 9
 
-	// add 3 leaf / 3 root / 3 pending certificates
+	// add 3 leaf / 3 root / 3 proposed certificates
 	PopulateStoreWithMixedCertificates(setup, count)
 
 	// get iterator
@@ -158,12 +158,12 @@ func TestKeeper_CertificateIterator(t *testing.T) {
 	require.Equal(t, count/3*2, len(expectedRecords))
 }
 
-func TestKeeper_PendingCertificateIterator(t *testing.T) {
+func TestKeeper_ProposedCertificateIterator(t *testing.T) {
 	setup := Setup()
 
 	count := 9
 
-	// add 3 leaf / 3 root / 3 pending certificates
+	// add 3 leaf / 3 root / 3 proposed certificates
 	PopulateStoreWithMixedCertificates(setup, count)
 
 	// get iterator
