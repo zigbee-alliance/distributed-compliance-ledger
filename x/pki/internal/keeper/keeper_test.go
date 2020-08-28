@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestKeeper_CertificateGetSet(t *testing.T) {
+func TestKeeper_ApprovedCertificateGetSet(t *testing.T) {
 	setup := Setup()
 
 	// check if certificate present
@@ -87,7 +87,7 @@ func TestKeeper_ProposedCertificateGetSet(t *testing.T) {
 
 	// get certificate
 	receivedCertificate := setup.PkiKeeper.GetProposedCertificate(
-		setup.Ctx, testconstants.RootSubject, certificate.SubjectKeyID)
+		setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(t, certificate.PemCert, receivedCertificate.PemCert)
 	require.Equal(t, certificate.Subject, receivedCertificate.Subject)
 	require.Equal(t, certificate.SubjectKeyID, receivedCertificate.SubjectKeyID)
@@ -95,6 +95,90 @@ func TestKeeper_ProposedCertificateGetSet(t *testing.T) {
 	require.Equal(t, certificate.Owner, receivedCertificate.Owner)
 	// Amino marshals empty slices as nulls: https://github.com/tendermint/go-amino/issues/275
 	// require.Equal(t, certificate.Approvals, receivedCertificate.Approvals)
+}
+
+func TestKeeper_RevokedCertificateGetSet(t *testing.T) {
+	setup := Setup()
+
+	// check if revoked certificate present
+	require.False(t, setup.PkiKeeper.IsRevokedCertificatesPresent(
+		setup.Ctx, testconstants.LeafSubject, testconstants.LeafSubjectKeyID))
+
+	// no revoked certificate before its created
+	certificates := setup.PkiKeeper.GetRevokedCertificates(
+		setup.Ctx, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	require.Equal(t, 0, len(certificates.Items))
+
+	// store revoked certificate
+	certificate := types.NewNonRootCertificate(
+		testconstants.LeafCertPem,
+		testconstants.LeafSubject,
+		testconstants.LeafSubjectKeyID,
+		testconstants.LeafSerialNumber,
+		testconstants.LeafIssuer,
+		testconstants.LeafAuthorityKeyID,
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.Address1,
+	)
+
+	setup.PkiKeeper.AddRevokedCertificates(setup.Ctx, certificate.Subject, certificate.SubjectKeyID,
+		types.NewCertificates([]types.Certificate{certificate}))
+
+	// check if revoked certificate present
+	require.True(t, setup.PkiKeeper.IsRevokedCertificatesPresent(
+		setup.Ctx, testconstants.LeafSubject, testconstants.LeafSubjectKeyID))
+
+	// get certificate
+	receivedCertificates := setup.PkiKeeper.GetRevokedCertificates(
+		setup.Ctx, testconstants.LeafSubject, certificate.SubjectKeyID)
+	require.Equal(t, 1, len(receivedCertificates.Items))
+
+	receivedCertificate := receivedCertificates.Items[0]
+	require.Equal(t, certificate.PemCert, receivedCertificate.PemCert)
+	require.Equal(t, certificate.Subject, receivedCertificate.Subject)
+	require.Equal(t, certificate.SubjectKeyID, receivedCertificate.SubjectKeyID)
+	require.Equal(t, certificate.SerialNumber, receivedCertificate.SerialNumber)
+	require.Equal(t, certificate.Issuer, receivedCertificate.Issuer)
+	require.Equal(t, certificate.AuthorityKeyID, receivedCertificate.AuthorityKeyID)
+	require.Equal(t, certificate.RootSubject, receivedCertificate.RootSubject)
+	require.Equal(t, certificate.RootSubjectKeyID, receivedCertificate.RootSubjectKeyID)
+	require.Equal(t, certificate.IsRoot, receivedCertificate.IsRoot)
+	require.Equal(t, certificate.Owner, receivedCertificate.Owner)
+}
+
+func TestKeeper_ProposedCertificateRevocationGetSet(t *testing.T) {
+	setup := Setup()
+
+	// check if proposed certificate present
+	require.False(t, setup.PkiKeeper.IsProposedCertificateRevocationPresent(
+		setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID))
+
+	// no certificate before its created
+	require.Panics(t, func() {
+		setup.PkiKeeper.GetProposedCertificateRevocation(
+			setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	})
+
+	// store certificate
+	revocation := types.NewProposedCertificateRevocation(
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
+		testconstants.Address1,
+	)
+
+	setup.PkiKeeper.SetProposedCertificateRevocation(setup.Ctx, revocation)
+
+	// check if certificate present
+	require.True(t, setup.PkiKeeper.IsProposedCertificateRevocationPresent(
+		setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID))
+
+	// get certificate
+	receivedRevocation := setup.PkiKeeper.GetProposedCertificateRevocation(
+		setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(t, revocation.Subject, receivedRevocation.Subject)
+	require.Equal(t, revocation.SubjectKeyID, receivedRevocation.SubjectKeyID)
+	require.Equal(t, revocation.Approvals, revocation.Approvals)
 }
 
 func TestKeeper_ChildCertificatesGetSet(t *testing.T) {
@@ -141,49 +225,63 @@ func TestKeeper_ChildCertificatesGetSet(t *testing.T) {
 	require.Equal(t, childCertificates.CertIdentifiers, receivedChildCertificates.CertIdentifiers)
 }
 
-func TestKeeper_CertificateIterator(t *testing.T) {
+func TestKeeper_UniqueCertificateKeyGetSet(t *testing.T) {
 	setup := Setup()
 
-	// add 3 leaf / 3 root / 3 proposed certificates
+	// check if unique certificate key is busy
+	require.False(t, setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx,
+		testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber))
+
+	// register unique certificate key
+	setup.PkiKeeper.SetUniqueCertificateKey(setup.Ctx,
+		testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber)
+
+	// check if unique certificate key is busy
+	require.True(t, setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx,
+		testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber))
+}
+
+func TestKeeper_ApprovedCertificatesIterator(t *testing.T) {
+	setup := Setup()
+
 	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// get iterator
-	var iteratedCerts []types.Certificate
+	var iteratedApprovedCerts []types.Certificate
 
 	setup.PkiKeeper.IterateApprovedCertificatesRecords(setup.Ctx, "", func(certificates types.Certificates) (stop bool) {
-		iteratedCerts = append(iteratedCerts, certificates.Items...)
+		iteratedApprovedCerts = append(iteratedApprovedCerts, certificates.Items...)
 		return false
 	})
 
 	allApproved := CombineCertLists(genCerts.ApprovedRoots, genCerts.ApprovedNonRoots)
 
-	require.Equal(t, len(allApproved), len(iteratedCerts))
+	require.Equal(t, len(allApproved), len(iteratedApprovedCerts))
 
 	for i := 0; i < len(allApproved); i++ {
-		require.Equal(t, allApproved[i].PemCert, iteratedCerts[i].PemCert)
-		require.Equal(t, allApproved[i].Subject, iteratedCerts[i].Subject)
-		require.Equal(t, allApproved[i].SubjectKeyID, iteratedCerts[i].SubjectKeyID)
-		require.Equal(t, allApproved[i].SerialNumber, iteratedCerts[i].SerialNumber)
-		require.Equal(t, allApproved[i].Issuer, iteratedCerts[i].Issuer)
-		require.Equal(t, allApproved[i].AuthorityKeyID, iteratedCerts[i].AuthorityKeyID)
-		require.Equal(t, allApproved[i].RootSubject, iteratedCerts[i].RootSubject)
-		require.Equal(t, allApproved[i].RootSubjectKeyID, iteratedCerts[i].RootSubjectKeyID)
-		require.Equal(t, allApproved[i].IsRoot, iteratedCerts[i].IsRoot)
-		require.Equal(t, allApproved[i].Owner, iteratedCerts[i].Owner)
+		require.Equal(t, allApproved[i].PemCert, iteratedApprovedCerts[i].PemCert)
+		require.Equal(t, allApproved[i].Subject, iteratedApprovedCerts[i].Subject)
+		require.Equal(t, allApproved[i].SubjectKeyID, iteratedApprovedCerts[i].SubjectKeyID)
+		require.Equal(t, allApproved[i].SerialNumber, iteratedApprovedCerts[i].SerialNumber)
+		require.Equal(t, allApproved[i].Issuer, iteratedApprovedCerts[i].Issuer)
+		require.Equal(t, allApproved[i].AuthorityKeyID, iteratedApprovedCerts[i].AuthorityKeyID)
+		require.Equal(t, allApproved[i].RootSubject, iteratedApprovedCerts[i].RootSubject)
+		require.Equal(t, allApproved[i].RootSubjectKeyID, iteratedApprovedCerts[i].RootSubjectKeyID)
+		require.Equal(t, allApproved[i].IsRoot, iteratedApprovedCerts[i].IsRoot)
+		require.Equal(t, allApproved[i].Owner, iteratedApprovedCerts[i].Owner)
 	}
 }
 
 func TestKeeper_ProposedCertificateIterator(t *testing.T) {
 	setup := Setup()
 
-	// add 3 leaf / 3 root / 3 proposed certificates
 	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// get iterator
 	var iteratedProposedCerts []types.ProposedCertificate
 
-	setup.PkiKeeper.IterateProposedCertificates(setup.Ctx, func(certificate types.ProposedCertificate) (stop bool) {
-		iteratedProposedCerts = append(iteratedProposedCerts, certificate)
+	setup.PkiKeeper.IterateProposedCertificates(setup.Ctx, func(proposedCertificate types.ProposedCertificate) (stop bool) {
+		iteratedProposedCerts = append(iteratedProposedCerts, proposedCertificate)
 		return false
 	})
 
@@ -198,4 +296,96 @@ func TestKeeper_ProposedCertificateIterator(t *testing.T) {
 		// Amino marshals empty slices as nulls: https://github.com/tendermint/go-amino/issues/275
 		// require.Equal(t, genCerts.ProposedRoots[i].Approvals, iteratedProposedCerts[i].Approvals)
 	}
+}
+
+func TestKeeper_RevokedCertificatesIterator(t *testing.T) {
+	setup := Setup()
+
+	genCerts := setup.PopulateStoreWithMixedCertificates()
+
+	// get iterator
+	var iteratedRevokedCerts []types.Certificate
+
+	setup.PkiKeeper.IterateRevokedCertificatesRecords(setup.Ctx, "", func(certificates types.Certificates) (stop bool) {
+		iteratedRevokedCerts = append(iteratedRevokedCerts, certificates.Items...)
+		return false
+	})
+
+	allRevoked := CombineCertLists(genCerts.RevokedRoots, genCerts.RevokedNonRoots)
+
+	require.Equal(t, len(allRevoked), len(iteratedRevokedCerts))
+
+	for i := 0; i < len(allRevoked); i++ {
+		require.Equal(t, allRevoked[i].PemCert, iteratedRevokedCerts[i].PemCert)
+		require.Equal(t, allRevoked[i].Subject, iteratedRevokedCerts[i].Subject)
+		require.Equal(t, allRevoked[i].SubjectKeyID, iteratedRevokedCerts[i].SubjectKeyID)
+		require.Equal(t, allRevoked[i].SerialNumber, iteratedRevokedCerts[i].SerialNumber)
+		require.Equal(t, allRevoked[i].Issuer, iteratedRevokedCerts[i].Issuer)
+		require.Equal(t, allRevoked[i].AuthorityKeyID, iteratedRevokedCerts[i].AuthorityKeyID)
+		require.Equal(t, allRevoked[i].RootSubject, iteratedRevokedCerts[i].RootSubject)
+		require.Equal(t, allRevoked[i].RootSubjectKeyID, iteratedRevokedCerts[i].RootSubjectKeyID)
+		require.Equal(t, allRevoked[i].IsRoot, iteratedRevokedCerts[i].IsRoot)
+		require.Equal(t, allRevoked[i].Owner, iteratedRevokedCerts[i].Owner)
+	}
+}
+
+func TestKeeper_ProposedCertificateRevocationIterator(t *testing.T) {
+	setup := Setup()
+
+	genCerts := setup.PopulateStoreWithMixedCertificates()
+
+	// get iterator
+	var iteratedProposedRevocations []types.ProposedCertificateRevocation
+
+	setup.PkiKeeper.IterateProposedCertificateRevocations(
+		setup.Ctx,
+		func(revocation types.ProposedCertificateRevocation) (stop bool) {
+			iteratedProposedRevocations = append(iteratedProposedRevocations, revocation)
+			return false
+		},
+	)
+
+	require.Equal(t, len(genCerts.ProposedRootRevocations), len(iteratedProposedRevocations))
+
+	for i := 0; i < len(genCerts.ProposedRootRevocations); i++ {
+		require.Equal(t, genCerts.ProposedRootRevocations[i].Subject, iteratedProposedRevocations[i].Subject)
+		require.Equal(t, genCerts.ProposedRootRevocations[i].SubjectKeyID, iteratedProposedRevocations[i].SubjectKeyID)
+		require.Equal(t, genCerts.ProposedRootRevocations[i].Approvals, iteratedProposedRevocations[i].Approvals)
+	}
+}
+
+func TestKeeper_ChildCertificatesIterator(t *testing.T) {
+	setup := Setup()
+
+	// store child certificates
+	childCertificates1 := types.NewChildCertificates(
+		"CN=DST Root CA X3,O=Digital Signature Trust Co.",
+		testconstants.IntermediateAuthorityKeyID)
+	childCertificates1.CertIdentifiers = append(childCertificates1.CertIdentifiers,
+		types.NewCertificateIdentifier(testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID))
+
+	setup.PkiKeeper.SetChildCertificates(setup.Ctx, childCertificates1)
+
+	childCertificates2 := types.NewChildCertificates(
+		"CN=Let's Encrypt Authority X3,O=Let's Encrypt,C=US",
+		testconstants.LeafAuthorityKeyID)
+	childCertificates2.CertIdentifiers = append(childCertificates2.CertIdentifiers,
+		types.NewCertificateIdentifier(testconstants.LeafSubject, testconstants.LeafSubjectKeyID))
+
+	setup.PkiKeeper.SetChildCertificates(setup.Ctx, childCertificates2)
+
+	// get iterator
+	var iteratedChildCertificatesRecords []types.ChildCertificates
+
+	setup.PkiKeeper.IterateChildCertificatesRecords(
+		setup.Ctx,
+		func(childCertificates types.ChildCertificates) (stop bool) {
+			iteratedChildCertificatesRecords = append(iteratedChildCertificatesRecords, childCertificates)
+			return false
+		},
+	)
+
+	require.Equal(t, 2, len(iteratedChildCertificatesRecords))
+	require.Equal(t, childCertificates1, iteratedChildCertificatesRecords[0])
+	require.Equal(t, childCertificates2, iteratedChildCertificatesRecords[1])
 }

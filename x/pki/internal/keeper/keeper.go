@@ -272,7 +272,7 @@ func (k Keeper) DeleteUniqueCertificateKey(ctx sdk.Context, issuer string, seria
 // Gets the Proposed Certificate Revocation record associated with a Subject/SubjectKeyID combination.
 func (k Keeper) GetProposedCertificateRevocation(ctx sdk.Context,
 	subject string, subjectKeyID string) types.ProposedCertificateRevocation {
-	if !k.IsProposedCertificatePresent(ctx, subject, subjectKeyID) {
+	if !k.IsProposedCertificateRevocationPresent(ctx, subject, subjectKeyID) {
 		panic("Proposed Certificate Revocation does not exist")
 	}
 

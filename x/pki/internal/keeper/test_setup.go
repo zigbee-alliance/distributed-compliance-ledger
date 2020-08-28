@@ -156,7 +156,7 @@ func Setup() TestSetup {
 	return setup
 }
 
-func DefaultLeafCertificate() types.Certificate {
+func DefaultNonRootCertificate() types.Certificate {
 	return types.NewNonRootCertificate(
 		testconstants.LeafCertPem,
 		testconstants.LeafSubject,
@@ -184,6 +184,13 @@ func DefaultProposedRootCertificate() types.ProposedCertificate {
 		testconstants.RootSubject,
 		testconstants.RootSubjectKeyID,
 		testconstants.RootSerialNumber,
+		testconstants.Address1)
+}
+
+func DefaultProposedRootCertificateRevocation() types.ProposedCertificateRevocation {
+	return types.NewProposedCertificateRevocation(
+		testconstants.RootSubject,
+		testconstants.RootSubjectKeyID,
 		testconstants.Address1)
 }
 
@@ -251,6 +258,6 @@ func createProposedRootCertificateRevocation(index Index) types.ProposedCertific
 	return types.ProposedCertificateRevocation{
 		Subject:      DN + subjectSuffix,
 		SubjectKeyID: KeyID + subjectSuffix,
-		Approvals:    []sdk.AccAddress{},
+		Approvals:    []sdk.AccAddress{testconstants.Address1},
 	}
 }

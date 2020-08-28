@@ -100,7 +100,7 @@ func TestHandler_ProposeAddX509RootCert_Twice(t *testing.T) {
 
 	// again propose add x509 root certificate
 	result = setup.Handler(setup.Ctx, proposeAddX509RootCert)
-	require.Equal(t, types.CodeCertificateAlreadyExists, result.Code)
+	require.Equal(t, types.CodeProposedCertificateAlreadyExists, result.Code)
 }
 
 func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
@@ -119,7 +119,7 @@ func TestHandler_ProposeAddX509RootCert_CertificateAlreadyExists(t *testing.T) {
 		// again propose adding of x509 root certificate
 		proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(proposeAddX509RootCert.Cert, constants.Address1)
 		result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
-		require.Equal(t, types.CodeCertificateAlreadyExists, result.Code)
+		require.Equal(t, types.CodeProposedCertificateAlreadyExists, result.Code)
 	}
 }
 
