@@ -27,7 +27,7 @@ func NewHandler(keeper keeper.Keeper) sdk.Handler {
 	}
 }
 
-func handleMsgProposeAddAccount(ctx sdk.Context, keeper Keeper, msg types.MsgProposeAddAccount) sdk.Result {
+func handleMsgProposeAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgProposeAddAccount) sdk.Result {
 	// check if sender has enough rights to propose account.
 	if !keeper.HasRole(ctx, msg.Signer, types.Trustee) {
 		return sdk.ErrUnauthorized(

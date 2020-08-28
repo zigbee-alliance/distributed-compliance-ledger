@@ -1,22 +1,21 @@
 package auth
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 type GenesisState struct {
-	Accounts        []Account              `json:"accounts"`
-	PendingAccounts []types.PendingAccount `json:"pending_accounts"`
+	Accounts                  []Account                  `json:"accounts"`
+	PendingAccounts           []PendingAccount           `json:"pending_accounts"`
+	PendingAccountRevocations []PendingAccountRevocation `json:"pending_account_revocations"`
 }
 
 func NewGenesisState() GenesisState {
-	return GenesisState{Accounts: []Account{}}
-}
-
-func DefaultGenesisState() GenesisState {
-	return NewGenesisState()
+	return GenesisState{
+		Accounts:                  []Account{},
+		PendingAccounts:           []PendingAccount{},
+		PendingAccountRevocations: []PendingAccountRevocation{},
+	}
 }
 
 func ValidateGenesis(data GenesisState) error {
@@ -32,10 +31,20 @@ func ValidateGenesis(data GenesisState) error {
 		}
 	}
 
+	for _, record := range data.PendingAccountRevocations {
+		if err := record.Validate(); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
-func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
+func DefaultGenesisState() GenesisState {
+	return NewGenesisState()
+}
+
+func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) {
 	for _, record := range data.Accounts {
 		keeper.SetAccount(ctx, record)
 	}
@@ -44,23 +53,36 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.Valid
 		keeper.SetPendingAccount(ctx, record)
 	}
 
-	return []abci.ValidatorUpdate{}
+	for _, record := range data.PendingAccountRevocations {
+		keeper.SetPendingAccountRevocation(ctx, record)
+	}
 }
 
 func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	var accounts []Account
+	var (
+		accounts                  []Account
+		pendingAccounts           []PendingAccount
+		pendingAccountRevocations []PendingAccountRevocation
+	)
 
-	var pendingAccounts []PendingAccount
-
-	k.IterateAccounts(ctx, func(account types.Account) (stop bool) {
+	k.IterateAccounts(ctx, func(account Account) (stop bool) {
 		accounts = append(accounts, account)
 		return false
 	})
 
-	k.IteratePendingAccounts(ctx, func(account types.PendingAccount) (stop bool) {
-		pendingAccounts = append(pendingAccounts, account)
+	k.IteratePendingAccounts(ctx, func(pendingAccount PendingAccount) (stop bool) {
+		pendingAccounts = append(pendingAccounts, pendingAccount)
 		return false
 	})
 
-	return GenesisState{Accounts: accounts, PendingAccounts: pendingAccounts}
+	k.IteratePendingAccountRevocations(ctx, func(pendingAccountRevocation PendingAccountRevocation) (stop bool) {
+		pendingAccountRevocations = append(pendingAccountRevocations, pendingAccountRevocation)
+		return false
+	})
+
+	return GenesisState{
+		Accounts:                  accounts,
+		PendingAccounts:           pendingAccounts,
+		PendingAccountRevocations: pendingAccountRevocations,
+	}
 }

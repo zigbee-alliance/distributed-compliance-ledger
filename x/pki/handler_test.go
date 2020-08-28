@@ -76,7 +76,7 @@ func TestHandler_ProposeAddX509RootCert_ForInvalidCertificate(t *testing.T) {
 	setup := Setup()
 
 	// propose x509 root certificate
-	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.StubCert, setup.Trustee)
+	proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(constants.StubCertPem, setup.Trustee)
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Equal(t, types.CodeInvalidCertificate, result.Code)
 }
@@ -279,7 +279,7 @@ func TestHandler_AddX509Cert_ForInvalidCertificate(t *testing.T) {
 	setup := Setup()
 
 	// add x509 certificate
-	addX509Cert := types.NewMsgAddX509Cert(constants.StubCert, setup.Trustee)
+	addX509Cert := types.NewMsgAddX509Cert(constants.StubCertPem, setup.Trustee)
 	result := setup.Handler(setup.Ctx, addX509Cert)
 	require.Equal(t, types.CodeInvalidCertificate, result.Code)
 }
@@ -389,7 +389,7 @@ func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
 	setup := Setup()
 
 	// add invalid root
-	intermediateCertificate := types.NewRootCertificate(constants.StubCert,
+	intermediateCertificate := types.NewRootCertificate(constants.StubCertPem,
 		constants.RootSubject, constants.RootSubjectKeyID, constants.RootSerialNumber, setup.Trustee)
 	setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, intermediateCertificate)
 

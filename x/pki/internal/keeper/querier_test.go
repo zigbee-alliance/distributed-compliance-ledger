@@ -4,7 +4,7 @@ package keeper
 import (
 	"testing"
 
-	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/stretchr/testify/require"
@@ -21,7 +21,7 @@ func TestQuerier_QueryProposedX509RootCert(t *testing.T) {
 	// query proposed certificate
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryProposedX509RootCert, test_constants.RootSubject, test_constants.RootSubjectKeyID},
+		[]string{QueryProposedX509RootCert, testconstants.RootSubject, testconstants.RootSubjectKeyID},
 		abci.RequestQuery{},
 	)
 
@@ -40,7 +40,7 @@ func TestQuerier_QueryProposedX509RootCertForNotFound(t *testing.T) {
 	// query proposed certificate
 	_, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryProposedX509RootCert, test_constants.RootSubject, test_constants.RootSubjectKeyID},
+		[]string{QueryProposedX509RootCert, testconstants.RootSubject, testconstants.RootSubjectKeyID},
 		abci.RequestQuery{},
 	)
 
@@ -59,7 +59,7 @@ func TestQuerier_QueryX509Cert(t *testing.T) {
 	// query certificate
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryX509Cert, test_constants.RootSubject, test_constants.RootSubjectKeyID},
+		[]string{QueryX509Cert, testconstants.RootSubject, testconstants.RootSubjectKeyID},
 		abci.RequestQuery{},
 	)
 
@@ -81,7 +81,7 @@ func TestQuerier_QueryX509CertForNotFound(t *testing.T) {
 	// query proposed certificate
 	_, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryX509Cert, test_constants.RootSubject, test_constants.RootSubjectKeyID},
+		[]string{QueryX509Cert, testconstants.RootSubject, testconstants.RootSubjectKeyID},
 		abci.RequestQuery{},
 	)
 
@@ -92,10 +92,9 @@ func TestQuerier_QueryX509CertForNotFound(t *testing.T) {
 
 func TestQuerier_QueryAllProposedX509RootCerts(t *testing.T) {
 	setup := Setup()
-	count := 9
 
 	// populate store with different certificates
-	_, _, firstID := PopulateStoreWithMixedCertificates(setup, count)
+	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -108,20 +107,22 @@ func TestQuerier_QueryAllProposedX509RootCerts(t *testing.T) {
 	_ = setup.Cdc.UnmarshalJSON(result, &listProposedCertificates)
 
 	// check
-	require.Equal(t, count/3, len(listProposedCertificates.Items))
-	require.Equal(t, DefaultProposedRootCertificate().PemCert, listProposedCertificates.Items[0].PemCert)
-	require.Equal(t, string(firstID), listProposedCertificates.Items[0].Subject)
-	require.Equal(t, string(firstID), listProposedCertificates.Items[0].SubjectKeyID)
+	require.Equal(t, len(genCerts.ProposedRoots), len(listProposedCertificates.Items))
+
+	for i := 0; i < len(genCerts.ProposedRoots); i++ {
+		require.Equal(t, genCerts.ProposedRoots[i].PemCert, listProposedCertificates.Items[i].PemCert)
+		require.Equal(t, genCerts.ProposedRoots[i].Subject, listProposedCertificates.Items[i].Subject)
+		require.Equal(t, genCerts.ProposedRoots[i].SubjectKeyID, listProposedCertificates.Items[i].SubjectKeyID)
+	}
 }
 
 func TestQuerier_QueryAllProposedX509RootCertsWithPagination(t *testing.T) {
 	setup := Setup()
-	count := 9
 	skip := 1
 	take := 2
 
 	// populate store with different certificates
-	_, _, firstID := PopulateStoreWithMixedCertificates(setup, count)
+	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -135,17 +136,19 @@ func TestQuerier_QueryAllProposedX509RootCertsWithPagination(t *testing.T) {
 
 	// check
 	require.Equal(t, take, len(listProposedCertificates.Items))
-	require.Equal(t, DefaultProposedRootCertificate().PemCert, listProposedCertificates.Items[0].PemCert)
-	require.Equal(t, string(firstID+skip), listProposedCertificates.Items[0].Subject)
-	require.Equal(t, string(firstID+skip), listProposedCertificates.Items[0].SubjectKeyID)
+
+	for i := 0; i < take; i++ {
+		require.Equal(t, genCerts.ProposedRoots[skip+i].PemCert, listProposedCertificates.Items[i].PemCert)
+		require.Equal(t, genCerts.ProposedRoots[skip+i].Subject, listProposedCertificates.Items[i].Subject)
+		require.Equal(t, genCerts.ProposedRoots[skip+i].SubjectKeyID, listProposedCertificates.Items[i].SubjectKeyID)
+	}
 }
 
 func TestQuerier_QueryAllX509RootCerts(t *testing.T) {
 	setup := Setup()
-	count := 9
 
 	// populate store with different certificates
-	firstID, _, _ := PopulateStoreWithMixedCertificates(setup, count)
+	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -158,20 +161,22 @@ func TestQuerier_QueryAllX509RootCerts(t *testing.T) {
 	_ = setup.Cdc.UnmarshalJSON(result, &listCertificates)
 
 	// check
-	require.Equal(t, count/3, len(listCertificates.Items))
-	require.Equal(t, DefaultRootCertificate().PemCert, listCertificates.Items[0].PemCert)
-	require.Equal(t, string(firstID), listCertificates.Items[0].Subject)
-	require.Equal(t, string(firstID), listCertificates.Items[0].SubjectKeyID)
+	require.Equal(t, len(genCerts.ApprovedRoots), len(listCertificates.Items))
+
+	for i := 0; i < len(genCerts.ApprovedRoots); i++ {
+		require.Equal(t, genCerts.ApprovedRoots[i].PemCert, listCertificates.Items[i].PemCert)
+		require.Equal(t, genCerts.ApprovedRoots[i].Subject, listCertificates.Items[i].Subject)
+		require.Equal(t, genCerts.ApprovedRoots[i].SubjectKeyID, listCertificates.Items[i].SubjectKeyID)
+	}
 }
 
 func TestQuerier_QueryAllX509RootCertsWithPagination(t *testing.T) {
 	setup := Setup()
-	count := 9
 	skip := 1
 	take := 2
 
 	// populate store with different certificates
-	firstID, _, _ := PopulateStoreWithMixedCertificates(setup, count)
+	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -185,17 +190,19 @@ func TestQuerier_QueryAllX509RootCertsWithPagination(t *testing.T) {
 
 	// check
 	require.Equal(t, take, len(listCertificates.Items))
-	require.Equal(t, DefaultRootCertificate().PemCert, listCertificates.Items[0].PemCert)
-	require.Equal(t, string(firstID+skip), listCertificates.Items[0].Subject)
-	require.Equal(t, string(firstID+skip), listCertificates.Items[0].SubjectKeyID)
+
+	for i := 0; i < take; i++ {
+		require.Equal(t, genCerts.ApprovedRoots[skip+i].PemCert, listCertificates.Items[i].PemCert)
+		require.Equal(t, genCerts.ApprovedRoots[skip+i].Subject, listCertificates.Items[i].Subject)
+		require.Equal(t, genCerts.ApprovedRoots[skip+i].SubjectKeyID, listCertificates.Items[i].SubjectKeyID)
+	}
 }
 
 func TestQuerier_QueryAllX509Certs(t *testing.T) {
 	setup := Setup()
-	count := 9
 
 	// populate store with different certificates
-	firstRootID, firstLeafID, _ := PopulateStoreWithMixedCertificates(setup, count)
+	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -208,30 +215,24 @@ func TestQuerier_QueryAllX509Certs(t *testing.T) {
 	_ = setup.Cdc.UnmarshalJSON(result, &listCertificates)
 
 	// check
-	require.Equal(t, count/3*2, len(listCertificates.Items))
+	allApproved := CombineCertLists(genCerts.ApprovedRoots, genCerts.ApprovedNonRoots)
 
-	// check first root
-	expectedCertificate := DefaultRootCertificate()
-	require.Equal(t, expectedCertificate.PemCert, listCertificates.Items[0].PemCert)
-	require.Equal(t, string(firstRootID), listCertificates.Items[0].Subject)
-	require.Equal(t, string(firstRootID), listCertificates.Items[0].SubjectKeyID)
+	require.Equal(t, len(allApproved), len(listCertificates.Items))
 
-	// check first leaf
-	index := count / 3
-	expectedCertificate = DefaultLeafCertificate()
-	require.Equal(t, expectedCertificate.PemCert, listCertificates.Items[index].PemCert)
-	require.Equal(t, string(firstLeafID), listCertificates.Items[index].Subject)
-	require.Equal(t, string(firstLeafID), listCertificates.Items[index].SubjectKeyID)
+	for i := 0; i < len(allApproved); i++ {
+		require.Equal(t, allApproved[i].PemCert, listCertificates.Items[i].PemCert)
+		require.Equal(t, allApproved[i].Subject, listCertificates.Items[i].Subject)
+		require.Equal(t, allApproved[i].SubjectKeyID, listCertificates.Items[i].SubjectKeyID)
+	}
 }
 
 func TestQuerier_QueryAllX509CertsWithPagination(t *testing.T) {
 	setup := Setup()
-	count := 9
 	skip := 1
 	take := 2
 
 	// populate store with different certificates
-	firstRootID, _, _ := PopulateStoreWithMixedCertificates(setup, count)
+	genCerts := setup.PopulateStoreWithMixedCertificates()
 
 	// query testing result
 	result, _ := setup.Querier(
@@ -244,23 +245,27 @@ func TestQuerier_QueryAllX509CertsWithPagination(t *testing.T) {
 	_ = setup.Cdc.UnmarshalJSON(result, &listCertificates)
 
 	// check
+	allApproved := CombineCertLists(genCerts.ApprovedRoots, genCerts.ApprovedNonRoots)
+
 	require.Equal(t, take, len(listCertificates.Items))
-	require.Equal(t, DefaultRootCertificate().PemCert, listCertificates.Items[0].PemCert)
-	require.Equal(t, string(firstRootID+skip), listCertificates.Items[0].Subject)
-	require.Equal(t, string(firstRootID+skip), listCertificates.Items[0].SubjectKeyID)
+
+	for i := 0; i < take; i++ {
+		require.Equal(t, allApproved[skip+i].PemCert, listCertificates.Items[i].PemCert)
+		require.Equal(t, allApproved[skip+i].Subject, listCertificates.Items[i].Subject)
+		require.Equal(t, allApproved[skip+i].SubjectKeyID, listCertificates.Items[i].SubjectKeyID)
+	}
 }
 
 func TestQuerier_QueryAllSubjectX509Certs(t *testing.T) {
 	setup := Setup()
-	count := 9
 
 	// populate store with different certificates
-	firstRootID, _, _ := PopulateStoreWithMixedCertificates(setup, count)
+	setup.PopulateStoreWithMixedCertificates()
 
 	// query testing result
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryAllSubjectX509Certs, string(firstRootID)},
+		[]string{QueryAllSubjectX509Certs, "DN105"},
 		abci.RequestQuery{Data: emptyQueryParams(setup)},
 	)
 
@@ -270,28 +275,25 @@ func TestQuerier_QueryAllSubjectX509Certs(t *testing.T) {
 	// check
 	require.Equal(t, 1, len(listCertificates.Items))
 
-	// check first root
-	expectedCertificate := DefaultRootCertificate()
-	require.Equal(t, expectedCertificate.PemCert, listCertificates.Items[0].PemCert)
-	require.Equal(t, string(firstRootID), listCertificates.Items[0].Subject)
-	require.Equal(t, string(firstRootID), listCertificates.Items[0].SubjectKeyID)
+	require.Equal(t, testconstants.StubCertPem, listCertificates.Items[0].PemCert)
+	require.Equal(t, "DN105", listCertificates.Items[0].Subject)
+	require.Equal(t, "KeyID105", listCertificates.Items[0].SubjectKeyID)
 }
 
-func TestQuerier_QueryAllSubjectX509Certs_Filer(t *testing.T) {
+func TestQuerier_QueryAllX509Certs_Filter(t *testing.T) {
 	setup := Setup()
-	count := 9
 
 	// populate store with different certificates
-	firstRootID, _, _ := PopulateStoreWithMixedCertificates(setup, count)
+	setup.PopulateStoreWithMixedCertificates()
 
 	paginationParams := pagination.NewPaginationParams(0, 0)
 
-	params := setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, string(firstRootID+1), ""))
+	params := setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, "DN104", "KeyID104"))
 
 	// query testing result
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryAllSubjectX509Certs, string(firstRootID)},
+		[]string{QueryAllX509Certs},
 		abci.RequestQuery{Data: params},
 	)
 
@@ -299,7 +301,19 @@ func TestQuerier_QueryAllSubjectX509Certs_Filer(t *testing.T) {
 	_ = setup.Cdc.UnmarshalJSON(result, &listCertificates)
 
 	// check
-	require.Equal(t, 0, len(listCertificates.Items))
+	require.Equal(t, 3, len(listCertificates.Items))
+
+	require.Equal(t, testconstants.StubCertPem, listCertificates.Items[0].PemCert)
+	require.Equal(t, "DN104", listCertificates.Items[0].Subject)
+	require.Equal(t, "KeyID104", listCertificates.Items[0].SubjectKeyID)
+
+	require.Equal(t, testconstants.StubCertPem, listCertificates.Items[1].PemCert)
+	require.Equal(t, "DN105", listCertificates.Items[1].Subject)
+	require.Equal(t, "KeyID105", listCertificates.Items[1].SubjectKeyID)
+
+	require.Equal(t, testconstants.StubCertPem, listCertificates.Items[2].PemCert)
+	require.Equal(t, "DN106", listCertificates.Items[2].Subject)
+	require.Equal(t, "KeyID106", listCertificates.Items[2].SubjectKeyID)
 }
 
 func emptyQueryParams(setup TestSetup) []byte {

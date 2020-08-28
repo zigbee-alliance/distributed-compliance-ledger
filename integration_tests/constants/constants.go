@@ -65,7 +65,7 @@ var (
 */
 
 const (
-	StubCert = `pem certificate`
+	StubCertPem = `pem certificate`
 
 	RootCertPem = `
 -----BEGIN CERTIFICATE-----

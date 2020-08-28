@@ -1,7 +1,9 @@
 package keeper
 
-//nolint:goimports
 import (
+	"sort"
+	"strconv"
+
 	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -12,11 +14,115 @@ import (
 	dbm "github.com/tendermint/tm-db"
 )
 
+const (
+	DN    = "DN"
+	KeyID = "KeyID"
+)
+
+type GeneratedCertificates struct {
+	ProposedRoots           []types.ProposedCertificate
+	ApprovedRoots           []types.Certificate
+	ApprovedNonRoots        []types.Certificate
+	ProposedRootRevocations []types.ProposedCertificateRevocation
+	RevokedRoots            []types.Certificate
+	RevokedNonRoots         []types.Certificate
+}
+
+type Index struct {
+	Subject int
+}
+
+type Indexes struct {
+	Subject int
+	Issuer  int
+	Root    int
+}
+
 type TestSetup struct {
 	Cdc       *codec.Codec
 	Ctx       sdk.Context
 	PkiKeeper Keeper
 	Querier   sdk.Querier
+}
+
+func (setup TestSetup) PopulateStoreWithMixedCertificates() GeneratedCertificates {
+	var genCerts GeneratedCertificates
+
+	// We use the ascending order of indexes and padded numbers for them to ensure the same order of entities
+	// in KVStore prefix iterators and in slices of genCerts.
+
+	setup.storeProposedRootCertificate(&genCerts, Index{Subject: 101})
+	setup.storeProposedRootCertificate(&genCerts, Index{Subject: 102})
+	setup.storeProposedRootCertificate(&genCerts, Index{Subject: 103})
+
+	setup.storeApprovedRootCertificate(&genCerts, Index{Subject: 104})
+	{
+		setup.storeApprovedNonRootCertificate(&genCerts, Indexes{Subject: 105, Issuer: 104, Root: 104})
+		{
+			setup.storeApprovedNonRootCertificate(&genCerts, Indexes{Subject: 106, Issuer: 105, Root: 104})
+		}
+		setup.storeRevokedNonRootCertificate(&genCerts, Indexes{Subject: 107, Issuer: 104, Root: 104})
+		{
+			setup.storeRevokedNonRootCertificate(&genCerts, Indexes{Subject: 108, Issuer: 107, Root: 104})
+		}
+	}
+	setup.storeApprovedRootCertificate(&genCerts, Index{Subject: 109})
+	{
+		setup.storeApprovedNonRootCertificate(&genCerts, Indexes{Subject: 110, Issuer: 109, Root: 109})
+	}
+	setup.storeApprovedRootCertificate(&genCerts, Index{Subject: 111})
+	setup.storeRevokedRootCertificate(&genCerts, Index{Subject: 112})
+	{
+		setup.storeRevokedNonRootCertificate(&genCerts, Indexes{Subject: 113, Issuer: 112, Root: 112})
+	}
+	setup.storeRevokedRootCertificate(&genCerts, Index{Subject: 114})
+
+	setup.storeProposedRootCertificateRevocation(&genCerts, Index{Subject: 109})
+	setup.storeProposedRootCertificateRevocation(&genCerts, Index{Subject: 111})
+
+	return genCerts
+}
+
+func (setup TestSetup) storeProposedRootCertificate(genCerts *GeneratedCertificates, index Index) {
+	proposedCertificate := createProposedRootCertificate(index)
+	setup.PkiKeeper.SetProposedCertificate(setup.Ctx, proposedCertificate)
+	genCerts.ProposedRoots = append(genCerts.ProposedRoots, proposedCertificate)
+}
+
+func (setup TestSetup) storeApprovedRootCertificate(genCerts *GeneratedCertificates, index Index) {
+	certificate := createRootCertificate(index)
+	setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, certificate)
+	genCerts.ApprovedRoots = append(genCerts.ApprovedRoots, certificate)
+}
+
+func (setup TestSetup) storeApprovedNonRootCertificate(genCerts *GeneratedCertificates, indexes Indexes) {
+	certificate := createNonRootCertificate(indexes)
+	setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, certificate)
+	genCerts.ApprovedNonRoots = append(genCerts.ApprovedNonRoots, certificate)
+}
+
+func (setup TestSetup) storeProposedRootCertificateRevocation(genCerts *GeneratedCertificates, index Index) {
+	revocation := createProposedRootCertificateRevocation(index)
+	setup.PkiKeeper.SetProposedCertificateRevocation(setup.Ctx, revocation)
+	genCerts.ProposedRootRevocations = append(genCerts.ProposedRootRevocations, revocation)
+}
+
+func (setup TestSetup) storeRevokedRootCertificate(genCerts *GeneratedCertificates, index Index) {
+	certificate := createRootCertificate(index)
+
+	setup.PkiKeeper.AddRevokedCertificates(setup.Ctx, certificate.Subject, certificate.SubjectKeyID,
+		types.NewCertificates([]types.Certificate{certificate}))
+
+	genCerts.RevokedRoots = append(genCerts.RevokedRoots, certificate)
+}
+
+func (setup TestSetup) storeRevokedNonRootCertificate(genCerts *GeneratedCertificates, indexes Indexes) {
+	certificate := createNonRootCertificate(indexes)
+
+	setup.PkiKeeper.AddRevokedCertificates(setup.Ctx, certificate.Subject, certificate.SubjectKeyID,
+		types.NewCertificates([]types.Certificate{certificate}))
+
+	genCerts.RevokedNonRoots = append(genCerts.RevokedNonRoots, certificate)
 }
 
 func Setup() TestSetup {
@@ -81,43 +187,70 @@ func DefaultProposedRootCertificate() types.ProposedCertificate {
 		testconstants.Address1)
 }
 
-// add n Mixed Certificates into store {SubjectKeyID: "1".."n"}.
-func PopulateStoreWithMixedCertificates(setup TestSetup, count int) (int, int, int) {
-	n := count / 3
-	firstID := 1
-	firstIDRoot := firstID
-	firstIDLeaf := firstID + n
-	firstIDProposed := firstID + n*2
-	populateStoreWithCertificates(setup, n, DefaultRootCertificate(), firstIDRoot)
-	populateStoreWithCertificates(setup, n+n, DefaultLeafCertificate(), firstIDLeaf)
-	populateStoreWithProposedCertificates(setup, n+n*2, DefaultProposedRootCertificate(), firstIDProposed)
+func CombineCertLists(rootCerts []types.Certificate, nonRootCerts []types.Certificate) []types.Certificate {
+	concatenation := append(rootCerts, nonRootCerts...)
 
-	return firstIDRoot, firstIDLeaf, firstIDProposed
+	sort.Slice(
+		concatenation,
+		func(i, j int) bool {
+			return concatenation[i].SerialNumber < concatenation[j].SerialNumber
+		},
+	)
+
+	return concatenation
 }
 
-// add n Certificates into store {SubjectKeyID: "1".."n"}.
-func populateStoreWithCertificates(setup TestSetup, count int, certificate types.Certificate, firstID int) int {
-	for i := firstID; i <= count; i++ {
-		certificate.Subject = string(i)
-		certificate.SubjectKeyID = string(i)
-		certificate.SerialNumber = string(i)
-		certificate.RootSubject = string(i)
-		certificate.RootSubjectKeyID = string(i)
-		setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, certificate)
-	}
+func createProposedRootCertificate(index Index) types.ProposedCertificate {
+	subjectSuffix := strconv.Itoa(index.Subject)
 
-	return firstID
+	return types.ProposedCertificate{
+		PemCert:      testconstants.StubCertPem,
+		Subject:      DN + subjectSuffix,
+		SubjectKeyID: KeyID + subjectSuffix,
+		SerialNumber: subjectSuffix,
+		Owner:        testconstants.Address1,
+		Approvals:    []sdk.AccAddress{},
+	}
 }
 
-// add n Proposed Root Certificates into store {SubjectKeyID: "1".."n"}.
-func populateStoreWithProposedCertificates(setup TestSetup,
-	count int, certificate types.ProposedCertificate, firstID int) int {
-	for i := firstID; i <= count; i++ {
-		certificate.Subject = string(i)
-		certificate.SubjectKeyID = string(i)
-		certificate.SerialNumber = string(i)
-		setup.PkiKeeper.SetProposedCertificate(setup.Ctx, certificate)
-	}
+func createRootCertificate(index Index) types.Certificate {
+	subjectSuffix := strconv.Itoa(index.Subject)
 
-	return firstID
+	return types.Certificate{
+		PemCert:      testconstants.StubCertPem,
+		Subject:      DN + subjectSuffix,
+		SubjectKeyID: KeyID + subjectSuffix,
+		SerialNumber: subjectSuffix,
+		IsRoot:       true,
+		Owner:        testconstants.Address1,
+	}
+}
+
+func createNonRootCertificate(indexes Indexes) types.Certificate {
+	subjectSuffix := strconv.Itoa(indexes.Subject)
+	issuerSuffix := strconv.Itoa(indexes.Issuer)
+	rootSuffix := strconv.Itoa(indexes.Root)
+
+	return types.Certificate{
+		PemCert:          testconstants.StubCertPem,
+		Subject:          DN + subjectSuffix,
+		SubjectKeyID:     KeyID + subjectSuffix,
+		SerialNumber:     subjectSuffix,
+		Issuer:           DN + issuerSuffix,
+		AuthorityKeyID:   KeyID + issuerSuffix,
+		RootSubject:      DN + rootSuffix,
+		RootSubjectKeyID: KeyID + rootSuffix,
+		IsRoot:           false,
+		Owner:            testconstants.Address1,
+	}
+}
+
+func createProposedRootCertificateRevocation(index Index) types.ProposedCertificateRevocation {
+	subjectSuffix := strconv.Itoa(index.Subject)
+
+	return types.ProposedCertificateRevocation{
+		Subject:      DN + subjectSuffix,
+		SubjectKeyID: KeyID + subjectSuffix,
+		Approvals:    []sdk.AccAddress{},
+	}
 }

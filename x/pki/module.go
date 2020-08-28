@@ -1,8 +1,8 @@
 package pki
 
-// nolint:goimports
 import (
 	"encoding/json"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/cli"
@@ -79,8 +79,9 @@ func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.Val
 	var genesisState GenesisState
 
 	ModuleCdc.MustUnmarshalJSON(data, &genesisState)
+	InitGenesis(ctx, a.keeper, genesisState)
 
-	return InitGenesis(ctx, a.keeper, genesisState)
+	return []abci.ValidatorUpdate{}
 }
 
 func (a AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
