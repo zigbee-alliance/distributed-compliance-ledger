@@ -3,10 +3,12 @@ package pagination
 //nolint:goimports
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/spf13/viper"
 	"net/http"
 	"strconv"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -24,6 +26,11 @@ type PaginationParams struct {
 
 func NewPaginationParams(skip int, take int) PaginationParams {
 	return PaginationParams{Skip: skip, Take: take}
+}
+
+func AddPaginationParams(cmd *cobra.Command) {
+	cmd.Flags().Int(FlagSkip, 0, FlagSkipUsage)
+	cmd.Flags().Int(FlagTake, 0, FlagTakeUsage)
 }
 
 func ParsePaginationParamsFromFlags() PaginationParams {

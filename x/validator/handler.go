@@ -1,15 +1,14 @@
 package validator
 
-//nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/functions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
-	tmtypes "github.com/tendermint/tendermint/types"
 	"strings"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/string"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 func NewHandler(k Keeper, authKeeper auth.Keeper) sdk.Handler {
@@ -21,6 +20,7 @@ func NewHandler(k Keeper, authKeeper auth.Keeper) sdk.Handler {
 			return handleMsgCreateValidator(ctx, msg, k, authKeeper)
 		default:
 			errMsg := fmt.Sprintf("unrecognized validator Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}
@@ -51,7 +51,7 @@ func handleMsgCreateValidator(ctx sdk.Context, msg types.MsgCreateValidator,
 	// check key type
 	if ctx.ConsensusParams() != nil {
 		tmPubKey := tmtypes.TM2PB.PubKey(msg.GetPubKey())
-		if !functions.StringInSlice(tmPubKey.Type, ctx.ConsensusParams().Validator.PubKeyTypes) {
+		if !string.StringInSlice(tmPubKey.Type, ctx.ConsensusParams().Validator.PubKeyTypes) {
 			return sdk.ErrUnknownRequest(
 				fmt.Sprintf("Validator pubkey type \"%s\" is not supported. Supported types: [%s]",
 					tmPubKey.Type, strings.Join(ctx.ConsensusParams().Validator.PubKeyTypes, ","))).Result()

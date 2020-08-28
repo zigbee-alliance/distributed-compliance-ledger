@@ -1,20 +1,21 @@
 package cli
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store/iavl"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"os"
 )
 
 const (
@@ -37,7 +38,6 @@ func NewReadResult(result json.RawMessage, height int64) ReadResult {
 // Implement fmt.Stringer.
 func (n ReadResult) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}
@@ -69,47 +69,72 @@ func (ctx CliContext) FromAddress() sdk.AccAddress {
 
 func (ctx CliContext) WithCodec(cdc *codec.Codec) CliContext {
 	ctx.context = ctx.context.WithCodec(cdc)
+
 	return ctx
 }
 
 func (ctx CliContext) WithHeight(height int64) CliContext {
 	ctx.context = ctx.context.WithHeight(height)
+
 	return ctx
 }
 
-func (ctx CliContext) WithFormerHeight() (CliContext, error) {
+func (ctx CliContext) FormerHeight() (int64, error) {
 	node, err := ctx.context.GetNode()
 	if err != nil {
-		return CliContext{}, err
+		return 0, err
 	}
 
 	status, err := node.Status()
 	if err != nil {
+		return 0, err
+	}
+
+	return status.SyncInfo.LatestBlockHeight - 1, nil
+}
+
+func (ctx CliContext) WithFormerHeight() (CliContext, error) {
+	height, err := ctx.FormerHeight()
+	if err != nil {
 		return CliContext{}, err
 	}
 
-	ctx.context = ctx.context.WithHeight(status.SyncInfo.LatestBlockHeight - 1)
+	ctx.context = ctx.context.WithHeight(height)
 
 	return ctx, nil
 }
 
-func (ctx CliContext) QueryStore(key []byte, storeName string) ([]byte, int64, error) {
-	// Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1.
+func (ctx CliContext) WithHeightFromFlag() (CliContext, error) {
 	if viper.GetBool(FlagPreviousHeight) {
-		ctx, err := ctx.WithFormerHeight()
-		if err != nil {
-			return nil, 0, err
-		}
-
-		res, height, err := ctx.context.QueryStore(key, storeName)
-		if res != nil {
-			return res, height, err
-		}
+		return ctx.WithFormerHeight()
 	}
-	// request on the current height
-	ctx.context = ctx.context.WithHeight(0)
+
+	return ctx.WithHeight(0), nil
+}
+
+func (ctx CliContext) QueryStore(key []byte, storeName string) ([]byte, int64, error) {
+	ctx, err := ctx.WithHeightFromFlag()
+	if err != nil {
+		return nil, 0, err
+	}
 
 	return ctx.context.QueryStore(key, storeName)
+}
+
+func (ctx CliContext) QueryRange(startKey []byte, endKey []byte, limit int,
+	storeName string) (iavl.RangeRes, int64, error) {
+	ctx, err := ctx.WithHeightFromFlag()
+	if err != nil {
+		return iavl.RangeRes{}, 0, err
+	}
+
+	req := iavl.RangeReq{
+		StartKey: startKey,
+		EndKey:   endKey,
+		Limit:    limit,
+	}
+
+	return ctx.context.QueryRange(req, storeName)
 }
 
 func (ctx CliContext) QueryWithData(path string, data interface{}) ([]byte, int64, error) {

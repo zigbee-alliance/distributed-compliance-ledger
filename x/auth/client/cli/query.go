@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/bytes"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
@@ -26,6 +27,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		GetCmdAccount(storeKey, cdc),
 		GetCmdAccounts(storeKey, cdc),
 		GetCmdProposedAccounts(storeKey, cdc),
+		GetCmdAccountsWithProof(storeKey, cdc),
 		GetCmdProposedAccountsToRevoke(storeKey, cdc),
 	)...)
 
@@ -61,7 +63,6 @@ func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagAddress, "", FlagAddressUsage)
-
 	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
@@ -75,12 +76,12 @@ func GetCmdProposedAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllPendingAccounts), params)
 		},
 	}
 
-	cmd.Flags().Int(pagination.FlagSkip, 0, pagination.FlagSkipUsage)
-	cmd.Flags().Int(pagination.FlagTake, 0, pagination.FlagTakeUsage)
+	pagination.AddPaginationParams(cmd)
 
 	return cmd
 }
@@ -93,12 +94,45 @@ func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllAccounts), params)
 		},
 	}
 
-	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of accounts to skip")
-	cmd.Flags().Int(pagination.FlagTake, 0, "amount of accounts to take")
+	pagination.AddPaginationParams(cmd)
+
+	return cmd
+}
+
+func GetCmdAccountsWithProof(storeKey string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all-accounts-with-proof",
+		Short: "Get all accounts",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			res, height, err := cliCtx.QueryRange(types.AccountPrefix, bytes.CpIncr(types.AccountPrefix), 0, storeKey)
+			if err != nil {
+				return err
+			}
+
+			var accounts []types.Account
+
+			for _, accBytes := range res.Values {
+				var account types.Account
+				cdc.MustUnmarshalBinaryBare(accBytes, &account)
+				accounts = append(accounts, account)
+			}
+
+			out := cdc.MustMarshalJSON(accounts)
+
+			return cliCtx.PrintWithHeight(out, height)
+		},
+	}
+
+	// TODO
+	pagination.AddPaginationParams(cmd)
 
 	return cmd
 }
@@ -111,12 +145,12 @@ func GetCmdProposedAccountsToRevoke(queryRoute string, cdc *codec.Codec) *cobra.
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllPendingAccountRevocations), params)
 		},
 	}
 
-	cmd.Flags().Int(pagination.FlagSkip, 0, pagination.FlagSkipUsage)
-	cmd.Flags().Int(pagination.FlagTake, 0, pagination.FlagTakeUsage)
+	pagination.AddPaginationParams(cmd)
 
 	return cmd
 }

@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strings"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
@@ -64,11 +63,9 @@ func GetCmdProposeAddAccount(cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
-	cmd.Flags().String(FlagPubKey, "", "Bench32 encoded account public key")
-	cmd.Flags().String(FlagRoles, "",
-		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
-			types.Roles))
+	cmd.Flags().String(FlagAddress, "", FlagAddressUsage)
+	cmd.Flags().String(FlagPubKey, "", FlagPubKeyUsage)
+	cmd.Flags().String(FlagRoles, "", FlagRolesUsage)
 
 	_ = cmd.MarkFlagRequired(FlagAddress)
 	_ = cmd.MarkFlagRequired(FlagPubKey)

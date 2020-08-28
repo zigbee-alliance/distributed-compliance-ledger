@@ -10,7 +10,7 @@ const (
 )
 
 var (
-	// functions aliases
+	// function aliases
 	InitializeNodeValidatorFiles = cosmosgenutil.InitializeNodeValidatorFiles
 	ExportGenesisFile            = cosmosgenutil.ExportGenesisFile
 	NewInitConfig                = cosmosgenutil.NewInitConfig
