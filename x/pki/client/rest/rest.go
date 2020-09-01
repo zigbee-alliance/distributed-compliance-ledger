@@ -30,6 +30,18 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		addX509CertHandler(cliCtx),
 	).Methods("POST")
 	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/proposed/revoked/root", storeName),
+		proposeRevokeX509RootCertHandler(cliCtx),
+	).Methods("POST")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/proposed/revoked/root/{%s}/{%s}", storeName, subject, subjectKeyID),
+		approveRevokeX509RootCertHandler(cliCtx),
+	).Methods("PATCH")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/{%s}/{%s}", storeName, subject, subjectKeyID),
+		revokeX509CertHandler(cliCtx),
+	).Methods("DELETE")
+	r.HandleFunc(
 		fmt.Sprintf("/%s/certs/root", storeName),
 		getAllX509RootCertsHandler(cliCtx, storeName),
 	).Methods("GET")
@@ -56,5 +68,25 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc(
 		fmt.Sprintf("/%s/certs", storeName),
 		getAllX509CertsHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/proposed/revoked/root/{%s}/{%s}", storeName, subject, subjectKeyID),
+		getProposedX509RootCertToRevokeHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/proposed/revoked/root", storeName),
+		getAllProposedX509RootCertsToRevokeHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/revoked/{%s}/{%s}", storeName, subject, subjectKeyID),
+		getRevokedX509CertHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/revoked/root", storeName),
+		getAllRevokedX509RootCertsHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/revoked", storeName),
+		getAllRevokedX509CertsHandler(cliCtx, storeName),
 	).Methods("GET")
 }

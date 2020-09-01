@@ -17,7 +17,7 @@ const (
 	CodePendingAccountRevocationDoesNotExist  sdk.CodeType = 106
 )
 
-func ErrAccountAlreadyExist(address interface{}) sdk.Error {
+func ErrAccountAlreadyExists(address interface{}) sdk.Error {
 	return sdk.NewError(DefaultCodespace, CodeAccountAlreadyExists,
 		fmt.Sprintf("Account associated with the address=%v already exists on the ledger", address))
 }
@@ -27,7 +27,7 @@ func ErrAccountDoesNotExist(address interface{}) sdk.Error {
 		fmt.Sprintf("No account associated with the address=%v on the ledger", address))
 }
 
-func ErrPendingAccountAlreadyExist(address interface{}) sdk.Error {
+func ErrPendingAccountAlreadyExists(address interface{}) sdk.Error {
 	return sdk.NewError(DefaultCodespace, CodePendingAccountAlreadyExists,
 		fmt.Sprintf("Pending account associated with the address=%v already exists on the ledger", address))
 }
@@ -37,7 +37,7 @@ func ErrPendingAccountDoesNotExist(address interface{}) sdk.Error {
 		fmt.Sprintf("No pending account associated with the address=%v on the ledger", address))
 }
 
-func ErrPendingAccountRevocationAlreadyExist(address interface{}) sdk.Error {
+func ErrPendingAccountRevocationAlreadyExists(address interface{}) sdk.Error {
 	return sdk.NewError(DefaultCodespace, CodePendingAccountRevocationAlreadyExists,
 		fmt.Sprintf("Pending account revocation associated with the address=%v already exists on the ledger", address))
 }

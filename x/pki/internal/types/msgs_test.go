@@ -46,21 +46,22 @@ func TestValidateMsgProposeAddX509RootCert(t *testing.T) {
 }
 
 func TestMsgProposeAddX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgProposeAddX509RootCert(testconstants.StubCert, testconstants.Signer)
+	var msg = NewMsgProposeAddX509RootCert(testconstants.StubCertPem, testconstants.Signer)
 	res := msg.GetSignBytes()
 
-	expected := `{"type":"pki/ProposeAddX509RootCert","value":{"cert":` +
-		`"pem certificate","signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	expected := `{"type":"pki/ProposeAddX509RootCert","value":{` +
+		`"cert":"pem certificate",` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
 	require.Equal(t, expected, string(res))
 }
 
 /*
-	MsgApproveAddX509RootCert(
+	MsgApproveAddX509RootCert
 */
 
 func TestNewMsgApproveAddX509RootCert(t *testing.T) {
-	var msg = NewMsgApproveAddX509RootCert(testconstants.LeafSubject,
-		testconstants.LeafSubjectKeyID, testconstants.Signer)
+	var msg = NewMsgApproveAddX509RootCert(testconstants.RootSubject,
+		testconstants.RootSubjectKeyID, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_add_x509_root_cert")
@@ -73,13 +74,13 @@ func TestValidateMsgApproveAddX509RootCert(t *testing.T) {
 		msg   MsgApproveAddX509RootCert
 	}{
 		{true, NewMsgApproveAddX509RootCert(
-			testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)},
+			testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Signer)},
 		{false, NewMsgApproveAddX509RootCert(
-			"", testconstants.LeafSubjectKeyID, testconstants.Signer)},
+			"", testconstants.RootSubjectKeyID, testconstants.Signer)},
 		{false, NewMsgApproveAddX509RootCert(
-			testconstants.LeafSubject, "", testconstants.Signer)},
+			testconstants.RootSubject, "", testconstants.Signer)},
 		{false, NewMsgApproveAddX509RootCert(
-			testconstants.LeafSubject, testconstants.LeafSubjectKeyID, nil)},
+			testconstants.RootSubject, testconstants.RootSubjectKeyID, nil)},
 	}
 
 	for _, tc := range cases {
@@ -94,13 +95,13 @@ func TestValidateMsgApproveAddX509RootCert(t *testing.T) {
 }
 
 func TestMsgApproveAddX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgApproveAddX509RootCert(testconstants.LeafSubject,
-		testconstants.LeafSubjectKeyID, testconstants.Signer)
+	var msg = NewMsgApproveAddX509RootCert(testconstants.RootSubject,
+		testconstants.RootSubjectKeyID, testconstants.Signer)
 
-	expected := `{"type":"pki/ApproveAddX509RootCert","value":{"signer":` +
-		`"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"subject":"CN=dsr-corporation.com","subject_key_id":` +
-		`"8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"}}`
+	expected := `{"type":"pki/ApproveAddX509RootCert","value":{` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"subject":"CN=DST Root CA X3,O=Digital Signature Trust Co.",` +
+		`"subject_key_id":"C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -140,11 +141,157 @@ func TestValidateMsgAddX509Cert(t *testing.T) {
 	}
 }
 
-func TestMsgMsgAddX509Cert(t *testing.T) {
-	var msg = NewMsgAddX509Cert(testconstants.StubCert, testconstants.Signer)
+func TestMsgAddX509CertGetSignBytes(t *testing.T) {
+	var msg = NewMsgAddX509Cert(testconstants.StubCertPem, testconstants.Signer)
 	res := msg.GetSignBytes()
 
-	expected := `{"type":"pki/AddX509Cert","value":{"cert":"pem certificate",` +
+	expected := `{"type":"pki/AddX509Cert","value":{` +
+		`"cert":"pem certificate",` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	require.Equal(t, expected, string(res))
+}
+
+/*
+	MsgProposeRevokeX509RootCert
+*/
+
+func TestNewMsgProposeRevokeX509RootCert(t *testing.T) {
+	var msg = NewMsgProposeRevokeX509RootCert(testconstants.RootSubject,
+		testconstants.RootSubjectKeyID, testconstants.Signer)
+
+	require.Equal(t, msg.Route(), RouterKey)
+	require.Equal(t, msg.Type(), "propose_revoke_x509_root_cert")
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
+}
+
+func TestValidateMsgProposeRevokeX509RootCert(t *testing.T) {
+	cases := []struct {
+		valid bool
+		msg   MsgProposeRevokeX509RootCert
+	}{
+		{true, NewMsgProposeRevokeX509RootCert(
+			testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgProposeRevokeX509RootCert(
+			"", testconstants.RootSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgProposeRevokeX509RootCert(
+			testconstants.RootSubject, "", testconstants.Signer)},
+		{false, NewMsgProposeRevokeX509RootCert(
+			testconstants.RootSubject, testconstants.RootSubjectKeyID, nil)},
+	}
+
+	for _, tc := range cases {
+		err := tc.msg.ValidateBasic()
+
+		if tc.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+}
+
+func TestMsgProposeRevokeX509RootCertGetSignBytes(t *testing.T) {
+	var msg = NewMsgProposeRevokeX509RootCert(testconstants.RootSubject,
+		testconstants.RootSubjectKeyID, testconstants.Signer)
+
+	expected := `{"type":"pki/ProposeRevokeX509RootCert","value":{` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"subject":"CN=DST Root CA X3,O=Digital Signature Trust Co.",` +
+		`"subject_key_id":"C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"}}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+/*
+	MsgApproveRevokeX509RootCert
+*/
+
+func TestNewMsgApproveRevokeX509RootCert(t *testing.T) {
+	var msg = NewMsgApproveRevokeX509RootCert(testconstants.RootSubject,
+		testconstants.RootSubjectKeyID, testconstants.Signer)
+
+	require.Equal(t, msg.Route(), RouterKey)
+	require.Equal(t, msg.Type(), "approve_revoke_x509_root_cert")
+	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
+}
+
+func TestValidateMsgApproveRevokeX509RootCert(t *testing.T) {
+	cases := []struct {
+		valid bool
+		msg   MsgApproveRevokeX509RootCert
+	}{
+		{true, NewMsgApproveRevokeX509RootCert(
+			testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgApproveRevokeX509RootCert(
+			"", testconstants.RootSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgApproveRevokeX509RootCert(
+			testconstants.RootSubject, "", testconstants.Signer)},
+		{false, NewMsgApproveRevokeX509RootCert(
+			testconstants.RootSubject, testconstants.RootSubjectKeyID, nil)},
+	}
+
+	for _, tc := range cases {
+		err := tc.msg.ValidateBasic()
+
+		if tc.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+}
+
+func TestMsgApproveRevokeX509RootCertGetSignBytes(t *testing.T) {
+	var msg = NewMsgApproveRevokeX509RootCert(testconstants.RootSubject,
+		testconstants.RootSubjectKeyID, testconstants.Signer)
+
+	expected := `{"type":"pki/ApproveRevokeX509RootCert","value":{` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"subject":"CN=DST Root CA X3,O=Digital Signature Trust Co.",` +
+		`"subject_key_id":"C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"}}`
+	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+/*
+	MsgRevokeX509Cert
+*/
+
+func TestNewMsgRevokeX509Cert(t *testing.T) {
+	var msg = NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
+
+	require.Equal(t, RouterKey, msg.Route())
+	require.Equal(t, "revoke_x509_cert", msg.Type())
+	require.Equal(t, []sdk.AccAddress{testconstants.Signer}, msg.GetSigners())
+}
+
+func TestValidateMsgRevokeX509Cert(t *testing.T) {
+	cases := []struct {
+		valid bool
+		msg   MsgRevokeX509Cert
+	}{
+		{true, NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert("", testconstants.LeafSubjectKeyID, testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert(testconstants.LeafSubject, "", testconstants.Signer)},
+		{false, NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, nil)},
+	}
+
+	for _, tc := range cases {
+		err := tc.msg.ValidateBasic()
+
+		if tc.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+}
+
+func TestMsgRevokeX509CertGetSignBytes(t *testing.T) {
+	var msg = NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
+	res := msg.GetSignBytes()
+
+	expected := `{"type":"pki/RevokeX509Cert","value":{` +
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"subject":"CN=dsr-corporation.com",` +
+		`"subject_key_id":"8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"}}`
 	require.Equal(t, expected, string(res))
 }

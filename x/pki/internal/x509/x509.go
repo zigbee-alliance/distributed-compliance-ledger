@@ -5,9 +5,10 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"strings"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"strings"
 )
 
 type X509Certificate struct {
@@ -55,9 +56,9 @@ func BytesToHex(bytes []byte) string {
 	return strings.Join(bytesHex, ":")
 }
 
-func (c X509Certificate) VerifyX509Certificate(parent *x509.Certificate) sdk.Error {
+func (c X509Certificate) Verify(parent *X509Certificate) sdk.Error {
 	roots := x509.NewCertPool()
-	roots.AddCert(parent)
+	roots.AddCert(parent.Certificate)
 
 	opts := x509.VerifyOptions{Roots: roots}
 
@@ -68,10 +69,10 @@ func (c X509Certificate) VerifyX509Certificate(parent *x509.Certificate) sdk.Err
 	return nil
 }
 
-func (c X509Certificate) IsRootCertificate() bool {
+func (c X509Certificate) IsSelfSigned() bool {
 	if len(c.AuthorityKeyID) > 0 {
-		return c.Subject == c.Issuer && c.AuthorityKeyID == c.SubjectKeyID
+		return c.Issuer == c.Subject && c.AuthorityKeyID == c.SubjectKeyID
 	} else {
-		return c.Subject == c.Issuer
+		return c.Issuer == c.Subject
 	}
 }

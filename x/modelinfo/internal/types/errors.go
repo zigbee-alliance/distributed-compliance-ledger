@@ -3,15 +3,16 @@ package types
 //nolint:goimports
 import (
 	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
 	Codespace sdk.CodespaceType = ModuleName
 
-	CodeModelInfoAlreadyExists   sdk.CodeType = 101
-	CodeModelInfoDoesNotExist    sdk.CodeType = 102
-	CodeVendorProductsDoNotExist sdk.CodeType = 103
+	CodeModelInfoAlreadyExists   sdk.CodeType = 501
+	CodeModelInfoDoesNotExist    sdk.CodeType = 502
+	CodeVendorProductsDoNotExist sdk.CodeType = 503
 )
 
 func ErrModelInfoAlreadyExists(vid interface{}, pid interface{}) sdk.Error {

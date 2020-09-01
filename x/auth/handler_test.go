@@ -21,7 +21,7 @@ func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 		trustee := storeTrustee(setup)
 
 		// ensure 1 trustee approval is needed
-		require.Equal(t, 1, AddAccountApprovalsCount(setup.Ctx, setup.Keeper))
+		require.Equal(t, 1, AccountApprovalsCount(setup.Ctx, setup.Keeper))
 
 		// propose account
 		result, address, pubkey := proposeAddAccount(setup, trustee)
@@ -46,7 +46,7 @@ func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, AddAccountApprovalsCount(setup.Ctx, setup.Keeper))
+	require.Equal(t, 2, AccountApprovalsCount(setup.Ctx, setup.Keeper))
 
 	// trustee1 propose account
 	result, address, pubkey := proposeAddAccount(setup, trustee1)
@@ -84,7 +84,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// ensure 3 trustee approvals are needed
-	require.Equal(t, 3, AddAccountApprovalsCount(setup.Ctx, setup.Keeper))
+	require.Equal(t, 3, AccountApprovalsCount(setup.Ctx, setup.Keeper))
 
 	// trustee1 propose account
 	result, address, pubkey := proposeAddAccount(setup, trustee1)
@@ -281,7 +281,7 @@ func TestHandler_RevokeAccount_OneApprovalIsNeeded(t *testing.T) {
 		address := storeAccount(setup, types.Vendor)
 
 		// ensure 1 trustee revocation approval is needed
-		require.Equal(t, 1, RevokeAccountApprovalsCount(setup.Ctx, setup.Keeper))
+		require.Equal(t, 1, AccountApprovalsCount(setup.Ctx, setup.Keeper))
 
 		// propose to revoke account
 		proposeRevokeAccount := types.NewMsgProposeRevokeAccount(address, trustee)
@@ -308,7 +308,7 @@ func TestHandler_RevokeAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	address := storeAccount(setup, types.Vendor)
 
 	// ensure 2 trustee revocation approvals are needed
-	require.Equal(t, 2, RevokeAccountApprovalsCount(setup.Ctx, setup.Keeper))
+	require.Equal(t, 2, AccountApprovalsCount(setup.Ctx, setup.Keeper))
 
 	// trustee1 proposes to revoke account
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(address, trustee1)
@@ -348,7 +348,7 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	address := storeAccount(setup, types.Vendor)
 
 	// ensure 3 trustee revocation approvals are needed
-	require.Equal(t, 3, RevokeAccountApprovalsCount(setup.Ctx, setup.Keeper))
+	require.Equal(t, 3, AccountApprovalsCount(setup.Ctx, setup.Keeper))
 
 	// trustee1 proposes to revoke account
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(address, trustee1)

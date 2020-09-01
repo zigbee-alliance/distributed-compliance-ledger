@@ -22,6 +22,9 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		GetCmdProposeAddX509RootCertificate(cdc),
 		GetCmdApproveAddX509RootCertificate(cdc),
 		GetCmdAddX509Certificate(cdc),
+		GetCmdProposeRevokeX509RootCertificate(cdc),
+		GetCmdApproveRevokeX509RootCertificate(cdc),
+		GetCmdRevokeX509Certificate(cdc),
 	)...)...)
 
 	return complianceTxCmd
@@ -31,7 +34,7 @@ func GetCmdProposeAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "propose-add-x509-root-cert",
 		Short: "Proposes a new self-signed root certificate",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -58,7 +61,7 @@ func GetCmdApproveAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "approve-add-x509-root-cert",
 		Short: "Approves the proposed root certificate correspondent to combination of subject and subject-key-id",
-		Args:  cobra.ExactArgs(0),
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -72,8 +75,7 @@ func GetCmdApproveAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 	}
 
 	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
-	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "",
-		"Certificate's subject key id (hex)")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 
 	_ = cmd.MarkFlagRequired(FlagSubject)
 	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
@@ -84,9 +86,9 @@ func GetCmdApproveAddX509RootCertificate(cdc *codec.Codec) *cobra.Command {
 func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "add-x509-cert",
-		Short: "Adds an intermediate or leaf X509 certificate signed by a chain " +
+		Short: "Adds an intermediate or leaf certificate signed by a chain " +
 			"of certificates which must be already present on the ledger",
-		Args: cobra.ExactArgs(0),
+		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -105,6 +107,87 @@ func GetCmdAddX509Certificate(cdc *codec.Codec) *cobra.Command {
 		"PEM encoded certificate (string or path to file containing data)")
 
 	_ = cmd.MarkFlagRequired(FlagCertificate)
+
+	return cmd
+}
+
+func GetCmdProposeRevokeX509RootCertificate(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "propose-revoke-x509-root-cert",
+		Short: "Proposes revocation of the given root certificate. " +
+			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
+		Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
+
+			msg := types.NewMsgProposeRevokeX509RootCert(subject, subjectKeyID, cliCtx.FromAddress())
+
+			return cliCtx.HandleWriteMessage(msg)
+		},
+	}
+
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+
+	return cmd
+}
+
+func GetCmdApproveRevokeX509RootCertificate(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "approve-revoke-x509-root-cert",
+		Short: "Approves the proposed revocation of the given root certificate. " +
+			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
+		Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
+
+			msg := types.NewMsgApproveRevokeX509RootCert(subject, subjectKeyID, cliCtx.FromAddress())
+
+			return cliCtx.HandleWriteMessage(msg)
+		},
+	}
+
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+
+	return cmd
+}
+
+func GetCmdRevokeX509Certificate(cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "revoke-x509-cert",
+		Short: "Revokes the given intermediate or leaf certificate. " +
+			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
+		Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
+
+			msg := types.NewMsgRevokeX509Cert(subject, subjectKeyID, cliCtx.FromAddress())
+
+			return cliCtx.HandleWriteMessage(msg)
+		},
+	}
+
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }
