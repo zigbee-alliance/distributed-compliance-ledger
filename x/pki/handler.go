@@ -238,6 +238,8 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 	return sdk.Result{}
 }
 
+// nolint:deadcode, unused, godox
+// FIXME: Unused function.
 func handleMsgProposeRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgProposeRevokeX509RootCert) sdk.Result {
 	// check if signer has root certificate approval role
@@ -280,6 +282,8 @@ func handleMsgProposeRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, a
 	return sdk.Result{}
 }
 
+// nolint:deadcode, unused, godox
+// FIXME: Unused function.
 func handleMsgApproveRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgApproveRevokeX509RootCert) sdk.Result {
 	// check if signer has root certificate approval role
