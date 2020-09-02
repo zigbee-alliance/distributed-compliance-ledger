@@ -13,7 +13,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
-	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 // EncodeTxRequestHandlerFn returns the decode tx REST handler. In particular,
@@ -56,7 +55,7 @@ func DecodeTxRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 }
 
 func decodeTx(cdc *codec.Codec, base64str string) (tx auth.StdTx, err error) {
-	var res types.StdTx
+	var res auth.StdTx
 
 	bytes, err := base64.StdEncoding.DecodeString(base64str)
 	if err != nil {
@@ -77,8 +76,8 @@ type SignMessageRequest struct {
 }
 
 type Txn struct {
-	Type_ string      `json:"type"`
-	Value types.StdTx `json:"value"`
+	Type_ string     `json:"type"`
+	Value auth.StdTx `json:"value"`
 }
 
 func SignMessageHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
@@ -135,7 +134,7 @@ func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		var stdTx types.StdTx
+		var stdTx auth.StdTx
 		if !restCtx.ReadRESTReq(&stdTx) {
 			return
 		}
