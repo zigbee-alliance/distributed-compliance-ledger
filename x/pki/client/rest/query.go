@@ -59,6 +59,7 @@ func getProposedX509RootCertHandler(cliCtx context.CLIContext, storeName string)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				types.ErrProposedCertificateDoesNotExist(subject, subjectKeyID).Error())
+
 			return
 		}
 
@@ -82,6 +83,7 @@ func getX509CertHandler(cliCtx context.CLIContext, storeName string) http.Handle
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				types.ErrCertificateDoesNotExist(subject, subjectKeyID).Error())
+
 			return
 		}
 
@@ -107,6 +109,7 @@ func getX509CertChainHandler(cliCtx context.CLIContext, storeName string) http.H
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				types.ErrCertificateDoesNotExist(subject, subjectKeyID).Error())
+
 			return
 		}
 
@@ -134,6 +137,7 @@ func getProposedX509RootCertToRevokeHandler(cliCtx context.CLIContext, storeName
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				types.ErrProposedCertificateRevocationDoesNotExist(subject, subjectKeyID).Error())
+
 			return
 		}
 
@@ -174,6 +178,7 @@ func getRevokedX509CertHandler(cliCtx context.CLIContext, storeName string) http
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				types.ErrRevokedCertificateDoesNotExist(subject, subjectKeyID).Error())
+
 			return
 		}
 

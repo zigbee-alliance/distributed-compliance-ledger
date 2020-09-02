@@ -60,12 +60,14 @@ func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		address, err := sdk.AccAddressFromBech32(accAddr)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, sdk.ErrInvalidAddress(accAddr).Error())
+
 			return
 		}
 
 		res, height, err := cliCtx.QueryStore(types.GetAccountKey(address), storeName)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrAccountDoesNotExist(address).Error())
+
 			return
 		}
 

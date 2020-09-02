@@ -79,6 +79,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	k.IterateModelInfos(ctx, func(modelInfo types.ModelInfo) (stop bool) {
 		records = append(records, modelInfo)
+
 		return false
 	})
 

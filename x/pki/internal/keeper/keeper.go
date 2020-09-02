@@ -60,6 +60,7 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, certificate types.Certif
 // is present in the store or not.
 func (k Keeper) IsApprovedCertificatesPresent(ctx sdk.Context, subject string, subjectKeyID string) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetApprovedCertificateKey(subject, subjectKeyID))
 }
 
@@ -128,6 +129,7 @@ func (k Keeper) SetProposedCertificate(ctx sdk.Context, certificate types.Propos
 // Subject/SubjectKeyID combination is present in the store or not.
 func (k Keeper) IsProposedCertificatePresent(ctx sdk.Context, subject string, subjectKeyID string) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetProposedCertificateKey(subject, subjectKeyID))
 }
 
@@ -202,6 +204,7 @@ func (k Keeper) SetChildCertificates(ctx sdk.Context, childCertificates types.Ch
 // Checks if the the list of Child Certificates for a combination Issuer/AuthorityKeyID is present in the store or not.
 func (k Keeper) IsChildCertificatesPresent(ctx sdk.Context, issuer string, authorityKeyID string) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetChildCertificatesKey(issuer, authorityKeyID))
 }
 
@@ -252,6 +255,7 @@ func (k Keeper) SetUniqueCertificateKey(ctx sdk.Context, issuer string, serialNu
 // Check if the unique certificate key (Issuer/SerialNumber combination) is busy.
 func (k Keeper) IsUniqueCertificateKeyPresent(ctx sdk.Context, issuer string, serialNumber string) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetUniqueCertificateKey(issuer, serialNumber))
 }
 
@@ -297,6 +301,7 @@ func (k Keeper) SetProposedCertificateRevocation(ctx sdk.Context, revocation typ
 // Subject/SubjectKeyID combination is present in the store or not.
 func (k Keeper) IsProposedCertificateRevocationPresent(ctx sdk.Context, subject string, subjectKeyID string) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetProposedCertificateRevocationKey(subject, subjectKeyID))
 }
 
@@ -370,6 +375,7 @@ func (k Keeper) AddRevokedCertificates(ctx sdk.Context, subject string, subjectK
 // is present in the store or not.
 func (k Keeper) IsRevokedCertificatesPresent(ctx sdk.Context, subject string, subjectKeyID string) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetRevokedCertificateKey(subject, subjectKeyID))
 }
 

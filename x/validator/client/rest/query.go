@@ -35,12 +35,14 @@ func getValidatorHandlerFn(cliCtx context.CLIContext, storeName string) http.Han
 		validatorAddr, err := sdk.ConsAddressFromBech32(bech32validatorAddr)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
 		res, height, err := restCtx.QueryStore(types.GetValidatorKey(validatorAddr), storeName)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrValidatorDoesNotExist(validatorAddr).Error())
+
 			return
 		}
 

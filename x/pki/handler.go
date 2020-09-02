@@ -421,6 +421,7 @@ func removeChildCertificateEntry(ctx sdk.Context, keeper keeper.Keeper, issuer s
 // Returns the RootSubject/RootSubjectKeyID combination or an error in case no valid certificate chain can be built.
 func verifyCertificate(ctx sdk.Context, keeper keeper.Keeper,
 	x509Certificate *x509.X509Certificate) (string, string, sdk.Error) {
+	// nolint:nestif
 	if x509Certificate.IsSelfSigned() {
 		// in this system a certificate is self-signed if and only if it is a root certificate
 		if err := x509Certificate.Verify(x509Certificate); err == nil {

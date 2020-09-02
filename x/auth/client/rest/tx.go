@@ -68,6 +68,7 @@ func approveAddAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				fmt.Sprintf("Request Parsing Error: %v. valid address must be cpecified", err))
+
 			return
 		}
 
@@ -132,6 +133,7 @@ func approveRevokeAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				fmt.Sprintf("Request Parsing Error: %v. valid address must be cpecified", err))
+
 			return
 		}
 

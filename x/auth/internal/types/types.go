@@ -195,6 +195,7 @@ func (acc Account) GetPubKey() crypto.PubKey {
 // SetPubKey - Implements sdk.Account.
 func (acc *Account) SetPubKey(pubKey crypto.PubKey) error {
 	acc.PubKey = pubKey
+
 	return nil
 }
 
@@ -216,6 +217,7 @@ func (acc *Account) GetAccountNumber() uint64 {
 // SetAccountNumber - Implements Account.
 func (acc *Account) SetAccountNumber(accNumber uint64) error {
 	acc.AccountNumber = accNumber
+
 	return nil
 }
 
@@ -227,6 +229,7 @@ func (acc *Account) GetSequence() uint64 {
 // SetSequence - Implements sdk.Account.
 func (acc *Account) SetSequence(seq uint64) error {
 	acc.Sequence = seq
+
 	return nil
 }
 

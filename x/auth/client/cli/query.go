@@ -75,6 +75,7 @@ func GetCmdProposedAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command 
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllPendingAccounts), params)
 		},
 	}
@@ -93,6 +94,7 @@ func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllAccounts), params)
 		},
 	}
@@ -111,6 +113,7 @@ func GetCmdProposedAccountsToRevoke(queryRoute string, cdc *codec.Codec) *cobra.
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/%s", queryRoute, keeper.QueryAllPendingAccountRevocations), params)
 		},
 	}

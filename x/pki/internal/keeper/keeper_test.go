@@ -58,6 +58,7 @@ func TestKeeper_ApprovedCertificateGetSet(t *testing.T) {
 	require.Equal(t, certificate.Owner, receivedCertificate.Owner)
 }
 
+// nolint:wsl
 func TestKeeper_ProposedCertificateGetSet(t *testing.T) {
 	setup := Setup()
 
@@ -241,6 +242,7 @@ func TestKeeper_UniqueCertificateKeyGetSet(t *testing.T) {
 		testconstants.IntermediateIssuer, testconstants.IntermediateSerialNumber))
 }
 
+// nolint:dupl
 func TestKeeper_ApprovedCertificatesIterator(t *testing.T) {
 	setup := Setup()
 
@@ -251,6 +253,7 @@ func TestKeeper_ApprovedCertificatesIterator(t *testing.T) {
 
 	setup.PkiKeeper.IterateApprovedCertificatesRecords(setup.Ctx, "", func(certificates types.Certificates) (stop bool) {
 		iteratedApprovedCerts = append(iteratedApprovedCerts, certificates.Items...)
+
 		return false
 	})
 
@@ -280,13 +283,16 @@ func TestKeeper_ProposedCertificateIterator(t *testing.T) {
 	// get iterator
 	var iteratedProposedCerts []types.ProposedCertificate
 
-	setup.PkiKeeper.IterateProposedCertificates(setup.Ctx, func(proposedCertificate types.ProposedCertificate) (stop bool) {
-		iteratedProposedCerts = append(iteratedProposedCerts, proposedCertificate)
-		return false
-	})
+	setup.PkiKeeper.IterateProposedCertificates(setup.Ctx,
+		func(proposedCertificate types.ProposedCertificate) (stop bool) {
+			iteratedProposedCerts = append(iteratedProposedCerts, proposedCertificate)
+
+			return false
+		})
 
 	require.Equal(t, len(genCerts.ProposedRoots), len(iteratedProposedCerts))
 
+	// nolint:wsl
 	for i := 0; i < len(genCerts.ProposedRoots); i++ {
 		require.Equal(t, genCerts.ProposedRoots[i].PemCert, iteratedProposedCerts[i].PemCert)
 		require.Equal(t, genCerts.ProposedRoots[i].Subject, iteratedProposedCerts[i].Subject)
@@ -298,6 +304,7 @@ func TestKeeper_ProposedCertificateIterator(t *testing.T) {
 	}
 }
 
+// nolint:dupl
 func TestKeeper_RevokedCertificatesIterator(t *testing.T) {
 	setup := Setup()
 
@@ -308,6 +315,7 @@ func TestKeeper_RevokedCertificatesIterator(t *testing.T) {
 
 	setup.PkiKeeper.IterateRevokedCertificatesRecords(setup.Ctx, "", func(certificates types.Certificates) (stop bool) {
 		iteratedRevokedCerts = append(iteratedRevokedCerts, certificates.Items...)
+
 		return false
 	})
 
@@ -341,6 +349,7 @@ func TestKeeper_ProposedCertificateRevocationIterator(t *testing.T) {
 		setup.Ctx,
 		func(revocation types.ProposedCertificateRevocation) (stop bool) {
 			iteratedProposedRevocations = append(iteratedProposedRevocations, revocation)
+
 			return false
 		},
 	)
@@ -381,6 +390,7 @@ func TestKeeper_ChildCertificatesIterator(t *testing.T) {
 		setup.Ctx,
 		func(childCertificates types.ChildCertificates) (stop bool) {
 			iteratedChildCertificatesRecords = append(iteratedChildCertificatesRecords, childCertificates)
+
 			return false
 		},
 	)

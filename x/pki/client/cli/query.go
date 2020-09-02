@@ -103,6 +103,7 @@ func GetCmdGetAllX509RootCerts(queryRoute string, cdc *codec.Codec) *cobra.Comma
 	return cmd
 }
 
+// nolint:dupl
 func GetCmdGetX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "x509-cert",
@@ -197,6 +198,7 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			subject := viper.GetString(FlagSubject)
+
 			return performPkiQuery(cdc, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s", queryRoute, subject))
 		},
 	}
@@ -232,6 +234,7 @@ func GetCmdGetAllProposedX509RootCertsToRevoke(queryRoute string, cdc *codec.Cod
 	return cmd
 }
 
+// nolint:dupl
 func GetCmdGetProposedX509RootCertToRevoke(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "proposed-x509-root-cert-to-revoke",
@@ -265,6 +268,7 @@ func GetCmdGetProposedX509RootCertToRevoke(queryRoute string, cdc *codec.Codec) 
 	return cmd
 }
 
+// nolint:dupl
 func GetCmdGetRevokedX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "revoked-x509-cert",

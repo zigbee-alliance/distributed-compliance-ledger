@@ -20,6 +20,7 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 					return handleMsgDeleteModelInfo(ctx, keeper, authKeeper, msg)*/
 		default:
 			errMsg := fmt.Sprintf("unrecognized nameservice Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

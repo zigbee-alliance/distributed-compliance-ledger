@@ -90,6 +90,7 @@ func TestQuerier_QueryX509CertForNotFound(t *testing.T) {
 	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
 }
 
+// nolint:dupl
 func TestQuerier_QueryAllProposedX509RootCerts(t *testing.T) {
 	setup := Setup()
 
@@ -144,6 +145,7 @@ func TestQuerier_QueryAllProposedX509RootCertsWithPagination(t *testing.T) {
 	}
 }
 
+// nolint:dupl
 func TestQuerier_QueryAllX509RootCerts(t *testing.T) {
 	setup := Setup()
 
@@ -391,6 +393,7 @@ func TestQuerier_QueryRevokedX509CertForNotFound(t *testing.T) {
 	require.Equal(t, types.CodeRevokedCertificateDoesNotExist, err.Code())
 }
 
+// nolint:dupl
 func TestQuerier_QueryAllProposedX509RootCertRevocations(t *testing.T) {
 	setup := Setup()
 
@@ -445,6 +448,7 @@ func TestQuerier_QueryAllProposedX509RootCertRevocationsWithPagination(t *testin
 	}
 }
 
+// nolint:dupl
 func TestQuerier_QueryAllRevokedX509RootCerts(t *testing.T) {
 	setup := Setup()
 
@@ -595,5 +599,6 @@ func paging(setup TestSetup, skip int, take int) []byte {
 
 func pagingAndFilter(setup TestSetup, skip int, take int, rootSubject string, rootSubjectKeyID string) []byte {
 	paginationParams := pagination.NewPaginationParams(skip, take)
+
 	return setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, rootSubject, rootSubjectKeyID))
 }

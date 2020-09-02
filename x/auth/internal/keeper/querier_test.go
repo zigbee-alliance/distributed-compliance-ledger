@@ -166,10 +166,12 @@ func TestQuerier_QueryAllPendingAccountRevocations(t *testing.T) {
 
 func queryAccountParams(setup TestSetup, address sdk.AccAddress) []byte {
 	params := types.NewQueryAccountParams(address)
+
 	return setup.Cdc.MustMarshalJSON(params)
 }
 
 func queryListEmptyQueryParams(setup TestSetup) []byte {
 	paginationParams := pagination.NewPaginationParams(0, 0)
+
 	return setup.Cdc.MustMarshalJSON(paginationParams)
 }

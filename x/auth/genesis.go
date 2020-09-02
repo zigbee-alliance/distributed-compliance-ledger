@@ -67,16 +67,19 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	k.IterateAccounts(ctx, func(account Account) (stop bool) {
 		accounts = append(accounts, account)
+
 		return false
 	})
 
 	k.IteratePendingAccounts(ctx, func(pendingAccount PendingAccount) (stop bool) {
 		pendingAccounts = append(pendingAccounts, pendingAccount)
+
 		return false
 	})
 
 	k.IteratePendingAccountRevocations(ctx, func(pendingAccountRevocation PendingAccountRevocation) (stop bool) {
 		pendingAccountRevocations = append(pendingAccountRevocations, pendingAccountRevocation)
+
 		return false
 	})
 

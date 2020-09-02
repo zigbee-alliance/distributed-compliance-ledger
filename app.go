@@ -28,14 +28,14 @@ import (
 const appName = "zb-ledger"
 
 var (
-	// default home directories for the application CLI
+	// default home directories for the application CLI.
 	DefaultCLIHome = os.ExpandEnv("$HOME/.zblcli")
 
-	// DefaultNodeHome sets the folder where the applcation data and configuration will be stored
+	// DefaultNodeHome sets the folder where the applcation data and configuration will be stored.
 	DefaultNodeHome = os.ExpandEnv("$HOME/.zbld")
 )
 
-// NewBasicManager is in charge of setting up basic module elemnets
+// ModuleBasics is in charge of setting up basic module elemnets.
 var ModuleBasics = module.NewBasicManager(
 	auth.AppModuleBasic{},
 	validator.AppModuleBasic{},

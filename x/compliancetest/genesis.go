@@ -54,6 +54,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	k.IterateTestingResults(ctx, func(testingResult types.TestingResults) (stop bool) {
 		records = append(records, testingResult)
+
 		return false
 	})
 

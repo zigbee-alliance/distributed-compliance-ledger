@@ -22,6 +22,7 @@ func NewHandler(keeper keeper.Keeper) sdk.Handler {
 			return handleMsgApproveRevokeAccount(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized auth Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

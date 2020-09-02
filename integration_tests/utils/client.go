@@ -36,6 +36,7 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 	}
 
 	client := &http.Client{}
+	//nolint:noctx
 	req, err := http.NewRequest(method, BuildURL(uri), bytes.NewBuffer(body))
 	if err != nil {
 		return nil, http.StatusInternalServerError

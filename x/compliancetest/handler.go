@@ -17,6 +17,7 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authKeep
 			return handleMsgAddTestingResult(ctx, keeper, modelinfoKeeper, authKeeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized compliancetest Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}
