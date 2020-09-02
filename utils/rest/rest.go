@@ -1,6 +1,5 @@
 package rest
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"

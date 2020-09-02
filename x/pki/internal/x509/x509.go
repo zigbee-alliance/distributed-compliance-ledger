@@ -1,6 +1,5 @@
 package x509
 
-// nolint:goimports
 import (
 	"crypto/x509"
 	"encoding/pem"

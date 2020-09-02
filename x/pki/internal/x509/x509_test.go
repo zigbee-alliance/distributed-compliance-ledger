@@ -1,7 +1,6 @@
 //nolint:testpackage
 package x509
 
-// nolint:goimports
 import (
 	"testing"
 

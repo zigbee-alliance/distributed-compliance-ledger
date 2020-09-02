@@ -1,7 +1,6 @@
 //nolint:testpackage
 package pki
 
-// nolint:goimports
 import (
 	"testing"
 
