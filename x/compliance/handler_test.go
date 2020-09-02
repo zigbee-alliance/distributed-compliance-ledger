@@ -1,7 +1,6 @@
 //nolint:testpackage
 package compliance
 
-//nolint:goimports
 import (
 	"fmt"
 	"testing"

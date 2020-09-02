@@ -23,6 +23,7 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 			return handleMsgRevokeX509Cert(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized pki Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

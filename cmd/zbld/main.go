@@ -1,6 +1,5 @@
 package main
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"io"

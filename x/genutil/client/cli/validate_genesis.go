@@ -1,6 +1,5 @@
 package cli
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -49,6 +48,7 @@ func ValidateGenesisCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicM
 			}
 
 			fmt.Printf("File at %s is a valid genesis file\n", genesis)
+
 			return nil
 		},
 	}

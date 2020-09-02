@@ -68,6 +68,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	k.IterateComplianceInfos(ctx, "", func(deviceCompliance types.ComplianceInfo) (stop bool) {
 		records = append(records, deviceCompliance)
+
 		return false
 	})
 

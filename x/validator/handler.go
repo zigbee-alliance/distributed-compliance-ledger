@@ -1,6 +1,5 @@
 package validator
 
-//nolint:goimports
 import (
 	"fmt"
 	"strings"
@@ -21,6 +20,7 @@ func NewHandler(k Keeper, authKeeper auth.Keeper) sdk.Handler {
 			return handleMsgCreateValidator(ctx, msg, k, authKeeper)
 		default:
 			errMsg := fmt.Sprintf("unrecognized validator Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

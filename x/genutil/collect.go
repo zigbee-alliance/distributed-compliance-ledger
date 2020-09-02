@@ -1,6 +1,5 @@
 package genutil
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -87,6 +86,7 @@ func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 	IterateGenesisAccounts(cdc, appState,
 		func(acc auth.Account) (stop bool) {
 			addrMap[acc.Address.String()] = acc
+
 			return false
 		},
 	)

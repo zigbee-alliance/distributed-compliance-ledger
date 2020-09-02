@@ -1,6 +1,5 @@
 package compliance
 
-//nolint:goimports
 import (
 	"encoding/json"
 
@@ -94,6 +93,7 @@ func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.Val
 
 func (a AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
 	gs := ExportGenesis(ctx, a.keeper)
+
 	return ModuleCdc.MustMarshalJSON(gs)
 }
 

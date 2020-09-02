@@ -1,6 +1,5 @@
 package cli
 
-//nolint:goimports
 import (
 	"fmt"
 	"strings"

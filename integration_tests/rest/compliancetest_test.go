@@ -1,6 +1,5 @@
 package rest_test
 
-//nolint:goimports
 import (
 	"testing"
 

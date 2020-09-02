@@ -1,6 +1,5 @@
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
 	"net/http"
@@ -56,12 +55,14 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 	vid, err_ := conversions.ParseVID(vars[vid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
 	pid, err_ := conversions.ParsePID(vars[pid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
@@ -81,6 +82,7 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 	if err != nil {
 		restCtx.WriteErrorResponse(http.StatusNotFound,
 			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+
 		return
 	}
 
@@ -95,12 +97,14 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 	vid, err_ := conversions.ParseVID(vars[vid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
 	pid, err_ := conversions.ParsePID(vars[pid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
@@ -110,6 +114,7 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 	if err != nil || res == nil {
 		restCtx.WriteErrorResponse(http.StatusNotFound,
 			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+
 		return
 	}
 

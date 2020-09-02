@@ -1,6 +1,5 @@
 package rest
 
-//nolint:goimports
 import (
 	"encoding/base64"
 	"fmt"
@@ -25,6 +24,7 @@ func DecodeTxRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -33,6 +33,7 @@ func DecodeTxRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		err = restCtx.Codec().UnmarshalJSON(body, &req)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -44,6 +45,7 @@ func DecodeTxRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			tx, err := decodeTx(restCtx.Codec(), base64str)
 			if err != nil {
 				restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 				return
 			}
 
@@ -95,12 +97,14 @@ func SignMessageHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+
 			return
 		}
 
 		account, passphrase, ok := restCtx.BasicAuth()
 		if !ok {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, "Could not find credentials to use")
+
 			return
 		}
 
@@ -117,12 +121,14 @@ func SignMessageHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		txBldr, err := restCtx.TxnBuilder()
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
 		signedStdTx, err := txBldr.SignStdTx(account, passphrase, req.Txn.Value, false)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
@@ -142,12 +148,14 @@ func BroadcastTxHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		txBytes, err := restCtx.Codec().MarshalBinaryLengthPrefixed(stdTx)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
 		res, err := restCtx.BroadcastMessage(txBytes)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 

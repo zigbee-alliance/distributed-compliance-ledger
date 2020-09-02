@@ -1,6 +1,5 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
 

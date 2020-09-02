@@ -1,7 +1,6 @@
 //nolint:testpackage
 package validator
 
-//nolint:goimports
 import (
 	"testing"
 

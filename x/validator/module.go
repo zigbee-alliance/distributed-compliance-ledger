@@ -1,6 +1,5 @@
 package validator
 
-//nolint:goimports
 import (
 	"encoding/json"
 

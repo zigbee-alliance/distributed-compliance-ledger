@@ -1,6 +1,5 @@
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
 	"net/http"
@@ -20,6 +19,7 @@ func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+
 			return
 		}
 
@@ -36,6 +36,7 @@ func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		res, err := restCtx.BlockchainInfo(minHeight, maxHeight)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
+
 			return
 		}
 
@@ -51,6 +52,7 @@ func NodeStatusHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+
 			return
 		}
 
@@ -76,6 +78,7 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+
 			return
 		}
 
@@ -85,6 +88,7 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			height_, err = strconv.ParseInt(h, 10, 64)
 			if err != nil {
 				restCtx.WriteErrorResponse(http.StatusBadRequest, "Invalid height: it must be integer")
+
 				return
 			}
 		}
@@ -92,12 +96,14 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		chainHeight, err := restCtx.GetChainHeight()
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
 		if height_ > chainHeight {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				fmt.Sprintf("Invalid height: It must not be bigger then the chain height: \"%v\"", chainHeight))
+
 			return
 		}
 
@@ -108,6 +114,7 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		output, err := rpc.GetValidators(cliCtx, &height_)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusInternalServerError, err.Error())
+
 			return
 		}
 

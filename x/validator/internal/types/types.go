@@ -1,6 +1,5 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -92,6 +91,7 @@ func MustUnmarshalBinaryBareValidator(cdc *codec.Codec, value []byte) Validator 
 
 func UnmarshalBinaryBareValidator(cdc *codec.Codec, value []byte) (v Validator, err error) {
 	err = cdc.UnmarshalBinaryBare(value, &v)
+
 	return v, err
 }
 

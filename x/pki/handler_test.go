@@ -269,8 +269,10 @@ func TestHandler_AddX509Cert(t *testing.T) {
 		require.Equal(t, types.CodeProposedCertificateDoesNotExist, err.Code())
 
 		// delete for next iteration
-		setup.PkiKeeper.DeleteApprovedCertificates(setup.Ctx, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-		setup.PkiKeeper.DeleteUniqueCertificateKey(setup.Ctx, constants.IntermediateIssuer, constants.IntermediateSerialNumber)
+		setup.PkiKeeper.DeleteApprovedCertificates(setup.Ctx,
+			constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
+		setup.PkiKeeper.DeleteUniqueCertificateKey(setup.Ctx,
+			constants.IntermediateIssuer, constants.IntermediateSerialNumber)
 	}
 }
 

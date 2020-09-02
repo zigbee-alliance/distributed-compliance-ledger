@@ -56,6 +56,7 @@ func TestKeeper_ComplianceInfoIterator(t *testing.T) {
 	setup.CompliancetKeeper.IterateComplianceInfos(setup.Ctx, types.CertificationType(testconstants.CertificationType),
 		func(modelInfo types.ComplianceInfo) (stop bool) {
 			expectedRecords = append(expectedRecords, modelInfo)
+
 			return false
 		})
 	require.Equal(t, count, len(expectedRecords))

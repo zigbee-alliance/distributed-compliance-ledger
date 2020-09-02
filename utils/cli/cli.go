@@ -1,6 +1,5 @@
 package cli
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -69,11 +68,13 @@ func (ctx CliContext) FromAddress() sdk.AccAddress {
 
 func (ctx CliContext) WithCodec(cdc *codec.Codec) CliContext {
 	ctx.context = ctx.context.WithCodec(cdc)
+
 	return ctx
 }
 
 func (ctx CliContext) WithHeight(height int64) CliContext {
 	ctx.context = ctx.context.WithHeight(height)
+
 	return ctx
 }
 

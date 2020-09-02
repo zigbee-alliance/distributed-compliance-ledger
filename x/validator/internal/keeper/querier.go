@@ -1,6 +1,5 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
 
@@ -42,6 +41,7 @@ func queryValidators(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res
 
 	keeper.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		// filter by validator state
+		// nolint:exhaustive
 		switch params.State {
 		case types.Active:
 			if validator.IsJailed() {
@@ -57,11 +57,13 @@ func queryValidators(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, validator)
+
 			return false
 		}
 

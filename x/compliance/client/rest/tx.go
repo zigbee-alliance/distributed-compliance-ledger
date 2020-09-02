@@ -26,12 +26,14 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		vid, err_ := conversions.ParseVID(vars[vid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 
 		pid, err_ := conversions.ParsePID(vars[pid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 
@@ -74,12 +76,14 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		vid, err_ := conversions.ParseVID(vars[vid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 
 		pid, err_ := conversions.ParsePID(vars[pid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 

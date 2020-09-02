@@ -1,6 +1,5 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
 
@@ -74,6 +73,7 @@ func (d *VendorProducts) RemoveVendorProduct(pid uint16) {
 	for i, value := range d.Products {
 		if pid == value.PID {
 			d.Products = append(d.Products[:i], d.Products[i+1:]...)
+
 			return
 		}
 	}

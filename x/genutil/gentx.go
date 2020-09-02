@@ -1,6 +1,5 @@
 package genutil
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
@@ -35,8 +34,10 @@ func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
 	IterateGenesisAccounts(cdc, appGenesisState, func(acc auth.Account) (stop bool) {
 		if acc.Address.Equals(key) {
 			accountIsInGenesis = true
+
 			return true
 		}
+
 		return false
 	})
 

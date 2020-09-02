@@ -1,6 +1,5 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
 
@@ -91,11 +90,13 @@ func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keepe
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, complianceInfo)
+
 			return false
 		}
 
@@ -129,6 +130,7 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
@@ -138,6 +140,7 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 				PID:               complianceInfo.PID,
 				CertificationType: complianceInfo.CertificationType,
 			})
+
 			return false
 		}
 

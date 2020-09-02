@@ -1,7 +1,6 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
 	"testing"
 	"time"

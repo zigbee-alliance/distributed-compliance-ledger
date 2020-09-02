@@ -1,6 +1,5 @@
 package validator
 
-//nolint:goimports
 import (
 	"fmt"
 
@@ -83,6 +82,7 @@ func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
 
 		keeper.IterateValidatorMissedBlockBitArray(ctx, info.Address, func(index int64, missed bool) (stop bool) {
 			localMissedBlocks = append(localMissedBlocks, MissedBlock{index, missed})
+
 			return false
 		})
 		missedBlocks[bechAddr] = localMissedBlocks

@@ -1,6 +1,5 @@
 package modelinfo
 
-//nolint:goimports
 import (
 	"fmt"
 

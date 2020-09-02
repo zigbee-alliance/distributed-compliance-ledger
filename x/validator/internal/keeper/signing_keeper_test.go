@@ -70,6 +70,7 @@ func TestKeeper_ValidatorMissedBlock_SetGet(t *testing.T) {
 			if missed {
 				missedCount++
 			}
+
 			return false
 		})
 

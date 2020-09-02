@@ -1,6 +1,5 @@
 package compliance
 
-//nolint:goimports
 import (
 	"fmt"
 
@@ -22,6 +21,7 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
 			return handleMsgRevokeModel(ctx, keeper, authKeeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized nameservice Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

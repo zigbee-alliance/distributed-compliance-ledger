@@ -1,6 +1,5 @@
 package conversions
 
-//nolint:goimports
 import (
 	"fmt"
 	"strconv"

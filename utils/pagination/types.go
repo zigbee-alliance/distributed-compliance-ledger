@@ -1,6 +1,5 @@
 package pagination
 
-//nolint:goimports
 import (
 	"fmt"
 	"net/http"

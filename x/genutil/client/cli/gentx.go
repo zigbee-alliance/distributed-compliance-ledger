@@ -1,6 +1,5 @@
 package cli
 
-//nolint:goimports
 import (
 	"bytes"
 	"encoding/json"
@@ -107,6 +106,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 			if info.GetType() == kbkeys.TypeOffline || info.GetType() == kbkeys.TypeMulti {
 				fmt.Println("Offline key passed in. Use `tx sign` command to sign:")
+
 				return utils.PrintUnsignedStdTx(txBldr, cliCtx, []sdk.Msg{msg})
 			}
 
@@ -144,6 +144,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 			}
 
 			fmt.Fprintf(os.Stderr, "Genesis transaction written to %q\n", outputDocument)
+
 			return nil
 		},
 	}

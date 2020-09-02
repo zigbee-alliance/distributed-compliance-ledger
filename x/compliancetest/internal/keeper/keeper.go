@@ -55,6 +55,7 @@ func (k Keeper) AddTestingResult(ctx sdk.Context, testingResult types.TestingRes
 // Check if the TestingResults record is present in the store or not.
 func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid uint16, pid uint16) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetTestingResultsKey(vid, pid))
 }
 

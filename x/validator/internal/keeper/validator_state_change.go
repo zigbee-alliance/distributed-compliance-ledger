@@ -1,6 +1,5 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
 	"time"
@@ -51,6 +50,7 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 
 	if !k.IsValidatorPresent(ctx, consAddr) {
 		logger.Error(fmt.Sprintf("Validator by validator address %s not found", consAddr))
+
 		return
 	}
 
@@ -150,6 +150,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address,
 
 	if !k.IsValidatorPresent(ctx, consAddr) {
 		logger.Error(fmt.Sprintf("Validator by validator address %s not found", consAddr))
+
 		return
 	}
 
@@ -160,6 +161,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address,
 	if age > types.MaxEvidenceAge {
 		logger.Info(fmt.Sprintf("Ignored double sign from %s at height %d, age of %d past max age of %d",
 			consAddr, infractionHeight, age, types.MaxEvidenceAge))
+
 		return
 	}
 

@@ -256,26 +256,31 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	k.IterateProposedCertificates(ctx, func(value types.ProposedCertificate) (stop bool) {
 		proposedCertificates = append(proposedCertificates, value)
+
 		return false
 	})
 
 	k.IterateApprovedCertificatesRecords(ctx, "", func(value types.Certificates) (stop bool) {
 		approvedCertificatesRecords = append(approvedCertificatesRecords, value)
+
 		return false
 	})
 
 	k.IterateProposedCertificateRevocations(ctx, func(value types.ProposedCertificateRevocation) (stop bool) {
 		proposedCertificateRevocations = append(proposedCertificateRevocations, value)
+
 		return false
 	})
 
 	k.IterateRevokedCertificatesRecords(ctx, "", func(value types.Certificates) (stop bool) {
 		revokedCertificatesRecords = append(revokedCertificatesRecords, value)
+
 		return false
 	})
 
 	k.IterateChildCertificatesRecords(ctx, func(value types.ChildCertificates) (stop bool) {
 		childCertificatesRecords = append(childCertificatesRecords, value)
+
 		return false
 	})
 
