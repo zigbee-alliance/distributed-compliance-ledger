@@ -28,6 +28,7 @@ func NewAnteHandler(ak Keeper, sigGasConsumer SignatureVerificationGasConsumer) 
 			// Set a gas meter with limit 0 as to prevent an infinite gas meter attack
 			// during runTx.
 			newCtx = SetGasMeter(simulate, ctx, 0)
+
 			return newCtx, sdk.ErrInternal("tx must be StdTx").Result(), true
 		}
 
@@ -145,10 +146,12 @@ func DefaultSigVerificationGasConsumer(meter sdk.GasMeter, pubkey crypto.PubKey)
 	switch pubkey := pubkey.(type) {
 	case ed25519.PubKeyEd25519:
 		meter.ConsumeGas(types.DefaultSigVerifyCostED25519, "ante verify: ed25519")
+
 		return sdk.ErrInvalidPubKey("ED25519 public keys are unsupported").Result()
 
 	case secp256k1.PubKeySecp256k1:
 		meter.ConsumeGas(types.DefaultSigVerifyCostSecp256k1, "ante verify: secp256k1")
+
 		return sdk.Result{}
 
 	default:

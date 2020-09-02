@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -55,6 +54,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	k.IterateTestingResults(ctx, func(testingResult types.TestingResults) (stop bool) {
 		records = append(records, testingResult)
+
 		return false
 	})
 

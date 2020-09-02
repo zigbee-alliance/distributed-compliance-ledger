@@ -1,8 +1,8 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -15,7 +15,6 @@ type LisModelInfoItems struct {
 // Implement fmt.Stringer.
 func (n LisModelInfoItems) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}
@@ -40,7 +39,6 @@ type ListVendorItems struct {
 // Implement fmt.Stringer.
 func (n ListVendorItems) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}

@@ -54,6 +54,7 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 	}
 }
 
+// nolint:dupl
 func queryAllProposedX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params types.PkiQueryParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
@@ -69,11 +70,13 @@ func queryAllProposedX509RootCerts(ctx sdk.Context, req abci.RequestQuery, keepe
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, certificate)
+
 			return false
 		}
 
@@ -126,9 +129,11 @@ func queryAllX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([
 func queryAllSubjectX509Certs(ctx sdk.Context, path []string,
 	req abci.RequestQuery, keeper Keeper) ([]byte, sdk.Error) {
 	subject := path[0]
+
 	return queryX509Certs(ctx, req, keeper, false, false, subject)
 }
 
+// nolint:gocognit
 func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper,
 	onlyRoot bool, revoked bool, iteratorPrefix string) (res []byte, err sdk.Error) {
 	var params types.PkiQueryParams
@@ -167,11 +172,13 @@ func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper,
 
 			if skipped < params.Skip {
 				skipped++
+
 				return false
 			}
 
 			if len(result.Items) < params.Take || params.Take == 0 {
 				result.Items = append(result.Items, certificate)
+
 				return false
 			}
 		}
@@ -190,6 +197,7 @@ func queryX509Certs(ctx sdk.Context, req abci.RequestQuery, keeper Keeper,
 	return res, nil
 }
 
+// nolint:dupl
 func queryAllProposedX509RootCertRevocations(ctx sdk.Context, req abci.RequestQuery,
 	keeper Keeper) (res []byte, err sdk.Error) {
 	var params types.PkiQueryParams
@@ -206,11 +214,13 @@ func queryAllProposedX509RootCertRevocations(ctx sdk.Context, req abci.RequestQu
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, revocation)
+
 			return false
 		}
 

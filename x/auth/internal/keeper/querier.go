@@ -51,6 +51,7 @@ func queryAccount(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte
 	return res, nil
 }
 
+// nolint:dupl
 func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
@@ -68,11 +69,13 @@ func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (re
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, account)
+
 			return false
 		}
 
@@ -84,6 +87,7 @@ func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (re
 	return res, nil
 }
 
+// nolint:dupl
 func queryAllPendingAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
@@ -101,11 +105,13 @@ func queryAllPendingAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keep
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, pendAcc)
+
 			return false
 		}
 
@@ -117,7 +123,9 @@ func queryAllPendingAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keep
 	return res, nil
 }
 
-func queryAllPendingAccountRevocations(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+// nolint:dupl
+func queryAllPendingAccountRevocations(ctx sdk.Context,
+	req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
@@ -134,11 +142,13 @@ func queryAllPendingAccountRevocations(ctx sdk.Context, req abci.RequestQuery, k
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, revocation)
+
 			return false
 		}
 

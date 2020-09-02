@@ -42,6 +42,7 @@ func (k Keeper) GetAccount(ctx sdk.Context, addr sdk.AccAddress) (acc types.Acco
 func (k Keeper) GetAllAccounts(ctx sdk.Context) (accounts []types.Account) {
 	appendAccount := func(acc types.Account) (stop bool) {
 		accounts = append(accounts, acc)
+
 		return false
 	}
 	k.IterateAccounts(ctx, appendAccount)
@@ -59,6 +60,7 @@ func (k Keeper) SetAccount(ctx sdk.Context, acc types.Account) {
 // Check if the Account record associated with an address is present in the store or not.
 func (k Keeper) IsAccountPresent(ctx sdk.Context, acc sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetAccountKey(acc))
 }
 
@@ -109,6 +111,7 @@ func (k Keeper) CountAccountsWithRole(ctx sdk.Context, roleToCount types.Account
 		for _, role := range account.Roles {
 			if role == roleToCount {
 				res++
+
 				return false
 			}
 		}
@@ -157,6 +160,7 @@ func (k Keeper) SetPendingAccount(ctx sdk.Context, pendAcc types.PendingAccount)
 // Check if the Pending Account record associated with an address is present in the store or not.
 func (k Keeper) IsPendingAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetPendingAccountKey(address))
 }
 
@@ -224,6 +228,7 @@ func (k Keeper) SetPendingAccountRevocation(ctx sdk.Context, revoc types.Pending
 // Check if the Pending Account Revocation record associated with an address is present in the store or not.
 func (k Keeper) IsPendingAccountRevocationPresent(ctx sdk.Context, address sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetPendingAccountRevocationKey(address))
 }
 

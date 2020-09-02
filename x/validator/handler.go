@@ -1,15 +1,14 @@
 package validator
 
-//nolint:goimports
 import (
 	"fmt"
+	"strings"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/functions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
-	tmtypes "github.com/tendermint/tendermint/types"
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 func NewHandler(k Keeper, authKeeper auth.Keeper) sdk.Handler {
@@ -21,6 +20,7 @@ func NewHandler(k Keeper, authKeeper auth.Keeper) sdk.Handler {
 			return handleMsgCreateValidator(ctx, msg, k, authKeeper)
 		default:
 			errMsg := fmt.Sprintf("unrecognized validator Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}

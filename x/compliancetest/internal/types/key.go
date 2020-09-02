@@ -12,9 +12,7 @@ const (
 	StoreKey = ModuleName
 )
 
-var (
-	TestingResultsPrefix = []byte{0x01} // prefix for each key to a testing results
-)
+var TestingResultsPrefix = []byte{0x01} // prefix for each key to a testing results
 
 // Key builder for Testing Results.
 func GetTestingResultsKey(vid uint16, pid uint16) []byte {

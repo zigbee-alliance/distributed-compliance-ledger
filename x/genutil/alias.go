@@ -10,14 +10,14 @@ const (
 )
 
 var (
-	// functions aliases
+	// functions aliases.
 	InitializeNodeValidatorFiles = cosmosgenutil.InitializeNodeValidatorFiles
 	ExportGenesisFile            = cosmosgenutil.ExportGenesisFile
 	NewInitConfig                = cosmosgenutil.NewInitConfig
 	GenesisStateFromGenDoc       = types.GenesisStateFromGenDoc
 	GenesisStateFromGenFile      = types.GenesisStateFromGenFile
 
-	// variable aliases
+	// variable aliases.
 	ModuleCdc = types.ModuleCdc
 )
 

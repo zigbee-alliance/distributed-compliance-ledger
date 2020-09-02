@@ -1,8 +1,9 @@
 //nolint:testpackage
 package validator
 
-//nolint:goimports
 import (
+	"testing"
+
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/keeper"
@@ -10,7 +11,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func TestHandler_CreateValidator(t *testing.T) {
@@ -99,7 +99,6 @@ func queryValidator(setup TestSetup, address sdk.ConsAddress) (*types.Validator,
 		[]string{keeper.QueryValidator, address.String()},
 		abci.RequestQuery{},
 	)
-
 	if err != nil {
 		return nil, err
 	}

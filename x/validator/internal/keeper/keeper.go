@@ -1,8 +1,8 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -58,6 +58,7 @@ func (k Keeper) SetValidator(ctx sdk.Context, validator types.Validator) {
 // Check if the Validator record associated with a validator address is present in the store or not.
 func (k Keeper) IsValidatorPresent(ctx sdk.Context, addr sdk.ConsAddress) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetValidatorKey(addr))
 }
 
@@ -65,6 +66,7 @@ func (k Keeper) IsValidatorPresent(ctx sdk.Context, addr sdk.ConsAddress) bool {
 func (k Keeper) GetAllValidators(ctx sdk.Context) (validators []types.Validator) {
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		validators = append(validators, validator)
+
 		return false
 	})
 
@@ -108,6 +110,7 @@ func (k Keeper) Jail(ctx sdk.Context, consAddr sdk.ConsAddress, reason string) {
 
 	if validator.Jailed {
 		k.Logger(ctx).Error(fmt.Sprintf("Cannot jail already jailed validator, validator: %v\n", validator))
+
 		return
 	}
 
@@ -122,6 +125,7 @@ func (k Keeper) Unjail(ctx sdk.Context, consAddr sdk.ConsAddress) {
 
 	if !validator.Jailed {
 		k.Logger(ctx).Error(fmt.Sprintf("Cannot unjail already unjailed validator, validator: %v\n", validator))
+
 		return
 	}
 
@@ -157,6 +161,7 @@ func (k Keeper) SetLastValidatorPower(ctx sdk.Context, validator types.LastValid
 // Check if the validator power record associated with validator address is present in the store or not.
 func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, address sdk.ConsAddress) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetValidatorLastPowerKey(address))
 }
 
@@ -210,6 +215,7 @@ func (k Keeper) CountLastValidators(ctx sdk.Context) (count int) {
 func (k Keeper) GetAllLastValidators(ctx sdk.Context) (validators []types.Validator) {
 	k.IterateLastValidators(ctx, func(validator types.Validator) (stop bool) {
 		validators = append(validators, validator)
+
 		return false
 	})
 
@@ -252,5 +258,6 @@ func (k Keeper) SetValidatorOwner(ctx sdk.Context, account sdk.AccAddress, valid
 // Check if the account has stored node.
 func (k Keeper) AccountHasValidator(ctx sdk.Context, addr sdk.AccAddress) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(types.GetValidatorOwnerKey(addr))
 }

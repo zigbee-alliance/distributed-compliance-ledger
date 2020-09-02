@@ -1,13 +1,13 @@
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
+	"net/http"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"net/http"
 )
 
 func getComplianceInfoHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
@@ -55,12 +55,14 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 	vid, err_ := conversions.ParseVID(vars[vid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
 	pid, err_ := conversions.ParsePID(vars[pid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
@@ -80,6 +82,7 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 	if err != nil {
 		restCtx.WriteErrorResponse(http.StatusNotFound,
 			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+
 		return
 	}
 
@@ -94,12 +97,14 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 	vid, err_ := conversions.ParseVID(vars[vid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
 	pid, err_ := conversions.ParsePID(vars[pid])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 		return
 	}
 
@@ -109,6 +114,7 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 	if err != nil || res == nil {
 		restCtx.WriteErrorResponse(http.StatusNotFound,
 			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+
 		return
 	}
 

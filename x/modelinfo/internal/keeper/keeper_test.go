@@ -3,11 +3,12 @@ package keeper
 
 //nolint:goimports
 import (
+	"math/rand"
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/stretchr/testify/require"
-	"math/rand"
-	"testing"
 )
 
 func TestKeeper_ModelInfoGetSet(t *testing.T) {
@@ -51,6 +52,7 @@ func TestKeeper_ModelInfoIterator(t *testing.T) {
 
 	setup.ModelinfoKeeper.IterateModelInfos(setup.Ctx, func(modelInfo types.ModelInfo) (stop bool) {
 		expectedRecords = append(expectedRecords, modelInfo)
+
 		return false
 	})
 	require.Equal(t, count, len(expectedRecords))
@@ -112,6 +114,7 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 
 	// remove all model infos in a random way and check associated products
 	for i := count; i > 0; i-- {
+		//nolint:gosec
 		index := uint16(rand.Intn(i))
 		pid := PIDs[index]
 
@@ -162,6 +165,7 @@ func TestKeeper_VendorProductsIteratorOverOneVendor(t *testing.T) {
 
 	setup.ModelinfoKeeper.IterateVendorProducts(setup.Ctx, func(vendorProducts types.VendorProducts) (stop bool) {
 		expectedRecords = append(expectedRecords, vendorProducts)
+
 		return false
 	})
 	require.Equal(t, expectedLen, len(expectedRecords))
@@ -183,6 +187,7 @@ func TestKeeper_VendorProductsIteratorOverDifferentVendors(t *testing.T) {
 
 	setup.ModelinfoKeeper.IterateVendorProducts(setup.Ctx, func(vendorProducts types.VendorProducts) (stop bool) {
 		expectedRecords = append(expectedRecords, vendorProducts)
+
 		return false
 	})
 	require.Equal(t, count, len(expectedRecords))

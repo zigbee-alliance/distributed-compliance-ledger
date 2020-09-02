@@ -1,15 +1,15 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
+	"time"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"time"
 )
 
 // Calculate the Validators signatures
@@ -50,6 +50,7 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 
 	if !k.IsValidatorPresent(ctx, consAddr) {
 		logger.Error(fmt.Sprintf("Validator by validator address %s not found", consAddr))
+
 		return
 	}
 
@@ -140,7 +141,7 @@ func (k Keeper) HandleValidatorSignature(ctx sdk.Context, addr crypto.Address, p
 
 // handle a validator signing two blocks at the same height
 // Zeros validator power and jail it. So validator will be removed from validator
-//set at the end of the block.
+// set at the end of the block.
 func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address,
 	infractionHeight int64, timestamp time.Time, power int64) {
 	logger := k.Logger(ctx)
@@ -149,6 +150,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address,
 
 	if !k.IsValidatorPresent(ctx, consAddr) {
 		logger.Error(fmt.Sprintf("Validator by validator address %s not found", consAddr))
+
 		return
 	}
 
@@ -159,6 +161,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, addr crypto.Address,
 	if age > types.MaxEvidenceAge {
 		logger.Info(fmt.Sprintf("Ignored double sign from %s at height %d, age of %d past max age of %d",
 			consAddr, infractionHeight, age, types.MaxEvidenceAge))
+
 		return
 	}
 
@@ -191,7 +194,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 		lastValidatorPower := k.GetLastValidatorPower(ctx, validator.Address)
 
 		// if last power was more then 0 and potential power 0 it
-		//means that validator was jailed or removed within the block.
+		// means that validator was jailed or removed within the block.
 		if lastValidatorPower.Power > 0 && validator.GetPower() == 0 {
 			updates = append(updates, validator.ABCIValidatorUpdateZero())
 

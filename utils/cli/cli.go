@@ -1,9 +1,11 @@
 package cli
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -13,8 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"os"
 )
 
 const (
@@ -37,7 +37,6 @@ func NewReadResult(result json.RawMessage, height int64) ReadResult {
 // Implement fmt.Stringer.
 func (n ReadResult) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}
@@ -69,11 +68,13 @@ func (ctx CliContext) FromAddress() sdk.AccAddress {
 
 func (ctx CliContext) WithCodec(cdc *codec.Codec) CliContext {
 	ctx.context = ctx.context.WithCodec(cdc)
+
 	return ctx
 }
 
 func (ctx CliContext) WithHeight(height int64) CliContext {
 	ctx.context = ctx.context.WithHeight(height)
+
 	return ctx
 }
 

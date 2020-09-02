@@ -1,8 +1,8 @@
 package validator
 
-//nolint:goimports
 import (
 	"encoding/json"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/rest"

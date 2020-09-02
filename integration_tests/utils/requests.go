@@ -213,6 +213,7 @@ func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) (TxnResponse, int)
 
 func SignAndBroadcastTransaction(sender KeyInfo, txn types.StdTx) (TxnResponse, int) {
 	signResponse, _ := SignMessage(sender, txn)
+
 	return BroadcastMessage(signResponse)
 }
 
@@ -463,18 +464,21 @@ func SendRevokedModelRequest(revokeModel compliance.MsgRevokeModel, name string)
 func GetComplianceInfo(vid uint16, pid uint16,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfo, int) {
 	println(fmt.Sprintf("Get Compliance Info for Model with VID:%v PID:%v", vid, pid))
+
 	return getComplianceInfo(vid, pid, certificationType)
 }
 
 func GetCertifiedModel(vid uint16, pid uint16,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, int) {
 	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Certified", vid, pid))
+
 	return getComplianceInfoInState(vid, pid, certificationType, "certified")
 }
 
 func GetRevokedModel(vid uint16, pid uint16,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, int) {
 	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Revoked", vid, pid))
+
 	return getComplianceInfoInState(vid, pid, certificationType, "revoked")
 }
 
@@ -505,16 +509,19 @@ func getComplianceInfoInState(vid uint16, pid uint16,
 
 func GetComplianceInfos() (ComplianceInfosHeadersResult, int) {
 	println("Get all compliance info records")
+
 	return GetAllComplianceInfos("")
 }
 
 func GetAllCertifiedModels() (ComplianceInfosHeadersResult, int) {
 	println("Get all certified models")
+
 	return GetAllComplianceInfos("certified")
 }
 
 func GetAllRevokedModels() (ComplianceInfosHeadersResult, int) {
 	println("Get all revoked models")
+
 	return GetAllComplianceInfos("revoked")
 }
 

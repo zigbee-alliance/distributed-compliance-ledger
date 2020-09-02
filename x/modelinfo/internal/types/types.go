@@ -1,8 +1,8 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -73,6 +73,7 @@ func (d *VendorProducts) RemoveVendorProduct(pid uint16) {
 	for i, value := range d.Products {
 		if pid == value.PID {
 			d.Products = append(d.Products[:i], d.Products[i+1:]...)
+
 			return
 		}
 	}

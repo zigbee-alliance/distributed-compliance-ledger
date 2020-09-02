@@ -1,12 +1,11 @@
 package rest
 
-//nolint:goimports
 import (
+	"net/http"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"net/http"
-
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 )
 

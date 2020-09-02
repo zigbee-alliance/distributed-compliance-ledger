@@ -20,6 +20,7 @@ import (
 	TODO: provide tests for error cases
 */
 
+// nolint:godox,funlen
 // FIXME: `GetX509CertChain` calls within this test may fail with EOF on an attempt to read the response
 // from REST API server and so leave the resulting `Certificates.Items` slice empty.
 // The issue seems to be caused by the connection being closed due to timeout while REST API server
@@ -52,7 +53,7 @@ func TestPkiDemo(t *testing.T) {
 	_, _ = utils.ProposeAddX509RootCert(msgProposeAddX509RootCert,
 		userKeyInfo.Name, testconstants.Passphrase)
 
-	//Request all proposed Root certificates
+	// Request all proposed Root certificates
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
 	require.Equal(t, 1, len(proposedCertificates.Items))
 	require.Equal(t, testconstants.RootSubject, proposedCertificates.Items[0].Subject)

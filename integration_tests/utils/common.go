@@ -15,6 +15,7 @@ func RandString() string {
 	var b strings.Builder
 
 	for i := 0; i < 5; i++ {
+		// nolint:gosec
 		b.WriteRune(chars[rand.Intn(len(chars))])
 	}
 
@@ -23,5 +24,6 @@ func RandString() string {
 
 func ParseUint(num string) uint64 {
 	val, _ := strconv.ParseUint(num, 10, 64)
+
 	return val
 }

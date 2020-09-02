@@ -6,13 +6,11 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
-	"github.com/spf13/viper"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/spf13/cobra"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -105,6 +103,7 @@ func GetCmdGetAllX509RootCerts(queryRoute string, cdc *codec.Codec) *cobra.Comma
 	return cmd
 }
 
+// nolint:dupl
 func GetCmdGetX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "x509-cert",
@@ -199,6 +198,7 @@ func GetCmdGetAllSubjectX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			subject := viper.GetString(FlagSubject)
+
 			return performPkiQuery(cdc, fmt.Sprintf("custom/%s/all_subject_x509_certs/%s", queryRoute, subject))
 		},
 	}
@@ -234,6 +234,7 @@ func GetCmdGetAllProposedX509RootCertsToRevoke(queryRoute string, cdc *codec.Cod
 	return cmd
 }
 
+// nolint:dupl
 func GetCmdGetProposedX509RootCertToRevoke(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "proposed-x509-root-cert-to-revoke",
@@ -267,6 +268,7 @@ func GetCmdGetProposedX509RootCertToRevoke(queryRoute string, cdc *codec.Codec) 
 	return cmd
 }
 
+// nolint:dupl
 func GetCmdGetRevokedX509Cert(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "revoked-x509-cert",
@@ -340,7 +342,6 @@ func GetCmdGetAllRevokedX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 
 func chainCertificates(cliCtx cli.CliContext, queryRoute string,
 	subject string, subjectKeyID string, chain *types.Certificates) (int64, sdk.Error) {
-
 	res, height, err := cliCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyID), queryRoute)
 	if err != nil || res == nil {
 		return height, types.ErrCertificateDoesNotExist(subject, subjectKeyID)

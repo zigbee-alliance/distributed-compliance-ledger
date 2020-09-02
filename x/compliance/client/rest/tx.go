@@ -1,6 +1,5 @@
 package rest
 
-//nolint:goimports
 import (
 	"net/http"
 	"time"
@@ -9,7 +8,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 )
 
@@ -19,6 +17,7 @@ type CertifyModelRequest struct {
 	Reason            string            `json:"reason,omitempty"`
 }
 
+// nolint:dupl
 func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -28,12 +27,14 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		vid, err_ := conversions.ParseVID(vars[vid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 
 		pid, err_ := conversions.ParsePID(vars[pid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 
@@ -67,6 +68,7 @@ type RevokeModelRequest struct {
 	Reason         string            `json:"reason,omitempty"`
 }
 
+// nolint:dupl
 func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -76,12 +78,14 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		vid, err_ := conversions.ParseVID(vars[vid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 
 		pid, err_ := conversions.ParsePID(vars[pid])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 

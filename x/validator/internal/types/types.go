@@ -1,9 +1,9 @@
 package types
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -91,6 +91,7 @@ func MustUnmarshalBinaryBareValidator(cdc *codec.Codec, value []byte) Validator 
 
 func UnmarshalBinaryBareValidator(cdc *codec.Codec, value []byte) (v Validator, err error) {
 	err = cdc.UnmarshalBinaryBare(value, &v)
+
 	return v, err
 }
 

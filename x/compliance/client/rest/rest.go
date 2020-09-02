@@ -1,13 +1,10 @@
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
-
 	"github.com/cosmos/cosmos-sdk/client/context"
-
 	"github.com/gorilla/mux"
 )
 

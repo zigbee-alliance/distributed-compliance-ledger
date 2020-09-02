@@ -1,7 +1,6 @@
 //nolint:testpackage
 package pki
 
-// nolint:goimports
 import (
 	"testing"
 
@@ -270,8 +269,10 @@ func TestHandler_AddX509Cert(t *testing.T) {
 		require.Equal(t, types.CodeProposedCertificateDoesNotExist, err.Code())
 
 		// delete for next iteration
-		setup.PkiKeeper.DeleteApprovedCertificates(setup.Ctx, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-		setup.PkiKeeper.DeleteUniqueCertificateKey(setup.Ctx, constants.IntermediateIssuer, constants.IntermediateSerialNumber)
+		setup.PkiKeeper.DeleteApprovedCertificates(setup.Ctx,
+			constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
+		setup.PkiKeeper.DeleteUniqueCertificateKey(setup.Ctx,
+			constants.IntermediateIssuer, constants.IntermediateSerialNumber)
 	}
 }
 
@@ -497,7 +498,6 @@ func queryProposedCertificate(setup TestSetup, subject string,
 		[]string{keeper.QueryProposedX509RootCert, subject, subjectKeyID},
 		abci.RequestQuery{},
 	)
-
 	if err != nil {
 		return nil, err
 	}
@@ -528,7 +528,6 @@ func queryCertificates(setup TestSetup, subject string, subjectKeyID string) (ty
 		[]string{keeper.QueryX509Cert, subject, subjectKeyID},
 		abci.RequestQuery{},
 	)
-
 	if err != nil {
 		return types.Certificates{}, err
 	}

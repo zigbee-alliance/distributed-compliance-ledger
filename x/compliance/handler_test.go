@@ -1,9 +1,11 @@
 //nolint:testpackage
 package compliance
 
-//nolint:goimports
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
@@ -13,8 +15,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
-	"time"
 )
 
 func TestHandler_CertifyModel(t *testing.T) {
@@ -381,11 +381,12 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{keeper.QueryComplianceInfo, fmt.Sprintf("%v", vid),
-			fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
+		[]string{
+			keeper.QueryComplianceInfo, fmt.Sprintf("%v", vid),
+			fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType),
+		},
 		abci.RequestQuery{},
 	)
-
 	if err != nil {
 		return types.ComplianceInfo{}, err
 	}
@@ -410,7 +411,6 @@ func queryComplianceInfoInState(setup TestSetup, vid uint16, pid uint16, state s
 		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", types.ZbCertificationType)},
 		abci.RequestQuery{},
 	)
-
 	if err != nil {
 		return false, err
 	}

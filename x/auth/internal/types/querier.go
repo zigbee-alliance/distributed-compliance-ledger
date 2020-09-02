@@ -70,6 +70,7 @@ func (n ListPendingAccountRevocations) String() string {
 	return string(res)
 }
 
+// nolint:godox
 // Result Payload for single account query.
 // It's a hack trick for Codec so that not inserting top-level `type` filed during serialization.
 // TODO: Better think regarding Pubkey representation.

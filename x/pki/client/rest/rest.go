@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-
 	"github.com/gorilla/mux"
 )
 
@@ -15,6 +14,7 @@ const (
 	rootSubjectKeyID = "root_subject_key_id"
 )
 
+// nolint:funlen
 // RegisterRoutes - Central function to define routes that get registered by the main application.
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
 	r.HandleFunc(

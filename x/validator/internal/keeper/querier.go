@@ -1,13 +1,12 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // query endpoints supported by the validator Querier.
@@ -42,6 +41,7 @@ func queryValidators(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res
 
 	keeper.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		// filter by validator state
+		// nolint:exhaustive
 		switch params.State {
 		case types.Active:
 			if validator.IsJailed() {
@@ -57,11 +57,13 @@ func queryValidators(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, validator)
+
 			return false
 		}
 

@@ -14,7 +14,7 @@ import (
 */
 
 func TestNewMsgProposeAddX509RootCert(t *testing.T) {
-	var msg = NewMsgProposeAddX509RootCert(testconstants.RootCertPem, testconstants.Signer)
+	msg := NewMsgProposeAddX509RootCert(testconstants.RootCertPem, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "propose_add_x509_root_cert")
@@ -46,7 +46,7 @@ func TestValidateMsgProposeAddX509RootCert(t *testing.T) {
 }
 
 func TestMsgProposeAddX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgProposeAddX509RootCert(testconstants.StubCertPem, testconstants.Signer)
+	msg := NewMsgProposeAddX509RootCert(testconstants.StubCertPem, testconstants.Signer)
 	res := msg.GetSignBytes()
 
 	expected := `{"type":"pki/ProposeAddX509RootCert","value":{` +
@@ -60,7 +60,7 @@ func TestMsgProposeAddX509RootCertGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveAddX509RootCert(t *testing.T) {
-	var msg = NewMsgApproveAddX509RootCert(testconstants.RootSubject,
+	msg := NewMsgApproveAddX509RootCert(testconstants.RootSubject,
 		testconstants.RootSubjectKeyID, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -95,7 +95,7 @@ func TestValidateMsgApproveAddX509RootCert(t *testing.T) {
 }
 
 func TestMsgApproveAddX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgApproveAddX509RootCert(testconstants.RootSubject,
+	msg := NewMsgApproveAddX509RootCert(testconstants.RootSubject,
 		testconstants.RootSubjectKeyID, testconstants.Signer)
 
 	expected := `{"type":"pki/ApproveAddX509RootCert","value":{` +
@@ -110,7 +110,7 @@ func TestMsgApproveAddX509RootCertGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgAddX509Cert(t *testing.T) {
-	var msg = NewMsgAddX509Cert(testconstants.LeafCertPem, testconstants.Signer)
+	msg := NewMsgAddX509Cert(testconstants.LeafCertPem, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "add_x509_cert")
@@ -142,7 +142,7 @@ func TestValidateMsgAddX509Cert(t *testing.T) {
 }
 
 func TestMsgAddX509CertGetSignBytes(t *testing.T) {
-	var msg = NewMsgAddX509Cert(testconstants.StubCertPem, testconstants.Signer)
+	msg := NewMsgAddX509Cert(testconstants.StubCertPem, testconstants.Signer)
 	res := msg.GetSignBytes()
 
 	expected := `{"type":"pki/AddX509Cert","value":{` +
@@ -156,7 +156,7 @@ func TestMsgAddX509CertGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgProposeRevokeX509RootCert(t *testing.T) {
-	var msg = NewMsgProposeRevokeX509RootCert(testconstants.RootSubject,
+	msg := NewMsgProposeRevokeX509RootCert(testconstants.RootSubject,
 		testconstants.RootSubjectKeyID, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -191,7 +191,7 @@ func TestValidateMsgProposeRevokeX509RootCert(t *testing.T) {
 }
 
 func TestMsgProposeRevokeX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgProposeRevokeX509RootCert(testconstants.RootSubject,
+	msg := NewMsgProposeRevokeX509RootCert(testconstants.RootSubject,
 		testconstants.RootSubjectKeyID, testconstants.Signer)
 
 	expected := `{"type":"pki/ProposeRevokeX509RootCert","value":{` +
@@ -206,7 +206,7 @@ func TestMsgProposeRevokeX509RootCertGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveRevokeX509RootCert(t *testing.T) {
-	var msg = NewMsgApproveRevokeX509RootCert(testconstants.RootSubject,
+	msg := NewMsgApproveRevokeX509RootCert(testconstants.RootSubject,
 		testconstants.RootSubjectKeyID, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -241,7 +241,7 @@ func TestValidateMsgApproveRevokeX509RootCert(t *testing.T) {
 }
 
 func TestMsgApproveRevokeX509RootCertGetSignBytes(t *testing.T) {
-	var msg = NewMsgApproveRevokeX509RootCert(testconstants.RootSubject,
+	msg := NewMsgApproveRevokeX509RootCert(testconstants.RootSubject,
 		testconstants.RootSubjectKeyID, testconstants.Signer)
 
 	expected := `{"type":"pki/ApproveRevokeX509RootCert","value":{` +
@@ -256,7 +256,7 @@ func TestMsgApproveRevokeX509RootCertGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgRevokeX509Cert(t *testing.T) {
-	var msg = NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
+	msg := NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
 
 	require.Equal(t, RouterKey, msg.Route())
 	require.Equal(t, "revoke_x509_cert", msg.Type())
@@ -286,7 +286,7 @@ func TestValidateMsgRevokeX509Cert(t *testing.T) {
 }
 
 func TestMsgRevokeX509CertGetSignBytes(t *testing.T) {
-	var msg = NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
+	msg := NewMsgRevokeX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID, testconstants.Signer)
 	res := msg.GetSignBytes()
 
 	expected := `{"type":"pki/RevokeX509Cert","value":{` +

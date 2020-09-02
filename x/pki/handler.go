@@ -23,6 +23,7 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 			return handleMsgRevokeX509Cert(ctx, keeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized pki Msg type: %v", msg.Type())
+
 			return sdk.ErrUnknownRequest(errMsg).Result()
 		}
 	}
@@ -237,6 +238,8 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 	return sdk.Result{}
 }
 
+// nolint:deadcode, unused, godox
+// FIXME: Unused function.
 func handleMsgProposeRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgProposeRevokeX509RootCert) sdk.Result {
 	// check if signer has root certificate approval role
@@ -279,6 +282,8 @@ func handleMsgProposeRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, a
 	return sdk.Result{}
 }
 
+// nolint:deadcode, unused, godox
+// FIXME: Unused function.
 func handleMsgApproveRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgApproveRevokeX509RootCert) sdk.Result {
 	// check if signer has root certificate approval role
@@ -420,6 +425,7 @@ func removeChildCertificateEntry(ctx sdk.Context, keeper keeper.Keeper, issuer s
 // Returns the RootSubject/RootSubjectKeyID combination or an error in case no valid certificate chain can be built.
 func verifyCertificate(ctx sdk.Context, keeper keeper.Keeper,
 	x509Certificate *x509.X509Certificate) (string, string, sdk.Error) {
+	// nolint:nestif
 	if x509Certificate.IsSelfSigned() {
 		// in this system a certificate is self-signed if and only if it is a root certificate
 		if err := x509Certificate.Verify(x509Certificate); err == nil {

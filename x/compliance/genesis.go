@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
@@ -69,6 +68,7 @@ func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
 
 	k.IterateComplianceInfos(ctx, "", func(deviceCompliance types.ComplianceInfo) (stop bool) {
 		records = append(records, deviceCompliance)
+
 		return false
 	})
 

@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	// Base constants
+	// Base constants.
 	JackAccount  = "jack"
 	AliceAccount = "alice"
 	BobAccount   = "bob"
@@ -19,7 +19,7 @@ var (
 	Passphrase   = "test1234"
 	EmptyString  = ""
 
-	// Model Info
+	// Model Info.
 	VID                      uint16 = 1
 	PID                      uint16 = 22
 	CID                      uint16 = 12345
@@ -32,14 +32,14 @@ var (
 	Custom                          = "Custom data"
 	TisOrTrpTestingCompleted        = false
 
-	// Compliance
+	// Compliance.
 	CertificationDate = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 	RevocationDate    = time.Date(2020, 3, 3, 3, 30, 0, 0, time.UTC)
 	Reason            = "Some Reason"
 	RevocationReason  = "Some Reason"
 	CertificationType = "zb"
 
-	// Testing Result
+	// Testing Result.
 	TestResult = "http://test.result.com"
 	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
 
@@ -178,5 +178,6 @@ func TestAddress() (sdk.AccAddress, crypto.PubKey, string) {
 	pub := key.PubKey()
 	addr := sdk.AccAddress(pub.Address())
 	pubStr := sdk.MustBech32ifyAccPub(pub)
+
 	return addr, pub, pubStr
 }

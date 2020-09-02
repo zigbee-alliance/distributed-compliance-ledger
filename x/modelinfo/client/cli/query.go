@@ -1,8 +1,8 @@
 package cli
 
-//nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
@@ -79,6 +79,7 @@ func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/all_models", queryRoute), params)
 		},
 	}
@@ -97,6 +98,7 @@ func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 			params := pagination.ParsePaginationParamsFromFlags()
+
 			return cliCtx.QueryList(fmt.Sprintf("custom/%s/vendors", queryRoute), params)
 		},
 	}

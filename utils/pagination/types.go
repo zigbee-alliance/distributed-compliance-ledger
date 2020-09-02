@@ -1,12 +1,12 @@
 package pagination
 
-//nolint:goimports
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/spf13/viper"
 	"net/http"
 	"strconv"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/viper"
 )
 
 const (

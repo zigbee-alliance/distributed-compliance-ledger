@@ -1,8 +1,8 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
@@ -73,6 +73,7 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res 
 	keeper.IterateModelInfos(ctx, func(modelInfo types.ModelInfo) (stop bool) {
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 		if len(result.Items) < params.Take || params.Take == 0 {
@@ -113,6 +114,7 @@ func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []
 	keeper.IterateVendorProducts(ctx, func(vendorProducts types.VendorProducts) (stop bool) {
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
@@ -122,6 +124,7 @@ func queryVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []
 			}
 
 			result.Items = append(result.Items, item)
+
 			return false
 		}
 

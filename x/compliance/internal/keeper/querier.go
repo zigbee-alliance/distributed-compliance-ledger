@@ -1,8 +1,8 @@
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -90,11 +90,13 @@ func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keepe
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, complianceInfo)
+
 			return false
 		}
 
@@ -128,6 +130,7 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
@@ -137,6 +140,7 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 				PID:               complianceInfo.PID,
 				CertificationType: complianceInfo.CertificationType,
 			})
+
 			return false
 		}
 

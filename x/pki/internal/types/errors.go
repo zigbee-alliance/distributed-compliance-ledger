@@ -1,7 +1,6 @@
 package types
 
 import (
-	// nolint:goimports
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"

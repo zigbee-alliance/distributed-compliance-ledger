@@ -1,18 +1,17 @@
 package cli
 
-//nolint:goimports
 import (
 	"fmt"
+	"strconv"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"strconv"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -27,7 +26,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	modelinfoTxCmd.AddCommand(cli.SignedCommands(client.PostCommands(
 		GetCmdAddModel(cdc),
 		GetCmdUpdateModel(cdc),
-		//GetCmdDeleteModel(cdc), Disable deletion
+		// GetCmdDeleteModel(cdc), Disable deletion
 	)...)...)
 
 	return modelinfoTxCmd

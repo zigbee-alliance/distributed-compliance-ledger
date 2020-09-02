@@ -4,18 +4,15 @@ import (
 	"encoding/json"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/rest"
-
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // type check to ensure the interface is properly implemented.
@@ -86,6 +83,7 @@ func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.Val
 
 func (a AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
 	gs := ExportGenesis(ctx, a.keeper)
+
 	return ModuleCdc.MustMarshalJSON(gs)
 }
 

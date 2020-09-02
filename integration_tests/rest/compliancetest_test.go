@@ -1,11 +1,11 @@
 package rest_test
 
-//nolint:goimports
 import (
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 //nolint:godox

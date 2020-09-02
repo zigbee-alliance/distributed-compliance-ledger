@@ -3,10 +3,11 @@ package keeper
 
 //nolint:goimports
 import (
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
@@ -55,6 +56,7 @@ func TestKeeper_ComplianceInfoIterator(t *testing.T) {
 	setup.CompliancetKeeper.IterateComplianceInfos(setup.Ctx, types.CertificationType(testconstants.CertificationType),
 		func(modelInfo types.ComplianceInfo) (stop bool) {
 			expectedRecords = append(expectedRecords, modelInfo)
+
 			return false
 		})
 	require.Equal(t, count, len(expectedRecords))

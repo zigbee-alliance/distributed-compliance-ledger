@@ -1,8 +1,8 @@
 package validator
 
-//nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -53,7 +53,6 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) (res []abci.
 
 	for addr, array := range data.MissedBlocks {
 		address, err := sdk.ConsAddressFromBech32(addr)
-
 		if err != nil {
 			panic(err)
 		}
@@ -83,6 +82,7 @@ func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
 
 		keeper.IterateValidatorMissedBlockBitArray(ctx, info.Address, func(index int64, missed bool) (stop bool) {
 			localMissedBlocks = append(localMissedBlocks, MissedBlock{index, missed})
+
 			return false
 		})
 		missedBlocks[bechAddr] = localMissedBlocks

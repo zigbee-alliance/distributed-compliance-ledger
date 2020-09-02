@@ -37,7 +37,6 @@ type ListComplianceInfoItems struct {
 // Implement fmt.Stringer.
 func (n ListComplianceInfoItems) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}
@@ -54,7 +53,6 @@ type ListComplianceInfoKeyItems struct {
 // Implement fmt.Stringer.
 func (n ListComplianceInfoKeyItems) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +67,6 @@ type ComplianceInfoInState struct {
 
 func (n ComplianceInfoInState) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}

@@ -179,6 +179,7 @@ func (k Keeper) CountTotalVendorProducts(ctx sdk.Context) int {
 // Check if the record is present in the store or not.
 func (k Keeper) isRecordPresent(ctx sdk.Context, id []byte) bool {
 	store := ctx.KVStore(k.storeKey)
+
 	return store.Has(id)
 }
 

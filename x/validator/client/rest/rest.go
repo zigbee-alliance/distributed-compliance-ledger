@@ -1,11 +1,10 @@
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/gorilla/mux"
 )
 
 const (
