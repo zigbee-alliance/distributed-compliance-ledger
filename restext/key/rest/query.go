@@ -3,14 +3,11 @@ package rest
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
-
-	keys2 "github.com/cosmos/cosmos-sdk/crypto/keys"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/keys"
+	keys2 "github.com/cosmos/cosmos-sdk/crypto/keys"
+	"github.com/gorilla/mux"
 )
 
 // Lists all keys in the local keychain.

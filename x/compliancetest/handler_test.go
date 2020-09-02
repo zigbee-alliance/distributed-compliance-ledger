@@ -1,9 +1,10 @@
 //nolint:testpackage
 package compliancetest
 
-//nolint:goimports
 import (
 	"fmt"
+	"testing"
+
 	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
@@ -12,7 +13,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func TestHandler_AddTestingResult(t *testing.T) {

@@ -2,11 +2,12 @@ package rest
 
 //nolint:goimports
 import (
+	"net/http"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"net/http"
 )
 
 func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {

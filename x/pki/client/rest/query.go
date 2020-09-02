@@ -104,7 +104,6 @@ func getX509CertChainHandler(cliCtx context.CLIContext, storeName string) http.H
 		chain := types.NewCertificates([]types.Certificate{})
 
 		height, err := chainCertificates(restCtx, storeName, subject, subjectKeyID, &chain)
-
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				types.ErrCertificateDoesNotExist(subject, subjectKeyID).Error())
@@ -188,7 +187,6 @@ func getRevokedX509CertHandler(cliCtx context.CLIContext, storeName string) http
 
 func chainCertificates(restCtx rest.RestContext, storeName string,
 	subject string, subjectKeyID string, chain *types.Certificates) (int64, sdk.Error) {
-
 	res, height, err := restCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyID), storeName)
 	if err != nil || res == nil {
 		return height, types.ErrCertificateDoesNotExist(subject, subjectKeyID)

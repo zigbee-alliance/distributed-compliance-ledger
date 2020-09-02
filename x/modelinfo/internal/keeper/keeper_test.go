@@ -3,11 +3,12 @@ package keeper
 
 //nolint:goimports
 import (
+	"math/rand"
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/stretchr/testify/require"
-	"math/rand"
-	"testing"
 )
 
 func TestKeeper_ModelInfoGetSet(t *testing.T) {

@@ -3,6 +3,7 @@ package types
 //nolint:goimports
 import (
 	"encoding/json"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 )
 
@@ -53,7 +54,6 @@ func NewListValidatorItems() ListValidatorItems {
 // Implement fmt.Stringer.
 func (n ListValidatorItems) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}

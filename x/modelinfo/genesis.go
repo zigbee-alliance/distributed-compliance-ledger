@@ -3,8 +3,8 @@ package modelinfo
 //nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )

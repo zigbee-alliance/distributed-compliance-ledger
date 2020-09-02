@@ -3,6 +3,7 @@ package compliance
 //nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
@@ -57,7 +58,7 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 		}
 	} else {
 		// Compliance is tracked on ledger. There is no compliance record yet.
-		//The corresponding Model Info and test results must be present on ledger.
+		// The corresponding Model Info and test results must be present on ledger.
 		if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
 			return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 		}
@@ -107,7 +108,7 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth
 		}
 	} else {
 		// Only revocation is tracked on the ledger. There is no compliance record yet.
-		//The corresponding Model Info and test results are not required to be on the ledger.
+		// The corresponding Model Info and test results are not required to be on the ledger.
 		complianceInfo = types.NewRevokedComplianceInfo(
 			msg.VID,
 			msg.PID,

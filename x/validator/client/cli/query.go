@@ -3,6 +3,7 @@ package cli
 //nolint:goimports
 import (
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"

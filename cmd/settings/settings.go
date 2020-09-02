@@ -10,7 +10,5 @@ const (
 	DefaultBroadcastMode = flags.BroadcastBlock
 )
 
-var (
-	// Application prune strategy: Store every state. Keep last two states
-	PruningStrategy = types.NewPruningOptions(2, 1)
-)
+// Application prune strategy: Store every state. Keep last two states
+var PruningStrategy = types.NewPruningOptions(2, 1)

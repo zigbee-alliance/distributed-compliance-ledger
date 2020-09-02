@@ -3,10 +3,11 @@ package types
 
 //nolint:goimports
 import (
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 /*
@@ -14,7 +15,7 @@ import (
 */
 
 func TestNewMsgCreateValidator(t *testing.T) {
-	var msg = NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
+	msg := NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
 		Description{Name: testconstants.Name}, testconstants.Owner)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -51,7 +52,7 @@ func TestValidateMsgCreateValidator(t *testing.T) {
 }
 
 func TestMsgCreateValidatorGetSignBytes(t *testing.T) {
-	var msg = NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
+	msg := NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
 		Description{Name: "Test"}, testconstants.Owner)
 
 	expected := `{"type":"validator/CreateValidator","value":{` +

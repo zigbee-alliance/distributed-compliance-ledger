@@ -4,12 +4,13 @@ package keeper
 //nolint:goimports
 import (
 	"fmt"
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func TestQuerier_QueryModel(t *testing.T) {

@@ -12,9 +12,7 @@ const (
 	StoreKey = ModuleName
 )
 
-var (
-	ComplianceInfoPrefix = []byte{0x01} // prefix for each key to a compliance info
-)
+var ComplianceInfoPrefix = []byte{0x01} // prefix for each key to a compliance info
 
 // Key builder for Compliance Info.
 func GetComplianceInfoKey(certificationType CertificationType, vid uint16, pid uint16) []byte {

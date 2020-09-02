@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"github.com/tendermint/tendermint/libs/cli"
-	tmtypes "github.com/tendermint/tendermint/types"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/tendermint/tendermint/libs/cli"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 const flagGenTxDir = "gentx-dir"

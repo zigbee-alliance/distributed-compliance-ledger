@@ -4,6 +4,9 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"os"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -13,8 +16,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"os"
 )
 
 const (
@@ -37,7 +38,6 @@ func NewReadResult(result json.RawMessage, height int64) ReadResult {
 // Implement fmt.Stringer.
 func (n ReadResult) String() string {
 	res, err := json.Marshal(n)
-
 	if err != nil {
 		panic(err)
 	}

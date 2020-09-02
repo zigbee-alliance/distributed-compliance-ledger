@@ -3,11 +3,11 @@ package keeper
 //nolint:goimports
 import (
 	"fmt"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // query endpoints supported by the validator Querier.

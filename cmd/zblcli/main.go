@@ -3,18 +3,16 @@ package main
 //nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/tendermint/go-amino"
 	"os"
 	"path"
 
 	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
 	keyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/key/rest"
 	proxyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/proxy/rest"
 	txUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
-
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/lcd"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
@@ -24,6 +22,7 @@ import (
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
 )
 

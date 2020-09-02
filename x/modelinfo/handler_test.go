@@ -4,6 +4,8 @@ package modelinfo
 //nolint:goimports
 import (
 	"fmt"
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
@@ -11,7 +13,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
 )
 
 func TestHandler_AddModel(t *testing.T) {

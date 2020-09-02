@@ -11,7 +11,6 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
-
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -19,7 +18,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	authutils "github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/params"
-
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/libs/log"
@@ -37,22 +35,20 @@ var (
 	DefaultNodeHome = os.ExpandEnv("$HOME/.zbld")
 )
 
-var (
-	// NewBasicManager is in charge of setting up basic module elemnets
-	ModuleBasics = module.NewBasicManager(
-		auth.AppModuleBasic{},
-		validator.AppModuleBasic{},
-		genutil.AppModuleBasic{},
-		modelinfo.AppModuleBasic{},
-		compliance.AppModuleBasic{},
-		compliancetest.AppModuleBasic{},
-		pki.AppModuleBasic{},
-	)
+// NewBasicManager is in charge of setting up basic module elemnets
+var ModuleBasics = module.NewBasicManager(
+	auth.AppModuleBasic{},
+	validator.AppModuleBasic{},
+	genutil.AppModuleBasic{},
+	modelinfo.AppModuleBasic{},
+	compliance.AppModuleBasic{},
+	compliancetest.AppModuleBasic{},
+	pki.AppModuleBasic{},
 )
 
 // MakeCodec generates the necessary codecs for Amino.
 func MakeCodec() *codec.Codec {
-	var cdc = codec.New()
+	cdc := codec.New()
 
 	ModuleBasics.RegisterCodec(cdc)
 	sdk.RegisterCodec(cdc)
@@ -97,7 +93,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
 	// Here you initialize your application with the store keys it requires.
-	var app = &zbLedgerApp{
+	app := &zbLedgerApp{
 		BaseApp: bApp,
 		cdc:     cdc,
 		keys:    keys,
@@ -244,9 +240,11 @@ func (app *zbLedgerApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) 
 func (app *zbLedgerApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
+
 func (app *zbLedgerApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
+
 func (app *zbLedgerApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
 }

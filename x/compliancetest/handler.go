@@ -1,13 +1,12 @@
 package compliancetest
 
-//nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

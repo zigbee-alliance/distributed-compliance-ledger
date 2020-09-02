@@ -3,8 +3,9 @@ package conversions
 //nolint:goimports
 import (
 	"fmt"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strconv"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func ParseUInt16FromString(str string) (uint16, sdk.Error) {

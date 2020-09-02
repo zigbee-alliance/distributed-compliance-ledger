@@ -3,6 +3,7 @@ package types
 //nolint:goimports
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

@@ -1,9 +1,9 @@
 package types
 
-//nolint:goimports
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const RouterKey = ModuleName

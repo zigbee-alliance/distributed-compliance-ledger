@@ -4,21 +4,20 @@ package genutil
 import (
 	"encoding/json"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
-	cfg "github.com/tendermint/tendermint/config"
-	tmtypes "github.com/tendermint/tendermint/types"
-
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	cfg "github.com/tendermint/tendermint/config"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // GenAppStateFromConfig gets the genesis app state from the config.

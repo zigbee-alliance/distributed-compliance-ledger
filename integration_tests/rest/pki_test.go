@@ -52,7 +52,7 @@ func TestPkiDemo(t *testing.T) {
 	_, _ = utils.ProposeAddX509RootCert(msgProposeAddX509RootCert,
 		userKeyInfo.Name, testconstants.Passphrase)
 
-	//Request all proposed Root certificates
+	// Request all proposed Root certificates
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
 	require.Equal(t, 1, len(proposedCertificates.Items))
 	require.Equal(t, testconstants.RootSubject, proposedCertificates.Items[0].Subject)

@@ -3,15 +3,16 @@ package types
 
 //nolint:goimports
 import (
+	"testing"
+	"time"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestNewMsgAddTestingResult(t *testing.T) {
-	var msg = NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
+	msg := NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
 		testconstants.TestDate, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -50,7 +51,7 @@ func TestMsgAddTestingResultValidation(t *testing.T) {
 }
 
 func TestMsgAddTestingResultGetSignBytes(t *testing.T) {
-	var msg = NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
+	msg := NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
 		testconstants.TestDate, testconstants.Signer)
 
 	expected := `{"type":"compliancetest/AddTestingResult","value":{"pid":22,"signer":` +

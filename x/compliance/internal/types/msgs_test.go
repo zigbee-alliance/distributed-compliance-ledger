@@ -3,15 +3,16 @@ package types
 
 //nolint:goimports
 import (
+	"testing"
+	"time"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestNewMsgCertifyModel(t *testing.T) {
-	var msg = NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
 		ZbCertificationType, testconstants.Reason, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -62,7 +63,7 @@ func TestMsgCertifyModelValidation(t *testing.T) {
 }
 
 func TestMsgCertifyModelGetSignBytes(t *testing.T) {
-	var msg = NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
 		CertificationType(testconstants.CertificationType), testconstants.EmptyString, testconstants.Signer)
 
 	expected := `{"type":"compliance/CertifyModel","value":{"certification_date":"2020-01-01T00:00:00Z",` +
@@ -72,7 +73,7 @@ func TestMsgCertifyModelGetSignBytes(t *testing.T) {
 }
 
 func TestNewMsgRevokeModel(t *testing.T) {
-	var msg = NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
 		CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -120,7 +121,7 @@ func TestMsgRevokeModelValidation(t *testing.T) {
 }
 
 func TestMsRevokeModelGetSignBytes(t *testing.T) {
-	var msg = NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
 		CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
 
 	expected := `{"type":"compliance/RevokeModel","value":{"certification_type":"zb","pid":22,"reason":"Some Reason",` +

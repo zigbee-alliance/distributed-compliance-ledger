@@ -496,7 +496,6 @@ func queryProposedCertificate(setup TestSetup, subject string,
 		[]string{keeper.QueryProposedX509RootCert, subject, subjectKeyID},
 		abci.RequestQuery{},
 	)
-
 	if err != nil {
 		return nil, err
 	}
@@ -527,7 +526,6 @@ func queryCertificates(setup TestSetup, subject string, subjectKeyID string) (ty
 		[]string{keeper.QueryX509Cert, subject, subjectKeyID},
 		abci.RequestQuery{},
 	)
-
 	if err != nil {
 		return types.Certificates{}, err
 	}

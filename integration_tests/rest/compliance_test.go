@@ -2,14 +2,15 @@ package rest_test
 
 //nolint:goimports
 import (
+	"testing"
+	"time"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/common"
-	"testing"
-	"time"
 )
 
 //nolint:godox

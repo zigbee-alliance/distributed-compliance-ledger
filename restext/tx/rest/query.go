@@ -4,19 +4,16 @@ package rest
 import (
 	"encoding/base64"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"io/ioutil"
 	"net/http"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
-
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
+	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
+	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 // EncodeTxRequestHandlerFn returns the decode tx REST handler. In particular,

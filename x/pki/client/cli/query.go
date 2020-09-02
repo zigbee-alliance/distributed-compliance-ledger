@@ -6,13 +6,11 @@ import (
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
-	"github.com/spf13/viper"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/spf13/cobra"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
@@ -340,7 +338,6 @@ func GetCmdGetAllRevokedX509Certs(queryRoute string, cdc *codec.Codec) *cobra.Co
 
 func chainCertificates(cliCtx cli.CliContext, queryRoute string,
 	subject string, subjectKeyID string, chain *types.Certificates) (int64, sdk.Error) {
-
 	res, height, err := cliCtx.QueryStore(types.GetApprovedCertificateKey(subject, subjectKeyID), queryRoute)
 	if err != nil || res == nil {
 		return height, types.ErrCertificateDoesNotExist(subject, subjectKeyID)

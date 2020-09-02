@@ -3,12 +3,13 @@ package keeper
 
 //nolint:goimports
 import (
+	"testing"
+	"time"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"testing"
-	"time"
 )
 
 func TestValidatorStateChange_ApplyAndReturnValidatorSetUpdates_ForEmpty(t *testing.T) {

@@ -3,13 +3,13 @@ package rest
 //nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"net/http"
 
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
+	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // HTTP request handler to query list of validators.

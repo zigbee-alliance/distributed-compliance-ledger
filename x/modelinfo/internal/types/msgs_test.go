@@ -3,14 +3,15 @@ package types
 
 //nolint:goimports
 import (
+	"testing"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestNewMsgAddModelInfo(t *testing.T) {
-	var msg = NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
+	msg := NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
 		testconstants.Description, testconstants.Sku, testconstants.FirmwareVersion,
 		testconstants.HardwareVersion, testconstants.Custom, testconstants.TisOrTrpTestingCompleted, testconstants.Signer)
 
@@ -82,7 +83,7 @@ func TestMsgAddModelInfoValidation(t *testing.T) {
 }
 
 func TestMsgAddModelInfoGetSignBytes(t *testing.T) {
-	var msg = NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
+	msg := NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
 		testconstants.Description, testconstants.Sku, testconstants.FirmwareVersion, testconstants.HardwareVersion,
 		testconstants.Custom, testconstants.TisOrTrpTestingCompleted, testconstants.Signer)
 

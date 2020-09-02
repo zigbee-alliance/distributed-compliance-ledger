@@ -4,16 +4,14 @@ package genutil
 import (
 	"encoding/json"
 	"fmt"
+
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // ValidateAccountInGenesis checks that the provided key has sufficient

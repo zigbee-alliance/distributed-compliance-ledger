@@ -5,21 +5,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/tendermint/tendermint/libs/common"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
-	tmtypes "github.com/tendermint/tendermint/types"
-
 	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
+	validator "git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	kbkeys "github.com/cosmos/cosmos-sdk/crypto/keys"
@@ -28,8 +21,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-
-	validator "git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/tendermint/tendermint/libs/common"
+	tmtypes "github.com/tendermint/tendermint/types"
 )
 
 // GenTxCmd builds the application's gentx command.
@@ -170,7 +166,7 @@ func GenTxCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 func makeOutputFilepath(rootDir, nodeID string) (string, error) {
 	writePath := filepath.Join(rootDir, "config", "gentx")
-	if err := common.EnsureDir(writePath, 0700); err != nil {
+	if err := common.EnsureDir(writePath, 0o700); err != nil {
 		return "", err
 	}
 
@@ -181,7 +177,6 @@ func readUnsignedGenTxFile(cdc *codec.Codec, r io.Reader) (auth.StdTx, error) {
 	var stdTx auth.StdTx
 
 	bytes, err := ioutil.ReadAll(r)
-
 	if err != nil {
 		return stdTx, err
 	}
@@ -192,14 +187,13 @@ func readUnsignedGenTxFile(cdc *codec.Codec, r io.Reader) (auth.StdTx, error) {
 }
 
 func writeSignedGenTx(cdc *codec.Codec, outputDocument string, tx auth.StdTx) error {
-	outputFile, err := os.OpenFile(outputDocument, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0644)
+	outputFile, err := os.OpenFile(outputDocument, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o644)
 	if err != nil {
 		return err
 	}
 	defer outputFile.Close()
 
 	json, err := cdc.MarshalJSON(tx)
-
 	if err != nil {
 		return err
 	}
