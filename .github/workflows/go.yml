@@ -5,6 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
 
@@ -31,7 +32,20 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v .
+      run: make build
 
     - name: Test
-      run: go test -v .
+      run: make test
+
+  golangci:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v1
+        with:
+          version: v1.29
+          args: --timeout 5m0s
