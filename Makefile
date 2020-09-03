@@ -1,4 +1,4 @@
-PACKAGES=$(shell go list ./... | grep -v '/integration_tests')
+PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
 
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
@@ -10,8 +10,14 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=ZbLedger \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) 
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
-OUTPUT_DIR?=build
-LOCALNET_DIR?=localnet
+OUTPUT_DIR ?= build
+
+LOCALNET_DIR ?= localnet
+
+LICENSE_TYPE = "apache"
+COPYRIGHT_YEAR = "2020"
+COPYRIGHT_HOLDER = "DSR Corporation"
+SOURCE_FILES = $(shell find . -name '*.go')
 
 all: install
 
@@ -33,6 +39,12 @@ test:
 lint:
 	golangci-lint run ./... --timeout 5m0s
 
+license:
+	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} ${SOURCE_FILES}
+
+license-check:
+	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} -check ${SOURCE_FILES}
+
 clean:
 	rm -rf $(OUTPUT_DIR)
 
@@ -53,4 +65,4 @@ localnet_stop:
 localnet_clean: localnet_stop
 	rm -rf $(LOCALNET_DIR)
 
-.PHONY: all build install test lint clean image localnet_init localnet_start localnet_stop localnet_clean
+.PHONY: all build install test lint clean image localnet_init localnet_start localnet_stop localnet_clean license license-check
