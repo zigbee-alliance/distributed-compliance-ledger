@@ -17,7 +17,7 @@ LOCALNET_DIR ?= localnet
 LICENSE_TYPE = "apache"
 COPYRIGHT_YEAR = "2020"
 COPYRIGHT_HOLDER = "DSR Corporation"
-SOURCE_FILES = $(shell find . -name '*.go')
+LICENSED_FILES = $(shell find . -type f \( -iname '*.go' -or -iname '*.sh' -or -iname '*.yml' -or -iname 'makefile' -or -iname 'dockerfile' \) -not -wholename '*/.*')
 
 all: install
 
@@ -40,10 +40,10 @@ lint:
 	golangci-lint run ./... --timeout 5m0s
 
 license:
-	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} ${SOURCE_FILES}
+	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} ${LICENSED_FILES}
 
 license-check:
-	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} -check ${SOURCE_FILES}
+	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} -check ${LICENSED_FILES}
 
 clean:
 	rm -rf $(OUTPUT_DIR)
