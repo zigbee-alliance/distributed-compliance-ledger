@@ -39,7 +39,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 )
 
-const appName = "zb-ledger"
+const appName = "dc-ledger"
 
 var (
 	// default home directories for the application CLI.

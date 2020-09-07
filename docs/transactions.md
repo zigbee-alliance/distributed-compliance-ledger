@@ -45,8 +45,8 @@ This is useful to avoid correlation by the sender's IP address.
         ```json
         CLI 2: dclcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
         CLI 2: dclcli query auth accounts
-        CLI 1: dclcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
-        CLI 2: dclcli tx broadcast /home/artem/zb-ledger/txn.json
+        CLI 1: dclcli tx sign /home/artem/dc-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
+        CLI 2: dclcli tx broadcast /home/artem/dc-ledger/txn.json
         ```
 - Non-trusted REST API (keys at the edge):
     - CLI is started in a server mode.
