@@ -31,6 +31,10 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 			return handleMsgProposeAddX509RootCert(ctx, keeper, authKeeper, msg)
 		case types.MsgApproveAddX509RootCert:
 			return handleMsgApproveAddX509RootCert(ctx, keeper, authKeeper, msg)
+		case types.MsgProposeRevokeX509RootCert:
+			return handleMsgProposeRevokeX509RootCert(ctx, keeper, authKeeper, msg)
+		case types.MsgApproveRevokeX509RootCert:
+			return handleMsgApproveRevokeX509RootCert(ctx, keeper, authKeeper, msg)
 		case types.MsgAddX509Cert:
 			return handleMsgAddX509Cert(ctx, keeper, msg)
 		case types.MsgRevokeX509Cert:
@@ -252,8 +256,6 @@ func handleMsgAddX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgAd
 	return sdk.Result{}
 }
 
-// nolint:deadcode, unused, godox
-// FIXME: Unused function.
 func handleMsgProposeRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgProposeRevokeX509RootCert) sdk.Result {
 	// check if signer has root certificate approval role
@@ -296,8 +298,6 @@ func handleMsgProposeRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, a
 	return sdk.Result{}
 }
 
-// nolint:deadcode, unused, godox
-// FIXME: Unused function.
 func handleMsgApproveRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgApproveRevokeX509RootCert) sdk.Result {
 	// check if signer has root certificate approval role
