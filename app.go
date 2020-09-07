@@ -18,13 +18,6 @@ import (
 	"encoding/json"
 	"os"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	bam "github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -37,6 +30,13 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 )
 
 const appName = "zb-ledger"

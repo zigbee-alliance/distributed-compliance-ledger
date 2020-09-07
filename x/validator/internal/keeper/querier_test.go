@@ -18,11 +18,11 @@ package keeper
 import (
 	"testing"
 
-	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 func TestQuerier_QueryValidator(t *testing.T) {

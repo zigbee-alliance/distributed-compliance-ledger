@@ -17,7 +17,7 @@ package types
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
 )
 
 /*

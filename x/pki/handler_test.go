@@ -18,13 +18,13 @@ package pki
 import (
 	"testing"
 
-	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
+	constants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
 )
 
 const SerialNumber = "12345678"

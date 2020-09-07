@@ -17,11 +17,11 @@ package rest
 import (
 	"net/http"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	keys2 "github.com/cosmos/cosmos-sdk/crypto/keys"
 	"github.com/gorilla/mux"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
 )
 
 // Lists all keys in the local keychain.

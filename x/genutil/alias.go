@@ -15,8 +15,8 @@
 package genutil
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	cosmosgenutil "github.com/cosmos/cosmos-sdk/x/genutil"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil/types"
 )
 
 const (

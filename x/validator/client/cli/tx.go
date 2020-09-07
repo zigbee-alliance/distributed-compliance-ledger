@@ -17,8 +17,6 @@ package cli
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -31,6 +29,8 @@ import (
 	"github.com/spf13/viper"
 	cfg "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/crypto"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 // GetTxCmd returns the transaction commands for this module.

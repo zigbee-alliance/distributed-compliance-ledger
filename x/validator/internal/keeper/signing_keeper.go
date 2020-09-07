@@ -15,8 +15,8 @@
 package keeper
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 func (k Keeper) GetValidatorSigningInfo(ctx sdk.Context, address sdk.ConsAddress) (info types.ValidatorSigningInfo) {

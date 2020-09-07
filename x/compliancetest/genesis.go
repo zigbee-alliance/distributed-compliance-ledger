@@ -17,9 +17,9 @@ package compliancetest
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
 )
 
 type GenesisState struct {

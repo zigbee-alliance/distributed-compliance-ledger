@@ -17,11 +17,11 @@ package genutil
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil/types"
 )
 
 // InitGenesis - initialize accounts and deliver genesis transactions.

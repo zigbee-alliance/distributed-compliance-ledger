@@ -19,8 +19,8 @@ package keeper
 import (
 	"testing"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestKeeper_TestingResultGetSet(t *testing.T) {

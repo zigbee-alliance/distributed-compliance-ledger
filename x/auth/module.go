@@ -17,8 +17,6 @@ package auth
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/client/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/client/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -26,6 +24,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/client/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/client/rest"
 )
 
 // type check to ensure the interface is properly implemented.

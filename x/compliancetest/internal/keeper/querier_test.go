@@ -19,10 +19,10 @@ import (
 	"fmt"
 	"testing"
 
-	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
+	test_constants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
 )
 
 func TestQuerier_QueryTestingResult(t *testing.T) {

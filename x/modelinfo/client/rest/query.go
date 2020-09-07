@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/conversions"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
 func getModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {

@@ -15,8 +15,8 @@
 package compliance
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
 const (

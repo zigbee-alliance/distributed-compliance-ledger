@@ -18,9 +18,6 @@ import (
 	"fmt"
 	"strings"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -28,6 +25,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil/types"
 )
 
 const (

@@ -19,11 +19,6 @@ import (
 	"os"
 	"path"
 
-	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
-	keyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/key/rest"
-	proxyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/proxy/rest"
-	txUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
@@ -37,6 +32,11 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
+	app "github.com/zigbee-alliance/distributed-compliance-ledger"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/cmd/settings"
+	keyUtils "github.com/zigbee-alliance/distributed-compliance-ledger/restext/key/rest"
+	proxyUtils "github.com/zigbee-alliance/distributed-compliance-ledger/restext/proxy/rest"
+	txUtils "github.com/zigbee-alliance/distributed-compliance-ledger/restext/tx/rest"
 )
 
 func main() {

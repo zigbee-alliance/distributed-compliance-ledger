@@ -19,14 +19,14 @@ import (
 	"fmt"
 	"testing"
 
-	test_constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
+	test_constants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 )
 
 func TestHandler_AddTestingResult(t *testing.T) {

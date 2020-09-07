@@ -18,10 +18,10 @@ import (
 	"net/http"
 	"time"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
 )
 
 type TestingResultRequest struct {

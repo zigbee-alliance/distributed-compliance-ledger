@@ -17,12 +17,12 @@ package compliance
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 )
 
 func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,

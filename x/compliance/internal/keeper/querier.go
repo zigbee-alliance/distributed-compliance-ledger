@@ -17,11 +17,11 @@ package keeper
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/conversions"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
 const (

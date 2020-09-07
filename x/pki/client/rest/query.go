@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
 )
 
 func getAllX509RootCertsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {

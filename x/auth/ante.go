@@ -17,12 +17,12 @@ package auth
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/types"
 )
 
 // SignatureVerificationGasConsumer is the type of function that is used to both consume gas when verifying signatures

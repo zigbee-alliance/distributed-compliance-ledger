@@ -17,10 +17,10 @@ package modelinfo
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
 func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {

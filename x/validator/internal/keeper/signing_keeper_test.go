@@ -19,9 +19,9 @@ package keeper
 import (
 	"testing"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 func TestKeeper_ValidatorSigningInfo_SetGet(t *testing.T) {

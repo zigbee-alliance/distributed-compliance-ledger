@@ -17,8 +17,8 @@ package pki
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
 )
 
 type GenesisState struct {

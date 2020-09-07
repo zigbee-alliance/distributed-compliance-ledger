@@ -15,8 +15,8 @@
 package modelinfo
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
 const (

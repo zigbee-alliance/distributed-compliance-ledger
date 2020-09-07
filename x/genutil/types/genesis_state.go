@@ -18,12 +18,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/tendermint/tendermint/libs/common"
 	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 )
 
 // GenesisState defines the genesis account and validators.

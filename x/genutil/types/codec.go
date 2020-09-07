@@ -15,10 +15,10 @@
 package types
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 )
 
 // ModuleCdc defines a generic sealed codec to be used throughout this module.

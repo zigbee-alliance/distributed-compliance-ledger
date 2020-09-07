@@ -20,12 +20,12 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	auth "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
 )
 
 // EncodeTxRequestHandlerFn returns the decode tx REST handler. In particular,

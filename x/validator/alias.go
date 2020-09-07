@@ -15,8 +15,8 @@
 package validator
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 const (

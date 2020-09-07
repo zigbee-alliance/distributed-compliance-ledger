@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"strings"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
 )
 
 type X509Certificate struct {

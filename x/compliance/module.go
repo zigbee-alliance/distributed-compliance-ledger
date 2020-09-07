@@ -17,11 +17,6 @@ package compliance
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -29,6 +24,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/client/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/client/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 )
 
 // type check to ensure the interface is properly implemented.

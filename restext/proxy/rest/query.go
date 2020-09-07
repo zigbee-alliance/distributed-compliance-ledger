@@ -19,10 +19,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
 )
 
 func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {

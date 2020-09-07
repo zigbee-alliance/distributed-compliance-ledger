@@ -20,9 +20,9 @@ import (
 	"testing"
 	"time"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestNewMsgCertifyModel(t *testing.T) {
