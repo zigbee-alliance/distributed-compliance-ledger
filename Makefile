@@ -17,7 +17,7 @@ LOCALNET_DIR ?= localnet
 LICENSE_TYPE = "apache"
 COPYRIGHT_YEAR = "2020"
 COPYRIGHT_HOLDER = "DSR Corporation"
-LICENSED_FILES = $(shell find . -type f \( -iname '*.go' -or -iname '*.sh' -or -iname '*.yml' -or -iname 'makefile' -or -iname 'dockerfile' \) -not -wholename '*/.*')
+LICENSED_FILES = $(shell find . -type f -not -wholename '*/.*')
 
 all: install
 
