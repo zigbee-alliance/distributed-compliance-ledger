@@ -25,7 +25,7 @@
   - Install Docker Compose as described at https://docs.docker.com/compose/install/
   - In any location that you prefer within your user home directory (`~`) execute the following command to clone DC Ledger project:
     ```
-    git clone https://gitlab.dsr-corporation.com/dc-ledger/dc-ledger.git
+    git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
     ```
   - In the the root directory of the cloned project execute the following commands to create and start DC Ledger pool in Docker:
     ```

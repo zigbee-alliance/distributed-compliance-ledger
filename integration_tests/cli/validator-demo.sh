@@ -23,8 +23,9 @@ chain_id="dclchain"
 ip="192.167.10.6"
 node0="tcp://192.167.10.2:26657"
 passphrase="test1234"
+docker_network="distributed-compliance-ledger_localnet"
 
-if docker container ls  | grep -q $container; then
+if docker container ls -a | grep -q $container; then
   if docker container inspect $container | grep -q '"Status": "running"'; then
     echo "Stopping container"
     docker container kill $container
@@ -34,7 +35,7 @@ if docker container ls  | grep -q $container; then
   docker container rm "$container"
 fi
 
-docker run -d --name $container --ip $ip -p "26664-26665:26656-26657" --network dc-ledger_localnet -i dcledger
+docker run -d --name $container --ip $ip -p "26664-26665:26656-26657" --network $docker_network -i dcledger
 
 echo "Generate keys for $account"
 docker exec $container /bin/sh -c "echo $passphrase | dclcli keys add $account"

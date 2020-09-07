@@ -1,4 +1,4 @@
-# DC Ledger
+# Distributed Compliance Ledger
 
 ## Overview
 DC Ledger is a public permissioned Ledger which can be used for two main use cases:
