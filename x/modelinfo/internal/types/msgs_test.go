@@ -19,9 +19,9 @@ package types
 import (
 	"testing"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestNewMsgAddModelInfo(t *testing.T) {

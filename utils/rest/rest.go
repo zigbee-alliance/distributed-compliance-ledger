@@ -20,7 +20,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -31,6 +30,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
 )
 
 const (

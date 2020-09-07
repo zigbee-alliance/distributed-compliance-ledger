@@ -1,4 +1,4 @@
-module git.dsr-corporation.com/zb-ledger/zb-ledger
+module github.com/zigbee-alliance/distributed-compliance-ledger
 
 go 1.13
 

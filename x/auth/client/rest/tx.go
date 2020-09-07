@@ -18,11 +18,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/types"
 )
 
 type ProposeAddAccountRequest struct {

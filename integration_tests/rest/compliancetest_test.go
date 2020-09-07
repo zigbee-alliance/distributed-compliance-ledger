@@ -17,9 +17,9 @@ package rest_test
 import (
 	"testing"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 )
 
 //nolint:godox

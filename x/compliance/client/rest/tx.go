@@ -18,11 +18,11 @@ import (
 	"net/http"
 	"time"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/conversions"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
 type CertifyModelRequest struct {

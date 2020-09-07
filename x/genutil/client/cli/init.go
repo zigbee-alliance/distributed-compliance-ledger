@@ -20,7 +20,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -32,6 +31,7 @@ import (
 	"github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil"
 )
 
 const (

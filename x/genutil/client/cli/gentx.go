@@ -23,8 +23,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
-	validator "git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/client/cli"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -39,6 +37,8 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/common"
 	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil"
+	validator "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/client/cli"
 )
 
 // GenTxCmd builds the application's gentx command.

@@ -15,8 +15,8 @@
 package types
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 )
 
 type GenesisAccounts []auth.Account

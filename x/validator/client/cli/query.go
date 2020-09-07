@@ -17,14 +17,14 @@ package cli
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module.

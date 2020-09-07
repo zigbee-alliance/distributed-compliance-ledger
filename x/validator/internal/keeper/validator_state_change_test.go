@@ -19,10 +19,10 @@ import (
 	"testing"
 	"time"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 func TestValidatorStateChange_ApplyAndReturnValidatorSetUpdates_ForEmpty(t *testing.T) {

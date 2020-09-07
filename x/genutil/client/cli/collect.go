@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server"
@@ -26,6 +25,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tendermint/tendermint/libs/cli"
 	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil"
 )
 
 const flagGenTxDir = "gentx-dir"

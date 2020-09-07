@@ -18,10 +18,10 @@ import (
 	"net/http"
 	"testing"
 
-	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 )
 
 //nolint:godox

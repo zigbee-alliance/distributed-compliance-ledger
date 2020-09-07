@@ -18,9 +18,9 @@ import (
 	"fmt"
 	"math"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/types"
 )
 
 func NewHandler(keeper keeper.Keeper) sdk.Handler {

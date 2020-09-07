@@ -18,9 +18,6 @@ import (
 	"encoding/json"
 	"io"
 
-	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
-	genutilcli "git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/client/cli"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,6 +27,9 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
+	app "github.com/zigbee-alliance/distributed-compliance-ledger"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/cmd/settings"
+	genutilcli "github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil/client/cli"
 )
 
 func main() {

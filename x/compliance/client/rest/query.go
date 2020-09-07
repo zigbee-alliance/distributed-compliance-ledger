@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/conversions"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
 func getComplianceInfoHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {

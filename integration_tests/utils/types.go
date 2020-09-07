@@ -17,11 +17,11 @@ package utils
 import (
 	"encoding/json"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 )
 
 type ResponseWrapper struct {

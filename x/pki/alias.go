@@ -15,8 +15,8 @@
 package pki
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
 )
 
 const (

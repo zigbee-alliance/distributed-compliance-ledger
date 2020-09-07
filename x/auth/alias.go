@@ -15,8 +15,8 @@
 package auth
 
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/types"
 )
 
 const (

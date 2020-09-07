@@ -17,11 +17,11 @@ package pki
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/keeper"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/x509"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/x509"
 )
 
 func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
