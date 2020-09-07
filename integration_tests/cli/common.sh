@@ -52,18 +52,18 @@ create_new_account(){
   echo "Account name: $name"
 
   echo "Generate key for $name"
-  echo $passphrase | zblcli keys add "$name"
+  echo $passphrase | dclcli keys add "$name"
 
-  address=$(zblcli keys show $name -a)
-  pubkey=$(zblcli keys show $name -p)
+  address=$(dclcli keys show $name -a)
+  pubkey=$(dclcli keys show $name -p)
 
   echo "Jack prupose account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | zblcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
+  result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
   check_response "$result" "\"success\": true"
   echo "$result"
 
   echo "Alice approve account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | zblcli tx auth approve-add-account --address="$address" --from alice --yes)
+  result=$(echo $passphrase | dclcli tx auth approve-add-account --address="$address" --from alice --yes)
   check_response "$result" "\"success\": true"
   echo "$result"
 }

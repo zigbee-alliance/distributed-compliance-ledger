@@ -14,108 +14,108 @@
 # limitations under the License.
 
 
-rm -rf ~/.zblcli
-rm -rf ~/.zbld
+rm -rf ~/.dclcli
+rm -rf ~/.dcld
 
 rm -rf localnet
 mkdir localnet localnet/client localnet/node0 localnet/node1 localnet/node2 localnet/node3
 
 # client
 
-zblcli config chain-id zblchain
-zblcli config output json
-zblcli config indent true
-zblcli config trust-node false
+dclcli config chain-id dclchain
+dclcli config output json
+dclcli config indent true
+dclcli config trust-node false
 
-echo 'test1234' | zblcli keys add jack
-echo 'test1234' | zblcli keys add alice
-echo 'test1234' | zblcli keys add bob
-echo 'test1234' | zblcli keys add anna
+echo 'test1234' | dclcli keys add jack
+echo 'test1234' | dclcli keys add alice
+echo 'test1234' | dclcli keys add bob
+echo 'test1234' | dclcli keys add anna
 
-cp -r ~/.zblcli/* localnet/client
+cp -r ~/.dclcli/* localnet/client
 
 # node 0
 
-zbld init node0 --chain-id zblchain
+dcld init node0 --chain-id dclchain
 
-jack_address=$(zblcli keys show jack -a)
-jack_pubkey=$(zblcli keys show jack -p)
+jack_address=$(dclcli keys show jack -a)
+jack_pubkey=$(dclcli keys show jack -p)
 
-alice_address=$(zblcli keys show alice -a)
-alice_pubkey=$(zblcli keys show alice -p)
+alice_address=$(dclcli keys show alice -a)
+alice_pubkey=$(dclcli keys show alice -p)
 
-bob_address=$(zblcli keys show bob -a)
-bob_pubkey=$(zblcli keys show bob -p)
+bob_address=$(dclcli keys show bob -a)
+bob_pubkey=$(dclcli keys show bob -p)
 
-anna_address=$(zblcli keys show anna -a)
-anna_pubkey=$(zblcli keys show anna -p)
+anna_address=$(dclcli keys show anna -a)
+anna_pubkey=$(dclcli keys show anna -p)
 
-zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
+dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | zbld gentx --from jack
+echo 'test1234' | dcld gentx --from jack
 
-mv ~/.zbld/* localnet/node0
+mv ~/.dcld/* localnet/node0
 
 # node 1
 
-zbld init node1 --chain-id zblchain
+dcld init node1 --chain-id dclchain
 
-zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
+dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | zbld gentx --from alice
+echo 'test1234' | dcld gentx --from alice
 
-mv ~/.zbld/* localnet/node1
+mv ~/.dcld/* localnet/node1
 
 # node 2
 
-zbld init node2 --chain-id zblchain
+dcld init node2 --chain-id dclchain
 
-zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
+dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | zbld gentx --from bob
+echo 'test1234' | dcld gentx --from bob
 
-mv ~/.zbld/* localnet/node2
+mv ~/.dcld/* localnet/node2
 
 # node 3
 
-zbld init node3 --chain-id zblchain
+dcld init node3 --chain-id dclchain
 
-zbld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
+dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | zbld gentx --from anna
+echo 'test1234' | dcld gentx --from anna
 
-cp -r ~/.zbld/* localnet/node3
+cp -r ~/.dcld/* localnet/node3
 
 # Collect all validator creation transactions
 
-cp localnet/node0/config/gentx/* ~/.zbld/config/gentx
-cp localnet/node1/config/gentx/* ~/.zbld/config/gentx
-cp localnet/node2/config/gentx/* ~/.zbld/config/gentx
-cp localnet/node3/config/gentx/* ~/.zbld/config/gentx
+cp localnet/node0/config/gentx/* ~/.dcld/config/gentx
+cp localnet/node1/config/gentx/* ~/.dcld/config/gentx
+cp localnet/node2/config/gentx/* ~/.dcld/config/gentx
+cp localnet/node3/config/gentx/* ~/.dcld/config/gentx
 
 # Embed them into genesis
 
-zbld collect-gentxs
-zbld validate-genesis
+dcld collect-gentxs
+dcld validate-genesis
 
 # Update genesis for all nodes
 
-cp ~/.zbld/config/genesis.json localnet/node0/config/
-cp ~/.zbld/config/genesis.json localnet/node1/config/
-cp ~/.zbld/config/genesis.json localnet/node2/config/
-cp ~/.zbld/config/genesis.json localnet/node3/config/
+cp ~/.dcld/config/genesis.json localnet/node0/config/
+cp ~/.dcld/config/genesis.json localnet/node1/config/
+cp ~/.dcld/config/genesis.json localnet/node2/config/
+cp ~/.dcld/config/genesis.json localnet/node3/config/
 
 # Find out node ids
 

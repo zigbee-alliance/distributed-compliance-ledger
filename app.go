@@ -43,10 +43,10 @@ const appName = "zb-ledger"
 
 var (
 	// default home directories for the application CLI.
-	DefaultCLIHome = os.ExpandEnv("$HOME/.zblcli")
+	DefaultCLIHome = os.ExpandEnv("$HOME/.dclcli")
 
 	// DefaultNodeHome sets the folder where the applcation data and configuration will be stored.
-	DefaultNodeHome = os.ExpandEnv("$HOME/.zbld")
+	DefaultNodeHome = os.ExpandEnv("$HOME/.dcld")
 )
 
 // ModuleBasics is in charge of setting up basic module elemnets.
@@ -71,7 +71,7 @@ func MakeCodec() *codec.Codec {
 	return cdc
 }
 
-type zbLedgerApp struct {
+type dcLedgerApp struct {
 	*bam.BaseApp
 	cdc *codec.Codec
 
@@ -91,8 +91,8 @@ type zbLedgerApp struct {
 	mm *module.Manager
 }
 
-// NewZbLedgerApp is a constructor function for zbLedgerApp.
-func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *zbLedgerApp {
+// NewDcLedgerApp is a constructor function for dcLedgerApp.
+func NewDcLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.BaseApp)) *dcLedgerApp {
 	// First define the top level codec that will be shared by the different modules
 	cdc := MakeCodec()
 
@@ -107,7 +107,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
 	// Here you initialize your application with the store keys it requires.
-	app := &zbLedgerApp{
+	app := &dcLedgerApp{
 		BaseApp: bApp,
 		cdc:     cdc,
 		keys:    keys,
@@ -143,7 +143,7 @@ func NewZbLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	return app
 }
 
-func InitModuleManager(app *zbLedgerApp) {
+func InitModuleManager(app *dcLedgerApp) {
 	app.mm = module.NewManager(
 		genutil.NewAppModule(app.authKeeper, app.validatorKeeper, app.BaseApp.DeliverTx),
 		auth.NewAppModule(app.authKeeper),
@@ -171,7 +171,7 @@ func InitModuleManager(app *zbLedgerApp) {
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 }
 
-func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey) {
+func InitKeepers(app *dcLedgerApp, keys map[string]*sdk.KVStoreKey) {
 	// The Validator keeper
 	app.validatorKeeper = MakeValidatorKeeper(keys, app)
 
@@ -191,42 +191,42 @@ func InitKeepers(app *zbLedgerApp, keys map[string]*sdk.KVStoreKey) {
 	app.authKeeper = MakeAuthKeeper(keys, app)
 }
 
-func MakeAuthKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) auth.Keeper {
+func MakeAuthKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) auth.Keeper {
 	return auth.NewKeeper(
 		keys[auth.StoreKey],
 		app.cdc,
 	)
 }
 
-func MakeModelinfoKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) modelinfo.Keeper {
+func MakeModelinfoKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) modelinfo.Keeper {
 	return modelinfo.NewKeeper(
 		keys[modelinfo.StoreKey],
 		app.cdc,
 	)
 }
 
-func MakeComplianceKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) compliance.Keeper {
+func MakeComplianceKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) compliance.Keeper {
 	return compliance.NewKeeper(
 		keys[compliance.StoreKey],
 		app.cdc,
 	)
 }
 
-func MakeCompliancetestKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) compliancetest.Keeper {
+func MakeCompliancetestKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) compliancetest.Keeper {
 	return compliancetest.NewKeeper(
 		keys[compliancetest.StoreKey],
 		app.cdc,
 	)
 }
 
-func MakePkiKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) pki.Keeper {
+func MakePkiKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) pki.Keeper {
 	return pki.NewKeeper(
 		keys[pki.StoreKey],
 		app.cdc,
 	)
 }
 
-func MakeValidatorKeeper(keys map[string]*sdk.KVStoreKey, app *zbLedgerApp) validator.Keeper {
+func MakeValidatorKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) validator.Keeper {
 	return validator.NewKeeper(
 		keys[validator.StoreKey],
 		app.cdc,
@@ -240,7 +240,7 @@ func NewDefaultGenesisState() GenesisState {
 	return ModuleBasics.DefaultGenesis()
 }
 
-func (app *zbLedgerApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *dcLedgerApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
 
 	err := app.cdc.UnmarshalJSON(req.AppStateBytes, &genesisState)
@@ -251,21 +251,21 @@ func (app *zbLedgerApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) 
 	return app.mm.InitGenesis(ctx, genesisState)
 }
 
-func (app *zbLedgerApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *dcLedgerApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
-func (app *zbLedgerApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *dcLedgerApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
-func (app *zbLedgerApp) LoadHeight(height int64) error {
+func (app *dcLedgerApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height, app.keys[bam.MainStoreKey])
 }
 
 //_________________________________________________________
 
-func (app *zbLedgerApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string,
+func (app *dcLedgerApp) ExportAppStateAndValidators(forZeroHeight bool, jailWhiteList []string,
 ) (appState json.RawMessage, validators []tmtypes.GenesisValidator, err error) {
 	// as if they could withdraw from the start of the next block
 	ctx := app.NewContext(true, abci.Header{Height: app.LastBlockHeight()})

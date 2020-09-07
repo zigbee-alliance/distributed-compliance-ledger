@@ -18,6 +18,6 @@
   tasks:
     - name: Copy binary
       copy:
-        src: "./../../build/zblcli"
+        src: "./../../build/dclcli"
         dest: "/usr/bin/"
         mode: 0755

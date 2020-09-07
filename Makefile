@@ -3,9 +3,9 @@ PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=ZbLedger \
-	-X github.com/cosmos/cosmos-sdk/version.ServerName=zbld \
-	-X github.com/cosmos/cosmos-sdk/version.ClientName=zblcli \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
+	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
+	-X github.com/cosmos/cosmos-sdk/version.ClientName=dclcli \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) 
 
@@ -22,12 +22,12 @@ LICENSED_FILES = $(shell find . -type f -not -wholename '*/.*')
 all: install
 
 build: go.sum
-	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/zbld ./cmd/zbld
-	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/zblcli ./cmd/zblcli
+	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
+	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/dclcli ./cmd/dclcli
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/zbld
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/zblcli
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/dcld
+	go install -mod=readonly $(BUILD_FLAGS) ./cmd/dclcli
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
@@ -51,7 +51,7 @@ clean:
 # Docker
 
 image:
-	docker build -t zbledger .
+	docker build -t dcledger .
 
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh

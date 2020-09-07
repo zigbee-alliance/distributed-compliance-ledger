@@ -52,7 +52,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(modelinfoKeeper)
 
 	// Create context
-	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: "zbl-test-chain-id"}, false, log.NewNopLogger())
+	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: "dcl-test-chain-id"}, false, log.NewNopLogger())
 
 	setup := TestSetup{
 		Cdc:             cdc,

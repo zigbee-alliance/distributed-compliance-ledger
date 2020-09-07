@@ -16,7 +16,7 @@
   user: ubuntu
   tasks:
     - name: Rest service status
-      command: "service zblcli status"
+      command: "service dclcli status"
       changed_when: false
       register: status
 

@@ -18,9 +18,9 @@
   tasks:
     - name: Remove existing config
       file:
-        path: "/etc/systemd/system/zblcli.service"
+        path: "/etc/systemd/system/dclcli.service"
         state: absent
     - name: Copy service configuration
       copy:
-        src: "./../templates/zblcli.service"
+        src: "./../templates/dclcli.service"
         dest: "/etc/systemd/system/"

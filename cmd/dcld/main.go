@@ -46,8 +46,8 @@ func main() {
 	ctx := server.NewDefaultContext()
 
 	rootCmd := &cobra.Command{
-		Use:               "zbld",
-		Short:             "ZbLedger App Daemon (server)",
+		Use:               "dcld",
+		Short:             "DcLedger App Daemon (server)",
 		PersistentPreRunE: server.PersistentPreRunEFn(ctx),
 	}
 	// CLI commands to initialize the chain
@@ -74,13 +74,13 @@ func main() {
 }
 
 func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application {
-	return app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
+	return app.NewDcLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 }
 
 func exportAppStateAndTMValidators(logger log.Logger, db dbm.DB, traceStore io.Writer,
 	height int64, forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tmtypes.GenesisValidator, error) {
 	if height != -1 {
-		nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
+		nsApp := app.NewDcLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 
 		err := nsApp.LoadHeight(height)
 		if err != nil {
@@ -90,7 +90,7 @@ func exportAppStateAndTMValidators(logger log.Logger, db dbm.DB, traceStore io.W
 		return nsApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
-	nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
+	nsApp := app.NewDcLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 
 	return nsApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }

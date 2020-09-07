@@ -29,7 +29,7 @@ This is useful to avoid correlation by the sender's IP address.
     - See `CLI` section for every write request (transaction).
     - Example
         ```json
-        zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
+        dclcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
         ```
 - CLI (keys at the edge)
     - There are two CLIs are started in a CLI mode.
@@ -39,14 +39,14 @@ This is useful to avoid correlation by the sender's IP address.
     - CLI 2: Register account containing generated `Address` and `PubKey` on the ledger.
     - CLI 2: Build transaction using the account (`--from`) and `--generate-only` flag.
     - CLI 2: Fetch `account number` and `sequence`
-    - CLI 1: Sign the transaction manually. `zblcli tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
+    - CLI 1: Sign the transaction manually. `dclcli tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
     - CLI 2: Broadcast signed transaction using CLI (`broadcast command)
     - Example
         ```json
-        CLI 2: zblcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
-        CLI 2: zblcli query auth accounts
-        CLI 1: zblcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
-        CLI 2: zblcli tx broadcast /home/artem/zb-ledger/txn.json
+        CLI 2: dclcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
+        CLI 2: dclcli query auth accounts
+        CLI 1: dclcli tx sign /home/artem/zb-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
+        CLI 2: dclcli tx broadcast /home/artem/zb-ledger/txn.json
         ```
 - Non-trusted REST API (keys at the edge):
     - CLI is started in a server mode.
@@ -180,7 +180,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - The current number of required approvals: 
     - 2
 - CLI command: 
-    -   `zblcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
+    -   `dclcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - REST API: 
     -   POST `/pki/certs/proposed/root`
 - Validation:
@@ -210,7 +210,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - The current number of required approvals: 
     - 2
 - CLI command: 
-    -   `zblcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dclcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PATCH `/pki/certs/proposed/root/<subject>/<subject_key_id>`
 - Validation:
@@ -232,7 +232,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - Who can send: 
     - Any role
 - CLI command: 
-    -   `zblcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
+    -   `dclcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 - REST API: 
     -   POST `/pki/certs`
 - Validation:
@@ -265,7 +265,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - Who can send: 
     - Any role; owner
 - CLI command: 
-    -   `zblcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dclcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   DELETE `/pki/certs/<subject>/<subject_key_id>`
 
@@ -286,7 +286,7 @@ then the certificate will be in a pending state until sufficient number of other
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx pki propose-revoke-x509-cert .--subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dclcli tx pki propose-revoke-x509-cert .--subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PUT `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
     
@@ -310,7 +310,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx pki approve-revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dclcli tx pki approve-revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PATCH `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
         
@@ -321,7 +321,7 @@ Gets all proposed but not approved root certificates.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query pki all-proposed-x509-root-certs ... `
+    -   `dclcli query pki all-proposed-x509-root-certs ... `
 - REST API: 
     -   GET `/pki/certs/proposed/root`
 - Result:
@@ -352,7 +352,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dclcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/proposed/root/<subject>/<subject_key_id>`
 ```json
@@ -376,7 +376,7 @@ Gets all approved root certificates.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query pki all-x509-root-certs .... `
+    -   `dclcli query pki all-x509-root-certs .... `
 - REST API: 
     -   GET `/pki/certs/root`
 ```json
@@ -406,7 +406,7 @@ Gets a certificate (either root, intermediate or leaf) by the given subject and 
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dclcli query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/<subject>/<subject_key_id>`
 ```json
@@ -439,7 +439,7 @@ Gets the complete chain for a certificate with the given combination of subject 
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dclcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/chain/<subject>/<subject_key_id>`
 ```json
@@ -478,7 +478,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
-    -   `zblcli query pki all-x509-certs .... `
+    -   `dclcli query pki all-x509-certs .... `
 - REST API: 
     -   GET `/pki/certs`
     -   GET `/pki/certs?root_subject=<>`
@@ -519,7 +519,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
-    -   `zblcli query pki all-subject-x509-certs --subject=<string> .... `
+    -   `dclcli query pki all-subject-x509-certs --subject=<string> .... `
 - REST API: 
     -   GET `/pki/certs/<subject>`
     -   GET `/pki/certs/<subject>?root_subject=<>`
@@ -560,7 +560,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id` 
 - CLI command: 
-    -   `zblcli query pki all-x509-certs-delta --since=<integer>.... `
+    -   `dclcli query pki all-x509-certs-delta --since=<integer>.... `
 - REST API: 
     -   GET `/pki/certs?since=<>`
     -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
@@ -573,7 +573,7 @@ Gets all proposed but not approved certificates to be revoked.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query pki all-proposed-x509-certs-to-revoke .... `
+    -   `dclcli query pki all-proposed-x509-certs-to-revoke .... `
 - REST API: 
     -   GET `/pki/certs/proposed/revoked`
 
@@ -584,7 +584,7 @@ Gets a proposed but not approved certificate to be revoked.
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
 - CLI command: 
-    -   `zblcli query pki proposed-x509-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
+    -   `dclcli query pki proposed-x509-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
 - REST API: 
     -   GET `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
 
@@ -593,7 +593,7 @@ Gets all revoked certificates (CRL or certificate revocation list).
    
 - Parameters: No
 - CLI command: 
-    -   `zblcli query pki all-revoked-certs .... `
+    -   `dclcli query pki all-revoked-certs .... `
 - REST API: 
     -   GET `/pki/certs/revoked`
     
@@ -624,7 +624,7 @@ a new model info with a new `vid` or `pid` can be created.
 - Who can send: 
     - Vendor
 - CLI command: 
-    -   `zblcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
+    -   `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
     --firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
 - REST API: 
     -   POST `/modelinfo/models`
@@ -652,7 +652,7 @@ All non-edited fields remain the same.
 - Who can send: 
     - Vendor; owner
 - CLI command: 
-    -   `zblcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
+    -   `dclcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
 - REST API: 
     -   PUT `/modelinfo/models/vid/pid`
 
@@ -664,7 +664,7 @@ Gets all Model Infos for all vendors.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query modelinfo all-models ...`
+    -   `dclcli query modelinfo all-models ...`
 - REST API: 
     -   GET `/modelinfo/models`
 - Result
@@ -692,7 +692,7 @@ Gets all Model Info by the given Vendor (`vid`).
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `zblcli query modelinfo vendor-models --vid=<uint16>`
+    -   `dclcli query modelinfo vendor-models --vid=<uint16>`
 - REST API: 
     -   GET `/modelinfo/models/vid`
 - Result
@@ -721,7 +721,7 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
     - `pid`: 16 bits int
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query modelinfo model --vid=<uint16> --pid=<uint16> .... `
+    -   `dclcli query modelinfo model --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
     -   GET `/modelinfo/models/vid/pid`
 - Result
@@ -751,7 +751,7 @@ Get a list of all Vendors (`vid`s).
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query modelinfo vendors .... `
+    -   `dclcli query modelinfo vendors .... `
 - REST API: 
     -   GET `/modelinfo/vendors`
 - Result
@@ -791,7 +791,7 @@ Another test result can be submitted instead.
 - Who can send: 
     - TestHouse
 - CLI command: 
-    -   `zblcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
+    -   `dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 - REST API: 
     -   POST `/compliancetest/testresults`
 
@@ -803,7 +803,7 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
     - `pid`: 16 bits int
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliancetest test-result --vid=<uint16> --pid=<uint16> .... `
+    -   `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
     -   GET `/compliancetest/testresults/vid/pid`
 - Result:
@@ -853,7 +853,7 @@ from the revocation list.
 - Who can send: 
     - ZBCertificationCenter
 - CLI command: 
-    -   `zblcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/certified/vid/pid/certification_type`
     
@@ -881,7 +881,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Who can send: 
     - ZBCertificationCenter
 - CLI command: 
-    -   `zblcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/revoked/vid/pid/certification_type`    
     
@@ -904,7 +904,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
     -   GET `/compliance/certified/vid/pid/certification_type`
 - Result
@@ -935,7 +935,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
     -   GET `/compliance/revoked/vid/pid/certification_type`
 - Result:
@@ -961,7 +961,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `zblcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
     -   GET `/compliance/vid/pid/certification_type`
 - Result:
@@ -1011,7 +1011,7 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `zblcli query compliance certified-vendor-models --vid=<uint16> .... `
+    -   `dclcli query compliance certified-vendor-models --vid=<uint16> .... `
 - REST API: 
     -   GET `/compliance/certified/vid`
     
@@ -1025,7 +1025,7 @@ It contains information about revocation only, so  it should be used in cases
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `zblcli query compliance revoked-vendor-models --vid=<uint16>  .... `
+    -   `dclcli query compliance revoked-vendor-models --vid=<uint16>  .... `
 - REST API: 
     -   GET `/compliance/revoked/vid`
 
@@ -1041,7 +1041,7 @@ It contains information about revocation only, so it should be used in cases
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query compliance all-revoked-models.... `
+    -   `dclcli query compliance all-revoked-models.... `
 - REST API: 
     -   GET `/compliance/revoked`
         - optional query parameter `certification_type` can be passed to filter by certification type.
@@ -1074,7 +1074,7 @@ revocation information for every vid/pid. It should be used in cases where compl
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query compliance all-certified-models `
+    -   `dclcli query compliance all-certified-models `
 - REST API: 
     -   GET `/compliance/certified`
         - optional query parameter `certification_type` can be passed to filter by certification type.
@@ -1104,7 +1104,7 @@ Gets all stored compliance information records.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `zblcli query compliance all-compliance-info-records`
+    -   `dclcli query compliance all-compliance-info-records`
 - REST API: 
     -   GET `/compliance`
         - optional query parameter `certification_type` can be passed
@@ -1140,7 +1140,7 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `zblcli query compliance all-certified-models-delta `
+    -   `dclcli query compliance all-certified-models-delta `
 - REST API: 
     -   GET `/compliance/certified?since=<>`
     
@@ -1154,7 +1154,7 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `zblcli query compliance revoked all-revoked-models-delta `
+    -   `dclcli query compliance revoked all-revoked-models-delta `
 - REST API: 
     -   GET `/compliance/revoked?since=<>`
     
@@ -1164,7 +1164,7 @@ Gets a delta of all compliance info records which has been added or revoked sinc
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `zblcli query compliance all-compliance-info-records-delta `
+    -   `dclcli query compliance all-compliance-info-records-delta `
 - REST API: 
     -   GET `/compliance?since=<>`
     
@@ -1187,7 +1187,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
+    -   `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
 - REST API: 
     -   POST `/auth/accounts/proposed`
     
@@ -1205,7 +1205,7 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
+    -   `dclcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   PATCH `/auth/accounts/proposed/<address>`
     
@@ -1222,7 +1222,7 @@ Rotate's the Account's public key by the owner.
 - Who can send: 
     - Any role; owner
 - CLI command: 
-    -   `zblcli tx auth rotate-key .... `
+    -   `dclcli tx auth rotate-key .... `
 - REST API: 
     -   PUT `/auth/accounts/<address>`
     
@@ -1241,7 +1241,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth propose-revoke-account --address=<account address> --from=<trustee name>`
+    -   `dclcli tx auth propose-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   POST `/auth/accounts/proposed/revoked`
     
@@ -1259,7 +1259,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx auth approve-revoke-account --address=<account address> --from=<trustee name>`
+    -   `dclcli tx auth approve-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   PATCH `/auth/accounts/proposed/revoked/<address>`
     
@@ -1268,7 +1268,7 @@ Gets all proposed but not approved accounts.
 
 - Parameters: No
 - CLI command: 
-    -   `zblcli query auth all-proposed-accounts .... `
+    -   `dclcli query auth all-proposed-accounts .... `
 - REST API: 
     -   GET `/auth/accounts/proposed`
     
@@ -1277,7 +1277,7 @@ Gets all accounts.
 
 - Parameters: No
 - CLI command: 
-    -   `zblcli query auth all-accounts .... `
+    -   `dclcli query auth all-accounts .... `
 - REST API: 
     -   GET `/auth/accounts`           
 
@@ -1287,7 +1287,7 @@ Gets an accounts by the address.
 - Parameters:
     - `address`
 - CLI command: 
-    -   `zblcli query auth account .... `
+    -   `dclcli query auth account .... `
 - REST API: 
     -   GET `/auth/accounts/<address>`         
     
@@ -1296,7 +1296,7 @@ Gets all proposed but not approved accounts to be revoked.
 
 - Parameters: No
 - CLI command: 
-    -   `zblcli query auth all-proposed-accounts-to-revoke`
+    -   `dclcli query auth all-proposed-accounts-to-revoke`
 - REST API: 
     -   GET `/auth/accounts/proposed/revoked`
     
@@ -1324,7 +1324,7 @@ Adds a new Validator node.
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `zblcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
+    -   `dclcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
 - REST API: 
     -   POST `/validators`
     
@@ -1344,7 +1344,7 @@ Updates the Validator node by the owner.
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `zblcli tx validator update-node --validator-address=<validator address> --from=<owner>.... `
+    -   `dclcli tx validator update-node --validator-address=<validator address> --from=<owner>.... `
 - REST API: 
     -   PUT `/validators/<validator_address>`    
 
@@ -1363,7 +1363,7 @@ Deletes the Validator node (removes from the validator set) by the owner.
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `zblcli tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
+    -   `dclcli tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
 - REST API: 
     -   DELETE `/validators/<validator_address>`
 
@@ -1379,7 +1379,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx validator propose-remove-node .... `
+    -   `dclcli tx validator propose-remove-node .... `
 - REST API: 
     -   POST `/validators/proposed/removed`
 
@@ -1394,7 +1394,7 @@ The account is not removed until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx validator approve-remove-node .... `
+    -   `dclcli tx validator approve-remove-node .... `
 - REST API: 
     -   PATCH `/validators/proposed/removed/<validator_address>`
                       
@@ -1415,7 +1415,7 @@ the node will be unjailed and returned to the active validator set.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `zblcli tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
+    -   `dclcli tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
 - REST API: 
     -   PATCH `/validators/<validator_address>`
             
@@ -1430,7 +1430,7 @@ In order to get an active validator set use `state` query parameter or specific 
   - `take`: optional(int)  - number records to take (all records are returned by default)
   - `state`: string (optional) - state of the validator (active/jailed)
 - CLI command: 
-    -   `zblcli query validator all-nodes .... `
+    -   `dclcli query validator all-nodes .... `
 - REST API: 
     -   GET `/validators`   
 - Result:
@@ -1466,7 +1466,7 @@ Gets a validator node.
 - Parameters:
     - `validator_address`: string // the tendermint validator address; bech32 encoded
 - CLI command: 
-    -   `zblcli query validator node --validator-address=<validator address>.... `
+    -   `dclcli query validator node --validator-address=<validator address>.... `
 - REST API: 
     -   GET `/validators/<validator_address>`   
 - Result:
@@ -1495,7 +1495,7 @@ Gets all proposed but not approved validator nodes to be removed.
 
 - Parameters: No
 - CLI command: 
-    -   `zblcli query validator all-proposed-nodes-to-remove .... `
+    -   `dclcli query validator all-proposed-nodes-to-remove .... `
 - REST API: 
     -   GET `/validators/proposed/removed`   
     
@@ -1512,7 +1512,7 @@ Sign transaction by the given key.
     - `sequence` - (optional) the sequence number of the signing account.
     - `chain-id` - (optional) chain id.
 - CLI command: 
-    -   `zblcli tx sign [path-to-txn-file] --from [address]`
+    -   `dclcli tx sign [path-to-txn-file] --from [address]`
     - Transaction:
         ```
         {
@@ -1563,7 +1563,7 @@ Broadcast transaction to the ledger.
 - Parameters:
     - `txn` - transaction to broadcast
 - CLI command: 
-    -   `zblcli tx broadcast [path-to-txn-file]`
+    -   `dclcli tx broadcast [path-to-txn-file]`
 - REST API: 
     - POST `/tx/broadcast`  
 - Transaction:
@@ -1598,7 +1598,7 @@ Query status of a node.
 - Parameters:
     - `node`: optional(string) - node physical address to query (by default queries the node specified in CLI config file or else "tcp://localhost:26657")
 - CLI command: 
-    -   `zblcli status [--node=<node ip>]`
+    -   `dclcli status [--node=<node ip>]`
         ```
 - REST API: 
     - GET `/status?node=<node ip>`  
@@ -1646,7 +1646,7 @@ Get the list of tendermint validators participating in the consensus at given he
 - Parameters:
     - `height`: optional(uint) - height to query (the latest by default)
 - CLI command: 
-    -   `zblcli tendermint-validator-set [height]`
+    -   `dclcli tendermint-validator-set [height]`
         ```
 - REST API: 
     - GET `/validator-set?height=<height>`

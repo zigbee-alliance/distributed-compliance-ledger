@@ -17,4 +17,4 @@
   become: yes
   tasks:
     - name: Start service
-      service: "name=zblcli state=started enabled=yes"
+      service: "name=dclcli state=started enabled=yes"

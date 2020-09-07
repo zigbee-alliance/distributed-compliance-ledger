@@ -14,29 +14,29 @@
 # limitations under the License.
 
 
-rm -rf ~/.zblcli
-rm -rf ~/.zbld
+rm -rf ~/.dclcli
+rm -rf ~/.dcld
 
 # client
 
-zblcli config chain-id zblchain
-zblcli config output json
-zblcli config indent true
-zblcli config trust-node false
+dclcli config chain-id dclchain
+dclcli config output json
+dclcli config indent true
+dclcli config trust-node false
 
-echo 'test1234' | zblcli keys add jack
-echo 'test1234' | zblcli keys add alice
-echo 'test1234' | zblcli keys add bob
+echo 'test1234' | dclcli keys add jack
+echo 'test1234' | dclcli keys add alice
+echo 'test1234' | dclcli keys add bob
 
 # node
 
-zbld init node0 --chain-id zblchain
+dcld init node0 --chain-id dclchain
 
-zbld add-genesis-account --address=$(zblcli keys show jack -a) --pubkey=$(zblcli keys show jack -p) --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$(zblcli keys show alice -a) --pubkey=$(zblcli keys show alice -p) --roles="Trustee,NodeAdmin"
-zbld add-genesis-account --address=$(zblcli keys show bob -a) --pubkey=$(zblcli keys show bob -p) --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$(dclcli keys show jack -a) --pubkey=$(dclcli keys show jack -p) --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$(dclcli keys show alice -a) --pubkey=$(dclcli keys show alice -p) --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$(dclcli keys show bob -a) --pubkey=$(dclcli keys show bob -p) --roles="Trustee,NodeAdmin"
 
-echo 'test1234' | zbld gentx --from jack
+echo 'test1234' | dcld gentx --from jack
 
-zbld collect-gentxs
-zbld validate-genesis
+dcld collect-gentxs
+dcld validate-genesis

@@ -17,4 +17,4 @@
   become: yes
   tasks:
     - name: Start service
-      service: "name=zbld state=stopped enabled=yes"
+      service: "name=dcld state=stopped enabled=yes"

@@ -21,11 +21,11 @@ services:
     ports:
       - "26656-26657:26656-26657"
     volumes:
-      - ./localnet/node0:/root/.zbld:Z
+      - ./localnet/node0:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.2
-    command: zbld start
+    command: dcld start
 
   node1:
     build: .
@@ -33,11 +33,11 @@ services:
     ports:
       - "26658-26659:26656-26657"
     volumes:
-      - ./localnet/node1:/root/.zbld:Z
+      - ./localnet/node1:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.3
-    command: zbld start
+    command: dcld start
 
   node2:
     build: .
@@ -45,11 +45,11 @@ services:
     ports:
       - "26660-26661:26656-26657"
     volumes:
-      - ./localnet/node2:/root/.zbld:Z
+      - ./localnet/node2:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.4
-    command: zbld start
+    command: dcld start
 
   node3:
     build: .
@@ -57,11 +57,11 @@ services:
     ports:
       - "26662-26663:26656-26657"
     volumes:
-      - ./localnet/node3:/root/.zbld:Z
+      - ./localnet/node3:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.5
-    command: zbld start
+    command: dcld start
 
 networks:
   localnet:

@@ -52,8 +52,8 @@ func main() {
 	config.Seal()
 
 	rootCmd := &cobra.Command{
-		Use:   "zblcli",
-		Short: "ZbLedger Client",
+		Use:   "dclcli",
+		Short: "DcLedger Client",
 	}
 
 	// Add --chain-id to persistent flags and mark it required
