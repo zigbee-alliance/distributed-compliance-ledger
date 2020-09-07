@@ -34,7 +34,7 @@ if docker container ls  | grep -q $container; then
   docker container rm "$container"
 fi
 
-docker run -d --name $container --ip $ip -p "26664-26665:26656-26657" --network zb-ledger_localnet -i dcledger
+docker run -d --name $container --ip $ip -p "26664-26665:26656-26657" --network dc-ledger_localnet -i dcledger
 
 echo "Generate keys for $account"
 docker exec $container /bin/sh -c "echo $passphrase | dclcli keys add $account"

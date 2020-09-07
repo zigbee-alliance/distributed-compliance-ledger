@@ -21,7 +21,7 @@ FROM golang:alpine AS builder
 # make is required for building.
 RUN apk update && apk add --no-cache git make
 
-WORKDIR /go/src/zb-ledger
+WORKDIR /go/src/dc-ledger
 COPY . .
 
 RUN make
