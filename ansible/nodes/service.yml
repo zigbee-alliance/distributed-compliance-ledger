@@ -18,5 +18,5 @@
   tasks:
     - name: Copy service configuration
       copy:
-        src: "./../templates/zbld.service"
+        src: "./../templates/dcld.service"
         dest: "/etc/systemd/system/"

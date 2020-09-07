@@ -31,11 +31,11 @@ RUN make
 ############################
 FROM alpine:latest
 
-COPY --from=builder /go/bin/zbld /usr/bin/zbld
-COPY --from=builder /go/bin/zblcli /usr/bin/zblcli
+COPY --from=builder /go/bin/dcld /usr/bin/dcld
+COPY --from=builder /go/bin/dclcli /usr/bin/dclcli
 
-VOLUME /root/.zbld
-VOLUME /root/.zblcli
+VOLUME /root/.dcld
+VOLUME /root/.dclcli
 
 EXPOSE 26656 26657
 

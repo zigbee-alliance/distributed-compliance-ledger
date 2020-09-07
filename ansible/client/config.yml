@@ -17,11 +17,11 @@
   tasks:
     - name: Remove existing config
       file:
-        path: "/home/ubuntu/.zblcli/"
+        path: "/home/ubuntu/.dclcli/"
         state: absent
     - name: Copy config
       copy:
         src: "./../../localnet/client/"
-        dest: "/home/ubuntu/.zblcli/"
+        dest: "/home/ubuntu/.dclcli/"
         owner: "ubuntu"
         group: "ubuntu"

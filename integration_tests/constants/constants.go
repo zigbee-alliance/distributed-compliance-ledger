@@ -28,7 +28,7 @@ var (
 	AliceAccount = "alice"
 	BobAccount   = "bob"
 	AnnaAccount  = "anna"
-	ChainID      = "zblchain"
+	ChainID      = "dclchain"
 	AccountName  = JackAccount
 	Passphrase   = "test1234"
 	EmptyString  = ""

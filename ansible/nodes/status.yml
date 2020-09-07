@@ -16,7 +16,7 @@
   user: ubuntu
   tasks:
     - name: Service status
-      command: "service zbld status"
+      command: "service dcld status"
       changed_when: false
       register: status
 

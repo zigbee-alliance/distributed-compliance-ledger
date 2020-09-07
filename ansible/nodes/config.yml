@@ -17,13 +17,13 @@
   tasks:
     - name: Remove existing config
       file:
-        path: "/home/ubuntu/.zbld/"
+        path: "/home/ubuntu/.dcld/"
         state: absent
     - name: Copy config
       when: inventory_hostname == 'node' ~ item
       copy:
         src: "./../../localnet/node{{item}}/"
-        dest: "/home/ubuntu/.zbld/"
+        dest: "/home/ubuntu/.dcld/"
         owner: "ubuntu"
         group: "ubuntu"
       loop: [ 0, 1, 2, 3 ]
