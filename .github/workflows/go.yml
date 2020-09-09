@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run integration tests
-        run: sh integration_tests/ci/run-all.sh
+        run: bash integration_tests/ci/run-all.sh
 
   golangci:
     name: Lint
