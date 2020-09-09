@@ -48,11 +48,23 @@ wait_for_height() {
   done
 }
 
+patch_consensus_config() {
+  local NODE_CONFIGS=$(find localnet -type f -name "config.toml" -wholename "*node*")
+
+  for NODE_CONFIG in ${NODE_CONFIGS}; do
+    sed -i 's/timeout_propose = "3s"/timeout_propose = "500ms"/g' "${NODE_CONFIG}"
+    sed -i 's/timeout_prevote = "1s"/timeout_prevote = "500ms"/g' "${NODE_CONFIG}"
+    sed -i 's/timeout_precommit = "1s"/timeout_precommit = "500ms"/g' "${NODE_CONFIG}"
+    sed -i 's/timeout_commit = "5s"/timeout_commit = "500ms"/g' "${NODE_CONFIG}"
+  done
+}
+
 init_pool() {
   log "Setting up pool"
 
   log "-> Generating network configuration" >${DETAILED_OUTPUT_TARGET}
   make localnet_init &>${DETAILED_OUTPUT_TARGET}
+  patch_consensus_config
 
   log "-> Running pool" >${DETAILED_OUTPUT_TARGET}
   make localnet_start &>${DETAILED_OUTPUT_TARGET}
