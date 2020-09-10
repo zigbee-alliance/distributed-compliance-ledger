@@ -13,15 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DETAILED_OUTPUT=true
-
 LOG_PREFIX="[run all] "
-
-if ${DETAILED_OUTPUT}; then
-  DETAILED_OUTPUT_TARGET=/dev/stdout
-else
-  DETAILED_OUTPUT_TARGET=/dev/null
-fi
+DETAILED_OUTPUT_TARGET=/dev/null # Use /dev/stdout for debug
 
 log() {
   echo "${LOG_PREFIX}$1"
@@ -107,7 +100,6 @@ set -o errexit
 set -o pipefail
 
 make install &>${DETAILED_OUTPUT_TARGET}
-cleanup_pool
 
 # Cli shell tests
 CLI_SHELL_TESTS=$(find integration_tests/cli -type f -not -name "common.sh")
@@ -117,9 +109,11 @@ for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
 
   log "Running $CLI_SHELL_TEST"
 
-  if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+  if bash "$CLI_SHELL_TEST" &>"test.out"; then
+    cat "test.out" >${DETAILED_OUTPUT_TARGET}
     log "$CLI_SHELL_TEST finished successfully"
   else
+    cat "test.out"
     log "$CLI_SHELL_TEST falied"
     exit 1
   fi
@@ -136,9 +130,11 @@ for GO_REST_TEST in ${GO_REST_TESTS}; do
 
   log "Running $GO_REST_TEST"
 
-  if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+  if go test "$GO_REST_TEST" &>"test.out"; then
+    cat "test.out" >${DETAILED_OUTPUT_TARGET}
     log "$GO_REST_TEST finished successfully"
   else
+    cat "test.out"
     log "$GO_REST_TEST falied"
     exit 1
   fi
