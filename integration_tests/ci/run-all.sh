@@ -14,7 +14,7 @@
 # limitations under the License.
 
 LOG_PREFIX="[run all] "
-DETAILED_OUTPUT_TARGET=/dev/null # Use /dev/stdout for debug
+DETAILED_OUTPUT_TARGET=/dev/stdout # Use /dev/stdout for debug
 
 log() {
   echo "${LOG_PREFIX}$1"
@@ -107,14 +107,15 @@ for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
 
   log "Running $CLI_SHELL_TEST"
 
-  if bash "$CLI_SHELL_TEST" &>"test.out"; then
-    cat "test.out" >${DETAILED_OUTPUT_TARGET}
-    log "$CLI_SHELL_TEST finished successfully"
-  else
-    cat "test.out"
-    log "$CLI_SHELL_TEST falied"
-    exit 1
-  fi
+  bash "$CLI_SHELL_TEST"
+#  if bash "$CLI_SHELL_TEST" &>"test.out"; then
+#    cat "test.out" >${DETAILED_OUTPUT_TARGET}
+#    log "$CLI_SHELL_TEST finished successfully"
+#  else
+#    cat "test.out"
+#    log "$CLI_SHELL_TEST falied"
+#    exit 1
+#  fi
 
   cleanup_pool
 done
@@ -128,14 +129,15 @@ for GO_REST_TEST in ${GO_REST_TESTS}; do
 
   log "Running $GO_REST_TEST"
 
-  if go test "$GO_REST_TEST" &>"test.out"; then
-    cat "test.out" >${DETAILED_OUTPUT_TARGET}
-    log "$GO_REST_TEST finished successfully"
-  else
-    cat "test.out"
-    log "$GO_REST_TEST falied"
-    exit 1
-  fi
+  go test "$GO_REST_TEST"
+#  if go test "$GO_REST_TEST" &>"test.out"; then
+#    cat "test.out" >${DETAILED_OUTPUT_TARGET}
+#    log "$GO_REST_TEST finished successfully"
+#  else
+#    cat "test.out"
+#    log "$GO_REST_TEST falied"
+#    exit 1
+#  fi
 
   stop_rest_server
   cleanup_pool
