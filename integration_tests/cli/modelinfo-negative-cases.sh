@@ -41,7 +41,7 @@ echo "Add Model with VID: $vid PID: $pid: Twice"
 result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
 result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
 check_response_and_report "$result" "\"success\": false"
-check_response_and_report "$result" "\"code\": 101"
+check_response_and_report "$result" "\"code\": 501"
 echo "$result"
 
 # CLI side errors
