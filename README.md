@@ -84,26 +84,35 @@ After the CLI or REST API is configured and Account with an appropriate role is 
 the following instructions from [how-to.md](docs/how-to.md) can be used for every role 
 (see [Use Case Diagrams](docs/use_cases)):
 - [Trustee](docs/how-to.md#trustee-instructions) 
-    - create new accounts
-    - assign roles to the account
-    - revoke roles from the account
+    - propose new accounts
+    - approve new accounts
+    - propose revocation of accounts
+    - approve revocation of accounts
+    - approve X509 root certificates
+    - propose revocation of X509 root certificates
+    - approve revocation of X509 root certificates
     - publish X509 certificates
-    - assign a role to the account    
+    - revoke X509 certificates    
 - [CA](docs/how-to.md#ca-instructions)
     - propose X509 root certificates
     - publish X509 certificates    
+    - revoke X509 certificates
 - [Vendor](docs/how-to.md#vendor-instructions) 
     - publish device model info
     - publish X509 certificates
+    - revoke X509 certificates    
 - [Test House](docs/how-to.md#test-house-instructions) 
     - publish compliance test results
     - publish X509 certificates
+    - revoke X509 root certificates    
 - [ZB Certification Center](docs/how-to.md#certification-center-instructions)
     - certify or revoke certification of device models
     - publish X509 certificates
+    - revoke X509 certificates    
 - [Node Admin](docs/how-to.md#node-admin-instructions-setting-up-a-new-validator-node) 
     - add a new Validator node
     - publish X509 certificates
+    - revoke X509 certificates    
 
 #### Build and run the app locally
 - To build and run, follow the [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial/22-build-run.md).
