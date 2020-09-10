@@ -366,7 +366,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
@@ -431,7 +431,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
@@ -468,7 +468,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
@@ -673,9 +673,9 @@ a new model info with a new `vid` or `pid` can be created.
 If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then the other two must also be set.
 
 - Parameters:
-    - `vid`: 16 bits int
-    - `pid`: 16 bits int
-    - `cid`: 16 bits int (optional)
+    - `vid`: 16 bits positive non-zero int 
+    - `pid`: 16 bits positive non-zero int
+    - `cid`: 16 bits positive non-zero int (optional)
     - `version`: string (optional)
     - `name`: string
     - `description`: string
@@ -800,7 +800,7 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query modelinfo model --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
@@ -891,7 +891,7 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
@@ -998,7 +998,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `certification_type`: string - `zb` is the default and the only supported value now
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
@@ -1031,7 +1031,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `certification_type`: string - `zb` is the default and the only supported value now
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
@@ -1059,7 +1059,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `certification_type`: string - `zb` is the default and the only supported value now
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
@@ -1268,7 +1268,7 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `dclcli query compliance revoked all-revoked-models-delta `
+    -   `dclcli query compliance all-revoked-models-delta `
 - REST API: 
     -   GET `/compliance/revoked?since=<>`
     
@@ -1543,7 +1543,8 @@ Gets a validator node.
 #### UPDATE_VALIDATOR_NODE
 **Status: Not Implemented**
 
-Updates the Validator node by the owner.
+Updates the Validator node by the owner. Only `description` can be changed. 
+`validator_address` is used to reference the node, but can not be changed. 
 
 - Parameters: 
     - `validator_address`: string // the tendermint validator address; bech32 encoded

@@ -225,8 +225,8 @@ The certificate must be signed by a chain of certificates which must be already 
 --firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account>`
 
   Flags:
-  - vid: `uint16` -  model vendor ID
-  - pid: `uint16` -  model product ID
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
@@ -235,7 +235,7 @@ The certificate must be signed by a chain of certificates which must be already 
   - hardware-version: `string` -  version of model hardware
   - tis-or-trp-testing-completed: `bool` -  whether model has successfully completed TIS/TRP testing
   - from: `string` - Name or address of private key with which to sign
-  - cid: `optional(uint16)` - model category ID
+  - cid: `optional(uint16)` - model category ID (positive non-zero)
   - custom: `optional(string)` - custom information (string or path to file containing data)
 
   Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`

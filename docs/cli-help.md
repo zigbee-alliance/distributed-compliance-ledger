@@ -371,17 +371,16 @@ The set of commands that allows you to manage model infos.
 --firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account>`
 
   Flags:
-  - vid: `uint16` -  model vendor ID
-  - pid: `uint16` -  model product ID
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
   - firmware-version: `string` -  version of model firmware
   - hardware-version: `string` -  version of model hardware
-  - hardware-version: `string` -  version of model hardware
   - tis-or-trp-testing-completed: `bool` -  whether model has successfully completed TIS/TRP testing
   - from: `string` - Name or address of private key with which to sign
-  - cid: `optional(uint16)` - model category ID
+  - cid: `optional(uint16)` - model category ID (positive non-zero)
   - custom: `optional(string)` - custom information (string or path to file containing data)
 
   Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`
@@ -601,7 +600,7 @@ The set of commands that allows you to manage the set of pool nodes.
   Flags:
   - validator-address: `string` - the tendermint validator address
   - validator-pubkey: `string` - the tendermint validator public key
-  - validator-name: `string` -  validator name
+  - name: `string` -  validator name
   - from: `string` - name or address of private key with which to sign
   - website: `optional(string)` - optional validator's website
   - identity: `optional(string)` - optional identity signature
