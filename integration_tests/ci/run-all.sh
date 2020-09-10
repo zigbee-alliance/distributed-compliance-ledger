@@ -106,7 +106,12 @@ stop_rest_server() {
 set -o errexit
 set -o pipefail
 
+log "Compiling local binaries"
 make install &>${DETAILED_OUTPUT_TARGET}
+
+log "Building docker image"
+make image &>${DETAILED_OUTPUT_TARGET}
+
 cleanup_pool
 
 # Cli shell tests
