@@ -14,7 +14,7 @@
 # limitations under the License.
 
 LOG_PREFIX="[run all] "
-DETAILED_OUTPUT_TARGET=/dev/stdout # Use /dev/stdout for debug
+DETAILED_OUTPUT_TARGET=/dev/null # Use /dev/stdout for debug
 
 log() {
   echo "${LOG_PREFIX}$1"
