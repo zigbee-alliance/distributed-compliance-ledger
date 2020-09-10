@@ -43,9 +43,13 @@ response_does_not_contain() {
 }
 
 create_new_account(){
+  echo 1
   local  __resultvar=$1
+  echo 2
   local name=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+  echo 3
   eval $__resultvar="'$name'"
+  echo 4
 
   roles=$2
 

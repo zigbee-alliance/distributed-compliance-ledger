@@ -19,7 +19,9 @@ source integration_tests/cli/common.sh
 # Preparation of Actors
 
 echo "Create Vendor account"
+echo "before create_new_account"
 create_new_account vendor_account "Vendor"
+echo "after create_new_account"
 
 # Body
 
