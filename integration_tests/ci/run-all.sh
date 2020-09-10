@@ -97,13 +97,13 @@ stop_rest_server() {
 
 # Global init
 set -e
-#make install &>${DETAILED_OUTPUT_TARGET}
+make install &>${DETAILED_OUTPUT_TARGET}
 
 # Cli shell tests
 CLI_SHELL_TESTS=$(find integration_tests/cli -type f -not -name "common.sh")
 
 for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-#  init_pool
+  init_pool
 
   log "Running $CLI_SHELL_TEST"
 

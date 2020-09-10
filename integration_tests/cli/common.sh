@@ -50,13 +50,9 @@ response_does_not_contain() {
 }
 
 create_new_account(){
-  echo 1
   local  __resultvar=$1
-  echo 2
   random_string name
-  echo 3
   eval $__resultvar="'$name'"
-  echo 4
 
   roles=$2
 
