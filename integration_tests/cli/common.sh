@@ -46,6 +46,10 @@ create_new_account(){
   echo 1
   local  __resultvar=$1
   echo 2
+
+  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1
+
+  echo "2.1"
   local name=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
   echo 3
   eval $__resultvar="'$name'"
