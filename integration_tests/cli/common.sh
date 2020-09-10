@@ -17,6 +17,13 @@ set -e
 
 passphrase="test1234"
 
+random_string() {
+  local __resultvar=$1
+  local length=${2:-6} # Default is 6
+
+  eval $__resultvar="'$(date +%s.%N | sha1sum | fold -w ${length} | head -n 1)'"
+}
+
 check_response() {
   result=$1
   expected_string=$2
@@ -46,11 +53,7 @@ create_new_account(){
   echo 1
   local  __resultvar=$1
   echo 2
-
-  cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1
-
-  echo "2.1"
-  local name=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+  random_string name
   echo 3
   eval $__resultvar="'$name'"
   echo 4
