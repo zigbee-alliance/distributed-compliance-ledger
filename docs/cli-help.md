@@ -7,6 +7,7 @@ Please configure the CLI before using (see `CLI Configuration` section in [how-t
 If write requests to the Ledger needs to be sent, please make sure that you have
 an Account created on the Ledger with an appropriate role (see `Getting Account` section in [how-to.md](how-to.md#getting-account)).
 
+All the transactions (write requests) must be signed. Use `--from` flag.
 
 ### Keys
 
@@ -53,13 +54,11 @@ Roles:
 - `ZBCertificationCenter` - Is able to certify and revoke models.
 - `NodeAdmin` - Is able to add nodes to validator pool.
 
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `Trustee` role. 
-
-Transactions:
+##### Transactions
 
 - Propose a new account.
+
+  Role: `Trustee`
 
   Command: `dclcli tx auth propose-add-account --address=<string> --pubkey=<string> --roles=<roles> --from=<account>`
 
@@ -73,6 +72,8 @@ Transactions:
 
 - Approve a proposed account.
 
+  Role: `Trustee`
+
   Command: `dclcli tx auth approve-add-account --address=<string> --from=<account>`
 
   Flags:
@@ -81,9 +82,34 @@ Transactions:
 
   Example: `dclcli tx auth approve-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
-Queries:
+- Propose revocation of an account.
 
-- Get a single account.
+  Role: `Trustee`
+
+  Command: `dclcli tx auth propose-revoke-account --address=<string> --from=<account>`
+
+  Flags:
+  - address: `string` - bench32 encoded account address to approve
+  - from: `string` - name or address of private key with which to sign
+
+  Example: `dclcli tx auth propose-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
+
+- Approve revocation of an account.
+
+  Role: `Trustee`
+
+  Command: `dclcli tx auth approve-revoke-account --address=<string> --from=<account>`
+
+  Flags:
+  - address: `string` - bench32 encoded account address to approve
+  - from: `string` - name or address of private key with which to sign
+
+  Example: `dclcli tx auth approve-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
+
+
+##### Queries
+
+- Get a single account. Revoked accounts are not returned.
 
   Command: `dclcli query auth account --address=<string>`
 
@@ -92,7 +118,7 @@ Queries:
 
   Example: `dclcli query auth account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
-- Get all accounts.
+- Get all accounts. Revoked accounts are not returned.
 
   Command: `dclcli query auth all-accounts`
  
@@ -112,18 +138,24 @@ Queries:
  
   Example: `dclcli query auth all-proposed-accounts`
 
+- Get all proposed accounts to revoke.
+
+  Command: `dclcli query auth all-proposed-accounts-to-revoke`
+ 
+  Flags:
+  - skip: `optional(int)` - number records to skip (`0` by default)
+  - take: `optional(int)` - number records to take (all records are returned by default) 
+ 
+  Example: `dclcli query auth all-proposed-accounts-to-revoke`
+
 ### PKI
 
 The set of commands that allows you to manage X.509 certificates.
 
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Propose Root Certificate: Any Role.
-- Approve Root Certificate: Signer must have `Trustee` role.
-- Add Leaf Certificate: Any Role.
-
-Transactions:
+##### Transactions
 - Proposes a new self-signed root certificate.
+
+  Role: Any  
 
   Command: `dclcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 
@@ -135,7 +167,9 @@ Transactions:
   
   Example: `dclcli tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
 
-- Approves the proposed root certificate.
+- Approves the proposed root certificate
+
+  Role: `Trustee`
 
   Command: `dclcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
@@ -148,6 +182,8 @@ Transactions:
   
 - Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
 
+  Role: Any
+
   Command: `dclcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 
   Flags:
@@ -157,8 +193,48 @@ Transactions:
   Example: `dclcli tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
   
   Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
+
+- Revokes the given intermediate or leaf X509 certificate. Can be done by the certificate's issuer only.
+
+  Role: Any 
+
+  Command: `dclcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>``
+
+  Flags:
+    - subject: `string` - certificates's `Subject`.
+    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+    - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki revoke-x509-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+
+- Propose revocation of a X509 root certificate.  
+
+  Role: `Trustee`
+  
+  Command: `dclcli tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+
+  Flags:
+    - subject: `string` - certificates's `Subject`.
+    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+    - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki propose-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+
+- Approve revocation of a X509 root certificate.  
+
+  Role: `Trustee`
+  
+  Command: `dclcli tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+
+  Flags:
+    - subject: `string` - certificates's `Subject`.
+    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+    - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki approve-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+
     
-Queries:
+##### Queries
 - Gets all proposed but not approved root certificates.
 
   Command: `dclcli query pki all-proposed-x509-root-certs`
@@ -179,7 +255,7 @@ Queries:
 
   Example: `dclcli query pki proposed-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
 
-- Gets all approved root certificates.
+- Gets all approved root certificates. Revoked certificates are not returned.
 
   Command: `dclcli query pki all-x509-root-certs`
 
@@ -189,7 +265,7 @@ Queries:
   
   Example: `dclcli query pki all-x509-root-certs`
   
-- Gets a certificates (either root, intermediate or leaf).
+- Gets a certificates (either root, intermediate or leaf). Revoked certificates are not returned.
 
   Command: `dclcli query pki x509-cert --subject=<string> --subject-key-id=<hex string>`
 
@@ -199,7 +275,7 @@ Queries:
 
   Example: `dclcli query pki x509-certs --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
   
-- Gets all certificates (root, intermediate and leaf).
+- Gets all certificates (root, intermediate and leaf). Revoked certificates are not returned.
 
   Command: `dclcli query pki all-x509-certs`
 
@@ -215,7 +291,7 @@ Queries:
   
   Example: `dclcli query pki x509-certs --root-subject="CN=dsr-corporation.com"`
   
-- Gets all certificates (root, intermediate and leaf) associated with subject.
+- Gets all certificates (root, intermediate and leaf) associated with subject. Revoked certificates are not returned.
 
   Command: `dclcli query pki all-subject-x509-certs --subject=<subject>`
 
@@ -232,39 +308,88 @@ Queries:
   
   Example: `dclcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject="CN=dsr-corporation.com"`
 
+- Gets a complete chain for a certificate. Revoked certificates are not returned.
+
+  Command: `dclcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string>`
+
+  Flags:
+    - subject: `string` - certificates's `Subject`.
+    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+
+  Example: `dclcli query pki x509-cert-chain --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
+
+- Gets all proposed but not approved root certificates to be revoked.
+
+  Command: `dclcli query pki all-proposed-x509-root-certs-to-revoke`
+
+  Flags:
+  - skip: `optional(int)` - number records to skip (`0` by default)
+  - take: `optional(int)` - number records to take (all records are returned by default)
+
+  Example: `dclcli query pki all-proposed-x509-root-certs-to-revoke`
+
+- Gets a proposed but not approved root certificate to be revoked.
+
+  Command: `dclcli query pki proposed-x509-root-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
+
+  Flags:
+    - subject: `string` - certificates's `Subject`.
+    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+
+  Example: `dclcli query pki proposed-x509-root-cert-to-revoke --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
+
+- Gets all revoked certificates (both root and non-root).
+
+  Command: `dclcli query pki all-revoked-x509-certs`
+
+  Flags:
+  - skip: `optional(int)` - number records to skip (`0` by default)
+  - take: `optional(int)` - number records to take (all records are returned by default)
+
+  Example: `dclcli query pki all-revoked-x509-certs`
+
+- Gets all revoked root certificates.
+
+  Command: `dclcli query pki all-revoked-x509-root-certs`
+
+  Flags:
+  - skip: `optional(int)` - number records to skip (`0` by default)
+  - take: `optional(int)` - number records to take (all records are returned by default)
+
+  Example: `dclcli query pki all-revoked-x509-root-certs`
+
 ### Model Info
 
 The set of commands that allows you to manage model infos.
 
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `Vendor` role.
-
-Transactions:
+##### Transactions
 - Add a new model info.
 
+  Role: `Vendor`
+  
   Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
 --firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account>`
 
   Flags:
-  - vid: `uint16` -  model vendor ID
-  - pid: `uint16` -  model product ID
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
   - firmware-version: `string` -  version of model firmware
   - hardware-version: `string` -  version of model hardware
-  - hardware-version: `string` -  version of model hardware
   - tis-or-trp-testing-completed: `bool` -  whether model has successfully completed TIS/TRP testing
   - from: `string` - Name or address of private key with which to sign
-  - cid: `optional(uint16)` - model category ID
+  - cid: `optional(uint16)` - model category ID (positive non-zero)
   - custom: `optional(string)` - custom information (string or path to file containing data)
 
   Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`
   
   Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
 
-- Update existing model info.
+- Update existing model info. Only the owner can edit a Model Info.
+
+  Role: `Vendor`
 
   Command: `dclcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account>`
   existing ModelInfo.
@@ -282,7 +407,7 @@ Transactions:
   
   Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --custom="Custom Data"`
 
-Queries:
+##### Queries
 - Query single model info.
 
   Command: `dclcli query modelinfo model --vid=<uint16> --pid=<uint16>`
@@ -328,12 +453,10 @@ Queries:
 
 The set of commands that allows you to manage testing results associated with a model.
 
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `TestHouse` role. See `Authorization` module for details.
-
-Transactions:
+##### Transactions
 - Add new testing result for model associated with VID/PID. Note that the corresponding model must present on the ledger. 
+
+  Role: `TestHouse`
 
   Command: ` dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 
@@ -348,7 +471,7 @@ Transactions:
   
   Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
-Queries:
+##### Queries
 - Query testing results for model associated with VID/PID.
 
   Command: `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16>`
@@ -363,13 +486,11 @@ Queries:
 
 The set of commands that allows you to manage model certification information.
 
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `ZBCertificationCenter` role. See `Authorization` module for details.
-- Only owner can update an existing record. 
-
-Transactions:
+##### Transactions
 - Certify model associated with VID/PID. Note that the corresponding model and the test results must present on the ledger.
+Only the owner can update an existing record. 
+
+  Role: `ZBCertificationCenter`
 
   Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>`
   
@@ -383,7 +504,9 @@ Transactions:
 
   Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
  
-- Revoke certification for a model associated with VID/PID.
+- Revoke certification for a model associated with VID/PID. Only the owner can update an existing record. 
+
+  Role: `ZBCertificationCenter`
 
   Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>`
 
@@ -399,7 +522,7 @@ Transactions:
   
   Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
-Queries:
+##### Queries
 - Query certification data for model associated with VID/PID.
 
   Command: `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>`
@@ -467,19 +590,17 @@ Queries:
 
 The set of commands that allows you to manage the set of pool nodes.
 
-Permissions:
-- All the transactions below must be signed. Use `--from` flag.
-- Signer must have `NodeAdmin` role.
-
-Transactions:
+##### Transactions
 - Add a new validator node.
+
+  Role: `NodeAdmin`
 
   Command: `dclcli tx validator add-node --validator-address=<address> --validator-pubkey=<pubkey> --name=<node name> --from=<account>`
   
   Flags:
   - validator-address: `string` - the tendermint validator address
   - validator-pubkey: `string` - the tendermint validator public key
-  - validator-name: `string` -  validator name
+  - name: `string` -  validator name
   - from: `string` - name or address of private key with which to sign
   - website: `optional(string)` - optional validator's website
   - identity: `optional(string)` - optional identity signature
@@ -487,7 +608,7 @@ Transactions:
   
   Example: `dclcli tx validator add-node --validator-address=cosmosvalcons1tl46nm39xtuutvw2wqaeyyd6csknfe0a7xqnrw --validator-pubkey=cosmosvalconspub1zcjduepqn5nz4c8n5jwfmgd6tqfqzu8arpne3au4g7tfsz33g8y6dcvhkf4sw054j8 --name=node1 --from=jack`
  
-Queries:
+##### Queries
 - Query validator node by given validator address.
 
   Command: `dclcli query validator node --validator-address=<address>`

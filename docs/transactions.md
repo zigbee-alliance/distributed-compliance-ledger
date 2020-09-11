@@ -160,6 +160,8 @@ A summary of KV store and paths used:
 All PKI related methods are based on this restriction.
 
 #### PROPOSE_ADD_X509_ROOT_CERT
+**Status: Implemented**
+
 Proposes a new self-signed root certificate.
 
 If it's sent by a non-Trustee account, or more than 1 Trustee signature is required to add a root certificate, 
@@ -194,6 +196,8 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
     - the signature (self-signature) and expiration date are valid.
 
 #### APPROVE_ADD_X509_ROOT_CERT
+**Status: Implemented**
+
 Approves the proposed root certificate.
 
 The certificate is not active until sufficient number of Trustees approve it. 
@@ -217,6 +221,8 @@ The certificate is not active until sufficient number of Trustees approve it.
     - the proposed certificate hasn't been approved by the signer yet
         
 #### ADD_X509_CERT
+**Status: Implemented**
+
 Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be
 already present on the ledger.
 
@@ -248,6 +254,8 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 Note: Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
     
 #### REVOKE_X509_CERT
+**Status: Implemented**
+
 Revokes the given X509 certificate (either intermediate or leaf).
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
@@ -269,8 +277,10 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - REST API: 
     -   DELETE `/pki/certs/<subject>/<subject_key_id>`
 
-#### PROPOSE_REVOKE_X509_CERT
-Proposes revocation of the given X509 certificate (either root, intermediate or leaf) by a Trustee.
+#### PROPOSE_REVOKE_X509_ROOT_CERT
+**Status: Implemented**
+
+Proposes revocation of the given X509 root certificate by a Trustee.
 
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
@@ -286,14 +296,16 @@ then the certificate will be in a pending state until sufficient number of other
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx pki propose-revoke-x509-cert .--subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dclcli tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
-    -   PUT `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
+    -   PUT `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
     
 
 
 #### APPROVE_REVOKE_X509_ROOT_CERT
-Approves the revocation of the given X509 certificate (either root, intermediate or leaf).
+**Status: Implemented**
+
+Approves the revocation of the given X509 root certificate by a Trustee.
 All the certificates in the chain signed by the revoked certificate will be revoked as well.
 
 The revocation is not applied until sufficient number of Trustees approve it. 
@@ -310,11 +322,13 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx pki approve-revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dclcli tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
-    -   PATCH `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
+    -   PATCH `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
         
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS
+**Status: Implemented**
+
 Gets all proposed but not approved root certificates.
 
 - Parameters:
@@ -345,12 +359,14 @@ Gets all proposed but not approved root certificates.
 ```
 
 #### GET_PROPOSED_X509_ROOT_CERT
+**Status: Implemented**
+
 Gets a proposed but not approved root certificate with the given subject and subject key id attributes.
 
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
@@ -370,7 +386,10 @@ Gets a proposed but not approved root certificate with the given subject and sub
 ```
 
 #### GET_ALL_X509_ROOT_CERTS
-Gets all approved root certificates.
+**Status: Implemented**
+
+Gets all approved root certificates. Revoked certificates are not returned. 
+Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certificates. 
 
 - Parameters:
   - `skip`: optional(int)  - number records to skip (`0` by default)
@@ -389,7 +408,11 @@ Gets all approved root certificates.
         "subject": string,
         "subject_key_id": string,
         "serial_number": string,
-        "type": string, // root
+        "issuer": string,
+        "authority_key_id": string,
+        "root_subject": string,
+        "root_subject_key_id": string,      
+        "is_root": boolean, 
         "owner": string,
       }
     ]
@@ -399,12 +422,16 @@ Gets all approved root certificates.
 ```
 
 #### GET_X509_CERT
+**Status: Implemented**
+
 Gets a certificate (either root, intermediate or leaf) by the given subject and subject key id attributes.
+Revoked certificates are not returned. 
+Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
@@ -422,7 +449,7 @@ Gets a certificate (either root, intermediate or leaf) by the given subject and 
         "authority_key_id": string, // omitted for root certificates
         "root_subject": string, // omitted for root certificates
         "root_subject_key_id": string, // omitted for root certificates
-        "type": string, // root or intermediate
+        "is_root": boolean, 
         "owner": string,
       }
     ]
@@ -432,12 +459,16 @@ Gets a certificate (either root, intermediate or leaf) by the given subject and 
 ```
 
 #### GET_X509_CERT_CHAIN
+**Status: Implemented**
+
 Gets the complete chain for a certificate with the given combination of subject and subject-key-id.
+Revoked certificates are not returned. 
+Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
@@ -455,7 +486,7 @@ Gets the complete chain for a certificate with the given combination of subject 
         "authority_key_id": string, // omitted for root certificate (last in the chain)
         "root_subject": string, // omitted for root certificate (last in the chain)
         "root_subject_key_id": string, // omitted for root certificate (last in the chain)
-        "type": string, // root or intermediate
+        "is_root": boolean, 
         "owner": string,
       }
     ]
@@ -465,7 +496,12 @@ Gets the complete chain for a certificate with the given combination of subject 
 ```
 
 #### GET_ALL_X509_CERTS
+**Status: Implemented**
+
 Gets all certificates (root, intermediate and leaf).
+
+Revoked certificates are not returned. 
+Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
 Can optionally be filtered by the root certificate's subject or subject key id so that 
 only the certificate chains started with the given root certificate are returned.   
@@ -498,7 +534,7 @@ only the certificate chains started with the given root certificate are returned
         "authority_key_id": string, // omitted for root certificates
         "root_subject": string, // omitted for root certificates
         "root_subject_key_id": string, // omitted for root certificates
-        "type": string, // root or intermediate
+        "is_root": boolean, 
         "owner": string,
       }
     ]
@@ -508,7 +544,12 @@ only the certificate chains started with the given root certificate are returned
 ```
 
 #### GET_ALL_SUBJECT_X509_CERTS
+**Status: Implemented**
+
 Gets all certificates (root, intermediate and leaf) associated with a subject.
+
+Revoked certificates are not returned. 
+Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
 Can optionally be filtered by the root certificate's subject or subject key id so that 
 only the certificate chains started with the given root certificate are returned. 
@@ -539,7 +580,7 @@ only the certificate chains started with the given root certificate are returned
         "authority_key_id": string, // omitted for root certificates
         "root_subject": string, // omitted for root certificates
         "root_subject_key_id": string, // omitted for root certificates
-        "type": string, // root or intermediate
+        "is_root": boolean, 
         "owner": string,
       }
     ]
@@ -548,7 +589,61 @@ only the certificate chains started with the given root certificate are returned
 }
 ```
 
+#### GET_ALL_PROPOSED_X509_ROOT_CERTS_TO_REVOKE
+**Status: Implemented**
+
+Gets all proposed but not approved root certificates to be revoked.
+
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
+- CLI command: 
+    -   `dclcli query pki all-proposed-x509-root-certs-to-revoke .... `
+- REST API: 
+    -   GET `/pki/certs/proposed/revoked/root`
+
+#### GET_PROPOSED_X509_ROOT_CERT_TO_REVOKE
+**Status: Implemented**
+
+Gets a proposed but not approved root certificate to be revoked.
+
+- Parameters:
+  - `subject`: string  - certificates's `Subject`
+  - `subject_key_id`: string  - certificates's `Subject Key Id`
+- CLI command: 
+    -   `dclcli query pki proposed-x509-root-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
+- REST API: 
+    -   GET `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
+
+#### GET_ALL_REVOKED_X509_CERTS
+**Status: Implemented**
+
+Gets all revoked certificates (both root and non-root).
+   
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
+- CLI command: 
+    -   `dclcli query pki all-revoked-x509-certs .... `
+- REST API: 
+    -   GET `/pki/certs/revoked`
+
+#### GET_ALL_REVOKED_X509_ROOT_CERTS
+**Status: Implemented**
+
+Gets all revoked root certificates.
+   
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
+- CLI command: 
+    -   `dclcli query pki all-revoked-x509-root-certs .... `
+- REST API: 
+    -   GET `/pki/certs/revoked/root`    
+
 #### GET_ALL_X509_CERTS_SINCE
+**Status: Not Implemented**
+
 Gets all certificates (root, intermediate and leaf) which has been added since 
 the given ledger's `height`.
 
@@ -564,57 +659,32 @@ only the certificate chains started with the given root certificate are returned
 - REST API: 
     -   GET `/pki/certs?since=<>`
     -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
-   
-
-#### GET_ALL_PROPOSED_X509_CERTS_TO_REVOKE
-Gets all proposed but not approved certificates to be revoked.
-
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
-- CLI command: 
-    -   `dclcli query pki all-proposed-x509-certs-to-revoke .... `
-- REST API: 
-    -   GET `/pki/certs/proposed/revoked`
-
-#### GET_PROPOSED_X509_CERT_TO_REVOKE
-Gets a proposed but not approved certificate to be revoked.
-
-- Parameters:
-  - `subject`: string  - certificates's `Subject`
-  - `subject_key_id`: string  - certificates's `Subject Key Id`
-- CLI command: 
-    -   `dclcli query pki proposed-x509-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
-- REST API: 
-    -   GET `/pki/certs/proposed/revoked/<subject>/<subject_key_id>`
-
-#### GET_CRL
-Gets all revoked certificates (CRL or certificate revocation list).
-   
-- Parameters: No
-- CLI command: 
-    -   `dclcli query pki all-revoked-certs .... `
-- REST API: 
-    -   GET `/pki/certs/revoked`
-    
     
 ## MODEL INFO
 
 #### ADD_MODEL_INFO
+**Status: Implemented**
+
 Adds a new Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID).
 
 Only some of Model Info fields can be edited (see `EDIT_MODEL_INFO`). If other fields need to be edited - 
 a new model info with a new `vid` or `pid` can be created.
 
+If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then the other two must also be set.
+
 - Parameters:
-    - `vid`: 16 bits int
-    - `pid`: 16 bits int
-    - `cid`: 16 bits int (optional)
+    - `vid`: 16 bits positive non-zero int 
+    - `pid`: 16 bits positive non-zero int
+    - `cid`: 16 bits positive non-zero int (optional)
+    - `version`: string (optional)
     - `name`: string
     - `description`: string
     - `sku`: string
     - `firmware_version`: string
     - `hardware_version`: string
+    - `OTA_URL`: string (optional)
+    - `OTA_checksum`: string (optional)
+    - `OTA_checksum_type`: string (optional)
     - `tis_or_trp_testing_completed`: bool
     - `custom`: string (optional)
 - In State:
@@ -630,18 +700,23 @@ a new model info with a new `vid` or `pid` can be created.
     -   POST `/modelinfo/models`
 
 #### EDIT_MODEL_INFO
+**Status: Implemented**
+
 Edits an existing Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
 by the owner.
 
 Only the fields listed below (besides `vid` and `pid`) can be edited. If other fields need to be edited - 
 a new model info with a new `vid` or `pid` can be created.
 
-All non-edited fields remain the same. 
+All non-edited fields remain the same.
+
+`OTA_URL` can be edited only if  `OTA_checksum` and `OTA_checksum_type` are already set.
 
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `cid`: 16 bits int (optional)
+    - `OTA_URL`: string (optional)
     - `description`: string (optional)
     - `tis_or_trp_testing_completed`: bool
     - `custom`: string (optional)
@@ -658,6 +733,8 @@ All non-edited fields remain the same.
 
 
 #### GET_ALL_MODEL_INFO
+**Status: Implemented**
+
 Gets all Model Infos for all vendors.
 
 - Parameters:
@@ -687,6 +764,8 @@ Gets all Model Infos for all vendors.
 ```
 
 #### GET_VENDOR_MODEL_INFO
+**Status: Implemented**
+
 Gets all Model Info by the given Vendor (`vid`).
 
 - Parameters:
@@ -714,12 +793,14 @@ Gets all Model Info by the given Vendor (`vid`).
 ```
 
 #### GET_MODEL_INFO
+**Status: Implemented**
+
 Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query modelinfo model --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
@@ -738,6 +819,9 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
     "sku": string,
     "firmware_version": string,
     "hardware_version": string,
+    "OTA_URL": string (optional),
+    "OTA_checksum" string (optional),
+    "OTA_checksum_type": string (optional),
     "custom": (optional) string,
     "tis_or_trp_testing_completed": bool
   }
@@ -745,6 +829,8 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
 ```
 
 #### GET_VENDORS    
+**Status: Implemented**
+
 Get a list of all Vendors (`vid`s). 
 
 - Parameters:
@@ -772,6 +858,8 @@ Get a list of all Vendors (`vid`s).
 ## TEST_DEVICE_COMPLIANCE
 
 #### ADD_TEST_RESULT
+**Status: Implemented**
+
 Submits result of a compliance testing for the given device (`vid` and `pid`).
 The test result can be a blob of data or a reference (URL) to an external storage.
 
@@ -796,12 +884,14 @@ Another test result can be submitted instead.
     -   POST `/compliancetest/testresults`
 
 #### GET_TEST_RESULT
+**Status: Implemented**
+
 Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
 
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
@@ -827,6 +917,8 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
 ## CERTIFY_DEVICE_COMPLIANCE
 
 #### CERTIFY_MODEL
+**Status: Implemented**
+
 Attests compliance of the Model to the ZB standard.
 
 `REVOKE_MODEL_CERTIFICATION` should be used for revoking (disabling) the compliance.
@@ -858,6 +950,8 @@ from the revocation list.
     -   PUT `/compliance/certified/vid/pid/certification_type`
     
 #### REVOKE_MODEL_CERTIFICATION
+**Status: Implemented**
+
 Revoke compliance of the Model to the ZB standard.
 
 The corresponding Model Info and test results are not required to be on the ledger 
@@ -886,6 +980,8 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
     -   PUT `/compliance/revoked/vid/pid/certification_type`    
     
 #### GET_CERTIFIED_MODEL
+**Status: Implemented**
+
 Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is compliant to ZB standards. 
 
 This is the aggregation of compliance and
@@ -902,7 +998,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `certification_type`: string - `zb` is the default and the only supported value now
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
@@ -918,6 +1014,8 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 ```
 
 #### GET_REVOKED_MODEL
+**Status: Implemented**
+
 Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is revoked. 
 
 It contains information about revocation only, so it should be used in cases
@@ -933,7 +1031,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `certification_type`: string - `zb` is the default and the only supported value now
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
@@ -949,6 +1047,8 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 ```
 
 #### GET_COMPLIANCE_INFO
+**Status: Implemented**
+
 Gets compliance information associated with the Model (identified by the `vid` and `pid` and `certification_type`).
 
 It can be used instead of GET_CERTIFIED_MODEL / GET_REVOKED_MODEL methods 
@@ -959,7 +1059,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
     - `vid`: 16 bits int
     - `pid`: 16 bits int
     - `certification_type`: string - `zb` is the default and the only supported value now
-    - `prev_height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
+    - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
     -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
 - REST API: 
@@ -1002,34 +1102,9 @@ This function responds with `NotFoundError` (404 code) if compliance information
 }
 ```
 
-#### GET_VENDOR_CERTIFIED_MODELS
-Gets all the Models (`pid`s) issued by the given Vendor (`vid`) which are complaint to ZB standards.
-
-This is the aggregation of compliance and
-revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
-
-- Parameters:
-    - `vid`: 16 bits int
-- CLI command: 
-    -   `dclcli query compliance certified-vendor-models --vid=<uint16> .... `
-- REST API: 
-    -   GET `/compliance/certified/vid`
-    
-#### GET_VENDOR_REVOKED_MODELS
-Gets all the Models (`pid`s) which certification is revoked for the given Vendor (`vid`).
-
-It contains information about revocation only, so  it should be used in cases
- where only revocation is tracked on the ledger.
-
-
-- Parameters:
-    - `vid`: 16 bits int
-- CLI command: 
-    -   `dclcli query compliance revoked-vendor-models --vid=<uint16>  .... `
-- REST API: 
-    -   GET `/compliance/revoked/vid`
-
 #### GET_ALL_REVOKED_MODELS
+**Status: Implemented**
+
 Gets all revoked Models (`pid`s) for all vendors (`vid`s).
 
 It contains information about revocation only, so it should be used in cases
@@ -1041,7 +1116,7 @@ It contains information about revocation only, so it should be used in cases
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query compliance all-revoked-models.... `
+    -   `dclcli query compliance all-revoked-models ... `
 - REST API: 
     -   GET `/compliance/revoked`
         - optional query parameter `certification_type` can be passed to filter by certification type.
@@ -1063,6 +1138,8 @@ It contains information about revocation only, so it should be used in cases
  ```
 
 #### GET_ALL_CERTIFIED_MODELS
+**Status: Implemented**
+
 Gets all compliant Models (`pid`s) for all the vendors (`vid`s).
 
 This is the aggregation of compliance and
@@ -1096,6 +1173,8 @@ revocation information for every vid/pid. It should be used in cases where compl
  ```
     
 #### GET_ALL_COMPLIANCE_INFO_RECORDS
+**Status: Implemented**
+
 Gets all stored compliance information records.
 
 `GET_ALL_COMPLIANCE_INFO_RECORDS_SINCE` can be used to incrementally update the list stored locally.
@@ -1130,7 +1209,40 @@ Gets all stored compliance information records.
 }
  ```
 
+#### GET_VENDOR_CERTIFIED_MODELS
+**Status: Not Implemented**
+
+Gets all the Models (`pid`s) issued by the given Vendor (`vid`) which are complaint to ZB standards.
+
+This is the aggregation of compliance and
+revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+
+- Parameters:
+    - `vid`: 16 bits int
+- CLI command: 
+    -   `dclcli query compliance certified-vendor-models --vid=<uint16> .... `
+- REST API: 
+    -   GET `/compliance/certified/vid`
+    
+#### GET_VENDOR_REVOKED_MODELS
+**Status: Not Implemented**
+
+Gets all the Models (`pid`s) which certification is revoked for the given Vendor (`vid`).
+
+It contains information about revocation only, so  it should be used in cases
+ where only revocation is tracked on the ledger.
+
+
+- Parameters:
+    - `vid`: 16 bits int
+- CLI command: 
+    -   `dclcli query compliance revoked-vendor-models --vid=<uint16>  .... `
+- REST API: 
+    -   GET `/compliance/revoked/vid`
+
 #### GET_ALL_CERTIFIED_MODELS_SINCE
+**Status: Not Implemented**
+
 Gets a delta of all compliant Models (`pid`s) for every vendor (`vid`s) which has been added or revoked since 
 the given ledger's `height`.
 
@@ -1145,6 +1257,8 @@ revocation information for every vid/pid. It should be used in cases where compl
     -   GET `/compliance/certified?since=<>`
     
 #### GET_ALL_REVOKED_MODELS_SINCE
+**Status: Not Implemented**
+
 Gets a delta of all revoked Models (`pid`s) for every vendor (`vid`s) which has been added or revoked since 
 the given ledger's `height`.
 
@@ -1154,11 +1268,13 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `dclcli query compliance revoked all-revoked-models-delta `
+    -   `dclcli query compliance all-revoked-models-delta `
 - REST API: 
     -   GET `/compliance/revoked?since=<>`
     
 #### GET_ALL_COMPLIANCE_INFO_RECORDS_SINCE
+**Status: Not Implemented**
+
 Gets a delta of all compliance info records which has been added or revoked since the given ledger's `height`.
 
 - Parameters: 
@@ -1171,6 +1287,8 @@ Gets a delta of all compliance info records which has been added or revoked sinc
 ## AUTH
 
 #### PROPOSE_ADD_ACCOUNT
+**Status: Implemented**
+
 Proposes a new Account with the given address, public key and role.
 
 If more than 1 Trustee signature is required to add the account, the account
@@ -1192,6 +1310,8 @@ will be in a pending state until sufficient number of approvals is received.
     -   POST `/auth/accounts/proposed`
     
 #### APPROVE_ADD_ACCOUNT
+**Status: Implemented**
+
 Approves the proposed account.    
 
 The account is not active until sufficient number of Trustees approve it. 
@@ -1210,23 +1330,10 @@ The account is not active until sufficient number of Trustees approve it.
     -   PATCH `/auth/accounts/proposed/<address>`
     
     
-#### ROTATE_KEY
-Rotate's the Account's public key by the owner.
-
-- Parameters:
-    - `pub_key`
-    - `pub_key_type`
-- In State:
-  - `auth` store  
-  - `1:<address>` : `<account info>`
-- Who can send: 
-    - Any role; owner
-- CLI command: 
-    -   `dclcli tx auth rotate-key .... `
-- REST API: 
-    -   PUT `/auth/accounts/<address>`
-    
+  
 #### PROPOSE_REVOKE_ACCOUNT
+**Status: Implemented**
+
 Proposes revocation of the Account with the given address.
 
 If more than 1 Trustee signature is required to revoke the account, the revocation
@@ -1246,6 +1353,8 @@ will be in a pending state until sufficient number of approvals is received.
     -   POST `/auth/accounts/proposed/revoked`
     
 #### APPROVE_REVOKE_ACCOUNT
+**Status: Implemented**
+
 Approves the proposed revocation of the account.    
 
 The account is not revoked until sufficient number of Trustees approve it. 
@@ -1264,6 +1373,8 @@ The account is not revoked until sufficient number of Trustees approve it.
     -   PATCH `/auth/accounts/proposed/revoked/<address>`
     
 #### GET_ALL_PROPOSED_ACCOUNTS
+**Status: Implemented**
+
 Gets all proposed but not approved accounts.
 
 - Parameters: No
@@ -1273,7 +1384,9 @@ Gets all proposed but not approved accounts.
     -   GET `/auth/accounts/proposed`
     
 #### GET_ALL_ACCOUNTS
-Gets all accounts.
+**Status: Implemented**
+
+Gets all accounts. Revoked accounts are not returned.
 
 - Parameters: No
 - CLI command: 
@@ -1282,7 +1395,9 @@ Gets all accounts.
     -   GET `/auth/accounts`           
 
 #### GET_ACCOUNT
-Gets an accounts by the address.
+**Status: Implemented**
+
+Gets an accounts by the address. Revoked accounts are not returned.
 
 - Parameters:
     - `address`
@@ -1292,6 +1407,8 @@ Gets an accounts by the address.
     -   GET `/auth/accounts/<address>`         
     
 #### GET_ALL_PROPOSED_ACCOUNTS_TO_REVOKE
+**Status: Implemented**
+
 Gets all proposed but not approved accounts to be revoked.
 
 - Parameters: No
@@ -1300,10 +1417,30 @@ Gets all proposed but not approved accounts to be revoked.
 - REST API: 
     -   GET `/auth/accounts/proposed/revoked`
     
+
+#### ROTATE_KEY
+**Status: Not Implemented**
+
+Rotate's the Account's public key by the owner.
+
+- Parameters:
+    - `pub_key`
+    - `pub_key_type`
+- In State:
+  - `auth` store  
+  - `1:<address>` : `<account info>`
+- Who can send: 
+    - Any role; owner
+- CLI command: 
+    -   `dclcli tx auth rotate-key .... `
+- REST API: 
+    -   PUT `/auth/accounts/<address>`
     
 ## VALIDATOR_NODE                      
 
 #### ADD_VALIDATOR_NODE
+**Status: Implemented**
+
 Adds a new Validator node.
 
 - Parameters:
@@ -1327,99 +1464,10 @@ Adds a new Validator node.
     -   `dclcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
 - REST API: 
     -   POST `/validators`
-    
-#### UPDATE_VALIDATOR_NODE
-Updates the Validator node by the owner.
 
-- Parameters: 
-    - `validator_address`: string // the tendermint validator address; bech32 encoded
-    - `description`: json
-        - `name`: string // validator name
-        - `identity`: string (optional) // identity signature (ex. UPort or Keybase)
-        - `website`: string (optional) // website link
-        - `details`: string (optional) // details
-- In State: 
-  - `validator` store  
-  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
-- Who can send: 
-    - NodeAdmin; owner
-- CLI command: 
-    -   `dclcli tx validator update-node --validator-address=<validator address> --from=<owner>.... `
-- REST API: 
-    -   PUT `/validators/<validator_address>`    
-
-#### REMOVE_VALIDATOR_NODE
-Deletes the Validator node (removes from the validator set) by the owner.
-
-- Parameters:
-    - `validator_address`: string // the tendermint validator address; bech32 encoded
-- In State: 
-  - `validator` store  
-  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
-  - `2:<Validator Address>` : `<Validator Last Power>` - helper index to track the last active validator set
-  - `5:<Account Address>` : `<Validator Address>` - helper index to track that each validator owner has only one node
-  - `6:<Validator Address>` : `<Signing Info>` - helper index to track validator signatures
-  - `7:<Validator Address>:<index>` : `<bool>` - helper index to track validator signatures over blocks window
-- Who can send: 
-    - NodeAdmin; owner
-- CLI command: 
-    -   `dclcli tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
-- REST API: 
-    -   DELETE `/validators/<validator_address>`
-
-#### PROPOSE_REMOVE_VALIDATOR_NODE
-Proposes removing the Validator node from the validator set by a Trustee. 
-
-If more than 1 Trustee signature is required to remove a node, the removal
-will be in a pending state until sufficient number of approvals is received.
-
-- Parameters:
-    - `validator_address`: string // the tendermint validator address; bech32 encoded
-- In State: Same as in Tendermint/Cosmos-sdk
-- Who can send: 
-    - Trustee
-- CLI command: 
-    -   `dclcli tx validator propose-remove-node .... `
-- REST API: 
-    -   POST `/validators/proposed/removed`
-
-#### APPROVE_REMOVE_VALIDATOR_NODE
-Approves removing of the Validator node by a Trustee. 
-
-The account is not removed until sufficient number of Trustees approve it. 
-
-- Parameters:
-    - `validator_address`: string // the tendermint validator address; bech32 encoded
-- In State: Same as in Tendermint/Cosmos-sdk
-- Who can send: 
-    - Trustee
-- CLI command: 
-    -   `dclcli tx validator approve-remove-node .... `
-- REST API: 
-    -   PATCH `/validators/proposed/removed/<validator_address>`
-                      
-#### UNJAIL_VALIDATOR_NODE
-Approves unjail of the Validator node from jailed state and returning to the active validator state. 
-
-If more than 1 Trustee approval is required to unjail a node, the node still
-will be in a jailed state until sufficient number of approvals is received.
-
-If 1 Trustee approval is required to unjail a nod or sufficient number of approvals is received,
-the node will be unjailed and returned to the active validator set.
-
-- Parameters:
-    - `validator_address`: string // the tendermint validator address; bech32 encoded
-- In State:
-  - `validator` store  
-  - `1:<Validator Address>` : `<Validator + List of Approvals>`
-- Who can send: 
-    - Trustee
-- CLI command: 
-    -   `dclcli tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
-- REST API: 
-    -   PATCH `/validators/<validator_address>`
-            
 #### GET_ALL_VALIDATORS
+**Status: Implemented**
+
 Gets the list of all validator nodes from the store.
 
 Note: All stored validator nodes (`active` and `jailed`) will be returned by default.
@@ -1461,6 +1509,8 @@ In order to get an active validator set use `state` query parameter or specific 
     ```
      
 #### GET_VALIDATOR
+**Status: Implemented**
+
 Gets a validator node.
 
 - Parameters:
@@ -1490,7 +1540,112 @@ Gets a validator node.
     }
     ```
     
+#### UPDATE_VALIDATOR_NODE
+**Status: Not Implemented**
+
+Updates the Validator node by the owner. Only `description` can be changed. 
+`validator_address` is used to reference the node, but can not be changed. 
+
+- Parameters: 
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+    - `description`: json
+        - `name`: string // validator name
+        - `identity`: string (optional) // identity signature (ex. UPort or Keybase)
+        - `website`: string (optional) // website link
+        - `details`: string (optional) // details
+- In State: 
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
+- Who can send: 
+    - NodeAdmin; owner
+- CLI command: 
+    -   `dclcli tx validator update-node --validator-address=<validator address> --from=<owner>.... `
+- REST API: 
+    -   PUT `/validators/<validator_address>`    
+
+#### REMOVE_VALIDATOR_NODE
+**Status: Not Implemented**
+
+Deletes the Validator node (removes from the validator set) by the owner.
+
+- Parameters:
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+- In State: 
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator>` - main index to store validators (there are two state of validator: active/jailed)
+  - `2:<Validator Address>` : `<Validator Last Power>` - helper index to track the last active validator set
+  - `5:<Account Address>` : `<Validator Address>` - helper index to track that each validator owner has only one node
+  - `6:<Validator Address>` : `<Signing Info>` - helper index to track validator signatures
+  - `7:<Validator Address>:<index>` : `<bool>` - helper index to track validator signatures over blocks window
+- Who can send: 
+    - NodeAdmin; owner
+- CLI command: 
+    -   `dclcli tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
+- REST API: 
+    -   DELETE `/validators/<validator_address>`
+
+#### PROPOSE_REMOVE_VALIDATOR_NODE
+**Status: Not Implemented**
+
+Proposes removing the Validator node from the validator set by a Trustee. 
+
+If more than 1 Trustee signature is required to remove a node, the removal
+will be in a pending state until sufficient number of approvals is received.
+
+- Parameters:
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `dclcli tx validator propose-remove-node .... `
+- REST API: 
+    -   POST `/validators/proposed/removed`
+
+#### APPROVE_REMOVE_VALIDATOR_NODE
+**Status: Not Implemented**
+
+Approves removing of the Validator node by a Trustee. 
+
+The account is not removed until sufficient number of Trustees approve it. 
+
+- Parameters:
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+- In State: Same as in Tendermint/Cosmos-sdk
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `dclcli tx validator approve-remove-node .... `
+- REST API: 
+    -   PATCH `/validators/proposed/removed/<validator_address>`
+                      
+#### UNJAIL_VALIDATOR_NODE
+**Status: Not Implemented**
+
+Approves unjail of the Validator node from jailed state and returning to the active validator state. 
+
+If more than 1 Trustee approval is required to unjail a node, the node still
+will be in a jailed state until sufficient number of approvals is received.
+
+If 1 Trustee approval is required to unjail a nod or sufficient number of approvals is received,
+the node will be unjailed and returned to the active validator set.
+
+- Parameters:
+    - `validator_address`: string // the tendermint validator address; bech32 encoded
+- In State:
+  - `validator` store  
+  - `1:<Validator Address>` : `<Validator + List of Approvals>`
+- Who can send: 
+    - Trustee
+- CLI command: 
+    -   `dclcli tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
+- REST API: 
+    -   PATCH `/validators/<validator_address>`
+            
+   
 #### GET_ALL_PROPOSED_VALIDATORS_TO_REMOVE
+**Status: Not Implemented**
+
 Gets all proposed but not approved validator nodes to be removed.
 
 - Parameters: No

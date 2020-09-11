@@ -10,26 +10,36 @@ an Account created on the Ledger with an appropriate role (see [Getting Account]
 - After the CLI is configured and Account with an appropriate role is created,
 the following instructions can be used for every role (see [Use Case Diagrams](use_cases)):
     - [Trustee](#trustee-instructions) 
-        - create new accounts
-        - assign roles to the account
-        - revoke roles from the account
+        - propose new accounts
+        - approve new accounts
+        - propose revocation of accounts
+        - approve revocation of accounts
+        - propose X509 root certificates
         - approve X509 root certificates
+        - propose revocation of X509 root certificates
+        - approve revocation of X509 root certificates
         - publish X509 certificates
+        - revoke X509 certificates        
     - [CA](#ca-instructions)
         - propose X509 root certificates
-        - publish X509 certificates        
+        - publish X509 certificates     
+        - revoke X509 certificates           
     - [Vendor](#vendor-instructions) 
         - publish device model info
         - publish X509 certificates
+        - revoke X509 certificates        
     - [Test House](#test-house-instructions) 
         - publish compliance test results
         - publish X509 certificates
+        - revoke X509 certificates        
     - [ZB Certification Center](#certification-center-instructions)
         - certify or revoke certification of device models
         - publish X509 certificates
+        - revoke X509 certificates        
     - [Node Admin](#node-admin-instructions-setting-up-a-new-validator-node) 
         - add a new Validator node
         - publish X509 certificates
+        - revoke X509 certificates
 
 ## CLI Configuration
 
@@ -104,7 +114,36 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
 
   Example: `dclcli tx auth approve-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
-##### 3. Approve proposed X509 root certificate  
+##### 3. Propose revocation of an Account
+  Command: `dclcli tx auth propose-revoke-account --address=<string> --from=<account>`
+
+  Flags:
+  - address: `string` - bench32 encoded account address to approve
+  - from: `string` - name or address of private key with which to sign
+
+  Example: `dclcli tx auth propose-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
+
+##### 4. Approve revocation of an Account
+  Command: `dclcli tx auth approve-revoke-account --address=<string> --from=<account>`
+
+  Flags:
+  - address: `string` - bench32 encoded account address to approve
+  - from: `string` - name or address of private key with which to sign
+
+  Example: `dclcli tx auth approve-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
+
+##### 5. Propose a new self-signed root certificate
+  Command: `dclcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
+
+  Flags:
+   - certificate: `string` - PEM encoded certificate (string or path to file containing data).
+   - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
+  
+  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
+
+##### 6. Approve proposed X509 root certificate  
   Command: `dclcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
@@ -114,6 +153,28 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
 
   Example: `dclcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
  
+##### 7. Propose revocation of an X509 root certificate  
+  Command: `dclcli tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+
+  Flags:
+   - subject: `string` - certificates's `Subject`.
+   - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+   - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki propose-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+  
+ 
+##### 8. Approve revocation of an X509 root certificate  
+  Command: `dclcli tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+
+  Flags:
+   - subject: `string` - certificates's `Subject`.
+   - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+   - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki approve-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+  
+  
 ## CA instructions
 Currently any role can propose an X509 root certificate, or publish 
 (intermediate or leaf) X509 certificates. 
@@ -142,7 +203,19 @@ Currently any role can propose an X509 root certificate, or publish
   
   Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
+##### 3. Revoke an intermediate or leaf X509 certificate
+ Can be done by the certificate's issuer only.
+ 
+ Command: `dclcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>``
 
+  Flags:
+    - subject: `string` - certificates's `Subject`.
+    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
+    - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki revoke-x509-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`  
+    
+    
 ## Vendor Instructions
 
 ##### 1. Publish an intermediate or leaf X509 certificate(s) to be used for signing X509 Certificates for every Device
@@ -164,8 +237,8 @@ The certificate must be signed by a chain of certificates which must be already 
 --firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account>`
 
   Flags:
-  - vid: `uint16` -  model vendor ID
-  - pid: `uint16` -  model product ID
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
@@ -174,7 +247,7 @@ The certificate must be signed by a chain of certificates which must be already 
   - hardware-version: `string` -  version of model hardware
   - tis-or-trp-testing-completed: `bool` -  whether model has successfully completed TIS/TRP testing
   - from: `string` - Name or address of private key with which to sign
-  - cid: `optional(uint16)` - model category ID
+  - cid: `optional(uint16)` - model category ID (positive non-zero)
   - custom: `optional(string)` - custom information (string or path to file containing data)
 
   Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`
