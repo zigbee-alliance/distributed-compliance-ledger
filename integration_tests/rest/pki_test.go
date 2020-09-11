@@ -210,12 +210,12 @@ func TestPkiDemo(t *testing.T) {
 	// Request all approved certificates
 	certificates, _ = utils.GetAllX509Certs()
 	require.Equal(t, 3, len(certificates.Items))
-	require.Equal(t, testconstants.RootSubject, certificates.Items[0].Subject)
-	require.Equal(t, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
-	require.Equal(t, testconstants.IntermediateSubject, certificates.Items[1].Subject)
-	require.Equal(t, testconstants.IntermediateSubjectKeyID, certificates.Items[1].SubjectKeyID)
-	require.Equal(t, testconstants.LeafSubject, certificates.Items[2].Subject)
-	require.Equal(t, testconstants.LeafSubjectKeyID, certificates.Items[2].SubjectKeyID)
+	require.Equal(t, testconstants.IntermediateSubject, certificates.Items[0].Subject)
+	require.Equal(t, testconstants.IntermediateSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	require.Equal(t, testconstants.LeafSubject, certificates.Items[1].Subject)
+	require.Equal(t, testconstants.LeafSubjectKeyID, certificates.Items[1].SubjectKeyID)
+	require.Equal(t, testconstants.RootSubject, certificates.Items[2].Subject)
+	require.Equal(t, testconstants.RootSubjectKeyID, certificates.Items[2].SubjectKeyID)
 
 	// Request all approved Root certificates
 	certificates, _ = utils.GetAllX509RootCerts()
