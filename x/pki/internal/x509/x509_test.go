@@ -48,7 +48,6 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Nil(t, err)
 	require.True(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.RootSubject, certificate.Issuer)
-	require.Equal(t, "", certificate.AuthorityKeyID)
 	require.Equal(t, testconstants.RootSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.RootSubject, certificate.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, certificate.SubjectKeyID)

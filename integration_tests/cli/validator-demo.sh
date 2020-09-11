@@ -16,7 +16,7 @@
 set -e
 source integration_tests/cli/common.sh
 
-account=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+random_string account
 container="validator-demo"
 node="node-demo"
 chain_id="dclchain"

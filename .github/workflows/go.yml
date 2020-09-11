@@ -43,6 +43,23 @@ jobs:
       - name: Run units
         run: make test
 
+  integration_tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Run integration tests
+        run: bash integration_tests/ci/run-all.sh
+
   golangci:
     name: Lint
     runs-on: ubuntu-latest

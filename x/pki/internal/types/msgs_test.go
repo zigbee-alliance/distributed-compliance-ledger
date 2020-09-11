@@ -114,8 +114,8 @@ func TestMsgApproveAddX509RootCertGetSignBytes(t *testing.T) {
 
 	expected := `{"type":"pki/ApproveAddX509RootCert","value":{` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"subject":"CN=DST Root CA X3,O=Digital Signature Trust Co.",` +
-		`"subject_key_id":"C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"}}`
+		`"subject":"` + testconstants.RootSubject + `",` +
+		`"subject_key_id":"` + testconstants.RootSubjectKeyID + `"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -210,8 +210,8 @@ func TestMsgProposeRevokeX509RootCertGetSignBytes(t *testing.T) {
 
 	expected := `{"type":"pki/ProposeRevokeX509RootCert","value":{` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"subject":"CN=DST Root CA X3,O=Digital Signature Trust Co.",` +
-		`"subject_key_id":"C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"}}`
+		`"subject":"` + testconstants.RootSubject + `",` +
+		`"subject_key_id":"` + testconstants.RootSubjectKeyID + `"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -260,8 +260,8 @@ func TestMsgApproveRevokeX509RootCertGetSignBytes(t *testing.T) {
 
 	expected := `{"type":"pki/ApproveRevokeX509RootCert","value":{` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"subject":"CN=DST Root CA X3,O=Digital Signature Trust Co.",` +
-		`"subject_key_id":"C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"}}`
+		`"subject":"` + testconstants.RootSubject + `",` +
+		`"subject_key_id":"` + testconstants.RootSubjectKeyID + `"}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -305,7 +305,7 @@ func TestMsgRevokeX509CertGetSignBytes(t *testing.T) {
 
 	expected := `{"type":"pki/RevokeX509Cert","value":{` +
 		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"subject":"CN=dsr-corporation.com",` +
-		`"subject_key_id":"8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"}}`
+		`"subject":"` + testconstants.LeafSubject + `",` +
+		`"subject_key_id":"` + testconstants.LeafSubjectKeyID + `"}}`
 	require.Equal(t, expected, string(res))
 }

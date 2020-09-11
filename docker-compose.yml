@@ -16,6 +16,7 @@ version: '3.2'
 
 services:
   node0:
+    image: dcledger
     build: .
     container_name: node0
     ports:
@@ -28,6 +29,7 @@ services:
     command: dcld start
 
   node1:
+    image: dcledger
     build: .
     container_name: node1
     ports:
@@ -40,6 +42,7 @@ services:
     command: dcld start
 
   node2:
+    image: dcledger
     build: .
     container_name: node2
     ports:
@@ -52,6 +55,7 @@ services:
     command: dcld start
 
   node3:
+    image: dcledger
     build: .
     container_name: node3
     ports:
@@ -69,5 +73,4 @@ networks:
     ipam:
       driver: default
       config:
-        -
-          subnet: 192.167.10.0/16
+        - subnet: 192.167.10.0/16

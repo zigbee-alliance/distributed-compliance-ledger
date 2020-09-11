@@ -16,7 +16,7 @@
 set -e
 source integration_tests/cli/common.sh
 
-user=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+random_string user
 echo "$user generates keys"
 result=$(echo 'test1234' | dclcli keys add $user)
 echo "$result"
