@@ -16,17 +16,17 @@
 set -e
 source integration_tests/cli/common.sh
 
-root_cert_subject="CN=DST Root CA X3,O=Digital Signature Trust Co."
-root_cert_subject_key_id="C4:A7:B1:A4:7B:2C:71:FA:DB:E1:4B:90:75:FF:C4:15:60:85:89:10"
-root_cert_serial_number="91299735575339953335919266965803778155"
+root_cert_subject="O=root-ca,ST=some-state,C=AU"
+root_cert_subject_key_id="5A:88:E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:9:30:E6:2B:DB"
+root_cert_serial_number="442314047376310867378175982234956458728610743315"
 
-intermediate_cert_subject="CN=Let's Encrypt Authority X3,O=Let's Encrypt,C=US"
-intermediate_cert_subject_key_id="A8:4A:6A:63:4:7D:DD:BA:E6:D1:39:B7:A6:45:65:EF:F3:A8:EC:A1"
-intermediate_cert_serial_number="13298795840390663119752826058995181320"
+intermediate_cert_subject="O=intermediate-ca,ST=some-state,C=AU"
+intermediate_cert_subject_key_id="4E:3B:73:F4:70:4D:C2:98:D:DB:C8:5A:5F:2:3B:BF:86:25:56:2B"
+intermediate_cert_serial_number="169917617234879872371588777545667947720450185023"
 
-leaf_cert_subject="CN=dsr-corporation.com"
-leaf_cert_subject_key_id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"
-leaf_cert_serial_number="393904870890265262371394210372104514174397"
+leaf_cert_subject="O=leaf,ST=some-state,C=AU"
+leaf_cert_subject_key_id="30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
+leaf_cert_serial_number="143290473708569835418599774898811724528308722063"
 
 # Preparation of Actors
 
