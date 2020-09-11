@@ -88,6 +88,7 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - approve new accounts
     - propose revocation of accounts
     - approve revocation of accounts
+    - propose X509 root certificates    
     - approve X509 root certificates
     - propose revocation of X509 root certificates
     - approve revocation of X509 root certificates

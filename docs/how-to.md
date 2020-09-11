@@ -14,6 +14,7 @@ the following instructions can be used for every role (see [Use Case Diagrams](u
         - approve new accounts
         - propose revocation of accounts
         - approve revocation of accounts
+        - propose X509 root certificates
         - approve X509 root certificates
         - propose revocation of X509 root certificates
         - approve revocation of X509 root certificates
@@ -131,7 +132,18 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
 
   Example: `dclcli tx auth approve-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
-##### 5. Approve proposed X509 root certificate  
+##### 5. Propose a new self-signed root certificate
+  Command: `dclcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
+
+  Flags:
+   - certificate: `string` - PEM encoded certificate (string or path to file containing data).
+   - from: `string` - Name or address of private key with which to sign.
+
+  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
+  
+  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
+
+##### 6. Approve proposed X509 root certificate  
   Command: `dclcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
@@ -141,7 +153,7 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
 
   Example: `dclcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
  
-##### 6. Propose revocation of an X509 root certificate  
+##### 7. Propose revocation of an X509 root certificate  
   Command: `dclcli tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
@@ -152,7 +164,7 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
   Example: `dclcli tx pki propose-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
   
  
-##### 7. Approve revocation of an X509 root certificate  
+##### 8. Approve revocation of an X509 root certificate  
   Command: `dclcli tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
