@@ -19,9 +19,9 @@
 
 `Store` is Cosmos's abstraction above data structures used to persist data (iavl, multisrore, ...). Those structures in their turn use Tendermint's `tm-db` abstraction above databases (leveldb, memdb, ...).
 
-Currently, `iavl` implementation is used to store domain entities in `zb-ledger`. The implementation contains the method for getting range proof `GetRangeWithProof`. It doesn't contain the method for checking that the range proof contains sequential elements.
+Currently, `iavl` implementation is used to store domain entities in `dc-ledger`. The implementation contains the method for getting range proof `GetRangeWithProof`. It doesn't contain the method for checking that the range proof contains sequential elements.
 
-There are two options on how to bring multiproof to zb-ledger:
+There are two options on how to bring multiproof to dc-ledger:
 
 - Extend the `store` interface and Cosmos API.
   - The flow will be like in `QueryStore` use case.

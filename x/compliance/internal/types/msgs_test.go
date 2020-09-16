@@ -1,17 +1,32 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 //nolint:testpackage
 package types
 
 //nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestNewMsgCertifyModel(t *testing.T) {
-	var msg = NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
 		ZbCertificationType, testconstants.Reason, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -62,7 +77,7 @@ func TestMsgCertifyModelValidation(t *testing.T) {
 }
 
 func TestMsgCertifyModelGetSignBytes(t *testing.T) {
-	var msg = NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
 		CertificationType(testconstants.CertificationType), testconstants.EmptyString, testconstants.Signer)
 
 	expected := `{"type":"compliance/CertifyModel","value":{"certification_date":"2020-01-01T00:00:00Z",` +
@@ -72,7 +87,7 @@ func TestMsgCertifyModelGetSignBytes(t *testing.T) {
 }
 
 func TestNewMsgRevokeModel(t *testing.T) {
-	var msg = NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
 		CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -120,7 +135,7 @@ func TestMsgRevokeModelValidation(t *testing.T) {
 }
 
 func TestMsRevokeModelGetSignBytes(t *testing.T) {
-	var msg = NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
 		CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
 
 	expected := `{"type":"compliance/RevokeModel","value":{"certification_type":"zb","pid":22,"reason":"Some Reason",` +

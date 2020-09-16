@@ -1,10 +1,25 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package rest
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/pagination"
+	"net/http"
+	"strconv"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -15,13 +30,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
-	"net/http"
-	"strconv"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
 )
 
 const (
 	FlagPreviousHeight = "prev_height" // Query data from previous height to avoid delay linked to state proof verification
 )
+
+type BasicReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
+}
 
 type RestContext struct {
 	context        client.CLIContext
@@ -71,12 +89,14 @@ func (ctx RestContext) NodeStatus() (*ctypes.ResultStatus, error) {
 	node, err := ctx.context.GetNode()
 	if err != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
+
 		return nil, err
 	}
 
 	status, err := node.Status()
 	if err != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
+
 		return nil, err
 	}
 
@@ -94,21 +114,25 @@ func (ctx RestContext) GetChainHeight() (int64, error) {
 
 func (ctx RestContext) WithCodec(cdc *codec.Codec) RestContext {
 	ctx.context = ctx.context.WithCodec(cdc)
+
 	return ctx
 }
 
 func (ctx RestContext) WithNodeURI(nodeURI string) RestContext {
 	ctx.context = ctx.context.WithNodeURI(nodeURI)
+
 	return ctx
 }
 
 func (ctx RestContext) WithResponseWriter(w http.ResponseWriter) RestContext {
 	ctx.responseWriter = w
+
 	return ctx
 }
 
 func (ctx RestContext) WithHeight(height int64) RestContext {
 	ctx.context = ctx.context.WithHeight(height)
+
 	return ctx
 }
 
@@ -128,6 +152,7 @@ func (ctx RestContext) WithSigner() (RestContext, error) {
 	if err != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusBadRequest,
 			fmt.Sprintf("Request Parsing Error: %v. `from` must be a valid address", err))
+
 		return RestContext{}, err
 	}
 
@@ -188,6 +213,7 @@ func (ctx RestContext) QueryList(path string, params interface{}) {
 	res, height, err := ctx.QueryWithData(path, params)
 	if err != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusNotFound, err.Error())
+
 		return
 	}
 
@@ -198,6 +224,7 @@ func (ctx RestContext) EncodeAndRespondWithHeight(data interface{}, height int64
 	out, err := json.Marshal(data)
 	if err != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
+
 		return
 	}
 
@@ -208,6 +235,7 @@ func (ctx RestContext) ParsePaginationParams() (pagination.PaginationParams, err
 	paginationParams, err := pagination.ParsePaginationParamsFromRequest(ctx.request)
 	if err != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusBadRequest, err.Error())
+
 		return pagination.PaginationParams{}, err
 	}
 
@@ -230,12 +258,14 @@ func (ctx RestContext) HandleWriteRequest(msg sdk.Msg) {
 	err := msg.ValidateBasic()
 	if err != nil {
 		ctx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 		return
 	}
 
 	account, passphrase, ok := ctx.BasicAuth()
 	if !ok { // No credentials - just generate request message
 		utils.WriteGenerateStdTxResponse(ctx.responseWriter, ctx.context, ctx.baseReq, []sdk.Msg{msg})
+
 		return
 	}
 
@@ -243,6 +273,7 @@ func (ctx RestContext) HandleWriteRequest(msg sdk.Msg) {
 	res, err_ := ctx.SignAndBroadcastMessage(account, passphrase, []sdk.Msg{msg})
 	if err_ != nil {
 		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err_.Error())
+
 		return
 	}
 

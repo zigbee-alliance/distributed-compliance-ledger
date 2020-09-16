@@ -1,25 +1,40 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package rest_test
 
 import (
 	"testing"
 
-	testconstants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/utils"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 )
 
 //nolint:godox
 /*
 	To Run test you need:
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
-		* run RPC service with `zblcli rest-server --chain-id zblchain`
+		* run RPC service with `dclcli rest-server --chain-id dclchain`
 
 	TODO: provide tests for error cases
 */
 
+// nolint:godox,funlen
 // FIXME: `GetX509CertChain` calls within this test may fail with EOF on an attempt to read the response
 // from REST API server and so leave the resulting `Certificates.Items` slice empty.
 // The issue seems to be caused by the connection being closed due to timeout while REST API server
@@ -52,7 +67,7 @@ func TestPkiDemo(t *testing.T) {
 	_, _ = utils.ProposeAddX509RootCert(msgProposeAddX509RootCert,
 		userKeyInfo.Name, testconstants.Passphrase)
 
-	//Request all proposed Root certificates
+	// Request all proposed Root certificates
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
 	require.Equal(t, 1, len(proposedCertificates.Items))
 	require.Equal(t, testconstants.RootSubject, proposedCertificates.Items[0].Subject)
@@ -116,14 +131,14 @@ func TestPkiDemo(t *testing.T) {
 	certificate, _ := utils.GetX509Cert(testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(t, msgProposeAddX509RootCert.Cert, certificate.PemCert)
 	require.Equal(t, msgProposeAddX509RootCert.Signer, certificate.Owner)
-	require.Equal(t, pki.RootCertificate, certificate.Type)
+	require.True(t, certificate.IsRoot)
 
 	// Request certificate chain for Root certificate
 	certificateChain, _ := utils.GetX509CertChain(testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Len(t, certificateChain.Items, 1)
 	require.Equal(t, msgProposeAddX509RootCert.Cert, certificateChain.Items[0].PemCert)
 	require.Equal(t, msgProposeAddX509RootCert.Signer, certificateChain.Items[0].Owner)
-	require.Equal(t, pki.RootCertificate, certificateChain.Items[0].Type)
+	require.True(t, certificateChain.Items[0].IsRoot)
 
 	// Request all proposed Root certificates must be empty
 	proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
@@ -155,10 +170,10 @@ func TestPkiDemo(t *testing.T) {
 	// Request all approved certificates
 	certificates, _ = utils.GetAllX509Certs()
 	require.Equal(t, 2, len(certificates.Items))
-	require.Equal(t, testconstants.RootSubject, certificates.Items[0].Subject)
-	require.Equal(t, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
-	require.Equal(t, testconstants.IntermediateSubject, certificates.Items[1].Subject)
-	require.Equal(t, testconstants.IntermediateSubjectKeyID, certificates.Items[1].SubjectKeyID)
+	require.Equal(t, testconstants.IntermediateSubject, certificates.Items[0].Subject)
+	require.Equal(t, testconstants.IntermediateSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	require.Equal(t, testconstants.RootSubject, certificates.Items[1].Subject)
+	require.Equal(t, testconstants.RootSubjectKeyID, certificates.Items[1].SubjectKeyID)
 
 	// Request all approved Root certificates
 	certificates, _ = utils.GetAllX509RootCerts()
@@ -169,17 +184,17 @@ func TestPkiDemo(t *testing.T) {
 	certificate, _ = utils.GetX509Cert(testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(t, msgAddX509Cert.Cert, certificate.PemCert)
 	require.Equal(t, msgAddX509Cert.Signer, certificate.Owner)
-	require.Equal(t, pki.IntermediateCertificate, certificate.Type)
+	require.False(t, certificate.IsRoot)
 
 	// Request certificate chain for Intermediate certificate
 	certificateChain, _ = utils.GetX509CertChain(testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Len(t, certificateChain.Items, 2)
 	require.Equal(t, msgAddX509Cert.Cert, certificateChain.Items[0].PemCert)
 	require.Equal(t, msgAddX509Cert.Signer, certificateChain.Items[0].Owner)
-	require.Equal(t, pki.IntermediateCertificate, certificateChain.Items[0].Type)
+	require.False(t, certificateChain.Items[0].IsRoot)
 	require.Equal(t, msgProposeAddX509RootCert.Cert, certificateChain.Items[1].PemCert)
 	require.Equal(t, msgProposeAddX509RootCert.Signer, certificateChain.Items[1].Owner)
-	require.Equal(t, pki.RootCertificate, certificateChain.Items[1].Type)
+	require.True(t, certificateChain.Items[1].IsRoot)
 
 	// Alice (Trustee) add Leaf certificate
 	secondMsgAddX509Cert := pki.MsgAddX509Cert{
@@ -195,12 +210,12 @@ func TestPkiDemo(t *testing.T) {
 	// Request all approved certificates
 	certificates, _ = utils.GetAllX509Certs()
 	require.Equal(t, 3, len(certificates.Items))
-	require.Equal(t, testconstants.RootSubject, certificates.Items[0].Subject)
-	require.Equal(t, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
-	require.Equal(t, testconstants.IntermediateSubject, certificates.Items[1].Subject)
-	require.Equal(t, testconstants.IntermediateSubjectKeyID, certificates.Items[1].SubjectKeyID)
-	require.Equal(t, testconstants.LeafSubject, certificates.Items[2].Subject)
-	require.Equal(t, testconstants.LeafSubjectKeyID, certificates.Items[2].SubjectKeyID)
+	require.Equal(t, testconstants.IntermediateSubject, certificates.Items[0].Subject)
+	require.Equal(t, testconstants.IntermediateSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	require.Equal(t, testconstants.LeafSubject, certificates.Items[1].Subject)
+	require.Equal(t, testconstants.LeafSubjectKeyID, certificates.Items[1].SubjectKeyID)
+	require.Equal(t, testconstants.RootSubject, certificates.Items[2].Subject)
+	require.Equal(t, testconstants.RootSubjectKeyID, certificates.Items[2].SubjectKeyID)
 
 	// Request all approved Root certificates
 	certificates, _ = utils.GetAllX509RootCerts()
@@ -211,20 +226,20 @@ func TestPkiDemo(t *testing.T) {
 	certificate, _ = utils.GetX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	require.Equal(t, secondMsgAddX509Cert.Cert, certificate.PemCert)
 	require.Equal(t, secondMsgAddX509Cert.Signer, certificate.Owner)
-	require.Equal(t, pki.IntermediateCertificate, certificate.Type)
+	require.False(t, certificate.IsRoot)
 
 	// Request certificate chain for Leaf certificate
 	certificateChain, _ = utils.GetX509CertChain(testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	require.Len(t, certificateChain.Items, 3)
 	require.Equal(t, secondMsgAddX509Cert.Cert, certificateChain.Items[0].PemCert)
 	require.Equal(t, secondMsgAddX509Cert.Signer, certificateChain.Items[0].Owner)
-	require.Equal(t, pki.IntermediateCertificate, certificateChain.Items[0].Type)
+	require.False(t, certificateChain.Items[0].IsRoot)
 	require.Equal(t, msgAddX509Cert.Cert, certificateChain.Items[1].PemCert)
 	require.Equal(t, msgAddX509Cert.Signer, certificateChain.Items[1].Owner)
-	require.Equal(t, pki.IntermediateCertificate, certificateChain.Items[1].Type)
+	require.False(t, certificateChain.Items[1].IsRoot)
 	require.Equal(t, msgProposeAddX509RootCert.Cert, certificateChain.Items[2].PemCert)
 	require.Equal(t, msgProposeAddX509RootCert.Signer, certificateChain.Items[2].Owner)
-	require.Equal(t, pki.RootCertificate, certificateChain.Items[2].Type)
+	require.True(t, certificateChain.Items[2].IsRoot)
 
 	// Request all Subject certificates
 	certificates, _ = utils.GetAllSubjectX509Certs(testconstants.LeafSubject)

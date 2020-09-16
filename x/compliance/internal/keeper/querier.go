@@ -1,13 +1,27 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/conversions"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/internal/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/conversions"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
 const (
@@ -90,11 +104,13 @@ func queryAllComplianceInfoRecords(ctx sdk.Context, req abci.RequestQuery, keepe
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, complianceInfo)
+
 			return false
 		}
 
@@ -128,6 +144,7 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
@@ -137,6 +154,7 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 				PID:               complianceInfo.PID,
 				CertificationType: complianceInfo.CertificationType,
 			})
+
 			return false
 		}
 

@@ -1,3 +1,17 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package utils
 
 import (
@@ -6,26 +20,27 @@ import (
 	"net/http"
 	"time"
 
-	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
-	constants "git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
-	extRest "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	authRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/client/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance"
-	complianceRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
-	compliancetestRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest/client/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
-	modelinfoRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo/client/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki"
-	pkiRest "git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/client/rest"
 	keyUtil "github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/rest"
+	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/go-bip39"
 	"github.com/tendermint/tendermint/libs/common"
+	app "github.com/zigbee-alliance/distributed-compliance-ledger"
+	constants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	extRest "github.com/zigbee-alliance/distributed-compliance-ledger/restext/tx/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	authRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/client/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
+	complianceRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/client/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
+	compliancetestRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	modelinfoRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/client/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	pkiRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/rest"
 )
 
 func CreateKey(accountName string) (KeyInfo, int) {
@@ -57,7 +72,7 @@ func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles)
 	println("Propose Add Account for: ", keyInfo.Name)
 
 	request := authRest.ProposeAddAccountRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -78,8 +93,8 @@ func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles)
 func ApproveAddAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	println("Approve Add Account for: ", keyInfo.Name)
 
-	request := authRest.ApproveAddAccountRequest{
-		BaseReq: rest.BaseReq{
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -98,7 +113,7 @@ func ProposeRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	println("Propose Revoke Account for: ", keyInfo.Name)
 
 	request := authRest.ProposeRevokeAccountRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -117,8 +132,8 @@ func ProposeRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 func ApproveRevokeAccount(keyInfo KeyInfo, signer KeyInfo) (TxnResponse, int) {
 	println("Approve Revoke Account for: ", keyInfo.Name)
 
-	request := authRest.ApproveRevokeAccountRequest{
-		BaseReq: rest.BaseReq{
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    signer.Address.String(),
 		},
@@ -212,6 +227,7 @@ func SignAndBroadcastMessage(sender KeyInfo, message sdk.Msg) (TxnResponse, int)
 
 func SignAndBroadcastTransaction(sender KeyInfo, txn types.StdTx) (TxnResponse, int) {
 	signResponse, _ := SignMessage(sender, txn)
+
 	return BroadcastMessage(signResponse)
 }
 
@@ -219,7 +235,7 @@ func SignMessage(sender KeyInfo, txn types.StdTx) (json.RawMessage, int) {
 	println("Sign prepared transaction")
 
 	stdSigMsg := extRest.SignMessageRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    sender.Address.String(),
 		},
@@ -269,7 +285,7 @@ func PrepareModelInfoTransaction(model modelinfo.MsgAddModelInfo) (types.StdTx, 
 
 func SendModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]byte, int) {
 	request := modelinfoRest.ModelInfoRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    model.Signer.String(),
 		},
@@ -362,7 +378,7 @@ func PrepareTestingResultTransaction(testingResult compliancetest.MsgAddTestingR
 
 func SendTestingResultRequest(testingResult compliancetest.MsgAddTestingResult, name string) ([]byte, int) {
 	request := compliancetestRest.TestingResultRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    testingResult.Signer.String(),
 		},
@@ -410,14 +426,11 @@ func PrepareCertifiedModelTransaction(certifyModel compliance.MsgCertifyModel) (
 
 func SendCertifiedModelRequest(certifyModel compliance.MsgCertifyModel, name string) ([]byte, int) {
 	request := complianceRest.CertifyModelRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    certifyModel.Signer.String(),
 		},
-		VID:               certifyModel.VID,
-		PID:               certifyModel.PID,
 		CertificationDate: certifyModel.CertificationDate,
-		CertificationType: certifyModel.CertificationType,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -446,15 +459,12 @@ func PrepareRevokedModelTransaction(revokeModel compliance.MsgRevokeModel) (type
 
 func SendRevokedModelRequest(revokeModel compliance.MsgRevokeModel, name string) ([]byte, int) {
 	request := complianceRest.RevokeModelRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    revokeModel.Signer.String(),
 		},
-		VID:               revokeModel.VID,
-		PID:               revokeModel.PID,
-		RevocationDate:    revokeModel.RevocationDate,
-		Reason:            revokeModel.Reason,
-		CertificationType: revokeModel.CertificationType,
+		RevocationDate: revokeModel.RevocationDate,
+		Reason:         revokeModel.Reason,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -468,18 +478,21 @@ func SendRevokedModelRequest(revokeModel compliance.MsgRevokeModel, name string)
 func GetComplianceInfo(vid uint16, pid uint16,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfo, int) {
 	println(fmt.Sprintf("Get Compliance Info for Model with VID:%v PID:%v", vid, pid))
+
 	return getComplianceInfo(vid, pid, certificationType)
 }
 
 func GetCertifiedModel(vid uint16, pid uint16,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, int) {
 	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Certified", vid, pid))
+
 	return getComplianceInfoInState(vid, pid, certificationType, "certified")
 }
 
 func GetRevokedModel(vid uint16, pid uint16,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, int) {
 	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Revoked", vid, pid))
+
 	return getComplianceInfoInState(vid, pid, certificationType, "revoked")
 }
 
@@ -510,16 +523,19 @@ func getComplianceInfoInState(vid uint16, pid uint16,
 
 func GetComplianceInfos() (ComplianceInfosHeadersResult, int) {
 	println("Get all compliance info records")
+
 	return GetAllComplianceInfos("")
 }
 
 func GetAllCertifiedModels() (ComplianceInfosHeadersResult, int) {
 	println("Get all certified models")
+
 	return GetAllComplianceInfos("certified")
 }
 
 func GetAllRevokedModels() (ComplianceInfosHeadersResult, int) {
 	println("Get all revoked models")
+
 	return GetAllComplianceInfos("revoked")
 }
 
@@ -560,12 +576,12 @@ func PrepareProposeAddX509RootCertTransaction(proposeAddX509RootCert pki.MsgProp
 
 func SendProposeAddX509RootCertRequest(proposeAddX509RootCert pki.MsgProposeAddX509RootCert,
 	account string, passphrase string) ([]byte, int) {
-	request := pkiRest.AddCertificateRequest{
-		BaseReq: rest.BaseReq{
+	request := pkiRest.ProposeAddRootCertificateRequest{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    proposeAddX509RootCert.Signer.String(),
 		},
-		Certificate: proposeAddX509RootCert.Cert,
+		Cert: proposeAddX509RootCert.Cert,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -577,7 +593,7 @@ func SendProposeAddX509RootCertRequest(proposeAddX509RootCert pki.MsgProposeAddX
 
 func ApproveAddX509RootCert(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert,
 	account string, passphrase string) (TxnResponse, int) {
-	println(fmt.Sprintf("Approve X509 Root Cert with subject=%s and subjectKeyId=%s",
+	println(fmt.Sprintf("Approve X509 Root Cert with subject=%s and subjectKeyID=%s",
 		msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyID))
 
 	response, code := SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert, account, passphrase)
@@ -596,13 +612,11 @@ func PrepareApproveAddX509RootCertTransaction(
 
 func SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert,
 	account string, passphrase string) ([]byte, int) {
-	request := pkiRest.ApproveCertificateRequest{
-		BaseReq: rest.BaseReq{
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    msgApproveAddX509RootCert.Signer.String(),
 		},
-		Subject:      msgApproveAddX509RootCert.Subject,
-		SubjectKeyID: msgApproveAddX509RootCert.SubjectKeyID,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -630,11 +644,11 @@ func PrepareAddX509CertTransaction(addX509Cert pki.MsgAddX509Cert) (types.StdTx,
 
 func SendAddX509CertRequest(addX509Cert pki.MsgAddX509Cert, account string, passphrase string) ([]byte, int) {
 	request := pkiRest.AddCertificateRequest{
-		BaseReq: rest.BaseReq{
+		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    addX509Cert.Signer.String(),
 		},
-		Certificate: addX509Cert.Cert,
+		Cert: addX509Cert.Cert,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)

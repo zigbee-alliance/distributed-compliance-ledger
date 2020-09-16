@@ -1,24 +1,36 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package genutil
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	cfg "github.com/tendermint/tendermint/config"
 	tmtypes "github.com/tendermint/tendermint/types"
-
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
-	"github.com/cosmos/cosmos-sdk/codec"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 )
 
 // GenAppStateFromConfig gets the genesis app state from the config.
@@ -88,6 +100,7 @@ func CollectStdTxs(cdc *codec.Codec, name, genTxsDir string,
 	IterateGenesisAccounts(cdc, appState,
 		func(acc auth.Account) (stop bool) {
 			addrMap[acc.Address.String()] = acc
+
 			return false
 		},
 	)

@@ -1,7 +1,28 @@
 #!/bin/bash
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 set -e
 
 passphrase="test1234"
+
+random_string() {
+  local __resultvar=$1
+  local length=${2:-6} # Default is 6
+
+  eval $__resultvar="'$(date +%s.%N | sha1sum | fold -w ${length} | head -n 1)'"
+}
 
 check_response() {
   result=$1
@@ -30,7 +51,7 @@ response_does_not_contain() {
 
 create_new_account(){
   local  __resultvar=$1
-  local name=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 6 | head -n 1)
+  random_string name
   eval $__resultvar="'$name'"
 
   roles=$2
@@ -38,18 +59,18 @@ create_new_account(){
   echo "Account name: $name"
 
   echo "Generate key for $name"
-  echo $passphrase | zblcli keys add "$name"
+  echo $passphrase | dclcli keys add "$name"
 
-  address=$(zblcli keys show $name -a)
-  pubkey=$(zblcli keys show $name -p)
+  address=$(dclcli keys show $name -a)
+  pubkey=$(dclcli keys show $name -p)
 
   echo "Jack prupose account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | zblcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
+  result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
   check_response "$result" "\"success\": true"
   echo "$result"
 
   echo "Alice approve account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | zblcli tx auth approve-add-account --address="$address" --from alice --yes)
+  result=$(echo $passphrase | dclcli tx auth approve-add-account --address="$address" --from alice --yes)
   check_response "$result" "\"success\": true"
   echo "$result"
 }

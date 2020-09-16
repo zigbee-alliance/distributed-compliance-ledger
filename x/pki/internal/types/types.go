@@ -1,17 +1,26 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package types
 
-// nolint:goimports
 import (
 	"encoding/json"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 type CertificateType string
-
-const (
-	RootCertificate         CertificateType = "root"
-	IntermediateCertificate CertificateType = "intermediate"
-)
 
 /*
 	Approved Root / Intermediate / Leaf certificates stored in KVStore and matching to the same key
@@ -39,16 +48,16 @@ func (d Certificates) String() string {
 	Single Approved Root / Intermediate / Leaf certificate
 */
 type Certificate struct {
-	PemCert          string          `json:"pem_cert"`
-	Subject          string          `json:"subject"`
-	SubjectKeyID     string          `json:"subject_key_id"`
-	SerialNumber     string          `json:"serial_number"`
-	Issuer           string          `json:"issuer,omitempty"`
-	AuthorityKeyID   string          `json:"authority_key_id,omitempty"`
-	RootSubject      string          `json:"root_subject,omitempty"`
-	RootSubjectKeyID string          `json:"root_subject_key_id,omitempty"`
-	Type             CertificateType `json:"type"`
-	Owner            sdk.AccAddress  `json:"owner"`
+	PemCert          string         `json:"pem_cert"`
+	Subject          string         `json:"subject"`
+	SubjectKeyID     string         `json:"subject_key_id"`
+	SerialNumber     string         `json:"serial_number"`
+	Issuer           string         `json:"issuer,omitempty"`
+	AuthorityKeyID   string         `json:"authority_key_id,omitempty"`
+	RootSubject      string         `json:"root_subject,omitempty"`
+	RootSubjectKeyID string         `json:"root_subject_key_id,omitempty"`
+	IsRoot           bool           `json:"is_root"`
+	Owner            sdk.AccAddress `json:"owner"`
 }
 
 func NewRootCertificate(pemCert string, subject string, subjectKeyID string,
@@ -58,12 +67,12 @@ func NewRootCertificate(pemCert string, subject string, subjectKeyID string,
 		Subject:      subject,
 		SubjectKeyID: subjectKeyID,
 		SerialNumber: serialNumber,
-		Type:         RootCertificate,
+		IsRoot:       true,
 		Owner:        owner,
 	}
 }
 
-func NewIntermediateCertificate(pemCert string, subject string, subjectKeyID string, serialNumber string,
+func NewNonRootCertificate(pemCert string, subject string, subjectKeyID string, serialNumber string,
 	issuer string, authorityKeyID string,
 	rootSubject string, rootSubjectKeyID string,
 	owner sdk.AccAddress) Certificate {
@@ -76,7 +85,7 @@ func NewIntermediateCertificate(pemCert string, subject string, subjectKeyID str
 		AuthorityKeyID:   authorityKeyID,
 		RootSubject:      rootSubject,
 		RootSubjectKeyID: rootSubjectKeyID,
-		Type:             IntermediateCertificate,
+		IsRoot:           false,
 		Owner:            owner,
 	}
 }
@@ -98,8 +107,8 @@ type ProposedCertificate struct {
 	Subject      string           `json:"subject"`
 	SubjectKeyID string           `json:"subject_key_id"`
 	SerialNumber string           `json:"serial_number"`
-	Approvals    []sdk.AccAddress `json:"approvals"`
 	Owner        sdk.AccAddress   `json:"owner"`
+	Approvals    []sdk.AccAddress `json:"approvals"`
 }
 
 func NewProposedCertificate(pemCert string, subject string, subjectKeyID string,
@@ -109,8 +118,8 @@ func NewProposedCertificate(pemCert string, subject string, subjectKeyID string,
 		Subject:      subject,
 		SubjectKeyID: subjectKeyID,
 		SerialNumber: serialNumber,
-		Approvals:    []sdk.AccAddress{},
 		Owner:        owner,
+		Approvals:    []sdk.AccAddress{},
 	}
 }
 
@@ -134,24 +143,20 @@ func (d ProposedCertificate) HasApprovalFrom(address sdk.Address) bool {
 }
 
 /*
-	The list of direct child certificates (depending of Subject/SubjectKeyID parent certificate ) stored in KVStore
+	The list of certificates issued by a given issuer
 */
 type ChildCertificates struct {
-	Subject           string                  `json:"subject"`
-	SubjectKeyID      string                  `json:"subject_key_id"`
-	ChildCertificates []CertificateIdentified `json:"child_certificates"`
+	Issuer          string                  `json:"issues"`
+	AuthorityKeyID  string                  `json:"authority_key_id"`
+	CertIdentifiers []CertificateIdentifier `json:"cert_identifiers"`
 }
 
-func NewChildCertificates(subject string, subjectKeyID string) ChildCertificates {
+func NewChildCertificates(issuer string, authorityKeyID string) ChildCertificates {
 	return ChildCertificates{
-		Subject:           subject,
-		SubjectKeyID:      subjectKeyID,
-		ChildCertificates: []CertificateIdentified{},
+		Issuer:          issuer,
+		AuthorityKeyID:  authorityKeyID,
+		CertIdentifiers: []CertificateIdentifier{},
 	}
-}
-
-func (d *ChildCertificates) AddChildCertificate(keyID CertificateIdentified) {
-	d.ChildCertificates = append(d.ChildCertificates, keyID)
 }
 
 func (d ChildCertificates) String() string {
@@ -167,14 +172,51 @@ func (d ChildCertificates) String() string {
 	Composed identifier for certificates
 */
 
-type CertificateIdentified struct {
+type CertificateIdentifier struct {
 	Subject      string `json:"subject"`
 	SubjectKeyID string `json:"subject_key_id"`
 }
 
-func NewCertificateIdentifier(subject string, subjectKeyID string) CertificateIdentified {
-	return CertificateIdentified{
+func NewCertificateIdentifier(subject string, subjectKeyID string) CertificateIdentifier {
+	return CertificateIdentifier{
 		Subject:      subject,
 		SubjectKeyID: subjectKeyID,
 	}
+}
+
+/*
+	Proposed (but not Approved yet) Revocation of Root certificate stored in KVStore
+*/
+type ProposedCertificateRevocation struct {
+	Subject      string           `json:"subject"`
+	SubjectKeyID string           `json:"subject_key_id"`
+	Approvals    []sdk.AccAddress `json:"approvals"`
+}
+
+func NewProposedCertificateRevocation(subject string, subjectKeyID string,
+	approval sdk.AccAddress) ProposedCertificateRevocation {
+	return ProposedCertificateRevocation{
+		Subject:      subject,
+		SubjectKeyID: subjectKeyID,
+		Approvals:    []sdk.AccAddress{approval},
+	}
+}
+
+func (d ProposedCertificateRevocation) String() string {
+	bytes, err := json.Marshal(d)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
+func (d ProposedCertificateRevocation) HasApprovalFrom(address sdk.Address) bool {
+	for _, approval := range d.Approvals {
+		if approval.Equals(address) {
+			return true
+		}
+	}
+
+	return false
 }

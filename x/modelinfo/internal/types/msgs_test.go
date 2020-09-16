@@ -1,16 +1,31 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 //nolint:testpackage
 package types
 
 //nolint:goimports
 import (
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/integration_tests/constants"
+	"testing"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"testing"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestNewMsgAddModelInfo(t *testing.T) {
-	var msg = NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
+	msg := NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
 		testconstants.Description, testconstants.Sku, testconstants.FirmwareVersion,
 		testconstants.HardwareVersion, testconstants.Custom, testconstants.TisOrTrpTestingCompleted, testconstants.Signer)
 
@@ -82,7 +97,7 @@ func TestMsgAddModelInfoValidation(t *testing.T) {
 }
 
 func TestMsgAddModelInfoGetSignBytes(t *testing.T) {
-	var msg = NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
+	msg := NewMsgAddModelInfo(testconstants.VID, testconstants.PID, testconstants.CID, testconstants.Name,
 		testconstants.Description, testconstants.Sku, testconstants.FirmwareVersion, testconstants.HardwareVersion,
 		testconstants.Custom, testconstants.TisOrTrpTestingCompleted, testconstants.Signer)
 

@@ -1,5 +1,5 @@
 [Unit]
-Description=ZB Ledger service
+Description=DC Ledger service
 After=network.target
 StartLimitIntervalSec=0
 
@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=ubuntu
-ExecStart=/usr/bin/zbld start
+ExecStart=/usr/bin/dcld start
 
 [Install]
 WantedBy=multi-user.target

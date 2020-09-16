@@ -1,18 +1,18 @@
-# ZB Ledger
+# Distributed Compliance Ledger
 
 ## Overview
-ZB Ledger is a public permissioned Ledger which can be used for two main use cases:
+DC Ledger is a public permissioned Ledger which can be used for two main use cases:
  - ZB compliance certification of device models
  - Public key infrastructure (PKI)
  
-More information about use cases can be found in [ZB Ledger Overview](docs/ZB_Ledger_overview.pdf) and [Use Case Diagrams](docs/use_cases).
+More information about use cases can be found in [DC Ledger Overview](docs/ZB_Ledger_overview.pdf) and [Use Case Diagrams](docs/use_cases).
 
-ZB Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](https://cosmos.network/sdk).
+DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](https://cosmos.network/sdk).
 
 #### Main Components
 The ledger consists of
  - A pool of Tendermint-based validator nodes maintaining the ledger.
-  Every validator node runs ZB Ledger application code (based on Cosmos SDK) implementing the use cases.
+  Every validator node runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
  - The client to be used for interactions with the pool (sending write and read requests).
  The following clients are supported: 
     - CLI to communicate with the pool (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)).
@@ -21,7 +21,7 @@ The ledger consists of
      (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)). 
     The REST API is based on the Cosmos SDK. See [REST Usage](#rest-usage) section for details.
     - Tendermint's Light Client can be used for a direct communication on API level. 
-    There are currently no ZB Ledger specific API libraries for various platforms and languages, 
+    There are currently no DC Ledger specific API libraries for various platforms and languages, 
     but they may be provided in future.
     These libraries can be based on the following Light Client implementations: 
         - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)
@@ -35,7 +35,7 @@ The ledger consists of
     - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
 
 #### Public Permissioned Ledger
-ZB Ledger is a public permissioned ledger in the following sense:
+DC Ledger is a public permissioned ledger in the following sense:
  - Anyone can read from the ledger (that's why it's public). See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
 -  Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 In order to send write transactions to the ledger you need: 
@@ -64,7 +64,7 @@ Sending read requests to the Ledger doesn't require an Account (Ledger is public
 
 #### REST Usage
 A REST API server is a CLI run in a REST mode: 
-`zblcli rest-server --chain-id <chain_id>`.
+`dclcli rest-server --chain-id <chain_id>`.
  
 Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
 
@@ -84,35 +84,45 @@ After the CLI or REST API is configured and Account with an appropriate role is 
 the following instructions from [how-to.md](docs/how-to.md) can be used for every role 
 (see [Use Case Diagrams](docs/use_cases)):
 - [Trustee](docs/how-to.md#trustee-instructions) 
-    - create new accounts
-    - assign roles to the account
-    - revoke roles from the account
+    - propose new accounts
+    - approve new accounts
+    - propose revocation of accounts
+    - approve revocation of accounts
+    - propose X509 root certificates    
+    - approve X509 root certificates
+    - propose revocation of X509 root certificates
+    - approve revocation of X509 root certificates
     - publish X509 certificates
-    - assign a role to the account    
+    - revoke X509 certificates    
 - [CA](docs/how-to.md#ca-instructions)
     - propose X509 root certificates
     - publish X509 certificates    
+    - revoke X509 certificates
 - [Vendor](docs/how-to.md#vendor-instructions) 
     - publish device model info
     - publish X509 certificates
+    - revoke X509 certificates    
 - [Test House](docs/how-to.md#test-house-instructions) 
     - publish compliance test results
     - publish X509 certificates
+    - revoke X509 root certificates    
 - [ZB Certification Center](docs/how-to.md#certification-center-instructions)
     - certify or revoke certification of device models
     - publish X509 certificates
+    - revoke X509 certificates    
 - [Node Admin](docs/how-to.md#node-admin-instructions-setting-up-a-new-validator-node) 
     - add a new Validator node
     - publish X509 certificates
+    - revoke X509 certificates    
 
 #### Build and run the app locally
 - To build and run, follow the [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial/22-build-run.md).
-Use __zbld__, __zblcli__ instead of __nsd__, __nscli__.
+Use __dcld__, __dclcli__ instead of __nsd__, __nscli__.
 - To start localnet using docker-compose run `make install && make localnet_init && make localnet_start`
   - 4 nodes will be started and will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26662`
 - To stop localnet run `make localnet_stop`
 #### Deploy a pool of validator nodes 
-One can either deploy its own pool of validator nodes or join the ZB Ledger Network 
+One can either deploy its own pool of validator nodes or join the DC Ledger Network 
 (currently the network is in a Demo mode).
 
 Read more about deployment in [ansible/readme.md](ansible/README.md)
@@ -125,7 +135,7 @@ and [Running a Validator Node](docs/running-node.md).
     - [Device off-ledger certification](docs/use_cases/use_cases_device_off_ledger_certification.png)
     - [Auth](docs/use_cases/use_cases_txn_auth.png)
     - [Validators](docs/use_cases/use_cases_add_validator_node.png)
-- [ZB Ledger Overview](docs/ZB_Ledger_overview.pdf)
+- [DC Ledger Overview](docs/ZB_Ledger_overview.pdf)
 - [List of Transactions](docs/transactions.md)
 - [How To Guide](docs/how-to.md)
 - [CLI Help](docs/cli-help.md)

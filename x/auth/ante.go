@@ -1,14 +1,28 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package auth
 
 import (
 	"fmt"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
 	"github.com/tendermint/tendermint/crypto/secp256k1"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/types"
 )
 
 // SignatureVerificationGasConsumer is the type of function that is used to both consume gas when verifying signatures
@@ -28,6 +42,7 @@ func NewAnteHandler(ak Keeper, sigGasConsumer SignatureVerificationGasConsumer) 
 			// Set a gas meter with limit 0 as to prevent an infinite gas meter attack
 			// during runTx.
 			newCtx = SetGasMeter(simulate, ctx, 0)
+
 			return newCtx, sdk.ErrInternal("tx must be StdTx").Result(), true
 		}
 
@@ -60,7 +75,7 @@ func NewAnteHandler(ak Keeper, sigGasConsumer SignatureVerificationGasConsumer) 
 			return newCtx, err.Result(), true
 		}
 
-		newCtx.GasMeter().ConsumeGas(types.DefaultTxSizeCostPerByte*sdk.Gas(len(newCtx.TxBytes())), "txSize")
+		newCtx.GasMeter().ConsumeGas(types.TxSizeCostPerByte*sdk.Gas(len(newCtx.TxBytes())), "txSize")
 
 		if res := ValidateMemo(stdTx); !res.IsOK() {
 			return newCtx, res, true
@@ -107,11 +122,11 @@ func GetSignerAcc(ctx sdk.Context, keeper Keeper, address sdk.AccAddress) (acc t
 // ValidateMemo validates the memo size.
 func ValidateMemo(stdTx auth.StdTx) sdk.Result {
 	memoLength := len(stdTx.GetMemo())
-	if uint64(memoLength) > types.DefaultMaxMemoCharacters {
+	if uint64(memoLength) > types.MaxMemoCharacters {
 		return sdk.ErrMemoTooLarge(
 			fmt.Sprintf(
 				"maximum number of characters is %d but received %d characters",
-				types.DefaultMaxMemoCharacters, memoLength,
+				types.MaxMemoCharacters, memoLength,
 			),
 		).Result()
 	}
@@ -145,10 +160,12 @@ func DefaultSigVerificationGasConsumer(meter sdk.GasMeter, pubkey crypto.PubKey)
 	switch pubkey := pubkey.(type) {
 	case ed25519.PubKeyEd25519:
 		meter.ConsumeGas(types.DefaultSigVerifyCostED25519, "ante verify: ed25519")
+
 		return sdk.ErrInvalidPubKey("ED25519 public keys are unsupported").Result()
 
 	case secp256k1.PubKeySecp256k1:
 		meter.ConsumeGas(types.DefaultSigVerifyCostSecp256k1, "ante verify: secp256k1")
+
 		return sdk.Result{}
 
 	default:

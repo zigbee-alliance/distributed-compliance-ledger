@@ -1,19 +1,30 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package genutil
 
-//nolint:goimports
 import (
 	"encoding/json"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/types"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 )
 
 // ValidateAccountInGenesis checks that the provided key has sufficient
@@ -37,8 +48,10 @@ func ValidateAccountInGenesis(appGenesisState map[string]json.RawMessage,
 	IterateGenesisAccounts(cdc, appGenesisState, func(acc auth.Account) (stop bool) {
 		if acc.Address.Equals(key) {
 			accountIsInGenesis = true
+
 			return true
 		}
+
 		return false
 	})
 

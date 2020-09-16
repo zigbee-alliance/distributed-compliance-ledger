@@ -1,17 +1,28 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package rest
 
-//nolint:goimports
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"net/http"
 	"strconv"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/cosmos/cosmos-sdk/client/context"
-
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/rest"
+	"github.com/cosmos/cosmos-sdk/client/rpc"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
 )
 
 func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
@@ -22,6 +33,7 @@ func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+
 			return
 		}
 
@@ -38,6 +50,7 @@ func BlocksHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		res, err := restCtx.BlockchainInfo(minHeight, maxHeight)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound, err.Error())
+
 			return
 		}
 
@@ -53,6 +66,7 @@ func NodeStatusHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+
 			return
 		}
 
@@ -78,6 +92,7 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest,
 				sdk.AppendMsgToErr("could not parse query parameters", err.Error()))
+
 			return
 		}
 
@@ -87,6 +102,7 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			height_, err = strconv.ParseInt(h, 10, 64)
 			if err != nil {
 				restCtx.WriteErrorResponse(http.StatusBadRequest, "Invalid height: it must be integer")
+
 				return
 			}
 		}
@@ -94,12 +110,14 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		chainHeight, err := restCtx.GetChainHeight()
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err.Error())
+
 			return
 		}
 
 		if height_ > chainHeight {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
 				fmt.Sprintf("Invalid height: It must not be bigger then the chain height: \"%v\"", chainHeight))
+
 			return
 		}
 
@@ -110,6 +128,7 @@ func ValidatorSetRequestHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 		output, err := rpc.GetValidators(cliCtx, &height_)
 		if err != nil {
 			restCtx.WriteErrorResponse(http.StatusInternalServerError, err.Error())
+
 			return
 		}
 

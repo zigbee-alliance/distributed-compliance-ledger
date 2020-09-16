@@ -1,20 +1,26 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package main
 
-//nolint:goimports
 import (
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
-	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/tendermint/go-amino"
 	"os"
 	"path"
 
-	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
-	keyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/key/rest"
-	proxyUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/proxy/rest"
-	txUtils "git.dsr-corporation.com/zb-ledger/zb-ledger/restext/tx/rest"
-
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/client/lcd"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
@@ -24,7 +30,13 @@ import (
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/tendermint/go-amino"
 	"github.com/tendermint/tendermint/libs/cli"
+	app "github.com/zigbee-alliance/distributed-compliance-ledger"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/cmd/settings"
+	keyUtils "github.com/zigbee-alliance/distributed-compliance-ledger/restext/key/rest"
+	proxyUtils "github.com/zigbee-alliance/distributed-compliance-ledger/restext/proxy/rest"
+	txUtils "github.com/zigbee-alliance/distributed-compliance-ledger/restext/tx/rest"
 )
 
 func main() {
@@ -40,8 +52,8 @@ func main() {
 	config.Seal()
 
 	rootCmd := &cobra.Command{
-		Use:   "zblcli",
-		Short: "ZbLedger Client",
+		Use:   "dclcli",
+		Short: "DcLedger Client",
 	}
 
 	// Add --chain-id to persistent flags and mark it required

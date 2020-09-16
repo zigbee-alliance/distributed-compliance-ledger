@@ -1,23 +1,35 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package main
 
-//nolint:goimports
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/cmd/settings"
-	genutilcli "git.dsr-corporation.com/zb-ledger/zb-ledger/x/genutil/client/cli"
 	"io"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/server"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
-
-	app "git.dsr-corporation.com/zb-ledger/zb-ledger"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
+	app "github.com/zigbee-alliance/distributed-compliance-ledger"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/cmd/settings"
+	genutilcli "github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil/client/cli"
 )
 
 func main() {
@@ -34,8 +46,8 @@ func main() {
 	ctx := server.NewDefaultContext()
 
 	rootCmd := &cobra.Command{
-		Use:               "zbld",
-		Short:             "ZbLedger App Daemon (server)",
+		Use:               "dcld",
+		Short:             "DcLedger App Daemon (server)",
 		PersistentPreRunE: server.PersistentPreRunEFn(ctx),
 	}
 	// CLI commands to initialize the chain
@@ -62,13 +74,13 @@ func main() {
 }
 
 func newApp(logger log.Logger, db dbm.DB, traceStore io.Writer) abci.Application {
-	return app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
+	return app.NewDcLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 }
 
 func exportAppStateAndTMValidators(logger log.Logger, db dbm.DB, traceStore io.Writer,
 	height int64, forZeroHeight bool, jailWhiteList []string) (json.RawMessage, []tmtypes.GenesisValidator, error) {
 	if height != -1 {
-		nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
+		nsApp := app.NewDcLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 
 		err := nsApp.LoadHeight(height)
 		if err != nil {
@@ -78,7 +90,7 @@ func exportAppStateAndTMValidators(logger log.Logger, db dbm.DB, traceStore io.W
 		return nsApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 	}
 
-	nsApp := app.NewZbLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
+	nsApp := app.NewDcLedgerApp(logger, db, baseapp.SetPruning(settings.PruningStrategy))
 
 	return nsApp.ExportAppStateAndValidators(forZeroHeight, jailWhiteList)
 }

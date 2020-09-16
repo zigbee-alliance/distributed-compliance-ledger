@@ -1,5 +1,5 @@
 [Unit]
-Description=ZB Ledger client service
+Description=DC Ledger client service
 After=network.target
 StartLimitIntervalSec=0
 
@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=ubuntu
-ExecStart=/usr/bin/zblcli rest-server
+ExecStart=/usr/bin/dclcli rest-server
 
 [Install]
 WantedBy=multi-user.target

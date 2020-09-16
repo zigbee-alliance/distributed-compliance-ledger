@@ -1,13 +1,26 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
-	abci "github.com/tendermint/tendermint/abci/types"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
 // query endpoints supported by the validator Querier.
@@ -42,6 +55,7 @@ func queryValidators(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res
 
 	keeper.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		// filter by validator state
+		// nolint:exhaustive
 		switch params.State {
 		case types.Active:
 			if validator.IsJailed() {
@@ -57,11 +71,13 @@ func queryValidators(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res
 
 		if skipped < params.Skip {
 			skipped++
+
 			return false
 		}
 
 		if len(result.Items) < params.Take || params.Take == 0 {
 			result.Items = append(result.Items, validator)
+
 			return false
 		}
 

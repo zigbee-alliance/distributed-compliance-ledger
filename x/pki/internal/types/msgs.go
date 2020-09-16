@@ -1,3 +1,17 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package types
 
 import (
@@ -142,5 +156,157 @@ func (m MsgAddX509Cert) GetSignBytes() []byte {
 }
 
 func (m MsgAddX509Cert) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Signer}
+}
+
+/*
+	PROPOSE_REVOKE_X509_ROOT_CERT
+*/
+
+type MsgProposeRevokeX509RootCert struct {
+	Subject      string         `json:"subject"`
+	SubjectKeyID string         `json:"subject_key_id"`
+	Signer       sdk.AccAddress `json:"signer"`
+}
+
+func NewMsgProposeRevokeX509RootCert(subject string, subjectKeyID string,
+	signer sdk.AccAddress) MsgProposeRevokeX509RootCert {
+	return MsgProposeRevokeX509RootCert{
+		Subject:      subject,
+		SubjectKeyID: subjectKeyID,
+		Signer:       signer,
+	}
+}
+
+func (m MsgProposeRevokeX509RootCert) Route() string {
+	return RouterKey
+}
+
+func (m MsgProposeRevokeX509RootCert) Type() string {
+	return "propose_revoke_x509_root_cert"
+}
+
+func (m MsgProposeRevokeX509RootCert) ValidateBasic() sdk.Error {
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
+	}
+
+	if len(m.Subject) == 0 {
+		return sdk.ErrUnknownRequest("Invalid Subject: it cannot be empty")
+	}
+
+	if len(m.SubjectKeyID) == 0 {
+		return sdk.ErrUnknownRequest("Invalid SubjectKeyID: it cannot be empty")
+	}
+
+	return nil
+}
+
+func (m MsgProposeRevokeX509RootCert) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
+}
+
+func (m MsgProposeRevokeX509RootCert) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Signer}
+}
+
+/*
+	APPROVE_REVOKE_X509_ROOT_CERT
+*/
+
+type MsgApproveRevokeX509RootCert struct {
+	Subject      string         `json:"subject"`
+	SubjectKeyID string         `json:"subject_key_id"`
+	Signer       sdk.AccAddress `json:"signer"`
+}
+
+func NewMsgApproveRevokeX509RootCert(subject string, subjectKeyID string,
+	signer sdk.AccAddress) MsgApproveRevokeX509RootCert {
+	return MsgApproveRevokeX509RootCert{
+		Subject:      subject,
+		SubjectKeyID: subjectKeyID,
+		Signer:       signer,
+	}
+}
+
+func (m MsgApproveRevokeX509RootCert) Route() string {
+	return RouterKey
+}
+
+func (m MsgApproveRevokeX509RootCert) Type() string {
+	return "approve_revoke_x509_root_cert"
+}
+
+func (m MsgApproveRevokeX509RootCert) ValidateBasic() sdk.Error {
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
+	}
+
+	if len(m.Subject) == 0 {
+		return sdk.ErrUnknownRequest("Invalid Subject: it cannot be empty")
+	}
+
+	if len(m.SubjectKeyID) == 0 {
+		return sdk.ErrUnknownRequest("Invalid SubjectKeyID: it cannot be empty")
+	}
+
+	return nil
+}
+
+func (m MsgApproveRevokeX509RootCert) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
+}
+
+func (m MsgApproveRevokeX509RootCert) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{m.Signer}
+}
+
+/*
+	REVOKE_X509_CERT
+*/
+
+type MsgRevokeX509Cert struct {
+	Subject      string         `json:"subject"`
+	SubjectKeyID string         `json:"subject_key_id"`
+	Signer       sdk.AccAddress `json:"signer"`
+}
+
+func NewMsgRevokeX509Cert(subject string, subjectKeyID string, signer sdk.AccAddress) MsgRevokeX509Cert {
+	return MsgRevokeX509Cert{
+		Subject:      subject,
+		SubjectKeyID: subjectKeyID,
+		Signer:       signer,
+	}
+}
+
+func (m MsgRevokeX509Cert) Route() string {
+	return RouterKey
+}
+
+func (m MsgRevokeX509Cert) Type() string {
+	return "revoke_x509_cert"
+}
+
+func (m MsgRevokeX509Cert) ValidateBasic() sdk.Error {
+	if m.Signer.Empty() {
+		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
+	}
+
+	if len(m.Subject) == 0 {
+		return sdk.ErrUnknownRequest("Invalid Subject: it cannot be empty")
+	}
+
+	if len(m.SubjectKeyID) == 0 {
+		return sdk.ErrUnknownRequest("Invalid SubjectKeyID: it cannot be empty")
+	}
+
+	return nil
+}
+
+func (m MsgRevokeX509Cert) GetSignBytes() []byte {
+	return sdk.MustSortJSON(ModuleCdc.MustMarshalJSON(m))
+}
+
+func (m MsgRevokeX509Cert) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
 }

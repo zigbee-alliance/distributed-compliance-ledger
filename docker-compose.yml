@@ -1,53 +1,71 @@
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 version: '3.2'
 
 services:
   node0:
+    image: dcledger
     build: .
     container_name: node0
     ports:
       - "26656-26657:26656-26657"
     volumes:
-      - ./localnet/node0:/root/.zbld:Z
+      - ./localnet/node0:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.2
-    command: zbld start
+    command: dcld start
 
   node1:
+    image: dcledger
     build: .
     container_name: node1
     ports:
       - "26658-26659:26656-26657"
     volumes:
-      - ./localnet/node1:/root/.zbld:Z
+      - ./localnet/node1:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.3
-    command: zbld start
+    command: dcld start
 
   node2:
+    image: dcledger
     build: .
     container_name: node2
     ports:
       - "26660-26661:26656-26657"
     volumes:
-      - ./localnet/node2:/root/.zbld:Z
+      - ./localnet/node2:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.4
-    command: zbld start
+    command: dcld start
 
   node3:
+    image: dcledger
     build: .
     container_name: node3
     ports:
       - "26662-26663:26656-26657"
     volumes:
-      - ./localnet/node3:/root/.zbld:Z
+      - ./localnet/node3:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.5
-    command: zbld start
+    command: dcld start
 
 networks:
   localnet:
@@ -55,5 +73,4 @@ networks:
     ipam:
       driver: default
       config:
-        -
-          subnet: 192.167.10.0/16
+        - subnet: 192.167.10.0/16

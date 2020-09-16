@@ -1,13 +1,27 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package x509
 
-// nolint:goimports
 import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/pki/internal/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"strings"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
 )
 
 type X509Certificate struct {
@@ -55,9 +69,9 @@ func BytesToHex(bytes []byte) string {
 	return strings.Join(bytesHex, ":")
 }
 
-func (c X509Certificate) VerifyX509Certificate(parent *x509.Certificate) sdk.Error {
+func (c X509Certificate) Verify(parent *X509Certificate) sdk.Error {
 	roots := x509.NewCertPool()
-	roots.AddCert(parent)
+	roots.AddCert(parent.Certificate)
 
 	opts := x509.VerifyOptions{Roots: roots}
 
@@ -68,10 +82,10 @@ func (c X509Certificate) VerifyX509Certificate(parent *x509.Certificate) sdk.Err
 	return nil
 }
 
-func (c X509Certificate) IsRootCertificate() bool {
+func (c X509Certificate) IsSelfSigned() bool {
 	if len(c.AuthorityKeyID) > 0 {
-		return c.Subject == c.Issuer && c.AuthorityKeyID == c.SubjectKeyID
+		return c.Issuer == c.Subject && c.AuthorityKeyID == c.SubjectKeyID
 	} else {
-		return c.Subject == c.Issuer
+		return c.Issuer == c.Subject
 	}
 }

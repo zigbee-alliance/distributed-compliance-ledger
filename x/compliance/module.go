@@ -1,22 +1,34 @@
+// Copyright 2020 DSR Corporation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package compliance
 
-//nolint:goimports
 import (
 	"encoding/json"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/cli"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliance/client/rest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/compliancetest"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/modelinfo"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/client/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/client/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 )
 
 // type check to ensure the interface is properly implemented.
@@ -95,6 +107,7 @@ func (a AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.Val
 
 func (a AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
 	gs := ExportGenesis(ctx, a.keeper)
+
 	return ModuleCdc.MustMarshalJSON(gs)
 }
 
