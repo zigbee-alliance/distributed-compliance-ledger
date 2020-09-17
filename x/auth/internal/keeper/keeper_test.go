@@ -150,3 +150,104 @@ func TestKeeper_AccountNumber(t *testing.T) {
 		require.Equal(t, i, setup.Keeper.GetNextAccountNumber(setup.Ctx))
 	}
 }
+
+func TestKeeper_AccountsTotalCounter(t *testing.T) {
+	setup := Setup()
+
+	// total accounts is 0
+	require.Equal(t, uint64(0), setup.Keeper.GetCounterValue(setup.Ctx, types.AccountsTotalKey))
+
+	// set non existing account
+	account1 := types.NewAccount(testconstants.Address1, testconstants.PubKey1, types.AccountRoles{types.Trustee})
+	setup.Keeper.SetAccount(setup.Ctx, account1)
+
+	// total accounts is 1
+	require.Equal(t, uint64(1), setup.Keeper.GetCounterValue(setup.Ctx, types.AccountsTotalKey))
+
+	// set non existing account
+	account2 := types.NewAccount(testconstants.Address2, testconstants.PubKey2, types.AccountRoles{types.TestHouse})
+	setup.Keeper.SetAccount(setup.Ctx, account2)
+
+	// total accounts is 2
+	require.Equal(t, uint64(2), setup.Keeper.GetCounterValue(setup.Ctx, types.AccountsTotalKey))
+
+	// set existing account
+	setup.Keeper.SetAccount(setup.Ctx, account1)
+
+	// total accounts is still 2
+	require.Equal(t, uint64(2), setup.Keeper.GetCounterValue(setup.Ctx, types.AccountsTotalKey))
+
+	// remove existing account
+	setup.Keeper.DeleteAccount(setup.Ctx, account1.Address)
+
+	// total accounts is 1
+	require.Equal(t, uint64(1), setup.Keeper.GetCounterValue(setup.Ctx, types.AccountsTotalKey))
+}
+
+func TestKeeper_PendingAccountsTotalCounter(t *testing.T) {
+	setup := Setup()
+
+	// total pending accounts is 0
+	require.Equal(t, uint64(0), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountsTotalKey))
+
+	// set non existing pending account
+	account1 := types.NewPendingAccount(testconstants.Address1,
+		testconstants.PubKey1, types.AccountRoles{types.Trustee}, nil)
+	setup.Keeper.SetPendingAccount(setup.Ctx, account1)
+
+	// total pending accounts is 1
+	require.Equal(t, uint64(1), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountsTotalKey))
+
+	// set non existing pending account
+	account2 := types.NewPendingAccount(testconstants.Address2,
+		testconstants.PubKey2, types.AccountRoles{types.TestHouse}, nil)
+	setup.Keeper.SetPendingAccount(setup.Ctx, account2)
+
+	// total pending accounts is 2
+	require.Equal(t, uint64(2), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountsTotalKey))
+
+	// set existing pending account
+	setup.Keeper.SetPendingAccount(setup.Ctx, account1)
+
+	// total pending accounts is still 2
+	require.Equal(t, uint64(2), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountsTotalKey))
+
+	// remove existing pending account
+	setup.Keeper.DeletePendingAccount(setup.Ctx, account1.Address)
+
+	// total pending accounts is 1
+	require.Equal(t, uint64(1), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountsTotalKey))
+}
+
+func TestKeeper_PendingAccountRevocationsTotalCounter(t *testing.T) {
+	setup := Setup()
+
+	// total pending account revocations is 0
+	require.Equal(t, uint64(0), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountRevocationsTotalKey))
+
+	// set non existing pending account revocation
+	account1 := types.NewPendingAccountRevocation(testconstants.Address1, nil)
+	setup.Keeper.SetPendingAccountRevocation(setup.Ctx, account1)
+
+	// total pending account revocations is 1
+	require.Equal(t, uint64(1), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountRevocationsTotalKey))
+
+	// set non existing pending account revocation
+	account2 := types.NewPendingAccountRevocation(testconstants.Address2, nil)
+	setup.Keeper.SetPendingAccountRevocation(setup.Ctx, account2)
+
+	// total pending account revocations is 2
+	require.Equal(t, uint64(2), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountRevocationsTotalKey))
+
+	// set existing pending account revocation
+	setup.Keeper.SetPendingAccountRevocation(setup.Ctx, account1)
+
+	// total pending account revocations is still 2
+	require.Equal(t, uint64(2), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountRevocationsTotalKey))
+
+	// remove existing pending account revocation
+	setup.Keeper.DeletePendingAccountRevocation(setup.Ctx, account1.Address)
+
+	// total pending account revocations is 1
+	require.Equal(t, uint64(1), setup.Keeper.GetCounterValue(setup.Ctx, types.PendingAccountRevocationsTotalKey))
+}

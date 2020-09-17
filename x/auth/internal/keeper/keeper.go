@@ -68,6 +68,11 @@ func (k Keeper) GetAllAccounts(ctx sdk.Context) (accounts []types.Account) {
 func (k Keeper) SetAccount(ctx sdk.Context, acc types.Account) {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryBare(acc)
+
+	if !k.IsAccountPresent(ctx, acc.Address) {
+		k.increaseCounterValue(ctx, types.AccountsTotalKey, 1)
+	}
+
 	store.Set(types.GetAccountKey(acc.Address), bz)
 }
 
@@ -142,6 +147,8 @@ func (k Keeper) DeleteAccount(ctx sdk.Context, address sdk.AccAddress) {
 		panic("Account does not exist")
 	}
 
+	k.decreaseCounterValue(ctx, types.AccountsTotalKey, 1)
+
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GetAccountKey(address))
 }
@@ -168,6 +175,11 @@ func (k Keeper) GetPendingAccount(ctx sdk.Context, address sdk.AccAddress) types
 // Sets Pending Account record for an address.
 func (k Keeper) SetPendingAccount(ctx sdk.Context, pendAcc types.PendingAccount) {
 	store := ctx.KVStore(k.storeKey)
+
+	if !k.IsPendingAccountPresent(ctx, pendAcc.Address) {
+		k.increaseCounterValue(ctx, types.PendingAccountsTotalKey, 1)
+	}
+
 	store.Set(types.GetPendingAccountKey(pendAcc.Address), k.cdc.MustMarshalBinaryBare(pendAcc))
 }
 
@@ -210,6 +222,8 @@ func (k Keeper) DeletePendingAccount(ctx sdk.Context, address sdk.AccAddress) {
 		panic("Pending Account does not exist")
 	}
 
+	k.decreaseCounterValue(ctx, types.PendingAccountsTotalKey, 1)
+
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GetPendingAccountKey(address))
 }
@@ -236,6 +250,11 @@ func (k Keeper) GetPendingAccountRevocation(ctx sdk.Context, address sdk.AccAddr
 // Sets Pending Account Revocation record for an address.
 func (k Keeper) SetPendingAccountRevocation(ctx sdk.Context, revoc types.PendingAccountRevocation) {
 	store := ctx.KVStore(k.storeKey)
+
+	if !k.IsPendingAccountRevocationPresent(ctx, revoc.Address) {
+		k.increaseCounterValue(ctx, types.PendingAccountRevocationsTotalKey, 1)
+	}
+
 	store.Set(types.GetPendingAccountRevocationKey(revoc.Address), k.cdc.MustMarshalBinaryBare(revoc))
 }
 
@@ -279,6 +298,8 @@ func (k Keeper) DeletePendingAccountRevocation(ctx sdk.Context, address sdk.AccA
 		panic("Pending Account Revocation does not exist")
 	}
 
+	k.decreaseCounterValue(ctx, types.PendingAccountRevocationsTotalKey, 1)
+
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(types.GetPendingAccountRevocationKey(address))
 }
@@ -300,4 +321,35 @@ func (k Keeper) GetNextAccountNumber(ctx sdk.Context) (accNumber uint64) {
 	store.Set(types.AccountNumberCounterKey, bz)
 
 	return
+}
+
+/*
+	Total records counter
+*/
+func (k Keeper) GetCounterValue(ctx sdk.Context, key []byte) (value uint64) {
+	store := ctx.KVStore(k.storeKey)
+	bytes := store.Get(key)
+
+	if bytes == nil {
+		value = 0
+	} else {
+		k.cdc.MustUnmarshalBinaryLengthPrefixed(bytes, &value)
+	}
+
+	return
+}
+
+func (k Keeper) setCounterValue(ctx sdk.Context, key []byte, value uint64) {
+	store := ctx.KVStore(k.storeKey)
+
+	bytes := k.cdc.MustMarshalBinaryLengthPrefixed(value)
+	store.Set(key, bytes)
+}
+
+func (k Keeper) increaseCounterValue(ctx sdk.Context, key []byte, delta uint64) {
+	k.setCounterValue(ctx, key, k.GetCounterValue(ctx, key)+delta)
+}
+
+func (k Keeper) decreaseCounterValue(ctx sdk.Context, key []byte, delta uint64) {
+	k.setCounterValue(ctx, key, k.GetCounterValue(ctx, key)-delta)
 }

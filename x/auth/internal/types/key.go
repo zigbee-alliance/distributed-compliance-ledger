@@ -29,6 +29,11 @@ var (
 	AccountPrefix                  = []byte{0x02} // prefix for each key to an account
 	PendingAccountRevocationPrefix = []byte{0x03} // prefix for each key to a pending account revocation
 
+	PendingAccountsTotalKey           = []byte{0x11} // key for a total number of pending accounts
+	AccountsTotalKey                  = []byte{0x12} // key for a total number of accounts
+	PendingAccountRevocationsTotalKey = []byte{0x13} // key for a total number of pending account revocations
+
+	// Only increases in contrast to total.
 	AccountNumberCounterKey = []byte("globalAccountNumber") // key for account number counter
 )
 
