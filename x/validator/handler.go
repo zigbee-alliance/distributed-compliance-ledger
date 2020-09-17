@@ -18,12 +18,9 @@ import (
 	"fmt"
 	"strings"
 
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/utils/string"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/auth"
-	"git.dsr-corporation.com/zb-ledger/zb-ledger/x/validator/internal/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/functions"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/string"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
