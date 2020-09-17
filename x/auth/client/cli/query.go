@@ -145,6 +145,7 @@ func GetCmdAccountsWithProof(storeKey string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
+	// nolint:godox
 	// TODO
 	pagination.AddPaginationParams(cmd)
 
