@@ -44,6 +44,10 @@ func SendPatchRequest(uri string, body []byte, account string, passphrase string
 	return sendRequest(uri, "PATCH", body, account, passphrase)
 }
 
+func SendDeleteRequest(uri string, body []byte, account string, passphrase string) ([]byte, int) {
+	return sendRequest(uri, "DELETE", body, account, passphrase)
+}
+
 func sendRequest(uri string, method string, body []byte, account string, passphrase string) ([]byte, int) {
 	if len(account) == 0 {
 		passphrase = ""

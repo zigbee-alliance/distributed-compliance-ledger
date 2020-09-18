@@ -22,6 +22,7 @@ import (
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	constants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/internal/types"
@@ -58,7 +59,7 @@ func TestHandler_ProposeAddX509RootCert_ByNotTrustee(t *testing.T) {
 			constants.RootIssuer, constants.RootSerialNumber))
 
 		// try to query approved certificate
-		_, err := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+		_, err := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 		require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
 
 		// cleanup for next iteration
@@ -91,7 +92,7 @@ func TestHandler_ProposeAddX509RootCert_ByTrustee(t *testing.T) {
 		constants.RootIssuer, constants.RootSerialNumber))
 
 	// query approved certificate
-	_, err := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	_, err := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
 }
 
@@ -160,7 +161,7 @@ func TestHandler_ProposeAddX509RootCert_ForDifferentSerialNumber(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// check
-	certificate, _ := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	certificate, _ := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.True(t, certificate.IsRoot)
 	require.Equal(t, constants.RootIssuer, certificate.Subject)
 	require.Equal(t, SerialNumber, certificate.SerialNumber)
@@ -211,7 +212,7 @@ func TestHandler_ApproveAddX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	require.Equal(t, []sdk.AccAddress{setup.Trustee}, proposedCertificate.Approvals)
 
 	// query approved certificate
-	_, err := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	_, err := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
 }
 
@@ -238,7 +239,7 @@ func TestHandler_ApproveAddX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, types.CodeProposedCertificateDoesNotExist, err.Code())
 
 	// query approved certificate
-	approvedCertificate, _ := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	approvedCertificate, _ := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, proposeAddX509RootCert.Cert, approvedCertificate.PemCert)
 	require.Equal(t, proposeAddX509RootCert.Signer, approvedCertificate.Owner)
 	require.Equal(t, constants.RootSubject, approvedCertificate.Subject)
@@ -327,7 +328,7 @@ func TestHandler_AddX509Cert(t *testing.T) {
 		require.Equal(t, sdk.CodeOK, result.Code)
 
 		// query certificate
-		certificate, _ := querySingleCertificate(&setup,
+		certificate, _ := querySingleApprovedCertificate(&setup,
 			constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
 
 		// check
@@ -424,7 +425,7 @@ func TestHandler_AddX509Cert_ForDifferentSerialNumber(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query certificate
-	certificates, _ := queryCertificates(&setup, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
+	certificates, _ := queryApprovedCertificates(&setup, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
 
 	// check
 	require.Equal(t, 2, len(certificates.Items))
@@ -516,7 +517,7 @@ func TestHandler_AddX509Cert_ForTree(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query root certificate
-	rootCertificate, _ := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	rootCertificate, _ := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, constants.RootCertPem, rootCertificate.PemCert)
 
 	// check child certificate identifiers of root certificate
@@ -530,7 +531,7 @@ func TestHandler_AddX509Cert_ForTree(t *testing.T) {
 
 	// query intermediate certificate
 	intermediateCertificate, _ :=
-		querySingleCertificate(&setup, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
+		querySingleApprovedCertificate(&setup, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
 	require.Equal(t, constants.IntermediateCertPem, intermediateCertificate.PemCert)
 
 	// check child certificate identifiers of intermediate certificate
@@ -543,7 +544,7 @@ func TestHandler_AddX509Cert_ForTree(t *testing.T) {
 		intermediateCertChildren.CertIdentifiers[0])
 
 	// query leaf certificate
-	leafCertificate, _ := querySingleCertificate(&setup, constants.LeafSubject, constants.LeafSubjectKeyID)
+	leafCertificate, _ := querySingleApprovedCertificate(&setup, constants.LeafSubject, constants.LeafSubjectKeyID)
 	require.Equal(t, constants.LeafCertPem, leafCertificate.PemCert)
 
 	// check child certificate identifiers of leaf certificate
@@ -595,7 +596,7 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query root certificate
-	rootCertificates, _ := queryCertificates(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	rootCertificates, _ := queryApprovedCertificates(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, 2, len(rootCertificates.Items))
 
 	// check child certificate identifiers of root certificate
@@ -608,7 +609,7 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 		rootCertChildren.CertIdentifiers[0])
 
 	// query intermediate certificate
-	intermediateCertificates, _ := queryCertificates(&setup,
+	intermediateCertificates, _ := queryApprovedCertificates(&setup,
 		constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
 	require.Equal(t, 2, len(intermediateCertificates.Items))
 
@@ -622,7 +623,7 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 		intermediateCertChildren.CertIdentifiers[0])
 
 	// query leaf certificate
-	leafCertificates, _ := queryCertificates(&setup, constants.LeafSubject, constants.LeafSubjectKeyID)
+	leafCertificates, _ := queryApprovedCertificates(&setup, constants.LeafSubject, constants.LeafSubjectKeyID)
 	require.Equal(t, 1, len(leafCertificates.Items))
 
 	// check child certificate identifiers of intermediate certificate
@@ -650,8 +651,8 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 	require.Equal(t, constants.RootSubjectKeyID, proposedRevocation.SubjectKeyID)
 	require.Equal(t, []sdk.AccAddress{setup.Trustee}, proposedRevocation.Approvals)
 
-	// check that approved certificate still exist
-	certificate, _ := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	// check that approved certificate still exists
+	certificate, _ := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.NotNil(t, certificate)
 
 	// check that revoked certificate does not exist
@@ -659,7 +660,8 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 	require.Equal(t, types.CodeRevokedCertificateDoesNotExist, err.Code())
 
 	// check that unique certificate key stays registered
-	setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber)
+	require.True(t,
+		setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber))
 }
 
 func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
@@ -684,8 +686,8 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	require.Equal(t, constants.RootSubjectKeyID, proposedRevocation.SubjectKeyID)
 	require.Equal(t, []sdk.AccAddress{constants.Address1}, proposedRevocation.Approvals)
 
-	// check that approved certificate still exist
-	certificate, _ := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	// check that approved certificate still exists
+	certificate, _ := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.NotNil(t, certificate)
 
 	// check that revoked certificate does not exist
@@ -693,7 +695,8 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	require.Equal(t, types.CodeRevokedCertificateDoesNotExist, err.Code())
 
 	// check that unique certificate key stays registered
-	setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber)
+	require.True(t,
+		setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber))
 }
 
 func TestHandler_ProposeRevokeX509RootCert_ByNotTrustee(t *testing.T) {
@@ -823,16 +826,17 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	require.Equal(t, constants.RootSubjectKeyID, proposedRevocation.SubjectKeyID)
 	require.Equal(t, []sdk.AccAddress{setup.Trustee, constants.Address1}, proposedRevocation.Approvals)
 
-	// check that approved certificate still exist
-	certificate, _ := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	// check that approved certificate still exists
+	certificate, _ := querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.NotNil(t, certificate)
 
 	// check that revoked certificate does not exist
 	_, err := queryRevokedCertificates(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, types.CodeRevokedCertificateDoesNotExist, err.Code())
 
-	// check that unique certificat key stays registered
-	setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber)
+	// check that unique certificate key stays registered
+	require.True(t,
+		setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber))
 }
 
 func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
@@ -848,7 +852,8 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// get certificate for further comparison
-	certificateBeforeRevocation, _ := querySingleCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	certificateBeforeRevocation, _ :=
+		querySingleApprovedCertificate(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.NotNil(t, certificateBeforeRevocation)
 
 	// store second trustee
@@ -866,7 +871,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, types.CodeProposedCertificateRevocationDoesNotExist, err.Code())
 
 	// check that approved certificate does not exist anymore
-	_, err = queryCertificates(&setup, constants.RootSubject, constants.RootSubjectKeyID)
+	_, err = queryApprovedCertificates(&setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
 
 	// query and check revoked certificate
@@ -874,7 +879,8 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, certificateBeforeRevocation, revokedCertificate)
 
 	// check that unique certificate key stays registered
-	setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber)
+	require.True(t,
+		setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx, constants.RootIssuer, constants.RootSerialNumber))
 }
 
 func TestHandler_ApproveRevokeX509RootCert_ByNotTrustee(t *testing.T) {
@@ -967,38 +973,38 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 	result = setup.Handler(setup.Ctx, approveRevokeX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	// check root certificate revocation
-	_, err := queryCertificates(&setup, constants.RootSubject, constants.RootSubjectKeyID)
-	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
+	// check that root, intermediate and leaf certificates have been revoked
+	allRevokedCertificates, _ := queryAllRevokedCertificates(&setup)
+	require.Equal(t, 3, len(allRevokedCertificates.Items))
+	require.Equal(t, constants.IntermediateSubject, allRevokedCertificates.Items[0].Subject)
+	require.Equal(t, constants.IntermediateSubjectKeyID, allRevokedCertificates.Items[0].SubjectKeyID)
+	require.Equal(t, constants.IntermediateCertPem, allRevokedCertificates.Items[0].PemCert)
+	require.Equal(t, constants.LeafSubject, allRevokedCertificates.Items[1].Subject)
+	require.Equal(t, constants.LeafSubjectKeyID, allRevokedCertificates.Items[1].SubjectKeyID)
+	require.Equal(t, constants.LeafCertPem, allRevokedCertificates.Items[1].PemCert)
+	require.Equal(t, constants.RootSubject, allRevokedCertificates.Items[2].Subject)
+	require.Equal(t, constants.RootSubjectKeyID, allRevokedCertificates.Items[2].SubjectKeyID)
+	require.Equal(t, constants.RootCertPem, allRevokedCertificates.Items[2].PemCert)
 
-	revokedRootCertificate, _ := querySingleRevokedCertificate(&setup,
-		constants.RootSubject, constants.RootSubjectKeyID)
-	require.Equal(t, constants.RootCertPem, revokedRootCertificate.PemCert)
+	// check that no certificates stays approved
+	allApprovedCertificates, _ := queryAllApprovedCertificates(&setup)
+	require.Equal(t, 0, len(allApprovedCertificates.Items))
 
+	// check that no proposed certificate revocations exist
+	allProposedCertificateRevocations, _ := queryAllProposedCertificateRevocations(&setup)
+	require.Equal(t, 0, len(allProposedCertificateRevocations.Items))
+
+	// check that no child certificate identifiers are registered for revoked root certificate
 	rootCertChildren := setup.PkiKeeper.GetChildCertificates(setup.Ctx,
 		constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, 0, len(rootCertChildren.CertIdentifiers))
 
-	// check intermediate certificate revocation
-	_, err = queryCertificates(&setup, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
-
-	revokedIntermediateCertificate, _ := querySingleRevokedCertificate(&setup,
-		constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-	require.Equal(t, constants.IntermediateCertPem, revokedIntermediateCertificate.PemCert)
-
+	// check that no child certificate identifiers are registered for revoked intermediate certificate
 	intermediateCertChildren := setup.PkiKeeper.GetChildCertificates(setup.Ctx,
 		constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
 	require.Equal(t, 0, len(intermediateCertChildren.CertIdentifiers))
 
-	// check leaf certificate revocation
-	_, err = queryCertificates(&setup, constants.LeafSubject, constants.LeafSubjectKeyID)
-	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
-
-	revokedLeafCertificate, _ := querySingleRevokedCertificate(&setup,
-		constants.LeafSubject, constants.LeafSubjectKeyID)
-	require.Equal(t, constants.LeafCertPem, revokedLeafCertificate.PemCert)
-
+	// check that no child certificate identifiers are registered for revoked leaf certificate
 	leafCertChildren := setup.PkiKeeper.GetChildCertificates(setup.Ctx,
 		constants.LeafSubject, constants.LeafSubjectKeyID)
 	require.Equal(t, 0, len(leafCertChildren.CertIdentifiers))
@@ -1022,7 +1028,7 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 		require.Equal(t, sdk.CodeOK, result.Code)
 
 		// get certificate for further comparison
-		certificateBeforeRevocation, _ := querySingleCertificate(&setup,
+		certificateBeforeRevocation, _ := querySingleApprovedCertificate(&setup,
 			constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
 		require.NotNil(t, certificateBeforeRevocation)
 
@@ -1032,27 +1038,30 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 		result = setup.Handler(setup.Ctx, revokeX509Cert)
 		require.Equal(t, sdk.CodeOK, result.Code)
 
-		// check that approved certificate does not exist anymore
-		_, err := queryCertificates(&setup, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-		require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
+		// check that intermediate certificate has been revoked
+		allRevokedCertificates, _ := queryAllRevokedCertificates(&setup)
+		require.Equal(t, 1, len(allRevokedCertificates.Items))
+		require.Equal(t, constants.IntermediateSubject, allRevokedCertificates.Items[0].Subject)
+		require.Equal(t, constants.IntermediateSubjectKeyID, allRevokedCertificates.Items[0].SubjectKeyID)
+		require.Equal(t, certificateBeforeRevocation, &allRevokedCertificates.Items[0])
 
-		// query and check revoked certificate
-		revokedCertificate, _ := querySingleRevokedCertificate(&setup,
-			constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-		require.Equal(t, certificateBeforeRevocation, revokedCertificate)
+		// check that root certificate stays approved
+		allApprovedCertificates, _ := queryAllApprovedCertificates(&setup)
+		require.Equal(t, 1, len(allApprovedCertificates.Items))
+		require.Equal(t, constants.IntermediateSubject, allRevokedCertificates.Items[0].Subject)
+		require.Equal(t, constants.IntermediateSubjectKeyID, allRevokedCertificates.Items[0].SubjectKeyID)
 
-		// check that child certificates for issuer do not exist anymore
+		// check that no proposed certificate revocations have been created
+		allProposedCertificateRevocations, _ := queryAllProposedCertificateRevocations(&setup)
+		require.Equal(t, 0, len(allProposedCertificateRevocations.Items))
+
+		// check that child certificate identifiers list of issuer do not exist anymore
 		require.False(t, setup.PkiKeeper.IsChildCertificatesPresent(setup.Ctx,
 			constants.IntermediateIssuer, constants.IntermediateAuthorityKeyID))
 
 		// check that unique certificate key stays registered
-		setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx,
-			constants.IntermediateIssuer, constants.IntermediateSerialNumber)
-
-		// check that no proposed certificate revocation has been created
-		_, err = queryProposedCertificateRevocation(&setup,
-			constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-		require.Equal(t, types.CodeProposedCertificateRevocationDoesNotExist, err.Code())
+		require.True(t, setup.PkiKeeper.IsUniqueCertificateKeyPresent(setup.Ctx,
+			constants.IntermediateIssuer, constants.IntermediateSerialNumber))
 
 		// cleanup for next iteration
 		setup.PkiKeeper.DeleteRevokedCertificates(setup.Ctx,
@@ -1130,33 +1139,37 @@ func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
 	result = setup.Handler(setup.Ctx, revokeX509Cert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	// Check that intermediate certificate identifier has been deleted
-	// from child certificate identifiers of root certificate.
-	// (It must become empty because previously it contained one certificate identifier only).
+	// check that intermediate and leaf certificates have been revoked
+	allRevokedCertificates, _ := queryAllRevokedCertificates(&setup)
+	require.Equal(t, 2, len(allRevokedCertificates.Items))
+	require.Equal(t, constants.IntermediateSubject, allRevokedCertificates.Items[0].Subject)
+	require.Equal(t, constants.IntermediateSubjectKeyID, allRevokedCertificates.Items[0].SubjectKeyID)
+	require.Equal(t, constants.IntermediateCertPem, allRevokedCertificates.Items[0].PemCert)
+	require.Equal(t, constants.LeafSubject, allRevokedCertificates.Items[1].Subject)
+	require.Equal(t, constants.LeafSubjectKeyID, allRevokedCertificates.Items[1].SubjectKeyID)
+	require.Equal(t, constants.LeafCertPem, allRevokedCertificates.Items[1].PemCert)
+
+	// check that root certificate stays approved
+	allApprovedCertificates, _ := queryAllApprovedCertificates(&setup)
+	require.Equal(t, 1, len(allApprovedCertificates.Items))
+	require.Equal(t, constants.RootSubject, allApprovedCertificates.Items[0].Subject)
+	require.Equal(t, constants.RootSubjectKeyID, allApprovedCertificates.Items[0].SubjectKeyID)
+
+	// check that no proposed certificate revocations have been created
+	allProposedCertificateRevocations, _ := queryAllProposedCertificateRevocations(&setup)
+	require.Equal(t, 0, len(allProposedCertificateRevocations.Items))
+
+	// check that no child certificate identifiers are now registered for root certificate
 	rootCertChildren := setup.PkiKeeper.GetChildCertificates(setup.Ctx,
 		constants.RootSubject, constants.RootSubjectKeyID)
 	require.Equal(t, 0, len(rootCertChildren.CertIdentifiers))
 
-	// check intermediate certificate revocation
-	_, err := queryCertificates(&setup, constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
-
-	revokedIntermediateCertificate, _ := querySingleRevokedCertificate(&setup,
-		constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
-	require.Equal(t, constants.IntermediateCertPem, revokedIntermediateCertificate.PemCert)
-
+	// check that no child certificate identifiers are registered for revoked intermediate certificate
 	intermediateCertChildren := setup.PkiKeeper.GetChildCertificates(setup.Ctx,
 		constants.IntermediateSubject, constants.IntermediateSubjectKeyID)
 	require.Equal(t, 0, len(intermediateCertChildren.CertIdentifiers))
 
-	// check leaf certificate revocation
-	_, err = queryCertificates(&setup, constants.LeafSubject, constants.LeafSubjectKeyID)
-	require.Equal(t, types.CodeCertificateDoesNotExist, err.Code())
-
-	revokedLeafCertificate, _ := querySingleRevokedCertificate(&setup,
-		constants.LeafSubject, constants.LeafSubjectKeyID)
-	require.Equal(t, constants.LeafCertPem, revokedLeafCertificate.PemCert)
-
+	// check that no child certificate identifiers are registered for revoked leaf certificate
 	leafCertChildren := setup.PkiKeeper.GetChildCertificates(setup.Ctx,
 		constants.LeafSubject, constants.LeafSubjectKeyID)
 	require.Equal(t, 0, len(leafCertChildren.CertIdentifiers))
@@ -1182,7 +1195,7 @@ func proposeAndApproveRootCertificate(t *testing.T, setup *TestSetup, ownerTrust
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// check that root certificate has been approved
-	approvedCertificate, _ := querySingleCertificate(setup, constants.RootSubject, constants.RootSubjectKeyID)
+	approvedCertificate, _ := querySingleApprovedCertificate(setup, constants.RootSubject, constants.RootSubjectKeyID)
 	require.NotNil(t, approvedCertificate)
 }
 
@@ -1204,8 +1217,26 @@ func queryProposedCertificate(setup *TestSetup, subject string,
 	return &proposedCertificate, nil
 }
 
-func querySingleCertificate(setup *TestSetup, subject string, subjectKeyID string) (*types.Certificate, sdk.Error) {
-	certificates, err := queryCertificates(setup, subject, subjectKeyID)
+func queryAllApprovedCertificates(setup *TestSetup) (*types.ListCertificates, sdk.Error) {
+	// query all certificates
+	result, err := setup.Querier(
+		setup.Ctx,
+		[]string{keeper.QueryAllX509Certs},
+		abci.RequestQuery{Data: emptyParams(setup)},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var certificates types.ListCertificates
+	_ = setup.Cdc.UnmarshalJSON(result, &certificates)
+
+	return &certificates, nil
+}
+
+func querySingleApprovedCertificate(setup *TestSetup,
+	subject string, subjectKeyID string) (*types.Certificate, sdk.Error) {
+	certificates, err := queryApprovedCertificates(setup, subject, subjectKeyID)
 	if err != nil {
 		return nil, err
 	}
@@ -1217,7 +1248,7 @@ func querySingleCertificate(setup *TestSetup, subject string, subjectKeyID strin
 	return &certificates.Items[0], nil
 }
 
-func queryCertificates(setup *TestSetup, subject string, subjectKeyID string) (types.Certificates, sdk.Error) {
+func queryApprovedCertificates(setup *TestSetup, subject string, subjectKeyID string) (*types.Certificates, sdk.Error) {
 	// query certificate
 	result, err := setup.Querier(
 		setup.Ctx,
@@ -1225,13 +1256,30 @@ func queryCertificates(setup *TestSetup, subject string, subjectKeyID string) (t
 		abci.RequestQuery{},
 	)
 	if err != nil {
-		return types.Certificates{}, err
+		return nil, err
 	}
 
 	var certificates types.Certificates
 	_ = setup.Cdc.UnmarshalJSON(result, &certificates)
 
-	return certificates, nil
+	return &certificates, nil
+}
+
+func queryAllProposedCertificateRevocations(setup *TestSetup) (*types.ListProposedCertificateRevocations, sdk.Error) {
+	// query all proposed certificate revocations
+	result, err := setup.Querier(
+		setup.Ctx,
+		[]string{keeper.QueryAllProposedX509RootCertRevocations},
+		abci.RequestQuery{Data: emptyParams(setup)},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var listProposedCertificateRevocations types.ListProposedCertificateRevocations
+	_ = setup.Cdc.UnmarshalJSON(result, &listProposedCertificateRevocations)
+
+	return &listProposedCertificateRevocations, nil
 }
 
 func queryProposedCertificateRevocation(setup *TestSetup, subject string,
@@ -1252,6 +1300,23 @@ func queryProposedCertificateRevocation(setup *TestSetup, subject string,
 	return &proposedCertificateRevocation, nil
 }
 
+func queryAllRevokedCertificates(setup *TestSetup) (*types.ListCertificates, sdk.Error) {
+	// query all revoked certificates
+	result, err := setup.Querier(
+		setup.Ctx,
+		[]string{keeper.QueryAllRevokedX509Certs},
+		abci.RequestQuery{Data: emptyParams(setup)},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var certificates types.ListCertificates
+	_ = setup.Cdc.UnmarshalJSON(result, &certificates)
+
+	return &certificates, nil
+}
+
 func querySingleRevokedCertificate(setup *TestSetup,
 	subject string, subjectKeyID string) (*types.Certificate, sdk.Error) {
 	certificates, err := queryRevokedCertificates(setup, subject, subjectKeyID)
@@ -1266,21 +1331,21 @@ func querySingleRevokedCertificate(setup *TestSetup,
 	return &certificates.Items[0], nil
 }
 
-func queryRevokedCertificates(setup *TestSetup, subject string, subjectKeyID string) (types.Certificates, sdk.Error) {
-	// query certificate
+func queryRevokedCertificates(setup *TestSetup, subject string, subjectKeyID string) (*types.Certificates, sdk.Error) {
+	// query revoked certificate
 	result, err := setup.Querier(
 		setup.Ctx,
 		[]string{keeper.QueryRevokedX509Cert, subject, subjectKeyID},
 		abci.RequestQuery{},
 	)
 	if err != nil {
-		return types.Certificates{}, err
+		return nil, err
 	}
 
 	var certificates types.Certificates
 	_ = setup.Cdc.UnmarshalJSON(result, &certificates)
 
-	return certificates, nil
+	return &certificates, nil
 }
 
 func rootCertificate(address sdk.AccAddress) types.Certificate {
@@ -1305,4 +1370,9 @@ func intermediateCertificate(address sdk.AccAddress) types.Certificate {
 		constants.RootSubjectKeyID,
 		address,
 	)
+}
+
+func emptyParams(setup *TestSetup) []byte {
+	paginationParams := pagination.NewPaginationParams(0, 0)
+	return setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, "", ""))
 }
