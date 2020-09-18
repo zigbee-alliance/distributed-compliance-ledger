@@ -65,7 +65,6 @@ func queryAccount(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) ([]byte
 	return res, nil
 }
 
-// nolint:dupl
 func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	var params pagination.PaginationParams
 	if err := keeper.cdc.UnmarshalJSON(req.Data, &params); err != nil {
@@ -73,14 +72,12 @@ func queryAllAccounts(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (re
 	}
 
 	result := types.ListAccounts{
-		Total: 0,
+		Total: keeper.GetCounterValue(ctx, types.AccountsTotalKey),
 		Items: []types.Account{},
 	}
 	skipped := 0
 
 	keeper.IterateAccounts(ctx, func(account types.Account) (stop bool) {
-		result.Total++
-
 		if skipped < params.Skip {
 			skipped++
 
