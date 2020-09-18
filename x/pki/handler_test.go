@@ -1374,5 +1374,6 @@ func intermediateCertificate(address sdk.AccAddress) types.Certificate {
 
 func emptyParams(setup *TestSetup) []byte {
 	paginationParams := pagination.NewPaginationParams(0, 0)
+
 	return setup.Cdc.MustMarshalJSON(types.NewPkiQueryParams(paginationParams, "", ""))
 }
