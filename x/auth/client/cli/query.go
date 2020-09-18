@@ -15,6 +15,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -22,7 +23,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/bytes"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/keeper"
@@ -70,7 +70,7 @@ func GetCmdAccount(queryRoute string, cdc *codec.Codec) *cobra.Command {
 			cdc.MustUnmarshalBinaryBare(res, &account)
 
 			// the trick to prevent appending of `type` field by cdc
-			out := cdc.MustMarshalJSON(types.ZBAccount(account))
+			out := codec.Cdc.MustMarshalJSON(account)
 
 			return cliCtx.PrintWithHeight(out, height)
 		},
@@ -126,28 +126,17 @@ func GetCmdAccountsWithProof(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			res, height, err := cliCtx.QueryRange(types.AccountPrefix, bytes.CpIncr(types.AccountPrefix), 0, storeKey)
-			if err != nil {
-				return err
+			valueUnmarshaler := func(bytes []byte) json.RawMessage {
+				value := types.Account{}
+				cdc.MustUnmarshalBinaryBare(bytes, &value)
+
+				// the trick to prevent appending of `type` field by cdc
+				return codec.Cdc.MustMarshalJSON(value)
 			}
 
-			var accounts []types.Account
-
-			for _, accBytes := range res.Values {
-				var account types.Account
-				cdc.MustUnmarshalBinaryBare(accBytes, &account)
-				accounts = append(accounts, account)
-			}
-
-			out := cdc.MustMarshalJSON(accounts)
-
-			return cliCtx.PrintWithHeight(out, height)
+			return cliCtx.QueryAllWithProof(storeKey, types.AccountPrefix, types.AccountsTotalKey, valueUnmarshaler)
 		},
 	}
-
-	// nolint:godox
-	// TODO
-	pagination.AddPaginationParams(cmd)
 
 	return cmd
 }

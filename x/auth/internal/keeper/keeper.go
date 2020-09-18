@@ -326,7 +326,7 @@ func (k Keeper) GetNextAccountNumber(ctx sdk.Context) (accNumber uint64) {
 /*
 	Total records counter
 */
-func (k Keeper) GetCounterValue(ctx sdk.Context, key []byte) (value uint64) {
+func (k Keeper) GetCounterValue(ctx sdk.Context, key []byte) (value int) {
 	store := ctx.KVStore(k.storeKey)
 	bytes := store.Get(key)
 
@@ -339,17 +339,17 @@ func (k Keeper) GetCounterValue(ctx sdk.Context, key []byte) (value uint64) {
 	return
 }
 
-func (k Keeper) setCounterValue(ctx sdk.Context, key []byte, value uint64) {
+func (k Keeper) setCounterValue(ctx sdk.Context, key []byte, value int) {
 	store := ctx.KVStore(k.storeKey)
 
 	bytes := k.cdc.MustMarshalBinaryLengthPrefixed(value)
 	store.Set(key, bytes)
 }
 
-func (k Keeper) increaseCounterValue(ctx sdk.Context, key []byte, delta uint64) {
+func (k Keeper) increaseCounterValue(ctx sdk.Context, key []byte, delta int) {
 	k.setCounterValue(ctx, key, k.GetCounterValue(ctx, key)+delta)
 }
 
-func (k Keeper) decreaseCounterValue(ctx sdk.Context, key []byte, delta uint64) {
+func (k Keeper) decreaseCounterValue(ctx sdk.Context, key []byte, delta int) {
 	k.setCounterValue(ctx, key, k.GetCounterValue(ctx, key)-delta)
 }

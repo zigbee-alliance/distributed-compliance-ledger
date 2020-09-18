@@ -30,6 +30,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/bytes"
 )
 
 const (
@@ -47,6 +48,11 @@ func NewReadResult(result json.RawMessage, height int64) ReadResult {
 		Result: result,
 		Height: height,
 	}
+}
+
+type RangeResult struct {
+	Total int               `json:"total"`
+	Items []json.RawMessage `json:"items"`
 }
 
 // Implement fmt.Stringer.
@@ -162,6 +168,48 @@ func (ctx CliContext) QueryList(path string, params interface{}) error {
 	}
 
 	return ctx.PrintWithHeight(res, height)
+}
+
+func (ctx CliContext) QueryAllWithProof(storeKey string,
+	prefix []byte, totalKey []byte, valueUnmarshaler func([]byte) json.RawMessage) error {
+	// Query range (all items)
+	rangeRes, rangeHeight, err := ctx.QueryRange(prefix, bytes.CpIncr(prefix), 0, storeKey)
+	if err != nil {
+		return sdk.ErrInternal(fmt.Sprintf("Could not get data: %s\n", err))
+	}
+
+	// Compare values length with the total number of items at the same height
+	totalRes, totalHeight, err := ctx.context.WithHeight(rangeHeight).QueryStore(totalKey, storeKey)
+	if err != nil {
+		return sdk.ErrInternal(fmt.Sprintf("Could not get data: %s\n", err))
+	}
+
+	if rangeHeight != totalHeight {
+		panic("should not happen")
+	}
+
+	var total int
+	if totalRes == nil {
+		total = 0
+	} else {
+		ctx.Codec().MustUnmarshalBinaryLengthPrefixed(totalRes, &total)
+	}
+
+	if len(rangeRes.Values) != total {
+		return sdk.ErrInternal(fmt.Sprintf("Response length doesn't match value stored in totoal key: %s\n", err))
+	}
+
+	// Convert result to json
+	result := RangeResult{
+		total,
+		make([]json.RawMessage, 0, len(rangeRes.Values)),
+	}
+
+	for _, valueBytes := range rangeRes.Values {
+		result.Items = append(result.Items, valueUnmarshaler(valueBytes))
+	}
+
+	return ctx.PrintWithHeight(ctx.Codec().MustMarshalJSON(result), rangeHeight)
 }
 
 func (ctx CliContext) HandleWriteMessage(msg sdk.Msg) error {

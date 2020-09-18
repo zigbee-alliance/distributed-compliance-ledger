@@ -88,6 +88,7 @@ func accountHandler(cliCtx context.CLIContext, storeName string) http.HandlerFun
 		var account types.Account
 
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &account)
+		// the trick to prevent appending of `type` field by cdc
 		restCtx.RespondWithHeight(types.ZBAccount(account), height)
 	}
 }
