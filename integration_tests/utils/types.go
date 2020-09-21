@@ -74,6 +74,11 @@ type CertificatesHeadersResult struct {
 	Items []pki.Certificate `json:"items"`
 }
 
+type ProposedCertificateRevocationsHeadersResult struct {
+	Total string                              `json:"total"`
+	Items []pki.ProposedCertificateRevocation `json:"items"`
+}
+
 type AccountHeadersResult struct {
 	Total string        `json:"total"`
 	Items []AccountInfo `json:"items"`

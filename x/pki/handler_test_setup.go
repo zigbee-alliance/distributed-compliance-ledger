@@ -30,7 +30,7 @@ type TestSetup struct {
 	Cdc        *amino.Codec
 	Ctx        sdk.Context
 	PkiKeeper  Keeper
-	authKeeper auth.Keeper
+	AuthKeeper auth.Keeper
 	Handler    sdk.Handler
 	Querier    sdk.Querier
 	Trustee    sdk.AccAddress
@@ -74,7 +74,7 @@ func Setup() TestSetup {
 		Cdc:        cdc,
 		Ctx:        ctx,
 		PkiKeeper:  pkiKeeper,
-		authKeeper: authKeeper,
+		AuthKeeper: authKeeper,
 		Handler:    handler,
 		Querier:    querier,
 		Trustee:    account.Address,
