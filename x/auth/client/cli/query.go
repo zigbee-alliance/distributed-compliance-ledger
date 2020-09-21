@@ -117,7 +117,7 @@ func GetCmdProposedAccountsRange(storeKey string, cdc *codec.Codec) *cobra.Comma
 				return cdc.MustMarshalJSON(value)
 			}
 
-			return cliCtx.QueryRangeWithToatalAndHandleCLIIO(
+			return cliCtx.QueryRangeWithToatalAndHandleIO(
 				storeKey, types.PendingAccountPrefix, types.PendingAccountsTotalKey, valueUnmarshaler)
 		},
 	}
@@ -161,7 +161,7 @@ func GetCmdAccountsRange(storeKey string, cdc *codec.Codec) *cobra.Command {
 				return codec.Cdc.MustMarshalJSON(value)
 			}
 
-			return cliCtx.QueryRangeWithToatalAndHandleCLIIO(
+			return cliCtx.QueryRangeWithToatalAndHandleIO(
 				storeKey, types.AccountPrefix, types.AccountsTotalKey, valueUnmarshaler)
 		},
 	}
@@ -204,7 +204,7 @@ func GetCmdProposedAccountsToRevokeRange(storeKey string, cdc *codec.Codec) *cob
 				return cdc.MustMarshalJSON(value)
 			}
 
-			return cliCtx.QueryRangeWithToatalAndHandleCLIIO(
+			return cliCtx.QueryRangeWithToatalAndHandleIO(
 				storeKey, types.PendingAccountRevocationPrefix, types.PendingAccountRevocationsTotalKey, valueUnmarshaler)
 		},
 	}

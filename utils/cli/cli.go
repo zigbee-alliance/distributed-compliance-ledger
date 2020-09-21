@@ -30,6 +30,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/range_helper"
 )
 
 const (
@@ -135,6 +137,10 @@ func (ctx CliContext) QueryStore(key []byte, storeName string) ([]byte, int64, e
 	return ctx.context.QueryStore(key, storeName)
 }
 
+func (ctx CliContext) QueryStoreAtHeight(height int64, key []byte, storeName string) ([]byte, int64, error) {
+	return ctx.WithHeight(height).QueryStore(key, storeName)
+}
+
 func (ctx CliContext) QueryRange(startKey []byte, endKey []byte, limit int,
 	storeName string) (iavl.RangeRes, int64, error) {
 	ctx, err := ctx.WithHeightFromFlag()
@@ -211,4 +217,19 @@ func SignedCommands(cmds ...*cobra.Command) []*cobra.Command {
 	}
 
 	return cmds
+}
+
+func (ctx CliContext) QueryRangeWithToatalAndHandleIO(storeKey string,
+	prefix []byte, totalKey []byte, valueUnmarshaler func([]byte) json.RawMessage) error {
+	params, err := pagination.ParseRangeParamsFromFlags()
+	if err != nil {
+		return err
+	}
+
+	result, height, err := range_helper.QueryRangeWithTotal(ctx, storeKey, prefix, params, totalKey, valueUnmarshaler)
+	if err != nil {
+		return err
+	}
+
+	return ctx.PrintWithHeight(ctx.Codec().MustMarshalJSON(result), height)
 }

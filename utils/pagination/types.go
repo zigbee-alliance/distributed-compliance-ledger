@@ -115,6 +115,7 @@ func ParseRangeParamsFromFlags() (RangeParams, error) {
 	), nil
 }
 
+// nolint: godox
 // TODO
 //func ParsePaginationParamsFromRequest(r *http.Request) (PaginationParams, error) {
 //	skip := 0

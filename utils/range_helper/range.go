@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+// nolint: stylecheck
+package range_helper
 
 import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/bytes"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
@@ -28,23 +30,7 @@ type RangeResult struct {
 	Items []json.RawMessage `json:"items"`
 }
 
-// Takes into account cli flags, validates total, handles output.
-func (ctx CliContext) QueryRangeWithToatalAndHandleCLIIO(storeKey string,
-	prefix []byte, totalKey []byte, valueUnmarshaler func([]byte) json.RawMessage) error {
-	params, err := pagination.ParseRangeParamsFromFlags()
-	if err != nil {
-		return err
-	}
-
-	result, height, err := ctx.QueryRangeWithTotal(storeKey, prefix, params, totalKey, valueUnmarshaler)
-	if err != nil {
-		return err
-	}
-
-	return ctx.PrintWithHeight(ctx.Codec().MustMarshalJSON(result), height)
-}
-
-func (ctx CliContext) QueryRangeWithTotal(storeKey string, prefix []byte, params pagination.RangeParams,
+func QueryRangeWithTotal(ctx Context, storeKey string, prefix []byte, params pagination.RangeParams,
 	totalKey []byte, valueUnmarshaler func([]byte) json.RawMessage) (RangeResult, int64, error) {
 	// Is all range queried
 	isAllRange := false
@@ -71,7 +57,7 @@ func (ctx CliContext) QueryRangeWithTotal(storeKey string, prefix []byte, params
 	}
 
 	// Query total number of items at the same height
-	totalRes, totalHeight, err := ctx.context.WithHeight(rangeHeight).QueryStore(totalKey, storeKey)
+	totalRes, totalHeight, err := ctx.QueryStoreAtHeight(rangeHeight, totalKey, storeKey)
 	if err != nil {
 		return RangeResult{}, 0, sdk.ErrInternal(fmt.Sprintf("Could not get data: %s\n", err))
 	}
@@ -84,7 +70,7 @@ func (ctx CliContext) QueryRangeWithTotal(storeKey string, prefix []byte, params
 	if totalRes == nil {
 		total = 0
 	} else {
-		ctx.Codec().MustUnmarshalBinaryLengthPrefixed(totalRes, &total)
+		codec.Cdc.MustUnmarshalBinaryLengthPrefixed(totalRes, &total)
 	}
 
 	// Compare length of response with the PROVED total number if all range is requested
