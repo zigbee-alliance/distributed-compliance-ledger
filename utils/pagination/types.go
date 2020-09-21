@@ -15,6 +15,7 @@
 package pagination
 
 import (
+	"encoding/hex"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -80,3 +81,84 @@ func ParsePaginationParamsFromRequest(r *http.Request) (PaginationParams, error)
 
 	return NewPaginationParams(skip, take), nil
 }
+
+const (
+	FlagStartKey      = "start-key"
+	FlagStartKeyUsage = "amount of records to skip" // TODO
+	FlagEndKey        = "end-key"
+	FlagEndKeyUsage   = "take of records to take" // TODO
+	FlagLimit         = "limit"
+	FlagLimitUsage    = "take of records to take" // TODO
+)
+
+// request Payload for a range query.
+type RangeParams struct {
+	StartKey []byte
+	EndKey   []byte
+	Limit    int
+}
+
+func NewRangeParams(startKey []byte, endKey []byte, limit int) RangeParams {
+	return RangeParams{StartKey: startKey, EndKey: endKey, Limit: limit}
+}
+
+func AddRangeParams(cmd *cobra.Command) {
+	cmd.Flags().BytesHex(FlagStartKey, nil, FlagStartKeyUsage)
+	cmd.Flags().BytesHex(FlagEndKey, nil, FlagEndKeyUsage)
+	cmd.Flags().Int(FlagLimit, 0, FlagLimitUsage)
+}
+
+func ParseRangeParamsFromFlags() (RangeParams, error) {
+	startKeyHex := viper.GetString(FlagStartKey)
+
+	startKey, err := hex.DecodeString(startKeyHex)
+	if err != nil {
+		return RangeParams{}, error(sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid flag `%v`: Parsing Error: %v must be hex value",
+				FlagStartKey, startKeyHex)))
+	}
+
+	endKeyHex := viper.GetString(FlagEndKey)
+
+	endKey, err := hex.DecodeString(endKeyHex)
+	if err != nil {
+		return RangeParams{}, error(sdk.ErrUnknownRequest(
+			fmt.Sprintf("Invalid flag `%v`: Parsing Error: %v must be hex value",
+				FlagEndKey, endKeyHex)))
+	}
+
+	return NewRangeParams(
+		startKey,
+		endKey,
+		viper.GetInt(FlagLimit),
+	), nil
+}
+
+// TODO
+//func ParsePaginationParamsFromRequest(r *http.Request) (PaginationParams, error) {
+//	skip := 0
+//
+//	if str := r.FormValue("skip"); len(str) > 0 {
+//		val_, err := strconv.Atoi(str)
+//		if err != nil {
+//			return PaginationParams{}, error(sdk.ErrUnknownRequest(
+//				fmt.Sprintf("Invalid query parameter `skip`: Parsing Error: %v must be number", str)))
+//		}
+//
+//		skip = val_
+//	}
+//
+//	take := 0
+//
+//	if str := r.FormValue("take"); len(str) > 0 {
+//		val_, err := strconv.Atoi(str)
+//		if err != nil {
+//			return PaginationParams{}, error(sdk.ErrUnknownRequest(
+//				fmt.Sprintf("Invalid query parameter `take`: Parsing Error: %v must be number", str)))
+//		}
+//
+//		take = val_
+//	}
+//
+//	return NewPaginationParams(skip, take), nil
+//}
