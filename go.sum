@@ -252,8 +252,8 @@ github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGr
 github.com/ugorji/go/codec v0.0.0-20181204163529-d75b2dcb6bc8/go.mod h1:VFNgLljTbGfSG7qAOspJ7OScBnGdDN/yBr0sguwnwf0=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
-github.com/zigbee-alliance/cosmos-sdk v0.37.5-0.20200828165740-d1da07e38b94 h1:yFS7CjWVwbv+xoQ7SjObPInRVU6AHL7MAiOWg0Yr83o=
-github.com/zigbee-alliance/cosmos-sdk v0.37.5-0.20200828165740-d1da07e38b94/go.mod h1:Axr+Q+G2Ffduxt4zMA6KwxxvyVSKPB9+nXZVPKgpC2c=
+github.com/zigbee-alliance/cosmos-sdk v0.37.5-0.20200921114800-dccef63d0942 h1:GYyvfJOgwB6xge8QC4epUgwd9JiAbBCArRNR/lAazq8=
+github.com/zigbee-alliance/cosmos-sdk v0.37.5-0.20200921114800-dccef63d0942/go.mod h1:Axr+Q+G2Ffduxt4zMA6KwxxvyVSKPB9+nXZVPKgpC2c=
 github.com/zondax/hid v0.9.0 h1:eiT3P6vNxAEVxXMw66eZUAAnU2zD33JBkfG/EnfAKl8=
 github.com/zondax/hid v0.9.0/go.mod h1:l5wttcP0jwtdLjqjMMWFVEE7d1zO0jvSPA9OPZxWpEM=
 go.etcd.io/bbolt v1.3.2/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
