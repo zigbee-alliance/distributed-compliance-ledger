@@ -333,6 +333,8 @@ func handleMsgApproveRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, a
 		keeper.DeleteApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyID)
 
 		revokeChildCertificates(ctx, keeper, msg.Subject, msg.SubjectKeyID)
+
+		keeper.DeleteProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyID)
 	} else {
 		keeper.SetProposedCertificateRevocation(ctx, revocation)
 	}
@@ -342,7 +344,7 @@ func handleMsgApproveRevokeX509RootCert(ctx sdk.Context, keeper keeper.Keeper, a
 
 func handleMsgRevokeX509Cert(ctx sdk.Context, keeper keeper.Keeper, msg types.MsgRevokeX509Cert) sdk.Result {
 	if !keeper.IsApprovedCertificatesPresent(ctx, msg.Subject, msg.SubjectKeyID) {
-		return types.ErrProposedCertificateDoesNotExist(msg.Subject, msg.SubjectKeyID).Result()
+		return types.ErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyID).Result()
 	}
 
 	certificates := keeper.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyID)

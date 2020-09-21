@@ -346,6 +346,16 @@ func (k Keeper) IterateProposedCertificateRevocations(ctx sdk.Context,
 	}
 }
 
+// Deletes the Proposed Certificate Revocation from the store.
+func (k Keeper) DeleteProposedCertificateRevocation(ctx sdk.Context, subject string, subjectKeyID string) {
+	if !k.IsProposedCertificateRevocationPresent(ctx, subject, subjectKeyID) {
+		panic("Proposed Certificate Revocation does not exist")
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	store.Delete(types.GetProposedCertificateRevocationKey(subject, subjectKeyID))
+}
+
 /*
 	Revoked Certificate (root or non-root)
 */

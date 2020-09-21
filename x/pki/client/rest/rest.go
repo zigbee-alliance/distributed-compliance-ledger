@@ -68,16 +68,8 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		getAllProposedX509RootCertsHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/certs/{%s}/{%s}", storeName, subject, subjectKeyID),
-		getX509CertHandler(cliCtx, storeName),
-	).Methods("GET")
-	r.HandleFunc(
 		fmt.Sprintf("/%s/certs/chain/{%s}/{%s}", storeName, subject, subjectKeyID),
 		getX509CertChainHandler(cliCtx, storeName),
-	).Methods("GET")
-	r.HandleFunc(
-		fmt.Sprintf("/%s/certs/{%s}", storeName, subject),
-		getAllSubjectX509CertsHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
 		fmt.Sprintf("/%s/certs", storeName),
@@ -102,5 +94,21 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc(
 		fmt.Sprintf("/%s/certs/revoked", storeName),
 		getAllRevokedX509CertsHandler(cliCtx, storeName),
+	).Methods("GET")
+	// The following endpoint must be registered
+	// after GET /pki/certs/revoked and
+	// after GET /pki/certs/root
+	// to avoid wrong matches
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/{%s}", storeName, subject),
+		getAllSubjectX509CertsHandler(cliCtx, storeName),
+	).Methods("GET")
+	// The following endpoint must be registered
+	// after GET /pki/certs/proposed/root and
+	// after GET /pki/certs/revoked/root
+	// to avoid wrong matches
+	r.HandleFunc(
+		fmt.Sprintf("/%s/certs/{%s}/{%s}", storeName, subject, subjectKeyID),
+		getX509CertHandler(cliCtx, storeName),
 	).Methods("GET")
 }

@@ -591,37 +591,37 @@ func SendProposeAddX509RootCertRequest(proposeAddX509RootCert pki.MsgProposeAddX
 	return SendPostRequest(uri, body, account, passphrase)
 }
 
-func ApproveAddX509RootCert(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert,
+func ApproveAddX509RootCert(approveAddX509RootCert pki.MsgApproveAddX509RootCert,
 	account string, passphrase string) (TxnResponse, int) {
 	println(fmt.Sprintf("Approve X509 Root Cert with subject=%s and subjectKeyID=%s",
-		msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyID))
+		approveAddX509RootCert.Subject, approveAddX509RootCert.SubjectKeyID))
 
-	response, code := SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert, account, passphrase)
+	response, code := SendApproveAddX509RootCertRequest(approveAddX509RootCert, account, passphrase)
 
 	return parseWriteTxnResponse(response, code)
 }
 
 func PrepareApproveAddX509RootCertTransaction(
-	msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert) (types.StdTx, int) {
+	approveAddX509RootCert pki.MsgApproveAddX509RootCert) (types.StdTx, int) {
 	println("Prepare Approve X509 Root Certificate Transaction")
 
-	response, code := SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert, "", "")
+	response, code := SendApproveAddX509RootCertRequest(approveAddX509RootCert, "", "")
 
 	return parseStdTxn(response, code)
 }
 
-func SendApproveAddX509RootCertRequest(msgApproveAddX509RootCert pki.MsgApproveAddX509RootCert,
+func SendApproveAddX509RootCertRequest(approveAddX509RootCert pki.MsgApproveAddX509RootCert,
 	account string, passphrase string) ([]byte, int) {
 	request := rest.BasicReq{
 		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
-			From:    msgApproveAddX509RootCert.Signer.String(),
+			From:    approveAddX509RootCert.Signer.String(),
 		},
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 	uri := fmt.Sprintf("%s/%s", pki.RouterKey, fmt.Sprintf("certs/proposed/root/%s/%s",
-		msgApproveAddX509RootCert.Subject, msgApproveAddX509RootCert.SubjectKeyID))
+		approveAddX509RootCert.Subject, approveAddX509RootCert.SubjectKeyID))
 
 	return SendPatchRequest(uri, body, account, passphrase)
 }
@@ -656,6 +656,110 @@ func SendAddX509CertRequest(addX509Cert pki.MsgAddX509Cert, account string, pass
 	uri := fmt.Sprintf("%s/%s", pki.RouterKey, "certs")
 
 	return SendPostRequest(uri, body, account, passphrase)
+}
+
+func ProposeRevokeX509RootCert(proposeRevokeX509RootCert pki.MsgProposeRevokeX509RootCert,
+	account string, passphrase string) (TxnResponse, int) {
+	println(fmt.Sprintf("Propose to Revoke X509 Root Cert with subject=%s and subjectKeyID=%s",
+		proposeRevokeX509RootCert.Subject, proposeRevokeX509RootCert.SubjectKeyID))
+
+	response, code := SendProposeRevokeX509RootCertRequest(proposeRevokeX509RootCert, account, passphrase)
+
+	return parseWriteTxnResponse(response, code)
+}
+
+func PrepareProposeRevokeX509RootCertTransaction(
+	proposeRevokeX509RootCert pki.MsgProposeRevokeX509RootCert) (types.StdTx, int) {
+	println("Prepare Propose to Revoke X509 Root Certificate Transaction")
+
+	response, code := SendProposeRevokeX509RootCertRequest(proposeRevokeX509RootCert, "", "")
+
+	return parseStdTxn(response, code)
+}
+
+func SendProposeRevokeX509RootCertRequest(proposeRevokeX509RootCert pki.MsgProposeRevokeX509RootCert,
+	account string, passphrase string) ([]byte, int) {
+	request := pkiRest.ProposeRevokeRootCertificateRequest{
+		BaseReq: restTypes.BaseReq{
+			ChainID: constants.ChainID,
+			From:    proposeRevokeX509RootCert.Signer.String(),
+		},
+		Subject:      proposeRevokeX509RootCert.Subject,
+		SubjectKeyID: proposeRevokeX509RootCert.SubjectKeyID,
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/certs/proposed/revoked/root", pki.RouterKey)
+
+	return SendPostRequest(uri, body, account, passphrase)
+}
+
+func ApproveRevokeX509RootCert(approveRevokeX509RootCert pki.MsgApproveRevokeX509RootCert,
+	account string, passphrase string) (TxnResponse, int) {
+	println(fmt.Sprintf("Approve to Revoke X509 Root Cert with subject=%s and subjectKeyID=%s",
+		approveRevokeX509RootCert.Subject, approveRevokeX509RootCert.SubjectKeyID))
+
+	response, code := SendApproveRevokeX509RootCertRequest(approveRevokeX509RootCert, account, passphrase)
+
+	return parseWriteTxnResponse(response, code)
+}
+
+func PrepareApproveRevokeX509RootCertTransaction(
+	approveRevokeX509RootCert pki.MsgApproveRevokeX509RootCert) (types.StdTx, int) {
+	println("Prepare Approve to Revoke X509 Root Certificate Transaction")
+
+	response, code := SendApproveRevokeX509RootCertRequest(approveRevokeX509RootCert, "", "")
+
+	return parseStdTxn(response, code)
+}
+
+func SendApproveRevokeX509RootCertRequest(approveRevokeX509RootCert pki.MsgApproveRevokeX509RootCert,
+	account string, passphrase string) ([]byte, int) {
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
+			ChainID: constants.ChainID,
+			From:    approveRevokeX509RootCert.Signer.String(),
+		},
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+	uri := fmt.Sprintf("%s/certs/proposed/revoked/root/%s/%s",
+		pki.RouterKey, approveRevokeX509RootCert.Subject, approveRevokeX509RootCert.SubjectKeyID)
+
+	return SendPatchRequest(uri, body, account, passphrase)
+}
+
+func RevokeX509Cert(revokeX509Cert pki.MsgRevokeX509Cert, account string, passphrase string) (TxnResponse, int) {
+	println(fmt.Sprintf("Revoke X509 Certificate with subject=%s and subjectKeyID=%s",
+		revokeX509Cert.Subject, revokeX509Cert.SubjectKeyID))
+
+	response, code := SendRevokeX509CertRequest(revokeX509Cert, account, passphrase)
+
+	return parseWriteTxnResponse(response, code)
+}
+
+func PrepareRevokeX509CertTransaction(revokeX509Cert pki.MsgRevokeX509Cert) (types.StdTx, int) {
+	println("Prepare Revoke X509 Certificate Transaction")
+
+	response, code := SendRevokeX509CertRequest(revokeX509Cert, "", "")
+
+	return parseStdTxn(response, code)
+}
+
+func SendRevokeX509CertRequest(revokeX509Cert pki.MsgRevokeX509Cert, account string, passphrase string) ([]byte, int) {
+	request := rest.BasicReq{
+		BaseReq: restTypes.BaseReq{
+			ChainID: constants.ChainID,
+			From:    revokeX509Cert.Signer.String(),
+		},
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/certs/%s/%s", pki.RouterKey, revokeX509Cert.Subject, revokeX509Cert.SubjectKeyID)
+
+	return SendDeleteRequest(uri, body, account, passphrase)
 }
 
 func GetAllX509RootCerts() (CertificatesHeadersResult, int) {
@@ -708,6 +812,43 @@ func GetX509CertChain(subject string, subjectKeyID string) (pki.Certificates, in
 	return result, code
 }
 
+func GetAllRevokedX509RootCerts() (CertificatesHeadersResult, int) {
+	return getCertificates(fmt.Sprintf("%s/certs/revoked/root", pki.RouterKey))
+}
+
+func GetAllRevokedX509Certs() (CertificatesHeadersResult, int) {
+	return getCertificates(fmt.Sprintf("%s/certs/revoked", pki.RouterKey))
+}
+
+func GetAllProposedX509RootCertsToRevoke() (ProposedCertificateRevocationsHeadersResult, int) {
+	return getProposedCertificateRevocations(fmt.Sprintf("%s/certs/proposed/revoked/root", pki.RouterKey))
+}
+
+func GetProposedX509RootCertToRevoke(subject string, subjectKeyID string) (pki.ProposedCertificateRevocation, int) {
+	response, code := SendGetRequest(fmt.Sprintf("%s/certs/proposed/revoked/root/%s/%s",
+		pki.RouterKey, subject, subjectKeyID))
+
+	var result pki.ProposedCertificateRevocation
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func GetRevokedX509Cert(subject string, subjectKeyID string) (pki.Certificate, int) {
+	response, code := SendGetRequest(fmt.Sprintf("%s/certs/revoked/%s/%s", pki.RouterKey, subject, subjectKeyID))
+
+	var result pki.Certificates
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	if len(result.Items) > 1 {
+		return pki.Certificate{}, http.StatusInternalServerError
+	}
+
+	return result.Items[0], code
+}
+
 func getCertificates(uri string) (CertificatesHeadersResult, int) {
 	response, code := SendGetRequest(uri)
 
@@ -722,6 +863,16 @@ func getProposedCertificates(uri string) (ProposedCertificatesHeadersResult, int
 	response, code := SendGetRequest(uri)
 
 	var result ProposedCertificatesHeadersResult
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func getProposedCertificateRevocations(uri string) (ProposedCertificateRevocationsHeadersResult, int) {
+	response, code := SendGetRequest(uri)
+
+	var result ProposedCertificateRevocationsHeadersResult
 
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
