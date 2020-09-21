@@ -37,16 +37,19 @@ echo "$result"
 echo "Get all active accounts. No $user account in the list because not enough approvals received"
 result=$(dclcli query auth all-accounts)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts. $user account in the list"
 result=$(dclcli query auth all-proposed-accounts)
 check_response "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts to revoke. No $user account in the list"
 result=$(dclcli query auth all-proposed-accounts-to-revoke)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-to-revoke-range | jq .result)"
 echo "$result"
 
 echo "Alice approves account for \"$user\""
@@ -57,16 +60,19 @@ echo "$result"
 echo "Get all accounts. $user account in the list because enough approvals received"
 result=$(dclcli query auth all-accounts)
 check_response "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts. No $user account in the list anymore"
 result=$(dclcli query auth all-proposed-accounts)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts to revoke. No $user account in the list"
 result=$(dclcli query auth all-proposed-accounts-to-revoke)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-to-revoke-range | jq .result)"
 echo "$result"
 
 echo "Get $user account"
@@ -97,16 +103,19 @@ echo "$result"
 echo "Get all accounts. $user account still in the list because not enought approvals to revoke received"
 result=$(dclcli query auth all-accounts)
 check_response "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts. No $user account in the list"
 result=$(dclcli query auth all-proposed-accounts)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts to revoke. $user account in the list"
 result=$(dclcli query auth all-proposed-accounts-to-revoke)
 check_response "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-to-revoke-range | jq .result)"
 echo "$result"
 
 echo "Bob approves to revoke account for $user"
@@ -117,16 +126,19 @@ echo "$result"
 echo "Get all accounts. No $user account in the list anymore because enought approvals to revoke received"
 result=$(dclcli query auth all-accounts)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts. No $user account in the list"
 result=$(dclcli query auth all-proposed-accounts)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-range | jq .result)"
 echo "$result"
 
 echo "Get all proposed accounts to revoke. No $user account in the list anymore"
 result=$(dclcli query auth all-proposed-accounts-to-revoke)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+assert_eq_str "$(echo "$result" | jq .result)" "$(dclcli query auth all-proposed-accounts-to-revoke-range | jq .result)"
 echo "$result"
 
 echo "Get $user account"

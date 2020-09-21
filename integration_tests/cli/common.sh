@@ -49,6 +49,15 @@ response_does_not_contain() {
   fi
 }
 
+assert_eq_str() {
+  expected=$1
+  actual=$2
+  if [[ ${expected} != "${actual}" ]];then
+    echo "ERROR: assertion failed. Values are not equal. Expected: $expected, found: $actual"
+    exit 1
+  fi
+}
+
 create_new_account(){
   local  __resultvar=$1
   random_string name
