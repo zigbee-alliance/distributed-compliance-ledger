@@ -37,17 +37,22 @@ var (
 	AccountNumberCounterKey = []byte("globalAccountNumber") // key for account number counter
 )
 
+// nolint: interfacer
 // Key builder for Pending Account.
 func GetPendingAccountKey(addr sdk.AccAddress) []byte {
-	return append(PendingAccountPrefix, addr.Bytes()...)
+	// We are using `String` instead of `Bytes` in order to provide
+	// more comfortable querying of ranges by prefixes
+	return append(PendingAccountPrefix, addr.String()...)
 }
 
+// nolint: interfacer
 // Key builder for Account.
 func GetAccountKey(addr sdk.AccAddress) []byte {
-	return append(AccountPrefix, addr.Bytes()...)
+	return append(AccountPrefix, addr.String()...)
 }
 
+// nolint: interfacer
 // Key builder for Pending Account Revocation.
 func GetPendingAccountRevocationKey(addr sdk.AccAddress) []byte {
-	return append(PendingAccountRevocationPrefix, addr.Bytes()...)
+	return append(PendingAccountRevocationPrefix, addr.String()...)
 }

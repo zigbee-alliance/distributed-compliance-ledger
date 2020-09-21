@@ -15,7 +15,6 @@
 package pagination
 
 import (
-	"encoding/hex"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -84,11 +83,11 @@ func ParsePaginationParamsFromRequest(r *http.Request) (PaginationParams, error)
 
 const (
 	FlagStartKey      = "start-key"
-	FlagStartKeyUsage = "amount of records to skip" // TODO
+	FlagStartKeyUsage = "utf-8 str to start iteration from"
 	FlagEndKey        = "end-key"
-	FlagEndKeyUsage   = "take of records to take" // TODO
+	FlagEndKeyUsage   = "utf-8 str to stop iteration at"
 	FlagLimit         = "limit"
-	FlagLimitUsage    = "take of records to take" // TODO
+	FlagLimitUsage    = "maximum number of records"
 )
 
 // request Payload for a range query.
@@ -103,33 +102,15 @@ func NewRangeParams(startKey []byte, endKey []byte, limit int) RangeParams {
 }
 
 func AddRangeParams(cmd *cobra.Command) {
-	cmd.Flags().BytesHex(FlagStartKey, nil, FlagStartKeyUsage)
-	cmd.Flags().BytesHex(FlagEndKey, nil, FlagEndKeyUsage)
+	cmd.Flags().String(FlagStartKey, "", FlagStartKeyUsage)
+	cmd.Flags().String(FlagEndKey, "", FlagEndKeyUsage)
 	cmd.Flags().Int(FlagLimit, 0, FlagLimitUsage)
 }
 
 func ParseRangeParamsFromFlags() (RangeParams, error) {
-	startKeyHex := viper.GetString(FlagStartKey)
-
-	startKey, err := hex.DecodeString(startKeyHex)
-	if err != nil {
-		return RangeParams{}, error(sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid flag `%v`: Parsing Error: %v must be hex value",
-				FlagStartKey, startKeyHex)))
-	}
-
-	endKeyHex := viper.GetString(FlagEndKey)
-
-	endKey, err := hex.DecodeString(endKeyHex)
-	if err != nil {
-		return RangeParams{}, error(sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid flag `%v`: Parsing Error: %v must be hex value",
-				FlagEndKey, endKeyHex)))
-	}
-
 	return NewRangeParams(
-		startKey,
-		endKey,
+		[]byte(viper.GetString(FlagStartKey)),
+		[]byte(viper.GetString(FlagEndKey)),
 		viper.GetInt(FlagLimit),
 	), nil
 }

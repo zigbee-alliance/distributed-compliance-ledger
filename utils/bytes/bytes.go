@@ -21,6 +21,16 @@ func cp(bz []byte) (ret []byte) {
 	return ret
 }
 
+func IsAllZeroes(bytes []byte) bool {
+	for _, val := range bytes {
+		if val != 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Returns a slice of the same length (big endian)
 // except incremented by one.
 // Appends 0x00 if bz is all 0xFF.

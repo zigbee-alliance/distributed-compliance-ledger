@@ -40,9 +40,11 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	authQueryCmd.AddCommand(client.GetCommands(
 		GetCmdAccount(storeKey, cdc),
 		GetCmdAccounts(storeKey, cdc),
+		GetCmdAccountsRange(storeKey, cdc),
 		GetCmdProposedAccounts(storeKey, cdc),
-		GetCmdAccountsWithProof(storeKey, cdc),
+		GetCmdProposedAccountsRange(storeKey, cdc),
 		GetCmdProposedAccountsToRevoke(storeKey, cdc),
+		GetCmdProposedAccountsToRevokeRange(storeKey, cdc),
 	)...)
 
 	return authQueryCmd
@@ -100,6 +102,31 @@ func GetCmdProposedAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command 
 	return cmd
 }
 
+func GetCmdProposedAccountsRange(storeKey string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all-proposed-accounts-range",
+		Short: "Get all proposed but not approved accounts. Range variant.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			valueUnmarshaler := func(bytes []byte) json.RawMessage {
+				value := types.PendingAccount{}
+				cdc.MustUnmarshalBinaryBare(bytes, &value)
+
+				return cdc.MustMarshalJSON(value)
+			}
+
+			return cliCtx.QueryRangeWithToatalAndHandleCLIIO(
+				storeKey, types.PendingAccountPrefix, types.PendingAccountsTotalKey, valueUnmarshaler)
+		},
+	}
+
+	pagination.AddRangeParams(cmd)
+
+	return cmd
+}
+
 func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-accounts",
@@ -118,10 +145,10 @@ func GetCmdAccounts(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
-func GetCmdAccountsWithProof(storeKey string, cdc *codec.Codec) *cobra.Command {
+func GetCmdAccountsRange(storeKey string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-accounts-with-proof",
-		Short: "Get all accounts",
+		Use:   "all-accounts-range",
+		Short: "Get all accounts. Range variant.",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
@@ -134,9 +161,12 @@ func GetCmdAccountsWithProof(storeKey string, cdc *codec.Codec) *cobra.Command {
 				return codec.Cdc.MustMarshalJSON(value)
 			}
 
-			return cliCtx.QueryAllWithProof(storeKey, types.AccountPrefix, types.AccountsTotalKey, valueUnmarshaler)
+			return cliCtx.QueryRangeWithToatalAndHandleCLIIO(
+				storeKey, types.AccountPrefix, types.AccountsTotalKey, valueUnmarshaler)
 		},
 	}
+
+	pagination.AddRangeParams(cmd)
 
 	return cmd
 }
@@ -155,6 +185,31 @@ func GetCmdProposedAccountsToRevoke(queryRoute string, cdc *codec.Codec) *cobra.
 	}
 
 	pagination.AddPaginationParams(cmd)
+
+	return cmd
+}
+
+func GetCmdProposedAccountsToRevokeRange(storeKey string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all-proposed-accounts-to-revoke-range",
+		Short: "Get all proposed but not approved accounts to be revoked. Range variant.",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			valueUnmarshaler := func(bytes []byte) json.RawMessage {
+				value := types.PendingAccountRevocation{}
+				cdc.MustUnmarshalBinaryBare(bytes, &value)
+
+				return cdc.MustMarshalJSON(value)
+			}
+
+			return cliCtx.QueryRangeWithToatalAndHandleCLIIO(
+				storeKey, types.PendingAccountRevocationPrefix, types.PendingAccountRevocationsTotalKey, valueUnmarshaler)
+		},
+	}
+
+	pagination.AddRangeParams(cmd)
 
 	return cmd
 }
