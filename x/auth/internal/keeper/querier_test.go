@@ -96,8 +96,8 @@ func TestQuerier_QueryAllAccounts(t *testing.T) {
 
 	// check
 	require.Equal(t, 2, len(listAccounts.Items))
-	require.Equal(t, account1, listAccounts.Items[0])
-	require.Equal(t, account2, listAccounts.Items[1])
+	require.Equal(t, account1, listAccounts.Items[1])
+	require.Equal(t, account2, listAccounts.Items[0])
 }
 
 func TestQuerier_QueryAllPendingAccounts(t *testing.T) {
@@ -137,8 +137,8 @@ func TestQuerier_QueryAllPendingAccounts(t *testing.T) {
 
 	// check
 	require.Equal(t, 2, len(listPendingAccounts.Items))
-	require.Equal(t, pendAcc1, listPendingAccounts.Items[0])
-	require.Equal(t, pendAcc2, listPendingAccounts.Items[1])
+	require.Equal(t, pendAcc1, listPendingAccounts.Items[1])
+	require.Equal(t, pendAcc2, listPendingAccounts.Items[0])
 }
 
 func TestQuerier_QueryAllPendingAccountRevocations(t *testing.T) {
@@ -174,8 +174,8 @@ func TestQuerier_QueryAllPendingAccountRevocations(t *testing.T) {
 
 	// check
 	require.Equal(t, 2, len(listPendingAccountRevocations.Items))
-	require.Equal(t, revocation1, listPendingAccountRevocations.Items[0])
-	require.Equal(t, revocation2, listPendingAccountRevocations.Items[1])
+	require.Equal(t, revocation1, listPendingAccountRevocations.Items[1])
+	require.Equal(t, revocation2, listPendingAccountRevocations.Items[0])
 }
 
 func queryAccountParams(setup TestSetup, address sdk.AccAddress) []byte {
