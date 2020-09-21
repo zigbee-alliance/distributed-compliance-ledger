@@ -44,6 +44,13 @@ result=$(echo "test1234" | dclcli tx pki propose-add-x509-root-cert --certificat
 check_response "$result" "\"success\": true"
 echo "$result"
 
+echo "Request all proposed Root certificates"
+result=$(dclcli query pki all-proposed-x509-root-certs)
+check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
 echo "Request proposed Root certificate"
 result=$(dclcli query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
 check_response "$result" "\"subject\": \"$root_cert_subject\""
@@ -51,20 +58,12 @@ check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
 
-echo "Request all proposed Root certificates"
-result=$(dclcli query pki all-proposed-x509-root-certs)
-check_response "$result" "\"total\": \"1\""
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
-echo "$result"
-
-echo "Request all active certificates must be empty"
+echo "Request all approved certificates must be empty"
 result=$(dclcli query pki all-x509-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
 
-echo "Request all active root certificates must be empty"
+echo "Request all approved root certificates must be empty"
 result=$(dclcli query pki all-x509-root-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
@@ -82,7 +81,7 @@ check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
 check_response "$result" "[\"$(dclcli keys show jack -a)\"]"
 echo "$result"
 
-echo "Request all active certificates must be empty"
+echo "Request all approved certificates must be empty"
 result=$(dclcli query pki all-x509-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
@@ -111,9 +110,10 @@ result=$(dclcli query pki all-proposed-x509-root-certs)
 check_response "$result" "\"total\": \"0\""
 echo "$result"
 
-echo "Request all active certificates"
+echo "Request all approved certificates"
 result=$(dclcli query pki all-x509-certs)
 check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
@@ -144,16 +144,19 @@ echo "Request all proposed Root certificates must be empty"
 result=$(dclcli query pki all-proposed-x509-root-certs)
 check_response "$result" "\"total\": \"0\""
 
-echo "Request all active certificates"
+echo "Request all approved certificates"
 result=$(dclcli query pki all-x509-certs)
 check_response "$result" "\"total\": \"2\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 echo "$result"
 
-echo "Request all active root certificates"
+echo "Request all approved root certificates"
 result=$(dclcli query pki all-x509-root-certs)
 check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
@@ -187,22 +190,162 @@ echo "Request all proposed Root certificates must be empty"
 result=$(dclcli query pki all-proposed-x509-root-certs)
 check_response "$result" "\"total\": \"0\""
 
-echo "Request all active certificates"
+echo "Request all approved certificates"
 result=$(dclcli query pki all-x509-certs)
 check_response "$result" "\"total\": \"3\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
 echo "$result"
 
-echo "Request all active root certificates"
+echo "Request all approved root certificates"
 result=$(dclcli query pki all-x509-root-certs)
 check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
 echo "Request all subject certificates"
 result=$(dclcli query pki all-subject-x509-certs --subject="$leaf_cert_subject")
 check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
+
+echo "Request all root certificates proposed to revoke"
+result=$(dclcli query pki all-proposed-x509-root-certs-to-revoke)
+check_response "$result" "\"total\": \"0\""
+echo "$result"
+
+echo "Request all revoked certificates"
+result=$(dclcli query pki all-revoked-x509-certs)
+check_response "$result" "\"total\": \"0\""
+echo "$result"
+
+echo "$user_account (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate."
+result=$(echo "test1234" | dclcli tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
+check_response "$result" "\"success\": true"
+echo "$result"
+
+echo "Request all root certificates proposed to revoke"
+result=$(dclcli query pki all-proposed-x509-root-certs-to-revoke)
+check_response "$result" "\"total\": \"0\""
+echo "$result"
+
+echo "Request all revoked certificates"
+result=$(dclcli query pki all-revoked-x509-certs)
+check_response "$result" "\"total\": \"2\""
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
+
+echo "Request all revoked root certificates"
+result=$(dclcli query pki all-revoked-x509-root-certs)
+check_response "$result" "\"total\": \"0\""
+echo "$result"
+
+echo "Request revoked Intermediate certificate"
+result=$(dclcli query pki revoked-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+echo "$result"
+
+echo "Request revoked Leaf certificate"
+result=$(dclcli query pki revoked-x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
+echo "$result"
+
+echo "Request all approved certificates"
+result=$(dclcli query pki all-x509-certs)
+check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+echo "$trustee_account (Trustee) proposes to revoke Root certificate"
+result=$(echo "test1234" | dclcli tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"success\": true"
+echo "$result"
+
+echo "Request all root certificates proposed to revoke"
+result=$(dclcli query pki all-proposed-x509-root-certs-to-revoke)
+check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+echo "Request all revoked certificates"
+result=$(dclcli query pki all-revoked-x509-certs)
+check_response "$result" "\"total\": \"2\""
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
+
+echo "Request all revoked root certificates"
+result=$(dclcli query pki all-revoked-x509-root-certs)
+check_response "$result" "\"total\": \"0\""
+echo "$result"
+
+echo "Request Root certificate proposed to revoke"
+result=$(dclcli query pki proposed-x509-root-cert-to-revoke --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "[\"$(dclcli keys show jack -a)\"]"
+echo "$result"
+
+echo "Request all approved certificates"
+result=$(dclcli query pki all-x509-certs)
+check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+echo "$second_trustee_account (Trustee) approves to revoke Root certificate"
+result=$(echo "test1234" | dclcli tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+check_response "$result" "\"success\": true"
+echo "$result"
+
+echo "Request all root certificates proposed to revoke"
+result=$(dclcli query pki all-proposed-x509-root-certs-to-revoke)
+check_response "$result" "\"total\": \"0\""
+echo "$result"
+
+echo "Request all revoked certificates"
+result=$(dclcli query pki all-revoked-x509-certs)
+check_response "$result" "\"total\": \"3\""
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+echo "Request all revoked root certificates"
+result=$(dclcli query pki all-revoked-x509-root-certs)
+check_response "$result" "\"total\": \"1\""
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+echo "Request revoked Root certificate"
+result=$(dclcli query pki revoked-x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
+
+echo "Request all approved certificates"
+result=$(dclcli query pki all-x509-certs)
+check_response "$result" "\"total\": \"0\""
 echo "$result"
