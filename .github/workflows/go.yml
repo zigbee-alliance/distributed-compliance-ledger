@@ -57,6 +57,9 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install jq
+
       - name: Run integration tests
         run: bash integration_tests/ci/run-all.sh
 
