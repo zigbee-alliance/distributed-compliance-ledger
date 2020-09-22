@@ -37,12 +37,15 @@ import (
 func TestAuthDemo(t *testing.T) {
 	// Query all active accounts
 	inputAccounts, _ := utils.GetAccounts()
+	require.Equal(t, inputAccounts, utils.MustGetAccountsRange())
 
 	// Query all proposed accounts
 	inputProposedAccounts, _ := utils.GetProposedAccounts()
+	require.Equal(t, inputProposedAccounts, utils.MustGetProposedAccountsRange())
 
 	// Query all proposed accounts to revoke
 	inputProposedAccountsToRevoke, _ := utils.GetProposedAccountsToRevoke()
+	require.Equal(t, inputProposedAccountsToRevoke, utils.MustGetProposedAccountsToRevokeRange())
 
 	// Create keys for new account
 	name := utils.RandString()
@@ -59,14 +62,17 @@ func TestAuthDemo(t *testing.T) {
 	// Query all active accounts
 	receivedAccounts, _ := utils.GetAccounts()
 	require.Equal(t, len(inputAccounts.Items), len(receivedAccounts.Items))
+	require.Equal(t, receivedAccounts, utils.MustGetAccountsRange())
 
 	// Query all proposed accounts
 	receivedProposedAccounts, _ := utils.GetProposedAccounts()
 	require.Equal(t, len(inputProposedAccounts.Items)+1, len(receivedProposedAccounts.Items))
+	require.Equal(t, receivedProposedAccounts, utils.MustGetProposedAccountsRange())
 
 	// Query all accounts proposed to be revoked
 	receivedProposedAccountsToRevoke, _ := utils.GetProposedAccountsToRevoke()
 	require.Equal(t, len(inputProposedAccountsToRevoke.Items), len(receivedProposedAccountsToRevoke.Items))
+	require.Equal(t, receivedProposedAccountsToRevoke, utils.MustGetProposedAccountsToRevokeRange())
 
 	// Alice approves new account
 	utils.ApproveAddAccount(testAccountKeyInfo, aliceKeyInfo)
@@ -74,14 +80,17 @@ func TestAuthDemo(t *testing.T) {
 	// Query all active accounts
 	receivedAccounts, _ = utils.GetAccounts()
 	require.Equal(t, len(inputAccounts.Items)+1, len(receivedAccounts.Items))
+	require.Equal(t, receivedAccounts, utils.MustGetAccountsRange())
 
 	// Query all proposed accounts
 	receivedProposedAccounts, _ = utils.GetProposedAccounts()
 	require.Equal(t, len(inputProposedAccounts.Items), len(receivedProposedAccounts.Items))
+	require.Equal(t, receivedProposedAccounts, utils.MustGetProposedAccountsRange())
 
 	// Query all accounts proposed to be revoked
 	receivedProposedAccountsToRevoke, _ = utils.GetProposedAccountsToRevoke()
 	require.Equal(t, len(inputProposedAccountsToRevoke.Items), len(receivedProposedAccountsToRevoke.Items))
+	require.Equal(t, receivedProposedAccountsToRevoke, utils.MustGetProposedAccountsToRevokeRange())
 
 	// Get info for new account
 	testAccount, _ := utils.GetAccount(testAccountKeyInfo.Address)
@@ -104,14 +113,17 @@ func TestAuthDemo(t *testing.T) {
 	// Query all active accounts
 	receivedAccounts, _ = utils.GetAccounts()
 	require.Equal(t, len(inputAccounts.Items)+1, len(receivedAccounts.Items))
+	require.Equal(t, receivedAccounts, utils.MustGetAccountsRange())
 
 	// Query all proposed accounts
 	receivedProposedAccounts, _ = utils.GetProposedAccounts()
 	require.Equal(t, len(inputProposedAccounts.Items), len(receivedProposedAccounts.Items))
+	require.Equal(t, receivedProposedAccounts, utils.MustGetProposedAccountsRange())
 
 	// Query all accounts proposed to be revoked
 	receivedProposedAccountsToRevoke, _ = utils.GetProposedAccountsToRevoke()
 	require.Equal(t, len(inputProposedAccountsToRevoke.Items)+1, len(receivedProposedAccountsToRevoke.Items))
+	require.Equal(t, receivedProposedAccountsToRevoke, utils.MustGetProposedAccountsToRevokeRange())
 
 	// Bob approves to revoke new account
 	utils.ApproveRevokeAccount(testAccountKeyInfo, bobKeyInfo)
@@ -119,14 +131,17 @@ func TestAuthDemo(t *testing.T) {
 	// Query all active accounts
 	receivedAccounts, _ = utils.GetAccounts()
 	require.Equal(t, len(inputAccounts.Items), len(receivedAccounts.Items))
+	require.Equal(t, receivedAccounts, utils.MustGetAccountsRange())
 
 	// Query all proposed accounts
 	receivedProposedAccounts, _ = utils.GetProposedAccounts()
 	require.Equal(t, len(inputProposedAccounts.Items), len(receivedProposedAccounts.Items))
+	require.Equal(t, receivedProposedAccounts, utils.MustGetProposedAccountsRange())
 
 	// Query all accounts proposed to be revoked
 	receivedProposedAccountsToRevoke, _ = utils.GetProposedAccountsToRevoke()
 	require.Equal(t, len(inputProposedAccountsToRevoke.Items), len(receivedProposedAccountsToRevoke.Items))
+	require.Equal(t, receivedProposedAccountsToRevoke, utils.MustGetProposedAccountsToRevokeRange())
 
 	// Ensure that new account is not available anymore
 	_, code := utils.GetAccount(testAccountKeyInfo.Address)

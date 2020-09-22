@@ -174,6 +174,28 @@ func GetAccounts() (AccountHeadersResult, int) {
 	return result, code
 }
 
+func GetAccountsRange() (AccountHeadersResult, int) {
+	println("Get Accounts Range")
+
+	uri := fmt.Sprintf("%s/range/accounts", auth.RouterKey)
+	response, code := SendGetRequest(uri)
+
+	var result AccountHeadersResult
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func MustGetAccountsRange() AccountHeadersResult {
+	accountsRange, code := GetAccountsRange()
+	if code != http.StatusOK {
+		panic("status code is not 200")
+	}
+
+	return accountsRange
+}
+
 func GetProposedAccounts() (ProposedAccountHeadersResult, int) {
 	println("Get Proposed Accounts")
 
@@ -187,6 +209,28 @@ func GetProposedAccounts() (ProposedAccountHeadersResult, int) {
 	return result, code
 }
 
+func GetProposedAccountsRange() (ProposedAccountHeadersResult, int) {
+	println("Get Proposed Accounts Range")
+
+	uri := fmt.Sprintf("%s/range/accounts/proposed", auth.RouterKey)
+	response, code := SendGetRequest(uri)
+
+	var result ProposedAccountHeadersResult
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func MustGetProposedAccountsRange() ProposedAccountHeadersResult {
+	proposedAccountsRange, code := GetProposedAccountsRange()
+	if code != http.StatusOK {
+		panic("status code is not 200")
+	}
+
+	return proposedAccountsRange
+}
+
 func GetProposedAccountsToRevoke() (ProposedAccountToRevokeHeadersResult, int) {
 	println("Get Proposed Accounts to Revoke")
 
@@ -198,6 +242,28 @@ func GetProposedAccountsToRevoke() (ProposedAccountToRevokeHeadersResult, int) {
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
 	return result, code
+}
+
+func GetProposedAccountsToRevokeRange() (ProposedAccountToRevokeHeadersResult, int) {
+	println("Get Proposed Accounts to Revoke")
+
+	uri := fmt.Sprintf("%s/range/accounts/proposed/revoked", auth.RouterKey)
+	response, code := SendGetRequest(uri)
+
+	var result ProposedAccountToRevokeHeadersResult
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
+func MustGetProposedAccountsToRevokeRange() ProposedAccountToRevokeHeadersResult {
+	proposedAccountsToRevokeRange, code := GetProposedAccountsToRevokeRange()
+	if code != http.StatusOK {
+		panic("status code is not 200")
+	}
+
+	return proposedAccountsToRevokeRange
 }
 
 func CreateNewAccount(roles auth.AccountRoles) KeyInfo {

@@ -14,7 +14,7 @@
 # limitations under the License.
 
 set -e
-source integration_tests/cli/common.sh
+source integration_tests/cli_utils/common.sh
 
 root_cert_subject="O=root-ca,ST=some-state,C=AU"
 root_cert_subject_key_id="5A:88:E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:9:30:E6:2B:DB"

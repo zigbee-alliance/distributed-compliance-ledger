@@ -115,32 +115,22 @@ func ParseRangeParamsFromFlags() (RangeParams, error) {
 	), nil
 }
 
-// nolint: godox
-// TODO
-//func ParsePaginationParamsFromRequest(r *http.Request) (PaginationParams, error) {
-//	skip := 0
-//
-//	if str := r.FormValue("skip"); len(str) > 0 {
-//		val_, err := strconv.Atoi(str)
-//		if err != nil {
-//			return PaginationParams{}, error(sdk.ErrUnknownRequest(
-//				fmt.Sprintf("Invalid query parameter `skip`: Parsing Error: %v must be number", str)))
-//		}
-//
-//		skip = val_
-//	}
-//
-//	take := 0
-//
-//	if str := r.FormValue("take"); len(str) > 0 {
-//		val_, err := strconv.Atoi(str)
-//		if err != nil {
-//			return PaginationParams{}, error(sdk.ErrUnknownRequest(
-//				fmt.Sprintf("Invalid query parameter `take`: Parsing Error: %v must be number", str)))
-//		}
-//
-//		take = val_
-//	}
-//
-//	return NewPaginationParams(skip, take), nil
-//}
+func ParseRangeParamsFromRequest(r *http.Request) (RangeParams, error) {
+	startKey := []byte(r.FormValue(FlagStartKey))
+
+	endKey := []byte(r.FormValue(FlagEndKey))
+
+	limit := 0
+
+	if str := r.FormValue(FlagLimit); len(str) > 0 {
+		val_, err := strconv.Atoi(str)
+		if err != nil {
+			return RangeParams{}, error(sdk.ErrUnknownRequest(
+				fmt.Sprintf("Invalid query parameter `%v`: Parsing Error: %v must be number", FlagLimit, str)))
+		}
+
+		limit = val_
+	}
+
+	return NewRangeParams(startKey, endKey, limit), nil
+}

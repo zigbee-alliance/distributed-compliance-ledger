@@ -23,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store/iavl"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -31,6 +32,7 @@ import (
 	"github.com/gorilla/mux"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/range_helper"
 )
 
 const (
@@ -147,6 +149,30 @@ func (ctx RestContext) WithFormerHeight() (RestContext, error) {
 	return ctx, nil
 }
 
+func (ctx RestContext) WithHeightFromFlag() (RestContext, error) {
+	requestPrevState := false
+
+	var err error
+
+	if flag := ctx.request.FormValue(FlagPreviousHeight); len(flag) > 0 {
+		requestPrevState, err = strconv.ParseBool(flag)
+
+		if err != nil {
+			return RestContext{}, err
+		}
+	}
+
+	// Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1.
+	if requestPrevState {
+		return ctx.WithFormerHeight()
+	}
+
+	// request on the current height
+	ctx.context = ctx.context.WithHeight(0)
+
+	return ctx, nil
+}
+
 func (ctx RestContext) WithSigner() (RestContext, error) {
 	from, err := sdk.AccAddressFromBech32(ctx.baseReq.From)
 	if err != nil {
@@ -175,34 +201,32 @@ func (ctx RestContext) ReadRESTReq(req interface{}) bool {
 }
 
 func (ctx RestContext) QueryStore(key []byte, storeName string) ([]byte, int64, error) {
-	requestPrevState := false
-
-	var err error
-
-	if flag := ctx.request.FormValue(FlagPreviousHeight); len(flag) > 0 {
-		requestPrevState, err = strconv.ParseBool(flag)
-
-		if err != nil {
-			return nil, 0, err
-		}
+	ctx, err := ctx.WithHeightFromFlag()
+	if err != nil {
+		return nil, 0, err
 	}
-
-	// Try to query row on `height-1` to avoid delay related to waiting of committing block with height + 1.
-	if requestPrevState {
-		ctx, err := ctx.WithFormerHeight()
-		if err != nil {
-			return nil, 0, err
-		}
-
-		res, height, err := ctx.context.QueryStore(key, storeName)
-		if res != nil {
-			return res, height, err
-		}
-	}
-	// request on the current height
-	ctx.context = ctx.context.WithHeight(0)
 
 	return ctx.context.QueryStore(key, storeName)
+}
+
+func (ctx RestContext) QueryStoreAtHeight(height int64, key []byte, storeName string) ([]byte, int64, error) {
+	return ctx.context.WithHeight(height).QueryStore(key, storeName)
+}
+
+func (ctx RestContext) QueryRange(startKey []byte, endKey []byte, limit int,
+	storeName string) (iavl.RangeRes, int64, error) {
+	ctx, err := ctx.WithHeightFromFlag()
+	if err != nil {
+		return iavl.RangeRes{}, 0, err
+	}
+
+	req := iavl.RangeReq{
+		StartKey: startKey,
+		EndKey:   endKey,
+		Limit:    limit,
+	}
+
+	return ctx.context.QueryRange(req, storeName)
 }
 
 func (ctx RestContext) QueryWithData(path string, data interface{}) ([]byte, int64, error) {
@@ -344,4 +368,23 @@ func (ctx RestContext) SignAndBroadcastMessage(account string, passphrase string
 	}
 
 	return ctx.BroadcastMessage(signedMsg)
+}
+
+func (ctx RestContext) QueryRangeWithTotalAndHandleIO(storeKey string,
+	prefix []byte, totalKey []byte, valueUnmarshaler func([]byte) json.RawMessage) {
+	params, err := pagination.ParseRangeParamsFromRequest(ctx.request)
+	if err != nil {
+		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	result, height, err := range_helper.QueryRangeWithTotal(ctx, storeKey, prefix, params, totalKey, valueUnmarshaler)
+	if err != nil {
+		rest.WriteErrorResponse(ctx.responseWriter, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	ctx.RespondWithHeight(ctx.Codec().MustMarshalJSON(result), height)
 }

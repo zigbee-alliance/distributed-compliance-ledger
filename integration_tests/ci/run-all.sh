@@ -115,7 +115,7 @@ make image &>${DETAILED_OUTPUT_TARGET}
 cleanup_pool
 
 # Cli shell tests
-CLI_SHELL_TESTS=$(find integration_tests/cli -type f -not -name "common.sh")
+CLI_SHELL_TESTS=$(find integration_tests/cli -type f)
 
 for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   init_pool

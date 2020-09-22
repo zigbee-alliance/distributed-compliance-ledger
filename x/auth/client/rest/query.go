@@ -15,10 +15,12 @@
 package rest
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/keeper"
@@ -38,6 +40,23 @@ func accountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 	}
 }
 
+func accountsRangeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		valueUnmarshaler := func(bytes []byte) json.RawMessage {
+			value := types.Account{}
+			restCtx.Codec().MustUnmarshalBinaryBare(bytes, &value)
+
+			// the trick to prevent appending of `type` field by cdc
+			return codec.Cdc.MustMarshalJSON(value)
+		}
+
+		restCtx.QueryRangeWithTotalAndHandleIO(
+			storeName, types.AccountPrefix, types.AccountsTotalKey, valueUnmarshaler)
+	}
+}
+
 func proposedAccountsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -51,6 +70,22 @@ func proposedAccountsHandler(cliCtx context.CLIContext, storeName string) http.H
 	}
 }
 
+func proposedAccountsRangeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		valueUnmarshaler := func(bytes []byte) json.RawMessage {
+			value := types.PendingAccount{}
+			restCtx.Codec().MustUnmarshalBinaryBare(bytes, &value)
+
+			return restCtx.Codec().MustMarshalJSON(value)
+		}
+
+		restCtx.QueryRangeWithTotalAndHandleIO(
+			storeName, types.PendingAccountPrefix, types.PendingAccountsTotalKey, valueUnmarshaler)
+	}
+}
+
 func proposedAccountsToRevokeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -61,6 +96,22 @@ func proposedAccountsToRevokeHandler(cliCtx context.CLIContext, storeName string
 		}
 
 		restCtx.QueryList(fmt.Sprintf("custom/%s/%s", storeName, keeper.QueryAllPendingAccountRevocations), params)
+	}
+}
+
+func proposedAccountsToRevokeRangeHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		valueUnmarshaler := func(bytes []byte) json.RawMessage {
+			value := types.PendingAccountRevocation{}
+			restCtx.Codec().MustUnmarshalBinaryBare(bytes, &value)
+
+			return restCtx.Codec().MustMarshalJSON(value)
+		}
+
+		restCtx.QueryRangeWithTotalAndHandleIO(
+			storeName, types.PendingAccountRevocationPrefix, types.PendingAccountRevocationsTotalKey, valueUnmarshaler)
 	}
 }
 

@@ -40,8 +40,16 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		proposedAccountsHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
+		"/auth/range/accounts/proposed",
+		proposedAccountsRangeHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
 		"/auth/accounts",
 		accountsHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		"/auth/range/accounts",
+		accountsRangeHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
 		fmt.Sprintf("/auth/accounts/{%s}", address),
@@ -58,5 +66,9 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc(
 		"/auth/accounts/proposed/revoked",
 		proposedAccountsToRevokeHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		"/auth/range/accounts/proposed/revoked",
+		proposedAccountsToRevokeRangeHandler(cliCtx, storeName),
 	).Methods("GET")
 }

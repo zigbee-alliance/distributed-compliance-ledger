@@ -14,7 +14,7 @@
 # limitations under the License.
 
 set -e
-source integration_tests/cli/common.sh
+source integration_tests/cli_utils/common.sh
 
 random_string user
 echo "$user generates keys"

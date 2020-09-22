@@ -219,7 +219,7 @@ func SignedCommands(cmds ...*cobra.Command) []*cobra.Command {
 	return cmds
 }
 
-func (ctx CliContext) QueryRangeWithToatalAndHandleIO(storeKey string,
+func (ctx CliContext) QueryRangeWithTotalAndHandleIO(storeKey string,
 	prefix []byte, totalKey []byte, valueUnmarshaler func([]byte) json.RawMessage) error {
 	params, err := pagination.ParseRangeParamsFromFlags()
 	if err != nil {
