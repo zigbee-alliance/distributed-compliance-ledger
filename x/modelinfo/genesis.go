@@ -30,6 +30,7 @@ func NewGenesisState() GenesisState {
 	return GenesisState{ModelInfoRecords: []ModelInfo{}}
 }
 
+//nolint:gocognit
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ModelInfoRecords {
 		if record.VID == 0 {
