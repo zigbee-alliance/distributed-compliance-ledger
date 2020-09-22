@@ -128,6 +128,17 @@ Roles:
  
   Example: `dclcli query auth accounts`
 
+- Get all accounts and verify existence proof. Revoked accounts are not returned.
+
+  Command: `dclcli query auth all-accounts-range`
+ 
+  Flags:
+  - start-key: `optional(string)` - utf-8 str to start iteration from
+  - stop-key: `optional(srting)` - utf-8 str to stop iteration at
+  - limit: `optional(int)` - maximum number of records (all records are returned by default) 
+ 
+  Example: `dclcli query auth accounts`
+
 - Get all proposed accounts.
 
   Command: `dclcli query auth all-proposed-accounts`
@@ -138,6 +149,17 @@ Roles:
  
   Example: `dclcli query auth all-proposed-accounts`
 
+- Get all proposed accounts and verify existence proof.
+
+  Command: `dclcli query auth all-proposed-accounts-range`
+ 
+  Flags:
+  - start-key: `optional(string)` - utf-8 str to start iteration from
+  - stop-key: `optional(srting)` - utf-8 str to stop iteration at
+  - limit: `optional(int)` - maximum number of records (all records are returned by default) 
+ 
+  Example: `dclcli query auth accounts`
+
 - Get all proposed accounts to revoke.
 
   Command: `dclcli query auth all-proposed-accounts-to-revoke`
@@ -147,6 +169,17 @@ Roles:
   - take: `optional(int)` - number records to take (all records are returned by default) 
  
   Example: `dclcli query auth all-proposed-accounts-to-revoke`
+
+- Get all proposed accounts to revoke and verify existence proof.
+
+  Command: `dclcli query auth all-proposed-accounts-to-revoke-range`
+ 
+  Flags:
+  - start-key: `optional(string)` - utf-8 str to start iteration from
+  - stop-key: `optional(srting)` - utf-8 str to stop iteration at
+  - limit: `optional(int)` - maximum number of records (all records are returned by default) 
+ 
+  Example: `dclcli query auth accounts`
 
 ### PKI
 

@@ -1377,11 +1377,27 @@ The account is not revoked until sufficient number of Trustees approve it.
 
 Gets all proposed but not approved accounts.
 
-- Parameters: No
+- Parameters:
+    -   `skip`
+    -   `take`
 - CLI command: 
     -   `dclcli query auth all-proposed-accounts .... `
 - REST API: 
     -   GET `/auth/accounts/proposed`
+    
+#### GET_ALL_PROPOSED_ACCOUNTS_RANGE
+**Status: Implemented**
+
+Gets all proposed but not approved accounts. Verifies existence proof.
+
+- Parameters:
+    -   `start-key`
+    -   `end-key`
+    -   `limit`
+- CLI command: 
+    -   `dclcli query auth all-proposed-accounts-range .... `
+- REST API: 
+    -   GET `/auth/range/accounts/proposed`
     
 #### GET_ALL_ACCOUNTS
 **Status: Implemented**
@@ -1393,6 +1409,20 @@ Gets all accounts. Revoked accounts are not returned.
     -   `dclcli query auth all-accounts .... `
 - REST API: 
     -   GET `/auth/accounts`           
+
+#### GET_ALL_ACCOUNTS_RANGE
+**Status: Implemented**
+
+Gets all accounts. Revoked accounts are not returned. Verifies existence proof.
+
+- Parameters:
+    -   `start-key`
+    -   `end-key`
+    -   `limit`
+- CLI command:
+    -   `dclcli query auth all-accounts-range .... `
+- REST API: 
+    -   GET `/auth/range/accounts`
 
 #### GET_ACCOUNT
 **Status: Implemented**
@@ -1416,7 +1446,20 @@ Gets all proposed but not approved accounts to be revoked.
     -   `dclcli query auth all-proposed-accounts-to-revoke`
 - REST API: 
     -   GET `/auth/accounts/proposed/revoked`
-    
+
+#### GET_ALL_PROPOSED_ACCOUNTS_TO_REVOKE_RANGE
+**Status: Implemented**
+
+Gets all proposed but not approved accounts to be revoked. Verifies existence proof.
+
+- Parameters:
+    -   `start-key`
+    -   `end-key`
+    -   `limit`
+- CLI command: 
+    -   `dclcli query auth all-proposed-accounts-to-revoke-range`
+- REST API: 
+    -   GET `/auth/range/accounts/proposed/revoked`
 
 #### ROTATE_KEY
 **Status: Not Implemented**
