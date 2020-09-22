@@ -138,7 +138,7 @@ func (ctx CliContext) QueryStore(key []byte, storeName string) ([]byte, int64, e
 }
 
 func (ctx CliContext) QueryStoreAtHeight(height int64, key []byte, storeName string) ([]byte, int64, error) {
-	return ctx.WithHeight(height).QueryStore(key, storeName)
+	return ctx.context.WithHeight(height).QueryStore(key, storeName)
 }
 
 func (ctx CliContext) QueryRange(startKey []byte, endKey []byte, limit int,
