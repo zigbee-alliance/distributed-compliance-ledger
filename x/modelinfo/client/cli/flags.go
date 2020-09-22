@@ -26,7 +26,7 @@ const (
 	FlagDescriptionShortcut              = "d"
 	FlagSKU                              = "sku"
 	FlagHardwareVersion                  = "hardware-version"
-	FlagHardwareVersionShortcut          = "h"
+	FlagHardwareVersionShortcut          = "w"
 	FlagFirmwareVersion                  = "firmware-version"
 	FlagFirmwareVersionShortcut          = "f"
 	FlagOtaURL                           = "ota-url"
