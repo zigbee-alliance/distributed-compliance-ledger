@@ -267,24 +267,24 @@ func BroadcastMessage(message interface{}) (TxnResponse, int) {
 	return parseWriteTxnResponse(response, code)
 }
 
-func PublishModelInfo(model modelinfo.MsgAddModelInfo, sender KeyInfo) (TxnResponse, int) {
-	println("Publish Model Info")
+func AddModelInfo(model modelinfo.MsgAddModelInfo, sender KeyInfo) (TxnResponse, int) {
+	println("Add Model Info")
 
-	response, code := SendModelInfoRequest(model, sender.Name)
+	response, code := SendAddModelInfoRequest(model, sender.Name)
 
 	return parseWriteTxnResponse(response, code)
 }
 
-func PrepareModelInfoTransaction(model modelinfo.MsgAddModelInfo) (types.StdTx, int) {
-	println("Prepare Model Info Transaction")
+func PrepareAddModelInfoTransaction(model modelinfo.MsgAddModelInfo) (types.StdTx, int) {
+	println("Prepare Add Model Info Transaction")
 
-	response, code := SendModelInfoRequest(model, "")
+	response, code := SendAddModelInfoRequest(model, "")
 
 	return parseStdTxn(response, code)
 }
 
-func SendModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]byte, int) {
-	request := modelinfoRest.ModelInfoRequest{
+func SendAddModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]byte, int) {
+	request := modelinfoRest.AddModelInfoRequest{
 		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    model.Signer.String(),
@@ -292,11 +292,15 @@ func SendModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]by
 		VID:                      model.VID,
 		PID:                      model.PID,
 		CID:                      model.CID,
+		Version:                  model.Version,
 		Name:                     model.Name,
 		Description:              model.Description,
 		SKU:                      model.SKU,
-		FirmwareVersion:          model.FirmwareVersion,
 		HardwareVersion:          model.HardwareVersion,
+		FirmwareVersion:          model.FirmwareVersion,
+		OtaURL:                   model.OtaURL,
+		OtaChecksum:              model.OtaChecksum,
+		OtaChecksumType:          model.OtaChecksumType,
 		Custom:                   model.Custom,
 		TisOrTrpTestingCompleted: model.TisOrTrpTestingCompleted,
 	}
@@ -306,6 +310,44 @@ func SendModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]by
 	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
 
 	return SendPostRequest(uri, body, account, constants.Passphrase)
+}
+
+func UpdateModelInfo(model modelinfo.MsgUpdateModelInfo, sender KeyInfo) (TxnResponse, int) {
+	println("Update Model Info")
+
+	response, code := SendUpdateModelInfoRequest(model, sender.Name)
+
+	return parseWriteTxnResponse(response, code)
+}
+
+func PrepareUpdateModelInfoTransaction(model modelinfo.MsgUpdateModelInfo) (types.StdTx, int) {
+	println("Prepare Update Model Info Transaction")
+
+	response, code := SendUpdateModelInfoRequest(model, "")
+
+	return parseStdTxn(response, code)
+}
+
+func SendUpdateModelInfoRequest(model modelinfo.MsgUpdateModelInfo, account string) ([]byte, int) {
+	request := modelinfoRest.UpdateModelInfoRequest{
+		BaseReq: restTypes.BaseReq{
+			ChainID: constants.ChainID,
+			From:    model.Signer.String(),
+		},
+		VID:                      model.VID,
+		PID:                      model.PID,
+		CID:                      model.CID,
+		Description:              model.Description,
+		OtaURL:                   model.OtaURL,
+		Custom:                   model.Custom,
+		TisOrTrpTestingCompleted: model.TisOrTrpTestingCompleted,
+	}
+
+	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
+
+	uri := fmt.Sprintf("%s/%s", modelinfo.RouterKey, "models")
+
+	return SendPutRequest(uri, body, account, constants.Passphrase)
 }
 
 func GetModelInfo(vid uint16, pid uint16) (modelinfo.ModelInfo, int) {
@@ -884,13 +926,30 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 		common.RandUint16(),
 		common.RandUint16(),
 		constants.CID,
+		constants.Version,
 		RandString(),
 		RandString(),
 		RandString(),
-		constants.FirmwareVersion,
 		constants.HardwareVersion,
+		constants.FirmwareVersion,
+		constants.OtaURL,
+		constants.OtaChecksum,
+		constants.OtaChecksumType,
 		RandString(),
 		constants.TisOrTrpTestingCompleted,
+		owner,
+	)
+}
+
+func NewMsgUpdateModelInfo(vid uint16, pid uint16, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
+	return modelinfo.NewMsgUpdateModelInfo(
+		vid,
+		pid,
+		constants.CID+1,
+		RandString(),
+		constants.OtaURL+"/new",
+		RandString(),
+		!constants.TisOrTrpTestingCompleted,
 		owner,
 	)
 }

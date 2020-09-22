@@ -21,13 +21,13 @@ import (
 )
 
 // Response Payload for a list query with pagination.
-type LisModelInfoItems struct {
+type ListModelInfoItems struct {
 	Total int             `json:"total"`
 	Items []ModelInfoItem `json:"items"`
 }
 
 // Implement fmt.Stringer.
-func (n LisModelInfoItems) String() string {
+func (n ListModelInfoItems) String() string {
 	res, err := json.Marshal(n)
 	if err != nil {
 		panic(err)
@@ -40,8 +40,8 @@ type ModelInfoItem struct {
 	VID   uint16         `json:"vid"`
 	PID   uint16         `json:"pid"`
 	Name  string         `json:"name"`
-	Owner sdk.AccAddress `json:"owner"`
 	SKU   string         `json:"sku"`
+	Owner sdk.AccAddress `json:"owner"`
 }
 
 // Response Payload for a list query with pagination.

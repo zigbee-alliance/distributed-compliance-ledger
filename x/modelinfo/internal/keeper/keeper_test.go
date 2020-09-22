@@ -15,13 +15,12 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
 	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
@@ -116,8 +115,8 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 		vendorProduct := types.Product{
 			PID:   modelInfo.PID,
 			Name:  modelInfo.Name,
-			Owner: modelInfo.Owner,
 			SKU:   modelInfo.SKU,
+			Owner: modelInfo.Owner,
 		}
 		PIDs = append(PIDs, vendorProduct)
 

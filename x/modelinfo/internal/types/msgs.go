@@ -20,32 +20,55 @@ import (
 
 const RouterKey = ModuleName
 
+//nolint:maligned
 type MsgAddModelInfo struct {
-	Name                     string         `json:"name"`
-	Description              string         `json:"description"`
-	SKU                      string         `json:"sku"`
-	FirmwareVersion          string         `json:"firmware_version"`
-	HardwareVersion          string         `json:"hardware_version"`
-	Custom                   string         `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	VID                      uint16         `json:"vid"`
 	PID                      uint16         `json:"pid"`
 	CID                      uint16         `json:"cid,omitempty"`
+	Version                  string         `json:"version,omitempty"`
+	Name                     string         `json:"name"`
+	Description              string         `json:"description"`
+	SKU                      string         `json:"sku"`
+	HardwareVersion          string         `json:"hardware_version"`
+	FirmwareVersion          string         `json:"firmware_version"`
+	OtaURL                   string         `json:"ota_url,omitempty"`
+	OtaChecksum              string         `json:"ota_checksum,omitempty"`
+	OtaChecksumType          string         `json:"ota_checksum_type,omitempty"`
+	Custom                   string         `json:"custom,omitempty"`
+	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddModelInfo(vid uint16, pid uint16, cid uint16, name string, description string, sku string,
-	firmwareVersion string, hardwareVersion string, custom string,
-	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgAddModelInfo {
+func NewMsgAddModelInfo(
+	vid uint16,
+	pid uint16,
+	cid uint16,
+	version string,
+	name string,
+	description string,
+	sku string,
+	hardwareVersion string,
+	firmwareVersion string,
+	otaURL string,
+	otaChecksum string,
+	otaChecksumType string,
+	custom string,
+	tisOrTrpTestingCompleted bool,
+	signer sdk.AccAddress,
+) MsgAddModelInfo {
 	return MsgAddModelInfo{
 		VID:                      vid,
 		PID:                      pid,
 		CID:                      cid,
+		Version:                  version,
 		Name:                     name,
 		Description:              description,
 		SKU:                      sku,
-		FirmwareVersion:          firmwareVersion,
 		HardwareVersion:          hardwareVersion,
+		FirmwareVersion:          firmwareVersion,
+		OtaURL:                   otaURL,
+		OtaChecksum:              otaChecksum,
+		OtaChecksumType:          otaChecksumType,
 		Custom:                   custom,
 		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,
 		Signer:                   signer,
@@ -66,11 +89,11 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
 	}
 
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
 	}
 
 	if len(m.Name) == 0 {
@@ -85,12 +108,19 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid SKU: it cannot be empty")
 	}
 
+	if len(m.HardwareVersion) == 0 {
+		return sdk.ErrUnknownRequest("Invalid HardwareVersion: it cannot be empty")
+	}
+
 	if len(m.FirmwareVersion) == 0 {
 		return sdk.ErrUnknownRequest("Invalid FirmwareVersion: it cannot be empty")
 	}
 
-	if len(m.HardwareVersion) == 0 {
-		return sdk.ErrUnknownRequest("Invalid HardwareVersion: it cannot be empty")
+	if m.OtaURL != "" || m.OtaChecksum != "" || m.OtaChecksumType != "" {
+		if m.OtaURL == "" || m.OtaChecksum == "" || m.OtaChecksumType == "" {
+			return sdk.ErrUnknownRequest("Invalid MsgAddModelInfo: the fields OtaURL, OtaChecksum and " +
+				"OtaChecksumType must be either specified together, or not specified together")
+		}
 	}
 
 	return nil
@@ -104,23 +134,34 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
 }
 
+//nolint:maligned
 type MsgUpdateModelInfo struct {
-	Description              string         `json:"description"`
-	Custom                   string         `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	VID                      uint16         `json:"vid"`
 	PID                      uint16         `json:"pid"`
-	CID                      uint16         `json:"cid"`
+	CID                      uint16         `json:"cid,omitempty"`
+	Description              string         `json:"description,omitempty"`
+	OtaURL                   string         `json:"ota_url,omitempty"`
+	Custom                   string         `json:"custom,omitempty"`
+	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Signer                   sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgUpdateModelInfo(vid uint16, pid uint16, cid uint16, description string, custom string,
-	tisOrTrpTestingCompleted bool, signer sdk.AccAddress) MsgUpdateModelInfo {
+func NewMsgUpdateModelInfo(
+	vid uint16,
+	pid uint16,
+	cid uint16,
+	description string,
+	otaURL string,
+	custom string,
+	tisOrTrpTestingCompleted bool,
+	signer sdk.AccAddress,
+) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                      vid,
 		PID:                      pid,
 		CID:                      cid,
 		Description:              description,
+		OtaURL:                   otaURL,
 		Custom:                   custom,
 		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,
 		Signer:                   signer,
@@ -141,11 +182,11 @@ func (m MsgUpdateModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
 	}
 
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
 	}
 
 	return nil
@@ -187,11 +228,11 @@ func (m MsgDeleteModelInfo) ValidateBasic() sdk.Error {
 	}
 
 	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non zero 16-bit unsigned integer")
+		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
 	}
 
 	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
+		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
 	}
 
 	return nil

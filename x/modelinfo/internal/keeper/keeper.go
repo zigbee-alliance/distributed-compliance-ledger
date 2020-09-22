@@ -57,8 +57,8 @@ func (k Keeper) SetModelInfo(ctx sdk.Context, model types.ModelInfo) {
 	product := types.Product{
 		PID:   model.PID,
 		Name:  model.Name,
-		Owner: model.Owner,
 		SKU:   model.SKU,
+		Owner: model.Owner,
 	}
 	k.AppendVendorProduct(ctx, model.VID, product)
 }

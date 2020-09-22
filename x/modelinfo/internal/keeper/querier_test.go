@@ -15,14 +15,13 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/pagination"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
@@ -48,8 +47,18 @@ func TestQuerier_QueryModel(t *testing.T) {
 	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
 	require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
 	require.Equal(t, receivedModelInfo.CID, modelInfo.CID)
+	require.Equal(t, receivedModelInfo.Version, modelInfo.Version)
 	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
 	require.Equal(t, receivedModelInfo.Description, modelInfo.Description)
+	require.Equal(t, receivedModelInfo.SKU, modelInfo.SKU)
+	require.Equal(t, receivedModelInfo.HardwareVersion, modelInfo.HardwareVersion)
+	require.Equal(t, receivedModelInfo.FirmwareVersion, modelInfo.FirmwareVersion)
+	require.Equal(t, receivedModelInfo.OtaURL, modelInfo.OtaURL)
+	require.Equal(t, receivedModelInfo.OtaChecksum, modelInfo.OtaChecksum)
+	require.Equal(t, receivedModelInfo.OtaChecksumType, modelInfo.OtaChecksumType)
+	require.Equal(t, receivedModelInfo.Custom, modelInfo.Custom)
+	require.Equal(t, receivedModelInfo.TisOrTrpTestingCompleted, modelInfo.TisOrTrpTestingCompleted)
+	require.Equal(t, receivedModelInfo.Owner, modelInfo.Owner)
 }
 
 func TestQuerier_QueryModelForUnknown(t *testing.T) {
@@ -193,14 +202,14 @@ func TestQuerier_QueryVendorModels(t *testing.T) {
 	}
 }
 
-func getModels(setup TestSetup, params pagination.PaginationParams) types.LisModelInfoItems {
+func getModels(setup TestSetup, params pagination.PaginationParams) types.ListModelInfoItems {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{QueryAllModels},
 		abci.RequestQuery{Data: setup.Cdc.MustMarshalJSON(params)},
 	)
 
-	var receiveModelInfos types.LisModelInfoItems
+	var receiveModelInfos types.ListModelInfoItems
 	_ = setup.Cdc.UnmarshalJSON(result, &receiveModelInfos)
 
 	return receiveModelInfos

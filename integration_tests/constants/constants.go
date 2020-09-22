@@ -37,14 +37,18 @@ var (
 	VID                      uint16 = 1
 	PID                      uint16 = 22
 	CID                      uint16 = 12345
+	Version                         = "1.0"
 	Name                            = "Device Name"
-	Owner                           = Address1
 	Description                     = "Device Description"
-	Sku                             = "RCU2205A"
-	FirmwareVersion                 = "1.0"
-	HardwareVersion                 = "2.0"
+	SKU                             = "RCU2205A"
+	HardwareVersion                 = "1.1"
+	FirmwareVersion                 = "2.0"
+	OtaURL                          = "http://ota.firmware.com"
+	OtaChecksum                     = "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	OtaChecksumType                 = "SHA-256"
 	Custom                          = "Custom data"
-	TisOrTrpTestingCompleted        = false
+	TisOrTrpTestingCompleted        = true
+	Owner                           = Address1
 
 	// Compliance.
 	CertificationDate = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)

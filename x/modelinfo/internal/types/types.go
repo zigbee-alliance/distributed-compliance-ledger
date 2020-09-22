@@ -23,35 +23,58 @@ import (
 /*
 	Model Info stored in KVStore
 */
+//nolint:maligned
 type ModelInfo struct {
-	Name                     string         `json:"name"`
-	Description              string         `json:"description"`
-	SKU                      string         `json:"sku"`
-	FirmwareVersion          string         `json:"firmware_version"`
-	HardwareVersion          string         `json:"hardware_version"`
-	Custom                   string         `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	VID                      uint16         `json:"vid"`
 	PID                      uint16         `json:"pid"`
 	CID                      uint16         `json:"cid,omitempty"`
+	Version                  string         `json:"version,omitempty"`
+	Name                     string         `json:"name"`
+	Description              string         `json:"description"`
+	SKU                      string         `json:"sku"`
+	HardwareVersion          string         `json:"hardware_version"`
+	FirmwareVersion          string         `json:"firmware_version"`
+	OtaURL                   string         `json:"ota_url,omitempty"`
+	OtaChecksum              string         `json:"ota_checksum,omitempty"`
+	OtaChecksumType          string         `json:"ota_checksum_type,omitempty"`
+	Custom                   string         `json:"custom,omitempty"`
+	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
 	Owner                    sdk.AccAddress `json:"owner"`
 }
 
-func NewModelInfo(vid uint16, pid uint16, cid uint16, name string, owner sdk.AccAddress,
-	description string, sku string, firmwareVersion string, hardwareVersion string, custom string,
-	tisOrTrpTestingCompleted bool) ModelInfo {
+func NewModelInfo(
+	vid uint16,
+	pid uint16,
+	cid uint16,
+	version string,
+	name string,
+	description string,
+	sku string,
+	hardwareVersion string,
+	firmwareVersion string,
+	otaURL string,
+	otaChecksum string,
+	otaChecksumType string,
+	custom string,
+	tisOrTrpTestingCompleted bool,
+	owner sdk.AccAddress,
+) ModelInfo {
 	return ModelInfo{
 		VID:                      vid,
 		PID:                      pid,
 		CID:                      cid,
+		Version:                  version,
 		Name:                     name,
-		Owner:                    owner,
 		Description:              description,
 		SKU:                      sku,
-		FirmwareVersion:          firmwareVersion,
 		HardwareVersion:          hardwareVersion,
+		FirmwareVersion:          firmwareVersion,
+		OtaURL:                   otaURL,
+		OtaChecksum:              otaChecksum,
+		OtaChecksumType:          otaChecksumType,
 		Custom:                   custom,
 		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,
+		Owner:                    owner,
 	}
 }
 
@@ -110,6 +133,6 @@ func (d VendorProducts) String() string {
 type Product struct {
 	PID   uint16         `json:"pid"`
 	Name  string         `json:"name"`
-	Owner sdk.AccAddress `json:"owner"`
 	SKU   string         `json:"sku"`
+	Owner sdk.AccAddress `json:"owner"`
 }

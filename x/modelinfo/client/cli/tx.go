@@ -65,28 +65,6 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			name := viper.GetString(FlagName)
-
-			description, err_ := cliCtx.ReadFromFile(viper.GetString(FlagDescription))
-			if err_ != nil {
-				return err_
-			}
-
-			sku := viper.GetString(FlagSKU)
-			firmwareVersion := viper.GetString(FlagFirmwareVersion)
-			hardwareVersion := viper.GetString(FlagHardwareVersion)
-
-			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(viper.GetString(FlagTisOrTrpTestingCompleted))
-			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Tis-or-trp-testing-completed: "+
-					"Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
-			}
-
-			custom, err_ := cliCtx.ReadFromFile(viper.GetString(FlagCustom))
-			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid custom:\"%v\"", err_))
-			}
-
 			var cid uint16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = conversions.ParseCID(cidStr)
@@ -95,7 +73,40 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			msg := types.NewMsgAddModelInfo(vid, pid, cid, name, description, sku, firmwareVersion, hardwareVersion,
+			version := viper.GetString(FlagVersion)
+
+			name := viper.GetString(FlagName)
+
+			description, err_ := cliCtx.ReadFromFile(viper.GetString(FlagDescription))
+			if err_ != nil {
+				return err_
+			}
+
+			sku := viper.GetString(FlagSKU)
+
+			hardwareVersion := viper.GetString(FlagHardwareVersion)
+
+			firmwareVersion := viper.GetString(FlagFirmwareVersion)
+			otaURL := viper.GetString(FlagOtaURL)
+			otaChecksum := viper.GetString(FlagOtaChecksum)
+			otaChecksumType := viper.GetString(FlagOtaChecksumType)
+
+			var custom string
+			if customFilename := viper.GetString(FlagCustom); len(customFilename) != 0 {
+				custom, err_ = cliCtx.ReadFromFile(customFilename)
+				if err_ != nil {
+					return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid custom:\"%v\"", err_))
+				}
+			}
+
+			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(viper.GetString(FlagTisOrTrpTestingCompleted))
+			if err_ != nil {
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Tis-or-trp-testing-completed: "+
+					"Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
+			}
+
+			msg := types.NewMsgAddModelInfo(vid, pid, cid, version, name, description, sku,
+				hardwareVersion, firmwareVersion, otaURL, otaChecksum, otaChecksumType,
 				custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
@@ -105,14 +116,19 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().String(FlagCID, "", "Model category ID")
+	cmd.Flags().StringP(FlagVersion, FlagVersionShortcut, "",
+		"Version of model info format")
 	cmd.Flags().StringP(FlagName, FlagNameShortcut, "", "Model name")
 	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "",
 		"Model description (string or path to file containing data)")
 	cmd.Flags().String(FlagSKU, "", "Model stock keeping unit")
-	cmd.Flags().StringP(FlagFirmwareVersion, FlagFirmwareVersionShortcut, "",
-		"Version of model firmware")
 	cmd.Flags().StringP(FlagHardwareVersion, FlagHardwareVersionShortcut, "",
 		"Version of model hardware")
+	cmd.Flags().StringP(FlagFirmwareVersion, FlagFirmwareVersionShortcut, "",
+		"Version of model firmware")
+	cmd.Flags().String(FlagOtaURL, "", "URL of the OTA")
+	cmd.Flags().String(FlagOtaChecksum, "", "Checksum of the OTA")
+	cmd.Flags().String(FlagOtaChecksumType, "", "Type of the OTA checksum")
 	cmd.Flags().StringP(FlagCustom, FlagCustomShortcut, "",
 		"Custom information (string or path to file containing data)")
 	cmd.Flags().StringP(FlagTisOrTrpTestingCompleted, FlagTisOrTrpTestingCompletedShortcut, "",
@@ -121,9 +137,10 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
 	_ = cmd.MarkFlagRequired(FlagName)
+	_ = cmd.MarkFlagRequired(FlagDescription)
 	_ = cmd.MarkFlagRequired(FlagSKU)
-	_ = cmd.MarkFlagRequired(FlagFirmwareVersion)
 	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
+	_ = cmd.MarkFlagRequired(FlagFirmwareVersion)
 	_ = cmd.MarkFlagRequired(FlagTisOrTrpTestingCompleted)
 
 	return cmd
@@ -148,17 +165,6 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(viper.GetString(FlagTisOrTrpTestingCompleted))
-			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid tis-or-trp-testing-completed: "+
-					"Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
-			}
-
-			description, err_ := cliCtx.ReadFromFile(viper.GetString(FlagDescription))
-			if err_ != nil {
-				return err_
-			}
-
 			var cid uint16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = conversions.ParseCID(cidStr)
@@ -167,13 +173,33 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			custom, err_ := cliCtx.ReadFromFile(viper.GetString(FlagCustom))
+			var description string
+			var err_ error
+			if descriptionFilename := viper.GetString(FlagDescription); len(descriptionFilename) != 0 {
+				description, err_ = cliCtx.ReadFromFile(descriptionFilename)
+				if err_ != nil {
+					return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid description:\"%v\"", err_))
+				}
+			}
+
+			otaURL := viper.GetString(FlagOtaURL)
+
+			var custom string
+			if customFilename := viper.GetString(FlagCustom); len(customFilename) != 0 {
+				custom, err_ = cliCtx.ReadFromFile(customFilename)
+				if err_ != nil {
+					return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid custom:\"%v\"", err_))
+				}
+			}
+
+			tisOrTrpTestingCompleted, err_ := strconv.ParseBool(viper.GetString(FlagTisOrTrpTestingCompleted))
 			if err_ != nil {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid custom:\"%v\"", err_))
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid tis-or-trp-testing-completed: "+
+					"Parsing Error: \"%v\" must be boolean", viper.GetString(FlagTisOrTrpTestingCompleted)))
 			}
 
 			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description,
-				custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
+				otaURL, custom, tisOrTrpTestingCompleted, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},

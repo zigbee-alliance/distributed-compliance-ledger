@@ -56,14 +56,18 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 		msg.VID,
 		msg.PID,
 		msg.CID,
+		msg.Version,
 		msg.Name,
-		msg.Signer,
 		msg.Description,
 		msg.SKU,
-		msg.FirmwareVersion,
 		msg.HardwareVersion,
+		msg.FirmwareVersion,
+		msg.OtaURL,
+		msg.OtaChecksum,
+		msg.OtaChecksumType,
 		msg.Custom,
 		msg.TisOrTrpTestingCompleted,
+		msg.Signer,
 	)
 
 	// store new model
@@ -74,7 +78,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 
 func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgUpdateModelInfo) sdk.Result {
-	// check is model exists
+	// check if model exists
 	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
 		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
@@ -86,35 +90,29 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 		return err.Result()
 	}
 
+	if msg.OtaURL != "" && modelInfo.OtaURL == "" {
+		return types.ErrOtaURLCannotBeSet(msg.VID, msg.PID).Result()
+	}
+
 	// updates existing model value only if corresponding value in MsgUpdate is not empty
-	CID := modelInfo.CID
+
 	if msg.CID != 0 {
-		CID = msg.CID
+		modelInfo.CID = msg.CID
 	}
 
-	description := modelInfo.Description
-	if len(msg.Description) != 0 {
-		description = msg.Description
+	if msg.Description != "" {
+		modelInfo.Description = msg.Description
 	}
 
-	custom := modelInfo.Custom
-	if len(msg.Custom) != 0 {
-		custom = msg.Custom
+	if msg.OtaURL != "" {
+		modelInfo.OtaURL = msg.OtaURL
 	}
 
-	modelInfo = types.NewModelInfo(
-		msg.VID,
-		msg.PID,
-		CID,
-		modelInfo.Name,
-		msg.Signer,
-		description,
-		modelInfo.SKU,
-		modelInfo.FirmwareVersion,
-		modelInfo.HardwareVersion,
-		custom,
-		msg.TisOrTrpTestingCompleted,
-	)
+	if msg.Custom != "" {
+		modelInfo.Custom = msg.Custom
+	}
+
+	modelInfo.TisOrTrpTestingCompleted = msg.TisOrTrpTestingCompleted
 
 	// store updated model
 	keeper.SetModelInfo(ctx, modelInfo)

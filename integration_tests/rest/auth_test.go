@@ -90,7 +90,7 @@ func TestAuthDemo(t *testing.T) {
 
 	// Publish model info by test account
 	modelInfo := utils.NewMsgAddModelInfo(testAccountKeyInfo.Address)
-	_, _ = utils.PublishModelInfo(modelInfo, testAccountKeyInfo)
+	_, _ = utils.AddModelInfo(modelInfo, testAccountKeyInfo)
 
 	// Check model is created
 	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
@@ -135,6 +135,6 @@ func TestAuthDemo(t *testing.T) {
 	// Try to publish another model info by test account.
 	// Ensure that the request is responded with not OK status code.
 	modelInfo = utils.NewMsgAddModelInfo(testAccountKeyInfo.Address)
-	_, code = utils.PublishModelInfo(modelInfo, testAccountKeyInfo)
+	_, code = utils.AddModelInfo(modelInfo, testAccountKeyInfo)
 	require.NotEqual(t, http.StatusOK, code)
 }

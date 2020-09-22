@@ -25,20 +25,27 @@ const (
 
 	CodeModelInfoAlreadyExists   sdk.CodeType = 501
 	CodeModelInfoDoesNotExist    sdk.CodeType = 502
-	CodeVendorProductsDoNotExist sdk.CodeType = 503
+	CodeOtaURLCannotBeSet        sdk.CodeType = 503
+	CodeVendorProductsDoNotExist sdk.CodeType = 504
 )
 
 func ErrModelInfoAlreadyExists(vid interface{}, pid interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeModelInfoAlreadyExists,
-		fmt.Sprintf("Model info associated with the vid=%v and pid=%v already exists on the ledger", vid, pid))
+		fmt.Sprintf("Model info associated with vid=%v and pid=%v already exists on the ledger", vid, pid))
 }
 
 func ErrModelInfoDoesNotExist(vid interface{}, pid interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeModelInfoDoesNotExist,
-		fmt.Sprintf("No model info associated with the vid=%v and pid=%v on the ledger", vid, pid))
+		fmt.Sprintf("No model info associated with vid=%v and pid=%v exist on the ledger", vid, pid))
+}
+
+func ErrOtaURLCannotBeSet(vid interface{}, pid interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeOtaURLCannotBeSet,
+		fmt.Sprintf("OTA URL cannot be set for model info associated with vid=%v and pid=%v "+
+			"because OTA was not set for this model info initially", vid, pid))
 }
 
 func ErrVendorProductsDoNotExist(vid interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeVendorProductsDoNotExist,
-		fmt.Sprintf("No models associated with the vid=%v on the ledger", vid))
+		fmt.Sprintf("No vendor products associated with vid=%v exist on the ledger", vid))
 }

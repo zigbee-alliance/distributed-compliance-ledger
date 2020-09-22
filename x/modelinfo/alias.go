@@ -31,6 +31,7 @@ var (
 	NewKeeper                = keeper.NewKeeper
 	NewQuerier               = keeper.NewQuerier
 	NewMsgAddModelInfo       = types.NewMsgAddModelInfo
+	NewMsgUpdateModelInfo    = types.NewMsgUpdateModelInfo
 	ModuleCdc                = types.ModuleCdc
 	RegisterCodec            = types.RegisterCodec
 	ErrModelInfoDoesNotExist = types.ErrModelInfoDoesNotExist

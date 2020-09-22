@@ -57,17 +57,19 @@ func TestModelinfoDemo(t *testing.T) {
 	require.Equal(t, receivedModelInfo.VID, firstModelInfo.VID)
 	require.Equal(t, receivedModelInfo.PID, firstModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Name, firstModelInfo.Name)
+	require.Equal(t, receivedModelInfo.Description, firstModelInfo.Description)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
 	secondModelInfo.VID = VID // Set same Vendor as for the first model
-	_, _ = utils.PublishModelInfo(secondModelInfo, vendor)
+	_, _ = utils.AddModelInfo(secondModelInfo, vendor)
 
 	// Check model is created
 	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
 	require.Equal(t, receivedModelInfo.VID, secondModelInfo.VID)
 	require.Equal(t, receivedModelInfo.PID, secondModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Name, secondModelInfo.Name)
+	require.Equal(t, receivedModelInfo.Description, secondModelInfo.Description)
 
 	// Get all model infos
 	modelInfos, _ := utils.GetModelInfos()
@@ -82,6 +84,14 @@ func TestModelinfoDemo(t *testing.T) {
 	require.Equal(t, uint64(2), uint64(len(vendorModels.Products)))
 	require.Equal(t, firstModelInfo.PID, vendorModels.Products[0].PID)
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)
+
+	// Update second model info
+	secondModelInfoUpdate := utils.NewMsgUpdateModelInfo(secondModelInfo.VID, secondModelInfo.PID, vendor.Address)
+	_, _ = utils.UpdateModelInfo(secondModelInfoUpdate, vendor)
+
+	// Check model is updated
+	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
+	require.Equal(t, receivedModelInfo.Description, secondModelInfoUpdate.Description)
 }
 
 func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
@@ -92,7 +102,7 @@ func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
 	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
 
 	// Prepare Sing Broadcast
-	addModelTransaction, _ := utils.PrepareModelInfoTransaction(modelInfo)
+	addModelTransaction, _ := utils.PrepareAddModelInfoTransaction(modelInfo)
 	_, _ = utils.SignAndBroadcastTransaction(vendor, addModelTransaction)
 
 	// Check model is created
@@ -120,11 +130,11 @@ func Test_AddModelinfo_Twice(t *testing.T) {
 
 	// publish model info
 	modelInfo := utils.NewMsgAddModelInfo(testAccount.Address)
-	res, _ := utils.PublishModelInfo(modelInfo, testAccount)
+	res, _ := utils.AddModelInfo(modelInfo, testAccount)
 	require.Equal(t, sdk.CodeOK, sdk.CodeType(res.Code))
 
 	// publish second time
-	res, _ = utils.PublishModelInfo(modelInfo, testAccount)
+	res, _ = utils.AddModelInfo(modelInfo, testAccount)
 	require.Equal(t, modelinfo.CodeModelInfoAlreadyExists, sdk.CodeType(res.Code))
 }
 

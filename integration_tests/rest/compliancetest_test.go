@@ -43,7 +43,7 @@ func TestCompliancetestDemo(t *testing.T) {
 
 	// Publish model info
 	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	_, _ = utils.PublishModelInfo(modelInfo, vendor)
+	_, _ = utils.AddModelInfo(modelInfo, vendor)
 
 	// Publish first testing result using Sign and Broadcast AddTestingResult message
 	firstTestingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, testHouse.Address)
@@ -60,7 +60,7 @@ func TestCompliancetestDemo(t *testing.T) {
 
 	// Publish second model info
 	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	_, _ = utils.PublishModelInfo(secondModelInfo, vendor)
+	_, _ = utils.AddModelInfo(secondModelInfo, vendor)
 
 	// Publish second testing result using POST
 	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, testHouse.Address)

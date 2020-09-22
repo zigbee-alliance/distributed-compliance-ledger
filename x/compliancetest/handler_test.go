@@ -166,14 +166,18 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 		VID:                      vid,
 		PID:                      pid,
 		CID:                      test_constants.CID,
-		Owner:                    test_constants.Owner,
+		Version:                  test_constants.Version,
 		Name:                     test_constants.Name,
 		Description:              test_constants.Description,
-		SKU:                      test_constants.Sku,
-		FirmwareVersion:          test_constants.FirmwareVersion,
+		SKU:                      test_constants.SKU,
 		HardwareVersion:          test_constants.HardwareVersion,
+		FirmwareVersion:          test_constants.FirmwareVersion,
+		OtaURL:                   test_constants.OtaURL,
+		OtaChecksum:              test_constants.OtaChecksum,
+		OtaChecksumType:          test_constants.OtaChecksumType,
 		Custom:                   test_constants.Custom,
 		TisOrTrpTestingCompleted: test_constants.TisOrTrpTestingCompleted,
+		Owner:                    test_constants.Owner,
 	}
 
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
