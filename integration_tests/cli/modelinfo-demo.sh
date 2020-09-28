@@ -27,7 +27,7 @@ vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=false --from $vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

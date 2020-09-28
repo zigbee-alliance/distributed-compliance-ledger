@@ -15,7 +15,6 @@
 //nolint:testpackage
 package modelinfo
 
-//nolint:goimports
 import (
 	"fmt"
 	"testing"
@@ -23,7 +22,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
@@ -43,16 +42,27 @@ func TestHandler_AddModel(t *testing.T) {
 	// check
 	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
 	require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
+	require.Equal(t, receivedModelInfo.CID, modelInfo.CID)
+	require.Equal(t, receivedModelInfo.Version, modelInfo.Version)
 	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
 	require.Equal(t, receivedModelInfo.Description, modelInfo.Description)
+	require.Equal(t, receivedModelInfo.SKU, modelInfo.SKU)
+	require.Equal(t, receivedModelInfo.HardwareVersion, modelInfo.HardwareVersion)
+	require.Equal(t, receivedModelInfo.FirmwareVersion, modelInfo.FirmwareVersion)
+	require.Equal(t, receivedModelInfo.OtaURL, modelInfo.OtaURL)
+	require.Equal(t, receivedModelInfo.OtaChecksum, modelInfo.OtaChecksum)
+	require.Equal(t, receivedModelInfo.OtaChecksumType, modelInfo.OtaChecksumType)
+	require.Equal(t, receivedModelInfo.Custom, modelInfo.Custom)
+	require.Equal(t, receivedModelInfo.TisOrTrpTestingCompleted, modelInfo.TisOrTrpTestingCompleted)
+	require.Equal(t, receivedModelInfo.Owner, modelInfo.Signer)
 }
 
 func TestHandler_UpdateModel(t *testing.T) {
 	setup := Setup()
 
 	// try update not present model
-	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(setup.Vendor)
-	result := setup.Handler(setup.Ctx, msgUpdatedModelInfo)
+	msgUpdateModelInfo := TestMsgUpdateModelInfo(setup.Vendor)
+	result := setup.Handler(setup.Ctx, msgUpdateModelInfo)
 	require.Equal(t, types.CodeModelInfoDoesNotExist, result.Code)
 
 	// add new model
@@ -61,8 +71,28 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// update existing model
-	result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
+	result = setup.Handler(setup.Ctx, msgUpdateModelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
+
+	// query updated model
+	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.VID, msgUpdateModelInfo.PID)
+
+	// check
+	require.Equal(t, receivedModelInfo.VID, msgAddModelInfo.VID)
+	require.Equal(t, receivedModelInfo.PID, msgAddModelInfo.PID)
+	require.Equal(t, receivedModelInfo.CID, msgUpdateModelInfo.CID)
+	require.Equal(t, receivedModelInfo.Version, msgAddModelInfo.Version)
+	require.Equal(t, receivedModelInfo.Name, msgAddModelInfo.Name)
+	require.Equal(t, receivedModelInfo.Description, msgUpdateModelInfo.Description)
+	require.Equal(t, receivedModelInfo.SKU, msgAddModelInfo.SKU)
+	require.Equal(t, receivedModelInfo.HardwareVersion, msgAddModelInfo.HardwareVersion)
+	require.Equal(t, receivedModelInfo.FirmwareVersion, msgAddModelInfo.FirmwareVersion)
+	require.Equal(t, receivedModelInfo.OtaURL, msgUpdateModelInfo.OtaURL)
+	require.Equal(t, receivedModelInfo.OtaChecksum, msgAddModelInfo.OtaChecksum)
+	require.Equal(t, receivedModelInfo.OtaChecksumType, msgAddModelInfo.OtaChecksumType)
+	require.Equal(t, receivedModelInfo.Custom, msgUpdateModelInfo.Custom)
+	require.Equal(t, receivedModelInfo.TisOrTrpTestingCompleted, msgUpdateModelInfo.TisOrTrpTestingCompleted)
+	require.Equal(t, receivedModelInfo.Owner, msgAddModelInfo.Signer)
 }
 
 func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
@@ -79,14 +109,14 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// update existing model by not owner
-		msgUpdatedModelInfo := TestMsgUpdatedModelInfo(testconstants.Address3)
-		result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
+		msgUpdateModelInfo := TestMsgUpdateModelInfo(testconstants.Address3)
+		result = setup.Handler(setup.Ctx, msgUpdateModelInfo)
 		require.Equal(t, sdk.CodeUnauthorized, result.Code)
 	}
 
 	// owner update existing model
-	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(setup.Vendor)
-	result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
+	msgUpdateModelInfo := TestMsgUpdateModelInfo(setup.Vendor)
+	result = setup.Handler(setup.Ctx, msgUpdateModelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 }
 
@@ -95,8 +125,12 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 
 	// add new model
 	modelInfo := TestMsgAddModelInfo(setup.Vendor)
-	modelInfo.CID = 0     // Set empty CID
-	modelInfo.Custom = "" // Set empty Custom
+	modelInfo.CID = 0              // Set empty CID
+	modelInfo.Version = ""         // Set empty Version
+	modelInfo.OtaURL = ""          // Set empty OtaURL
+	modelInfo.OtaChecksum = ""     // Set empty OtaChecksum
+	modelInfo.OtaChecksumType = "" // Set empty OtaChecksumType
+	modelInfo.Custom = ""          // Set empty Custom
 
 	result := setup.Handler(setup.Ctx, modelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
@@ -106,6 +140,10 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 
 	// check
 	require.Equal(t, receivedModelInfo.CID, uint16(0))
+	require.Equal(t, receivedModelInfo.Version, "")
+	require.Equal(t, receivedModelInfo.OtaURL, "")
+	require.Equal(t, receivedModelInfo.OtaChecksum, "")
+	require.Equal(t, receivedModelInfo.OtaChecksumType, "")
 	require.Equal(t, receivedModelInfo.Custom, "")
 }
 
@@ -132,20 +170,24 @@ func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	result := setup.Handler(setup.Ctx, msgAddModelInfo)
 
 	// owner update Description of existing model
-	msgUpdatedModelInfo := TestMsgUpdatedModelInfo(setup.Vendor)
-	msgUpdatedModelInfo.Description = "New Description"
-	msgUpdatedModelInfo.Custom = ""
-	msgUpdatedModelInfo.CID = 0
-	result = setup.Handler(setup.Ctx, msgUpdatedModelInfo)
+	msgUpdateModelInfo := TestMsgUpdateModelInfo(setup.Vendor)
+	msgUpdateModelInfo.CID = 0
+	msgUpdateModelInfo.Description = "New Description"
+	msgUpdateModelInfo.OtaURL = ""
+	msgUpdateModelInfo.Custom = ""
+	msgUpdateModelInfo.TisOrTrpTestingCompleted = !testconstants.TisOrTrpTestingCompleted
+	result = setup.Handler(setup.Ctx, msgUpdateModelInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query model
-	receivedModelInfo := queryModelInfo(setup, msgUpdatedModelInfo.VID, msgUpdatedModelInfo.PID)
+	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.VID, msgUpdateModelInfo.PID)
 
 	// check
-	require.Equal(t, receivedModelInfo.Description, msgUpdatedModelInfo.Description)
-	require.Equal(t, receivedModelInfo.Custom, msgAddModelInfo.Custom)
 	require.Equal(t, receivedModelInfo.CID, msgAddModelInfo.CID)
+	require.Equal(t, receivedModelInfo.Description, msgUpdateModelInfo.Description)
+	require.Equal(t, receivedModelInfo.OtaURL, msgAddModelInfo.OtaURL)
+	require.Equal(t, receivedModelInfo.Custom, msgAddModelInfo.Custom)
+	require.Equal(t, receivedModelInfo.TisOrTrpTestingCompleted, msgUpdateModelInfo.TisOrTrpTestingCompleted)
 }
 
 func queryModelInfo(setup TestSetup, vid uint16, pid uint16) types.ModelInfo {

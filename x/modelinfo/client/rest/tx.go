@@ -23,25 +23,42 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
-type ModelInfoRequest struct {
+//nolint:maligned
+type AddModelInfoRequest struct {
 	BaseReq                  restTypes.BaseReq `json:"base_req"`
-	Name                     string            `json:"name"`
-	Description              string            `json:"description"`
-	SKU                      string            `json:"sku"`
-	FirmwareVersion          string            `json:"firmware_version"`
-	HardwareVersion          string            `json:"hardware_version"`
-	Custom                   string            `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool              `json:"tis_or_trp_testing_completed"`
 	VID                      uint16            `json:"vid"`
 	PID                      uint16            `json:"pid"`
 	CID                      uint16            `json:"cid,omitempty"`
+	Version                  string            `json:"version,omitempty"`
+	Name                     string            `json:"name"`
+	Description              string            `json:"description"`
+	SKU                      string            `json:"sku"`
+	HardwareVersion          string            `json:"hardware_version"`
+	FirmwareVersion          string            `json:"firmware_version"`
+	OtaURL                   string            `json:"ota_url,omitempty"`
+	OtaChecksum              string            `json:"ota_checksum,omitempty"`
+	OtaChecksumType          string            `json:"ota_checksum_type,omitempty"`
+	Custom                   string            `json:"custom,omitempty"`
+	TisOrTrpTestingCompleted bool              `json:"tis_or_trp_testing_completed"`
+}
+
+//nolint:maligned
+type UpdateModelInfoRequest struct {
+	BaseReq                  restTypes.BaseReq `json:"base_req"`
+	VID                      uint16            `json:"vid"`
+	PID                      uint16            `json:"pid"`
+	CID                      uint16            `json:"cid,omitempty"`
+	Description              string            `json:"description,omitempty"`
+	OtaURL                   string            `json:"ota_url,omitempty"`
+	Custom                   string            `json:"custom,omitempty"`
+	TisOrTrpTestingCompleted bool              `json:"tis_or_trp_testing_completed"`
 }
 
 func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		var req ModelInfoRequest
+		var req AddModelInfoRequest
 		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
@@ -56,8 +73,10 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAddModelInfo(req.VID, req.PID, req.CID, req.Name, req.Description, req.SKU,
-			req.FirmwareVersion, req.HardwareVersion, req.Custom, req.TisOrTrpTestingCompleted, restCtx.Signer())
+		msg := types.NewMsgAddModelInfo(req.VID, req.PID, req.CID, req.Version,
+			req.Name, req.Description, req.SKU, req.HardwareVersion,
+			req.FirmwareVersion, req.OtaURL, req.OtaChecksum, req.OtaChecksumType,
+			req.Custom, req.TisOrTrpTestingCompleted, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}
@@ -67,7 +86,7 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
-		var req ModelInfoRequest
+		var req UpdateModelInfoRequest
 		if !restCtx.ReadRESTReq(&req) {
 			return
 		}
@@ -83,7 +102,7 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgUpdateModelInfo(req.VID, req.PID, req.CID, req.Description,
-			req.Custom, req.TisOrTrpTestingCompleted, restCtx.Signer())
+			req.OtaURL, req.Custom, req.TisOrTrpTestingCompleted, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

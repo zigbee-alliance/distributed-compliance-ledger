@@ -14,7 +14,6 @@
 
 package keeper
 
-//nolint:goimports
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -22,7 +21,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
@@ -69,14 +68,18 @@ func DefaultModelInfo() types.ModelInfo {
 		VID:                      testconstants.VID,
 		PID:                      testconstants.PID,
 		CID:                      testconstants.CID,
+		Version:                  testconstants.Version,
 		Name:                     testconstants.Name,
-		Owner:                    testconstants.Owner,
 		Description:              testconstants.Description,
-		SKU:                      testconstants.Sku,
-		FirmwareVersion:          testconstants.FirmwareVersion,
+		SKU:                      testconstants.SKU,
 		HardwareVersion:          testconstants.HardwareVersion,
+		FirmwareVersion:          testconstants.FirmwareVersion,
+		OtaURL:                   testconstants.OtaURL,
+		OtaChecksum:              testconstants.OtaChecksum,
+		OtaChecksumType:          testconstants.OtaChecksumType,
 		Custom:                   testconstants.Custom,
 		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
+		Owner:                    testconstants.Owner,
 	}
 }
 

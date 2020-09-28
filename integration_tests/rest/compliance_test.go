@@ -14,14 +14,13 @@
 
 package rest_test
 
-//nolint:goimports
 import (
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/common"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
@@ -58,7 +57,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 	// Publish model info
 	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	_, _ = utils.PublishModelInfo(modelInfo, vendor)
+	_, _ = utils.AddModelInfo(modelInfo, vendor)
 
 	// Check if model either certified or revoked before Compliance record was created
 	modelIsCertified, _ := utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, compliance.ZbCertificationType)

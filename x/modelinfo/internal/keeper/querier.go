@@ -77,7 +77,7 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res 
 		return nil, sdk.ErrUnknownRequest(fmt.Sprintf("failed to parse request params: %s", err))
 	}
 
-	result := types.LisModelInfoItems{
+	result := types.ListModelInfoItems{
 		Total: keeper.CountTotalModelInfos(ctx),
 		Items: []types.ModelInfoItem{},
 	}
@@ -95,8 +95,8 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res 
 				VID:   modelInfo.VID,
 				PID:   modelInfo.PID,
 				Name:  modelInfo.Name,
-				Owner: modelInfo.Owner,
 				SKU:   modelInfo.SKU,
+				Owner: modelInfo.Owner,
 			}
 
 			result.Items = append(result.Items, item)

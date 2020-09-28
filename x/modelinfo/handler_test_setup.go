@@ -88,25 +88,30 @@ func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 		VID:                      testconstants.VID,
 		PID:                      testconstants.PID,
 		CID:                      testconstants.CID,
+		Version:                  testconstants.Version,
 		Name:                     testconstants.Name,
 		Description:              testconstants.Description,
-		SKU:                      testconstants.Sku,
-		FirmwareVersion:          testconstants.FirmwareVersion,
+		SKU:                      testconstants.SKU,
 		HardwareVersion:          testconstants.HardwareVersion,
+		FirmwareVersion:          testconstants.FirmwareVersion,
+		OtaURL:                   testconstants.OtaURL,
+		OtaChecksum:              testconstants.OtaChecksum,
+		OtaChecksumType:          testconstants.OtaChecksumType,
 		Custom:                   testconstants.Custom,
 		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
 }
 
-func TestMsgUpdatedModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
+func TestMsgUpdateModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
 		VID:                      testconstants.VID,
 		PID:                      testconstants.PID,
 		CID:                      testconstants.CID + 1,
 		Description:              "New Description",
+		OtaURL:                   "http://ota.firmware.com/new",
 		Custom:                   "New Custom Data",
-		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
+		TisOrTrpTestingCompleted: !testconstants.TisOrTrpTestingCompleted,
 		Signer:                   signer,
 	}
 }
