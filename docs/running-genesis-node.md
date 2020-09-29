@@ -1,0 +1,161 @@
+## Running Node
+
+This document describes in details how to configure a genesis (first) validator node.
+
+### Hardware requirements
+
+Minimal:
+- 1GB RAM
+- 25GB of disk space
+- 1.4 GHz CPU
+
+Recommended (for highload applications):
+- 2GB RAM
+- 100GB SSD
+- x64 2.0 GHz 2v CPU
+
+### Operating System
+
+Current delivery is compiled and tested under `Ubuntu 18.04.3 LTS` so we recommend using this distribution for now. In future, it will be possible to compile the application for a wide range of operating systems thanks to Go language.
+
+## Components
+
+The delivery must consist of the following components:
+
+* Binary artifacts:
+    * dcld: The binary used for running a node.
+    * dclcli: The binary that allow users to interact with pool ledger.
+* Genesis transactions file: `genesis.json`
+* The list of alive peers: `persistent_peers.txt`. It has the following format: `<node id>@<node ip>,<node2 id>@<node2 ip>,...`.
+* The service configuration file `dcld.service`
+
+### Deployment steps
+
+1. Put `dcld` and `dclcli` binaries to `/usr/bin/` and configure permissions.
+
+2. Configure dclcli:
+    * `dclcli config chain-id dclchain`
+    * `dclcli config output json` - Output format (text/json).
+    * `dclcli config indent true` - Add indent to JSON response.
+    * `dclcli config trust-node false` - Verify proofs for node responses.
+    * `dclcli config node tcp://localhost:26657` - Address of the genesis node. 
+
+3. Prepare keys:
+    * Derive a new private key and encrypt to disk: `dclcli keys add <name>`.
+    Expected output format: 
+        ```json
+        {
+          "name": <name>, // key name. can be used for signing transactions
+          "type": "local",
+          "address": string, // bench32 encoded address
+          "pubkey": string, // bench32 encoded public key
+          "mnemonic": string // seed that can be used to generate the same private/public key pair
+        }
+        ```
+    * Remember generated `address` and `pubkey` they will be used later. 
+    You can retrieve `address` and `pubkey` values anytime using `dclcli keys show <name>`. 
+    Of course, only on the machine where the keypair was generated.
+
+4. Prepare genesis node configuration:
+
+    * Initialize new configuration: `dcld init <node-name> --chain-id dclchain`.
+    * Add genesis account with the generated key and `Trustee`, `NodeAdmin` roles:
+    `dcld add-genesis-account --address=<address> --pubkey=<pubkey> --roles="Trustee,NodeAdmin"`
+    * Optionally, add other genesis accounts using the same command.
+    * Create genesis transaction: `dcld gentx --from <name>`
+    * Collect genesis transactions: `dcld collect-gentxs`.
+    * Validate genesis file: `dcld validate-genesis`.
+    * Genesis file is located in `$HOME/.dcld/config/genesis.json`. Give this file to each new node admin.
+
+5. Run node:
+    * Open `26656` (p2p) and `26657` (RPC) ports. 
+        * `sudo ufw allow 26656/tcp`
+        * `sudo ufw allow 26657/tcp`
+    * Edit `dcld.service`
+        * Replace `ubuntu` with a user name you want to start service on behalf
+    * Copy service configuration.
+        * `cp dcld.service /etc/systemd/system/`
+    * Optionally, edit `$HOME/.dcld/config/config.toml` in order to set different setting (like listen address).
+    * Enable the service: `sudo systemctl enable dcld`
+    * Start node: `sudo systemctl start dcld`
+    * For testing purpose the node can be started in CLI mode: `dcld start` (instead of two previous `systemctl` commands).
+    Service mode is recommended for demo and production environment.
+    
+    * Use `systemctl start status` to get the node service status. 
+    In the output, you can notice that `height` increases quickly over time. 
+    This means that the node in updating to the latest network state (it takes some time).
+        
+        You can also check node status by executing the command `dclcli status` to get the current status.
+        The value of `latest_block_height` reflects the current node height.
+       
+6. Check that genesis account is created:
+
+    * In order to ensure that account is created and has assigned role you can use the command: 
+    `dclcli query auth account --address=<address>`.
+    Expected output format: 
+        ```json
+        {
+          "result": {
+            "address": string, // bench32 encoded address
+            "public_key": "string, // bench32 encoded public key
+            "roles": [
+              "NodeAdmin"
+            ],
+            "coins": [],
+            "account_number": string,
+            "sequence": string
+          },
+          "height": string
+        }
+        ```
+
+6. Check the node is running and participates in consensus:
+    * Get the list of all nodes: `dclcli query validator all-nodes`. 
+    The node must present in the list and has the following params: `power:10` and `jailed:false`.
+
+    * Get the node status: `dclcli status --node <node ip>`. 
+    The value of `node ip` matches to `[rpc] laddr` field in `$HOME/.dcld/config/config.toml`
+    (TCP or UNIX socket address for the RPC server to listen on).  
+    Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
+       Expected output format: 
+        ```json
+        {
+          "node_info": {
+            "protocol_version": {
+              "p2p": "7",
+              "block": "10",
+              "app": "0"
+            },
+            "id": string, // matches to prefix <ID> of the file: $HOME/.dcld/config/gentx/gentx-<ID>.json
+            "listen_addr": "tcp://0.0.0.0:26656", // Address to listen for incoming connections. Matches to $HOME/.dcld/config/config.toml [p2p] `laddr` filed.
+            "network": "dclchain",
+            "version": "0.32.8",
+            "channels": string,
+            "moniker": string,
+            "other": {
+              "tx_index": "on",
+              "rpc_address": "tcp://127.0.0.1:26657" // TCP or UNIX socket address for the RPC server to listen on. Matches to $HOME/.dcld/config/config.toml [rpc] `laddr` filed. 
+            }
+          },
+          "sync_info": {
+            "latest_block_hash": string,
+            "latest_app_hash": "string,
+            "latest_block_height": string,
+            "latest_block_time": string,
+            "catching_up": bool
+          },
+          "validator_info": {
+            "address": string,
+            "pub_key": {
+              "type": string,
+              "value": string
+            },
+            "voting_power": string
+          }
+        }
+        ```
+    
+    * Get the list of nodes participating in the consensus for the last block: `dclcli tendermint-validator-set`.
+        * You can pass the additional value to get the result for a specific height: `dclcli tendermint-validator-set 100`.
+      
+7. Congrats! You are an owner of the genesis node.
