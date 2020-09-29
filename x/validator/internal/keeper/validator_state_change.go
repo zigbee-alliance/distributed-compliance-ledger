@@ -22,7 +22,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/slashing"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
-	tmtypes "github.com/tendermint/tendermint/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
@@ -32,20 +31,24 @@ func (k Keeper) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) {
 	// Iterate over all the validators which *should* have signed this block
 	// store whether or not they have actually signed it and jail any
 	// which have missed too many blocks in a window
-	for _, voteInfo := range req.LastCommitInfo.GetVotes() {
-		k.HandleValidatorSignature(ctx, voteInfo.Validator.Address, voteInfo.Validator.Power, voteInfo.SignedLastBlock)
-	}
+	// nolint: godox
+	// TODO: Jail is disabled because unjail functionality is not implemented yet.
+	//for _, voteInfo := range req.LastCommitInfo.GetVotes() {
+	//	k.HandleValidatorSignature(ctx, voteInfo.Validator.Address, voteInfo.Validator.Power, voteInfo.SignedLastBlock)
+	//}
 
 	// Iterate through any newly discovered evidence of infraction
 	// Slash all validators who contributed to infractions.
-	for _, evidence := range req.ByzantineValidators {
-		switch evidence.Type {
-		case tmtypes.ABCIEvidenceTypeDuplicateVote:
-			k.HandleDoubleSign(ctx, evidence.Validator.Address, evidence.Height, evidence.Time, evidence.Validator.Power)
-		default:
-			k.Logger(ctx).Error(fmt.Sprintf("ignored unknown evidence type: %s", evidence.Type))
-		}
-	}
+	// nolint: godox
+	// TODO: Jail is disabled because unjail functionality is not implemented yet.
+	//for _, evidence := range req.ByzantineValidators {
+	//	switch evidence.Type {
+	//	case tmtypes.ABCIEvidenceTypeDuplicateVote:
+	//		k.HandleDoubleSign(ctx, evidence.Validator.Address, evidence.Height, evidence.Time, evidence.Validator.Power)
+	//	default:
+	//		k.Logger(ctx).Error(fmt.Sprintf("ignored unknown evidence type: %s", evidence.Type))
+	//	}
+	//}
 }
 
 // Calculate the ValidatorUpdates for the current block
