@@ -70,7 +70,7 @@ must have a unique chain ID.
     * Add genesis account with the generated key and `Trustee`, `NodeAdmin` roles:
     `dcld add-genesis-account --address=<address> --pubkey=<pubkey> --roles="Trustee,NodeAdmin"`
     * Optionally, add other genesis accounts using the same command.
-    * Create genesis transaction: `dcld gentx --from <name>`
+    * Create genesis transaction: `dcld gentx --from <name>`, where `<name>` is the keys' name specified at Step 4. 
     * Collect genesis transactions: `dcld collect-gentxs`.
     * Validate genesis file: `dcld validate-genesis`.
     * Genesis file is located in `$HOME/.dcld/config/genesis.json`. Give this file to each new node admin.
