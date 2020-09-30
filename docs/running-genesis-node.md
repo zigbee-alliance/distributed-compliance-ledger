@@ -1,7 +1,10 @@
-## Running Node
+## Running a Genesis Validator Node
 
 This document describes in details how to configure a genesis (first) validator node.
 
+Here we assume (for simplicity) that the genesis block consists of a single node only.
+Please note that nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly.
+ 
 ### Hardware requirements
 
 Minimal:
@@ -20,27 +23,32 @@ Current delivery is compiled and tested under `Ubuntu 18.04.3 LTS` so we recomme
 
 ## Components
 
-The delivery must consist of the following components:
+The latest release can be found at [DCL Releases](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases).
 
-* Binary artifacts:
+The following components will be needed:
+
+* Binary artifacts (part of the release):
     * dcld: The binary used for running a node.
-    * dclcli: The binary that allow users to interact with pool ledger.
-* Genesis transactions file: `genesis.json`
-* The list of alive peers: `persistent_peers.txt`. It has the following format: `<node id>@<node ip>,<node2 id>@<node2 ip>,...`.
-* The service configuration file `dcld.service`
+    * dclcli: The binary that allow users to interact with the network of nodes.
+* The service configuration file `dcld.service` 
+(either part of the release or [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment) folder).    
+
 
 ### Deployment steps
 
 1. Put `dcld` and `dclcli` binaries to `/usr/bin/` and configure permissions.
 
-2. Configure dclcli:
-    * `dclcli config chain-id dclchain`
+2. Choose the chain ID. Every network (for example, test-net, main-net, etc.)
+must have a unique chain ID.
+
+3. Configure dclcli:
+    * `dclcli config chain-id <chain-id>` - the chosen unique chain ID.
     * `dclcli config output json` - Output format (text/json).
     * `dclcli config indent true` - Add indent to JSON response.
     * `dclcli config trust-node false` - Verify proofs for node responses.
-    * `dclcli config node tcp://localhost:26657` - Address of the genesis node. 
+    * `dclcli config node tcp://localhost:26657` - Address of the genesis node (this is a local node). 
 
-3. Prepare keys:
+4. Prepare keys:
     * Derive a new private key and encrypt to disk: `dclcli keys add <name>`.
     Expected output format: 
         ```json
@@ -56,9 +64,9 @@ The delivery must consist of the following components:
     You can retrieve `address` and `pubkey` values anytime using `dclcli keys show <name>`. 
     Of course, only on the machine where the keypair was generated.
 
-4. Prepare genesis node configuration:
+5. Prepare genesis node configuration:
 
-    * Initialize new configuration: `dcld init <node-name> --chain-id dclchain`.
+    * Initialize new configuration: `dcld init <node-name> --chain-id <chain-id>`.
     * Add genesis account with the generated key and `Trustee`, `NodeAdmin` roles:
     `dcld add-genesis-account --address=<address> --pubkey=<pubkey> --roles="Trustee,NodeAdmin"`
     * Optionally, add other genesis accounts using the same command.
@@ -67,7 +75,7 @@ The delivery must consist of the following components:
     * Validate genesis file: `dcld validate-genesis`.
     * Genesis file is located in `$HOME/.dcld/config/genesis.json`. Give this file to each new node admin.
 
-5. Run node:
+6. Run node:
     * Open `26656` (p2p) and `26657` (RPC) ports. 
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
@@ -82,13 +90,10 @@ The delivery must consist of the following components:
     Service mode is recommended for demo and production environment.
     
     * Use `systemctl start status` to get the node service status. 
-    In the output, you can notice that `height` increases quickly over time. 
-    This means that the node in updating to the latest network state (it takes some time).
-        
-        You can also check node status by executing the command `dclcli status` to get the current status.
-        The value of `latest_block_height` reflects the current node height.
+    * You can also check node status by executing the command `dclcli status` to get the current status.
+      The value of `latest_block_height` reflects the current node height.
        
-6. Check that genesis account is created:
+7. Check that genesis account is created:
 
     * In order to ensure that account is created and has assigned role you can use the command: 
     `dclcli query auth account --address=<address>`.
@@ -99,7 +104,7 @@ The delivery must consist of the following components:
             "address": string, // bench32 encoded address
             "public_key": "string, // bench32 encoded public key
             "roles": [
-              "NodeAdmin"
+              "NodeAdmin", "Trustee"
             ],
             "coins": [],
             "account_number": string,
@@ -109,7 +114,7 @@ The delivery must consist of the following components:
         }
         ```
 
-6. Check the node is running and participates in consensus:
+8. Check the node is running and participates in consensus:
     * Get the list of all nodes: `dclcli query validator all-nodes`. 
     The node must present in the list and has the following params: `power:10` and `jailed:false`.
 
@@ -128,7 +133,7 @@ The delivery must consist of the following components:
             },
             "id": string, // matches to prefix <ID> of the file: $HOME/.dcld/config/gentx/gentx-<ID>.json
             "listen_addr": "tcp://0.0.0.0:26656", // Address to listen for incoming connections. Matches to $HOME/.dcld/config/config.toml [p2p] `laddr` filed.
-            "network": "dclchain",
+            "network": "<chain-id>",
             "version": "0.32.8",
             "channels": string,
             "moniker": string,
@@ -157,5 +162,29 @@ The delivery must consist of the following components:
     
     * Get the list of nodes participating in the consensus for the last block: `dclcli tendermint-validator-set`.
         * You can pass the additional value to get the result for a specific height: `dclcli tendermint-validator-set 100`.
+        * As for the genesis state we have just 1 node, the command should return only our node at this phase.
       
-7. Congrats! You are an owner of the genesis node.
+9. Add more initial trusted validator nodes to the network
+   * Let's add more nodes that will be considered as trusted persistent peers by other nodes.
+   * Create a sub-folder in [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment/persistent_chains)
+   with the chosen chain ID (Step 2) as a name. 
+   * Persist the genesis file in the created chain-id subfolder.
+   The genesis file can be found in `$HOME/.dcld/config/genesis.json` (Step 5). 
+   * Create the `persistent_peers.txt` file from the template located in [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment)
+   and persist it in the chain-id subfolder. 
+      * If there is only one genesis node (like in the current tutorial), it will contain 
+      a single entry `<node1_id>@<node1_IP>:26656`.
+      * `<node1_id>` - Node ID. Can be found as an `<ID>` prefix of the file `$HOME/.dcld/config/gentx/gentx-<ID>.json`.
+      * `<node1-IP>` - public IP address of the genesis node. 
+   * Every node that needs to join the network should follow the [Running Node](running-node.md) instructions
+   using the chosen chain-id and the genesis and persistent_peers files above (or from the chain-id subfolder).
+   * Update the `persistent_peers.txt` file by including the entries for every added initial node.
+   * Update the `persistent_peers` field in `$HOME/.dcld/config/config.toml`
+    for every initial node (including the genesis one) to match the `persistent_peers.txt` content.
+        * See Step 4 from [Running Node](running-node.md) for details.
+
+10. Adding more validator nodes to the network
+    * Just follow the [Running Node](running-node.md) instructions 
+    using the chosen chain-id and the genesis and persistent_peers files above (from the chain-id subfolder).
+       * Please make sure, that the persistent_peers contain all the nodes (including the genesis node)
+    added at Step 9.

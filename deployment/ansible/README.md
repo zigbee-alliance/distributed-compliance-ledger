@@ -1,5 +1,9 @@
 # Ansible playbooks
 
+This playbook can be used to deploy your own network of validator nodes for debug purposes.
+
+If you like to join one of the persistent networks instead, please follow the [Running Node](../../docs/running-node.md) instructions. 
+
 ## Setting up nodes:
 
 1. Generate genesis and configuration files for nodes by running `genlocalnetconfig.sh`

@@ -1,6 +1,14 @@
-## Running Node
+## Running a Validator Node
 
-This document describes in details how to configure a validator node, and add it to the existing pool.
+This document describes in details how to configure a validator node, and add it to the existing network.
+
+The existing network can be either a custom one, or one of the persistent networks (such as a Test Net).
+Configuration of all persistent networks can be found in [Persistent Chains](../deployment/persistent_chains)
+where each subfolder represents a `<chain-id>`.
+
+If a new network needs to be initialized, please follow the [Running Genesis Node](running-genesis-node.md)
+instructions first. After this more validator nodes can be added by following the instructions from this doc. 
+ 
 
 ### Hardware requirements
 
@@ -20,21 +28,29 @@ Current delivery is compiled and tested under `Ubuntu 18.04.3 LTS` so we recomme
 
 ## Components
 
-The delivery must consist of the following components:
+The latest release can be found at [DCL Releases](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases).
 
-* Binary artifacts:
+The following components will be needed:
+
+* Binary artifacts (part of the release):
     * dcld: The binary used for running a node.
-    * dclcli: The binary that allow users to interact with pool ledger.
+    * dclcli: The binary that allow users to interact with the network of nodes.
+* The service configuration file `dcld.service` 
+(either part of the release or [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment) folder).    
 * Genesis transactions file: `genesis.json`
 * The list of alive peers: `persistent_peers.txt`. It has the following format: `<node id>@<node ip>,<node2 id>@<node2 ip>,...`.
-* The service configuration file `dcld.service`
+
+If you want to join an existing persistent network (such as Test Net), then look at the [Persistent Chains](../deployment/persistent_chains)
+folder for a list of available networks. Each subfolder there represents a `<chain-id>` 
+and contains the genesis and persistent_peers files. 
 
 ### Deployment steps
 
 1. Put `dcld` and `dclcli` binaries to `/usr/bin/` and configure permissions.
 
 2. Configure dclcli:
-    * `dclcli config chain-id dclchain`
+    * `dclcli config chain-id <chain-id>`
+      * Use `dcl-test-net-chain` if you want to connect to the persistent Test Net
     * `dclcli config output json` - Output format (text/json).
     * `dclcli config indent true` - Add indent to JSON response.
     * `dclcli config trust-node false` - Verify proofs for node responses.

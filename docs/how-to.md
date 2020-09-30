@@ -45,7 +45,7 @@ the following instructions can be used for every role (see [Use Case Diagrams](u
 
 CLI configuration file can be created or updated by executing of the command: `dclcli config <key> [value]`.
 Here is the list of supported settings:
-* chain-id <chain id> - Chain ID of pool node
+* chain-id <chain id> - unique chain ID of the network you are going to connect to
 * output <type> - Output format (text/json)
 * indent <bool> - Add indent to JSON response
 * trust-node <bool> - Trust connected full node (don't verify proofs for responses). The `false` value is recommended.
@@ -53,15 +53,21 @@ Here is the list of supported settings:
 * trace <bool> - Print out full stack trace on errors.
 * broadcast-mode <mode> - Write transaction broadcast mode to use (one of: `sync`, `async`, `block`. `block` is default).
 
-In order to connect the CLI to the DC Ledger Demo Pool, the following parameters should be used:
+In order to connect the CLI to a DC Ledger Network (Chain), the following parameters should be used:
 
-* `dclcli config chain-id dclchain`
+* `dclcli config chain-id <chain-id>` - `<chain-id>` defines the Network you want to connect to
+    * Use `dcl-test-net-chain` if you want to connect to persistent Test Net
+    * A full list of available persistent chains can be found in [Persistent Chains](../deployment/persistent_chains)
+    where every sub-folder matches the corresponding chain-id.
 * `dclcli config output json` - Output format (text/json).
 * `dclcli config indent true` - Add indent to JSON response.
 * `dclcli config trust-node false` - Verify proofs for node responses.
-* `dclcli config node <ip address>` - Address of a node to connect. 
-Choose one of the listed in `persistent_peers.txt` file. 
-Example: `tcp://18.157.114.34:26657`.
+* `dclcli config node <address>` - Address of a node to connect.
+    * Example: `tcp://18.157.114.34:26657`.
+    * The IP address there is the IP of one of the nodes from the Network you are going to connect to.
+    * One of the persistent peer's IP can be used here
+    * A list of persistent peer IPs for persistent networks (such as the Test Net)
+    can be found in the corresponding subfolders within [Persistent Chains](../deployment/persistent_chains). 
 
 
 ## Getting Account
@@ -348,18 +354,22 @@ This step can be used in either on-ledger certification use case
 Validators are responsible for committing of new blocks to the ledger.
 Here are steps for setting up a new validator node.
 
-A more detailed instruction on how to add a validator node to the current DC Ledger pool
+A more detailed instruction on how to add a validator node to an existing DC Ledger network
 can be found here: [running-node.md](running-node.md).
 
 * Firstly you have to posses an account with `NodeAdmin` role on the ledger. See [Getting Account](#getting-account):
     
 * Initialize the node and create the necessary config files:
-    * Init Node: `dcld init <node name> --chain-id <chain id>`.
+    * If you want to join an existing persistent network, then look at the [Persistent Chains](../deployment/persistent_chains)
+    for a list of available networks. Each subfolder there represents `<chain-id>` 
+    and contains the genesis and persistent_peers files. 
+    * Init Node: `dcld init <node name> --chain-id <chain-id>`.
     * Fetch the network `genesis.json` file and put it into dcld's config directory (usually `$HOME/.dcld/config/`).
     * In order to join network your node needs to know how to find alive peers. 
     Update `persistent_peers` field of `$HOME/.dcld/config/config.toml` file to contain peers info in the format:
     `<node1 id>@<node1 listen_addr>,<node2 id>@<node2 listen_addr>,.....`
     * Open `26656` (p2p) and `26657` (RPC) ports.
+    
 
 * Add validator node to the network:
     * Get this node's tendermint validator *consensus address*: `dcld tendermint show-address`
@@ -398,6 +408,9 @@ Example:
 * `dclcli query validator all-nodes`
 
 ##### Policy
+
+**Please note, that Jailing is currently disabled!**
+
 - Maximum number of nodes (`MaxNodes`): 100 
 - Size (number of blocks) of the sliding window used to track validator liveness (`SignedBlocksWindow`): 100
 - Minimal number of blocks must have been signed per window (`MinSignedPerWindow`): 50

@@ -1,0 +1,1 @@
+<node1_id>@<node1_IP>:26656,<node2_id>@<node2_IP>:26656,<node3_id>@<node3_IP>:26656
