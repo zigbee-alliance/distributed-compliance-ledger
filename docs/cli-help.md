@@ -153,7 +153,7 @@ Roles:
 The set of commands that allows you to manage X.509 certificates.
 
 ##### Transactions
-- Proposes a new self-signed root certificate.
+- Propose a new self-signed root certificate.
 
   Role: Any  
 
@@ -180,7 +180,7 @@ The set of commands that allows you to manage X.509 certificates.
 
   Example: `dclcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
   
-- Adds an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
+- Add an intermediate or leaf X509 certificate signed by a chain of certificates which must be already present on the ledger.
 
   Role: Any
 
@@ -194,11 +194,11 @@ The set of commands that allows you to manage X.509 certificates.
   
   Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
 
-- Revokes the given intermediate or leaf X509 certificate. Can be done by the certificate's issuer only.
+- Revoke the given intermediate or leaf X509 certificate. Can be done by the certificate's issuer only.
 
   Role: Any 
 
-  Command: `dclcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>``
+  Command: `dclcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
     - subject: `string` - certificates's `Subject`.
@@ -235,7 +235,7 @@ The set of commands that allows you to manage X.509 certificates.
 
     
 ##### Queries
-- Gets all proposed but not approved root certificates.
+- Get all proposed but not approved root certificates.
 
   Command: `dclcli query pki all-proposed-x509-root-certs`
 
@@ -245,7 +245,7 @@ The set of commands that allows you to manage X.509 certificates.
     
   Example: `dclcli query pki all-proposed-x509-root-certs`
   
-- Gets a proposed but not approved root certificate.
+- Get a proposed but not approved root certificate.
 
   Command: `dclcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string>`
 
@@ -255,7 +255,7 @@ The set of commands that allows you to manage X.509 certificates.
 
   Example: `dclcli query pki proposed-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
 
-- Gets all approved root certificates. Revoked certificates are not returned.
+- Get all approved root certificates. Revoked certificates are not returned.
 
   Command: `dclcli query pki all-x509-root-certs`
 
@@ -265,7 +265,7 @@ The set of commands that allows you to manage X.509 certificates.
   
   Example: `dclcli query pki all-x509-root-certs`
   
-- Gets a certificates (either root, intermediate or leaf). Revoked certificates are not returned.
+- Get a certificate (either root, intermediate or leaf). Revoked certificates are not returned.
 
   Command: `dclcli query pki x509-cert --subject=<string> --subject-key-id=<hex string>`
 
@@ -275,7 +275,7 @@ The set of commands that allows you to manage X.509 certificates.
 
   Example: `dclcli query pki x509-certs --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
   
-- Gets all certificates (root, intermediate and leaf). Revoked certificates are not returned.
+- Get all certificates (root, intermediate and leaf). Revoked certificates are not returned.
 
   Command: `dclcli query pki all-x509-certs`
 
@@ -291,7 +291,7 @@ The set of commands that allows you to manage X.509 certificates.
   
   Example: `dclcli query pki x509-certs --root-subject="CN=dsr-corporation.com"`
   
-- Gets all certificates (root, intermediate and leaf) associated with subject. Revoked certificates are not returned.
+- Get all certificates (root, intermediate and leaf) associated with subject. Revoked certificates are not returned.
 
   Command: `dclcli query pki all-subject-x509-certs --subject=<subject>`
 
@@ -308,7 +308,7 @@ The set of commands that allows you to manage X.509 certificates.
   
   Example: `dclcli query pki all-subject-x509-certs --subject="CN=dsr" --root-subject="CN=dsr-corporation.com"`
 
-- Gets a complete chain for a certificate. Revoked certificates are not returned.
+- Get a complete chain for a certificate. Revoked certificates are not returned.
 
   Command: `dclcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string>`
 
@@ -318,7 +318,7 @@ The set of commands that allows you to manage X.509 certificates.
 
   Example: `dclcli query pki x509-cert-chain --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
 
-- Gets all proposed but not approved root certificates to be revoked.
+- Get all proposed but not approved root certificates to be revoked.
 
   Command: `dclcli query pki all-proposed-x509-root-certs-to-revoke`
 
@@ -328,7 +328,7 @@ The set of commands that allows you to manage X.509 certificates.
 
   Example: `dclcli query pki all-proposed-x509-root-certs-to-revoke`
 
-- Gets a proposed but not approved root certificate to be revoked.
+- Get a proposed but not approved root certificate to be revoked.
 
   Command: `dclcli query pki proposed-x509-root-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
 
@@ -338,7 +338,7 @@ The set of commands that allows you to manage X.509 certificates.
 
   Example: `dclcli query pki proposed-x509-root-cert-to-revoke --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
 
-- Gets all revoked certificates (both root and non-root).
+- Get all revoked certificates (both root and non-root).
 
   Command: `dclcli query pki all-revoked-x509-certs`
 
@@ -348,7 +348,7 @@ The set of commands that allows you to manage X.509 certificates.
 
   Example: `dclcli query pki all-revoked-x509-certs`
 
-- Gets all revoked root certificates.
+- Get all revoked root certificates.
 
   Command: `dclcli query pki all-revoked-x509-root-certs`
 
@@ -387,7 +387,7 @@ The set of commands that allows you to manage model infos.
   
   Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
 
-- Update existing model info. Only the owner can edit a Model Info.
+- Update an existing model info. Only the owner can edit a Model Info.
 
   Role: `Vendor`
 
@@ -408,7 +408,7 @@ The set of commands that allows you to manage model infos.
   Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --custom="Custom Data"`
 
 ##### Queries
-- Query single model info.
+- Query a single model info.
 
   Command: `dclcli query modelinfo model --vid=<uint16> --pid=<uint16>`
 
@@ -418,7 +418,7 @@ The set of commands that allows you to manage model infos.
 
   Example: `dclcli query modelinfo model --vid=1 --pid=1`
   
-- Query list of all model infos. 
+- Query a list of all model infos. 
 
   Command: `dclcli query modelinfo all-models`
 
@@ -428,7 +428,7 @@ The set of commands that allows you to manage model infos.
     
   Example: `dclcli query modelinfo all-models`
 
-- Query list of vendors.
+- Query a list of all vendors.
 
   Command: `dclcli query modelinfo vendors`
   
@@ -438,7 +438,7 @@ The set of commands that allows you to manage model infos.
     
   Example: `dclcli query modelinfo vendors`
   
-- Query list of all model infos for the given vendor.
+- Query a list of all model infos for the given vendor.
 
   Command: `dclcli query modelinfo vendor-models --vid=<uint16>`
 
@@ -454,7 +454,7 @@ The set of commands that allows you to manage model infos.
 The set of commands that allows you to manage testing results associated with a model.
 
 ##### Transactions
-- Add new testing result for model associated with VID/PID. Note that the corresponding model must present on the ledger. 
+- Add new testing result for model associated with the given VID/PID. Note that the corresponding model must present on the ledger. 
 
   Role: `TestHouse`
 
@@ -472,7 +472,7 @@ The set of commands that allows you to manage testing results associated with a 
   Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
 ##### Queries
-- Query testing results for model associated with VID/PID.
+- Query testing results for model associated with the given VID/PID.
 
   Command: `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16>`
 
@@ -487,7 +487,7 @@ The set of commands that allows you to manage testing results associated with a 
 The set of commands that allows you to manage model certification information.
 
 ##### Transactions
-- Certify model associated with VID/PID. Note that the corresponding model and the test results must present on the ledger.
+- Certify a model associated with the given VID/PID. Note that the corresponding model and the test results must present on the ledger.
 Only the owner can update an existing record. 
 
   Role: `ZBCertificationCenter`
@@ -504,7 +504,7 @@ Only the owner can update an existing record.
 
   Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
  
-- Revoke certification for a model associated with VID/PID. Only the owner can update an existing record. 
+- Revoke certification for a model associated with the given VID/PID. Only the owner can update an existing record. 
 
   Role: `ZBCertificationCenter`
 
@@ -523,7 +523,7 @@ Only the owner can update an existing record.
   Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
 ##### Queries
-- Query certification data for model associated with VID/PID.
+- Check if the model associated with the given VID/PID is certified.
 
   Command: `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>`
 
@@ -544,7 +544,7 @@ Only the owner can update an existing record.
 
   Example: `dclcli query compliance all-certified-models`
   
-- Query revocation data for model associated with VID/PID.
+- Check if the model associated with the given VID/PID is revoked.
 
   Command: `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>`
 
@@ -609,7 +609,7 @@ The set of commands that allows you to manage the set of validator nodes in the 
   Example: `dclcli tx validator add-node --validator-address=cosmosvalcons1tl46nm39xtuutvw2wqaeyyd6csknfe0a7xqnrw --validator-pubkey=cosmosvalconspub1zcjduepqn5nz4c8n5jwfmgd6tqfqzu8arpne3au4g7tfsz33g8y6dcvhkf4sw054j8 --name=node1 --from=jack`
  
 ##### Queries
-- Query validator node by given validator address.
+- Query a validator node by the given validator address.
 
   Command: `dclcli query validator node --validator-address=<address>`
 
