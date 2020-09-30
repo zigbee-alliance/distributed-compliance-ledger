@@ -27,7 +27,7 @@
     ```
     git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
     ```
-  - In the the root directory of the cloned project execute the following commands to create and start DC Ledger pool in Docker:
+  - In the the root directory of the cloned project execute the following commands to create and start DC Ledger network in Docker:
     ```
     make install
     make localnet_init
@@ -38,12 +38,12 @@
     dclcli
     ```
     - This command runs DC Ledger CLI. Without any arguments it shows the help on the command usage
-  - To stop the pool execute:
+  - To stop the network execution:
     ```
     make localnet_stop
     ```
-  - Then you can start the pool again with the existing data using `make localnet_start`
-  - If you need to start a new clean pool then do the following steps prior to executing `make localnet_start`:
+  - Then you can start the network again with the existing data using `make localnet_start`
+  - If you need to start a new clean network then do the following steps prior to executing `make localnet_start`:
     - Remove `.dclcli` and `.dcld` directories from your user home directory (`~`)
     - Remove `localnet` directory from the root directory of the cloned project
-    - Initialize the new pool data using `make localnet_init`
+    - Initialize the new network data using `make localnet_init`

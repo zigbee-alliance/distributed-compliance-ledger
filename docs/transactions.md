@@ -33,8 +33,8 @@ This is useful to avoid correlation by the sender's IP address.
         ```
 - CLI (keys at the edge)
     - There are two CLIs are started in a CLI mode.
-        - CLI 1: Stores private key. Does not have a connection to pool.
-        - CLI 2: Is connected to pool. Doesn't has access to private key.
+        - CLI 1: Stores private key. Does not have a connection to the network of nodes.
+        - CLI 2: Is connected to the network of nodes. Doesn't has access to private key.
     - CLI 1: A private key is generated and stored off-server (in the user's private wallet).
     - CLI 2: Register account containing generated `Address` and `PubKey` on the ledger.
     - CLI 2: Build transaction using the account (`--from`) and `--generate-only` flag.

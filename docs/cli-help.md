@@ -52,7 +52,7 @@ Roles:
 - `Vendor` - Is able to add models.
 - `TestHouse` - Is able to add testing results for a model.
 - `ZBCertificationCenter` - Is able to certify and revoke models.
-- `NodeAdmin` - Is able to add nodes to validator pool.
+- `NodeAdmin` - Is able to add nodes to the network of validator nodes.
 
 ##### Transactions
 
@@ -588,7 +588,7 @@ Only the owner can update an existing record.
 
 ### Validator
 
-The set of commands that allows you to manage the set of pool nodes.
+The set of commands that allows you to manage the set of validator nodes in the network.
 
 ##### Transactions
 - Add a new validator node.

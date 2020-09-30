@@ -11,13 +11,13 @@ DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](htt
 
 #### Main Components
 The ledger consists of
- - A pool of Tendermint-based validator nodes maintaining the ledger.
+ - A network of Tendermint-based validator nodes maintaining the ledger.
   Every validator node runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
- - The client to be used for interactions with the pool (sending write and read requests).
+ - The client to be used for interactions with the network of nodes (sending write and read requests).
  The following clients are supported: 
-    - CLI to communicate with the pool (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)).
+    - CLI to communicate with the network of nodes (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)).
     The CLI is based on the Cosmos SDK. See [CLI Usage](#cli-usage) section for details.
-    - REST API which can be deployed as a server. The server can communicate with the pool
+    - REST API which can be deployed as a server. The server can communicate with the nodes
      (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)). 
     The REST API is based on the Cosmos SDK. See [REST Usage](#rest-usage) section for details.
     - Tendermint's Light Client can be used for a direct communication on API level. 
@@ -44,7 +44,7 @@ In order to send write transactions to the ledger you need:
           - The Account stores the public part of the key
           - The Account has an associated role. The role is used for authorization policies.
       - Sign every transaction by the private key.
- - PoA (proof of authority) approach is used for adding new validator nodes to the pool 
+ - PoA (proof of authority) approach is used for adding new validator nodes to the network 
  (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
   [Running Node Instructions](docs/running-node.md).
 
@@ -121,12 +121,21 @@ Use __dcld__, __dclcli__ instead of __nsd__, __nscli__.
 - To start localnet using docker-compose run `make install && make localnet_init && make localnet_start`
   - 4 nodes will be started and will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26662`
 - To stop localnet run `make localnet_stop`
-#### Deploy a pool of validator nodes 
-One can either deploy its own pool of validator nodes or join the DC Ledger Network 
-(currently the network is in a Demo mode).
+- A detailed instruction of now to start a local net in Docker can be found in [Setup of Local Net in Docker](docs/localnet-setup.md).
 
-Read more about deployment in [ansible/readme.md](ansible/README.md)
-and [Running a Validator Node](docs/running-node.md).
+#### Deploy a network of validator nodes 
+One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks. 
+
+- If you want to deploy your own network for debug purposes,
+you can use the provided Ansible Playbook: [ansible/readme.md](deployment/ansible/README.md).
+- If you want to join an existing network (either a custom or persistent) as a validator node,
+please follow the [Running a Validator Node](docs/running-node.md) instructions.
+- If you want to deploy your own persistent network,
+you will need to create a genesis node and a genesis file first as described in [Running a Genesis Validator Node](docs/running-genesis-node.md).
+After this more nodes can be added by following the [Running a Validator Node](docs/running-node.md) instructions.
+Please note, that [Running a Genesis Validator Node](docs/running-genesis-node.md) describes 
+the case when the genesis block consist of a single node only. This is done just for simplicity, 
+and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
 
 ## Useful Links 
 - [Use Case Diagrams](docs/use_cases)
@@ -139,7 +148,8 @@ and [Running a Validator Node](docs/running-node.md).
 - [List of Transactions](docs/transactions.md)
 - [How To Guide](docs/how-to.md)
 - [CLI Help](docs/cli-help.md)
-- [Deployment](ansible/README.md)
+- [Deployment](deployment/ansible/README.md)
+- [Running a Genesis Validator Node](docs/running-genesis-node.md)
 - [Running a Validator Node](docs/running-node.md)
 - [Tendermint](https://tendermint.com/)
 - [Cosmos SDK](https://cosmos.network/sdk)
