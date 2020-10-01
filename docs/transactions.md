@@ -682,9 +682,9 @@ If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then 
     - `sku`: string
     - `firmware_version`: string
     - `hardware_version`: string
-    - `OTA_URL`: string (optional)
-    - `OTA_checksum`: string (optional)
-    - `OTA_checksum_type`: string (optional)
+    - `ota_url`: string (optional)
+    - `ota_checksum`: string (optional)
+    - `ota_checksum_type`: string (optional)
     - `tis_or_trp_testing_completed`: bool
     - `custom`: string (optional)
 - In State:
