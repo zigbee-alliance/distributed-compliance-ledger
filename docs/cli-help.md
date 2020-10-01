@@ -382,10 +382,13 @@ The set of commands that allows you to manage model infos.
   - from: `string` - Name or address of private key with which to sign
   - cid: `optional(uint16)` - model category ID (positive non-zero)
   - custom: `optional(string)` - custom information (string or path to file containing data)
+  - ota-url: `optional(string)` - the URL of the OTA
+  - ota-checksum: `optional(string)` - the checksum of the OTA 
+  - ota-checksum-type: `optional(string)` - the type of the OTA checksum 
 
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true "--from=jack`
   
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information"`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information" --ota-url="http://my-ota.com" --ota-checksum="df56hf" --ota-checksum-type="SHA-256"`
 
 - Update an existing model info. Only the owner can edit a Model Info.
 
@@ -402,10 +405,11 @@ The set of commands that allows you to manage model infos.
   - description: `optional(string)` -  model description (string or path to file containing data)
   - cid: `optional(uint16)` - model category ID
   - custom: `optional(string)` - custom information (string or path to file containing data)
+  - ota-url: `optional(string)` - a new OTA URL. Can be edited only if `OTA_checksum` and `OTA_checksum_type` are already set.
     
   Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --description="New Description"`
   
-  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --custom="Custom Data"`
+  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --custom="Custom Data" --ota-url="http://new-ota.com"`
 
 ##### Queries
 - Query a single model info.
