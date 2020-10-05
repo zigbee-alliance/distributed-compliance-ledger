@@ -52,7 +52,7 @@ Roles:
 - `Vendor` - Is able to add models.
 - `TestHouse` - Is able to add testing results for a model.
 - `ZBCertificationCenter` - Is able to certify and revoke models.
-- `NodeAdmin` - Is able to add nodes to the network of validator nodes.
+- `NodeAdmin` - Is able to add validator nodes to the network.
 
 ##### Transactions
 
