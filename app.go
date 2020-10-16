@@ -24,7 +24,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	authutils "github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/params"
 	abci "github.com/tendermint/tendermint/abci/types"
 	cmn "github.com/tendermint/tendermint/libs/common"
 	"github.com/tendermint/tendermint/libs/log"
@@ -36,6 +35,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/genutil"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/upgrade"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 )
 
@@ -58,6 +58,7 @@ var ModuleBasics = module.NewBasicManager(
 	compliance.AppModuleBasic{},
 	compliancetest.AppModuleBasic{},
 	pki.AppModuleBasic{},
+	upgrade.AppModuleBasic{},
 )
 
 // MakeCodec generates the necessary codecs for Amino.
@@ -86,6 +87,7 @@ type dcLedgerApp struct {
 	pkiKeeper            pki.Keeper
 	complianceKeeper     compliance.Keeper
 	compliancetestKeeper compliancetest.Keeper
+	upgradeKeeper        upgrade.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -102,9 +104,9 @@ func NewDcLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, validator.StoreKey,
-		modelinfo.StoreKey, compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey)
+		modelinfo.StoreKey, compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey, upgrade.StoreKey)
 
-	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
+	tkeys := sdk.NewTransientStoreKeys()
 
 	// Here you initialize your application with the store keys it requires.
 	app := &dcLedgerApp{
@@ -152,8 +154,10 @@ func InitModuleManager(app *dcLedgerApp) {
 		compliance.NewAppModule(app.complianceKeeper, app.modelinfoKeeper, app.compliancetestKeeper, app.authKeeper),
 		compliancetest.NewAppModule(app.compliancetestKeeper, app.authKeeper, app.modelinfoKeeper),
 		pki.NewAppModule(app.pkiKeeper, app.authKeeper),
+		upgrade.NewAppModule(app.upgradeKeeper),
 	)
 
+	// TODO: Think
 	app.mm.SetOrderBeginBlockers(validator.ModuleName)
 	app.mm.SetOrderEndBlockers(validator.ModuleName)
 
@@ -165,6 +169,7 @@ func InitModuleManager(app *dcLedgerApp) {
 		compliancetest.ModuleName,
 		pki.ModuleName,
 		genutil.ModuleName,
+		upgrade.ModuleName,
 	)
 
 	// register all module routes and module queriers
@@ -189,6 +194,17 @@ func InitKeepers(app *dcLedgerApp, keys map[string]*sdk.KVStoreKey) {
 
 	// The AuthKeeper keeper
 	app.authKeeper = MakeAuthKeeper(keys, app)
+
+	// The Upgrade keeper
+	app.upgradeKeeper = MakeUpgradeKeeper(keys, app)
+}
+
+func MakeUpgradeKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) upgrade.Keeper {
+	return upgrade.NewKeeper(
+		map[int64]bool{},
+		keys[upgrade.StoreKey],
+		app.cdc,
+	)
 }
 
 func MakeAuthKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) auth.Keeper {

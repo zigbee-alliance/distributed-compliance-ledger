@@ -25,47 +25,47 @@ const (
 	FlagUpgradeInfo   = "info"
 )
 
-func parseArgsToContent(cmd *cobra.Command, name string) (gov.Content, error) {
+func parseArgsToContent(cmd *cobra.Command, name string) (upgrade.SoftwareUpgradeProposal, error) {
 	title, err := cmd.Flags().GetString(cli.FlagTitle)
 	if err != nil {
-		return nil, err
+		return upgrade.SoftwareUpgradeProposal{}, err
 	}
 
 	description, err := cmd.Flags().GetString(cli.FlagDescription)
 	if err != nil {
-		return nil, err
+		return upgrade.SoftwareUpgradeProposal{}, err
 	}
 
 	height, err := cmd.Flags().GetInt64(FlagUpgradeHeight)
 	if err != nil {
-		return nil, err
+		return upgrade.SoftwareUpgradeProposal{}, err
 	}
 
 	timeStr, err := cmd.Flags().GetString(FlagUpgradeTime)
 	if err != nil {
-		return nil, err
+		return upgrade.SoftwareUpgradeProposal{}, err
 	}
 
 	if height != 0 && len(timeStr) != 0 {
-		return nil, fmt.Errorf("only one of --upgrade-time or --upgrade-height should be specified")
+		return upgrade.SoftwareUpgradeProposal{}, fmt.Errorf("only one of --upgrade-time or --upgrade-height should be specified")
 	}
 
 	var upgradeTime time.Time
 	if len(timeStr) != 0 {
 		upgradeTime, err = time.Parse(TimeFormat, timeStr)
 		if err != nil {
-			return nil, err
+			return upgrade.SoftwareUpgradeProposal{}, err
 		}
 	}
 
 	info, err := cmd.Flags().GetString(FlagUpgradeInfo)
 	if err != nil {
-		return nil, err
+		return upgrade.SoftwareUpgradeProposal{}, err
 	}
 
 	plan := upgrade.Plan{Name: name, Time: upgradeTime, Height: height, Info: info}
-	content := upgrade.NewSoftwareUpgradeProposal(title, description, plan)
-	return content, nil
+	proposal := upgrade.NewSoftwareUpgradeProposal(title, description, plan)
+	return proposal, nil
 }
 
 // GetCmdSubmitUpgradeProposal implements a command handler for submitting a software upgrade proposal transaction.

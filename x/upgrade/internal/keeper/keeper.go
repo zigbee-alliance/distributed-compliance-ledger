@@ -4,13 +4,11 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/cosmos/cosmos-sdk/x/upgrade/internal/types"
+	"github.com/tendermint/tendermint/libs/log"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/upgrade/internal/types"
 )
 
 type Keeper struct {
@@ -47,14 +45,14 @@ func (k Keeper) ScheduleUpgrade(ctx sdk.Context, plan types.Plan) error {
 
 	if !plan.Time.IsZero() {
 		if !plan.Time.After(ctx.BlockHeader().Time) {
-			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "upgrade cannot be scheduled in the past")
+			return types.NewError(types.ErrInvalidRequest, "upgrade cannot be scheduled in the past")
 		}
 	} else if plan.Height <= ctx.BlockHeight() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "upgrade cannot be scheduled in the past")
+		return types.NewError(types.ErrInvalidRequest, "upgrade cannot be scheduled in the past")
 	}
 
 	if k.GetDoneHeight(ctx, plan.Name) != 0 {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "upgrade with name %s has already been completed", plan.Name)
+		return types.NewError(types.ErrInvalidRequest, "upgrade with name %s has already been completed", plan.Name)
 	}
 
 	bz := k.cdc.MustMarshalBinaryBare(plan)
