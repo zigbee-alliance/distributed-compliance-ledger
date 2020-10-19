@@ -95,11 +95,11 @@ and contains the genesis and persistent_peers files.
     * Init Node: `dcld init <node name> --chain-id <chain-id>`.
         * Use `testnet` if you want to connect to the persistent Test Net
     * Put `genesis.json` into dcld's config directory (usually `$HOME/.dcld/config/`).
-        * Use `networks/testnet/genesis.json` if you want to connect to the persistent Test Net
+        * Use `deployment/persistent_chains/testnet/genesis.json` if you want to connect to the persistent Test Net
     * Open `$HOME/.dcld/config/config.toml` file in your favorite text editor:
         * Tell node how to connect to the network:
             * Set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
-            * Use `networks/testnet/persistent_peers.txt` if you want to connect to the persistent Test Net.
+            * Use `deployment/persistent_chains/testnet/persistent_peers.txt` if you want to connect to the persistent Test Net.
         * Make your node public:
             * Open `$HOME/.dcld/config/config.toml`
             * Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
