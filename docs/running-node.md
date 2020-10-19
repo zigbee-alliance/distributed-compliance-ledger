@@ -50,7 +50,7 @@ and contains the genesis and persistent_peers files.
 
 2. Configure dclcli:
     * `dclcli config chain-id <chain-id>`
-      * Use `dcl-test-net-chain` if you want to connect to the persistent Test Net
+      * Use `testnet` if you want to connect to the persistent Test Net
     * `dclcli config output json` - Output format (text/json).
     * `dclcli config indent true` - Add indent to JSON response.
     * `dclcli config trust-node false` - Verify proofs for node responses.
@@ -92,10 +92,19 @@ and contains the genesis and persistent_peers files.
         ```
 
 4. Initialize the node and create the necessary config files:
-    * Init Node: `dcld init <node name> --chain-id dclchain`.
+    * Init Node: `dcld init <node name> --chain-id <chain-id>`.
+        * Use `testnet` if you want to connect to the persistent Test Net
     * Put `genesis.json` into dcld's config directory (usually `$HOME/.dcld/config/`).
-    * Open `$HOME/.dcld/config/config.toml` file in your favorite text editor and 
-    set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
+        * Use `deployment/persistent_chains/testnet/genesis.json` if you want to connect to the persistent Test Net
+    * Open `$HOME/.dcld/config/config.toml` file in your favorite text editor:
+        * Tell node how to connect to the network:
+            * Set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
+            * Use `deployment/persistent_chains/testnet/persistent_peers.txt` if you want to connect to the persistent Test Net.
+        * Make your node public:
+            * Open `$HOME/.dcld/config/config.toml`
+            * Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
+            * Change it to: `laddr = "tcp://0.0.0.0:26657"`
+        * Optionally change other setting.
     * Open `26656` (p2p) and `26657` (RPC) ports. 
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
@@ -103,7 +112,6 @@ and contains the genesis and persistent_peers files.
         * Replace `ubuntu` with a user name you want to start service on behalf
     * Copy service configuration.
         * `cp dcld.service /etc/systemd/system/`
-    * Optionally, edit `$HOME/.dcld/config/config.toml` in order to set different setting (like listen address).
 
 5. Add validator node to the network:
    * Get this node's tendermint validator address: `dcld tendermint show-address`.
@@ -124,7 +132,7 @@ and contains the genesis and persistent_peers files.
    * For testing purpose the node can be started in CLI mode: `dcld start` (instead of two previous `systemctl` commands).
    Service mode is recommended for demo and production environment.
    
-   * Use `systemctl start status` to get the node service status. 
+   * Use `systemctl status dcld` to get the node service status. 
     In the output, you can notice that `height` increases quickly over time. 
     This means that the node in updating to the latest network state (it takes some time).
         
