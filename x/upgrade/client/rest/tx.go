@@ -8,8 +8,8 @@ package rest
 //	sdk "github.com/cosmos/cosmos-sdk/types"
 //	"github.com/cosmos/cosmos-sdk/types/rest"
 //	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-//	"github.com/cosmos/cosmos-sdk/x/gov"
-//	govrest "github.com/cosmos/cosmos-sdk/x/gov/client/rest"
+//	"github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old"
+//	govrest "github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old/client/rest"
 //	"github.com/gorilla/mux"
 //	"github.com/zigbee-alliance/distributed-compliance-ledger/x/upgrade/internal/types"
 //)
@@ -76,7 +76,7 @@ package rest
 //
 //		plan := types.Plan{Name: req.UpgradeName, Time: t, Height: req.UpgradeHeight, Info: req.UpgradeInfo}
 //		content := types.NewSoftwareUpgradeProposal(req.Title, req.Description, plan)
-//		msg := gov.NewMsgSubmitProposal(content, req.Deposit, fromAddr)
+//		msg := gov_old.NewMsgSubmitProposal(content, req.Deposit, fromAddr)
 //		if err := msg.ValidateBasic(); err != nil {
 //			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 //			return
@@ -106,7 +106,7 @@ package rest
 //		}
 //
 //		content := types.NewCancelSoftwareUpgradeProposal(req.Title, req.Description)
-//		msg := gov.NewMsgSubmitProposal(content, req.Deposit, fromAddr)
+//		msg := gov_old.NewMsgSubmitProposal(content, req.Deposit, fromAddr)
 //		if err := msg.ValidateBasic(); err != nil {
 //			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 //			return

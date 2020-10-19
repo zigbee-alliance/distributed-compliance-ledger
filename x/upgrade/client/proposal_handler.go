@@ -1,7 +1,7 @@
 package client
 
 import (
-	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
+	govclient "github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old/client"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/upgrade/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/upgrade/client/rest"
 )

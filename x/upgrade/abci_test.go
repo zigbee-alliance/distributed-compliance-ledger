@@ -10,11 +10,11 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/gov"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/upgrade"
 )
 
@@ -22,7 +22,7 @@ type TestSuite struct {
 	module  module.AppModule
 	keeper  upgrade.Keeper
 	querier sdk.Querier
-	handler gov.Handler
+	handler gov_old.Handler
 	ctx     sdk.Context
 }
 

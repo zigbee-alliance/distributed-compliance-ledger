@@ -10,16 +10,19 @@ import (
 
 const (
 	// ModuleName is the name of the module
-	ModuleName = "gov"
+	ModuleName = "gov_old"
 
-	// StoreKey is the store key string for gov
+	// StoreKey is the store key string for gov_old
 	StoreKey = ModuleName
 
-	// RouterKey is the message route for gov
+	// RouterKey is the message route for gov_old
 	RouterKey = ModuleName
 
-	// QuerierRoute is the querier route for gov
+	// QuerierRoute is the querier route for gov_old
 	QuerierRoute = ModuleName
+
+	// DefaultParamspace default name for parameter store
+	DefaultParamspace = ModuleName
 )
 
 // Keys for governance store

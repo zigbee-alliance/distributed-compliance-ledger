@@ -2,7 +2,7 @@ package upgrade
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	govtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old/types"
 )
 
 // NewSoftwareUpgradeProposalHandler creates a governance handler to manage new proposal types.

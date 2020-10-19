@@ -10,9 +10,9 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/cosmos/cosmos-sdk/x/gov"
-	"github.com/cosmos/cosmos-sdk/x/gov/client/cli"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old/client/cli"
 	upgrade "github.com/zigbee-alliance/distributed-compliance-ledger/x/upgrade/internal/types"
 )
 
@@ -98,7 +98,7 @@ func GetCmdSubmitUpgradeProposal(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			msg := gov.NewMsgSubmitProposal(content, deposit, from)
+			msg := gov_old.NewMsgSubmitProposal(content, deposit, from)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -151,7 +151,7 @@ func GetCmdSubmitCancelUpgradeProposal(cdc *codec.Codec) *cobra.Command {
 
 			content := upgrade.NewCancelSoftwareUpgradeProposal(title, description)
 
-			msg := gov.NewMsgSubmitProposal(content, deposit, from)
+			msg := gov_old.NewMsgSubmitProposal(content, deposit, from)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

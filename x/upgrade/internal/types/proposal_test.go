@@ -3,20 +3,19 @@ package types
 import (
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/x/gov"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/gov_old"
 )
 
 type ProposalWrapper struct {
-	Prop gov.Content
+	Prop gov_old.Content
 }
 
 func TestContentAccessors(t *testing.T) {
 	cases := map[string]struct {
-		p     gov.Content
+		p     gov_old.Content
 		title string
 		desc  string
 		typ   string
@@ -43,7 +42,7 @@ func TestContentAccessors(t *testing.T) {
 	}
 
 	cdc := codec.New()
-	gov.RegisterCodec(cdc)
+	gov_old.RegisterCodec(cdc)
 	RegisterCodec(cdc)
 
 	for name, tc := range cases {
