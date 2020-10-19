@@ -103,6 +103,10 @@ and contains the genesis and persistent_peers files.
         * Replace `ubuntu` with a user name you want to start service on behalf
     * Copy service configuration.
         * `cp dcld.service /etc/systemd/system/`
+    * Make your node public:
+        * Open `$HOME/.dcld/config/config.toml`
+        * Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
+        * Change it to: `laddr = "tcp://0.0.0.0:26657"`
     * Optionally, edit `$HOME/.dcld/config/config.toml` in order to set different setting (like listen address).
 
 5. Add validator node to the network:
