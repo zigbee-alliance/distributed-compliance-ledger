@@ -27,7 +27,7 @@ The ledger consists of
         - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)
         - [Rust Light Client implementation](https://docs.rs/tendermint/0.13.0/tendermint/lite/index.html)  
  - Public UI
-    - http://18.197.220.188.
+    - https://dcl.dev.dsr-corporation.com.
     - based onf the REST API
     - can be used to browse the ledger
         - please note that it doesn't show all the accounts on the ledger
