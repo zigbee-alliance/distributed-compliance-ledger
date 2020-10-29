@@ -161,7 +161,12 @@ func checkZbCertificationRights(ctx sdk.Context, authKeeper auth.Keeper, signer 
 	return nil
 }
 
-func checkZbCertificationDone(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper, signer sdk.AccAddress, msg types.MsgCertifyModel) sdk.Error {
+func checkZbCertificationDone(
+	ctx sdk.Context,
+	keeper keeper.Keeper,
+	authKeeper auth.Keeper,
+	signer sdk.AccAddress,
+	msg types.MsgCertifyModel) sdk.Error {
 	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
 		complianceInfo := keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID)
 		if complianceInfo.State == types.Certified {
