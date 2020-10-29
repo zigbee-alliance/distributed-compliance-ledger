@@ -15,6 +15,7 @@
 package compliance
 
 import (
+	"bytes"
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -46,6 +47,10 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	msg types.MsgCertifyModel) sdk.Result {
 	// check if sender has enough rights to certify model
 	if err := checkZbCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
+		return err.Result()
+	}
+
+	if err := checkZbCertificationDone(ctx, keeper, authKeeper, msg.Signer, msg); err != nil {
 		return err.Result()
 	}
 
@@ -151,6 +156,21 @@ func checkZbCertificationRights(ctx sdk.Context, authKeeper auth.Keeper, signer 
 	} else {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Unexpected CertificationType: \"%s\". Supported types: [%s]",
 			certificationType, ZbCertificationType))
+	}
+
+	return nil
+}
+
+func checkZbCertificationDone(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper, signer sdk.AccAddress, msg types.MsgCertifyModel) sdk.Error {
+	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
+		complianceInfo := keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID)
+		if complianceInfo.State == types.Certified {
+			if bytes.Equal(complianceInfo.Owner, signer) {
+				return nil
+			} else {
+				return types.ErrAlreadyCertifyed(msg.VID, msg.PID)
+			}
+		}
 	}
 
 	return nil

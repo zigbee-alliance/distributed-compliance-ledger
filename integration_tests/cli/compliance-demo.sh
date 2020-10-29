@@ -27,6 +27,9 @@ create_new_account test_house_account "TestHouse"
 echo "Create ZBCertificationCenter account"
 create_new_account zb_account "ZBCertificationCenter"
 
+echo "Create other ZBCertificationCenter account"
+create_new_account second_zb_account "ZBCertificationCenter"
+
 # Body
 
 vid=$RANDOM
@@ -58,6 +61,13 @@ certification_date="2020-01-01T00:00:00Z"
 certification_type="zb"
 result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --certification-type="$certification_type" --certification-date="$certification_date" --from $zb_account --yes)
 check_response "$result" "\"success\": true"
+echo "$result"
+
+echo "Certify Model with VID: $vid PID: $pid"
+certification_date="2020-01-01T00:00:00Z"
+certification_type="zb"
+result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --certification-type="$certification_type" --certification-date="$certification_date" --from $second_zb_account --yes)
+check_response "$result" "\"success\": false"
 echo "$result"
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid}"

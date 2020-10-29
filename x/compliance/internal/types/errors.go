@@ -25,6 +25,7 @@ const (
 
 	CodeComplianceInfoDoesNotExist sdk.CodeType = 301
 	CodeInconsistentDates          sdk.CodeType = 302
+	CodeAlreadyCertifyed           sdk.CodeType = 303
 )
 
 func ErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}, certificationType interface{}) sdk.Error {
@@ -36,4 +37,9 @@ func ErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}, certificati
 
 func ErrInconsistentDates(error interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeInconsistentDates, fmt.Sprintf("%v", error))
+}
+
+func ErrAlreadyCertifyed(vid interface{}, pid interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeAlreadyCertifyed,
+		fmt.Sprintf("Model with vid=%v, pid=%v already certified on the ledger", vid, pid))
 }
