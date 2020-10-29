@@ -83,6 +83,8 @@ In order to send write transactions to the ledger you need:
 
 Here is steps for getting an account:
 * Generate keys and local account: `dclcli keys add <account name>`.
+    * You can remember and securely save the mnemonic phrase shown after the key is created
+        to be able to recover the key later.
 * Share generated `address` and `pubkey` with a number of `Trustee`s sufficient for account addition operation.
 * One of `Trustee`s proposes to add the account to the ledger: `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
 * Sufficient number of other `Trustee`s approve the proposed account: `dclcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
@@ -93,6 +95,26 @@ Example:
 * `dclcli tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --roles=Vendor,NodeAdmin --from jack`
 * `dclcli tx auth approve-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --from alice`
 * `dclcli query auth account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
+
+## Exporting and Importing Accounts
+
+It's possible to export and import accounts by exporting and importing the corresponding keys.
+
+There are two options on how it can be done:
+1. Recover existing keys from the mnemonic passphrase saved when key was created.
+2. Export a private key to ASCII-armored encrypted format, and then import it.
+
+Example:
+* Recovering an exiting key:
+
+    `dclcli keys add jack --recover`
+
+* Exporting and importing a key:
+
+    * `dclcli keys export jack`
+    * store the exported ASCII-armored encrypted key to a file `jack_exported_priv_key_file.txt`
+    * `dclcli keys import jack jack_exported_priv_key_file.txt`
+
 
 ## Trustee Instructions
 

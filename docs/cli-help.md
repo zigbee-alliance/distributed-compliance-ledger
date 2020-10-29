@@ -15,16 +15,21 @@ The set of commands that allows you to manage your local keystore.
 
 Commands:
 - Derive a new private key and encrypt to disk. 
-You will be prompted to enter encryption passphrase. 
-This passphrase will be requested each time you send write transactions on the ledger using this key.
+
+  You will be prompted to create an encryption passphrase. 
+  This passphrase will be requested each time you send write transactions on the ledger using this key.
+  You can remember and securely save the mnemonic phrase shown after the key is created
+  to be able to recover the key later.
 
   Command: `dclcli keys add <key name>`
 
   Example: `dclcli keys add jack`
 
-- Recover existing key using seed instead of creating a new one.
-You will be prompted to enter encryption passphrase and seed.
-This passphrase will be requested each time you send write transactions on the ledger using this key.
+- Recover existing key instead of creating a new one.
+
+  The key can be recovered from a seed obtained from the mnemonic passphrase (see the previous command).
+  You will be prompted to create an encryption passphrase and enter the seed's mnemonic.
+  This passphrase will be requested each time you send write transactions on the ledger using this key.
 
   Command: `dclcli keys add <key name> --recover`
 
@@ -42,7 +47,28 @@ This passphrase will be requested each time you send write transactions on the l
 
   Example: `dclcli keys show jack`
 
+- Export a key.
+
+  A private key from the local keystore can be exported in ASCII-armored encrypted format.
+  You will be prompted to enter the decryption passphrase for the key and  
+  to create an encryption passphrase for the exported key.
+  The exported key can be stored to a file for import.
+ 
+  Command: `dclcli keys export <key name>`
   
+  Example: `dclcli keys export jack`
+  
+- Import a key.
+
+  A key can be imported from the ASCII-armored encrypted format 
+  obtained by the export key command.
+  You will be prompted to enter the decryption passphrase for the exported key
+  which was used during the export process.
+
+  Command: `dclcli keys import <key name> <key file>`
+  
+  Example: `dclcli keys import jack jack_exported_priv_key_file`
+
 ### Authorization
 
 The set of commands that allows you to manage accounts and assigned roles.
