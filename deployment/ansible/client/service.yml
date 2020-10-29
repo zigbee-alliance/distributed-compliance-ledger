@@ -16,7 +16,7 @@
   user: ubuntu
   become: yes
   tasks:
-    - name: Remove existing config
+    - name: Remove existing service config
       file:
         path: "/etc/systemd/system/dclcli.service"
         state: absent

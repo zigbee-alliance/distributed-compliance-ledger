@@ -16,6 +16,15 @@ PS. Don't forget to define node ips in their configurations so they will be able
 
 ## Setting up client:
 
-1. Make sure you have hosts in group `clients` in your hosts file
+Ansible is used to quickly deploy `dclcli` running in rest-server mode.
+
+1. Add target machine to the `clients` group in your inventory file:
+    - Hosts file is usually located in: `/etc/ansible/hosts`
+    - It should be looking like this: 
+    ```
+    [clients]
+    54.248.129.25 ansible_connection=ssh ansible_user=ubuntu
+    ```
 2. Execute playbooks in the following order: `binary`, `config`, `service`, `start`
+    - Commands should be looking like: `ansible-playbook binary.yml`
 4. Make sure clients are running by running `status` playbook
