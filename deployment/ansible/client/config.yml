@@ -21,7 +21,7 @@
         state: absent
     - name: Copy config
       copy:
-        src: "./../../localnet/client/"
+        src: "./../../../localnet/client/"
         dest: "/home/ubuntu/.dclcli/"
         owner: "ubuntu"
         group: "ubuntu"

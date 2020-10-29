@@ -56,7 +56,7 @@ Here is the list of supported settings:
 In order to connect the CLI to a DC Ledger Network (Chain), the following parameters should be used:
 
 * `dclcli config chain-id <chain-id>` - `<chain-id>` defines the Network you want to connect to
-    * Use `dcl-test-net-chain` if you want to connect to persistent Test Net
+    * Use `testnet` if you want to connect to persistent Test Net
     * A full list of available persistent chains can be found in [Persistent Chains](../deployment/persistent_chains)
     where every sub-folder matches the corresponding chain-id.
 * `dclcli config output json` - Output format (text/json).
