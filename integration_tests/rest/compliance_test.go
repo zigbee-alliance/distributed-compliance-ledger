@@ -18,6 +18,7 @@ import (
 	"testing"
 	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/libs/common"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -78,6 +79,16 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Check model is certified
 	modelIsCertified, _ = utils.GetCertifiedModel(modelInfo.VID, modelInfo.PID, certifyModelMsg.CertificationType)
 	require.True(t, modelIsCertified.Value)
+
+	// Register other ZBCertificationCenter account
+	secondZb := utils.CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter})
+
+	// Certify model by other ZBCertificationCenter account
+	secondCertifyModelMsg := compliance.NewMsgCertifyModel(modelInfo.VID, modelInfo.PID, time.Now().UTC(),
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, secondZb.Address)
+	secondCertifyResult, _ := utils.PublishCertifiedModel(secondCertifyModelMsg, secondZb)
+
+	require.Equal(t, compliance.CodeAlreadyCertifyed, sdk.CodeType(secondCertifyResult.Code))
 
 	modelIsRevoked, _ = utils.GetRevokedModel(modelInfo.VID, modelInfo.PID, certifyModelMsg.CertificationType)
 	require.False(t, modelIsRevoked.Value)

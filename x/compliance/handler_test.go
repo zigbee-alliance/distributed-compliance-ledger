@@ -392,6 +392,27 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 }
 
+func TestHandler_CheckZbCertificationDone(t *testing.T) {
+	setup := Setup()
+
+	// add model amd testing result
+	vid, pid := addModel(setup, constants.VID, constants.PID)
+	addTestingResult(setup, vid, pid)
+
+	// certify model
+	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid)
+	result := setup.Handler(setup.Ctx, certifyModelMsg)
+	require.Equal(t, sdk.CodeOK, result.Code)
+
+	// create other account certification center
+	account := auth.NewAccount(constants.Address3, constants.PubKey3, auth.AccountRoles{auth.ZBCertificationCenter})
+	setup.authKeeper.SetAccount(setup.Ctx, account)
+
+	secondCertifyModelMsg := msgCertifyModel(account.Address, vid, pid)
+	result = setup.Handler(setup.Ctx, secondCertifyModelMsg)
+	require.Equal(t, types.CodeAlreadyCertifyed, result.Code)
+}
+
 func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
