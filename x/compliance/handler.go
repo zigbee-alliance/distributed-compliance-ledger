@@ -167,7 +167,6 @@ func checkZbCertificationDone(
 	authKeeper auth.Keeper,
 	signer sdk.AccAddress,
 	msg types.MsgCertifyModel) sdk.Error {
-
 	if !keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
 		return nil
 	}
