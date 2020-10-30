@@ -167,16 +167,20 @@ func checkZbCertificationDone(
 	authKeeper auth.Keeper,
 	signer sdk.AccAddress,
 	msg types.MsgCertifyModel) sdk.Error {
-	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
-		complianceInfo := keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID)
-		if complianceInfo.State == types.Certified {
-			if bytes.Equal(complianceInfo.Owner, signer) {
-				return nil
-			} else {
-				return types.ErrAlreadyCertifyed(msg.VID, msg.PID)
-			}
-		}
+
+	if !keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
+		return nil
 	}
 
-	return nil
+	complianceInfo := keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID)
+
+	if complianceInfo.State != types.Certified {
+		return nil
+	}
+
+	if bytes.Equal(complianceInfo.Owner, signer) {
+		return nil
+	}
+
+	return types.ErrAlreadyCertifyed(msg.VID, msg.PID)
 }
