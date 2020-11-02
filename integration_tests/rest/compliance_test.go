@@ -130,6 +130,13 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 }
 
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
+	// Register new Vendor account
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
+
+	// Publish model info
+	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
+	_, _ = utils.AddModelInfo(modelInfo, vendor)
+
 	// Get all certified models
 	inputCertifiedModels, _ := utils.GetAllCertifiedModels()
 
@@ -139,16 +146,27 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Register new ZBCertificationCenter account
 	zb := utils.CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter})
 
-	vid, pid := common.RandUint16(), common.RandUint16()
+	vid, pid := modelInfo.VID, modelInfo.PID
+
+	// Revoke non-existent model
+	revocationTime := time.Now().UTC()
+	revokeModelMsg := compliance.NewMsgRevokeModel(common.RandUint16(), common.RandUint16(), revocationTime,
+		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zb.Address)
+	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
+
+	// Check non-existent model is revoked
+	modelIsRevoked, _ := utils.GetRevokedModel(revokeModelMsg.VID,
+		revokeModelMsg.PID, revokeModelMsg.CertificationType)
+	require.False(t, modelIsRevoked.Value)
 
 	// Revoke model
-	revocationTime := time.Now().UTC()
-	revokeModelMsg := compliance.NewMsgRevokeModel(vid, pid, revocationTime,
+	revocationTime = time.Now().UTC()
+	revokeModelMsg = compliance.NewMsgRevokeModel(vid, pid, revocationTime,
 		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zb.Address)
 	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
 
 	// Check model is revoked
-	modelIsRevoked, _ := utils.GetRevokedModel(revokeModelMsg.VID,
+	modelIsRevoked, _ = utils.GetRevokedModel(revokeModelMsg.VID,
 		revokeModelMsg.PID, revokeModelMsg.CertificationType)
 	require.True(t, modelIsRevoked.Value)
 

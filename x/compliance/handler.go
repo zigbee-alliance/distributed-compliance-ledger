@@ -33,7 +33,7 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
 		case types.MsgCertifyModel:
 			return handleMsgCertifyModel(ctx, keeper, modelinfoKeeper, compliancetestKeeper, authKeeper, msg)
 		case types.MsgRevokeModel:
-			return handleMsgRevokeModel(ctx, keeper, authKeeper, msg)
+			return handleMsgRevokeModel(ctx, keeper, modelinfoKeeper, authKeeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized nameservice Msg type: %v", msg.Type())
 
@@ -102,7 +102,7 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	return sdk.Result{}
 }
 
-func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
+func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authKeeper auth.Keeper,
 	msg types.MsgRevokeModel) sdk.Result {
 	// check if sender has enough rights to revoke model
 	if err := checkZbCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
@@ -126,16 +126,20 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth
 			complianceInfo.UpdateComplianceInfo(msg.RevocationDate, msg.Reason)
 		}
 	} else {
-		// Only revocation is tracked on the ledger. There is no compliance record yet.
-		// The corresponding Model Info and test results are not required to be on the ledger.
-		complianceInfo = types.NewRevokedComplianceInfo(
-			msg.VID,
-			msg.PID,
-			msg.CertificationType,
-			msg.RevocationDate,
-			msg.Reason,
-			msg.Signer,
-		)
+		if modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
+			// Only revocation is tracked on the ledger. There is no compliance record yet.
+			// The corresponding Model Info and test results are not required to be on the ledger.
+			complianceInfo = types.NewRevokedComplianceInfo(
+				msg.VID,
+				msg.PID,
+				msg.CertificationType,
+				msg.RevocationDate,
+				msg.Reason,
+				msg.Signer,
+			)
+		} else {
+			return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
+		}
 	}
 
 	// store compliance info

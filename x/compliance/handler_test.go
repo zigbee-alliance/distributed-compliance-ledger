@@ -375,18 +375,27 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 	setup := Setup()
 
-	// revoke model
+	// revoke non-existent model
 	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, constants.VID, constants.PID)
 	revokedModelMsg.RevocationDate = time.Now().UTC()
 	result := setup.Handler(setup.Ctx, revokedModelMsg)
+	require.Equal(t, types.CodeModelInfoDoesNotExist, result.Code)
+
+	// add model
+	vid, pid := addModel(setup, constants.VID, constants.PID)
+
+	// revoke model
+	revokedModelMsg = msgRevokedModel(setup.CertificationCenter, vid, pid)
+	revokedModelMsg.RevocationDate = time.Now().UTC()
+	result = setup.Handler(setup.Ctx, revokedModelMsg)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query certified model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, constants.VID, constants.PID)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid)
 	checkRevokedModel(t, receivedComplianceInfo, revokedModelMsg)
 
 	// certify model
-	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, constants.VID, constants.PID)
+	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid)
 	certifyModelMsg.CertificationDate = revokedModelMsg.RevocationDate.AddDate(0, 0, 1)
 	result = setup.Handler(setup.Ctx, certifyModelMsg)
 	require.Equal(t, sdk.CodeOK, result.Code)

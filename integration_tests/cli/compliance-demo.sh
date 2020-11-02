@@ -39,6 +39,15 @@ result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid -
 check_response "$result" "\"success\": true"
 echo "$result"
 
+
+echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
+revocation_date="2020-02-02T02:20:20Z"
+revocation_reason="some reason"
+certification_type="zb"
+result=$(echo "test1234" | dclcli tx compliance revoke-model --vid=$vid --pid=$pid --certification-type="$certification_type" --revocation-date="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
+check_response "$result" "\"success\": true"
+echo "$result"
+
 echo "Add Testing Result for Model VID: $vid PID: $pid"
 testing_result="http://first.place.com"
 test_date="2020-11-24T10:00:00Z"
