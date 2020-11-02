@@ -130,21 +130,10 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 }
 
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
-	// Register new Vendor account
-	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
-
+	// Register new account Vendor, ZBCertificationCenter
 	// Publish model info
-	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	_, _ = utils.AddModelInfo(modelInfo, vendor)
-
-	// Get all certified models
-	inputCertifiedModels, _ := utils.GetAllCertifiedModels()
-
-	// Get all revoked models
-	inputRevokedModels, _ := utils.GetAllRevokedModels()
-
-	// Register new ZBCertificationCenter account
-	zb := utils.CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter})
+	// Get all certified and revoked models
+	_, zb, modelInfo, inputCertifiedModels, inputRevokedModels := utils.InitStartData()
 
 	vid, pid := modelInfo.VID, modelInfo.PID
 

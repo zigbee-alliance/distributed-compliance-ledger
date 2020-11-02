@@ -998,3 +998,24 @@ func parseGetReqResponse(response []byte, entity interface{}, code int) {
 		_ = json.Unmarshal(response, entity)
 	}
 }
+
+func InitStartData() (KeyInfo, KeyInfo, modelinfo.MsgAddModelInfo,
+	ComplianceInfosHeadersResult, ComplianceInfosHeadersResult) {
+	// Register new Vendor account
+	vendor := CreateNewAccount(auth.AccountRoles{auth.Vendor})
+
+	// Register new ZBCertificationCenter account
+	zb := CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter})
+
+	// Publish model info
+	modelInfo := NewMsgAddModelInfo(vendor.Address)
+	_, _ = AddModelInfo(modelInfo, vendor)
+
+	// Get all certified models
+	inputCertifiedModels, _ := GetAllCertifiedModels()
+
+	// Get all revoked models
+	inputRevokedModels, _ := GetAllRevokedModels()
+
+	return vendor, zb, modelInfo, inputCertifiedModels, inputRevokedModels
+}
