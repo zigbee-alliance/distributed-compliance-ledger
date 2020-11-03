@@ -103,8 +103,7 @@ stop_rest_server() {
 }
 
 # Global init
-set -o errexit
-set -o pipefail
+set -euo pipefail
 
 log "Compiling local binaries"
 make install &>${DETAILED_OUTPUT_TARGET}

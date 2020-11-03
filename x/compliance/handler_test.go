@@ -173,8 +173,12 @@ func TestHandler_CertifyModelForNotZbCertificationType(t *testing.T) {
 func TestHandler_RevokeModel(t *testing.T) {
 	setup := Setup()
 
+	// add model and testing result
+	vid, pid := addModel(setup, constants.VID, constants.PID)
+	addTestingResult(setup, vid, pid)
+
 	// revoke model
-	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, constants.VID, constants.PID)
+	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, vid, pid)
 	result := setup.Handler(setup.Ctx, revokedModelMsg)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -246,8 +250,12 @@ func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 func TestHandler_RevokeModelTwice(t *testing.T) {
 	setup := Setup()
 
+	// add model and testing result
+	vid, pid := addModel(setup, constants.VID, constants.PID)
+	addTestingResult(setup, vid, pid)
+
 	// revoke model
-	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, constants.VID, constants.PID)
+	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, vid, pid)
 	result := setup.Handler(setup.Ctx, revokedModelMsg)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -264,6 +272,10 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 
 func TestHandler_RevokeDifferentModels(t *testing.T) {
 	setup := Setup()
+
+	// add model and testing result
+	vid, pid := addModel(setup, constants.VID, constants.PID)
+	addTestingResult(setup, vid, pid)
 
 	for i := uint16(1); i < uint16(5); i++ {
 		// revoke model

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
+set -euo pipefail
 source integration_tests/cli/common.sh
 
 # Preparation of Actors
@@ -36,15 +36,6 @@ vid=$RANDOM
 pid=$RANDOM
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
-
-
-echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
-revocation_date="2020-02-02T02:20:20Z"
-revocation_reason="some reason"
-certification_type="zb"
-result=$(echo "test1234" | dclcli tx compliance revoke-model --vid=$vid --pid=$pid --certification-type="$certification_type" --revocation-date="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -78,7 +69,7 @@ certification_type="zb"
 result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --certification-type="$certification_type" --certification-date="$certification_date" --from $second_zb_account --yes)
 check_response "$result" "\"success\": false"
 echo "$result"
-
+: '
 echo "Get Certified Model with VID: ${vid} PID: ${pid}"
 result=$(dclcli query compliance certified-model --vid=$vid --pid=$pid --certification-type=$certification_type)
 check_response "$result" "\"value\": true"
@@ -173,3 +164,4 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"state\": \"certified\""
 echo "$result"
+'

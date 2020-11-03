@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -e
+set -euo pipefail
 source integration_tests/cli/common.sh
 
 root_cert_subject="O=root-ca,ST=some-state,C=AU"
