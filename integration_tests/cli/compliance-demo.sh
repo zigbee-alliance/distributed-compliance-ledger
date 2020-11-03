@@ -69,7 +69,7 @@ certification_type="zb"
 result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --certification-type="$certification_type" --certification-date="$certification_date" --from $second_zb_account --yes)
 check_response "$result" "\"success\": false"
 echo "$result"
-: '
+
 echo "Get Certified Model with VID: ${vid} PID: ${pid}"
 result=$(dclcli query compliance certified-model --vid=$vid --pid=$pid --certification-type=$certification_type)
 check_response "$result" "\"value\": true"
@@ -164,4 +164,3 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"state\": \"certified\""
 echo "$result"
-'
