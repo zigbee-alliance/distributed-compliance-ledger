@@ -7,6 +7,14 @@ parent:
 
 # `upgrade`
 
+# Notes on implementation
+
+This module was copied from the `master` of Cosmos SDK repo.
+
+It was downgraded for our Cosmos SDK version.
+
+The module requires `gov` module to function, so we switched to its implementation.
+
 ## Abstract
 
 `x/upgrade` is an implementation of a Cosmos SDK module that facilitates smoothly

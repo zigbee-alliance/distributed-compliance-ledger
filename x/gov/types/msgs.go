@@ -12,7 +12,7 @@ const (
 	TypeMsgSubmitProposal = "submit_proposal"
 )
 
-var _, _, _ sdk.Msg = MsgSubmitProposal{}, MsgDeposit{}, MsgVote{}
+var _, _ sdk.Msg = MsgSubmitProposal{}, MsgVote{}
 
 // MsgSubmitProposal
 type MsgSubmitProposal struct {
@@ -36,10 +36,6 @@ func (msg MsgSubmitProposal) ValidateBasic() sdk.Error {
 
 	if msg.Proposer.Empty() {
 		return sdk.ErrInvalidAddress(msg.Proposer.String())
-	}
-
-	if !IsValidProposalType(msg.Content.ProposalType()) {
-		return ErrInvalidProposalType(DefaultCodespace, msg.Content.ProposalType())
 	}
 
 	return msg.Content.ValidateBasic()
