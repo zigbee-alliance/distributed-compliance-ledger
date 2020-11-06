@@ -43,7 +43,7 @@ check_response_and_report() {
 response_does_not_contain() {
   result=$1
   unexpected_string=$2
-  if [[ $result == *$expected_string* ]];then
+  if [[ $result == *$unexpected_string* ]];then
     echo "ERROR: command failed. The unexpected string: $unexpected_string found in the result: $result"
     exit 1
   fi
