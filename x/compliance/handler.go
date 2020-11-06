@@ -125,21 +125,19 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper
 
 			complianceInfo.UpdateComplianceInfo(msg.RevocationDate, msg.Reason)
 		}
+	} else if modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
+		// Only revocation is tracked on the ledger. There is no compliance record yet.
+		// The corresponding Model Info and test results are not required to be on the ledger.
+		complianceInfo = types.NewRevokedComplianceInfo(
+			msg.VID,
+			msg.PID,
+			msg.CertificationType,
+			msg.RevocationDate,
+			msg.Reason,
+			msg.Signer,
+		)
 	} else {
-		if modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-			// Only revocation is tracked on the ledger. There is no compliance record yet.
-			// The corresponding Model Info and test results are not required to be on the ledger.
-			complianceInfo = types.NewRevokedComplianceInfo(
-				msg.VID,
-				msg.PID,
-				msg.CertificationType,
-				msg.RevocationDate,
-				msg.Reason,
-				msg.Signer,
-			)
-		} else {
-			return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
-		}
+		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
 	}
 
 	// store compliance info
