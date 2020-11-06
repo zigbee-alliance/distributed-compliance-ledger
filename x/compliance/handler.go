@@ -111,7 +111,7 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper
 
 	var complianceInfo types.ComplianceInfo
 
-	// nolint: gocritic
+	// nolint: gocritic, nestif
 	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID) {
 		// Compliance record already exist.
 		complianceInfo = keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID)
