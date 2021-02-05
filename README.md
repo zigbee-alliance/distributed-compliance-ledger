@@ -1,6 +1,6 @@
 # Distributed Compliance Ledger
 
-If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.ms)
+If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.md)
 
 Please note, that the only officially supported platform now is Linux.
 It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
