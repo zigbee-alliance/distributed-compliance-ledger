@@ -120,7 +120,7 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - publish X509 certificates
     - revoke X509 certificates    
 
-#### Deploy a network of validator nodes 
+### Deploy a network of validator nodes 
 One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks. 
 
 - If you want to deploy your own network for debug purposes,
