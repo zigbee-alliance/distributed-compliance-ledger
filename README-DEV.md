@@ -1,5 +1,8 @@
 # Development Guideline
 
+Please note, that the only officially supported platform now is Linux.
+It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
+
 ## Pre-requisites
 1. Install Go as described at https://golang.org/doc/install
     - Ensure that the following line has been appended to `/etc/profile`:
