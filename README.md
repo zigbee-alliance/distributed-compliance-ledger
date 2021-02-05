@@ -1,5 +1,7 @@
 # Distributed Compliance Ledger
 
+If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.ms)
+
 ## Overview
 DC Ledger is a public permissioned Ledger which can be used for two main use cases:
  - ZB compliance certification of device models
@@ -52,7 +54,7 @@ In order to send write transactions to the ledger you need:
 
 ## How To
 
-#### CLI Usage
+### CLI Usage
 A full list of all CLI commands can be found there: [cli-help.md](docs/cli-help.md).
 
 Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
@@ -62,7 +64,7 @@ an Account created on the Ledger with an appropriate role (see [how-to.md](docs/
 
 Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
 
-#### REST Usage
+### REST Usage
 A REST API server is a CLI run in a REST mode: 
 `dclcli rest-server --chain-id <chain_id>`.
  
@@ -79,7 +81,7 @@ an Account created on the Ledger with an appropriate role (see [how-to.md](docs/
 
 Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
 
-#### Instructions
+### Instructions
 After the CLI or REST API is configured and Account with an appropriate role is created,
 the following instructions from [how-to.md](docs/how-to.md) can be used for every role 
 (see [Use Case Diagrams](docs/use_cases)):
@@ -114,14 +116,6 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - add a new Validator node
     - publish X509 certificates
     - revoke X509 certificates    
-
-#### Build and run the app locally
-- To build and run, follow the [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial/22-build-run.md).
-Use __dcld__, __dclcli__ instead of __nsd__, __nscli__.
-- To start localnet using docker-compose run `make install && make localnet_init && make localnet_start`
-  - 4 nodes will be started and will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26662`
-- To stop localnet run `make localnet_stop`
-- A detailed instruction of now to start a local net in Docker can be found in [Setup of Local Net in Docker](docs/localnet-setup.md).
 
 #### Deploy a network of validator nodes 
 One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks. 
