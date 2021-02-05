@@ -2,3 +2,4 @@ settings.json
 .idea
 build
 localnet
+rest-server.out
