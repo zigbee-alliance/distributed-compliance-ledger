@@ -121,3 +121,51 @@ $ dclcli tx modelinfo add-model --vid=12345 --pid=675463 --name="Disco Ball" \
  --from=cool-vendor
  
 ----
+
+==== Check TestHouse Test Status
+[source,bash]
+----
+$ dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16>
+----
+
+==== Check Zigbee Certification Status
+[source,bash]
+----
+$ dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type="zb"
+$ dclcli query compliance all-certified-models
+----
+
+==== Download PAA Certs
+[source,bash]
+----
+$ dclcli query pki all-x509-certs
+`{
+  "result": {
+    "total": "2",
+    "items": [
+      {
+        "pem_cert": "-----BEGIN CERTIFICATE-----\nMIIBvjCCAWWgAwIBAgIUIkOmG+Xw20N4HMLyeXybk0jmlo8wCgYIKoZIzj0EAwIw\nOTE3MDUGA1UEAwwuQ29tY2FzdCBJbnRlZ3JhdGlvbiBUZXN0aW5nIEVDQyBDbGFz\ncyBJSUkgUm9vdDAeFw0yMDA3MDcyMzA3NTFaFw00NTA1MDUyMzExMzhaMB4xHDAa\nBgNVBAMME0NISVAgREVWIENsYXNzMyBJQ0EwWTATBgcqhkjOPQIBBggqhkjOPQMB\nBwNCAAQ0wmDbYmHmVFn6Ly/LqFFZQmFS+1td7s+yZD8LboM3jcrBW/ayS3AnIO6c\nNHD4iJDioNLFMab9xUzVGmSYgoUCo2YwZDASBgNVHRMBAf8ECDAGAQH/AgEAMB8G\nA1UdIwQYMBaAFDb0CqUK9CvOTlfUzH+wMqyqy9i1MB0GA1UdDgQWBBSeb0Sqjfti\nW3jND3YfySG6TDuakDAOBgNVHQ8BAf8EBAMCAYYwCgYIKoZIzj0EAwIDRwAwRAIg\naZQRxZAA8RVyjD1oTNxqdEkKNCueew9tM8HzZ9+rGT4CIDFD/3i5wDck2GxgQqgQ\n1DCUgDuwpCvFosPZ1GzmDBco\n-----END CERTIFICATE-----\n",
+        "subject": "CN=CHIP DEV Class3 ICA",
+        "subject_key_id": "9E:6F:44:AA:8D:FB:62:5B:78:CD:F:76:1F:C9:21:BA:4C:3B:9A:90",
+        "serial_number": "195614306269044484114648791458657602232633431695",
+        "issuer": "CN=Comcast Integration Testing ECC Class III Root",
+        "authority_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
+        "root_subject": "CN=Comcast Integration Testing ECC Class III Root",
+        "root_subject_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
+        "is_root": false,
+        "owner": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6"
+      },
+      {
+        "pem_cert": "-----BEGIN CERTIFICATE-----\nMIIB2jCCAYCgAwIBAgIUSpw4NDgjpSefY8fDfnEVw3pRiTIwCgYIKoZIzj0EAwIw\nOTE3MDUGA1UEAwwuQ29tY2FzdCBJbnRlZ3JhdGlvbiBUZXN0aW5nIEVDQyBDbGFz\ncyBJSUkgUm9vdDAeFw0yMDA1MTEyMzExMzhaFw00NTA1MDUyMzExMzhaMDkxNzA1\nBgNVBAMMLkNvbWNhc3QgSW50ZWdyYXRpb24gVGVzdGluZyBFQ0MgQ2xhc3MgSUlJ\nIFJvb3QwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQeHvQ24mds4HkSkZtMcuzy\nQO5wSWIQMRfOQ4fXz+i11A/ceJ8fac4j4a52vD8lm/1PmHg+Fx8VSBV9Dismg6SP\no2YwZDASBgNVHRMBAf8ECDAGAQH/AgEBMB8GA1UdIwQYMBaAFDb0CqUK9CvOTlfU\nzH+wMqyqy9i1MB0GA1UdDgQWBBQ29AqlCvQrzk5X1Mx/sDKsqsvYtTAOBgNVHQ8B\nAf8EBAMCAYYwCgYIKoZIzj0EAwIDSAAwRQIhAJNYLBfsx0+JFlicYl1BZEckgRaz\nnddXAsMw7+XQNo3PAiApvkNkkTJk4cAxuQptW8O/ov99C3nc9drePBvo2RA8Zg==\n-----END CERTIFICATE-----\n",
+        "subject": "CN=Comcast Integration Testing ECC Class III Root",
+        "subject_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
+        "serial_number": "425949129349252008356760222047868300335909013810",
+        "is_root": true,
+        "owner": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6"
+      }
+    ]
+  },
+  "height": "2147366"
+}
+`
+----
