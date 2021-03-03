@@ -1,0 +1,81 @@
+== Disctributed Compliance Ledger (DCL)
+
+=== Quick Start Guide
+This guide will help you configure DCL `dclcli` and interact with DCL TestNet.
+
+=== Test Net Infrastructure
+TestNet consists of following nodes:<ID>@IP:port
+. tcp://54.73.187.91:26656
+. tcp://3.124.76.30:26656
+. tcp://34.224.48.142:26656
+. tcp://44.239.5.82:26656
+
+=== dclcli setup
+These steps will configure `dclcli` on Ubuntu platform.
+
+==== GOLANG 1.3+
+Make sure you have goLang 1.3+ installed.
+https://khongwooilee.medium.com/how-to-update-the-go-version-6065f5c8c3ec
+
+==== Download DCL from repo
+.DCL CLI Build
+[source,bash]
+----
+$ git clone https://github.com/zigbee-alliance/distributed-compliance-ledger.git
+$ cd distributed-compliance-ledger
+$ make install
+----
+
+After successful comletion of above steps, `dclcli` should be installed.
+
+.DCL CLI Test
+[source,bash]
+----
+$ ls -l ~/go/bin/dclcli
+$ dclcli
+
+DcLedger Client
+
+Usage:
+  dclcli [command]
+
+Available Commands:
+  status                   Query remote node for status
+  tendermint-validator-set Get the full tendermint validator set at given height
+  config                   Create or query an application CLI configuration file
+  query                    Querying subcommands
+  tx                       Transactions subcommands
+                           
+  rest-server              Start LCD (light-client daemon), a local REST server
+                           
+  keys                     Add or view local private keys
+                           
+  version                  Print the app version
+  help                     Help about any command
+
+Flags:
+      --broadcast-mode string   Transaction broadcast mode to use (block, sync, async) (default "block")
+      --chain-id string         Chain ID of tendermint node
+  -e, --encoding string         Binary encoding (hex|b64|btc) (default "hex")
+  -h, --help                    help for dclcli
+      --home string             directory for config and data (default "/home/ahaque201/.dclcli")
+  -o, --output string           Output format (text|json) (default "text")
+      --trace                   print out full stack trace on errors
+
+Use "dclcli [command] --help" for more information about a command.
+----
+
+.DCL CLI Configure
+[source,bash]
+----
+# Configure `dclci` to connect to one of the testnet nodes
+$ dclcli config chain-id testnet
+$ dclcli config output json
+$ dclcli config indent true
+$ dclcli config trust-node false
+$ dclcli config node tcp://18.157.114.34:26657
+
+# Run `dclci` to connect to one of the testnet nodes
+$ dclcli query modelinfo model --vid=500 --pid=504
+
+----
