@@ -18,6 +18,9 @@ These steps will configure `dclcli` on Ubuntu platform.
 Make sure you have goLang 1.3+ installed.
 https://khongwooilee.medium.com/how-to-update-the-go-version-6065f5c8c3ec
 
+==== Download Pre Compiled `dclcli`
+A pre-built version of DCLCLI for Ubuntu: https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.4/dclcli, so no need to clone the repo and run make at all.
+
 ==== Download DCL from repo
 .DCL CLI Build
 [source,bash]
