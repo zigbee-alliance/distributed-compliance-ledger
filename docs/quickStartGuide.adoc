@@ -16,12 +16,15 @@ These steps will configure `dclcli` on Ubuntu platform.
 
 ==== GOLANG 1.3+
 Make sure you have goLang 1.3+ installed.
-https://khongwooilee.medium.com/how-to-update-the-go-version-6065f5c8c3ec
+Ubuntu
+    https://khongwooilee.medium.com/how-to-update-the-go-version-6065f5c8c3ec
+MacOS
+    https://www.jajaldoang.com/post/how-to-update-golang
 
 ==== Download Pre Compiled `dclcli`
 A pre-built version of DCLCLI for Ubuntu: https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.4/dclcli, so no need to clone the repo and run make at all.
 
-==== Download DCL from repo
+==== Download DCL Source Code from repo
 .DCL CLI Build
 [source,bash]
 ----
@@ -83,5 +86,38 @@ $ dclcli config node tcp://54.73.187.91:26657
 
 # Run `dclci` to connect to one of the testnet nodes
 $ dclcli query modelinfo model --vid=500 --pid=504
+----
 
+==== Create Vendor Account Steps
+.DCL CLI Steps
+[source,bash]
+----
+# First create vendor account. Remember the password and mnemonic below.
+# mnemonic can be used to recover your key, therefore it is important
+# to safeguard it
+$ dclcli keys add <vendor-name>
+`Enter a passphrase to encrypt your key to disk:
+Repeat the passphrase:
+{
+  "name": "cool-vendor",
+  "type": "local",
+  "address": "cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693",
+  "pubkey": "cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn",
+  "mnemonic": "mandate rally glue ugly next erode link clarify disease adjust relief runway better rack saddle page sight fly vital ribbon captain dinner dish edit"
+}
+`
+# Send your `address` and `pubkey` to Zigbee Alliance to be enrolled in DCL.
+# Zigbee Alliance will propose your account to DCL
+$ dclcli tx auth propose-add-account \ --address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 \ --pubkey=cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn \ --roles=Vendor --from=<Zigbee Aliance Account>
+
+# 2/3rd DCL Trustees will need to approve using following txn.
+$ dclcli tx auth approve-add-account \
+--address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 --from=<trustee-account>
+
+# After account approval, you can submit your product information
+$ dclcli tx modelinfo add-model --vid=12345 --pid=675463 --name="Disco Ball" \
+--description="CHIP Discoball" --sku=A1234GH --firmware-version=1.0 \
+ --hardware-version=1.0 --tis-or-trp-testing-completed=yes \
+ --from=cool-vendor
+ 
 ----
