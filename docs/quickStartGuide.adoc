@@ -4,7 +4,8 @@
 This guide will help you configure DCL `dclcli` and interact with DCL TestNet.
 
 === Test Net Infrastructure
-TestNet consists of following nodes:<ID>@IP:port
+TestNet consists of following nodes:<ID>@IP:port are to be used with `dclcli`.
+
 . tcp://54.73.187.91:26657
 . tcp://3.124.76.30:26657
 . tcp://34.224.48.142:26657
@@ -72,6 +73,8 @@ Use "dclcli [command] --help" for more information about a command.
 $ dclcli config chain-id testnet
 $ dclcli config output json
 $ dclcli config indent true
+# dclcli connects to a single node. Set following property to ensure every reply from node is 
+# cryptographically verified.
 $ dclcli config trust-node false
 $ dclcli config node tcp://18.157.114.34:26657
 
