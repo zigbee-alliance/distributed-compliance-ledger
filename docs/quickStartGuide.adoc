@@ -125,14 +125,50 @@ $ dclcli tx modelinfo add-model --vid=12345 --pid=675463 --name="Disco Ball" \
 ==== Check TestHouse Test Status
 [source,bash]
 ----
-$ dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16>
+$ $ dclcli query compliancetest test-result --vid=2020 --pid=10
+`{
+  "result": {
+    "vid": 2020,
+    "pid": 10,
+    "results": [
+      {
+        "owner": "cosmos1w3waz79mptxt6wtcdcex74apt42x3y7j2n4v39",
+        "test_result": "#Results\nPassed\n",
+        "test_date": "2021-02-16T06:04:57.05Z"
+      }
+    ]
+  },
+  "height": "2147544"
+}
+`
 ----
 
 ==== Check Zigbee Certification Status
 [source,bash]
 ----
-$ dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type="zb"
+$ dclcli query compliance certified-model --vid=2020 --pid=10 --certification-type="zb"
+`{
+  "result": {
+    "value": true
+  },
+  "height": "2147601"
+}`
+
 $ dclcli query compliance all-certified-models
+`{
+  "result": {
+    "total": "1",
+    "items": [
+      {
+        "vid": 2020,
+        "pid": 10,
+        "certification_type": "zb"
+      }
+    ]
+  },
+  "height": "2147611"
+}
+`
 ----
 
 ==== Download PAA Certs
