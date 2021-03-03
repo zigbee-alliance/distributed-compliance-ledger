@@ -76,7 +76,7 @@ $ dclcli config indent true
 # dclcli connects to a single node. Set following property to ensure every reply from node is 
 # cryptographically verified.
 $ dclcli config trust-node false
-$ dclcli config node tcp://18.157.114.34:26657
+$ dclcli config node tcp://54.73.187.91:26657
 
 # Run `dclci` to connect to one of the testnet nodes
 $ dclcli query modelinfo model --vid=500 --pid=504
