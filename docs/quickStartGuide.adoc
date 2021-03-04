@@ -85,7 +85,22 @@ $ dclcli config trust-node false
 $ dclcli config node tcp://54.73.187.91:26657
 
 # Run `dclci` to connect to one of the testnet nodes
-$ dclcli query modelinfo model --vid=500 --pid=504
+$ dclcli query modelinfo model --vid=100 --pid=100
+`{
+  "result": {
+    "vid": 100,
+    "pid": 100,
+    "name": "test-device-dsr-1",
+    "description": "test-device-dsr-1",
+    "sku": "test-sku",
+    "hardware_version": "1.0",
+    "firmware_version": "1.0",
+    "tis_or_trp_testing_completed": false,
+    "owner": "cosmos1x5xqekntys4drpamxtear5jcnahx7j4e08qzj6"
+  },
+  "height": "2147531"
+}
+`
 ----
 
 ==== Create Vendor Account Steps
