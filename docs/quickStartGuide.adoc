@@ -108,7 +108,10 @@ Repeat the passphrase:
 `
 # Send your `address` and `pubkey` to Zigbee Alliance to be enrolled in DCL.
 # Zigbee Alliance will propose your account to DCL
-$ dclcli tx auth propose-add-account \ --address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 \ --pubkey=cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn \ --roles=Vendor --from=<Zigbee Aliance Account>
+$ dclcli tx auth propose-add-account \ 
+--address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 \ 
+--pubkey=cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn \
+ --roles=Vendor --from=<Zigbee Aliance Account>
 
 # 2/3rd DCL Trustees will need to approve using following txn.
 $ dclcli tx auth approve-add-account \
