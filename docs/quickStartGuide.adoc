@@ -16,12 +16,15 @@ These steps will configure `dclcli` on Ubuntu platform.
 
 ==== GOLANG 1.3+
 Make sure you have goLang 1.3+ installed.
-https://khongwooilee.medium.com/how-to-update-the-go-version-6065f5c8c3ec
+Ubuntu
+    https://khongwooilee.medium.com/how-to-update-the-go-version-6065f5c8c3ec
+MacOS
+    https://www.jajaldoang.com/post/how-to-update-golang
 
 ==== Download Pre Compiled `dclcli`
 A pre-built version of DCLCLI for Ubuntu: https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.4/dclcli, so no need to clone the repo and run make at all.
 
-==== Download DCL from repo
+==== Download DCL Source Code from repo
 .DCL CLI Build
 [source,bash]
 ----
@@ -82,6 +85,141 @@ $ dclcli config trust-node false
 $ dclcli config node tcp://54.73.187.91:26657
 
 # Run `dclci` to connect to one of the testnet nodes
-$ dclcli query modelinfo model --vid=500 --pid=504
+$ dclcli query modelinfo model --vid=100 --pid=100
+`{
+  "result": {
+    "vid": 100,
+    "pid": 100,
+    "name": "test-device-dsr-1",
+    "description": "test-device-dsr-1",
+    "sku": "test-sku",
+    "hardware_version": "1.0",
+    "firmware_version": "1.0",
+    "tis_or_trp_testing_completed": false,
+    "owner": "cosmos1x5xqekntys4drpamxtear5jcnahx7j4e08qzj6"
+  },
+  "height": "2147531"
+}
+`
+----
 
+==== Create Vendor Account Steps
+.DCL CLI Steps
+[source,bash]
+----
+# First create vendor account. Remember the password and mnemonic below.
+# mnemonic can be used to recover your key, therefore it is important
+# to safeguard it
+$ dclcli keys add <vendor-name>
+`Enter a passphrase to encrypt your key to disk:
+Repeat the passphrase:
+{
+  "name": "cool-vendor",
+  "type": "local",
+  "address": "cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693",
+  "pubkey": "cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn",
+  "mnemonic": "mandate rally glue ugly next erode link clarify disease adjust relief runway better rack saddle page sight fly vital ribbon captain dinner dish edit"
+}
+`
+# Send your `address` and `pubkey` to Zigbee Alliance to be enrolled in DCL.
+# Zigbee Alliance will propose your account to DCL
+$ dclcli tx auth propose-add-account \ 
+--address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 \ 
+--pubkey=cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn \
+ --roles=Vendor --from=<Zigbee Aliance Account>
+
+# 2/3rd DCL Trustees will need to approve using following txn.
+$ dclcli tx auth approve-add-account \
+--address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 --from=<trustee-account>
+
+# After account approval, you can submit your product information
+$ dclcli tx modelinfo add-model --vid=12345 --pid=675463 --name="Disco Ball" \
+--description="CHIP Discoball" --sku=A1234GH --firmware-version=1.0 \
+ --hardware-version=1.0 --tis-or-trp-testing-completed=yes \
+ --from=cool-vendor
+ 
+----
+
+==== Check TestHouse Test Status
+[source,bash]
+----
+$ $ dclcli query compliancetest test-result --vid=2020 --pid=10
+`{
+  "result": {
+    "vid": 2020,
+    "pid": 10,
+    "results": [
+      {
+        "owner": "cosmos1w3waz79mptxt6wtcdcex74apt42x3y7j2n4v39",
+        "test_result": "#Results\nPassed\n",
+        "test_date": "2021-02-16T06:04:57.05Z"
+      }
+    ]
+  },
+  "height": "2147544"
+}
+`
+----
+
+==== Check Zigbee Certification Status
+[source,bash]
+----
+$ dclcli query compliance certified-model --vid=2020 --pid=10 --certification-type="zb"
+`{
+  "result": {
+    "value": true
+  },
+  "height": "2147601"
+}`
+
+$ dclcli query compliance all-certified-models
+`{
+  "result": {
+    "total": "1",
+    "items": [
+      {
+        "vid": 2020,
+        "pid": 10,
+        "certification_type": "zb"
+      }
+    ]
+  },
+  "height": "2147611"
+}
+`
+----
+
+==== Download PAA Certs
+[source,bash]
+----
+$ dclcli query pki all-x509-certs
+`{
+  "result": {
+    "total": "2",
+    "items": [
+      {
+        "pem_cert": "-----BEGIN CERTIFICATE-----\nMIIBvjCCAWWgAwIBAgIUIkOmG+Xw20N4HMLyeXybk0jmlo8wCgYIKoZIzj0EAwIw\nOTE3MDUGA1UEAwwuQ29tY2FzdCBJbnRlZ3JhdGlvbiBUZXN0aW5nIEVDQyBDbGFz\ncyBJSUkgUm9vdDAeFw0yMDA3MDcyMzA3NTFaFw00NTA1MDUyMzExMzhaMB4xHDAa\nBgNVBAMME0NISVAgREVWIENsYXNzMyBJQ0EwWTATBgcqhkjOPQIBBggqhkjOPQMB\nBwNCAAQ0wmDbYmHmVFn6Ly/LqFFZQmFS+1td7s+yZD8LboM3jcrBW/ayS3AnIO6c\nNHD4iJDioNLFMab9xUzVGmSYgoUCo2YwZDASBgNVHRMBAf8ECDAGAQH/AgEAMB8G\nA1UdIwQYMBaAFDb0CqUK9CvOTlfUzH+wMqyqy9i1MB0GA1UdDgQWBBSeb0Sqjfti\nW3jND3YfySG6TDuakDAOBgNVHQ8BAf8EBAMCAYYwCgYIKoZIzj0EAwIDRwAwRAIg\naZQRxZAA8RVyjD1oTNxqdEkKNCueew9tM8HzZ9+rGT4CIDFD/3i5wDck2GxgQqgQ\n1DCUgDuwpCvFosPZ1GzmDBco\n-----END CERTIFICATE-----\n",
+        "subject": "CN=CHIP DEV Class3 ICA",
+        "subject_key_id": "9E:6F:44:AA:8D:FB:62:5B:78:CD:F:76:1F:C9:21:BA:4C:3B:9A:90",
+        "serial_number": "195614306269044484114648791458657602232633431695",
+        "issuer": "CN=Comcast Integration Testing ECC Class III Root",
+        "authority_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
+        "root_subject": "CN=Comcast Integration Testing ECC Class III Root",
+        "root_subject_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
+        "is_root": false,
+        "owner": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6"
+      },
+      {
+        "pem_cert": "-----BEGIN CERTIFICATE-----\nMIIB2jCCAYCgAwIBAgIUSpw4NDgjpSefY8fDfnEVw3pRiTIwCgYIKoZIzj0EAwIw\nOTE3MDUGA1UEAwwuQ29tY2FzdCBJbnRlZ3JhdGlvbiBUZXN0aW5nIEVDQyBDbGFz\ncyBJSUkgUm9vdDAeFw0yMDA1MTEyMzExMzhaFw00NTA1MDUyMzExMzhaMDkxNzA1\nBgNVBAMMLkNvbWNhc3QgSW50ZWdyYXRpb24gVGVzdGluZyBFQ0MgQ2xhc3MgSUlJ\nIFJvb3QwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQeHvQ24mds4HkSkZtMcuzy\nQO5wSWIQMRfOQ4fXz+i11A/ceJ8fac4j4a52vD8lm/1PmHg+Fx8VSBV9Dismg6SP\no2YwZDASBgNVHRMBAf8ECDAGAQH/AgEBMB8GA1UdIwQYMBaAFDb0CqUK9CvOTlfU\nzH+wMqyqy9i1MB0GA1UdDgQWBBQ29AqlCvQrzk5X1Mx/sDKsqsvYtTAOBgNVHQ8B\nAf8EBAMCAYYwCgYIKoZIzj0EAwIDSAAwRQIhAJNYLBfsx0+JFlicYl1BZEckgRaz\nnddXAsMw7+XQNo3PAiApvkNkkTJk4cAxuQptW8O/ov99C3nc9drePBvo2RA8Zg==\n-----END CERTIFICATE-----\n",
+        "subject": "CN=Comcast Integration Testing ECC Class III Root",
+        "subject_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
+        "serial_number": "425949129349252008356760222047868300335909013810",
+        "is_root": true,
+        "owner": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6"
+      }
+    ]
+  },
+  "height": "2147366"
+}
+`
 ----
