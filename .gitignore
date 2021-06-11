@@ -3,3 +3,4 @@ settings.json
 build
 localnet
 rest-server.out
+.DS_Store
