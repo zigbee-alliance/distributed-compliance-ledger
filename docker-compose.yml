@@ -60,12 +60,16 @@ services:
     container_name: node3
     ports:
       - "26662-26663:26656-26657"
+      # uncomment following line if starting in debug mode 
+      # - "2345:2345"
     volumes:
       - ./localnet/node3:/root/.dcld:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.5
-    command: dcld start
+    command: dcld start    
+    # Please use the following as the entry point if you want to start this node in debug mode for easy debugging
+    # command: dlv --listen=:2345 --headless=true --log=true --log-output=debugger,debuglineerr,gdbwire,lldbout,rpc --accept-multiclient --api-version=2 exec /usr/bin/dcld start
 
 networks:
   localnet:

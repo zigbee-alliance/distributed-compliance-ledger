@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 # Copyright 2020 DSR Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,11 @@
 DETAILED_OUTPUT=true
 
 LOG_PREFIX="[run all] "
+SED_EXT=
+if [ "$(uname)" == "Darwin" ]; then
+    # Mac OS X sed needs the file extension when -i flag is used. Keeping it empty as we don't need backupfile
+    SED_EXT="''"
+fi
 
 if ${DETAILED_OUTPUT}; then
   DETAILED_OUTPUT_TARGET=/dev/stdout
@@ -59,10 +64,10 @@ patch_consensus_config() {
   local NODE_CONFIGS=$(find localnet -type f -name "config.toml" -wholename "*node*")
 
   for NODE_CONFIG in ${NODE_CONFIGS}; do
-    sed -i 's/timeout_propose = "3s"/timeout_propose = "500ms"/g' "${NODE_CONFIG}"
-    sed -i 's/timeout_prevote = "1s"/timeout_prevote = "500ms"/g' "${NODE_CONFIG}"
-    sed -i 's/timeout_precommit = "1s"/timeout_precommit = "500ms"/g' "${NODE_CONFIG}"
-    sed -i 's/timeout_commit = "5s"/timeout_commit = "500ms"/g' "${NODE_CONFIG}"
+    sed -i $SED_EXT 's/timeout_propose = "3s"/timeout_propose = "500ms"/g' "${NODE_CONFIG}"
+    sed -i $SED_EXT 's/timeout_prevote = "1s"/timeout_prevote = "500ms"/g' "${NODE_CONFIG}"
+    sed -i $SED_EXT 's/timeout_precommit = "1s"/timeout_precommit = "500ms"/g' "${NODE_CONFIG}"
+    sed -i $SED_EXT 's/timeout_commit = "5s"/timeout_commit = "500ms"/g' "${NODE_CONFIG}"
   done
 }
 
@@ -89,12 +94,12 @@ cleanup_pool() {
   log "-> Removing configurations" >${DETAILED_OUTPUT_TARGET}
   rm -rf ~/.dclcli
   rm -rf ~/.dcld
-  sudo rm -rf localnet
+  rm -rf localnet
 }
 
 run_rest_server() {
   log "Running cli in rest-server mode"
-  dclcli rest-server --chain-id dclchain &>>rest-server.out &
+  dclcli rest-server --chain-id dclchain & >> rest-server.out &
 }
 
 stop_rest_server() {
@@ -106,10 +111,10 @@ stop_rest_server() {
 set -euo pipefail
 
 log "Compiling local binaries"
-make install &>${DETAILED_OUTPUT_TARGET}
+#make install &>${DETAILED_OUTPUT_TARGET}
 
 log "Building docker image"
-make image &>${DETAILED_OUTPUT_TARGET}
+#make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
@@ -119,8 +124,10 @@ CLI_SHELL_TESTS=$(find integration_tests/cli -type f -not -name "common.sh")
 for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   init_pool
 
+  log "*****************************************************************************************"
   log "Running $CLI_SHELL_TEST"
-
+  log "*****************************************************************************************"
+  
   if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$CLI_SHELL_TEST finished successfully"
   else
@@ -136,9 +143,11 @@ GO_REST_TESTS=$(find integration_tests/rest -type f)
 
 for GO_REST_TEST in ${GO_REST_TESTS}; do
   init_pool
+  log "Starting the rest server"
   run_rest_server
 
   log "Running $GO_REST_TEST"
+  
 
   if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$GO_REST_TEST finished successfully"

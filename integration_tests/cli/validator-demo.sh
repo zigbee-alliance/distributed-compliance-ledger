@@ -80,7 +80,7 @@ check_response "$result" "\"validator_pubkey\": \"$vpubkey\""
 echo "$result"
 
 echo "Connect CLI to node \"$node\" and check status"
-dclcli config node "tcp://$ip:26657"
+dclcli config node "tcp://localhost:26665"
 result=$(dclcli status)
 check_response "$result" "\"moniker\": \"$node\""
 echo "$result"
@@ -100,7 +100,7 @@ echo "$result"
 sleep 5
 
 echo "Connect CLI to node \"node0\""
-dclcli config node $node0
+dclcli config node "tcp://localhost:26657"
 result=$(dclcli status)
 check_response "$result" "\"moniker\": \"node0\""
 echo "$result"

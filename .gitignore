@@ -4,3 +4,4 @@ build
 localnet
 rest-server.out
 .DS_Store
+.vscode
