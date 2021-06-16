@@ -85,33 +85,32 @@ func Setup() TestSetup {
 
 func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
-		VID:                      testconstants.VID,
-		PID:                      testconstants.PID,
-		CID:                      testconstants.CID,
-		Version:                  testconstants.Version,
-		Name:                     testconstants.Name,
-		Description:              testconstants.Description,
-		SKU:                      testconstants.SKU,
-		HardwareVersion:          testconstants.HardwareVersion,
-		FirmwareVersion:          testconstants.FirmwareVersion,
-		OtaURL:                   testconstants.OtaURL,
-		OtaChecksum:              testconstants.OtaChecksum,
-		OtaChecksumType:          testconstants.OtaChecksumType,
-		Custom:                   testconstants.Custom,
-		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
-		Signer:                   signer,
+		VID:                   testconstants.VID,
+		PID:                   testconstants.PID,
+		CID:                   testconstants.CID,
+		Name:                  testconstants.Name,
+		Description:           testconstants.Description,
+		SKU:                   testconstants.SKU,
+		SoftwareVersion:       testconstants.SoftwareVersion,
+		SoftwareVersionString: testconstants.SoftwareVersionString,
+		HardwareVersion:       testconstants.HardwareVersion,
+		HardwareVersionString: testconstants.HardwareVersionString,
+		CDVersionNumber:       testconstants.CDVersionNumber,
+		OtaURL:                testconstants.OtaURL,
+		OtaChecksum:           testconstants.OtaChecksum,
+		OtaChecksumType:       testconstants.OtaChecksumType,
+		Revoked:               testconstants.Revoked,
+		Signer:                signer,
 	}
 }
 
 func TestMsgUpdateModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
-		VID:                      testconstants.VID,
-		PID:                      testconstants.PID,
-		CID:                      testconstants.CID + 1,
-		Description:              "New Description",
-		OtaURL:                   "http://ota.firmware.com/new",
-		Custom:                   "New Custom Data",
-		TisOrTrpTestingCompleted: !testconstants.TisOrTrpTestingCompleted,
-		Signer:                   signer,
+		VID:         testconstants.VID,
+		PID:         testconstants.PID,
+		CID:         testconstants.CID + 1,
+		Description: "New Description",
+		OtaURL:      "http://ota.firmware.com/new",
+		Signer:      signer,
 	}
 }

@@ -479,21 +479,22 @@ func queryComplianceInfoInState(setup TestSetup, vid uint16, pid uint16, state s
 
 func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	modelInfo := modelinfo.ModelInfo{
-		VID:                      vid,
-		PID:                      pid,
-		CID:                      constants.CID,
-		Version:                  constants.Version,
-		Name:                     constants.Name,
-		Description:              constants.Description,
-		SKU:                      constants.SKU,
-		HardwareVersion:          constants.HardwareVersion,
-		FirmwareVersion:          constants.FirmwareVersion,
-		OtaURL:                   constants.OtaURL,
-		OtaChecksum:              constants.OtaChecksum,
-		OtaChecksumType:          constants.OtaChecksumType,
-		Custom:                   constants.Custom,
-		TisOrTrpTestingCompleted: constants.TisOrTrpTestingCompleted,
-		Owner:                    constants.Owner,
+		VID:                   vid,
+		PID:                   pid,
+		CID:                   constants.CID,
+		Name:                  constants.Name,
+		Description:           constants.Description,
+		SKU:                   constants.SKU,
+		SoftwareVersion:       constants.SoftwareVersion,
+		SoftwareVersionString: constants.SoftwareVersionString,
+		HardwareVersion:       constants.HardwareVersion,
+		HardwareVersionString: constants.HardwareVersionString,
+		CDVersionNumber:       constants.CDVersionNumber,
+		OtaURL:                constants.OtaURL,
+		OtaChecksum:           constants.OtaChecksum,
+		OtaChecksumType:       constants.OtaChecksumType,
+		Revoked:               constants.Revoked,
+		Owner:                 constants.Owner,
 	}
 
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)

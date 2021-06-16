@@ -44,21 +44,7 @@ func TestQuerier_QueryModel(t *testing.T) {
 	_ = setup.Cdc.UnmarshalJSON(result, &receivedModelInfo)
 
 	// check
-	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.CID, modelInfo.CID)
-	require.Equal(t, receivedModelInfo.Version, modelInfo.Version)
-	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
-	require.Equal(t, receivedModelInfo.Description, modelInfo.Description)
-	require.Equal(t, receivedModelInfo.SKU, modelInfo.SKU)
-	require.Equal(t, receivedModelInfo.HardwareVersion, modelInfo.HardwareVersion)
-	require.Equal(t, receivedModelInfo.FirmwareVersion, modelInfo.FirmwareVersion)
-	require.Equal(t, receivedModelInfo.OtaURL, modelInfo.OtaURL)
-	require.Equal(t, receivedModelInfo.OtaChecksum, modelInfo.OtaChecksum)
-	require.Equal(t, receivedModelInfo.OtaChecksumType, modelInfo.OtaChecksumType)
-	require.Equal(t, receivedModelInfo.Custom, modelInfo.Custom)
-	require.Equal(t, receivedModelInfo.TisOrTrpTestingCompleted, modelInfo.TisOrTrpTestingCompleted)
-	require.Equal(t, receivedModelInfo.Owner, modelInfo.Owner)
+	require.Equal(t, receivedModelInfo, modelInfo)
 }
 
 func TestQuerier_QueryModelForUnknown(t *testing.T) {

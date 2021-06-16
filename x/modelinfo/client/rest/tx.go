@@ -25,33 +25,58 @@ import (
 
 //nolint:maligned
 type AddModelInfoRequest struct {
-	BaseReq                  restTypes.BaseReq `json:"base_req"`
-	VID                      uint16            `json:"vid"`
-	PID                      uint16            `json:"pid"`
-	CID                      uint16            `json:"cid,omitempty"`
-	Version                  string            `json:"version,omitempty"`
-	Name                     string            `json:"name"`
-	Description              string            `json:"description"`
-	SKU                      string            `json:"sku"`
-	HardwareVersion          string            `json:"hardware_version"`
-	FirmwareVersion          string            `json:"firmware_version"`
-	OtaURL                   string            `json:"ota_url,omitempty"`
-	OtaChecksum              string            `json:"ota_checksum,omitempty"`
-	OtaChecksumType          string            `json:"ota_checksum_type,omitempty"`
-	Custom                   string            `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool              `json:"tis_or_trp_testing_completed"`
+	BaseReq                                    restTypes.BaseReq `json:"base_req"`
+	VID                                        uint16            `json:"vid"`
+	PID                                        uint16            `json:"pid"`
+	CID                                        uint16            `json:"cid,omitempty"`
+	Name                                       string            `json:"name"`
+	Description                                string            `json:"description"`
+	SKU                                        string            `json:"sku"`
+	SoftwareVersion                            uint32            `json:"software_version"`
+	SoftwareVersionString                      string            `json:"software_version_string"`
+	HardwareVersion                            uint32            `json:"hardware_version"`
+	HardwareVersionString                      string            `json:"hardware_version_string"`
+	CDVersionNumber                            uint16            `json:"cd_version_number"`
+	FirmwareDigests                            string            `json:"firmware_digests,omitempty"`
+	Revoked                                    bool              `json:"revoked"`
+	OtaURL                                     string            `json:"ota_url,omitempty"`
+	OtaChecksum                                string            `json:"ota_checksum,omitempty"`
+	OtaChecksumType                            string            `json:"ota_checksum_type,omitempty"`
+	OtaBlob                                    string            `json:"ota_blob,omitempty"`
+	CommissioningCustomFlow                    uint8             `json:"commission_custom_flow,omitempty"`
+	CommissioningCustomFlowUrl                 string            `json:"commission_custom_flow_url,omitempty"`
+	CommissioningModeInitialStepsHint          uint32            `json:"commisioning_mode_initial_steps_hint,omitempty"`
+	CommissioningModeInitialStepsInstruction   string            `json:"commisioning_mode_initial_steps_instruction,omitempty"`
+	CommissioningModeSecondaryStepsHint        uint32            `json:"commisioning_mode_secondary_steps_hint,omitempty"`
+	CommissioningModeSecondaryStepsInstruction string            `json:"commisioning_mode_secondary_steps_instruction,omitempty"`
+	ReleaseNotesUrl                            string            `json:"release_notes_url,omitempty"`
+	UserManualUrl                              string            `json:"user-manual-url,omitempty"`
+	SupportUrl                                 string            `json:"support-url,omitempty"`
+	ProductURL                                 string            `json:"product-url,omitempty"`
+	ChipBlob                                   string            `json:"chip-blob,omitempty"`
+	VendorBlob                                 string            `json:"vendor-blob,omitempty"`
 }
 
 //nolint:maligned
 type UpdateModelInfoRequest struct {
-	BaseReq                  restTypes.BaseReq `json:"base_req"`
-	VID                      uint16            `json:"vid"`
-	PID                      uint16            `json:"pid"`
-	CID                      uint16            `json:"cid,omitempty"`
-	Description              string            `json:"description,omitempty"`
-	OtaURL                   string            `json:"ota_url,omitempty"`
-	Custom                   string            `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool              `json:"tis_or_trp_testing_completed"`
+	BaseReq                    restTypes.BaseReq `json:"base_req"`
+	VID                        uint16            `json:"vid"`
+	PID                        uint16            `json:"pid"`
+	CID                        uint16            `json:"cid,omitempty"`
+	Description                string            `json:"description"`
+	CDVersionNumber            uint16            `json:"cd_version_number"`
+	Revoked                    bool              `json:"revoked"`
+	OtaURL                     string            `json:"ota_url,omitempty"`
+	OtaChecksum                string            `json:"ota_checksum,omitempty"`
+	OtaChecksumType            string            `json:"ota_checksum_type,omitempty"`
+	OtaBlob                    string            `json:"ota_blob,omitempty"`
+	CommissioningCustomFlowUrl string            `json:"commission_custom_flow_url,omitempty"`
+	ReleaseNotesUrl            string            `json:"release_notes_url,omitempty"`
+	UserManualUrl              string            `json:"user-manual-url,omitempty"`
+	SupportUrl                 string            `json:"support-url,omitempty"`
+	ProductURL                 string            `json:"product-url,omitempty"`
+	ChipBlob                   string            `json:"chip-blob,omitempty"`
+	VendorBlob                 string            `json:"vendor-blob,omitempty"`
 }
 
 func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -73,10 +98,11 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAddModelInfo(req.VID, req.PID, req.CID, req.Version,
-			req.Name, req.Description, req.SKU, req.HardwareVersion,
-			req.FirmwareVersion, req.OtaURL, req.OtaChecksum, req.OtaChecksumType,
-			req.Custom, req.TisOrTrpTestingCompleted, restCtx.Signer())
+		msg := types.NewMsgAddModelInfo(req.VID, req.PID, req.CID, req.Name, req.Description, req.SKU, req.SoftwareVersion, req.SoftwareVersionString, req.HardwareVersion,
+			req.HardwareVersionString, req.CDVersionNumber, req.FirmwareDigests, req.Revoked, req.OtaURL, req.OtaChecksum,
+			req.OtaChecksumType, req.OtaBlob, req.CommissioningCustomFlow, req.CommissioningCustomFlowUrl, req.CommissioningModeInitialStepsHint, req.CommissioningModeInitialStepsInstruction,
+			req.CommissioningModeSecondaryStepsHint, req.CommissioningModeSecondaryStepsInstruction, req.ReleaseNotesUrl, req.UserManualUrl, req.SupportUrl, req.ProductURL,
+			req.ChipBlob, req.VendorBlob, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}
@@ -101,8 +127,9 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgUpdateModelInfo(req.VID, req.PID, req.CID, req.Description,
-			req.OtaURL, req.Custom, req.TisOrTrpTestingCompleted, restCtx.Signer())
+		msg := types.NewMsgUpdateModelInfo(req.VID, req.PID, req.CID, req.Description, req.CDVersionNumber, req.Revoked,
+			req.OtaURL, req.OtaChecksum, req.OtaChecksumType, req.OtaBlob, req.CommissioningCustomFlowUrl, req.ReleaseNotesUrl,
+			req.UserManualUrl, req.SupportUrl, req.ProductURL, req.ChipBlob, req.VendorBlob, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

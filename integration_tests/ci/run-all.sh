@@ -99,12 +99,13 @@ cleanup_pool() {
 
 run_rest_server() {
   log "Running cli in rest-server mode"
+  if pgrep dclcli; then pkill dclcli; fi
   dclcli rest-server --chain-id dclchain & >> rest-server.out &
 }
 
 stop_rest_server() {
   log "Stopping cli in rest-server mode"
-  killall dclcli
+  if pgrep dclcli; then pkill dclcli; fi
 }
 
 # Global init
@@ -146,13 +147,14 @@ for GO_REST_TEST in ${GO_REST_TESTS}; do
   log "Starting the rest server"
   run_rest_server
 
+  log "*****************************************************************************************"
   log "Running $GO_REST_TEST"
-  
+  log "*****************************************************************************************"
 
   if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$GO_REST_TEST finished successfully"
   else
-    log "$GO_REST_TEST falied"
+    log "$GO_REST_TEST failed"
     exit 1
   fi
 

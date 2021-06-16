@@ -32,14 +32,15 @@ vid=$RANDOM
 pid=$RANDOM
 
 echo "Add Model with VID: $vid PID: $pid: Not Vendor"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $user_account --yes)
+
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $user_account --yes)
 check_response_and_report "$result" "\"success\": false"
 check_response_and_report "$result" "\"code\": 4"
 echo "$result"
 
 echo "Add Model with VID: $vid PID: $pid: Twice"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes)
 check_response_and_report "$result" "\"success\": false"
 check_response_and_report "$result" "\"code\": 501"
 echo "$result"
@@ -47,53 +48,63 @@ echo "$result"
 # CLI side errors
 
 echo "Add Model with VID: $vid PID: $pid: Unknown account"
-result=$(dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name 1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from "Unknown"  2>&1) || true
+result=$(dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from "Unknown"  2>&1) || true
 check_response_and_report "$result" "Key Unknown not found"
 
 echo "Add model with invalid VID/PID"
 for i in "0" "string"
 do
-  result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$i --pid=$pid --name="Name" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+  result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$i --pid=$pid --name="Name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
   check_response_and_report "$result" "Invalid VID"
 
-  result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$i --name="Name" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+  result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$i --name="Name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
   check_response_and_report "$result" "Invalid PID"
 done
 
-echo "Add model with epmty name"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty name"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
 check_response_and_report "$result" "Invalid Name"
 
-echo "Add model with epmty description"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty description"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
 check_response_and_report "$result" "Invalid Description"
 
-echo "Add model with epmty SKU"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty SKU"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="" --software-version=12 --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
 check_response_and_report "$result" "Invalid SKU"
 
-echo "Add model with epmty Hardware Version"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --hardware-version="" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty Software Version"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --software-version="" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Code: 6"
+check_response_and_report "$result" "Invalid SoftwareVersion"
+
+echo "Add model with empty Software Version String"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --software-version="1" --software-version-string=""  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Code: 6"
+check_response_and_report "$result" "Invalid SoftwareVersionString"
+
+echo "Add model with empty Hardware Version"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --software-version="1" --software-version-string="1.0b123"  --hardware-version="" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
 check_response_and_report "$result" "Invalid HardwareVersion"
 
-echo "Add model with epmty Firmwere Version"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty Hardware Version String"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --software-version="1" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string=""  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid FirmwareVersion"
+check_response_and_report "$result" "Invalid HardwareVersionString"
 
-echo "Add model with Invalid TIS flag"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed="string" --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty CD Version Number"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --software-version="1" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="51.1235.3"  --cd-version-number="" --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid Tis-or-trp-testing-completed"
+check_response_and_report "$result" "Invalid CDVersionNumber"
 
 echo "Add model without --from flag"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --yes 2>&1) || true
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32"  --yes 2>&1) || true
 check_response_and_report "$result" "required flag(s) \"from\" not set"
 
-echo "Add model with not enought parameters"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "required flag(s) \"tis-or-trp-testing-completed\" not set"
+echo "Add model without enough parameters"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name"  --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "required flag(s) \"description\" not set"

@@ -53,20 +53,11 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 	}
 
 	modelInfo := types.NewModelInfo(
-		msg.VID,
-		msg.PID,
-		msg.CID,
-		msg.Version,
-		msg.Name,
-		msg.Description,
-		msg.SKU,
-		msg.HardwareVersion,
-		msg.FirmwareVersion,
-		msg.OtaURL,
-		msg.OtaChecksum,
-		msg.OtaChecksumType,
-		msg.Custom,
-		msg.TisOrTrpTestingCompleted,
+		msg.VID, msg.PID, msg.CID, msg.Name, msg.Description, msg.SKU, msg.SoftwareVersion, msg.SoftwareVersionString, msg.HardwareVersion,
+		msg.HardwareVersionString, msg.CDVersionNumber, msg.FirmwareDigests, msg.Revoked, msg.OtaURL, msg.OtaChecksum,
+		msg.OtaChecksumType, msg.OtaBlob, msg.CommissioningCustomFlow, msg.CommissioningCustomFlowUrl, msg.CommissioningModeInitialStepsHint, msg.CommissioningModeInitialStepsInstruction,
+		msg.CommissioningModeSecondaryStepsHint, msg.CommissioningModeSecondaryStepsInstruction, msg.ReleaseNotesUrl, msg.UserManualUrl, msg.SupportUrl, msg.ProductURL,
+		msg.ChipBlob, msg.VendorBlob,
 		msg.Signer,
 	)
 
@@ -107,12 +98,6 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 	if msg.OtaURL != "" {
 		modelInfo.OtaURL = msg.OtaURL
 	}
-
-	if msg.Custom != "" {
-		modelInfo.Custom = msg.Custom
-	}
-
-	modelInfo.TisOrTrpTestingCompleted = msg.TisOrTrpTestingCompleted
 
 	// store updated model
 	keeper.SetModelInfo(ctx, modelInfo)

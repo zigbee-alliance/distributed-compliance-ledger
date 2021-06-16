@@ -78,7 +78,7 @@ vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=$user_address --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from=$user_address --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -137,5 +137,5 @@ vid=$RANDOM
 pid=$RANDOM
 name="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=$user_address --yes 2>&1) || true
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version=10 --software-version-string="1.0b123"  --hardware-version=5 --hardware-version-string="5.1.23"  --cd-version-number=32 --from=$user_address --yes 2>&1) || true
 check_response_and_report "$result" "No account associated with the address"

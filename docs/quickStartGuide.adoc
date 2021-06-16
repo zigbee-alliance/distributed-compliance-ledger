@@ -134,9 +134,9 @@ $ dclcli tx auth approve-add-account \
 
 # After account approval, you can submit your product information
 $ dclcli tx modelinfo add-model --vid=12345 --pid=675463 --name="Disco Ball" \
---description="CHIP Discoball" --sku=A1234GH --firmware-version=1.0 \
- --hardware-version=1.0 --tis-or-trp-testing-completed=yes \
- --from=cool-vendor
+--description="CHIP Discoball" --sku=A1234GH --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" \
+--hardware-version-string="5.1.23"  --cd-version-number="32" \
+--from=cool-vendor
  
 ----
 

@@ -53,24 +53,25 @@ func ValidateGenesis(data GenesisState) error {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed SKU. Value: %v", record))
 		}
 
-		if record.HardwareVersion == "" {
+		if record.HardwareVersion == 0 {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed HardwareVersion. Value: %v", record))
 		}
-
-		if record.FirmwareVersion == "" {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed FirmwareVersion. Value: %v", record))
-		}
-
-		if record.Owner.Empty() {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed Owner. Value: %v", record))
-		}
-
-		if record.OtaURL != "" || record.OtaChecksum != "" || record.OtaChecksumType != "" {
-			if record.OtaURL == "" || record.OtaChecksum == "" || record.OtaChecksumType == "" {
-				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: The fields OtaURL, OtaChecksum and "+
-					"OtaChecksumType must be either specified together, or not specified together. Value: %v", record))
+		// TODO we should reuse validation
+		/*
+			if record.FirmwareVersion == 0 {
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed FirmwareVersion. Value: %v", record))
 			}
-		}
+
+			if record.Owner.Empty() {
+				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed Owner. Value: %v", record))
+			}
+
+			if record.OtaURL != "" || record.OtaChecksum != "" || record.OtaChecksumType != "" {
+				if record.OtaURL == "" || record.OtaChecksum == "" || record.OtaChecksumType == "" {
+					return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: The fields OtaURL, OtaChecksum and "+
+						"OtaChecksumType must be either specified together, or not specified together. Value: %v", record))
+				}
+			}*/
 	}
 
 	return nil

@@ -65,21 +65,22 @@ func Setup() TestSetup {
 
 func DefaultModelInfo() types.ModelInfo {
 	return types.ModelInfo{
-		VID:                      testconstants.VID,
-		PID:                      testconstants.PID,
-		CID:                      testconstants.CID,
-		Version:                  testconstants.Version,
-		Name:                     testconstants.Name,
-		Description:              testconstants.Description,
-		SKU:                      testconstants.SKU,
-		HardwareVersion:          testconstants.HardwareVersion,
-		FirmwareVersion:          testconstants.FirmwareVersion,
-		OtaURL:                   testconstants.OtaURL,
-		OtaChecksum:              testconstants.OtaChecksum,
-		OtaChecksumType:          testconstants.OtaChecksumType,
-		Custom:                   testconstants.Custom,
-		TisOrTrpTestingCompleted: testconstants.TisOrTrpTestingCompleted,
-		Owner:                    testconstants.Owner,
+		VID:                   testconstants.VID,
+		PID:                   testconstants.PID,
+		CID:                   testconstants.CID,
+		Name:                  testconstants.Name,
+		Description:           testconstants.Description,
+		SKU:                   testconstants.SKU,
+		SoftwareVersion:       testconstants.SoftwareVersion,
+		SoftwareVersionString: testconstants.SoftwareVersionString,
+		HardwareVersion:       testconstants.HardwareVersion,
+		HardwareVersionString: testconstants.HardwareVersionString,
+		CDVersionNumber:       testconstants.CDVersionNumber,
+		OtaURL:                testconstants.OtaURL,
+		OtaChecksum:           testconstants.OtaChecksum,
+		OtaChecksumType:       testconstants.OtaChecksumType,
+		Revoked:               testconstants.Revoked,
+		Owner:                 testconstants.Owner,
 	}
 }
 

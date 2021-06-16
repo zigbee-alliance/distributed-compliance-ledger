@@ -64,7 +64,7 @@ create_new_account(){
   address=$(dclcli keys show $name -a)
   pubkey=$(dclcli keys show $name -p)
 
-  echo "Jack prupose account for \"$name\" with roles: \"$roles\""
+  echo "Jack proposes account for \"$name\" with roles: \"$roles\""
   result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
   check_response "$result" "\"success\": true"
   echo "$result"

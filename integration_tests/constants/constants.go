@@ -34,21 +34,37 @@ var (
 	EmptyString  = ""
 
 	// Model Info.
-	VID                      uint16 = 1
-	PID                      uint16 = 22
-	CID                      uint16 = 12345
-	Version                         = "1.0"
-	Name                            = "Device Name"
-	Description                     = "Device Description"
-	SKU                             = "RCU2205A"
-	HardwareVersion                 = "1.1"
-	FirmwareVersion                 = "2.0"
-	OtaURL                          = "http://ota.firmware.com"
-	OtaChecksum                     = "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-	OtaChecksumType                 = "SHA-256"
-	Custom                          = "Custom data"
-	TisOrTrpTestingCompleted        = true
-	Owner                           = Address1
+	VID                                        uint16 = 1
+	PID                                        uint16 = 22
+	CID                                        uint16 = 12345
+	Version                                           = "1.0"
+	Name                                              = "Device Name"
+	Description                                       = "Device Description"
+	SKU                                               = "RCU2205A"
+	SoftwareVersion                            uint32 = 1
+	SoftwareVersionString                             = "1.0"
+	HardwareVersion                            uint32 = 21
+	HardwareVersionString                             = "2.1"
+	CDVersionNumber                            uint16 = 312
+	FirmwareDigests                                   = "Firmware Digest String"
+	Revoked                                           = false
+	OtaURL                                            = "http://ota.firmware.com"
+	OtaChecksum                                       = "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	OtaChecksumType                                   = "SHA-256"
+	OtaBlob                                           = "OTABlob Text"
+	CommissioningCustomFlow                    uint8  = 1
+	CommissioningCustomFlowUrl                        = "https://sampleflowurl.dclmodel"
+	CommissioningModeInitialStepsHint          uint32 = 2
+	CommissioningModeInitialStepsInstruction          = "commissioningModeInitialStepsInstruction details"
+	CommissioningModeSecondaryStepsHint        uint32 = 3
+	CommissioningModeSecondaryStepsInstruction        = "commissioningModeSecondaryStepsInstruction steps"
+	ReleaseNotesUrl                                   = "https://url.releasenotes.dclmodel"
+	UserManualUrl                                     = "https://url.usermanual.dclmodel"
+	SupportUrl                                        = "https://url.supporturl.dclmodel"
+	ProductURL                                        = "https://url.producturl.dclmodel"
+	ChipBlob                                          = "Chip Blob Text"
+	VendorBlob                                        = "Vendor Blob Text"
+	Owner                                             = Address1
 
 	// Compliance.
 	CertificationDate = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)

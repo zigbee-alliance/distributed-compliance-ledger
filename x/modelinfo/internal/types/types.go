@@ -25,56 +25,102 @@ import (
 */
 //nolint:maligned
 type ModelInfo struct {
-	VID                      uint16         `json:"vid"`
-	PID                      uint16         `json:"pid"`
-	CID                      uint16         `json:"cid,omitempty"`
-	Version                  string         `json:"version,omitempty"`
-	Name                     string         `json:"name"`
-	Description              string         `json:"description"`
-	SKU                      string         `json:"sku"`
-	HardwareVersion          string         `json:"hardware_version"`
-	FirmwareVersion          string         `json:"firmware_version"`
-	OtaURL                   string         `json:"ota_url,omitempty"`
-	OtaChecksum              string         `json:"ota_checksum,omitempty"`
-	OtaChecksumType          string         `json:"ota_checksum_type,omitempty"`
-	Custom                   string         `json:"custom,omitempty"`
-	TisOrTrpTestingCompleted bool           `json:"tis_or_trp_testing_completed"`
-	Owner                    sdk.AccAddress `json:"owner"`
+	VID                                        uint16         `json:"vid"`
+	PID                                        uint16         `json:"pid"`
+	CID                                        uint16         `json:"cid,omitempty"`
+	Name                                       string         `json:"name"`
+	Description                                string         `json:"description"`
+	SKU                                        string         `json:"sku"`
+	SoftwareVersion                            uint32         `json:"software_version"`
+	SoftwareVersionString                      string         `json:"software_version_string"`
+	HardwareVersion                            uint32         `json:"hardware_version"`
+	HardwareVersionString                      string         `json:"hardware_version_string"`
+	CDVersionNumber                            uint16         `json:"cd_version_number"`
+	FirmwareDigests                            string         `json:"firmware_digests,omitempty"`
+	Revoked                                    bool           `json:"revoked"`
+	OtaURL                                     string         `json:"ota_url,omitempty"`
+	OtaChecksum                                string         `json:"ota_checksum,omitempty"`
+	OtaChecksumType                            string         `json:"ota_checksum_type,omitempty"`
+	OtaBlob                                    string         `json:"ota_blob,omitempty"`
+	CommissioningCustomFlow                    uint8          `json:"commission_custom_flow,omitempty"`
+	CommissioningCustomFlowUrl                 string         `json:"commission_custom_flow_url,omitempty"`
+	CommissioningModeInitialStepsHint          uint32         `json:"commisioning_mode_initial_steps_hint,omitempty"`
+	CommissioningModeInitialStepsInstruction   string         `json:"commisioning_mode_initial_steps_instruction,omitempty"`
+	CommissioningModeSecondaryStepsHint        uint32         `json:"commisioning_mode_secondary_steps_hint,omitempty"`
+	CommissioningModeSecondaryStepsInstruction string         `json:"commisioning_mode_secondary_steps_instruction,omitempty"`
+	ReleaseNotesUrl                            string         `json:"release_notes_url,omitempty"`
+	UserManualUrl                              string         `json:"user-manual-url,omitempty"`
+	SupportUrl                                 string         `json:"support-url,omitempty"`
+	ProductURL                                 string         `json:"product-url,omitempty"`
+	ChipBlob                                   string         `json:"chip-blob,omitempty"`
+	VendorBlob                                 string         `json:"vendor-blob,omitempty"`
+	Owner                                      sdk.AccAddress `json:"owner"`
 }
 
 func NewModelInfo(
 	vid uint16,
 	pid uint16,
 	cid uint16,
-	version string,
 	name string,
 	description string,
 	sku string,
-	hardwareVersion string,
-	firmwareVersion string,
+	softwareVersion uint32,
+	softwareVersionString string,
+	hardwareVersion uint32,
+	hardwareVersionString string,
+	cDVersionNumber uint16,
+	firmwareDigests string,
+	revoked bool,
 	otaURL string,
 	otaChecksum string,
 	otaChecksumType string,
-	custom string,
-	tisOrTrpTestingCompleted bool,
+	otaBlob string,
+	commissioningCustomFlow uint8,
+	commissioningCustomFlowUrl string,
+	commissioningModeInitialStepsHint uint32,
+	commissioningModeInitialStepsInstruction string,
+	commissioningModeSecondaryStepsHint uint32,
+	commissioningModeSecondaryStepsInstruction string,
+	releaseNotesUrl string,
+	userManualUrl string,
+	supportUrl string,
+	productURL string,
+	chipBlob string,
+	vendorBlob string,
 	owner sdk.AccAddress,
+
 ) ModelInfo {
 	return ModelInfo{
-		VID:                      vid,
-		PID:                      pid,
-		CID:                      cid,
-		Version:                  version,
-		Name:                     name,
-		Description:              description,
-		SKU:                      sku,
-		HardwareVersion:          hardwareVersion,
-		FirmwareVersion:          firmwareVersion,
-		OtaURL:                   otaURL,
-		OtaChecksum:              otaChecksum,
-		OtaChecksumType:          otaChecksumType,
-		Custom:                   custom,
-		TisOrTrpTestingCompleted: tisOrTrpTestingCompleted,
-		Owner:                    owner,
+		VID:                                      vid,
+		PID:                                      pid,
+		CID:                                      cid,
+		Name:                                     name,
+		Description:                              description,
+		SKU:                                      sku,
+		SoftwareVersion:                          softwareVersion,
+		SoftwareVersionString:                    softwareVersionString,
+		HardwareVersion:                          hardwareVersion,
+		HardwareVersionString:                    hardwareVersionString,
+		CDVersionNumber:                          cDVersionNumber,
+		FirmwareDigests:                          firmwareDigests,
+		Revoked:                                  revoked,
+		OtaURL:                                   otaURL,
+		OtaChecksum:                              otaChecksum,
+		OtaChecksumType:                          otaChecksumType,
+		OtaBlob:                                  otaBlob,
+		CommissioningCustomFlow:                  commissioningCustomFlow,
+		CommissioningCustomFlowUrl:               commissioningCustomFlowUrl,
+		CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
+		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
+		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
+		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
+		ReleaseNotesUrl: releaseNotesUrl,
+		UserManualUrl:   userManualUrl,
+		SupportUrl:      supportUrl,
+		ProductURL:      productURL,
+		ChipBlob:        chipBlob,
+		VendorBlob:      vendorBlob,
+		Owner:           owner,
 	}
 }
 

@@ -21,6 +21,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func ParseUInt8FromString(str string) (uint8, sdk.Error) {
+	val, err := strconv.ParseUint(str, 10, 8)
+	if err != nil {
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: \"%v\" must be 16 bit unsigned integer", str))
+	}
+
+	return uint8(val), nil
+}
+
 func ParseUInt16FromString(str string) (uint16, sdk.Error) {
 	val, err := strconv.ParseUint(str, 10, 16)
 	if err != nil {
@@ -28,6 +37,15 @@ func ParseUInt16FromString(str string) (uint16, sdk.Error) {
 	}
 
 	return uint16(val), nil
+}
+
+func ParseUInt32FromString(str string) (uint32, sdk.Error) {
+	val, err := strconv.ParseUint(str, 10, 32)
+	if err != nil {
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: \"%v\" must be 16 bit unsigned integer", str))
+	}
+
+	return uint32(val), nil
 }
 
 func ParseVID(str string) (uint16, sdk.Error) {
