@@ -27,7 +27,7 @@ vid=$RANDOM
 pid=$RANDOM
 name="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --support-url="https://originalsupporturl.test" --name="$name" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from $vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -54,7 +54,7 @@ result=$(dclcli query modelinfo vendor-models --vid=$vid)
 check_response "$result" "\"pid\": $pid"
 echo "$result"
 
-echo "Update Model with VID: ${vid} PID: ${pid}"
+echo "Update Model with VID: ${vid} PID: ${pid} with new description"
 description="New Device Description"
 result=$(echo "test1234" | dclcli tx modelinfo update-model --vid=$vid --pid=$pid --cd-version-number="32" --from $vendor_account --yes --description "$description")
 check_response "$result" "\"success\": true"
@@ -65,4 +65,18 @@ result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"description\": \"$description\""
+echo "$result"
+
+echo "Update Model with VID: ${vid} PID: ${pid} modifying support-url"
+support_url="https://newsupporturl.test"
+echo dclcli tx modelinfo update-model --vid=$vid --pid=$pid --cd-version-number="32" --from $vendor_account --yes --support-url "$support_url"
+result=$(echo "test1234" | dclcli tx modelinfo update-model --vid=$vid --pid=$pid --cd-version-number="33" --from $vendor_account --yes --support-url "$support_url")
+check_response "$result" "\"success\": true"
+echo "$result"
+
+echo "Get Model with VID: ${vid} PID: ${pid}"
+result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"support-url\": \"$support_url\""
 echo "$result"

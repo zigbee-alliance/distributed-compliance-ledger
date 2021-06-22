@@ -95,8 +95,52 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 		modelInfo.Description = msg.Description
 	}
 
+	if msg.Revoked != modelInfo.Revoked {
+		modelInfo.Revoked = msg.Revoked
+	}
+
+	if msg.CDVersionNumber != 0 {
+		modelInfo.CDVersionNumber = msg.CDVersionNumber
+	}
+
 	if msg.OtaURL != "" {
 		modelInfo.OtaURL = msg.OtaURL
+	}
+
+	if msg.OtaChecksum != "" {
+		modelInfo.OtaChecksum = msg.OtaChecksum
+	}
+
+	if msg.OtaChecksumType != "" {
+		modelInfo.OtaChecksumType = msg.OtaChecksumType
+	}
+
+	if msg.CommissioningCustomFlowUrl != "" {
+		modelInfo.CommissioningCustomFlowUrl = msg.CommissioningCustomFlowUrl
+	}
+
+	if msg.ReleaseNotesUrl != "" {
+		modelInfo.ReleaseNotesUrl = msg.ReleaseNotesUrl
+	}
+
+	if msg.UserManualUrl != "" {
+		modelInfo.UserManualUrl = msg.UserManualUrl
+	}
+
+	if msg.SupportUrl != "" {
+		modelInfo.SupportUrl = msg.SupportUrl
+	}
+
+	if msg.ProductURL != "" {
+		modelInfo.ProductURL = msg.ProductURL
+	}
+
+	if msg.ChipBlob != "" {
+		modelInfo.ChipBlob = msg.ChipBlob
+	}
+
+	if msg.VendorBlob != "" {
+		modelInfo.VendorBlob = msg.VendorBlob
 	}
 
 	// store updated model

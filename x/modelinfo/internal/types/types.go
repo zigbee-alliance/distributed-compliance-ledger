@@ -49,11 +49,11 @@ type ModelInfo struct {
 	CommissioningModeSecondaryStepsHint        uint32         `json:"commisioning_mode_secondary_steps_hint,omitempty"`
 	CommissioningModeSecondaryStepsInstruction string         `json:"commisioning_mode_secondary_steps_instruction,omitempty"`
 	ReleaseNotesUrl                            string         `json:"release_notes_url,omitempty"`
-	UserManualUrl                              string         `json:"user-manual-url,omitempty"`
-	SupportUrl                                 string         `json:"support-url,omitempty"`
-	ProductURL                                 string         `json:"product-url,omitempty"`
-	ChipBlob                                   string         `json:"chip-blob,omitempty"`
-	VendorBlob                                 string         `json:"vendor-blob,omitempty"`
+	UserManualUrl                              string         `json:"user_manual_url,omitempty"`
+	SupportUrl                                 string         `json:"support_url,omitempty"`
+	ProductURL                                 string         `json:"product_url,omitempty"`
+	ChipBlob                                   string         `json:"chip_blob,omitempty"`
+	VendorBlob                                 string         `json:"vendor_blob,omitempty"`
 	Owner                                      sdk.AccAddress `json:"owner"`
 }
 

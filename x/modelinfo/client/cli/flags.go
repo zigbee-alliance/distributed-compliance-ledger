@@ -38,8 +38,8 @@ const (
 	FlagOtaChecksumType = "ota-checksum-type"
 
 	FlagOtaBlob                                    = "ota-blob"
-	FlagCommissioningCustomFlow                    = "commisioning-custom-flow"
-	FlagCommissioningCustomFlowUrl                 = "commisioning-custom-flow-url"
+	FlagCommissioningCustomFlow                    = "commissioning-custom-flow"
+	FlagCommissioningCustomFlowUrl                 = "commissioning-custom-flow-url"
 	FlagCommissioningModeInitialStepsHint          = "commissioning-mode-initial-steps-hint"
 	FlagCommissioningModeInitialStepsInstruction   = "commissioning-mode-initial-steps-instruction"
 	FlagCommissioningModeSecondaryStepsHint        = "commissioning-mode-secondary-steps-hint"
