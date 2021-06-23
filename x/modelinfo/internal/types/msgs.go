@@ -22,101 +22,17 @@ const RouterKey = ModuleName
 
 //nolint:maligned
 type MsgAddModelInfo struct {
-	VID                                        uint16         `json:"vid"`
-	PID                                        uint16         `json:"pid"`
-	CID                                        uint16         `json:"cid,omitempty"`
-	Name                                       string         `json:"name"`
-	Description                                string         `json:"description"`
-	SKU                                        string         `json:"sku"`
-	SoftwareVersion                            uint32         `json:"software_version"`
-	SoftwareVersionString                      string         `json:"software_version_string"`
-	HardwareVersion                            uint32         `json:"hardware_version"`
-	HardwareVersionString                      string         `json:"hardware_version_string"`
-	CDVersionNumber                            uint16         `json:"cd_version_number"`
-	FirmwareDigests                            string         `json:"firmware_digests,omitempty"`
-	Revoked                                    bool           `json:"revoked"`
-	OtaURL                                     string         `json:"ota_url,omitempty"`
-	OtaChecksum                                string         `json:"ota_checksum,omitempty"`
-	OtaChecksumType                            string         `json:"ota_checksum_type,omitempty"`
-	OtaBlob                                    string         `json:"ota_blob,omitempty"`
-	CommissioningCustomFlow                    uint8          `json:"commission_custom_flow,omitempty"`
-	CommissioningCustomFlowUrl                 string         `json:"commission_custom_flow_url,omitempty"`
-	CommissioningModeInitialStepsHint          uint32         `json:"commisioning_mode_initial_steps_hint,omitempty"`
-	CommissioningModeInitialStepsInstruction   string         `json:"commisioning_mode_initial_steps_instruction,omitempty"`
-	CommissioningModeSecondaryStepsHint        uint32         `json:"commisioning_mode_secondary_steps_hint,omitempty"`
-	CommissioningModeSecondaryStepsInstruction string         `json:"commisioning_mode_secondary_steps_instruction,omitempty"`
-	ReleaseNotesUrl                            string         `json:"release_notes_url,omitempty"`
-	UserManualUrl                              string         `json:"user_manual_url,omitempty"`
-	SupportUrl                                 string         `json:"support_url,omitempty"`
-	ProductURL                                 string         `json:"product_url,omitempty"`
-	ChipBlob                                   string         `json:"chip_blob,omitempty"`
-	VendorBlob                                 string         `json:"vendor_blob,omitempty"`
-	Signer                                     sdk.AccAddress `json:"signer"`
+	Model
+	Signer sdk.AccAddress `json:"signer"`
 }
 
 func NewMsgAddModelInfo(
-	vid uint16,
-	pid uint16,
-	cid uint16,
-	name string,
-	description string,
-	sku string,
-	softwareVersion uint32,
-	softwareVersionString string,
-	hardwareVersion uint32,
-	hardwareVersionString string,
-	cDVersionNumber uint16,
-	firmwareDigests string,
-	revoked bool,
-	otaURL string,
-	otaChecksum string,
-	otaChecksumType string,
-	otaBlob string,
-	commissioningCustomFlow uint8,
-	commissioningCustomFlowUrl string,
-	commissioningModeInitialStepsHint uint32,
-	commissioningModeInitialStepsInstruction string,
-	commissioningModeSecondaryStepsHint uint32,
-	commissioningModeSecondaryStepsInstruction string,
-	releaseNotesUrl string,
-	userManualUrl string,
-	supportUrl string,
-	productURL string,
-	chipBlob string,
-	vendorBlob string,
+	model Model,
 	signer sdk.AccAddress,
 ) MsgAddModelInfo {
 	return MsgAddModelInfo{
-		VID:                                      vid,
-		PID:                                      pid,
-		CID:                                      cid,
-		Name:                                     name,
-		Description:                              description,
-		SKU:                                      sku,
-		SoftwareVersion:                          softwareVersion,
-		SoftwareVersionString:                    softwareVersionString,
-		HardwareVersion:                          hardwareVersion,
-		HardwareVersionString:                    hardwareVersionString,
-		CDVersionNumber:                          cDVersionNumber,
-		FirmwareDigests:                          firmwareDigests,
-		Revoked:                                  revoked,
-		OtaURL:                                   otaURL,
-		OtaChecksum:                              otaChecksum,
-		OtaChecksumType:                          otaChecksumType,
-		OtaBlob:                                  otaBlob,
-		CommissioningCustomFlow:                  commissioningCustomFlow,
-		CommissioningCustomFlowUrl:               commissioningCustomFlowUrl,
-		CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
-		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
-		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
-		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		ReleaseNotesUrl: releaseNotesUrl,
-		UserManualUrl:   userManualUrl,
-		SupportUrl:      supportUrl,
-		ProductURL:      productURL,
-		ChipBlob:        chipBlob,
-		VendorBlob:      vendorBlob,
-		Signer:          signer,
+		Model:  model,
+		Signer: signer,
 	}
 }
 
@@ -193,65 +109,17 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 
 //nolint:maligned
 type MsgUpdateModelInfo struct {
-	VID                        uint16         `json:"vid"`
-	PID                        uint16         `json:"pid"`
-	CID                        uint16         `json:"cid,omitempty"`
-	Description                string         `json:"description,omitempty"`
-	CDVersionNumber            uint16         `json:"cd_version_number"`
-	Revoked                    bool           `json:"revoked"`
-	OtaURL                     string         `json:"ota_url,omitempty"`
-	OtaChecksum                string         `json:"ota_checksum,omitempty"`
-	OtaChecksumType            string         `json:"ota_checksum_type,omitempty"`
-	OtaBlob                    string         `json:"ota_blob,omitempty"`
-	CommissioningCustomFlowUrl string         `json:"commission_custom_flow_url,omitempty"`
-	ReleaseNotesUrl            string         `json:"release_notes_url,omitempty"`
-	UserManualUrl              string         `json:"user_manual_url,omitempty"`
-	SupportUrl                 string         `json:"support_url,omitempty"`
-	ProductURL                 string         `json:"product_url,omitempty"`
-	ChipBlob                   string         `json:"chip_blob,omitempty"`
-	VendorBlob                 string         `json:"vendor_blob,omitempty"`
-	Signer                     sdk.AccAddress `json:"signer"`
+	Model
+	Signer sdk.AccAddress `json:"signer"`
 }
 
 func NewMsgUpdateModelInfo(
-	vid uint16,
-	pid uint16,
-	cid uint16,
-	description string,
-	cDVersionNumber uint16,
-	revoked bool,
-	otaURL string,
-	otaChecksum string,
-	otaChecksumType string,
-	otaBlob string,
-	commissioningCustomFlowUrl string,
-	releaseNotesUrl string,
-	userManualUrl string,
-	supportUrl string,
-	productURL string,
-	chipBlob string,
-	vendorBlob string,
+	model Model,
 	signer sdk.AccAddress,
 ) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
-		VID:                        vid,
-		PID:                        pid,
-		CID:                        cid,
-		Description:                description,
-		CDVersionNumber:            cDVersionNumber,
-		Revoked:                    revoked,
-		OtaURL:                     otaURL,
-		OtaChecksum:                otaChecksum,
-		OtaChecksumType:            otaChecksumType,
-		OtaBlob:                    otaBlob,
-		CommissioningCustomFlowUrl: commissioningCustomFlowUrl,
-		ReleaseNotesUrl:            releaseNotesUrl,
-		UserManualUrl:              userManualUrl,
-		SupportUrl:                 supportUrl,
-		ProductURL:                 productURL,
-		ChipBlob:                   chipBlob,
-		VendorBlob:                 vendorBlob,
-		Signer:                     signer,
+		Model:  model,
+		Signer: signer,
 	}
 }
 

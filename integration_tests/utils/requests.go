@@ -39,6 +39,7 @@ import (
 	compliancetestRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/rest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 	modelinfoRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/client/rest"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	pkiRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/rest"
 )
@@ -285,40 +286,11 @@ func PrepareAddModelInfoTransaction(model modelinfo.MsgAddModelInfo) (types.StdT
 
 func SendAddModelInfoRequest(model modelinfo.MsgAddModelInfo, account string) ([]byte, int) {
 	request := modelinfoRest.AddModelInfoRequest{
+		Model: model.Model,
 		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    model.Signer.String(),
 		},
-
-		VID:                                      model.VID,
-		PID:                                      model.PID,
-		CID:                                      model.CID,
-		Name:                                     model.Name,
-		Description:                              model.Description,
-		SKU:                                      model.SKU,
-		SoftwareVersion:                          model.SoftwareVersion,
-		SoftwareVersionString:                    model.SoftwareVersionString,
-		HardwareVersion:                          model.HardwareVersion,
-		HardwareVersionString:                    model.HardwareVersionString,
-		CDVersionNumber:                          model.CDVersionNumber,
-		FirmwareDigests:                          model.FirmwareDigests,
-		Revoked:                                  model.Revoked,
-		OtaURL:                                   model.OtaURL,
-		OtaChecksum:                              model.OtaChecksum,
-		OtaChecksumType:                          model.OtaChecksumType,
-		OtaBlob:                                  model.OtaBlob,
-		CommissioningCustomFlow:                  model.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               model.CommissioningCustomFlowUrl,
-		CommissioningModeInitialStepsHint:        model.CommissioningModeInitialStepsHint,
-		CommissioningModeInitialStepsInstruction: model.CommissioningModeInitialStepsInstruction,
-		CommissioningModeSecondaryStepsHint:      model.CommissioningModeSecondaryStepsHint,
-		CommissioningModeSecondaryStepsInstruction: model.CommissioningModeSecondaryStepsInstruction,
-		ReleaseNotesUrl: model.ReleaseNotesUrl,
-		UserManualUrl:   model.UserManualUrl,
-		SupportUrl:      model.SupportUrl,
-		ProductURL:      model.ProductURL,
-		ChipBlob:        model.ChipBlob,
-		VendorBlob:      model.VendorBlob,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -345,29 +317,13 @@ func PrepareUpdateModelInfoTransaction(model modelinfo.MsgUpdateModelInfo) (type
 }
 
 func SendUpdateModelInfoRequest(model modelinfo.MsgUpdateModelInfo, account string) ([]byte, int) {
+
 	request := modelinfoRest.UpdateModelInfoRequest{
+		Model: model.Model,
 		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
 			From:    model.Signer.String(),
 		},
-
-		VID:                        model.VID,
-		PID:                        model.PID,
-		CID:                        model.CID,
-		Description:                model.Description,
-		CDVersionNumber:            model.CDVersionNumber,
-		Revoked:                    model.Revoked,
-		OtaURL:                     model.OtaURL,
-		OtaChecksum:                model.OtaChecksum,
-		OtaChecksumType:            model.OtaChecksumType,
-		OtaBlob:                    model.OtaBlob,
-		CommissioningCustomFlowUrl: model.CommissioningCustomFlowUrl,
-		ReleaseNotesUrl:            model.ReleaseNotesUrl,
-		UserManualUrl:              model.UserManualUrl,
-		SupportUrl:                 model.SupportUrl,
-		ProductURL:                 model.ProductURL,
-		ChipBlob:                   model.ChipBlob,
-		VendorBlob:                 model.VendorBlob,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -949,58 +905,70 @@ func getProposedCertificateRevocations(uri string) (ProposedCertificateRevocatio
 }
 
 func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
+	model := modelinfo.Model{
+
+		VID:                                      common.RandUint16(),
+		PID:                                      common.RandUint16(),
+		CID:                                      constants.CID,
+		Name:                                     RandString(),
+		Description:                              RandString(),
+		SKU:                                      RandString(),
+		SoftwareVersion:                          constants.SoftwareVersion,
+		SoftwareVersionString:                    constants.SoftwareVersionString,
+		HardwareVersion:                          constants.HardwareVersion,
+		HardwareVersionString:                    constants.HardwareVersionString,
+		CDVersionNumber:                          constants.CDVersionNumber,
+		FirmwareDigests:                          constants.FirmwareDigests,
+		Revoked:                                  constants.Revoked,
+		OtaURL:                                   constants.OtaURL,
+		OtaChecksum:                              constants.OtaChecksum,
+		OtaChecksumType:                          constants.OtaChecksumType,
+		OtaBlob:                                  RandString(),
+		CommissioningCustomFlow:                  constants.CommissioningCustomFlow,
+		CommissioningCustomFlowUrl:               constants.CommissioningCustomFlowUrl,
+		CommissioningModeInitialStepsHint:        constants.CommissioningModeInitialStepsHint,
+		CommissioningModeInitialStepsInstruction: constants.CommissioningModeInitialStepsInstruction,
+		CommissioningModeSecondaryStepsHint:      constants.CommissioningModeSecondaryStepsHint,
+		CommissioningModeSecondaryStepsInstruction: constants.CommissioningModeSecondaryStepsInstruction,
+		ReleaseNotesUrl: constants.ReleaseNotesUrl,
+		UserManualUrl:   constants.UserManualUrl,
+		SupportUrl:      constants.SupportUrl,
+		ProductURL:      constants.ProductURL,
+		ChipBlob:        constants.ChipBlob,
+		VendorBlob:      constants.VendorBlob,
+	}
+
 	return modelinfo.NewMsgAddModelInfo(
-		common.RandUint16(),
-		common.RandUint16(),
-		constants.CID,
-		RandString(),
-		RandString(),
-		RandString(),
-		constants.SoftwareVersion,
-		constants.SoftwareVersionString,
-		constants.HardwareVersion,
-		constants.HardwareVersionString,
-		constants.CDVersionNumber,
-		constants.FirmwareDigests,
-		false,
-		constants.OtaURL,
-		constants.OtaChecksum,
-		constants.OtaChecksumType,
-		RandString(),
-		constants.CommissioningCustomFlow,
-		constants.CommissioningCustomFlowUrl,
-		constants.CommissioningModeInitialStepsHint,
-		constants.CommissioningModeInitialStepsInstruction,
-		constants.CommissioningModeSecondaryStepsHint,
-		constants.CommissioningModeSecondaryStepsInstruction,
-		constants.ReleaseNotesUrl, constants.UserManualUrl,
-		constants.SupportUrl, constants.ProductURL,
-		constants.ChipBlob,
-		constants.VendorBlob,
+		model,
 		owner,
 	)
 }
 
 func NewMsgUpdateModelInfo(vid uint16, pid uint16, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
 
+	model := modelinfo.Model{
+
+		VID:                        vid,
+		PID:                        pid,
+		CID:                        constants.CID + 1,
+		Description:                RandString(),
+		CDVersionNumber:            constants.CDVersionNumber + 1,
+		Revoked:                    constants.Revoked,
+		OtaURL:                     constants.OtaURL + "/new",
+		OtaChecksum:                constants.OtaChecksum,
+		OtaChecksumType:            constants.OtaChecksumType,
+		OtaBlob:                    RandString(),
+		CommissioningCustomFlowUrl: constants.CommissioningCustomFlowUrl + "/new",
+		ReleaseNotesUrl:            constants.ReleaseNotesUrl + "/new",
+		UserManualUrl:              constants.UserManualUrl + "/new",
+		SupportUrl:                 constants.SupportUrl + "/new",
+		ProductURL:                 constants.ProductURL + "/new",
+		ChipBlob:                   constants.ChipBlob + "-new",
+		VendorBlob:                 constants.VendorBlob + "-new",
+	}
+
 	return modelinfo.NewMsgUpdateModelInfo(
-		vid,
-		pid,
-		constants.CID+1,
-		RandString(),
-		constants.CDVersionNumber+1,
-		false,
-		constants.OtaURL+"/new",
-		constants.OtaChecksum,
-		constants.OtaChecksumType,
-		RandString(),
-		constants.CommissioningCustomFlowUrl,
-		constants.ReleaseNotesUrl+"/new",
-		constants.UserManualUrl+"/new",
-		constants.SupportUrl+"/new",
-		constants.ProductURL+"/new",
-		constants.ChipBlob+"-new",
-		constants.VendorBlob+"-new",
+		model,
 		owner,
 	)
 }
