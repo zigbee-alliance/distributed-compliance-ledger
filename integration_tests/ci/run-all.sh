@@ -94,7 +94,7 @@ cleanup_pool() {
   log "-> Removing configurations" >${DETAILED_OUTPUT_TARGET}
   rm -rf ~/.dclcli
   rm -rf ~/.dcld
-  rm -rf localnet
+  sudo rm -rf localnet
 }
 
 run_rest_server() {
