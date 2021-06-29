@@ -40,23 +40,9 @@ func TestHandler_AddModel(t *testing.T) {
 	receivedModelInfo := queryModelInfo(setup, modelInfo.VID, modelInfo.PID)
 
 	// check
-	// TODO do a smart check
-
-	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
-	/*require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.CID, modelInfo.CID)
-	require.Equal(t, receivedModelInfo.Version, modelInfo.Version)
-	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
-	require.Equal(t, receivedModelInfo.Description, modelInfo.Description)
-	require.Equal(t, receivedModelInfo.SKU, modelInfo.SKU)
-	require.Equal(t, receivedModelInfo.HardwareVersion, modelInfo.HardwareVersion)
-	require.Equal(t, receivedModelInfo.FirmwareVersion, modelInfo.FirmwareVersion)
-	require.Equal(t, receivedModelInfo.OtaURL, modelInfo.OtaURL)
-	require.Equal(t, receivedModelInfo.OtaChecksum, modelInfo.OtaChecksum)
-	require.Equal(t, receivedModelInfo.OtaChecksumType, modelInfo.OtaChecksumType)
-	require.Equal(t, receivedModelInfo.Custom, modelInfo.Custom)
-	require.Equal(t, receivedModelInfo.TisOrTrpTestingCompleted, modelInfo.TisOrTrpTestingCompleted)
-	require.Equal(t, receivedModelInfo.Owner, modelInfo.Signer)*/
+	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, modelInfo.PID)
+	require.Equal(t, receivedModelInfo.Model.CID, modelInfo.CID)
 }
 
 func TestHandler_UpdateModel(t *testing.T) {
@@ -80,10 +66,9 @@ func TestHandler_UpdateModel(t *testing.T) {
 	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.VID, msgUpdateModelInfo.PID)
 
 	// check
-	require.Equal(t, receivedModelInfo.VID, msgAddModelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, msgAddModelInfo.PID)
-	require.Equal(t, receivedModelInfo.CID, msgUpdateModelInfo.CID)
-
+	require.Equal(t, receivedModelInfo.Model.VID, msgAddModelInfo.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, msgAddModelInfo.PID)
+	require.Equal(t, receivedModelInfo.Model.CID, msgUpdateModelInfo.CID)
 }
 
 func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
@@ -128,12 +113,10 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 	receivedModelInfo := queryModelInfo(setup, testconstants.VID, testconstants.PID)
 
 	// check
-
-	require.Equal(t, receivedModelInfo.CID, uint16(0))
-	require.Equal(t, receivedModelInfo.OtaURL, "")
-	require.Equal(t, receivedModelInfo.OtaChecksum, "")
-	require.Equal(t, receivedModelInfo.OtaChecksumType, "")
-
+	require.Equal(t, receivedModelInfo.Model.CID, uint16(0))
+	require.Equal(t, receivedModelInfo.Model.OtaURL, "")
+	require.Equal(t, receivedModelInfo.Model.OtaChecksum, "")
+	require.Equal(t, receivedModelInfo.Model.OtaChecksumType, "")
 }
 
 func TestHandler_AddModelByNonVendor(t *testing.T) {
@@ -170,9 +153,9 @@ func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.VID, msgUpdateModelInfo.PID)
 
 	// check
-	require.Equal(t, receivedModelInfo.CID, msgAddModelInfo.CID)
-	require.Equal(t, receivedModelInfo.Description, msgUpdateModelInfo.Description)
-	require.Equal(t, receivedModelInfo.OtaURL, msgAddModelInfo.OtaURL)
+	require.Equal(t, receivedModelInfo.Model.CID, msgAddModelInfo.CID)
+	require.Equal(t, receivedModelInfo.Model.Description, msgUpdateModelInfo.Description)
+	require.Equal(t, receivedModelInfo.Model.OtaURL, msgAddModelInfo.OtaURL)
 }
 
 func queryModelInfo(setup TestSetup, vid uint16, pid uint16) types.ModelInfo {

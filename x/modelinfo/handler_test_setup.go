@@ -24,6 +24,7 @@ import (
 	dbm "github.com/tendermint/tm-db"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
 type TestSetup struct {
@@ -83,34 +84,73 @@ func Setup() TestSetup {
 	return setup
 }
 
+func getTestModel() types.Model {
+	return Model{
+		VID:                                      testconstants.VID,
+		PID:                                      testconstants.PID,
+		CID:                                      testconstants.CID,
+		Name:                                     testconstants.Name,
+		Description:                              testconstants.Description,
+		SKU:                                      testconstants.SKU,
+		SoftwareVersion:                          testconstants.SoftwareVersion,
+		SoftwareVersionString:                    testconstants.SoftwareVersionString,
+		HardwareVersion:                          testconstants.HardwareVersion,
+		HardwareVersionString:                    testconstants.HardwareVersionString,
+		CDVersionNumber:                          testconstants.CDVersionNumber,
+		FirmwareDigests:                          testconstants.FirmwareDigests,
+		Revoked:                                  testconstants.Revoked,
+		OtaURL:                                   testconstants.OtaURL,
+		OtaChecksum:                              testconstants.OtaChecksum,
+		OtaChecksumType:                          testconstants.OtaChecksumType,
+		OtaBlob:                                  testconstants.OtaBlob,
+		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
+		CommissioningCustomFlowURL:               testconstants.CommissioningCustomFlowURL,
+		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
+		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
+		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
+		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
+		ReleaseNotesURL: testconstants.ReleaseNotesURL,
+		UserManualURL:   testconstants.UserManualURL,
+		SupportURL:      testconstants.SupportURL,
+		ProductURL:      testconstants.ProductURL,
+		ChipBlob:        testconstants.ChipBlob,
+		VendorBlob:      testconstants.VendorBlob,
+	}
+}
+
+func getTestModelForUpdate() types.Model {
+	return Model{
+		VID:                        testconstants.VID,
+		PID:                        testconstants.PID,
+		CID:                        testconstants.CID + 1,
+		Description:                "New Description",
+		OtaURL:                     "http://ota.firmware.com/new",
+		CDVersionNumber:            testconstants.CDVersionNumber,
+		FirmwareDigests:            testconstants.FirmwareDigests,
+		Revoked:                    testconstants.Revoked,
+		OtaChecksum:                testconstants.OtaChecksum,
+		OtaChecksumType:            testconstants.OtaChecksumType,
+		OtaBlob:                    testconstants.OtaBlob,
+		CommissioningCustomFlowURL: testconstants.CommissioningCustomFlowURL,
+		ReleaseNotesURL:            testconstants.ReleaseNotesURL,
+		UserManualURL:              testconstants.UserManualURL,
+		SupportURL:                 testconstants.SupportURL,
+		ProductURL:                 testconstants.ProductURL,
+		ChipBlob:                   testconstants.ChipBlob,
+		VendorBlob:                 testconstants.VendorBlob,
+	}
+}
+
 func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
-		VID:                   testconstants.VID,
-		PID:                   testconstants.PID,
-		CID:                   testconstants.CID,
-		Name:                  testconstants.Name,
-		Description:           testconstants.Description,
-		SKU:                   testconstants.SKU,
-		SoftwareVersion:       testconstants.SoftwareVersion,
-		SoftwareVersionString: testconstants.SoftwareVersionString,
-		HardwareVersion:       testconstants.HardwareVersion,
-		HardwareVersionString: testconstants.HardwareVersionString,
-		CDVersionNumber:       testconstants.CDVersionNumber,
-		OtaURL:                testconstants.OtaURL,
-		OtaChecksum:           testconstants.OtaChecksum,
-		OtaChecksumType:       testconstants.OtaChecksumType,
-		Revoked:               testconstants.Revoked,
-		Signer:                signer,
+		Model:  getTestModel(),
+		Signer: signer,
 	}
 }
 
 func TestMsgUpdateModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
 	return MsgUpdateModelInfo{
-		VID:         testconstants.VID,
-		PID:         testconstants.PID,
-		CID:         testconstants.CID + 1,
-		Description: "New Description",
-		OtaURL:      "http://ota.firmware.com/new",
-		Signer:      signer,
+		Model:  getTestModelForUpdate(),
+		Signer: signer,
 	}
 }

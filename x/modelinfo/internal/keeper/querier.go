@@ -92,10 +92,10 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res 
 		}
 		if len(result.Items) < params.Take || params.Take == 0 {
 			item := types.ModelInfoItem{
-				VID:   modelInfo.VID,
-				PID:   modelInfo.PID,
-				Name:  modelInfo.Name,
-				SKU:   modelInfo.SKU,
+				VID:   modelInfo.Model.VID,
+				PID:   modelInfo.Model.PID,
+				Name:  modelInfo.Model.Name,
+				SKU:   modelInfo.Model.SKU,
 				Owner: modelInfo.Owner,
 			}
 

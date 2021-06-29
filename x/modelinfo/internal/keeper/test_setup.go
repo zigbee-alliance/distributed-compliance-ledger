@@ -64,7 +64,7 @@ func Setup() TestSetup {
 }
 
 func DefaultModelInfo() types.ModelInfo {
-	return types.ModelInfo{
+	model := types.Model{
 		VID:                   testconstants.VID,
 		PID:                   testconstants.PID,
 		CID:                   testconstants.CID,
@@ -80,7 +80,11 @@ func DefaultModelInfo() types.ModelInfo {
 		OtaChecksum:           testconstants.OtaChecksum,
 		OtaChecksumType:       testconstants.OtaChecksumType,
 		Revoked:               testconstants.Revoked,
-		Owner:                 testconstants.Owner,
+	}
+
+	return types.ModelInfo{
+		Model: model,
+		Owner: testconstants.Owner,
 	}
 }
 
@@ -89,11 +93,11 @@ func PopulateStoreWithModelsHavingSameVendor(setup TestSetup, count int) uint16 
 	firstID := uint16(1)
 
 	modelInfo := DefaultModelInfo()
-	modelInfo.VID = firstID
+	modelInfo.Model.VID = firstID
 
 	for i := firstID; i <= uint16(count); i++ {
 		// add model info {VID: 1, PID: i}
-		modelInfo.PID = i
+		modelInfo.Model.PID = i
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 	}
 
@@ -108,8 +112,8 @@ func PopulateStoreWithModelsHavingDifferentVendor(setup TestSetup, count int) ui
 
 	for i := firstID; i <= uint16(count); i++ {
 		// add model info {VID: i, PID: i}
-		modelInfo.VID = i
-		modelInfo.PID = i
+		modelInfo.Model.VID = i
+		modelInfo.Model.PID = i
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 	}
 

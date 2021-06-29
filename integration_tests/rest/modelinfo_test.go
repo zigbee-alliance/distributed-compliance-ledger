@@ -54,10 +54,10 @@ func TestModelinfoDemo(t *testing.T) {
 
 	// Check model is created
 	receivedModelInfo, _ := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
-	require.Equal(t, receivedModelInfo.VID, firstModelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, firstModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Name, firstModelInfo.Name)
-	require.Equal(t, receivedModelInfo.Description, firstModelInfo.Description)
+	require.Equal(t, receivedModelInfo.Model.VID, firstModelInfo.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, firstModelInfo.PID)
+	require.Equal(t, receivedModelInfo.Model.Name, firstModelInfo.Name)
+	require.Equal(t, receivedModelInfo.Model.Description, firstModelInfo.Description)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
@@ -66,10 +66,10 @@ func TestModelinfoDemo(t *testing.T) {
 
 	// Check model is created
 	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.VID, secondModelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Name, secondModelInfo.Name)
-	require.Equal(t, receivedModelInfo.Description, secondModelInfo.Description)
+	require.Equal(t, receivedModelInfo.Model.VID, secondModelInfo.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, secondModelInfo.PID)
+	require.Equal(t, receivedModelInfo.Model.Name, secondModelInfo.Name)
+	require.Equal(t, receivedModelInfo.Model.Description, secondModelInfo.Description)
 
 	// Get all model infos
 	modelInfos, _ := utils.GetModelInfos()
@@ -91,7 +91,7 @@ func TestModelinfoDemo(t *testing.T) {
 
 	// Check model is updated
 	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Description, secondModelInfoUpdate.Description)
+	require.Equal(t, receivedModelInfo.Model.Description, secondModelInfoUpdate.Description)
 }
 
 func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
@@ -107,9 +107,9 @@ func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
 
 	// Check model is created
 	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
+	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, modelInfo.PID)
+	require.Equal(t, receivedModelInfo.Model.Name, modelInfo.Name)
 }
 
 /* Error cases */

@@ -163,22 +163,24 @@ func queryTestingResult(setup TestSetup, vid uint16, pid uint16) types.TestingRe
 
 func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	modelInfo := modelinfo.ModelInfo{
-		VID:                   vid,
-		PID:                   pid,
-		CID:                   test_constants.CID,
-		Name:                  test_constants.Name,
-		Description:           test_constants.Description,
-		SKU:                   test_constants.SKU,
-		SoftwareVersion:       test_constants.SoftwareVersion,
-		SoftwareVersionString: test_constants.SoftwareVersionString,
-		HardwareVersion:       test_constants.HardwareVersion,
-		HardwareVersionString: test_constants.HardwareVersionString,
-		CDVersionNumber:       test_constants.CDVersionNumber,
-		OtaURL:                test_constants.OtaURL,
-		OtaChecksum:           test_constants.OtaChecksum,
-		OtaChecksumType:       test_constants.OtaChecksumType,
-		Revoked:               test_constants.Revoked,
-		Owner:                 test_constants.Owner,
+		Model: modelinfo.Model{
+			VID:                   vid,
+			PID:                   pid,
+			CID:                   test_constants.CID,
+			Name:                  test_constants.Name,
+			Description:           test_constants.Description,
+			SKU:                   test_constants.SKU,
+			SoftwareVersion:       test_constants.SoftwareVersion,
+			SoftwareVersionString: test_constants.SoftwareVersionString,
+			HardwareVersion:       test_constants.HardwareVersion,
+			HardwareVersionString: test_constants.HardwareVersionString,
+			CDVersionNumber:       test_constants.CDVersionNumber,
+			OtaURL:                test_constants.OtaURL,
+			OtaChecksum:           test_constants.OtaChecksum,
+			OtaChecksumType:       test_constants.OtaChecksumType,
+			Revoked:               test_constants.Revoked,
+		},
+		Owner: test_constants.Owner,
 	}
 
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)

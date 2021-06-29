@@ -42,7 +42,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return modelinfoTxCmd
 }
 
-//nolint:funlen
+//nolint:funlen,gocognit
 func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-model",
@@ -120,10 +120,11 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 					return err
 				}
 			}
-			commissioningCustomFlowUrl := viper.GetString(FlagCommissioningCustomFlowUrl)
+			commissioningCustomFlowURL := viper.GetString(FlagCommissioningCustomFlowURL)
 
 			var commissioningModeInitialStepsHint uint32
-			if commissioningModeInitialStepsHintStr := viper.GetString(FlagCommissioningModeInitialStepsHint); len(commissioningModeInitialStepsHintStr) != 0 {
+			commissioningModeInitialStepsHintStr := viper.GetString(FlagCommissioningModeInitialStepsHint)
+			if len(commissioningModeInitialStepsHintStr) != 0 {
 				commissioningModeInitialStepsHint, err = conversions.ParseUInt32FromString(commissioningModeInitialStepsHintStr)
 				if err != nil {
 					return err
@@ -132,63 +133,135 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			commissioningModeInitialStepsInstruction := viper.GetString(FlagCommissioningModeInitialStepsInstruction)
 
 			var commissioningModeSecondaryStepsHint uint32
-			if commissioningModeSecondaryStepsHintStr := viper.GetString(FlagCommissioningModeSecondaryStepsHint); len(commissioningModeSecondaryStepsHintStr) != 0 {
+			commissioningModeSecondaryStepsHintStr := viper.GetString(FlagCommissioningModeSecondaryStepsHint)
+			if len(commissioningModeSecondaryStepsHintStr) != 0 {
 				commissioningModeSecondaryStepsHint, err = conversions.ParseUInt32FromString(commissioningModeSecondaryStepsHintStr)
 				if err != nil {
 					return err
 				}
 			}
 			commissioningModeSecondaryStepsInstruction := viper.GetString(FlagCommissioningModeSecondaryStepsInstruction)
-			releaseNotesUrl := viper.GetString(FlagReleaseNotesUrl)
-			userManualUrl := viper.GetString(FlagUserManualUrl)
-			supportUrl := viper.GetString(FlagSupportUrl)
+			releaseNotesURL := viper.GetString(FlagReleaseNotesURL)
+			userManualURL := viper.GetString(FlagUserManualURL)
+			supportURL := viper.GetString(FlagSupportURL)
 			productURL := viper.GetString(FlagProductURL)
 			chipBlob := viper.GetString(FlagChipBlob)
 			vendorBlob := viper.GetString(FlagVendorBlob)
 
-			msg := types.NewMsgAddModelInfo(vid, pid, cid, name, description, sku, softwareVersion, softwareVersionString,
-				hardwareVersion, hardwareVersionString, cdVersionNumber, firmwareDigests, revoked,
-				otaURL, otaChecksum, otaChecksumType, otaBlob, commissioningCustomFlow, commissioningCustomFlowUrl,
-				commissioningModeInitialStepsHint, commissioningModeInitialStepsInstruction,
-				commissioningModeSecondaryStepsHint, commissioningModeSecondaryStepsInstruction, releaseNotesUrl, userManualUrl,
-				supportUrl, productURL, chipBlob, vendorBlob, cliCtx.FromAddress())
+			model := types.Model{
+
+				VID:                                      vid,
+				PID:                                      pid,
+				CID:                                      cid,
+				Name:                                     name,
+				Description:                              description,
+				SKU:                                      sku,
+				SoftwareVersion:                          softwareVersion,
+				SoftwareVersionString:                    softwareVersionString,
+				HardwareVersion:                          hardwareVersion,
+				HardwareVersionString:                    hardwareVersionString,
+				CDVersionNumber:                          cdVersionNumber,
+				FirmwareDigests:                          firmwareDigests,
+				Revoked:                                  revoked,
+				OtaURL:                                   otaURL,
+				OtaChecksum:                              otaChecksum,
+				OtaChecksumType:                          otaChecksumType,
+				OtaBlob:                                  otaBlob,
+				CommissioningCustomFlow:                  commissioningCustomFlow,
+				CommissioningCustomFlowURL:               commissioningCustomFlowURL,
+				CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
+				CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
+				CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
+				CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
+				ReleaseNotesURL: releaseNotesURL,
+				UserManualURL:   userManualURL,
+				SupportURL:      supportURL,
+				ProductURL:      productURL,
+				ChipBlob:        chipBlob,
+				VendorBlob:      vendorBlob,
+			}
+
+			msg := types.NewMsgAddModelInfo(model, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
 
-	cmd.Flags().String(FlagVID, "", "Model vendor ID")
-	cmd.Flags().String(FlagPID, "", "Model product ID")
-	cmd.Flags().String(FlagCID, "", "Model category ID")
-	cmd.Flags().StringP(FlagName, FlagNameShortcut, "", "Model name")
+	cmd.Flags().String(FlagVID, "",
+		"Model vendor ID")
+	cmd.Flags().String(FlagPID, "",
+		"Model product ID")
+	cmd.Flags().String(FlagCID, "",
+		"Model category ID")
+	cmd.Flags().StringP(FlagName, FlagNameShortcut, "",
+		"Model name")
 	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "",
 		"Model description (string or path to file containing data)")
-	cmd.Flags().String(FlagSKU, "", "Model stock keeping unit")
+	cmd.Flags().String(FlagSKU, "",
+		"Model stock keeping unit")
 	cmd.Flags().StringP(FlagSoftwareVersion, FlagSoftwareVersionShortcut, "",
 		"Software Version of model (uint32)")
-	cmd.Flags().String(FlagSoftwareVersionString, "", "Software Version String of model")
+	cmd.Flags().String(FlagSoftwareVersionString, "",
+		"Software Version String of model")
 	cmd.Flags().StringP(FlagHardwareVersion, FlagHardwareVersionShortcut, "",
 		"Version of model hardware")
-	cmd.Flags().String(FlagHardwareVersionString, "", "Hardware Version String of model")
-	cmd.Flags().String(FlagCDVersionNumber, "", "CD Version Number of the Certification")
-	cmd.Flags().String(FlagFirmwareDigests, "", "FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device")
-	cmd.Flags().String(FlagRevoked, "", "boolean flag to revoke the model")
+	cmd.Flags().String(FlagHardwareVersionString, "",
+		"Hardware Version String of model")
+	cmd.Flags().String(FlagCDVersionNumber, "",
+		"CD Version Number of the Certification")
+	cmd.Flags().String(FlagFirmwareDigests, "",
+		`FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device`)
+	cmd.Flags().String(FlagRevoked, "",
+		"boolean flag to revoke the model")
 	cmd.Flags().String(FlagOtaURL, "", "Url for OTA")
-	cmd.Flags().String(FlagOtaChecksum, "", "Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType")
+	cmd.Flags().String(FlagOtaChecksum, "",
+		`Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, 
+	encoded in base64 string representation. The digest SHALL have been computed using 
+	the algorithm specified in OtaChecksumType`)
 	cmd.Flags().String(FlagOtaChecksumType, "", "Legal values for OtaChecksumType are : SHA-256")
 	cmd.Flags().String(FlagOtaBlob, "", "Metadata about OTA")
-	cmd.Flags().String(FlagCommissioningCustomFlow, "", "A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning.")
-	cmd.Flags().String(FlagCommissioningCustomFlowUrl, "", "commisioning-custom-flow-url SHALL identify a vendor specific commissioning URL for the device model when the commisioning-custom-flow field is set to '2'")
-	cmd.Flags().String(FlagCommissioningModeInitialStepsHint, "", "commissioning-mode-initial-steps-hint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.")
-	cmd.Flags().String(FlagCommissioningModeInitialStepsInstruction, "", "commissioning-mode-initial-steps-instruction SHALL contain text which relates to specific values of commissioning-mode-secondary-steps-hint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioning-mode-initial-steps-instruction SHALL be set")
-	cmd.Flags().String(FlagCommissioningModeSecondaryStepsHint, "", "commissioning-mode-secondary-steps-hint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.")
-	cmd.Flags().String(FlagCommissioningModeSecondaryStepsInstruction, "", "commissioning-mode-secondary-step-instruction SHALL contain text which relates to specific values of commissioning-mode-secondary-steps-hint. Certain values of commissioning-mode-secondary-steps-hint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioning-mode-secondary-step-instruction SHALL be set")
-	cmd.Flags().String(FlagReleaseNotesUrl, "", "URL that contains product specific web page that contains release notes for the device model.")
-	cmd.Flags().String(FlagUserManualUrl, "", "URL that contains product specific web page that contains user manual for the device model.")
-	cmd.Flags().String(FlagSupportUrl, "", "URL that contains product specific web page that contains support details for the device model.")
-	cmd.Flags().String(FlagProductURL, "", "URL that contains product specific web page that contains details for the device model.")
-	cmd.Flags().String(FlagChipBlob, "", "chip-blob SHALL identify CHIP specific configurations")
-	cmd.Flags().String(FlagVendorBlob, "", "field for vendors to provide any additional metadata about the device model using a string, blob, or URL.")
+	cmd.Flags().String(FlagCommissioningCustomFlow, "",
+		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is 
+	required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 
+	the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with 
+	the necessary details for how to configure the product for initial commissioning.`)
+	cmd.Flags().String(FlagCommissioningCustomFlowURL, "",
+		`commissioning-custom-flow-url SHALL identify a vendor specific commissioning URL for the 
+	device model when the commissioning-custom-flow field is set to '2'`)
+	cmd.Flags().String(FlagCommissioningModeInitialStepsHint, "",
+		`commissioning-mode-initial-steps-hint SHALL 
+	identify a hint for the steps that can be used to put into commissioning mode a device that 
+	has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
+	For example, a value of 1 (bit 0 is set) indicates 
+	that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.`)
+	cmd.Flags().String(FlagCommissioningModeInitialStepsInstruction, "",
+		`commissioning-mode-initial-steps-instruction SHALL contain text which relates to specific 
+	values of commissioning-mode-secondary-steps-hint. Certain values of CommissioningModeInitialStepsHint, 
+	as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
+	values the commissioning-mode-initial-steps-instruction SHALL be set`)
+	cmd.Flags().String(FlagCommissioningModeSecondaryStepsHint, "",
+		`commissioning-mode-secondary-steps-hint SHALL identify a hint for steps that can 
+	be used to put into commissioning mode a device that has already been commissioned. 
+	This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) 
+	indicates that a device that has already been commissioned will require the user to visit a 
+	current CHIP Administrator to put the device into commissioning mode.`)
+	cmd.Flags().String(FlagCommissioningModeSecondaryStepsInstruction, "",
+		`commissioning-mode-secondary-step-instruction SHALL contain text which relates to specific values 
+	of commissioning-mode-secondary-steps-hint. Certain values of commissioning-mode-secondary-steps-hint, 
+	as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
+	and for these values the commissioning-mode-secondary-step-instruction SHALL be set`)
+	cmd.Flags().String(FlagReleaseNotesURL, "",
+		`URL that contains product specific web page that contains release notes for the device model.`)
+	cmd.Flags().String(FlagUserManualURL, "",
+		"URL that contains product specific web page that contains user manual for the device model.")
+	cmd.Flags().String(FlagSupportURL, "",
+		"URL that contains product specific web page that contains support details for the device model.")
+	cmd.Flags().String(FlagProductURL, "",
+		"URL that contains product specific web page that contains details for the device model.")
+	cmd.Flags().String(FlagChipBlob, "",
+		"chip-blob SHALL identify CHIP specific configurations")
+	cmd.Flags().String(FlagVendorBlob, "",
+		"field for vendors to provide any additional metadata about the device model using a string, blob, or URL.")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
@@ -200,12 +273,12 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
 	_ = cmd.MarkFlagRequired(FlagHardwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCDVersionNumber)
+
 	return cmd
 }
 
 //nolint:funlen
 func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
-
 	cmd := &cobra.Command{
 		Use:   "update-model",
 		Short: "Update existing Model",
@@ -251,40 +324,73 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 			otaChecksumType := viper.GetString(FlagOtaChecksumType)
 			otaBlob := viper.GetString(FlagOtaBlob)
 
-			commissioningCustomFlowUrl := viper.GetString(FlagCommissioningCustomFlowUrl)
+			commissioningCustomFlowURL := viper.GetString(FlagCommissioningCustomFlowURL)
 
-			releaseNotesUrl := viper.GetString(FlagReleaseNotesUrl)
-			userManualUrl := viper.GetString(FlagUserManualUrl)
-			supportUrl := viper.GetString(FlagSupportUrl)
+			releaseNotesURL := viper.GetString(FlagReleaseNotesURL)
+			userManualURL := viper.GetString(FlagUserManualURL)
+			supportURL := viper.GetString(FlagSupportURL)
 			productURL := viper.GetString(FlagProductURL)
 			chipBlob := viper.GetString(FlagChipBlob)
 			vendorBlob := viper.GetString(FlagVendorBlob)
 
-			msg := types.NewMsgUpdateModelInfo(vid, pid, cid, description, cdVersionNumber, revoked,
-				otaURL, otaChecksum, otaChecksumType, otaBlob, commissioningCustomFlowUrl, releaseNotesUrl,
-				userManualUrl, supportUrl, productURL, chipBlob, vendorBlob, cliCtx.FromAddress())
+			model := types.Model{
+
+				VID:                        vid,
+				PID:                        pid,
+				CID:                        cid,
+				Description:                description,
+				CDVersionNumber:            cdVersionNumber,
+				Revoked:                    revoked,
+				OtaURL:                     otaURL,
+				OtaChecksum:                otaChecksum,
+				OtaChecksumType:            otaChecksumType,
+				OtaBlob:                    otaBlob,
+				CommissioningCustomFlowURL: commissioningCustomFlowURL,
+				ReleaseNotesURL:            releaseNotesURL,
+				UserManualURL:              userManualURL,
+				SupportURL:                 supportURL,
+				ProductURL:                 productURL,
+				ChipBlob:                   chipBlob,
+				VendorBlob:                 vendorBlob,
+			}
+			msg := types.NewMsgUpdateModelInfo(model, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
 	}
-
-	cmd.Flags().String(FlagVID, "", "Model vendor ID")
-	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagVID, "",
+		"Model vendor ID")
+	cmd.Flags().String(FlagPID, "",
+		"Model product ID")
 	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "",
 		"Model description (string or path to file containing data)")
-	cmd.Flags().String(FlagCDVersionNumber, "", "CD Version Number of the Certification")
-	cmd.Flags().String(FlagRevoked, "", "boolean flag to revoke the model")
+
+	cmd.Flags().String(FlagCDVersionNumber, "",
+		"CD Version Number of the Certification")
+	cmd.Flags().String(FlagRevoked, "",
+		"boolean flag to revoke the model")
 	cmd.Flags().String(FlagOtaURL, "", "Url for OTA")
-	cmd.Flags().String(FlagOtaChecksum, "", "Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType")
+	cmd.Flags().String(FlagOtaChecksum, "",
+		`Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, 
+	encoded in base64 string representation. The digest SHALL have been computed using 
+	the algorithm specified in OtaChecksumType`)
 	cmd.Flags().String(FlagOtaChecksumType, "", "Legal values for OtaChecksumType are : SHA-256")
 	cmd.Flags().String(FlagOtaBlob, "", "Metadata about OTA")
-	cmd.Flags().String(FlagCommissioningCustomFlowUrl, "", "CommissioningCustomFlowUrl SHALL identify a vendor specific commissioning URL for the device model when the CommissioningCustomFlow field is set to '2'")
-	cmd.Flags().String(FlagReleaseNotesUrl, "", "URL that contains product specific web page that contains release notes for the device model.")
-	cmd.Flags().String(FlagUserManualUrl, "", "URL that contains product specific web page that contains user manual for the device model.")
-	cmd.Flags().String(FlagSupportUrl, "", "URL that contains product specific web page that contains support details for the device model.")
-	cmd.Flags().String(FlagProductURL, "", "URL that contains product specific web page that contains details for the device model.")
-	cmd.Flags().String(FlagChipBlob, "", "ChipBlob SHALL identify CHIP specific configurations")
-	cmd.Flags().String(FlagVendorBlob, "", "VendorBlob is a optional field for vendors to provide any additional metadata about the device model using a string, blob, or URL.")
+	cmd.Flags().String(FlagCommissioningCustomFlowURL, "",
+		`commissioning-custom-flow-url SHALL identify a vendor specific commissioning URL for the 
+	device model when the commissioning-custom-flow field is set to '2'`)
+	cmd.Flags().String(FlagReleaseNotesURL, "",
+		`URL that contains product specific web page that contains release notes for the device model.`)
+	cmd.Flags().String(FlagUserManualURL, "",
+		"URL that contains product specific web page that contains user manual for the device model.")
+	cmd.Flags().String(FlagSupportURL, "",
+		"URL that contains product specific web page that contains support details for the device model.")
+	cmd.Flags().String(FlagProductURL, "",
+		"URL that contains product specific web page that contains details for the device model.")
+	cmd.Flags().String(FlagChipBlob, "",
+		"chip-blob SHALL identify CHIP specific configurations")
+	cmd.Flags().String(FlagVendorBlob, "",
+		"field for vendors to provide any additional metadata about the device model using a string, blob, or URL.")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

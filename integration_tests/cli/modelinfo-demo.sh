@@ -78,5 +78,5 @@ echo "Get Model with VID: ${vid} PID: ${pid}"
 result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"support-url\": \"$support_url\""
+check_response "$result" "\"support_url\": \"$support_url\""
 echo "$result"
