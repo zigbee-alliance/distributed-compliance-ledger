@@ -39,7 +39,6 @@ import (
 	compliancetestRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/rest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 	modelinfoRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/client/rest"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	pkiRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/rest"
 )
@@ -317,7 +316,6 @@ func PrepareUpdateModelInfoTransaction(model modelinfo.MsgUpdateModelInfo) (type
 }
 
 func SendUpdateModelInfoRequest(model modelinfo.MsgUpdateModelInfo, account string) ([]byte, int) {
-
 	request := modelinfoRest.UpdateModelInfoRequest{
 		Model: model.Model,
 		BaseReq: restTypes.BaseReq{
@@ -925,14 +923,14 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 		OtaChecksumType:                          constants.OtaChecksumType,
 		OtaBlob:                                  RandString(),
 		CommissioningCustomFlow:                  constants.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               constants.CommissioningCustomFlowUrl,
+		CommissioningCustomFlowURL:               constants.CommissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        constants.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: constants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      constants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: constants.CommissioningModeSecondaryStepsInstruction,
-		ReleaseNotesUrl: constants.ReleaseNotesUrl,
-		UserManualUrl:   constants.UserManualUrl,
-		SupportUrl:      constants.SupportUrl,
+		ReleaseNotesURL: constants.ReleaseNotesURL,
+		UserManualURL:   constants.UserManualURL,
+		SupportURL:      constants.SupportURL,
 		ProductURL:      constants.ProductURL,
 		ChipBlob:        constants.ChipBlob,
 		VendorBlob:      constants.VendorBlob,
@@ -945,9 +943,7 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 }
 
 func NewMsgUpdateModelInfo(vid uint16, pid uint16, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
-
 	model := modelinfo.Model{
-
 		VID:                        vid,
 		PID:                        pid,
 		CID:                        constants.CID + 1,
@@ -958,10 +954,10 @@ func NewMsgUpdateModelInfo(vid uint16, pid uint16, owner sdk.AccAddress) modelin
 		OtaChecksum:                constants.OtaChecksum,
 		OtaChecksumType:            constants.OtaChecksumType,
 		OtaBlob:                    RandString(),
-		CommissioningCustomFlowUrl: constants.CommissioningCustomFlowUrl + "/new",
-		ReleaseNotesUrl:            constants.ReleaseNotesUrl + "/new",
-		UserManualUrl:              constants.UserManualUrl + "/new",
-		SupportUrl:                 constants.SupportUrl + "/new",
+		CommissioningCustomFlowURL: constants.CommissioningCustomFlowURL + "/new",
+		ReleaseNotesURL:            constants.ReleaseNotesURL + "/new",
+		UserManualURL:              constants.UserManualURL + "/new",
+		SupportURL:                 constants.SupportURL + "/new",
 		ProductURL:                 constants.ProductURL + "/new",
 		ChipBlob:                   constants.ChipBlob + "-new",
 		VendorBlob:                 constants.VendorBlob + "-new",

@@ -71,14 +71,14 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 		OtaChecksumType:                          msg.OtaChecksumType,
 		OtaBlob:                                  msg.OtaBlob,
 		CommissioningCustomFlow:                  msg.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               msg.CommissioningCustomFlowUrl,
+		CommissioningCustomFlowURL:               msg.CommissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        msg.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		ReleaseNotesUrl: msg.ReleaseNotesUrl,
-		UserManualUrl:   msg.UserManualUrl,
-		SupportUrl:      msg.SupportUrl,
+		ReleaseNotesURL: msg.ReleaseNotesURL,
+		UserManualURL:   msg.UserManualURL,
+		SupportURL:      msg.SupportURL,
 		ProductURL:      msg.ProductURL,
 		ChipBlob:        msg.ChipBlob,
 		VendorBlob:      msg.VendorBlob,
@@ -94,6 +94,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 	return sdk.Result{}
 }
 
+//nolint:funlen
 func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgUpdateModelInfo) sdk.Result {
 	// check if model exists
@@ -142,20 +143,20 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 		modelInfo.Model.OtaChecksumType = msg.OtaChecksumType
 	}
 
-	if msg.CommissioningCustomFlowUrl != "" {
-		modelInfo.Model.CommissioningCustomFlowUrl = msg.CommissioningCustomFlowUrl
+	if msg.CommissioningCustomFlowURL != "" {
+		modelInfo.Model.CommissioningCustomFlowURL = msg.CommissioningCustomFlowURL
 	}
 
-	if msg.ReleaseNotesUrl != "" {
-		modelInfo.Model.ReleaseNotesUrl = msg.ReleaseNotesUrl
+	if msg.ReleaseNotesURL != "" {
+		modelInfo.Model.ReleaseNotesURL = msg.ReleaseNotesURL
 	}
 
-	if msg.UserManualUrl != "" {
-		modelInfo.Model.UserManualUrl = msg.UserManualUrl
+	if msg.UserManualURL != "" {
+		modelInfo.Model.UserManualURL = msg.UserManualURL
 	}
 
-	if msg.SupportUrl != "" {
-		modelInfo.Model.SupportUrl = msg.SupportUrl
+	if msg.SupportURL != "" {
+		modelInfo.Model.SupportURL = msg.SupportURL
 	}
 
 	if msg.ProductURL != "" {

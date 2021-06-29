@@ -14,6 +14,7 @@
 
 package types
 
+//nolint:maligned
 type Model struct {
 	VID                                        uint16 `json:"vid"`
 	PID                                        uint16 `json:"pid"`
@@ -33,14 +34,14 @@ type Model struct {
 	OtaChecksumType                            string `json:"ota_checksum_type,omitempty"`
 	OtaBlob                                    string `json:"ota_blob,omitempty"`
 	CommissioningCustomFlow                    uint8  `json:"commission_custom_flow,omitempty"`
-	CommissioningCustomFlowUrl                 string `json:"commission_custom_flow_url,omitempty"`
-	CommissioningModeInitialStepsHint          uint32 `json:"commisioning_mode_initial_steps_hint,omitempty"`
-	CommissioningModeInitialStepsInstruction   string `json:"commisioning_mode_initial_steps_instruction,omitempty"`
-	CommissioningModeSecondaryStepsHint        uint32 `json:"commisioning_mode_secondary_steps_hint,omitempty"`
-	CommissioningModeSecondaryStepsInstruction string `json:"commisioning_mode_secondary_steps_instruction,omitempty"`
-	ReleaseNotesUrl                            string `json:"release_notes_url,omitempty"`
-	UserManualUrl                              string `json:"user_manual_url,omitempty"`
-	SupportUrl                                 string `json:"support_url,omitempty"`
+	CommissioningCustomFlowURL                 string `json:"commission_custom_flow_url,omitempty"`
+	CommissioningModeInitialStepsHint          uint32 `json:"commissioning_mode_initial_steps_hint,omitempty"`
+	CommissioningModeInitialStepsInstruction   string `json:"commissioning_mode_initial_steps_instruction,omitempty"`
+	CommissioningModeSecondaryStepsHint        uint32 `json:"commissioning_mode_secondary_steps_hint,omitempty"`
+	CommissioningModeSecondaryStepsInstruction string `json:"commissioning_mode_secondary_steps_instruction,omitempty"`
+	ReleaseNotesURL                            string `json:"release_notes_url,omitempty"`
+	UserManualURL                              string `json:"user_manual_url,omitempty"`
+	SupportURL                                 string `json:"support_url,omitempty"`
 	ProductURL                                 string `json:"product_url,omitempty"`
 	ChipBlob                                   string `json:"chip_blob,omitempty"`
 	VendorBlob                                 string `json:"vendor_blob,omitempty"`

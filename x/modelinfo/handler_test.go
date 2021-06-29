@@ -40,23 +40,9 @@ func TestHandler_AddModel(t *testing.T) {
 	receivedModelInfo := queryModelInfo(setup, modelInfo.VID, modelInfo.PID)
 
 	// check
-	// TODO do a smart check
-
 	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.VID)
-	/*require.Equal(t, receivedModelInfo.Model.PID, modelInfo.PID)
+	require.Equal(t, receivedModelInfo.Model.PID, modelInfo.PID)
 	require.Equal(t, receivedModelInfo.Model.CID, modelInfo.CID)
-	require.Equal(t, receivedModelInfo.Model.Version, modelInfo.Version)
-	require.Equal(t, receivedModelInfo.Model.Name, modelInfo.Name)
-	require.Equal(t, receivedModelInfo.Model.Description, modelInfo.Description)
-	require.Equal(t, receivedModelInfo.Model.SKU, modelInfo.SKU)
-	require.Equal(t, receivedModelInfo.Model.HardwareVersion, modelInfo.HardwareVersion)
-	require.Equal(t, receivedModelInfo.Model.FirmwareVersion, modelInfo.FirmwareVersion)
-	require.Equal(t, receivedModelInfo.Model.OtaURL, modelInfo.OtaURL)
-	require.Equal(t, receivedModelInfo.Model.OtaChecksum, modelInfo.OtaChecksum)
-	require.Equal(t, receivedModelInfo.Model.OtaChecksumType, modelInfo.OtaChecksumType)
-	require.Equal(t, receivedModelInfo.Model.Custom, modelInfo.Custom)
-	require.Equal(t, receivedModelInfo.Model.TisOrTrpTestingCompleted, modelInfo.TisOrTrpTestingCompleted)
-	require.Equal(t, receivedModelInfo.Model.Owner, modelInfo.Signer)*/
 }
 
 func TestHandler_UpdateModel(t *testing.T) {
@@ -83,7 +69,6 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, receivedModelInfo.Model.VID, msgAddModelInfo.VID)
 	require.Equal(t, receivedModelInfo.Model.PID, msgAddModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Model.CID, msgUpdateModelInfo.CID)
-
 }
 
 func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
@@ -128,12 +113,10 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 	receivedModelInfo := queryModelInfo(setup, testconstants.VID, testconstants.PID)
 
 	// check
-
 	require.Equal(t, receivedModelInfo.Model.CID, uint16(0))
 	require.Equal(t, receivedModelInfo.Model.OtaURL, "")
 	require.Equal(t, receivedModelInfo.Model.OtaChecksum, "")
 	require.Equal(t, receivedModelInfo.Model.OtaChecksumType, "")
-
 }
 
 func TestHandler_AddModelByNonVendor(t *testing.T) {

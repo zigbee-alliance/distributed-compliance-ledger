@@ -20,7 +20,6 @@ import (
 
 const RouterKey = ModuleName
 
-//nolint:maligned
 type MsgAddModelInfo struct {
 	Model
 	Signer sdk.AccAddress `json:"signer"`
@@ -107,7 +106,6 @@ func (m MsgAddModelInfo) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
 }
 
-//nolint:maligned
 type MsgUpdateModelInfo struct {
 	Model
 	Signer sdk.AccAddress `json:"signer"`

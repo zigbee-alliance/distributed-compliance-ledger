@@ -23,15 +23,13 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo/internal/types"
 )
 
-//nolint:maligned
 type AddModelInfoRequest struct {
-	types.Model
+	Model   types.Model       `json:"model"`
 	BaseReq restTypes.BaseReq `json:"base_req"`
 }
 
-//nolint:maligned
 type UpdateModelInfoRequest struct {
-	types.Model
+	Model   types.Model       `json:"model"`
 	BaseReq restTypes.BaseReq `json:"base_req"`
 }
 
@@ -55,35 +53,35 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		model := types.Model{
-			VID:                                      req.VID,
-			PID:                                      req.PID,
-			CID:                                      req.CID,
-			Name:                                     req.Name,
-			Description:                              req.Description,
-			SKU:                                      req.SKU,
-			SoftwareVersion:                          req.SoftwareVersion,
-			SoftwareVersionString:                    req.SoftwareVersionString,
-			HardwareVersion:                          req.HardwareVersion,
-			HardwareVersionString:                    req.HardwareVersionString,
-			CDVersionNumber:                          req.CDVersionNumber,
-			FirmwareDigests:                          req.FirmwareDigests,
-			Revoked:                                  req.Revoked,
-			OtaURL:                                   req.OtaURL,
-			OtaChecksum:                              req.OtaChecksum,
-			OtaChecksumType:                          req.OtaChecksumType,
-			OtaBlob:                                  req.OtaBlob,
-			CommissioningCustomFlow:                  req.CommissioningCustomFlow,
-			CommissioningCustomFlowUrl:               req.CommissioningCustomFlowUrl,
-			CommissioningModeInitialStepsHint:        req.CommissioningModeInitialStepsHint,
-			CommissioningModeInitialStepsInstruction: req.CommissioningModeInitialStepsInstruction,
-			CommissioningModeSecondaryStepsHint:      req.CommissioningModeSecondaryStepsHint,
-			CommissioningModeSecondaryStepsInstruction: req.CommissioningModeSecondaryStepsInstruction,
-			ReleaseNotesUrl: req.ReleaseNotesUrl,
-			UserManualUrl:   req.UserManualUrl,
-			SupportUrl:      req.SupportUrl,
-			ProductURL:      req.ProductURL,
-			ChipBlob:        req.ChipBlob,
-			VendorBlob:      req.VendorBlob,
+			VID:                                      req.Model.VID,
+			PID:                                      req.Model.PID,
+			CID:                                      req.Model.CID,
+			Name:                                     req.Model.Name,
+			Description:                              req.Model.Description,
+			SKU:                                      req.Model.SKU,
+			SoftwareVersion:                          req.Model.SoftwareVersion,
+			SoftwareVersionString:                    req.Model.SoftwareVersionString,
+			HardwareVersion:                          req.Model.HardwareVersion,
+			HardwareVersionString:                    req.Model.HardwareVersionString,
+			CDVersionNumber:                          req.Model.CDVersionNumber,
+			FirmwareDigests:                          req.Model.FirmwareDigests,
+			Revoked:                                  req.Model.Revoked,
+			OtaURL:                                   req.Model.OtaURL,
+			OtaChecksum:                              req.Model.OtaChecksum,
+			OtaChecksumType:                          req.Model.OtaChecksumType,
+			OtaBlob:                                  req.Model.OtaBlob,
+			CommissioningCustomFlow:                  req.Model.CommissioningCustomFlow,
+			CommissioningCustomFlowURL:               req.Model.CommissioningCustomFlowURL,
+			CommissioningModeInitialStepsHint:        req.Model.CommissioningModeInitialStepsHint,
+			CommissioningModeInitialStepsInstruction: req.Model.CommissioningModeInitialStepsInstruction,
+			CommissioningModeSecondaryStepsHint:      req.Model.CommissioningModeSecondaryStepsHint,
+			CommissioningModeSecondaryStepsInstruction: req.Model.CommissioningModeSecondaryStepsInstruction,
+			ReleaseNotesURL: req.Model.ReleaseNotesURL,
+			UserManualURL:   req.Model.UserManualURL,
+			SupportURL:      req.Model.SupportURL,
+			ProductURL:      req.Model.ProductURL,
+			ChipBlob:        req.Model.ChipBlob,
+			VendorBlob:      req.Model.VendorBlob,
 		}
 
 		msg := types.NewMsgAddModelInfo(model, restCtx.Signer())
@@ -112,23 +110,23 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		model := types.Model{
-			VID:                        req.VID,
-			PID:                        req.PID,
-			CID:                        req.CID,
-			Description:                req.Description,
-			CDVersionNumber:            req.CDVersionNumber,
-			Revoked:                    req.Revoked,
-			OtaURL:                     req.OtaURL,
-			OtaChecksum:                req.OtaChecksum,
-			OtaChecksumType:            req.OtaChecksumType,
-			OtaBlob:                    req.OtaBlob,
-			CommissioningCustomFlowUrl: req.CommissioningCustomFlowUrl,
-			ReleaseNotesUrl:            req.ReleaseNotesUrl,
-			UserManualUrl:              req.UserManualUrl,
-			SupportUrl:                 req.SupportUrl,
-			ProductURL:                 req.ProductURL,
-			ChipBlob:                   req.ChipBlob,
-			VendorBlob:                 req.VendorBlob,
+			VID:                        req.Model.VID,
+			PID:                        req.Model.PID,
+			CID:                        req.Model.CID,
+			Description:                req.Model.Description,
+			CDVersionNumber:            req.Model.CDVersionNumber,
+			Revoked:                    req.Model.Revoked,
+			OtaURL:                     req.Model.OtaURL,
+			OtaChecksum:                req.Model.OtaChecksum,
+			OtaChecksumType:            req.Model.OtaChecksumType,
+			OtaBlob:                    req.Model.OtaBlob,
+			CommissioningCustomFlowURL: req.Model.CommissioningCustomFlowURL,
+			ReleaseNotesURL:            req.Model.ReleaseNotesURL,
+			UserManualURL:              req.Model.UserManualURL,
+			SupportURL:                 req.Model.SupportURL,
+			ProductURL:                 req.Model.ProductURL,
+			ChipBlob:                   req.Model.ChipBlob,
+			VendorBlob:                 req.Model.VendorBlob,
 		}
 
 		msg := types.NewMsgUpdateModelInfo(model, restCtx.Signer())

@@ -43,14 +43,14 @@ func getTestModel() Model {
 		OtaChecksumType:                          testconstants.OtaChecksumType,
 		OtaBlob:                                  testconstants.OtaBlob,
 		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowUrl,
+		CommissioningCustomFlowURL:               testconstants.CommissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		ReleaseNotesUrl: testconstants.ReleaseNotesUrl,
-		UserManualUrl:   testconstants.UserManualUrl,
-		SupportUrl:      testconstants.SupportUrl,
+		ReleaseNotesURL: testconstants.ReleaseNotesURL,
+		UserManualURL:   testconstants.UserManualURL,
+		SupportURL:      testconstants.SupportURL,
 		ProductURL:      testconstants.ProductURL,
 		ChipBlob:        testconstants.ChipBlob,
 		VendorBlob:      testconstants.VendorBlob,
@@ -58,7 +58,6 @@ func getTestModel() Model {
 }
 
 func getTestModelForUpdate() Model {
-
 	return Model{
 		VID:                        testconstants.VID,
 		PID:                        testconstants.PID,
@@ -71,10 +70,10 @@ func getTestModelForUpdate() Model {
 		OtaChecksum:                testconstants.OtaChecksum,
 		OtaChecksumType:            testconstants.OtaChecksumType,
 		OtaBlob:                    testconstants.OtaBlob,
-		CommissioningCustomFlowUrl: testconstants.CommissioningCustomFlowUrl,
-		ReleaseNotesUrl:            testconstants.ReleaseNotesUrl,
-		UserManualUrl:              testconstants.UserManualUrl,
-		SupportUrl:                 testconstants.SupportUrl,
+		CommissioningCustomFlowURL: testconstants.CommissioningCustomFlowURL,
+		ReleaseNotesURL:            testconstants.ReleaseNotesURL,
+		UserManualURL:              testconstants.UserManualURL,
+		SupportURL:                 testconstants.SupportURL,
 		ProductURL:                 testconstants.ProductURL,
 		ChipBlob:                   testconstants.ChipBlob,
 		VendorBlob:                 testconstants.VendorBlob,
@@ -92,7 +91,6 @@ func TestNewMsgAddModelInfo(t *testing.T) {
 
 //nolint:funlen
 func TestMsgAddModelInfoValidation(t *testing.T) {
-
 	require.Nil(t, NewMsgAddModelInfo(getTestModel(), testconstants.Signer).ValidateBasic())
 
 	// Invalid VID
@@ -181,21 +179,16 @@ func TestMsgAddModelInfoValidation(t *testing.T) {
 	require.NotNil(t, NewMsgAddModelInfo(model, nil).ValidateBasic())
 	// Signer is nil
 	require.NotNil(t, NewMsgAddModelInfo(model, []byte{}).ValidateBasic())
-
 }
 
 func TestMsgAddModelInfoGetSignBytes(t *testing.T) {
 	msg := NewMsgAddModelInfo(getTestModel(), testconstants.Signer)
-
-	expected := "{\"type\":\"modelinfo/AddModelInfo\",\"value\":{\"Model\":{\"cd_version_number\":312,\"chip_blob\":\"Chip Blob Text\",\"cid\":12345,\"commisioning_mode_initial_steps_hint\":2,\"commisioning_mode_initial_steps_instruction\":\"commissioningModeInitialStepsInstruction details\",\"commisioning_mode_secondary_steps_hint\":3,\"commisioning_mode_secondary_steps_instruction\":\"commissioningModeSecondaryStepsInstruction steps\",\"commission_custom_flow\":1,\"commission_custom_flow_url\":\"https://sampleflowurl.dclmodel\",\"description\":\"Device Description\",\"firmware_digests\":\"Firmware Digest String\",\"hardware_version\":21,\"hardware_version_string\":\"2.1\",\"name\":\"Device Name\",\"ota_blob\":\"OTABlob Text\",\"ota_checksum\":\"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"ota_checksum_type\":\"SHA-256\",\"ota_url\":\"http://ota.firmware.com\",\"pid\":22,\"product_url\":\"https://url.producturl.dclmodel\",\"release_notes_url\":\"https://url.releasenotes.dclmodel\",\"revoked\":false,\"sku\":\"RCU2205A\",\"software_version\":1,\"software_version_string\":\"1.0\",\"support_url\":\"https://url.supporturl.dclmodel\",\"user_manual_url\":\"https://url.usermanual.dclmodel\",\"vendor_blob\":\"Vendor Blob Text\",\"vid\":1},\"signer\":\"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz\"}}"
-
+	expected := "{\"type\":\"modelinfo/AddModelInfo\",\"value\":{\"Model\":{\"cd_version_number\":312,\"chip_blob\":\"Chip Blob Text\",\"cid\":12345,\"commissioning_mode_initial_steps_hint\":2,\"commissioning_mode_initial_steps_instruction\":\"commissioningModeInitialStepsInstruction details\",\"commissioning_mode_secondary_steps_hint\":3,\"commissioning_mode_secondary_steps_instruction\":\"commissioningModeSecondaryStepsInstruction steps\",\"commission_custom_flow\":1,\"commission_custom_flow_url\":\"https://sampleflowurl.dclmodel\",\"description\":\"Device Description\",\"firmware_digests\":\"Firmware Digest String\",\"hardware_version\":21,\"hardware_version_string\":\"2.1\",\"name\":\"Device Name\",\"ota_blob\":\"OTABlob Text\",\"ota_checksum\":\"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"ota_checksum_type\":\"SHA-256\",\"ota_url\":\"http://ota.firmware.com\",\"pid\":22,\"product_url\":\"https://url.producturl.dclmodel\",\"release_notes_url\":\"https://url.releasenotes.dclmodel\",\"revoked\":false,\"sku\":\"RCU2205A\",\"software_version\":1,\"software_version_string\":\"1.0\",\"support_url\":\"https://url.supporturl.dclmodel\",\"user_manual_url\":\"https://url.usermanual.dclmodel\",\"vendor_blob\":\"Vendor Blob Text\",\"vid\":1},\"signer\":\"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz\"}}" //nolint:lll
 	require.Equal(t, expected, string(msg.GetSignBytes()))
-
 }
 
 func TestNewMsgUpdateModelInfo(t *testing.T) {
 	msg := NewMsgUpdateModelInfo(getTestModelForUpdate(), testconstants.Signer)
-
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "update_model_info")
 	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
@@ -229,7 +222,7 @@ func TestMsgUpdateModelInfoValidation(t *testing.T) {
 func TestMsgUpdateModelInfoGetSignBytes(t *testing.T) {
 	msg := NewMsgUpdateModelInfo(getTestModelForUpdate(), testconstants.Signer)
 
-	expected := `{"type":"modelinfo/UpdateModelInfo","value":{"Model":{"cd_version_number":312,"chip_blob":"Chip Blob Text","cid":12345,"commission_custom_flow_url":"https://sampleflowurl.dclmodel","description":"Device Description","firmware_digests":"Firmware Digest String","hardware_version":0,"hardware_version_string":"","name":"","ota_blob":"OTABlob Text","ota_checksum":"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","ota_checksum_type":"SHA-256","ota_url":"http://ota.firmware.com","pid":22,"product_url":"https://url.producturl.dclmodel","release_notes_url":"https://url.releasenotes.dclmodel","revoked":false,"sku":"","software_version":0,"software_version_string":"","support_url":"https://url.supporturl.dclmodel","user_manual_url":"https://url.usermanual.dclmodel","vendor_blob":"Vendor Blob Text","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+	expected := `{"type":"modelinfo/UpdateModelInfo","value":{"Model":{"cd_version_number":312,"chip_blob":"Chip Blob Text","cid":12345,"commission_custom_flow_url":"https://sampleflowurl.dclmodel","description":"Device Description","firmware_digests":"Firmware Digest String","hardware_version":0,"hardware_version_string":"","name":"","ota_blob":"OTABlob Text","ota_checksum":"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","ota_checksum_type":"SHA-256","ota_url":"http://ota.firmware.com","pid":22,"product_url":"https://url.producturl.dclmodel","release_notes_url":"https://url.releasenotes.dclmodel","revoked":false,"sku":"","software_version":0,"software_version_string":"","support_url":"https://url.supporturl.dclmodel","user_manual_url":"https://url.usermanual.dclmodel","vendor_blob":"Vendor Blob Text","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}` //nolint:lll
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

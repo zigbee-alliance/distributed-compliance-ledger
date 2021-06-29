@@ -104,14 +104,14 @@ func getTestModel() types.Model {
 		OtaChecksumType:                          testconstants.OtaChecksumType,
 		OtaBlob:                                  testconstants.OtaBlob,
 		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowUrl,
+		CommissioningCustomFlowURL:               testconstants.CommissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		ReleaseNotesUrl: testconstants.ReleaseNotesUrl,
-		UserManualUrl:   testconstants.UserManualUrl,
-		SupportUrl:      testconstants.SupportUrl,
+		ReleaseNotesURL: testconstants.ReleaseNotesURL,
+		UserManualURL:   testconstants.UserManualURL,
+		SupportURL:      testconstants.SupportURL,
 		ProductURL:      testconstants.ProductURL,
 		ChipBlob:        testconstants.ChipBlob,
 		VendorBlob:      testconstants.VendorBlob,
@@ -119,7 +119,6 @@ func getTestModel() types.Model {
 }
 
 func getTestModelForUpdate() types.Model {
-
 	return Model{
 		VID:                        testconstants.VID,
 		PID:                        testconstants.PID,
@@ -132,15 +131,16 @@ func getTestModelForUpdate() types.Model {
 		OtaChecksum:                testconstants.OtaChecksum,
 		OtaChecksumType:            testconstants.OtaChecksumType,
 		OtaBlob:                    testconstants.OtaBlob,
-		CommissioningCustomFlowUrl: testconstants.CommissioningCustomFlowUrl,
-		ReleaseNotesUrl:            testconstants.ReleaseNotesUrl,
-		UserManualUrl:              testconstants.UserManualUrl,
-		SupportUrl:                 testconstants.SupportUrl,
+		CommissioningCustomFlowURL: testconstants.CommissioningCustomFlowURL,
+		ReleaseNotesURL:            testconstants.ReleaseNotesURL,
+		UserManualURL:              testconstants.UserManualURL,
+		SupportURL:                 testconstants.SupportURL,
 		ProductURL:                 testconstants.ProductURL,
 		ChipBlob:                   testconstants.ChipBlob,
 		VendorBlob:                 testconstants.VendorBlob,
 	}
 }
+
 func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 	return MsgAddModelInfo{
 		Model:  getTestModel(),
@@ -149,7 +149,6 @@ func TestMsgAddModelInfo(signer sdk.AccAddress) MsgAddModelInfo {
 }
 
 func TestMsgUpdateModelInfo(signer sdk.AccAddress) MsgUpdateModelInfo {
-
 	return MsgUpdateModelInfo{
 		Model:  getTestModelForUpdate(),
 		Signer: signer,
