@@ -44,7 +44,7 @@ func TestKeeper_ModelInfoGetSet(t *testing.T) {
 	// get model info
 	modelInfo := setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
 	require.NotNil(t, modelInfo)
-	require.Equal(t, testconstants.Name, modelInfo.Name)
+	require.Equal(t, testconstants.Name, modelInfo.Model.Name)
 	require.Equal(t, testconstants.Owner, modelInfo.Owner)
 }
 
@@ -109,13 +109,13 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 	for i := 0; i < count; i++ {
 		// add model info
 		modelInfo := DefaultModelInfo()
-		modelInfo.PID = uint16(i)
+		modelInfo.Model.PID = uint16(i)
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 
 		vendorProduct := types.Product{
-			PID:   modelInfo.PID,
-			Name:  modelInfo.Name,
-			SKU:   modelInfo.SKU,
+			PID:   modelInfo.Model.PID,
+			Name:  modelInfo.Model.Name,
+			SKU:   modelInfo.Model.SKU,
 			Owner: modelInfo.Owner,
 		}
 		PIDs = append(PIDs, vendorProduct)

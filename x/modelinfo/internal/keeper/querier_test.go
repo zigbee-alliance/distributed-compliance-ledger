@@ -36,7 +36,7 @@ func TestQuerier_QueryModel(t *testing.T) {
 	// query model
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryModel, fmt.Sprintf("%v", modelInfo.VID), fmt.Sprintf("%v", modelInfo.PID)},
+		[]string{QueryModel, fmt.Sprintf("%v", modelInfo.Model.VID), fmt.Sprintf("%v", modelInfo.Model.PID)},
 		abci.RequestQuery{},
 	)
 

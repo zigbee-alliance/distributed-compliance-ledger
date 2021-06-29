@@ -49,18 +49,18 @@ func (k Keeper) GetModelInfo(ctx sdk.Context, vid uint16, pid uint16) types.Mode
 }
 
 // Sets the entire ModelInfo metadata struct for a ModelInfoID.
-func (k Keeper) SetModelInfo(ctx sdk.Context, model types.ModelInfo) {
+func (k Keeper) SetModelInfo(ctx sdk.Context, modelInfo types.ModelInfo) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.GetModelInfoKey(model.VID, model.PID), k.cdc.MustMarshalBinaryBare(model))
+	store.Set(types.GetModelInfoKey(modelInfo.Model.VID, modelInfo.Model.PID), k.cdc.MustMarshalBinaryBare(modelInfo))
 
 	// Update the list of products associated with vendor.
 	product := types.Product{
-		PID:   model.PID,
-		Name:  model.Name,
-		SKU:   model.SKU,
-		Owner: model.Owner,
+		PID:   modelInfo.Model.PID,
+		Name:  modelInfo.Model.Name,
+		SKU:   modelInfo.Model.SKU,
+		Owner: modelInfo.Owner,
 	}
-	k.AppendVendorProduct(ctx, model.VID, product)
+	k.AppendVendorProduct(ctx, modelInfo.Model.VID, product)
 }
 
 // Deletes the ModelInfo from the store.

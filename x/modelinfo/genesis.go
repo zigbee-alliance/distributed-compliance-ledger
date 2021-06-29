@@ -33,27 +33,27 @@ func NewGenesisState() GenesisState {
 //nolint:gocognit
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ModelInfoRecords {
-		if record.VID == 0 {
+		if record.Model.VID == 0 {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Invalid VID. Value: %v", record))
 		}
 
-		if record.PID == 0 {
+		if record.Model.PID == 0 {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Invalid PID. Value: %v", record))
 		}
 
-		if record.Name == "" {
+		if record.Model.Name == "" {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed Name. Value: %v", record))
 		}
 
-		if record.Description == "" {
+		if record.Model.Description == "" {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed Description. Value: %v", record))
 		}
 
-		if record.SKU == "" {
+		if record.Model.SKU == "" {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed SKU. Value: %v", record))
 		}
 
-		if record.HardwareVersion == 0 {
+		if record.Model.HardwareVersion == 0 {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed HardwareVersion. Value: %v", record))
 		}
 		// TODO we should reuse validation

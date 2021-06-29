@@ -52,12 +52,39 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 		return err.Result()
 	}
 
+	model := types.Model{
+		VID:                                      msg.VID,
+		PID:                                      msg.PID,
+		CID:                                      msg.CID,
+		Name:                                     msg.Name,
+		Description:                              msg.Description,
+		SKU:                                      msg.SKU,
+		SoftwareVersion:                          msg.SoftwareVersion,
+		SoftwareVersionString:                    msg.SoftwareVersionString,
+		HardwareVersion:                          msg.HardwareVersion,
+		HardwareVersionString:                    msg.HardwareVersionString,
+		CDVersionNumber:                          msg.CDVersionNumber,
+		FirmwareDigests:                          msg.FirmwareDigests,
+		Revoked:                                  msg.Revoked,
+		OtaURL:                                   msg.OtaURL,
+		OtaChecksum:                              msg.OtaChecksum,
+		OtaChecksumType:                          msg.OtaChecksumType,
+		OtaBlob:                                  msg.OtaBlob,
+		CommissioningCustomFlow:                  msg.CommissioningCustomFlow,
+		CommissioningCustomFlowUrl:               msg.CommissioningCustomFlowUrl,
+		CommissioningModeInitialStepsHint:        msg.CommissioningModeInitialStepsHint,
+		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
+		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
+		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
+		ReleaseNotesUrl: msg.ReleaseNotesUrl,
+		UserManualUrl:   msg.UserManualUrl,
+		SupportUrl:      msg.SupportUrl,
+		ProductURL:      msg.ProductURL,
+		ChipBlob:        msg.ChipBlob,
+		VendorBlob:      msg.VendorBlob,
+	}
 	modelInfo := types.NewModelInfo(
-		msg.VID, msg.PID, msg.CID, msg.Name, msg.Description, msg.SKU, msg.SoftwareVersion, msg.SoftwareVersionString, msg.HardwareVersion,
-		msg.HardwareVersionString, msg.CDVersionNumber, msg.FirmwareDigests, msg.Revoked, msg.OtaURL, msg.OtaChecksum,
-		msg.OtaChecksumType, msg.OtaBlob, msg.CommissioningCustomFlow, msg.CommissioningCustomFlowUrl, msg.CommissioningModeInitialStepsHint, msg.CommissioningModeInitialStepsInstruction,
-		msg.CommissioningModeSecondaryStepsHint, msg.CommissioningModeSecondaryStepsInstruction, msg.ReleaseNotesUrl, msg.UserManualUrl, msg.SupportUrl, msg.ProductURL,
-		msg.ChipBlob, msg.VendorBlob,
+		model,
 		msg.Signer,
 	)
 
@@ -81,66 +108,66 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 		return err.Result()
 	}
 
-	if msg.OtaURL != "" && modelInfo.OtaURL == "" {
+	if msg.OtaURL != "" && modelInfo.Model.OtaURL == "" {
 		return types.ErrOtaURLCannotBeSet(msg.VID, msg.PID).Result()
 	}
 
 	// updates existing model value only if corresponding value in MsgUpdate is not empty
 
 	if msg.CID != 0 {
-		modelInfo.CID = msg.CID
+		modelInfo.Model.CID = msg.CID
 	}
 
 	if msg.Description != "" {
-		modelInfo.Description = msg.Description
+		modelInfo.Model.Description = msg.Description
 	}
 
-	if msg.Revoked != modelInfo.Revoked {
-		modelInfo.Revoked = msg.Revoked
+	if msg.Revoked != modelInfo.Model.Revoked {
+		modelInfo.Model.Revoked = msg.Revoked
 	}
 
 	if msg.CDVersionNumber != 0 {
-		modelInfo.CDVersionNumber = msg.CDVersionNumber
+		modelInfo.Model.CDVersionNumber = msg.CDVersionNumber
 	}
 
 	if msg.OtaURL != "" {
-		modelInfo.OtaURL = msg.OtaURL
+		modelInfo.Model.OtaURL = msg.OtaURL
 	}
 
 	if msg.OtaChecksum != "" {
-		modelInfo.OtaChecksum = msg.OtaChecksum
+		modelInfo.Model.OtaChecksum = msg.OtaChecksum
 	}
 
 	if msg.OtaChecksumType != "" {
-		modelInfo.OtaChecksumType = msg.OtaChecksumType
+		modelInfo.Model.OtaChecksumType = msg.OtaChecksumType
 	}
 
 	if msg.CommissioningCustomFlowUrl != "" {
-		modelInfo.CommissioningCustomFlowUrl = msg.CommissioningCustomFlowUrl
+		modelInfo.Model.CommissioningCustomFlowUrl = msg.CommissioningCustomFlowUrl
 	}
 
 	if msg.ReleaseNotesUrl != "" {
-		modelInfo.ReleaseNotesUrl = msg.ReleaseNotesUrl
+		modelInfo.Model.ReleaseNotesUrl = msg.ReleaseNotesUrl
 	}
 
 	if msg.UserManualUrl != "" {
-		modelInfo.UserManualUrl = msg.UserManualUrl
+		modelInfo.Model.UserManualUrl = msg.UserManualUrl
 	}
 
 	if msg.SupportUrl != "" {
-		modelInfo.SupportUrl = msg.SupportUrl
+		modelInfo.Model.SupportUrl = msg.SupportUrl
 	}
 
 	if msg.ProductURL != "" {
-		modelInfo.ProductURL = msg.ProductURL
+		modelInfo.Model.ProductURL = msg.ProductURL
 	}
 
 	if msg.ChipBlob != "" {
-		modelInfo.ChipBlob = msg.ChipBlob
+		modelInfo.Model.ChipBlob = msg.ChipBlob
 	}
 
 	if msg.VendorBlob != "" {
-		modelInfo.VendorBlob = msg.VendorBlob
+		modelInfo.Model.VendorBlob = msg.VendorBlob
 	}
 
 	// store updated model
