@@ -394,7 +394,7 @@ The set of commands that allows you to manage model infos.
   Role: `Vendor`
   
   Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
---software-version=<uint32> --software-version-string=<string> --hardware-version=<uint32> --hardware-version-string=<string> --cd-version-number=<uint16> 
+--softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
 --from=<account>`
 
   Flags:
@@ -403,35 +403,35 @@ The set of commands that allows you to manage model infos.
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
-  - software-version: `uint32` -  Software Version of model (uint32)
-  - software-version-string: `string` - Software Version String of model
-  - hardware-version: `uint32` -  version of model hardware
-  - hardware-version-string: `string` - Hardware Version String of model
-  - cd-version-number: `uint32` -  CD Version Number of the Certification
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - softwareVersionString: `string` - Software Version String of model
+  - hardwareVersion: `uint32` -  version of model hardware
+  - hardwareVersionString: `string` - Hardware Version String of model
+  - cdVersionNumber: `uint32` -  CD Version Number of the Certification
   - from: `string` - Name or address of private key with which to sign
   - cid: `optional(uint16)` - model category ID (positive non-zero)
   - revoked: `optional(bool)` - boolean flag to revoke the model
-  - ota-url: `optional(string)` - the URL of the OTA
-  - ota-checksum: `optional(string)` - the checksum of the OTA 
-  - ota-checksum-type: `optional(string)` - the type of the OTA checksum 
-  - ota-blob: `optional(string)` - metadata about OTA 
-  - commissioning-custom-flow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
-  - commissioning-custom-flow-url: `optional(string)` - commissioning-custom-flow-url SHALL identify a vendor specific commissioning URL for the device model when the commissioning-custom-flow field is set to '2'
-  - commissioning-mode-initial-steps-hint: `optional(uint32)` - commissioning-mode-initial-steps-hint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
-  - commissioning-mode-initial-steps-instruction: `optional(string)` - commissioning-mode-initial-steps-instruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioning-mode-initial-steps-instruction SHALL be set
-  - commissioning-mode-secondary-steps-hint: `optional(uint32)` - commissioning-mode-secondary-steps-hint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
-  - commissioning-mode-secondary-step-instruction: `optional(string)` - commissioning-mode-secondary-step-instruction SHALL contain text which relates to specific values of commissioning-mode-secondary-steps-hint. Certain values of commissioning-mode-secondary-steps-hint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioning-mode-secondary-step-instruction SHALL be set
-  - release_notes_url: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
-  - user-manual-url: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
-  - support-url: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
-  - product-url: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
-  - chip-blob: `optional(string)` - chip-blob SHALL identify CHIP specific configurations
-  - vendor-blob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
+  - otaURL: `optional(string)` - the URL of the OTA
+  - otaChecksum: `optional(string)` - the checksum of the OTA 
+  - otaChecksumType: `optional(string)` - the type of the OTA checksum 
+  - otaBlob: `optional(string)` - metadata about OTA 
+  - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
+  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
+  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
+  - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
+  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
+  - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
+  - releaseNotesURL: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
+  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
+  - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
   
 
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from="jack"`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from="jack"`
   
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32"  --cid=1 --custom="Some Custom information" --ota-url="http://my-ota.com" --ota-checksum="df56hf" --ota-checksum-type="SHA-256" --from=jack `
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32"  --cid=1 --custom="Some Custom information" --otaURL="http://my-ota.com" --otaChecksum="df56hf" --otaChecksumType="SHA-256" --from=jack `
 
 - Update an existing model info. Only the owner can edit a Model Info.
 
@@ -444,24 +444,24 @@ The set of commands that allows you to manage model infos.
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
   - description: `string` -  model description (string or path to file containing data)
-  - cd-version-number: `uint32` -  CD Version Number of the Certification
+  - cdVersionNumber: `uint32` -  CD Version Number of the Certification
   - from: `string` - Name or address of private key with which to sign
   - revoked: `optional(bool)` - boolean flag to revoke the model
-  - ota-url: `optional(string)` - the URL of the OTA
-  - ota-checksum: `optional(string)` - the checksum of the OTA 
-  - ota-checksum-type: `optional(string)` - the type of the OTA checksum 
-  - ota-blob: `optional(string)` - metadata about OTA 
-  - commissioning-custom-flow-url: `optional(string)` - commissioning-custom-flow-url SHALL identify a vendor specific commissioning URL for the device model when the commissioning-custom-flow field is set to '2'
-  - release_notes_url: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
-  - user-manual-url: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
-  - support-url: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
-  - product-url: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
-  - chip-blob: `optional(string)` - chip-blob SHALL identify CHIP specific configurations
-  - vendor-blob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
+  - otaURL: `optional(string)` - the URL of the OTA
+  - otaChecksum: `optional(string)` - the checksum of the OTA 
+  - otaChecksumType: `optional(string)` - the type of the OTA checksum 
+  - otaBlob: `optional(string)` - metadata about OTA 
+  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
+  - releaseNotesURL: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
+  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
+  - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
     
-  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --cd-version-number="32" --description="New Description" --from=jack `
+  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --cdVersionNumber="32" --description="New Description" --from=jack `
   
-  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --support-url="https://product-support.url.test" --ota-url="http://new-ota.com" --from=jack `
+  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --supportURL="https://product-support.url.test" --otaURL="http://new-ota.com" --from=jack `
 
 ##### Queries
 - Query a single model info.

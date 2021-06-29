@@ -26,7 +26,7 @@ create_new_account vendor_account "Vendor"
 vid1=$RANDOM
 pid1=$RANDOM
 echo "Jack adds Model with VID: $vid1 PID: $pid1. Using default Broadcast Mode: block"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid1 --pid=$pid1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from=$vendor_account --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid1 --pid=$pid1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$vendor_account --yes)
 check_response "$result" "\"gas_used\""
 check_response "$result" "\"txhash\""
 check_response "$result" "\"raw_log\""
@@ -37,7 +37,7 @@ echo "$result"
 vid2=$RANDOM
 pid2=$RANDOM
 echo "Jack adds Model with VID: $vid2 PID: $pid2. Using async Broadcast Mode"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid2 --pid=$pid2 --name="Device #2" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from=$vendor_account --yes --broadcast-mode "async")
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid2 --pid=$pid2 --name="Device #2" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$vendor_account --yes --broadcast-mode "async")
 check_response "$result" "\"txhash\""
 check_response "$result" "\"height\": \"0\""
 response_does_not_contain "$result" "\"gas_used\""
@@ -49,7 +49,7 @@ sleep 6
 vid3=$RANDOM
 pid3=$RANDOM
 echo "Jack adds Model with VID: $vid3 PID: $pid3. Using sync Broadcast Mode"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid3 --pid=$pid3 --name="Device #2" --description="Device Description" --sku="SKU12FS" --software-version="10123" --software-version-string="1.0b123"  --hardware-version="5123" --hardware-version-string="5.1.23"  --cd-version-number="32" --from=$vendor_account --yes --broadcast-mode "sync")
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid3 --pid=$pid3 --name="Device #2" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$vendor_account --yes --broadcast-mode "sync")
 check_response "$result" "\"txhash\""
 check_response "$result" "\"raw_log\""
 check_response "$result" "\"height\": \"0\""

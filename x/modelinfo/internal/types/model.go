@@ -39,7 +39,7 @@ type Model struct {
 	CommissioningModeInitialStepsInstruction   string `json:"commissioning_mode_initial_steps_instruction,omitempty"`
 	CommissioningModeSecondaryStepsHint        uint32 `json:"commissioning_mode_secondary_steps_hint,omitempty"`
 	CommissioningModeSecondaryStepsInstruction string `json:"commissioning_mode_secondary_steps_instruction,omitempty"`
-	ReleaseNotesURL                            string `json:"release_notes_url,omitempty"`
+	ReleaseNotesURL                            string `json:"releaseNotesURL,omitempty"`
 	UserManualURL                              string `json:"user_manual_url,omitempty"`
 	SupportURL                                 string `json:"support_url,omitempty"`
 	ProductURL                                 string `json:"product_url,omitempty"`
