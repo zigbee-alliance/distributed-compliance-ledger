@@ -28,18 +28,50 @@ const (
 
 var (
 	ModelInfoPrefix      = []byte{0x01} // prefix for each key to a model info
-	VendorProductsPrefix = []byte{0x02} // prefix for each key to a vendor products
+	ModelVersionPrefix   = []byte{0x02} // prefix for each key to a model with sv and hv
+	VendorProductsPrefix = []byte{0x03} // prefix for each key to a vendor products
 )
 
-// Key builder for Model Info.
-func GetModelInfoKey(vid uint16, pid uint16) []byte {
+// Key builder for Model Info (with versions).
+func GetModelInfoKey(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) []byte {
+	var key []byte
+
+	key = append(key, ModelInfoPrefix...)
+
 	v := make([]byte, 2)
 	binary.LittleEndian.PutUint16(v, vid)
+	key = append(key, v...)
 
 	p := make([]byte, 2)
 	binary.LittleEndian.PutUint16(p, pid)
+	key = append(key, p...)
 
-	return append(ModelInfoPrefix, append(v, p...)...)
+	sv := make([]byte, 4)
+	binary.LittleEndian.PutUint32(sv, softwareVersion)
+	key = append(key, sv...)
+
+	hv := make([]byte, 4)
+	binary.LittleEndian.PutUint32(hv, hardwareVersion)
+	key = append(key, hv...)
+
+	return key
+}
+
+// Key builder for Model Info (without versions).
+func GetProductKey(vid uint16, pid uint16) []byte {
+	var key []byte
+
+	key = append(key, ModelInfoPrefix...)
+
+	v := make([]byte, 2)
+	binary.LittleEndian.PutUint16(v, vid)
+	key = append(key, v...)
+
+	p := make([]byte, 2)
+	binary.LittleEndian.PutUint16(p, pid)
+	key = append(key, p...)
+
+	return key
 }
 
 // Key builder for Vendor Products.

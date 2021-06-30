@@ -42,7 +42,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "test-result",
-		Short: "Query testing results for Model (identified by the `vid` and `pid`)",
+		Short: "Query testing results for Model (identified by the `vid`, `pid`, `softwareVersion` and `hardwareVersion`)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
@@ -57,9 +57,20 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err_
 			}
 
-			res, height, err := cliCtx.QueryStore(types.GetTestingResultsKey(vid, pid), queryRoute)
+			softwareVersion, err_ := conversions.ParseSoftwareVersion(viper.GetString(FlagSoftwareVersion))
+			if err_ != nil {
+				return err_
+			}
+
+			hardwareVersion, err_ := conversions.ParseHardwareVersion(viper.GetString(FlagHardwareVersion))
+			if err_ != nil {
+				return err_
+			}
+
+			res, height, err := cliCtx.QueryStore(
+				types.GetTestingResultsKey(vid, pid, softwareVersion, hardwareVersion), queryRoute)
 			if err != nil || res == nil {
-				return types.ErrTestingResultDoesNotExist(vid, pid)
+				return types.ErrTestingResultDoesNotExist(vid, pid, softwareVersion, hardwareVersion)
 			}
 
 			var testingResult types.TestingResults
@@ -71,10 +82,15 @@ func GetCmdTestingResult(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model SoftwareVersion")
+	cmd.Flags().String(FlagHardwareVersion, "", "Model HardwareVersion")
+
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
 
 	return cmd
 }

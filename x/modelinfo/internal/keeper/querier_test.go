@@ -36,7 +36,10 @@ func TestQuerier_QueryModel(t *testing.T) {
 	// query model
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryModel, fmt.Sprintf("%v", modelInfo.Model.VID), fmt.Sprintf("%v", modelInfo.Model.PID)},
+		[]string{
+			QueryModel, fmt.Sprintf("%v", modelInfo.Model.VID), fmt.Sprintf("%v", modelInfo.Model.PID),
+			fmt.Sprintf("%v", modelInfo.Model.SoftwareVersion), fmt.Sprintf("%v", modelInfo.Model.HardwareVersion),
+		},
 		abci.RequestQuery{},
 	)
 
@@ -53,7 +56,10 @@ func TestQuerier_QueryModelForUnknown(t *testing.T) {
 	// query model
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryModel, fmt.Sprintf("%v", testconstants.VID), fmt.Sprintf("%v", testconstants.PID)},
+		[]string{
+			QueryModel, fmt.Sprintf("%v", testconstants.VID), fmt.Sprintf("%v", testconstants.PID),
+			fmt.Sprintf("%v", testconstants.SoftwareVersion), fmt.Sprintf("%v", testconstants.HardwareVersion),
+		},
 		abci.RequestQuery{},
 	)
 

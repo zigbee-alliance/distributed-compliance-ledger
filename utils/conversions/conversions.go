@@ -74,6 +74,32 @@ func ParsePID(str string) (uint16, sdk.Error) {
 	return res, nil
 }
 
+func ParseSoftwareVersion(str string) (uint32, sdk.Error) {
+	res, err := ParseUInt32FromString(str)
+	if err != nil {
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid SoftwareVersion: %v", err.Data()))
+	}
+
+	if res == 0 {
+		return 0, sdk.ErrUnknownRequest("Invalid SoftwareVersion: it must be non zero 32-bit unsigned integer")
+	}
+
+	return res, nil
+}
+
+func ParseHardwareVersion(str string) (uint32, sdk.Error) {
+	res, err := ParseUInt32FromString(str)
+	if err != nil {
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid HardwareVersion: %v", err.Data()))
+	}
+
+	if res == 0 {
+		return 0, sdk.ErrUnknownRequest("Invalid HardwareVersion: it must be non zero 32-bit unsigned integer")
+	}
+
+	return res, nil
+}
+
 func ParseCID(str string) (uint16, sdk.Error) {
 	res, err := ParseUInt16FromString(str)
 	if err != nil {

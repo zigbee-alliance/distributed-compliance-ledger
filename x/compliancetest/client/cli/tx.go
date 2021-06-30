@@ -62,6 +62,16 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			softwareVersion, err := conversions.ParseSoftwareVersion(viper.GetString(FlagSoftwareVersion))
+			if err != nil {
+				return err
+			}
+
+			hardwareVersion, err := conversions.ParseHardwareVersion(viper.GetString(FlagHardwareVersion))
+			if err != nil {
+				return err
+			}
+
 			testResult, err_ := cliCtx.ReadFromFile(viper.GetString(FlagTestResult))
 			if err_ != nil {
 				return err_
@@ -73,7 +83,8 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 					"it must be RFC3339 encoded date", viper.GetString(FlagTestDate)))
 			}
 
-			msg := types.NewMsgAddTestingResult(vid, pid, testResult, testDate, cliCtx.FromAddress())
+			msg := types.NewMsgAddTestingResult(vid, pid, softwareVersion,
+				hardwareVersion, testResult, testDate, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -81,12 +92,18 @@ func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model SoftwareVersion")
+	cmd.Flags().String(FlagHardwareVersion, "", "Model HardwareVersion")
+
 	cmd.Flags().StringP(FlagTestResult, FlagTestResultShortcut, "",
 		"Test result (string or path to file containing data)")
 	cmd.Flags().StringP(FlagTestDate, FlagTestDateShortcut, "", "Date of test result (rfc3339 encoded)")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
+
 	_ = cmd.MarkFlagRequired(FlagTestResult)
 	_ = cmd.MarkFlagRequired(FlagTestDate)
 

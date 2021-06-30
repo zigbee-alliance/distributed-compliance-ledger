@@ -37,11 +37,13 @@ func (n ListModelInfoItems) String() string {
 }
 
 type ModelInfoItem struct {
-	VID   uint16         `json:"vid"`
-	PID   uint16         `json:"pid"`
-	Name  string         `json:"name"`
-	SKU   string         `json:"sku"`
-	Owner sdk.AccAddress `json:"owner"`
+	VID             uint16         `json:"vid"`
+	PID             uint16         `json:"pid"`
+	ProductName     string         `json:"productName"`
+	SoftwareVersion uint32         `json:"softwareVersion"`
+	HardwareVersion uint32         `json:"hardwareVersion"`
+	SKU             string         `json:"sku"`
+	Owner           sdk.AccAddress `json:"owner"`
 }
 
 // Response Payload for a list query with pagination.

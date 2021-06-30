@@ -122,6 +122,8 @@ func getTestModelForUpdate() types.Model {
 	return Model{
 		VID:                        testconstants.VID,
 		PID:                        testconstants.PID,
+		SoftwareVersion:            testconstants.SoftwareVersion,
+		HardwareVersion:            testconstants.HardwareVersion,
 		CID:                        testconstants.CID + 1,
 		Description:                "New Description",
 		OtaURL:                     "http://ota.firmware.com/new",

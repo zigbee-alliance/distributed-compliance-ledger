@@ -23,21 +23,25 @@ import (
 const RouterKey = ModuleName
 
 type MsgAddTestingResult struct {
-	VID        uint16         `json:"vid"`
-	PID        uint16         `json:"pid"`
-	TestResult string         `json:"test_result"`
-	TestDate   time.Time      `json:"test_date"` // rfc3339 encoded date
-	Signer     sdk.AccAddress `json:"signer"`
+	VID             uint16         `json:"vid"`
+	PID             uint16         `json:"pid"`
+	SoftwareVersion uint32         `json:"softwareVersion"`
+	HardwareVersion uint32         `json:"hardwareVersion"`
+	TestResult      string         `json:"test_result"`
+	TestDate        time.Time      `json:"test_date"` // rfc3339 encoded date
+	Signer          sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddTestingResult(vid uint16, pid uint16, testResult string,
+func NewMsgAddTestingResult(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32, testResult string,
 	testDate time.Time, signer sdk.AccAddress) MsgAddTestingResult {
 	return MsgAddTestingResult{
-		VID:        vid,
-		PID:        pid,
-		TestResult: testResult,
-		TestDate:   testDate,
-		Signer:     signer,
+		VID:             vid,
+		PID:             pid,
+		SoftwareVersion: softwareVersion,
+		HardwareVersion: hardwareVersion,
+		TestResult:      testResult,
+		TestDate:        testDate,
+		Signer:          signer,
 	}
 }
 

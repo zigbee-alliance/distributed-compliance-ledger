@@ -37,7 +37,8 @@ func TestHandler_AddModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query model
-	receivedModelInfo := queryModelInfo(setup, modelInfo.VID, modelInfo.PID)
+	receivedModelInfo := queryModelInfo(setup, modelInfo.VID, modelInfo.PID,
+		modelInfo.SoftwareVersion, modelInfo.HardwareVersion)
 
 	// check
 	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.VID)
@@ -63,12 +64,13 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query updated model
-	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.VID, msgUpdateModelInfo.PID)
+	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.Model.VID, msgUpdateModelInfo.Model.PID,
+		msgUpdateModelInfo.Model.SoftwareVersion, msgUpdateModelInfo.Model.HardwareVersion)
 
 	// check
-	require.Equal(t, receivedModelInfo.Model.VID, msgAddModelInfo.VID)
-	require.Equal(t, receivedModelInfo.Model.PID, msgAddModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.CID, msgUpdateModelInfo.CID)
+	require.Equal(t, receivedModelInfo.Model.VID, msgUpdateModelInfo.Model.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, msgUpdateModelInfo.Model.PID)
+	require.Equal(t, receivedModelInfo.Model.CID, msgUpdateModelInfo.Model.CID)
 }
 
 func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
@@ -110,7 +112,8 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query model
-	receivedModelInfo := queryModelInfo(setup, testconstants.VID, testconstants.PID)
+	receivedModelInfo := queryModelInfo(setup, testconstants.VID, testconstants.PID,
+		testconstants.SoftwareVersion, testconstants.HardwareVersion)
 
 	// check
 	require.Equal(t, receivedModelInfo.Model.CID, uint16(0))
@@ -150,7 +153,8 @@ func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query model
-	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.VID, msgUpdateModelInfo.PID)
+	receivedModelInfo := queryModelInfo(setup, msgUpdateModelInfo.VID, msgUpdateModelInfo.PID,
+		msgUpdateModelInfo.SoftwareVersion, msgUpdateModelInfo.HardwareVersion)
 
 	// check
 	require.Equal(t, receivedModelInfo.Model.CID, msgAddModelInfo.CID)
@@ -158,10 +162,14 @@ func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	require.Equal(t, receivedModelInfo.Model.OtaURL, msgAddModelInfo.OtaURL)
 }
 
-func queryModelInfo(setup TestSetup, vid uint16, pid uint16) types.ModelInfo {
+func queryModelInfo(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) types.ModelInfo {
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{keeper.QueryModel, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid)},
+		[]string{
+			keeper.QueryModel, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid),
+			fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", hardwareVersion),
+		},
 		abci.RequestQuery{},
 	)
 

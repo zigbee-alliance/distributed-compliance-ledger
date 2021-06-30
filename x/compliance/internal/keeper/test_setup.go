@@ -25,7 +25,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
@@ -71,6 +71,8 @@ func DefaultCertifiedModel() types.ComplianceInfo {
 	return types.NewCertifiedComplianceInfo(
 		testconstants.VID,
 		testconstants.PID,
+		testconstants.SoftwareVersion,
+		testconstants.HardwareVersion,
 		types.CertificationType(testconstants.CertificationType),
 		testconstants.CertificationDate,
 		testconstants.EmptyString,
@@ -82,6 +84,8 @@ func DefaultRevokedModel() types.ComplianceInfo {
 	return types.NewRevokedComplianceInfo(
 		testconstants.VID,
 		testconstants.PID,
+		testconstants.SoftwareVersion,
+		testconstants.HardwareVersion,
 		types.CertificationType(testconstants.CertificationType),
 		testconstants.RevocationDate,
 		testconstants.RevocationReason,

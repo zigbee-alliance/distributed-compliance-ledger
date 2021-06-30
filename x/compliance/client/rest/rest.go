@@ -23,15 +23,18 @@ import (
 )
 
 const (
-	vid               = "vid"
-	pid               = "pid"
-	certificationType = "certification_type"
+	VID = "vid"
+	PID = "pid"
+	SV  = "softwareVersion"
+	HV  = "hardwareVersion"
+	CT  = "certification_type"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application.
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
 	r.HandleFunc(
-		fmt.Sprintf("/%s/{%s}/{%s}/{%s}", storeName, vid, pid, certificationType),
+		fmt.Sprintf("/%s/{%s}/{%s}/{%s}/{%s}/{%s}", storeName,
+			VID, PID, SV, HV, CT),
 		getComplianceInfoHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
@@ -39,11 +42,13 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		getComplianceInfosHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Certified, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}/{%s}/{%s}", storeName, types.Certified,
+			VID, PID, SV, HV, CT),
 		certifyModelHandler(cliCtx),
 	).Methods("PUT")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Certified, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}/{%s}/{%s}", storeName, types.Certified,
+			VID, PID, SV, HV, CT),
 		getCertifiedModelHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
@@ -51,11 +56,13 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		getCertifiedModelsHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Revoked, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}/{%s}/{%s}", storeName, types.Revoked,
+			VID, PID, SV, HV, CT),
 		revokeModelHandler(cliCtx),
 	).Methods("PUT")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Revoked, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}/{%s}/{%s}", storeName, types.Revoked,
+			VID, PID, SV, HV, CT),
 		getRevokedModelHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(

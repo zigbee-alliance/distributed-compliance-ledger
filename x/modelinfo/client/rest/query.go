@@ -43,23 +43,38 @@ func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 
 		vars := restCtx.Variables()
 
-		vid, err_ := conversions.ParseVID(vars[vid])
+		vid, err_ := conversions.ParseVID(vars[VID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		pid, err_ := conversions.ParsePID(vars[pid])
+		pid, err_ := conversions.ParsePID(vars[PID])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+		softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		res, height, err := restCtx.QueryStore(types.GetModelInfoKey(vid, pid), storeName)
+		hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+		//nolint
+		// TODO  -- Fix me
+		res, height, err := restCtx.QueryStore(types.GetModelInfoKey(vid, pid, softwareVersion, hardwareVersion), storeName)
 		if err != nil || res == nil {
-			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrModelInfoDoesNotExist(vid, pid).Error())
+			restCtx.WriteErrorResponse(http.StatusNotFound,
+				types.ErrModelInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion).Error())
 
 			return
 		}
@@ -91,7 +106,7 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 
 		vars := restCtx.Variables()
 
-		vid, err_ := conversions.ParseVID(vars[vid])
+		vid, err_ := conversions.ParseVID(vars[VID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 

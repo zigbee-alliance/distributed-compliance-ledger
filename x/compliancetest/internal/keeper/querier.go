@@ -48,11 +48,21 @@ func queryTestingResult(ctx sdk.Context, path []string, keeper Keeper) (res []by
 		return nil, err
 	}
 
-	if !keeper.IsTestingResultsPresents(ctx, vid, pid) {
-		return nil, types.ErrTestingResultDoesNotExist(vid, pid)
+	softwareVersion, err := conversions.ParseSoftwareVersion(path[2])
+	if err != nil {
+		return nil, err
 	}
 
-	testingResult := keeper.GetTestingResults(ctx, vid, pid)
+	hardwareVersion, err := conversions.ParseHardwareVersion(path[3])
+	if err != nil {
+		return nil, err
+	}
+
+	if !keeper.IsTestingResultsPresents(ctx, vid, pid, softwareVersion, hardwareVersion) {
+		return nil, types.ErrTestingResultDoesNotExist(vid, pid, softwareVersion, hardwareVersion)
+	}
+
+	testingResult := keeper.GetTestingResults(ctx, vid, pid, softwareVersion, hardwareVersion)
 
 	res = codec.MustMarshalJSONIndent(keeper.cdc, testingResult)
 

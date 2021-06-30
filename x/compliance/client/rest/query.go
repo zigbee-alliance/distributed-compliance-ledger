@@ -66,25 +66,40 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 
 	vars := restCtx.Variables()
 
-	vid, err_ := conversions.ParseVID(vars[vid])
+	vid, err_ := conversions.ParseVID(vars[VID])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 		return
 	}
 
-	pid, err_ := conversions.ParsePID(vars[pid])
+	pid, err_ := conversions.ParsePID(vars[PID])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 		return
 	}
 
-	certificationType := types.CertificationType(vars[certificationType])
+	softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
+	if err_ != nil {
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+		return
+	}
+
+	hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
+	if err_ != nil {
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+		return
+	}
+
+	certificationType := types.CertificationType(vars[CT])
 
 	isInState := types.ComplianceInfoInState{Value: false}
 
-	res, height, err := restCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), storeName)
+	res, height, err := restCtx.QueryStore(
+		types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion, hardwareVersion), storeName)
 	if res != nil {
 		var complianceInfo types.ComplianceInfo
 
@@ -95,7 +110,7 @@ func getComplianceInfoInState(cliCtx context.CLIContext, w http.ResponseWriter, 
 
 	if err != nil {
 		restCtx.WriteErrorResponse(http.StatusNotFound,
-			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+			types.ErrComplianceInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion, certificationType).Error())
 
 		return
 	}
@@ -108,26 +123,41 @@ func getComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *http
 
 	vars := restCtx.Variables()
 
-	vid, err_ := conversions.ParseVID(vars[vid])
+	vid, err_ := conversions.ParseVID(vars[VID])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 		return
 	}
 
-	pid, err_ := conversions.ParsePID(vars[pid])
+	pid, err_ := conversions.ParsePID(vars[PID])
 	if err_ != nil {
 		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 		return
 	}
 
-	certificationType := types.CertificationType(vars[certificationType])
+	softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
+	if err_ != nil {
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
-	res, height, err := restCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), storeName)
+		return
+	}
+
+	hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
+	if err_ != nil {
+		restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+		return
+	}
+
+	certificationType := types.CertificationType(vars[CT])
+
+	res, height, err := restCtx.QueryStore(
+		types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion, hardwareVersion), storeName)
 	if err != nil || res == nil {
 		restCtx.WriteErrorResponse(http.StatusNotFound,
-			types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType).Error())
+			types.ErrComplianceInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion, certificationType).Error())
 
 		return
 	}
@@ -147,7 +177,7 @@ func getAllComplianceInfo(cliCtx context.CLIContext, w http.ResponseWriter, r *h
 		return
 	}
 
-	certificationType := types.CertificationType(restCtx.Request().FormValue(certificationType))
+	certificationType := types.CertificationType(restCtx.Request().FormValue(CT))
 	params := types.NewListQueryParams(certificationType, paginationParams.Skip, paginationParams.Take)
 
 	restCtx.QueryList(path, params)

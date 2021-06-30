@@ -60,11 +60,21 @@ func queryModel(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Ke
 		return nil, err
 	}
 
-	if !keeper.IsModelInfoPresent(ctx, vid, pid) {
-		return nil, types.ErrModelInfoDoesNotExist(vid, pid)
+	softwareVersion, err := conversions.ParseSoftwareVersion(path[2])
+	if err != nil {
+		return nil, err
 	}
 
-	modelInfo := keeper.GetModelInfo(ctx, vid, pid)
+	hardwareVersion, err := conversions.ParseHardwareVersion(path[3])
+	if err != nil {
+		return nil, err
+	}
+
+	if !keeper.IsModelInfoPresent(ctx, vid, pid, softwareVersion, hardwareVersion) {
+		return nil, types.ErrModelInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion)
+	}
+
+	modelInfo := keeper.GetModelInfo(ctx, vid, pid, softwareVersion, hardwareVersion)
 
 	res = codec.MustMarshalJSONIndent(keeper.cdc, modelInfo)
 
@@ -92,11 +102,13 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res 
 		}
 		if len(result.Items) < params.Take || params.Take == 0 {
 			item := types.ModelInfoItem{
-				VID:   modelInfo.Model.VID,
-				PID:   modelInfo.Model.PID,
-				Name:  modelInfo.Model.ProductName,
-				SKU:   modelInfo.Model.SKU,
-				Owner: modelInfo.Owner,
+				VID:             modelInfo.Model.VID,
+				PID:             modelInfo.Model.PID,
+				ProductName:     modelInfo.Model.ProductName,
+				SoftwareVersion: modelInfo.Model.SoftwareVersion,
+				HardwareVersion: modelInfo.Model.HardwareVersion,
+				SKU:             modelInfo.Model.SKU,
+				Owner:           modelInfo.Owner,
 			}
 
 			result.Items = append(result.Items, item)

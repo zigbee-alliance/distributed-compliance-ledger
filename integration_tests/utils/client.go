@@ -54,8 +54,10 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 	}
 
 	client := &http.Client{}
+	url := BuildURL(uri)
+	println("URL is %v", url)
 	//nolint:noctx
-	req, err := http.NewRequest(method, BuildURL(uri), bytes.NewBuffer(body))
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(body))
 	if err != nil {
 		return nil, http.StatusInternalServerError
 	}

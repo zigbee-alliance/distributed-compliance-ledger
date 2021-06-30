@@ -91,9 +91,13 @@ create_new_account vendor_account "Vendor"
 echo "Publish Model"
 vid=$RANDOM
 pid=$RANDOM
-productName="Device #1"
-echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from "$vendor_account" --yes)
+sv=$RANDOM
+hv=$RANDOM
+productName="Device#1"
+echo "Add Model with VID: $vid PID: $pid SV: $sv HV: $hv"
+echo "dclcli tx modelinfo add-model --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv --productName=\"$productName\" --description=\"Device Description\" --sku=\"SKU12FS\"  --softwareVersionString=\"1.0b123\"   --hardwareVersionString=\"5.1.23\"  --cdVersionNumber=\"32\" --from \"$vendor_account\" --yes"
+
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv --productName="$productName" --description="Device Description" --sku="SKU12FS"  --softwareVersionString="1.0b123"   --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from "$vendor_account" --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -106,10 +110,12 @@ check_response "$result" "\"moniker\": \"node0\""
 echo "$result"
 
 echo "Query Model using node0 node"
-echo "Get Model with VID: $vid PID: $pid"
-result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
+echo "Get Model with VID: $vid PID: $pid SV: $sv HV: $hv"
+result=$(dclcli query modelinfo model --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersion\": $sv"
+check_response "$result" "\"hardwareVersion\": $hv"
 check_response "$result" "\"productName\": \"$productName\""
 echo "$result"
 

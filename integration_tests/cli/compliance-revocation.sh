@@ -34,34 +34,35 @@ create_new_account second_zb_account "ZBCertificationCenter"
 
 vid=$RANDOM
 pid=$RANDOM
-
-echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from $vendor_account --yes)
+sv=$RANDOM
+hv=$RANDOM
+echo "Add Model with $vid PID: $pid SV: $sv HV: $hv"
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersionString="1.0b123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from $vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Add Testing Result for Model VID: $vid PID: $pid"
+echo "Add Testing Result for Model $vid PID: $pid SV: $sv HV: $hv"
 testing_result="http://first.place.com"
 test_date="2020-11-24T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
+echo "Revoke Certification for uncertificate Model with $vid PID: $pid SV: $sv HV: $hv"
 revocation_date="2020-02-02T02:20:20Z"
 revocation_reason="some reason"
 certification_type="zb"
-result=$(echo "test1234" | dclcli tx compliance revoke-model --vid=$vid --pid=$pid --certification-type="$certification_type" --revocation-date="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
+result=$(echo "test1234" | dclcli tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv --certification-type="$certification_type" --revocation-date="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created"
-result=$(dclcli query compliance certified-model --vid=$vid --pid=$pid --certification-type="zb")
+result=$(dclcli query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv --certification-type="zb")
 check_response "$result" "\"value\": false"
 echo "$result"
 
 echo "Get Revoked Model with VID: ${vid} PID: ${pid} before compliance record was created"
-result=$(dclcli query compliance revoked-model --vid=$vid --pid=$pid --certification-type="zb")
+result=$(dclcli query compliance revoked-model --vid=$vid --pid=$pid --softwareVersion=$sv --hardwareVersion=$hv --certification-type="zb")
 check_response "$result" "\"value\": true"
 echo "$result"
 

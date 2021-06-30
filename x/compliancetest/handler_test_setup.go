@@ -94,13 +94,15 @@ func Setup() TestSetup {
 	return setup
 }
 
-func TestMsgAddTestingResult(signer sdk.AccAddress, vid uint16, pid uint16) MsgAddTestingResult {
+func TestMsgAddTestingResult(signer sdk.AccAddress, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) MsgAddTestingResult {
 	return MsgAddTestingResult{
-		VID:        vid,
-		PID:        pid,
-		TestResult: testconstants.TestResult,
-		TestDate:   testconstants.TestDate,
-		Signer:     signer,
+		VID:             vid,
+		PID:             pid,
+		SoftwareVersion: softwareVersion,
+		HardwareVersion: hardwareVersion,
+		TestResult:      testconstants.TestResult,
+		TestDate:        testconstants.TestDate,
+		Signer:          signer,
 	}
 }
 

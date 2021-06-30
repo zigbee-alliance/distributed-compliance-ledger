@@ -47,4 +47,6 @@ type (
 	ModelInfoItem      = types.ModelInfoItem
 	VendorItem         = types.VendorItem
 	Model              = types.Model
+	ProductVersions    = types.ProductVersions
+	Version            = types.Version
 )

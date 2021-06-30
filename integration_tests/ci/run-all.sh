@@ -136,7 +136,7 @@ for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$CLI_SHELL_TEST finished successfully"
   else
-    log "$CLI_SHELL_TEST falied"
+    log "$CLI_SHELL_TEST failed"
     exit 1
   fi
 

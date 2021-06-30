@@ -43,8 +43,8 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgAddModelInfo) sdk.Result {
 	// check if model already exists
-	if keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return types.ErrModelInfoAlreadyExists(msg.VID, msg.PID).Result()
+	if keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
+		return types.ErrModelInfoAlreadyExists(msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion).Result()
 	}
 
 	// check sender has enough rights to add model
@@ -98,11 +98,14 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgUpdateModelInfo) sdk.Result {
 	// check if model exists
-	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
+	if !keeper.IsModelInfoPresent(ctx, msg.Model.VID, msg.Model.PID,
+		msg.Model.SoftwareVersion, msg.Model.HardwareVersion) {
+		return types.ErrModelInfoDoesNotExist(msg.Model.VID, msg.Model.PID,
+			msg.Model.SoftwareVersion, msg.Model.HardwareVersion).Result()
 	}
 
-	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)
+	modelInfo := keeper.GetModelInfo(ctx, msg.Model.VID, msg.Model.PID,
+		msg.Model.SoftwareVersion, msg.Model.HardwareVersion)
 
 	// check if sender has enough rights to update model
 	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
@@ -110,65 +113,66 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 	}
 
 	if msg.OtaURL != "" && modelInfo.Model.OtaURL == "" {
-		return types.ErrOtaURLCannotBeSet(msg.VID, msg.PID).Result()
+		return types.ErrOtaURLCannotBeSet(msg.Model.VID, msg.Model.PID,
+		msg.Model.SoftwareVersion, msg.Model.HardwareVersion).Result()
 	}
 
 	// updates existing model value only if corresponding value in MsgUpdate is not empty
 
-	if msg.CID != 0 {
-		modelInfo.Model.CID = msg.CID
+	if msg.Model.CID != 0 {
+		modelInfo.Model.CID = msg.Model.CID
 	}
 
-	if msg.Description != "" {
-		modelInfo.Model.Description = msg.Description
+	if msg.Model.Description != "" {
+		modelInfo.Model.Description = msg.Model.Description
 	}
 
-	if msg.Revoked != modelInfo.Model.Revoked {
-		modelInfo.Model.Revoked = msg.Revoked
+	if msg.Model.Revoked != modelInfo.Model.Revoked {
+		modelInfo.Model.Revoked = msg.Model.Revoked
 	}
 
-	if msg.CDVersionNumber != 0 {
-		modelInfo.Model.CDVersionNumber = msg.CDVersionNumber
+	if msg.Model.CDVersionNumber != 0 {
+		modelInfo.Model.CDVersionNumber = msg.Model.CDVersionNumber
 	}
 
-	if msg.OtaURL != "" {
-		modelInfo.Model.OtaURL = msg.OtaURL
+	if msg.Model.OtaURL != "" {
+		modelInfo.Model.OtaURL = msg.Model.OtaURL
 	}
 
-	if msg.OtaChecksum != "" {
-		modelInfo.Model.OtaChecksum = msg.OtaChecksum
+	if msg.Model.OtaChecksum != "" {
+		modelInfo.Model.OtaChecksum = msg.Model.OtaChecksum
 	}
 
-	if msg.OtaChecksumType != "" {
-		modelInfo.Model.OtaChecksumType = msg.OtaChecksumType
+	if msg.Model.OtaChecksumType != "" {
+		modelInfo.Model.OtaChecksumType = msg.Model.OtaChecksumType
 	}
 
-	if msg.CommissioningCustomFlowURL != "" {
-		modelInfo.Model.CommissioningCustomFlowURL = msg.CommissioningCustomFlowURL
+	if msg.Model.CommissioningCustomFlowURL != "" {
+		modelInfo.Model.CommissioningCustomFlowURL = msg.Model.CommissioningCustomFlowURL
 	}
 
-	if msg.ReleaseNotesURL != "" {
-		modelInfo.Model.ReleaseNotesURL = msg.ReleaseNotesURL
+	if msg.Model.ReleaseNotesURL != "" {
+		modelInfo.Model.ReleaseNotesURL = msg.Model.ReleaseNotesURL
 	}
 
-	if msg.UserManualURL != "" {
-		modelInfo.Model.UserManualURL = msg.UserManualURL
+	if msg.Model.UserManualURL != "" {
+		modelInfo.Model.UserManualURL = msg.Model.UserManualURL
 	}
 
-	if msg.SupportURL != "" {
-		modelInfo.Model.SupportURL = msg.SupportURL
+	if msg.Model.SupportURL != "" {
+		modelInfo.Model.SupportURL = msg.Model.SupportURL
 	}
 
-	if msg.ProductURL != "" {
-		modelInfo.Model.ProductURL = msg.ProductURL
+	if msg.Model.ProductURL != "" {
+		modelInfo.Model.ProductURL = msg.Model.ProductURL
 	}
 
-	if msg.ChipBlob != "" {
-		modelInfo.Model.ChipBlob = msg.ChipBlob
+	if msg.Model.ChipBlob != "" {
+		modelInfo.Model.ChipBlob = msg.Model.ChipBlob
 	}
 
-	if msg.VendorBlob != "" {
-		modelInfo.Model.VendorBlob = msg.VendorBlob
+	if msg.Model.VendorBlob != "" {
+		modelInfo.Model.VendorBlob = msg.Model.VendorBlob
 	}
 
 	// store updated model
@@ -181,11 +185,11 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgDeleteModelInfo) sdk.Result {
 	// check if model exists
-	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
+	if !keeper.IsModelInfoPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
+		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion).Result()
 	}
 
-	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID)
+	modelInfo := keeper.GetModelInfo(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion)
 
 	// check if sender has enough rights to delete model
 	if err := checkUpdateModelRights(modelInfo.Owner, msg.Signer); err != nil {
@@ -193,7 +197,7 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 	}
 
 	// remove model from the store
-	keeper.DeleteModelInfo(ctx, msg.VID, msg.PID)
+	keeper.DeleteModelInfo(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion)
 
 	return sdk.Result{}
 }

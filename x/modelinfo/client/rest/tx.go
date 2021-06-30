@@ -112,6 +112,8 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		model := types.Model{
 			VID:                        req.Model.VID,
 			PID:                        req.Model.PID,
+			SoftwareVersion:            req.Model.SoftwareVersion,
+			HardwareVersion:            req.Model.HardwareVersion,
 			CID:                        req.Model.CID,
 			Description:                req.Model.Description,
 			CDVersionNumber:            req.Model.CDVersionNumber,

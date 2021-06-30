@@ -36,6 +36,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 	modelinfoQueryCmd.AddCommand(client.GetCommands(
+		GetCmdModelVersions(storeKey, cdc),
 		GetCmdModel(storeKey, cdc),
 		GetCmdAllModels(storeKey, cdc),
 		GetCmdVendors(storeKey, cdc),
@@ -48,7 +49,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "model",
-		Short: "Query Model by combination of Vendor ID and Product ID",
+		Short: "Query Model by combination of Vendor ID, Product ID, SoftwareVersion and HardwareVersion",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
@@ -63,15 +64,86 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err_
 			}
 
-			res, height, err := cliCtx.QueryStore(types.GetModelInfoKey(vid, pid), queryRoute)
+			softwareVersion, err_ := conversions.ParseUInt32FromString(viper.GetString(FlagSoftwareVersion))
+			if err_ != nil {
+				return err_
+			}
+
+			hardwareVersion, err_ := conversions.ParseUInt32FromString(viper.GetString(FlagHardwareVersion))
+			if err_ != nil {
+				return err_
+			}
+
+			res, height, err := cliCtx.QueryStore(types.GetModelInfoKey(vid, pid, softwareVersion, hardwareVersion), queryRoute)
 			if err != nil || res == nil {
-				return types.ErrModelInfoDoesNotExist(vid, pid)
+				return types.ErrModelInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion)
 			}
 
 			var modelInfo types.ModelInfo
 			cdc.MustUnmarshalBinaryBare(res, &modelInfo)
 
 			return cliCtx.EncodeAndPrintWithHeight(modelInfo, height)
+		},
+	}
+
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model SoftwareVersion")
+	cmd.Flags().String(FlagHardwareVersion, "", "Model HardwareVersion")
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
+
+	return cmd
+}
+
+func GetCmdModelVersions(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "model-versions",
+		Short: "Query the list of all Model Versions by combination of Vendor ID and Product ID",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
+			if err_ != nil {
+				return err_
+			}
+
+			pid, err_ := conversions.ParsePID(viper.GetString(FlagPID))
+			if err_ != nil {
+				return err_
+			}
+
+			if viper.GetString(FlagSoftwareVersion) != "" && viper.GetString(FlagHardwareVersion) != "" {
+				// We get Specific Model for the given Software Version
+				res, height, err := cliCtx.QueryStore(types.GetModelInfoKey(vid, pid, 0, 0), queryRoute)
+				if err != nil || res == nil {
+					// TODO FIXME
+					return types.ErrModelInfoDoesNotExist(vid, pid, 0, 0)
+				}
+
+				var modelInfo types.ModelInfo
+				cdc.MustUnmarshalBinaryBare(res, &modelInfo)
+
+				return cliCtx.EncodeAndPrintWithHeight(modelInfo, height)
+			} else {
+				res, height, err := cliCtx.QueryStore(types.GetProductKey(vid, pid), queryRoute)
+				if err != nil || res == nil {
+					// TODO FIXME
+					return types.ErrModelInfoDoesNotExist(vid, pid, 0, 0)
+				}
+
+				var modelInfo types.ModelInfo
+				cdc.MustUnmarshalBinaryBare(res, &modelInfo)
+
+				return cliCtx.EncodeAndPrintWithHeight(modelInfo, height)
+			}
+
+			// TODO : GET All versions of the given model and return them as paginated results
 		},
 	}
 

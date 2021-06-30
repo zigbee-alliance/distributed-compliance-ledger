@@ -40,6 +40,8 @@ const (
 type ComplianceInfo struct {
 	VID               uint16                  `json:"vid"`
 	PID               uint16                  `json:"pid"`
+	SoftwareVersion   uint32                  `json:"softwareVersion"`
+	HardwareVersion   uint32                  `json:"hardwareVersion"`
 	State             ComplianceState         `json:"state"`
 	Date              time.Time               `json:"date"` // rfc3339 encoded date
 	CertificationType CertificationType       `json:"certification_type"`
@@ -48,11 +50,14 @@ type ComplianceInfo struct {
 	History           []ComplianceHistoryItem `json:"history,omitempty"`
 }
 
-func NewCertifiedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType,
+func NewCertifiedComplianceInfo(vid uint16, pid uint16, softwareVersion uint32,
+	hardwareVersion uint32, certificationType CertificationType,
 	date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
+		SoftwareVersion:   softwareVersion,
+		HardwareVersion:   hardwareVersion,
 		State:             Certified,
 		Date:              date,
 		CertificationType: certificationType,
@@ -62,11 +67,14 @@ func NewCertifiedComplianceInfo(vid uint16, pid uint16, certificationType Certif
 	}
 }
 
-func NewRevokedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType,
+func NewRevokedComplianceInfo(vid uint16, pid uint16, softwareVersion uint32,
+	hardwareVersion uint32, certificationType CertificationType,
 	date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
 		VID:               vid,
 		PID:               pid,
+		SoftwareVersion:   softwareVersion,
+		HardwareVersion:   hardwareVersion,
 		State:             Revoked,
 		Date:              date,
 		CertificationType: certificationType,
@@ -129,5 +137,7 @@ func (d ComplianceHistoryItem) String() string {
 type ComplianceInfoKey struct {
 	VID               uint16            `json:"vid"`
 	PID               uint16            `json:"pid"`
+	SoftwareVersion   uint32            `json:"softwareVersion"`
+	HardwareVersion   uint32            `json:"hardwareVersion"`
 	CertificationType CertificationType `json:"certification_type"`
 }

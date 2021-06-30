@@ -296,6 +296,16 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			softwareVersion, err := conversions.ParseSoftwareVersion(viper.GetString(FlagSoftwareVersion))
+			if err != nil {
+				return err
+			}
+
+			hardwareVersion, err := conversions.ParseHardwareVersion(viper.GetString(FlagHardwareVersion))
+			if err != nil {
+				return err
+			}
+
 			var cid uint16
 			if cidStr := viper.GetString(FlagCID); len(cidStr) != 0 {
 				cid, err = conversions.ParseCID(cidStr)
@@ -337,6 +347,8 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 
 				VID:                        vid,
 				PID:                        pid,
+				SoftwareVersion:            softwareVersion,
+				HardwareVersion:            hardwareVersion,
 				CID:                        cid,
 				Description:                description,
 				CDVersionNumber:            cdVersionNumber,
@@ -362,6 +374,10 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 		"Model vendor ID")
 	cmd.Flags().String(FlagPID, "",
 		"Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "",
+		"Model SoftwareVersion")
+	cmd.Flags().String(FlagHardwareVersion, "",
+		"Model HardwareVersion")
 	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "",
 		"Model description (string or path to file containing data)")
 
@@ -394,6 +410,8 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
 
 	return cmd
 }

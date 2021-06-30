@@ -46,11 +46,13 @@ func TestCompliancetestDemo(t *testing.T) {
 	_, _ = utils.AddModelInfo(modelInfo, vendor)
 
 	// Publish first testing result using Sign and Broadcast AddTestingResult message
-	firstTestingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, testHouse.Address)
+	firstTestingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID,
+		modelInfo.SoftwareVersion, modelInfo.HardwareVersion, testHouse.Address)
 	utils.SignAndBroadcastMessage(testHouse, firstTestingResult)
 
 	// Check testing result is created
-	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID)
+	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID,
+		firstTestingResult.SoftwareVersion, firstTestingResult.HardwareVersion)
 	require.Equal(t, receivedTestingResult.VID, firstTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, firstTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
@@ -63,11 +65,13 @@ func TestCompliancetestDemo(t *testing.T) {
 	_, _ = utils.AddModelInfo(secondModelInfo, vendor)
 
 	// Publish second testing result using POST
-	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, testHouse.Address)
+	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID,
+		secondModelInfo.SoftwareVersion, secondModelInfo.HardwareVersion, testHouse.Address)
 	_, _ = utils.PublishTestingResult(secondTestingResult, testHouse)
 
 	// Check testing result is created
-	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID,
+		secondTestingResult.SoftwareVersion, secondTestingResult.HardwareVersion)
 	require.Equal(t, receivedTestingResult.VID, secondTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, secondTestingResult.PID)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
@@ -76,11 +80,13 @@ func TestCompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
 
 	// Publish new testing result for second model
-	thirdTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, secondTestHouse.Address)
+	thirdTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID,
+		secondModelInfo.SoftwareVersion, secondModelInfo.HardwareVersion, secondTestHouse.Address)
 	_, _ = utils.PublishTestingResult(thirdTestingResult, secondTestHouse)
 
 	// Check testing result is created
-	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID,
+		secondTestingResult.SoftwareVersion, secondTestingResult.HardwareVersion)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)

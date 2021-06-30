@@ -78,12 +78,13 @@ vid=$RANDOM
 pid=$RANDOM
 productName="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
+echo "echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$user_address --yes"
 result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$user_address --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get Model with VID: $vid PID: $pid"
-result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
+result=$(dclcli query modelinfo model --vid=$vid --pid=$pid --softwareVersion="10123"  --hardwareVersion="5123" )
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productName\": \"$productName\""
@@ -137,5 +138,6 @@ vid=$RANDOM
 pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
+echo "echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion=10 --softwareVersionString="1.0b123"  --hardwareVersion=5 --hardwareVersionString="5.1.23"  --cdVersionNumber=32 --from=$user_address --yes"
 result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion=10 --softwareVersionString="1.0b123"  --hardwareVersion=5 --hardwareVersionString="5.1.23"  --cdVersionNumber=32 --from=$user_address --yes 2>&1) || true
 check_response_and_report "$result" "No account associated with the address"

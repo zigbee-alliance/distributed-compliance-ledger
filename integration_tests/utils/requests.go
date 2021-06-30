@@ -331,10 +331,12 @@ func SendUpdateModelInfoRequest(model modelinfo.MsgUpdateModelInfo, account stri
 	return SendPutRequest(uri, body, account, constants.Passphrase)
 }
 
-func GetModelInfo(vid uint16, pid uint16) (modelinfo.ModelInfo, int) {
-	println(fmt.Sprintf("Get Model Info with VID:%v PID:%v", vid, pid))
+func GetModelInfo(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (modelinfo.ModelInfo, int) {
+	println(fmt.Sprintf("Get Model Info with VID:%v PID:%v, SV:%v, HV:%v",
+		vid, pid, softwareVersion, hardwareVersion))
 
-	uri := fmt.Sprintf("%s/%s/%v/%v", modelinfo.RouterKey, "models", vid, pid)
+	uri := fmt.Sprintf("%s/%s/%v/%v/%v/%v", modelinfo.RouterKey, "models",
+		vid, pid, softwareVersion, hardwareVersion)
 	response, code := SendGetRequest(uri)
 
 	var result modelinfo.ModelInfo
@@ -405,10 +407,12 @@ func SendTestingResultRequest(testingResult compliancetest.MsgAddTestingResult, 
 			ChainID: constants.ChainID,
 			From:    testingResult.Signer.String(),
 		},
-		VID:        testingResult.VID,
-		PID:        testingResult.PID,
-		TestResult: testingResult.TestResult,
-		TestDate:   testingResult.TestDate,
+		VID:             testingResult.VID,
+		PID:             testingResult.PID,
+		SoftwareVersion: testingResult.SoftwareVersion,
+		HardwareVersion: testingResult.HardwareVersion,
+		TestResult:      testingResult.TestResult,
+		TestDate:        testingResult.TestDate,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -418,10 +422,11 @@ func SendTestingResultRequest(testingResult compliancetest.MsgAddTestingResult, 
 	return SendPostRequest(uri, body, name, constants.Passphrase)
 }
 
-func GetTestingResult(vid uint16, pid uint16) (compliancetest.TestingResults, int) {
+func GetTestingResult(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (compliancetest.TestingResults, int) {
 	println(fmt.Sprintf("Get Testing Result for Model with VID:%v PID:%v", vid, pid))
 
-	uri := fmt.Sprintf("%s/%s/%v/%v", compliancetest.RouterKey, "testresults", vid, pid)
+	uri := fmt.Sprintf("%s/%s/%v/%v/%v/%v", compliancetest.RouterKey, "testresults",
+		vid, pid, softwareVersion, hardwareVersion)
 	response, code := SendGetRequest(uri)
 
 	var result compliancetest.TestingResults
@@ -458,8 +463,9 @@ func SendCertifiedModelRequest(certifyModel compliance.MsgCertifyModel, name str
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
-	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "certified",
-		certifyModel.VID, certifyModel.PID, certifyModel.CertificationType)
+	uri := fmt.Sprintf("%s/%s/%v/%v/%v/%v/%v", compliance.RouterKey, "certified",
+		certifyModel.VID, certifyModel.PID, certifyModel.SoftwareVersion,
+		certifyModel.HardwareVersion, certifyModel.CertificationType)
 
 	return SendPutRequest(uri, body, name, constants.Passphrase)
 }
@@ -492,36 +498,40 @@ func SendRevokedModelRequest(revokeModel compliance.MsgRevokeModel, name string)
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
-	uri := fmt.Sprintf("%s/%s/%v/%v/%v", compliance.RouterKey, "revoked",
-		revokeModel.VID, revokeModel.PID, revokeModel.CertificationType)
+	uri := fmt.Sprintf("%s/%s/%v/%v/%v/%v/%v", compliance.RouterKey, "revoked",
+		revokeModel.VID, revokeModel.PID,
+		revokeModel.SoftwareVersion, revokeModel.HardwareVersion, revokeModel.CertificationType)
 
 	return SendPutRequest(uri, body, name, constants.Passphrase)
 }
 
-func GetComplianceInfo(vid uint16, pid uint16,
+func GetComplianceInfo(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfo, int) {
 	println(fmt.Sprintf("Get Compliance Info for Model with VID:%v PID:%v", vid, pid))
 
-	return getComplianceInfo(vid, pid, certificationType)
+	return getComplianceInfo(vid, pid, softwareVersion, hardwareVersion, certificationType)
 }
 
-func GetCertifiedModel(vid uint16, pid uint16,
+func GetCertifiedModel(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, int) {
-	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Certified", vid, pid))
+	println(fmt.Sprintf("Get Model with VID:%v PID:%v SV:%v HV: %v Certified",
+		vid, pid, softwareVersion, hardwareVersion))
 
-	return getComplianceInfoInState(vid, pid, certificationType, "certified")
+	return getComplianceInfoInState(vid, pid, softwareVersion, hardwareVersion, certificationType, "certified")
 }
 
-func GetRevokedModel(vid uint16, pid uint16,
+func GetRevokedModel(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfoInState, int) {
-	println(fmt.Sprintf("Get if Model with VID:%v PID:%v Revoked", vid, pid))
+	println(fmt.Sprintf("Get Model with VID:%v PID:%v SV:%v HV: %v Revoked",
+		vid, pid, softwareVersion, hardwareVersion))
 
-	return getComplianceInfoInState(vid, pid, certificationType, "revoked")
+	return getComplianceInfoInState(vid, pid, softwareVersion, hardwareVersion, certificationType, "revoked")
 }
 
-func getComplianceInfo(vid uint16, pid uint16,
+func getComplianceInfo(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32,
 	certificationType compliance.CertificationType) (compliance.ComplianceInfo, int) {
-	uri := fmt.Sprintf("%s/%v/%v/%v", compliance.RouterKey, vid, pid, certificationType)
+	uri := fmt.Sprintf("%s/%v/%v/%v/%v/%v", compliance.RouterKey,
+		vid, pid, softwareVersion, hardwareVersion, certificationType)
 	response, code := SendGetRequest(uri)
 
 	var result compliance.ComplianceInfo
@@ -531,9 +541,10 @@ func getComplianceInfo(vid uint16, pid uint16,
 	return result, code
 }
 
-func getComplianceInfoInState(vid uint16, pid uint16,
+func getComplianceInfoInState(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32,
 	certificationType compliance.CertificationType, state string) (compliance.ComplianceInfoInState, int) {
-	uri := fmt.Sprintf("%s/%v/%v/%v/%v", compliance.RouterKey, state, vid, pid, certificationType)
+	uri := fmt.Sprintf("%s/%v/%v/%v/%v/%v/%v", compliance.RouterKey, state, vid, pid,
+		softwareVersion, hardwareVersion, certificationType)
 
 	response, code := SendGetRequest(uri)
 
@@ -907,13 +918,13 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 
 		VID:                                      common.RandUint16(),
 		PID:                                      common.RandUint16(),
+		SoftwareVersion:                          common.RandUint32(),
+		HardwareVersion:                          common.RandUint32(),
 		CID:                                      constants.CID,
 		ProductName:                              RandString(),
 		Description:                              RandString(),
 		SKU:                                      RandString(),
-		SoftwareVersion:                          constants.SoftwareVersion,
 		SoftwareVersionString:                    constants.SoftwareVersionString,
-		HardwareVersion:                          constants.HardwareVersion,
 		HardwareVersionString:                    constants.HardwareVersionString,
 		CDVersionNumber:                          constants.CDVersionNumber,
 		FirmwareDigests:                          constants.FirmwareDigests,
@@ -942,10 +953,12 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 	)
 }
 
-func NewMsgUpdateModelInfo(vid uint16, pid uint16, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
+func NewMsgUpdateModelInfo(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
 	model := modelinfo.Model{
 		VID:                        vid,
 		PID:                        pid,
+		SoftwareVersion:            softwareVersion,
+		HardwareVersion:            hardwareVersion,
 		CID:                        constants.CID + 1,
 		Description:                RandString(),
 		CDVersionNumber:            constants.CDVersionNumber + 1,
@@ -969,10 +982,11 @@ func NewMsgUpdateModelInfo(vid uint16, pid uint16, owner sdk.AccAddress) modelin
 	)
 }
 
-func NewMsgAddTestingResult(vid uint16, pid uint16, owner sdk.AccAddress) compliancetest.MsgAddTestingResult {
+func NewMsgAddTestingResult(vid uint16, pid uint16, softwareVersion uint32,
+	hardwareVersion uint32, owner sdk.AccAddress) compliancetest.MsgAddTestingResult {
 	return compliancetest.NewMsgAddTestingResult(
 		vid,
-		pid,
+		pid, softwareVersion, hardwareVersion,
 		RandString(),
 		time.Now().UTC(),
 		owner,

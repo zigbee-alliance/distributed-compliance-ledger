@@ -26,17 +26,22 @@ const RouterKey = ModuleName
 type MsgCertifyModel struct {
 	VID               uint16            `json:"vid"`
 	PID               uint16            `json:"pid"`
+	SoftwareVersion   uint32            `json:"softwareVersion"`
+	HardwareVersion   uint32            `json:"hardwareVersion"`
 	CertificationDate time.Time         `json:"certification_date"` // rfc3339 encoded date
 	CertificationType CertificationType `json:"certification_type"`
 	Reason            string            `json:"reason,omitempty"`
 	Signer            sdk.AccAddress    `json:"signer"`
 }
 
-func NewMsgCertifyModel(vid uint16, pid uint16, certificationDate time.Time, certificationType CertificationType,
+func NewMsgCertifyModel(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32,
+	certificationDate time.Time, certificationType CertificationType,
 	reason string, signer sdk.AccAddress) MsgCertifyModel {
 	return MsgCertifyModel{
 		VID:               vid,
 		PID:               pid,
+		SoftwareVersion:   softwareVersion,
+		HardwareVersion:   hardwareVersion,
 		CertificationDate: certificationDate,
 		CertificationType: certificationType,
 		Reason:            reason,
@@ -88,17 +93,22 @@ func (m MsgCertifyModel) GetSigners() []sdk.AccAddress {
 type MsgRevokeModel struct {
 	VID               uint16            `json:"vid"`
 	PID               uint16            `json:"pid"`
+	SoftwareVersion   uint32            `json:"softwareVersion"`
+	HardwareVersion   uint32            `json:"hardwareVersion"`
 	RevocationDate    time.Time         `json:"revocation_date"` // rfc3339 encoded date
 	CertificationType CertificationType `json:"certification_type"`
 	Reason            string            `json:"reason,omitempty"`
 	Signer            sdk.AccAddress    `json:"signer"`
 }
 
-func NewMsgRevokeModel(vid uint16, pid uint16, revocationDate time.Time, certificationType CertificationType,
+func NewMsgRevokeModel(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32,
+	revocationDate time.Time, certificationType CertificationType,
 	revocationReason string, signer sdk.AccAddress) MsgRevokeModel {
 	return MsgRevokeModel{
 		VID:               vid,
 		PID:               pid,
+		SoftwareVersion:   softwareVersion,
+		HardwareVersion:   hardwareVersion,
 		RevocationDate:    revocationDate,
 		CertificationType: certificationType,
 		Reason:            revocationReason,

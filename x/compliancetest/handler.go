@@ -45,13 +45,15 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoK
 	}
 
 	// check that corresponding model exists on the ledger
-	if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
+	if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
+		return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion).Result()
 	}
 
 	testingResult := types.NewTestingResult(
 		msg.VID,
 		msg.PID,
+		msg.SoftwareVersion,
+		msg.HardwareVersion,
 		msg.Signer,
 		msg.TestResult,
 		msg.TestDate,

@@ -47,17 +47,18 @@ func TestModelinfoDemo(t *testing.T) {
 
 	// Prepare model info
 	firstModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	VID := firstModelInfo.VID
+	VID := firstModelInfo.Model.VID
 
 	// Sign and Broadcast AddModelInfo message
 	utils.SignAndBroadcastMessage(vendor, firstModelInfo)
 
 	// Check model is created
-	receivedModelInfo, _ := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.VID, firstModelInfo.VID)
-	require.Equal(t, receivedModelInfo.Model.PID, firstModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.ProductName, firstModelInfo.ProductName)
-	require.Equal(t, receivedModelInfo.Model.Description, firstModelInfo.Description)
+	receivedModelInfo, _ := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.Model.PID,
+		firstModelInfo.Model.SoftwareVersion, firstModelInfo.Model.HardwareVersion)
+	require.Equal(t, receivedModelInfo.Model.VID, firstModelInfo.Model.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, firstModelInfo.Model.PID)
+	require.Equal(t, receivedModelInfo.Model.ProductName, firstModelInfo.Model.ProductName)
+	require.Equal(t, receivedModelInfo.Model.Description, firstModelInfo.Model.Description)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
@@ -65,11 +66,12 @@ func TestModelinfoDemo(t *testing.T) {
 	_, _ = utils.AddModelInfo(secondModelInfo, vendor)
 
 	// Check model is created
-	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.VID, secondModelInfo.VID)
-	require.Equal(t, receivedModelInfo.Model.PID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.ProductName, secondModelInfo.ProductName)
-	require.Equal(t, receivedModelInfo.Model.Description, secondModelInfo.Description)
+	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.Model.VID, secondModelInfo.Model.PID,
+		secondModelInfo.Model.SoftwareVersion, secondModelInfo.Model.HardwareVersion)
+	require.Equal(t, receivedModelInfo.Model.VID, secondModelInfo.Model.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, secondModelInfo.Model.PID)
+	require.Equal(t, receivedModelInfo.Model.ProductName, secondModelInfo.Model.ProductName)
+	require.Equal(t, receivedModelInfo.Model.Description, secondModelInfo.Model.Description)
 
 	// Get all model infos
 	modelInfos, _ := utils.GetModelInfos()
@@ -86,12 +88,14 @@ func TestModelinfoDemo(t *testing.T) {
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)
 
 	// Update second model info
-	secondModelInfoUpdate := utils.NewMsgUpdateModelInfo(secondModelInfo.VID, secondModelInfo.PID, vendor.Address)
+	secondModelInfoUpdate := utils.NewMsgUpdateModelInfo(secondModelInfo.Model.VID, secondModelInfo.Model.PID,
+		secondModelInfo.Model.SoftwareVersion, secondModelInfo.Model.HardwareVersion, vendor.Address)
 	_, _ = utils.UpdateModelInfo(secondModelInfoUpdate, vendor)
 
 	// Check model is updated
-	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.Description, secondModelInfoUpdate.Description)
+	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.Model.VID, secondModelInfo.Model.PID,
+		secondModelInfo.Model.SoftwareVersion, secondModelInfo.Model.HardwareVersion)
+	require.Equal(t, receivedModelInfo.Model.Description, secondModelInfoUpdate.Model.Description)
 }
 
 func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
@@ -106,10 +110,11 @@ func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
 	_, _ = utils.SignAndBroadcastTransaction(vendor, addModelTransaction)
 
 	// Check model is created
-	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.VID)
-	require.Equal(t, receivedModelInfo.Model.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.ProductName, modelInfo.ProductName)
+	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.Model.VID, modelInfo.Model.PID,
+		modelInfo.Model.SoftwareVersion, modelInfo.Model.HardwareVersion)
+	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.Model.VID)
+	require.Equal(t, receivedModelInfo.Model.PID, modelInfo.Model.PID)
+	require.Equal(t, receivedModelInfo.Model.ProductName, modelInfo.Model.ProductName)
 }
 
 /* Error cases */
@@ -139,16 +144,16 @@ func Test_AddModelinfo_Twice(t *testing.T) {
 }
 
 func Test_GetModelinfo_ForUnknown(t *testing.T) {
-	_, code := utils.GetModelInfo(common.RandUint16(), common.RandUint16())
+	_, code := utils.GetModelInfo(common.RandUint16(), common.RandUint16(), common.RandUint32(), common.RandUint32())
 	require.Equal(t, http.StatusNotFound, code)
 }
 
 func Test_GetModelinfo_ForInvalidVidPid(t *testing.T) {
 	// zero vid
-	_, code := utils.GetModelInfo(0, common.RandUint16())
+	_, code := utils.GetModelInfo(0, common.RandUint16(), common.RandUint32(), common.RandUint32())
 	require.Equal(t, http.StatusBadRequest, code)
 
 	// zero pid
-	_, code = utils.GetModelInfo(common.RandUint16(), 0)
+	_, code = utils.GetModelInfo(common.RandUint16(), 0, common.RandUint32(), common.RandUint32())
 	require.Equal(t, http.StatusBadRequest, code)
 }

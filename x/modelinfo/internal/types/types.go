@@ -91,10 +91,65 @@ func (d VendorProducts) String() string {
 	return string(bytes)
 }
 
+/*
+	List of versions for specific Product
+*/
+type ProductVersions struct {
+	VID      uint16    `json:"vid"`
+	PID      uint16    `json:"pid"`
+	Versions []Version `json:"products"`
+}
+
+func NewProductVersion(vid uint16, pid uint16) ProductVersions {
+	return ProductVersions{
+		VID:      vid,
+		PID:      pid,
+		Versions: []Version{},
+	}
+}
+
+func (d *ProductVersions) AddProductVersion(version Version) {
+	d.Versions = append(d.Versions, version)
+}
+
+func (d *ProductVersions) RemoveProductVersion(softwareVersion uint32, hardwareVersion uint32) {
+	for i, value := range d.Versions {
+		if softwareVersion == value.SoftwareVersion && hardwareVersion == value.HardwareVersion {
+			d.Versions = append(d.Versions[:i], d.Versions[i+1:]...)
+
+			return
+		}
+	}
+}
+
+func (d *ProductVersions) IsEmpty() bool {
+	return len(d.Versions) == 0
+}
+
+func (d ProductVersions) String() string {
+	bytes, err := json.Marshal(d)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(bytes)
+}
+
 // Single Vendor Product.
 type Product struct {
-	PID   uint16         `json:"pid"`
-	Name  string         `json:"name"`
-	SKU   string         `json:"sku"`
-	Owner sdk.AccAddress `json:"owner"`
+	PID             uint16         `json:"pid"`
+	Name            string         `json:"name"`
+	SKU             string         `json:"sku"`
+	SoftwareVersion uint32         `json:"softwareVersion"`
+	HardwareVersion uint32         `json:"hardwareVersion"`
+	Owner           sdk.AccAddress `json:"owner"`
+}
+
+// Single Product Version.
+type Version struct {
+	SoftwareVersion uint32         `json:"softwareVersion"`
+	HardwareVersion uint32         `json:"hardwareVersion"`
+	Name            string         `json:"name"`
+	SKU             string         `json:"sku"`
+	Owner           sdk.AccAddress `json:"owner"`
 }

@@ -34,13 +34,13 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 
 // Gets the entire ComplianceInfo struct for a ComplianceInfoID.
 func (k Keeper) GetComplianceInfo(ctx sdk.Context, certificationType types.CertificationType,
-	vid uint16, pid uint16) types.ComplianceInfo {
-	if !k.IsComplianceInfoPresent(ctx, certificationType, vid, pid) {
+	vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) types.ComplianceInfo {
+	if !k.IsComplianceInfoPresent(ctx, certificationType, vid, pid, softwareVersion, hardwareVersion) {
 		panic("ComplianceInfo does not exist")
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.GetComplianceInfoKey(certificationType, vid, pid))
+	bz := store.Get(types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion, hardwareVersion))
 
 	var device types.ComplianceInfo
 
@@ -53,7 +53,8 @@ func (k Keeper) GetComplianceInfo(ctx sdk.Context, certificationType types.Certi
 func (k Keeper) SetComplianceInfo(ctx sdk.Context, model types.ComplianceInfo) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.GetComplianceInfoKey(
-		model.CertificationType, model.VID, model.PID), k.cdc.MustMarshalBinaryBare(model))
+		model.CertificationType, model.VID, model.PID, model.SoftwareVersion, model.HardwareVersion),
+		k.cdc.MustMarshalBinaryBare(model))
 }
 
 // Iterate over all ComplianceInfos.
@@ -89,8 +90,9 @@ func (k Keeper) CountTotalComplianceInfo(ctx sdk.Context, certificationType type
 
 // Check if the ComplianceInfo is present in the store or not.
 func (k Keeper) IsComplianceInfoPresent(ctx sdk.Context,
-	certificationType types.CertificationType, vid uint16, pid uint16) bool {
-	return k.isRecordPresent(ctx, types.GetComplianceInfoKey(certificationType, vid, pid))
+	certificationType types.CertificationType, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) bool {
+	return k.isRecordPresent(ctx, types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion, hardwareVersion))
 }
 
 // Check if the record is present in the store or not.

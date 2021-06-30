@@ -28,21 +28,25 @@ func TestKeeper_ModelInfoGetSet(t *testing.T) {
 	setup := Setup()
 
 	// check if model present
-	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID,
+		testconstants.PID, testconstants.SoftwareVersion, testconstants.HardwareVersion))
 
 	// no model before its created
 	require.Panics(t, func() {
-		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
+		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID,
+			testconstants.SoftwareVersion, testconstants.SoftwareVersion)
 	})
 
 	// create model
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, DefaultModelInfo())
 
 	// check if model present
-	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID,
+		testconstants.SoftwareVersion, testconstants.HardwareVersion))
 
 	// get model info
-	modelInfo := setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
+	modelInfo := setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID,
+		testconstants.SoftwareVersion, testconstants.HardwareVersion)
 	require.NotNil(t, modelInfo)
 	require.Equal(t, testconstants.ProductName, modelInfo.Model.ProductName)
 	require.Equal(t, testconstants.Owner, modelInfo.Owner)
@@ -78,17 +82,21 @@ func TestKeeper_ModelInfoDelete(t *testing.T) {
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, DefaultModelInfo())
 
 	// check if model present
-	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.True(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID,
+		testconstants.SoftwareVersion, testconstants.HardwareVersion))
 
 	// delete model
-	setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
+	setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, testconstants.VID, testconstants.PID,
+		testconstants.SoftwareVersion, testconstants.HardwareVersion)
 
 	// check if model present
-	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.False(t, setup.ModelinfoKeeper.IsModelInfoPresent(setup.Ctx, testconstants.VID,
+		testconstants.PID, testconstants.SoftwareVersion, testconstants.HardwareVersion))
 
 	// try to get model info
 	require.Panics(t, func() {
-		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID)
+		setup.ModelinfoKeeper.GetModelInfo(setup.Ctx, testconstants.VID, testconstants.PID,
+			testconstants.SoftwareVersion, testconstants.HardwareVersion)
 	})
 }
 
@@ -113,10 +121,12 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 		setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 
 		vendorProduct := types.Product{
-			PID:   modelInfo.Model.PID,
-			Name:  modelInfo.Model.ProductName,
-			SKU:   modelInfo.Model.SKU,
-			Owner: modelInfo.Owner,
+			PID:             modelInfo.Model.PID,
+			Name:            modelInfo.Model.ProductName,
+			SoftwareVersion: modelInfo.Model.SoftwareVersion,
+			HardwareVersion: modelInfo.Model.HardwareVersion,
+			SKU:             modelInfo.Model.SKU,
+			Owner:           modelInfo.Owner,
 		}
 		PIDs = append(PIDs, vendorProduct)
 
@@ -134,7 +144,8 @@ func TestKeeper_VendorProductsUpdatesWithModelInfo(t *testing.T) {
 		PIDs = append(PIDs[:index], PIDs[index+1:]...)
 
 		// remove second model
-		setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, testconstants.VID, pid.PID)
+		setup.ModelinfoKeeper.DeleteModelInfo(setup.Ctx, testconstants.VID, pid.PID,
+			testconstants.SoftwareVersion, testconstants.HardwareVersion)
 
 		// check vendor products
 		vendorProducts = setup.ModelinfoKeeper.GetVendorProducts(setup.Ctx, testconstants.VID)

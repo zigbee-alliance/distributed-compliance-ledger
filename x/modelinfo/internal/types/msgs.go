@@ -52,6 +52,10 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
 	}
 
+	if m.VID == 65535 {
+		return sdk.ErrUnknownRequest("Invalid VID: 65535 is reserved for ID for All Vendors")
+	}
+
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
 	}
@@ -154,9 +158,11 @@ func (m MsgUpdateModelInfo) GetSigners() []sdk.AccAddress {
 }
 
 type MsgDeleteModelInfo struct {
-	VID    uint16         `json:"vid"`
-	PID    uint16         `json:"pid"`
-	Signer sdk.AccAddress `json:"signer"`
+	VID             uint16         `json:"vid"`
+	PID             uint16         `json:"pid"`
+	SoftwareVersion uint32         `json:"softwareVersion"`
+	HardwareVersion uint32         `json:"hardwareVersion"`
+	Signer          sdk.AccAddress `json:"signer"`
 }
 
 func NewMsgDeleteModelInfo(vid uint16, pid uint16, signer sdk.AccAddress) MsgDeleteModelInfo {

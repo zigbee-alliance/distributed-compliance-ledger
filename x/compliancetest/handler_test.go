@@ -33,15 +33,16 @@ func TestHandler_AddTestingResult(t *testing.T) {
 	setup := Setup()
 
 	// add model
-	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
+	vid, pid, softwareVersion, hardwareVersion := addModel(setup, test_constants.VID, test_constants.PID,
+		test_constants.SoftwareVersion, test_constants.HardwareVersion)
 
 	// add new testing result
-	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid)
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, hardwareVersion)
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query testing result
-	receivedTestingResult := queryTestingResult(setup, vid, pid)
+	receivedTestingResult := queryTestingResult(setup, vid, pid, softwareVersion, hardwareVersion)
 
 	// check
 	require.Equal(t, receivedTestingResult.VID, vid)
@@ -52,7 +53,8 @@ func TestHandler_AddTestingResult(t *testing.T) {
 
 func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	setup := Setup()
-	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
+	vid, pid, softwareVersion, hardwareVersion := addModel(setup, test_constants.VID, test_constants.PID,
+		test_constants.SoftwareVersion, test_constants.HardwareVersion)
 
 	for _, role := range []auth.AccountRole{auth.Vendor, auth.ZBCertificationCenter, auth.NodeAdmin} {
 		// store account
@@ -60,7 +62,7 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new testing result by non TestHouse
-		testingResult := TestMsgAddTestingResult(test_constants.Address3, vid, pid)
+		testingResult := TestMsgAddTestingResult(test_constants.Address3, vid, pid, softwareVersion, hardwareVersion)
 		result := setup.Handler(setup.Ctx, testingResult)
 		require.Equal(t, sdk.CodeUnauthorized, result.Code)
 	}
@@ -70,7 +72,7 @@ func TestHandler_AddTestingResultForUnknownModel(t *testing.T) {
 	setup := Setup()
 
 	// add new testing result
-	testingResult := TestMsgAddTestingResult(setup.TestHouse, test_constants.VID, test_constants.PID)
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.HardwareVersion)
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, modelinfo.CodeModelInfoDoesNotExist, result.Code)
 }
@@ -79,7 +81,8 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 	setup := Setup()
 
 	// add model
-	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
+	vid, pid, softwareVersion, hardwareVersion := addModel(setup, test_constants.VID, test_constants.PID,
+		test_constants.SoftwareVersion, test_constants.HardwareVersion)
 
 	for i, th := range []sdk.AccAddress{test_constants.Address1, test_constants.Address2, test_constants.Address3} {
 		// store account
@@ -87,12 +90,12 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new testing result
-		testingResult := TestMsgAddTestingResult(th, vid, pid)
+		testingResult := TestMsgAddTestingResult(th, vid, pid, softwareVersion, hardwareVersion)
 		result := setup.Handler(setup.Ctx, testingResult)
 		require.Equal(t, sdk.CodeOK, result.Code)
 
 		// query testing result
-		receivedTestingResult := queryTestingResult(setup, vid, pid)
+		receivedTestingResult := queryTestingResult(setup, vid, pid, softwareVersion, hardwareVersion)
 
 		// check
 		require.Equal(t, receivedTestingResult.VID, vid)
@@ -104,18 +107,19 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 
 func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 	setup := Setup()
-
+	j := uint32(1)
 	for i := uint16(1); i < uint16(5); i++ {
 		// add model
-		vid, pid := addModel(setup, i, i)
+		j++
+		vid, pid, softwareVersion, hardwareVersion := addModel(setup, i, i, j, j)
 
 		// add new testing result
-		testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid)
+		testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, hardwareVersion)
 		result := setup.Handler(setup.Ctx, testingResult)
 		require.Equal(t, sdk.CodeOK, result.Code)
 
 		// query testing result
-		receivedTestingResult := queryTestingResult(setup, vid, pid)
+		receivedTestingResult := queryTestingResult(setup, vid, pid, softwareVersion, hardwareVersion)
 
 		// check
 		require.Equal(t, receivedTestingResult.VID, vid)
@@ -129,10 +133,10 @@ func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T)
 	setup := Setup()
 
 	// add model
-	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
+	vid, pid, softwareVersion, hardwareVersion := addModel(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.HardwareVersion)
 
 	// add new testing result
-	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid)
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, hardwareVersion)
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -142,16 +146,19 @@ func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query testing result
-	receivedTestingResult := queryTestingResult(setup, vid, pid)
+	receivedTestingResult := queryTestingResult(setup, vid, pid, softwareVersion, hardwareVersion)
 
 	// check
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 }
 
-func queryTestingResult(setup TestSetup, vid uint16, pid uint16) types.TestingResults {
+func queryTestingResult(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) types.TestingResults {
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{keeper.QueryTestingResult, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid)},
+		[]string{
+			keeper.QueryTestingResult, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid),
+			fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", hardwareVersion),
+		},
 		abci.RequestQuery{},
 	)
 
@@ -161,7 +168,8 @@ func queryTestingResult(setup TestSetup, vid uint16, pid uint16) types.TestingRe
 	return receivedTestingResult
 }
 
-func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
+func addModel(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (uint16, uint16, uint32, uint32) {
 	modelInfo := modelinfo.ModelInfo{
 		Model: modelinfo.Model{
 			VID:                   vid,
@@ -170,9 +178,9 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 			ProductName:           test_constants.ProductName,
 			Description:           test_constants.Description,
 			SKU:                   test_constants.SKU,
-			SoftwareVersion:       test_constants.SoftwareVersion,
+			SoftwareVersion:       softwareVersion,
 			SoftwareVersionString: test_constants.SoftwareVersionString,
-			HardwareVersion:       test_constants.HardwareVersion,
+			HardwareVersion:       hardwareVersion,
 			HardwareVersionString: test_constants.HardwareVersionString,
 			CDVersionNumber:       test_constants.CDVersionNumber,
 			OtaURL:                test_constants.OtaURL,
@@ -185,5 +193,5 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 
 	setup.ModelinfoKeeper.SetModelInfo(setup.Ctx, modelInfo)
 
-	return vid, pid
+	return vid, pid, softwareVersion, hardwareVersion
 }

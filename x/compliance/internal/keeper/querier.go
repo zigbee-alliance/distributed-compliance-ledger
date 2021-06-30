@@ -66,17 +66,27 @@ func queryComplianceInfo(ctx sdk.Context, path []string, keeper Keeper,
 		return nil, err
 	}
 
-	certificationType := types.CertificationType(path[2])
-
-	if !keeper.IsComplianceInfoPresent(ctx, certificationType, vid, pid) {
-		return nil, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
+	softwareVersion, err := conversions.ParseSoftwareVersion(path[2])
+	if err != nil {
+		return nil, err
 	}
 
-	complianceInfo := keeper.GetComplianceInfo(ctx, certificationType, vid, pid)
+	hardwareVersion, err := conversions.ParseHardwareVersion(path[3])
+	if err != nil {
+		return nil, err
+	}
+
+	certificationType := types.CertificationType(path[4])
+
+	if !keeper.IsComplianceInfoPresent(ctx, certificationType, vid, pid, softwareVersion, hardwareVersion) {
+		return nil, types.ErrComplianceInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion, certificationType)
+	}
+
+	complianceInfo := keeper.GetComplianceInfo(ctx, certificationType, vid, pid, softwareVersion, hardwareVersion)
 
 	if len(requestedState) != 0 {
 		if complianceInfo.State != requestedState {
-			return nil, types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
+			return nil, types.ErrComplianceInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion, certificationType)
 		}
 
 		res = codec.MustMarshalJSONIndent(keeper.cdc, types.ComplianceInfoInState{Value: true})
@@ -152,6 +162,8 @@ func queryAllComplianceInfoInStateRecords(ctx sdk.Context, req abci.RequestQuery
 			result.Items = append(result.Items, types.ComplianceInfoKey{
 				VID:               complianceInfo.VID,
 				PID:               complianceInfo.PID,
+				SoftwareVersion:   complianceInfo.SoftwareVersion,
+				HardwareVersion:   complianceInfo.HardwareVersion,
 				CertificationType: complianceInfo.CertificationType,
 			})
 

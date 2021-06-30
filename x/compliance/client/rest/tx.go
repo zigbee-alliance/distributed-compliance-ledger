@@ -38,21 +38,35 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		vars := restCtx.Variables()
 
-		vid, err_ := conversions.ParseVID(vars[vid])
+		vid, err_ := conversions.ParseVID(vars[VID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		pid, err_ := conversions.ParsePID(vars[pid])
+		pid, err_ := conversions.ParsePID(vars[PID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		certificationType := types.CertificationType(vars[certificationType])
+		softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		certificationType := types.CertificationType(vars[CT])
 
 		var req CertifyModelRequest
 		if !restCtx.ReadRESTReq(&req) {
@@ -69,7 +83,7 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCertifyModel(vid, pid, req.CertificationDate,
+		msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, hardwareVersion, req.CertificationDate,
 			certificationType, req.Reason, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
@@ -89,21 +103,35 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 		vars := restCtx.Variables()
 
-		vid, err_ := conversions.ParseVID(vars[vid])
+		vid, err_ := conversions.ParseVID(vars[VID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		pid, err_ := conversions.ParsePID(vars[pid])
+		pid, err_ := conversions.ParsePID(vars[PID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		certificationType := types.CertificationType(vars[certificationType])
+		softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		certificationType := types.CertificationType(vars[CT])
 
 		var req RevokeModelRequest
 		if !restCtx.ReadRESTReq(&req) {
@@ -120,7 +148,7 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRevokeModel(vid, pid, req.RevocationDate,
+		msg := types.NewMsgRevokeModel(vid, pid, softwareVersion, hardwareVersion, req.RevocationDate,
 			certificationType, req.Reason, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)

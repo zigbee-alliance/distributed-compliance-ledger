@@ -29,23 +29,39 @@ func getTestingResultHandler(cliCtx context.CLIContext, storeName string) http.H
 
 		vars := restCtx.Variables()
 
-		vid, err_ := conversions.ParseVID(vars[vid])
+		vid, err_ := conversions.ParseVID(vars[VID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		pid, err_ := conversions.ParsePID(vars[pid])
+		pid, err_ := conversions.ParsePID(vars[PID])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
 			return
 		}
 
-		res, height, err := restCtx.QueryStore(types.GetTestingResultsKey(vid, pid), storeName)
+		softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		res, height, err := restCtx.QueryStore(
+			types.GetTestingResultsKey(vid, pid, softwareVersion, hardwareVersion), storeName)
 		if err != nil || res == nil {
-			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrTestingResultDoesNotExist(vid, pid).Error())
+			restCtx.WriteErrorResponse(
+				http.StatusNotFound, types.ErrTestingResultDoesNotExist(vid, pid, softwareVersion, hardwareVersion).Error())
 
 			return
 		}

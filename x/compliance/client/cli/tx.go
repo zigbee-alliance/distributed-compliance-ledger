@@ -64,6 +64,16 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			softwareVersion, err := conversions.ParseSoftwareVersion(viper.GetString(FlagSoftwareVersion))
+			if err != nil {
+				return err
+			}
+
+			hardwareVersion, err := conversions.ParseHardwareVersion(viper.GetString(FlagHardwareVersion))
+			if err != nil {
+				return err
+			}
+
 			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
 			certificationDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagCertificationDate))
@@ -74,7 +84,8 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgCertifyModel(vid, pid, certificationDate, certificationType, reason, cliCtx.FromAddress())
+			msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, hardwareVersion,
+				certificationDate, certificationType, reason, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -82,6 +93,8 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model SoftwareVersion")
+	cmd.Flags().String(FlagHardwareVersion, "", "Model HardwareVersion")
 	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
 		"Certification type (zb` is the only supported value now)")
 	cmd.Flags().StringP(FlagCertificationDate, FlagCertificationDateShortcut, "",
@@ -91,6 +104,8 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagCertificationDate)
 
@@ -115,6 +130,16 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			softwareVersion, err := conversions.ParseSoftwareVersion(viper.GetString(FlagSoftwareVersion))
+			if err != nil {
+				return err
+			}
+
+			hardwareVersion, err := conversions.ParseHardwareVersion(viper.GetString(FlagHardwareVersion))
+			if err != nil {
+				return err
+			}
+
 			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
 			revocationDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagRevocationDate))
@@ -125,7 +150,8 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgRevokeModel(vid, pid, revocationDate, certificationType, reason, cliCtx.FromAddress())
+			msg := types.NewMsgRevokeModel(vid, pid, softwareVersion, hardwareVersion,
+				revocationDate, certificationType, reason, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -133,6 +159,8 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model SoftwareVersion")
+	cmd.Flags().String(FlagHardwareVersion, "", "Model HardwareVersion")
 	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
 		"Certification type (zb` is the only supported value now)")
 	cmd.Flags().StringP(FlagRevocationDate, FlagCertificationDateShortcut, "",
@@ -142,6 +170,8 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagHardwareVersion)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagRevocationDate)
 
