@@ -94,7 +94,7 @@ func queryAllModels(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res 
 			item := types.ModelInfoItem{
 				VID:   modelInfo.Model.VID,
 				PID:   modelInfo.Model.PID,
-				Name:  modelInfo.Model.Name,
+				Name:  modelInfo.Model.ProductName,
 				SKU:   modelInfo.Model.SKU,
 				Owner: modelInfo.Owner,
 			}

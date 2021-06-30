@@ -38,7 +38,7 @@ var (
 	PID                                        uint16 = 22
 	CID                                        uint16 = 12345
 	Version                                           = "1.0"
-	Name                                              = "Device Name"
+	ProductName                                       = "Device Name"
 	Description                                       = "Device Description"
 	SKU                                               = "RCU2205A"
 	SoftwareVersion                            uint32 = 1

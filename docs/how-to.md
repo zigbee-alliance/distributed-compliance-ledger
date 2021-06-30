@@ -262,7 +262,7 @@ The certificate must be signed by a chain of certificates which must be already 
 ##### 2. Add a new model info with the given VID/PID
 
 
-Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
+Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --productName=<string> --description=<string or path> --sku=<string> 
 --softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
 --from=<account>`
 
@@ -297,9 +297,9 @@ Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<st
   - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
   - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
 
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack`
   
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack --cid=1 --custom="Some Custom information"`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack --cid=1 --custom="Some Custom information"`
 
 
 ## Test House Instructions

@@ -908,7 +908,7 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 		VID:                                      common.RandUint16(),
 		PID:                                      common.RandUint16(),
 		CID:                                      constants.CID,
-		Name:                                     RandString(),
+		ProductName:                              RandString(),
 		Description:                              RandString(),
 		SKU:                                      RandString(),
 		SoftwareVersion:                          constants.SoftwareVersion,

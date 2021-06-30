@@ -19,30 +19,30 @@ type Model struct {
 	VID                                        uint16 `json:"vid"`
 	PID                                        uint16 `json:"pid"`
 	CID                                        uint16 `json:"cid,omitempty"`
-	Name                                       string `json:"name"`
+	ProductName                                string `json:"productName"`
 	Description                                string `json:"description"`
 	SKU                                        string `json:"sku"`
-	SoftwareVersion                            uint32 `json:"software_version"`
-	SoftwareVersionString                      string `json:"software_version_string"`
-	HardwareVersion                            uint32 `json:"hardware_version"`
-	HardwareVersionString                      string `json:"hardware_version_string"`
-	CDVersionNumber                            uint16 `json:"cd_version_number"`
-	FirmwareDigests                            string `json:"firmware_digests,omitempty"`
+	SoftwareVersion                            uint32 `json:"softwareVersion"`
+	SoftwareVersionString                      string `json:"softwareVersionString"`
+	HardwareVersion                            uint32 `json:"hardwareVersion"`
+	HardwareVersionString                      string `json:"hardwareVersionString"`
+	CDVersionNumber                            uint16 `json:"CDVersionNumber"`
+	FirmwareDigests                            string `json:"firmwareDigests,omitempty"`
 	Revoked                                    bool   `json:"revoked"`
-	OtaURL                                     string `json:"ota_url,omitempty"`
-	OtaChecksum                                string `json:"ota_checksum,omitempty"`
-	OtaChecksumType                            string `json:"ota_checksum_type,omitempty"`
-	OtaBlob                                    string `json:"ota_blob,omitempty"`
-	CommissioningCustomFlow                    uint8  `json:"commission_custom_flow,omitempty"`
-	CommissioningCustomFlowURL                 string `json:"commission_custom_flow_url,omitempty"`
-	CommissioningModeInitialStepsHint          uint32 `json:"commissioning_mode_initial_steps_hint,omitempty"`
-	CommissioningModeInitialStepsInstruction   string `json:"commissioning_mode_initial_steps_instruction,omitempty"`
-	CommissioningModeSecondaryStepsHint        uint32 `json:"commissioning_mode_secondary_steps_hint,omitempty"`
-	CommissioningModeSecondaryStepsInstruction string `json:"commissioning_mode_secondary_steps_instruction,omitempty"`
+	OtaURL                                     string `json:"otaURL,omitempty"`
+	OtaChecksum                                string `json:"otaChecksum,omitempty"`
+	OtaChecksumType                            string `json:"otaChecksumType,omitempty"`
+	OtaBlob                                    string `json:"otaBlob,omitempty"`
+	CommissioningCustomFlow                    uint8  `json:"commissioningCustomFlow,omitempty"`
+	CommissioningCustomFlowURL                 string `json:"commissioningCustomFlowURL,omitempty"`
+	CommissioningModeInitialStepsHint          uint32 `json:"commissioningModeInitialStepsHint,omitempty"`
+	CommissioningModeInitialStepsInstruction   string `json:"commissioningModeInitialStepsInstruction,omitempty"`
+	CommissioningModeSecondaryStepsHint        uint32 `json:"commissioningModeSecondaryStepsHint,omitempty"`
+	CommissioningModeSecondaryStepsInstruction string `json:"commissioningModeSecondaryStepsInstruction,omitempty"`
 	ReleaseNotesURL                            string `json:"releaseNotesURL,omitempty"`
-	UserManualURL                              string `json:"user_manual_url,omitempty"`
-	SupportURL                                 string `json:"support_url,omitempty"`
-	ProductURL                                 string `json:"product_url,omitempty"`
-	ChipBlob                                   string `json:"chip_blob,omitempty"`
-	VendorBlob                                 string `json:"vendor_blob,omitempty"`
+	UserManualURL                              string `json:"userManualURL,omitempty"`
+	SupportURL                                 string `json:"supportURL,omitempty"`
+	ProductURL                                 string `json:"productURL,omitempty"`
+	ChipBlob                                   string `json:"chipBlob,omitempty"`
+	VendorBlob                                 string `json:"vendorBlob,omitempty"`
 }

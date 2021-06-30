@@ -69,7 +69,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			name := viper.GetString(FlagName)
+			productName := viper.GetString(FlagProductName)
 
 			description, err_ := cliCtx.ReadFromFile(viper.GetString(FlagDescription))
 			if err_ != nil {
@@ -153,7 +153,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 				VID:                                      vid,
 				PID:                                      pid,
 				CID:                                      cid,
-				Name:                                     name,
+				ProductName:                              productName,
 				Description:                              description,
 				SKU:                                      sku,
 				SoftwareVersion:                          softwareVersion,
@@ -193,7 +193,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 		"Model product ID")
 	cmd.Flags().String(FlagCID, "",
 		"Model category ID")
-	cmd.Flags().StringP(FlagName, FlagNameShortcut, "",
+	cmd.Flags().StringP(FlagProductName, FlagProductNameShortcut, "",
 		"Model name")
 	cmd.Flags().StringP(FlagDescription, FlagDescriptionShortcut, "",
 		"Model description (string or path to file containing data)")
@@ -265,7 +265,7 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
-	_ = cmd.MarkFlagRequired(FlagName)
+	_ = cmd.MarkFlagRequired(FlagProductName)
 	_ = cmd.MarkFlagRequired(FlagDescription)
 	_ = cmd.MarkFlagRequired(FlagSKU)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)

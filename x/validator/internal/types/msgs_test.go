@@ -21,7 +21,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 /*
@@ -30,7 +30,7 @@ import (
 
 func TestNewMsgCreateValidator(t *testing.T) {
 	msg := NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
-		Description{Name: testconstants.Name}, testconstants.Owner)
+		Description{Name: testconstants.ProductName}, testconstants.Owner)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "create_validator")
@@ -43,15 +43,15 @@ func TestValidateMsgCreateValidator(t *testing.T) {
 		msg   MsgCreateValidator
 	}{
 		{true, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
-			Description{Name: testconstants.Name}, testconstants.Owner)},
+			Description{Name: testconstants.ProductName}, testconstants.Owner)},
 		{false, NewMsgCreateValidator(nil, testconstants.ValidatorPubKey1,
-			Description{Name: testconstants.Name}, testconstants.Owner)},
+			Description{Name: testconstants.ProductName}, testconstants.Owner)},
 		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, "",
-			Description{Name: testconstants.Name}, testconstants.Owner)},
+			Description{Name: testconstants.ProductName}, testconstants.Owner)},
 		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
 			Description{}, testconstants.Owner)},
 		{false, NewMsgCreateValidator(testconstants.ValidatorAddress1, testconstants.ValidatorPubKey1,
-			Description{Name: testconstants.Name}, nil)},
+			Description{Name: testconstants.ProductName}, nil)},
 	}
 
 	for _, tc := range cases {

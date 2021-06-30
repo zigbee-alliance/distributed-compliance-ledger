@@ -56,7 +56,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 		VID:                                      msg.VID,
 		PID:                                      msg.PID,
 		CID:                                      msg.CID,
-		Name:                                     msg.Name,
+		ProductName:                              msg.ProductName,
 		Description:                              msg.Description,
 		SKU:                                      msg.SKU,
 		SoftwareVersion:                          msg.SoftwareVersion,

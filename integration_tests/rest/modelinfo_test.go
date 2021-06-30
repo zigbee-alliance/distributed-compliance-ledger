@@ -56,7 +56,7 @@ func TestModelinfoDemo(t *testing.T) {
 	receivedModelInfo, _ := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Model.VID, firstModelInfo.VID)
 	require.Equal(t, receivedModelInfo.Model.PID, firstModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.Name, firstModelInfo.Name)
+	require.Equal(t, receivedModelInfo.Model.ProductName, firstModelInfo.ProductName)
 	require.Equal(t, receivedModelInfo.Model.Description, firstModelInfo.Description)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
@@ -68,7 +68,7 @@ func TestModelinfoDemo(t *testing.T) {
 	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
 	require.Equal(t, receivedModelInfo.Model.VID, secondModelInfo.VID)
 	require.Equal(t, receivedModelInfo.Model.PID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.Name, secondModelInfo.Name)
+	require.Equal(t, receivedModelInfo.Model.ProductName, secondModelInfo.ProductName)
 	require.Equal(t, receivedModelInfo.Model.Description, secondModelInfo.Description)
 
 	// Get all model infos
@@ -109,7 +109,7 @@ func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
 	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
 	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.VID)
 	require.Equal(t, receivedModelInfo.Model.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.Name, modelInfo.Name)
+	require.Equal(t, receivedModelInfo.Model.ProductName, modelInfo.ProductName)
 }
 
 /* Error cases */

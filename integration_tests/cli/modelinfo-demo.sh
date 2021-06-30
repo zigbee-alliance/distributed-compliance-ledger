@@ -25,9 +25,9 @@ create_new_account vendor_account "Vendor"
 
 vid=$RANDOM
 pid=$RANDOM
-name="Device #1"
+productName="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --supportURL="https://originalsupporturl.test" --name="$name" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from $vendor_account --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --supportURL="https://originalsupporturl.test" --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from $vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -35,7 +35,7 @@ echo "Get Model with VID: $vid PID: $pid"
 result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"name\": \"$name\""
+check_response "$result" "\"productName\": \"$productName\""
 echo "$result"
 
 echo "Get all model infos"

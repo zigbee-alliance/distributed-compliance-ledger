@@ -40,7 +40,7 @@ func ValidateGenesis(data GenesisState) error {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Invalid PID. Value: %v", record))
 		}
 
-		if record.Model.Name == "" {
+		if record.Model.ProductName == "" {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed Name. Value: %v", record))
 		}
 

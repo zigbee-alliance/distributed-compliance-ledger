@@ -89,7 +89,7 @@ func getTestModel() types.Model {
 		VID:                                      testconstants.VID,
 		PID:                                      testconstants.PID,
 		CID:                                      testconstants.CID,
-		Name:                                     testconstants.Name,
+		ProductName:                              testconstants.ProductName,
 		Description:                              testconstants.Description,
 		SKU:                                      testconstants.SKU,
 		SoftwareVersion:                          testconstants.SoftwareVersion,

@@ -56,7 +56,7 @@ func addModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			VID:                                      req.Model.VID,
 			PID:                                      req.Model.PID,
 			CID:                                      req.Model.CID,
-			Name:                                     req.Model.Name,
+			ProductName:                              req.Model.ProductName,
 			Description:                              req.Model.Description,
 			SKU:                                      req.Model.SKU,
 			SoftwareVersion:                          req.Model.SoftwareVersion,

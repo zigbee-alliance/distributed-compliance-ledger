@@ -56,7 +56,7 @@ func (k Keeper) SetModelInfo(ctx sdk.Context, modelInfo types.ModelInfo) {
 	// Update the list of products associated with vendor.
 	product := types.Product{
 		PID:   modelInfo.Model.PID,
-		Name:  modelInfo.Model.Name,
+		Name:  modelInfo.Model.ProductName,
 		SKU:   modelInfo.Model.SKU,
 		Owner: modelInfo.Owner,
 	}

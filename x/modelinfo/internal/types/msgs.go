@@ -56,8 +56,8 @@ func (m MsgAddModelInfo) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
 	}
 
-	if len(m.Name) == 0 {
-		return sdk.ErrUnknownRequest("Invalid Name: it cannot be empty")
+	if len(m.ProductName) == 0 {
+		return sdk.ErrUnknownRequest("Invalid ProductName: it cannot be empty")
 	}
 
 	if len(m.Description) == 0 {

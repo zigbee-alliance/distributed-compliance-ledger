@@ -28,7 +28,7 @@ func getTestModel() Model {
 		VID:                                      testconstants.VID,
 		PID:                                      testconstants.PID,
 		CID:                                      testconstants.CID,
-		Name:                                     testconstants.Name,
+		ProductName:                              testconstants.ProductName,
 		Description:                              testconstants.Description,
 		SKU:                                      testconstants.SKU,
 		SoftwareVersion:                          testconstants.SoftwareVersion,
@@ -110,7 +110,7 @@ func TestMsgAddModelInfoValidation(t *testing.T) {
 
 	// Name is mandatory
 	model = getTestModel()
-	model.Name = ""
+	model.ProductName = ""
 	require.NotNil(t, NewMsgAddModelInfo(model, testconstants.Signer).ValidateBasic())
 
 	// Description is mandatory
@@ -183,7 +183,7 @@ func TestMsgAddModelInfoValidation(t *testing.T) {
 
 func TestMsgAddModelInfoGetSignBytes(t *testing.T) {
 	msg := NewMsgAddModelInfo(getTestModel(), testconstants.Signer)
-	expected := "{\"type\":\"modelinfo/AddModelInfo\",\"value\":{\"Model\":{\"cd_version_number\":312,\"chip_blob\":\"Chip Blob Text\",\"cid\":12345,\"commission_custom_flow\":1,\"commission_custom_flow_url\":\"https://sampleflowurl.dclmodel\",\"commissioning_mode_initial_steps_hint\":2,\"commissioning_mode_initial_steps_instruction\":\"commissioningModeInitialStepsInstruction details\",\"commissioning_mode_secondary_steps_hint\":3,\"commissioning_mode_secondary_steps_instruction\":\"commissioningModeSecondaryStepsInstruction steps\",\"description\":\"Device Description\",\"firmware_digests\":\"Firmware Digest String\",\"hardware_version\":21,\"hardware_version_string\":\"2.1\",\"name\":\"Device Name\",\"ota_blob\":\"OTABlob Text\",\"ota_checksum\":\"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\",\"ota_checksum_type\":\"SHA-256\",\"ota_url\":\"http://ota.firmware.com\",\"pid\":22,\"product_url\":\"https://url.producturl.dclmodel\",\"releaseNotesURL\":\"https://url.releasenotes.dclmodel\",\"revoked\":false,\"sku\":\"RCU2205A\",\"software_version\":1,\"software_version_string\":\"1.0\",\"support_url\":\"https://url.supporturl.dclmodel\",\"user_manual_url\":\"https://url.usermanual.dclmodel\",\"vendor_blob\":\"Vendor Blob Text\",\"vid\":1},\"signer\":\"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz\"}}" //nolint:lll
+	expected := `{"type":"modelinfo/AddModelInfo","value":{"Model":{"CDVersionNumber":312,"chipBlob":"Chip Blob Text","cid":12345,"commissioningCustomFlow":1,"commissioningCustomFlowURL":"https://sampleflowurl.dclmodel","commissioningModeInitialStepsHint":2,"commissioningModeInitialStepsInstruction":"commissioningModeInitialStepsInstruction details","commissioningModeSecondaryStepsHint":3,"commissioningModeSecondaryStepsInstruction":"commissioningModeSecondaryStepsInstruction steps","description":"Device Description","firmwareDigests":"Firmware Digest String","hardwareVersion":21,"hardwareVersionString":"2.1","otaBlob":"OTABlob Text","otaChecksum":"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","otaChecksumType":"SHA-256","otaURL":"http://ota.firmware.com","pid":22,"productName":"Device Name","productURL":"https://url.producturl.dclmodel","releaseNotesURL":"https://url.releasenotes.dclmodel","revoked":false,"sku":"RCU2205A","softwareVersion":1,"softwareVersionString":"1.0","supportURL":"https://url.supporturl.dclmodel","userManualURL":"https://url.usermanual.dclmodel","vendorBlob":"Vendor Blob Text","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}` //nolint:lll
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -222,7 +222,7 @@ func TestMsgUpdateModelInfoValidation(t *testing.T) {
 func TestMsgUpdateModelInfoGetSignBytes(t *testing.T) {
 	msg := NewMsgUpdateModelInfo(getTestModelForUpdate(), testconstants.Signer)
 
-	expected := `{"type":"modelinfo/UpdateModelInfo","value":{"Model":{"cd_version_number":312,"chip_blob":"Chip Blob Text","cid":12345,"commission_custom_flow_url":"https://sampleflowurl.dclmodel","description":"Device Description","firmware_digests":"Firmware Digest String","hardware_version":0,"hardware_version_string":"","name":"","ota_blob":"OTABlob Text","ota_checksum":"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","ota_checksum_type":"SHA-256","ota_url":"http://ota.firmware.com","pid":22,"product_url":"https://url.producturl.dclmodel","releaseNotesURL":"https://url.releasenotes.dclmodel","revoked":false,"sku":"","software_version":0,"software_version_string":"","support_url":"https://url.supporturl.dclmodel","user_manual_url":"https://url.usermanual.dclmodel","vendor_blob":"Vendor Blob Text","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}` //nolint:lll
+	expected := `{"type":"modelinfo/UpdateModelInfo","value":{"Model":{"CDVersionNumber":312,"chipBlob":"Chip Blob Text","cid":12345,"commissioningCustomFlowURL":"https://sampleflowurl.dclmodel","description":"Device Description","firmwareDigests":"Firmware Digest String","hardwareVersion":0,"hardwareVersionString":"","otaBlob":"OTABlob Text","otaChecksum":"0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855","otaChecksumType":"SHA-256","otaURL":"http://ota.firmware.com","pid":22,"productName":"","productURL":"https://url.producturl.dclmodel","releaseNotesURL":"https://url.releasenotes.dclmodel","revoked":false,"sku":"","softwareVersion":0,"softwareVersionString":"","supportURL":"https://url.supporturl.dclmodel","userManualURL":"https://url.usermanual.dclmodel","vendorBlob":"Vendor Blob Text","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}` //nolint:lll
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

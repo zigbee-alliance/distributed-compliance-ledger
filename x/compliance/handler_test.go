@@ -483,7 +483,7 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 			VID:                   vid,
 			PID:                   pid,
 			CID:                   constants.CID,
-			Name:                  constants.Name,
+			ProductName:           constants.ProductName,
 			Description:           constants.Description,
 			SKU:                   constants.SKU,
 			SoftwareVersion:       constants.SoftwareVersion,

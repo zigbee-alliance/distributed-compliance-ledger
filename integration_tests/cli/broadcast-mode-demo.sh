@@ -26,7 +26,7 @@ create_new_account vendor_account "Vendor"
 vid1=$RANDOM
 pid1=$RANDOM
 echo "Jack adds Model with VID: $vid1 PID: $pid1. Using default Broadcast Mode: block"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid1 --pid=$pid1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$vendor_account --yes)
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid1 --pid=$pid1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$vendor_account --yes)
 check_response "$result" "\"gas_used\""
 check_response "$result" "\"txhash\""
 check_response "$result" "\"raw_log\""

@@ -710,7 +710,7 @@ If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then 
 - Who can send: 
     - Vendor
 - CLI command: 
-    -   `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
+    -   `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --productName=<string> --description=<string or path> --sku=<string> 
 --softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
 --from=<account> .... `
 - REST API: 

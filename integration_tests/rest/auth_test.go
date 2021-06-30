@@ -96,7 +96,7 @@ func TestAuthDemo(t *testing.T) {
 	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
 	require.Equal(t, receivedModelInfo.Model.VID, modelInfo.VID)
 	require.Equal(t, receivedModelInfo.Model.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.Model.Name, modelInfo.Name)
+	require.Equal(t, receivedModelInfo.Model.ProductName, modelInfo.ProductName)
 
 	// Alice proposes to revoke new account
 	utils.ProposeRevokeAccount(testAccountKeyInfo, aliceKeyInfo)
