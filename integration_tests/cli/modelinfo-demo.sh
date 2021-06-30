@@ -68,9 +68,9 @@ check_response "$result" "\"description\": \"$description\""
 echo "$result"
 
 echo "Update Model with VID: ${vid} PID: ${pid} modifying supportURL"
-support_url="https://newsupporturl.test"
-echo dclcli tx modelinfo update-model --vid=$vid --pid=$pid --cdVersionNumber="32" --from $vendor_account --yes --supportURL "$support_url"
-result=$(echo "test1234" | dclcli tx modelinfo update-model --vid=$vid --pid=$pid --cdVersionNumber="33" --from $vendor_account --yes --supportURL "$support_url")
+supportURL="https://newsupporturl.test"
+echo dclcli tx modelinfo update-model --vid=$vid --pid=$pid --cdVersionNumber="32" --from $vendor_account --yes --supportURL "$supportURL"
+result=$(echo "test1234" | dclcli tx modelinfo update-model --vid=$vid --pid=$pid --cdVersionNumber="33" --from $vendor_account --yes --supportURL "$supportURL")
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -78,5 +78,5 @@ echo "Get Model with VID: ${vid} PID: ${pid}"
 result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"support_url\": \"$support_url\""
+check_response "$result" "\"supportURL\": \"$supportURL\""
 echo "$result"
