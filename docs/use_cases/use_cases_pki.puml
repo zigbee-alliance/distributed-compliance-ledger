@@ -26,7 +26,7 @@ V -> L: ADD_X509_CERT
 L -> L: Validate certificate against the Root Certificate
 
 == Revoke a Certificate by Trustees ==
-T1 -> L: PROPOSE_REVOKE_X509_CERT
+T1 -> L: PROPOSE_REVOKE_X509_ROOT_CERT
 TN -> L: APPROVE_REVOKE_X509_ROOT_CERT
 L -> L:the certificate and all child certificates are revoked\nafter receiving approval from N (or K% of) Trustees
 
