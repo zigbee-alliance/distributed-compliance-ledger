@@ -30,6 +30,7 @@ func NewGenesisState() GenesisState {
 	return GenesisState{ModelInfoRecords: []ModelInfo{}}
 }
 
+//nolint:cognit
 func ValidateGenesis(data GenesisState) error {
 	for _, record := range data.ModelInfoRecords {
 		if record.Model.VID == 0 {
@@ -41,7 +42,7 @@ func ValidateGenesis(data GenesisState) error {
 		}
 
 		if record.Model.ProductName == "" {
-			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed Name. Value: %v", record))
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed ProductName. Value: %v", record))
 		}
 
 		if record.Model.Description == "" {
@@ -54,6 +55,18 @@ func ValidateGenesis(data GenesisState) error {
 
 		if record.Model.HardwareVersion == 0 {
 			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed HardwareVersion. Value: %v", record))
+		}
+
+		if record.Model.HardwareVersionString == "" {
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed HardwareVersionString. Value: %v", record))
+		}
+
+		if record.Model.SoftwareVersion == 0 {
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed SoftwareVersion. Value: %v", record))
+		}
+
+		if record.Model.SoftwareVersionString == "" {
+			return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid ModelInfo: Missed SoftwareVersionString. Value: %v", record))
 		}
 
 		if record.Owner.Empty() {
