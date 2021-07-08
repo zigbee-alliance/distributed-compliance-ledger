@@ -47,8 +47,12 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		getVendorModelsHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/models/{%s}/{%s}/{%s}/{%s}", storeName, VID, PID, SV, HV),
+		fmt.Sprintf("/%s/models/{%s}/{%s}", storeName, VID, PID),
 		getModelHandler(cliCtx, storeName),
+	).Methods("GET")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/models/{%s}/{%s}/{%s}/{%s}", storeName, VID, PID, SV, HV),
+		getModelInfoHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
 		fmt.Sprintf("/%s/vendors", storeName),

@@ -385,6 +385,19 @@ func GetVendorModels(vid uint16) (modelinfo.VendorProducts, int) {
 	return result, code
 }
 
+func GetModelVersions(vid uint16, pid uint16) (modelinfo.ProductVersions, int) {
+	fmt.Printf("Get the list of model versions for VID:%v PID:%v", vid, pid)
+
+	uri := fmt.Sprintf("%s/%s/%v/%v", modelinfo.RouterKey, "models", vid, pid)
+	response, code := SendGetRequest(uri)
+
+	var result modelinfo.ProductVersions
+
+	parseGetReqResponse(removeResponseWrapper(response), &result, code)
+
+	return result, code
+}
+
 func PublishTestingResult(testingResult compliancetest.MsgAddTestingResult, sender KeyInfo) (TxnResponse, int) {
 	println("Publish Testing Result")
 

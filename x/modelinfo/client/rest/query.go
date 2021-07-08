@@ -37,6 +37,56 @@ func getModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerF
 	}
 }
 
+func getModelInfoHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+
+		vid, err_ := conversions.ParseVID(vars[VID])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		pid, err_ := conversions.ParsePID(vars[PID])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		res, height, err := restCtx.QueryStore(types.GetModelInfoKey(vid, pid, softwareVersion, hardwareVersion), storeName)
+		if err != nil || res == nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound,
+				types.ErrModelInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion).Error())
+
+			return
+		}
+
+		var modelInfo types.ModelInfo
+
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &modelInfo)
+
+		restCtx.EncodeAndRespondWithHeight(modelInfo, height)
+	}
+}
+
 func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -56,34 +106,20 @@ func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFu
 
 			return
 		}
-		softwareVersion, err_ := conversions.ParseSoftwareVersion(vars[SV])
-		if err_ != nil {
-			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
-			return
-		}
-
-		hardwareVersion, err_ := conversions.ParseHardwareVersion(vars[HV])
-		if err_ != nil {
-			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
-
-			return
-		}
-		//nolint
-		// TODO  -- Fix me
-		res, height, err := restCtx.QueryStore(types.GetModelInfoKey(vid, pid, softwareVersion, hardwareVersion), storeName)
+		res, height, err := restCtx.QueryStore(types.GetProductKey(vid, pid), storeName)
 		if err != nil || res == nil {
 			restCtx.WriteErrorResponse(http.StatusNotFound,
-				types.ErrModelInfoDoesNotExist(vid, pid, softwareVersion, hardwareVersion).Error())
+				types.ErrModelDoesNotExist(vid, pid).Error())
 
 			return
 		}
 
-		var modelInfo types.ModelInfo
+		var productVersions types.ProductVersions
 
-		cliCtx.Codec.MustUnmarshalBinaryBare(res, &modelInfo)
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &productVersions)
 
-		restCtx.EncodeAndRespondWithHeight(modelInfo, height)
+		restCtx.EncodeAndRespondWithHeight(productVersions, height)
 	}
 }
 

@@ -68,12 +68,13 @@ func (d *VendorProducts) AddVendorProduct(pid Product) {
 	d.Products = append(d.Products, pid)
 }
 
-func (d *VendorProducts) RemoveVendorProduct(pid uint16) {
+func (d *VendorProducts) RemoveVendorProduct(pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) {
 	for i, value := range d.Products {
-		if pid == value.PID {
+		if pid == value.PID &&
+			softwareVersion == value.SoftwareVersion &&
+			hardwareVersion == value.HardwareVersion {
 			d.Products = append(d.Products[:i], d.Products[i+1:]...)
-
-			return
 		}
 	}
 }

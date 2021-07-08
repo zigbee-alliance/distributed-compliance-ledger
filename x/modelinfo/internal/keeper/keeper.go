@@ -65,7 +65,18 @@ func (k Keeper) SetModelInfo(ctx sdk.Context, modelInfo types.ModelInfo) {
 		SKU:             modelInfo.Model.SKU,
 		Owner:           modelInfo.Owner,
 	}
+
 	k.AppendVendorProduct(ctx, modelInfo.Model.VID, product)
+
+	// Update the version of product.
+	version := types.Version{
+		SoftwareVersion: modelInfo.Model.SoftwareVersion,
+		HardwareVersion: modelInfo.Model.HardwareVersion,
+		Name:            modelInfo.Model.ProductName,
+		SKU:             modelInfo.Model.SKU,
+		Owner:           modelInfo.Owner,
+	}
+	k.AppendProductVersion(ctx, modelInfo.Model.VID, modelInfo.Model.PID, version)
 }
 
 // Deletes the ModelInfo from the store.
@@ -79,14 +90,16 @@ func (k Keeper) DeleteModelInfo(ctx sdk.Context, vid uint16, pid uint16,
 	store.Delete(types.GetModelInfoKey(vid, pid, softwareVersion, hardwareVersion))
 
 	// Update the list of devices associated with vendor.
-	k.RemoveVendorProduct(ctx, vid, pid)
+	k.RemoveVendorProduct(ctx, vid, pid, softwareVersion, hardwareVersion)
+	// Update the versions associated with a Model.
+	k.RemoveProductVersion(ctx, vid, pid, softwareVersion, hardwareVersion)
 }
 
 // Iterate over all ModelInfos.
 func (k Keeper) IterateModelInfos(ctx sdk.Context, process func(info types.ModelInfo) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
-	iter := sdk.KVStorePrefixIterator(store, types.ModelInfoPrefix)
+	iter := sdk.KVStorePrefixIterator(store, types.ModelVersionPrefix)
 	defer iter.Close()
 
 	for {
@@ -109,13 +122,12 @@ func (k Keeper) IterateModelInfos(ctx sdk.Context, process func(info types.Model
 }
 
 func (k Keeper) CountTotalModelInfos(ctx sdk.Context) int {
-	return k.countTotal(ctx, types.ModelInfoPrefix)
+	return k.countTotal(ctx, types.ModelVersionPrefix)
 }
 
 // Check if the ModelInfo is present in the store or not.
 func (k Keeper) IsModelInfoPresent(ctx sdk.Context, vid uint16, pid uint16,
 	softwareVersion uint32, hardwareVersion uint32) bool {
-	// TODO add implementaion
 	return k.isRecordPresent(ctx, types.GetModelInfoKey(vid, pid, softwareVersion, hardwareVersion))
 }
 
@@ -137,45 +149,62 @@ func (k Keeper) GetVendorProducts(ctx sdk.Context, vid uint16) types.VendorProdu
 
 // Gets the Versions for a given Product.
 func (k Keeper) GetProductVersions(ctx sdk.Context, vid uint16, pid uint16) types.ProductVersions {
-	// TODO add implementation
-	return types.ProductVersions{}
+	if !k.IsProductPresent(ctx, vid, pid) {
+		return types.NewProductVersion(vid, pid)
+	}
+
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.GetProductKey(vid, pid))
+
+	var productVersions types.ProductVersions
+
+	k.cdc.MustUnmarshalBinaryBare(bz, &productVersions)
+
+	return productVersions
 }
 
 // Add ProductVersion to Product.
 func (k Keeper) AppendProductVersion(ctx sdk.Context, vid uint16, pid uint16,
-	softwareVersion uint32, hardwareVersion uint32) {
-	// TODO add implementation
-	// store := ctx.KVStore(k.storeKey)
+	version types.Version) {
+	store := ctx.KVStore(k.storeKey)
 
-	// vendorProducts := k.GetVendorProducts(ctx, vid)
-	// vendorProducts.AddVendorProduct(product)
+	if k.IsProductPresent(ctx, vid, pid) {
+		k.RemoveProductVersion(ctx, vid, pid,
+			version.SoftwareVersion, version.HardwareVersion)
+	}
 
-	// store.Set(types.GetVendorProductsKey(vid), k.cdc.MustMarshalBinaryBare(vendorProducts))
+	productVersions := k.GetProductVersions(ctx, vid, pid)
+	productVersions.AddProductVersion(version)
+	store.Set(types.GetProductKey(vid, pid), k.cdc.MustMarshalBinaryBare(productVersions))
 }
 
 // Delete ProductVersion from Product.
 func (k Keeper) RemoveProductVersion(ctx sdk.Context, vid uint16, pid uint16,
 	softwareVersion uint32, hardwareVersion uint32) {
-	// TODO add implementaion
-	// if !k.IsVendorProductsPresent(ctx, vid) {
-	// 	panic("VendorProducts does not exist")
-	// }
+	if !k.IsProductPresent(ctx, vid, pid) {
+		panic("Product does not exist")
+	}
 
-	// store := ctx.KVStore(k.storeKey)
+	store := ctx.KVStore(k.storeKey)
 
-	// vendorProducts := k.GetVendorProducts(ctx, vid)
-	// vendorProducts.RemoveVendorProduct(pid)
+	productVersions := k.GetProductVersions(ctx, vid, pid)
+	productVersions.RemoveProductVersion(softwareVersion, hardwareVersion)
 
-	// if vendorProducts.IsEmpty() {
-	// 	store.Delete(types.GetVendorProductsKey(vid))
-	// } else {
-	// 	store.Set(types.GetVendorProductsKey(vid), k.cdc.MustMarshalBinaryBare(vendorProducts))
-	// }
+	if productVersions.IsEmpty() {
+		store.Delete(types.GetProductKey(vid, pid))
+	} else {
+		store.Set(types.GetProductKey(vid, pid), k.cdc.MustMarshalBinaryBare(productVersions))
+	}
 }
 
 // Add Product to Vendor.
 func (k Keeper) AppendVendorProduct(ctx sdk.Context, vid uint16, product types.Product) {
 	store := ctx.KVStore(k.storeKey)
+
+	if k.IsVendorProductsPresent(ctx, vid) {
+		k.RemoveVendorProduct(ctx, vid, product.PID,
+			product.SoftwareVersion, product.HardwareVersion)
+	}
 
 	vendorProducts := k.GetVendorProducts(ctx, vid)
 	vendorProducts.AddVendorProduct(product)
@@ -184,7 +213,8 @@ func (k Keeper) AppendVendorProduct(ctx sdk.Context, vid uint16, product types.P
 }
 
 // Delete Product of Vendor.
-func (k Keeper) RemoveVendorProduct(ctx sdk.Context, vid uint16, pid uint16) {
+func (k Keeper) RemoveVendorProduct(ctx sdk.Context, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) {
 	if !k.IsVendorProductsPresent(ctx, vid) {
 		panic("VendorProducts does not exist")
 	}
@@ -192,7 +222,7 @@ func (k Keeper) RemoveVendorProduct(ctx sdk.Context, vid uint16, pid uint16) {
 	store := ctx.KVStore(k.storeKey)
 
 	vendorProducts := k.GetVendorProducts(ctx, vid)
-	vendorProducts.RemoveVendorProduct(pid)
+	vendorProducts.RemoveVendorProduct(pid, softwareVersion, hardwareVersion)
 
 	if vendorProducts.IsEmpty() {
 		store.Delete(types.GetVendorProductsKey(vid))
@@ -207,7 +237,7 @@ func (k Keeper) IsVendorProductsPresent(ctx sdk.Context, vid uint16) bool {
 }
 
 // Check if the Product is present in the store or not.
-func (k Keeper) IsProductsPresent(ctx sdk.Context, vid uint16, pid uint16) bool {
+func (k Keeper) IsProductPresent(ctx sdk.Context, vid uint16, pid uint16) bool {
 	return k.isRecordPresent(ctx, types.GetProductKey(vid, pid))
 }
 

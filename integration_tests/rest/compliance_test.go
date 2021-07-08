@@ -140,7 +140,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	require.Equal(t, complianceInfo.History[0].State, compliance.CertifiedState)
 }
 
-//nolint:funclen
+//nolint:funlen
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Register new account Vendor, ZBCertificationCenter
 	// Publish model info

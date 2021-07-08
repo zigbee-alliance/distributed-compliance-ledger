@@ -118,32 +118,15 @@ func GetCmdModelVersions(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err_
 			}
 
-			if viper.GetString(FlagSoftwareVersion) != "" && viper.GetString(FlagHardwareVersion) != "" {
-				// We get Specific Model for the given Software Version
-				res, height, err := cliCtx.QueryStore(types.GetModelInfoKey(vid, pid, 0, 0), queryRoute)
-				if err != nil || res == nil {
-					// TODO FIXME
-					return types.ErrModelInfoDoesNotExist(vid, pid, 0, 0)
-				}
-
-				var modelInfo types.ModelInfo
-				cdc.MustUnmarshalBinaryBare(res, &modelInfo)
-
-				return cliCtx.EncodeAndPrintWithHeight(modelInfo, height)
-			} else {
-				res, height, err := cliCtx.QueryStore(types.GetProductKey(vid, pid), queryRoute)
-				if err != nil || res == nil {
-					// TODO FIXME
-					return types.ErrModelInfoDoesNotExist(vid, pid, 0, 0)
-				}
-
-				var modelInfo types.ModelInfo
-				cdc.MustUnmarshalBinaryBare(res, &modelInfo)
-
-				return cliCtx.EncodeAndPrintWithHeight(modelInfo, height)
+			res, height, err := cliCtx.QueryStore(types.GetProductKey(vid, pid), queryRoute)
+			if err != nil || res == nil {
+				return types.ErrVendorProductsDoNotExist(vid)
 			}
 
-			// TODO : GET All versions of the given model and return them as paginated results
+			var productVersions types.ProductVersions
+			cdc.MustUnmarshalBinaryBare(res, &productVersions)
+
+			return cliCtx.EncodeAndPrintWithHeight(productVersions, height)
 		},
 	}
 

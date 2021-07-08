@@ -36,7 +36,7 @@ var (
 func GetModelInfoKey(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) []byte {
 	var key []byte
 
-	key = append(key, ModelInfoPrefix...)
+	key = append(key, ModelVersionPrefix...)
 
 	v := make([]byte, 2)
 	binary.LittleEndian.PutUint16(v, vid)

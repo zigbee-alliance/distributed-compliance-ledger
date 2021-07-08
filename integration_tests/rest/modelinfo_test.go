@@ -35,6 +35,7 @@ import (
 	TODO: provide tests for error cases
 */
 
+//nolint:funlen
 func TestModelinfoDemo(t *testing.T) {
 	// Register new Vendor account
 	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
@@ -48,6 +49,7 @@ func TestModelinfoDemo(t *testing.T) {
 	// Prepare model info
 	firstModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
 	VID := firstModelInfo.Model.VID
+	PID := firstModelInfo.Model.PID
 
 	// Sign and Broadcast AddModelInfo message
 	utils.SignAndBroadcastMessage(vendor, firstModelInfo)
@@ -62,7 +64,8 @@ func TestModelinfoDemo(t *testing.T) {
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
 	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	secondModelInfo.VID = VID // Set same Vendor as for the first model
+	secondModelInfo.VID = VID       // Set same Vendor as for the first model
+	secondModelInfo.Model.PID = PID // Set same PID as for the first model
 	_, _ = utils.AddModelInfo(secondModelInfo, vendor)
 
 	// Check model is created
@@ -86,6 +89,14 @@ func TestModelinfoDemo(t *testing.T) {
 	require.Equal(t, uint64(2), uint64(len(vendorModels.Products)))
 	require.Equal(t, firstModelInfo.PID, vendorModels.Products[0].PID)
 	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)
+
+	// Get model versions
+	modelVersions, _ := utils.GetModelVersions(VID, PID)
+	require.Equal(t, uint64(2), uint64(len(modelVersions.Versions)))
+	require.Equal(t, firstModelInfo.SoftwareVersion, modelVersions.Versions[0].SoftwareVersion)
+	require.Equal(t, firstModelInfo.HardwareVersion, modelVersions.Versions[0].HardwareVersion)
+	require.Equal(t, secondModelInfo.SoftwareVersion, modelVersions.Versions[1].SoftwareVersion)
+	require.Equal(t, secondModelInfo.HardwareVersion, modelVersions.Versions[1].HardwareVersion)
 
 	// Update second model info
 	secondModelInfoUpdate := utils.NewMsgUpdateModelInfo(secondModelInfo.Model.VID, secondModelInfo.Model.PID,
