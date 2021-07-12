@@ -72,7 +72,8 @@ func TestHandler_AddTestingResultForUnknownModel(t *testing.T) {
 	setup := Setup()
 
 	// add new testing result
-	testingResult := TestMsgAddTestingResult(setup.TestHouse, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.HardwareVersion)
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, test_constants.VID,
+		test_constants.PID, test_constants.SoftwareVersion, test_constants.HardwareVersion)
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, modelinfo.CodeModelInfoDoesNotExist, result.Code)
 }
@@ -107,6 +108,7 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 
 func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 	setup := Setup()
+	
 	j := uint32(1)
 	for i := uint16(1); i < uint16(5); i++ {
 		// add model
@@ -133,7 +135,8 @@ func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T)
 	setup := Setup()
 
 	// add model
-	vid, pid, softwareVersion, hardwareVersion := addModel(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.HardwareVersion)
+	vid, pid, softwareVersion, hardwareVersion := addModel(setup, test_constants.VID,
+		test_constants.PID, test_constants.SoftwareVersion, test_constants.HardwareVersion)
 
 	// add new testing result
 	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, hardwareVersion)
@@ -152,7 +155,8 @@ func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 }
 
-func queryTestingResult(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) types.TestingResults {
+func queryTestingResult(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) types.TestingResults {
 	result, _ := setup.Querier(
 		setup.Ctx,
 		[]string{

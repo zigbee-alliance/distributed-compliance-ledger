@@ -393,19 +393,17 @@ The set of commands that allows you to manage model infos.
 
   Role: `Vendor`
   
-  Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --productName=<string> --description=<string or path> --sku=<string> 
---softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
---from=<account>`
+  Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --hardwareVersion=<uint32> --productName=<string> --description=<string or path> --sku=<string> --softwareVersionString=<string>  --hardwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - hardwareVersion: `uint32` -  version of model hardware
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
-  - softwareVersion: `uint32` -  Software Version of model (uint32)
   - softwareVersionString: `string` - Software Version String of model
-  - hardwareVersion: `uint32` -  version of model hardware
   - hardwareVersionString: `string` - Hardware Version String of model
   - cdVersionNumber: `uint32` -  CD Version Number of the Certification
   - from: `string` - Name or address of private key with which to sign
@@ -429,20 +427,22 @@ The set of commands that allows you to manage model infos.
   - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
   
 
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from="jack"`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersionString="1.0b123"  --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from="jack"`
   
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32"  --cid=1 --custom="Some Custom information" --otaURL="http://my-ota.com" --otaChecksum="df56hf" --otaChecksumType="SHA-256" --from=jack `
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --cdVersionNumber="32"  --cid=1 --custom="Some Custom information" --otaURL="http://my-ota.com" --otaChecksum="df56hf" --otaChecksumType="SHA-256" --from=jack `
 
 - Update an existing model info. Only the owner can edit a Model Info.
 
   Role: `Vendor`
 
-  Command: `dclcli tx modelinfo update-model --vid=<uint16> --pid=<uint16>  --from=<account>`
+  Command: `dclcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --hardwareVersion=<uint32> --from=<account>`
   existing ModelInfo.
     
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - hardwareVersion: `uint32` -  version of model hardware
   - description: `string` -  model description (string or path to file containing data)
   - cdVersionNumber: `uint32` -  CD Version Number of the Certification
   - from: `string` - Name or address of private key with which to sign
@@ -459,20 +459,23 @@ The set of commands that allows you to manage model infos.
   - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
   - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
     
-  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --cdVersionNumber="32" --description="New Description" --from=jack `
+  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1 --cdVersionNumber="32" --description="New Description" --from=jack `
   
-  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --supportURL="https://product-support.url.test" --otaURL="http://new-ota.com" --from=jack `
+  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1 --supportURL="https://product-support.url.test" --otaURL="http://new-ota.com" --from=jack `
 
 ##### Queries
 - Query a single model info.
 
-  Command: `dclcli query modelinfo model --vid=<uint16> --pid=<uint16>`
+  Command: `dclcli query modelinfo model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --hardwareVersion=<uint32>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - hardwareVersion: `uint32` -  version of model hardware
 
-  Example: `dclcli query modelinfo model --vid=1 --pid=1`
+
+  Example: `dclcli query modelinfo model --vid=1 --pid=1  --softwareVersion=1 --hardwareVersion=1`
   
 - Query a list of all model infos. 
 
@@ -505,6 +508,15 @@ The set of commands that allows you to manage model infos.
 
   Example: `dclcli query modelinfo vendor-models --vid=1`
 
+- Query the list of all Model Versions by combination of Vendor ID and Product ID.
+
+  Command: `dclcli query modelinfo model-versions --vid=<uint16> --pid=<uint16>`
+
+  Flags:
+  - vid: `uint16` -  model vendor ID
+  - pid: `uint16` -  model product ID
+  
+  Example: `dclcli query modelinfo model-versions --vid=1 --pid=1`
 ### Compliance Test
 
 The set of commands that allows you to manage testing results associated with a model.

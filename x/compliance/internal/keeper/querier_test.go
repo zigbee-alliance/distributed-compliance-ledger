@@ -256,15 +256,18 @@ func TestQuerier_QueryAllModelsInStateWithPaginationHeaders(t *testing.T) {
 	}
 }
 
-func getComplianceInfo(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfo, sdk.Error) {
+func getComplianceInfo(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfo, sdk.Error) {
 	return getSingle(setup, vid, pid, softwareVersion, hardwareVersion, QueryComplianceInfo)
 }
 
-func getCertifiedModel(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfoInState, sdk.Error) {
+func getCertifiedModel(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfoInState, sdk.Error) {
 	return getSingleInState(setup, vid, pid, softwareVersion, hardwareVersion, QueryCertifiedModel)
 }
 
-func getRevokedModel(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfoInState, sdk.Error) {
+func getRevokedModel(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfoInState, sdk.Error) {
 	return getSingleInState(setup, vid, pid, softwareVersion, hardwareVersion, QueryRevokedModel)
 }
 

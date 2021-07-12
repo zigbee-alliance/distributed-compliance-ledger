@@ -92,7 +92,8 @@ func (k Keeper) CountTotalComplianceInfo(ctx sdk.Context, certificationType type
 func (k Keeper) IsComplianceInfoPresent(ctx sdk.Context,
 	certificationType types.CertificationType, vid uint16, pid uint16,
 	softwareVersion uint32, hardwareVersion uint32) bool {
-	return k.isRecordPresent(ctx, types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion, hardwareVersion))
+	return k.isRecordPresent(ctx, types.
+		GetComplianceInfoKey(certificationType, vid, pid, softwareVersion, hardwareVersion))
 }
 
 // Check if the record is present in the store or not.

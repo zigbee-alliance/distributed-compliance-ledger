@@ -93,6 +93,24 @@ func GetCmdGetAllComplianceInfos(queryRoute string, cdc *codec.Codec) *cobra.Com
 	return cmd
 }
 
+func GetCmdGetAllCertifiedModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all-certified-models",
+		Short: "Query the list of all certified models",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return getAllComplianceInfoRecords(cdc, fmt.Sprintf("custom/%s/all_certified_models", queryRoute))
+		},
+	}
+
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
+		"Requested certification type. `zb` is the default and the only supported value now")
+	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of models to skip")
+	cmd.Flags().Int(pagination.FlagTake, 0, "amount of models to take")
+
+	return cmd
+}
+
+//nolint:dupl
 func GetCmdGetCertifiedModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "certified-model",
@@ -123,23 +141,7 @@ func GetCmdGetCertifiedModel(queryRoute string, cdc *codec.Codec) *cobra.Command
 	return cmd
 }
 
-func GetCmdGetAllCertifiedModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "all-certified-models",
-		Short: "Query the list of all certified models",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return getAllComplianceInfoRecords(cdc, fmt.Sprintf("custom/%s/all_certified_models", queryRoute))
-		},
-	}
-
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Requested certification type. `zb` is the default and the only supported value now")
-	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of models to skip")
-	cmd.Flags().Int(pagination.FlagTake, 0, "amount of models to take")
-
-	return cmd
-}
-
+//nolint:dupl
 func GetCmdGetRevokedModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "revoked-model",

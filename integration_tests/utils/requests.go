@@ -435,7 +435,8 @@ func SendTestingResultRequest(testingResult compliancetest.MsgAddTestingResult, 
 	return SendPostRequest(uri, body, name, constants.Passphrase)
 }
 
-func GetTestingResult(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (compliancetest.TestingResults, int) {
+func GetTestingResult(vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (compliancetest.TestingResults, int) {
 	println(fmt.Sprintf("Get Testing Result for Model with VID:%v PID:%v", vid, pid))
 
 	uri := fmt.Sprintf("%s/%s/%v/%v/%v/%v", compliancetest.RouterKey, "testresults",
@@ -966,7 +967,8 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 	)
 }
 
-func NewMsgUpdateModelInfo(vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
+func NewMsgUpdateModelInfo(vid uint16, pid uint16, 
+	softwareVersion uint32, hardwareVersion uint32, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
 	model := modelinfo.Model{
 		VID:                        vid,
 		PID:                        pid,

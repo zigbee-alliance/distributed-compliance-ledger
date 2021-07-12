@@ -383,7 +383,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query revoked model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid , softwareVersion, hardwareVersion)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, hardwareVersion)
 	require.Equal(t, types.Revoked, receivedComplianceInfo.State)
 	require.Equal(t, 1, len(receivedComplianceInfo.History))
 
@@ -394,7 +394,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query certified model
-	receivedComplianceInfo, _ = queryComplianceInfo(setup, vid, pid , softwareVersion, hardwareVersion)
+	receivedComplianceInfo, _ = queryComplianceInfo(setup, vid, pid, softwareVersion, hardwareVersion)
 
 	// check
 	checkCertifiedModel(t, receivedComplianceInfo, secondCertifyModelMsg)
@@ -407,7 +407,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	require.Equal(t, revokedModelMsg.RevocationDate, receivedComplianceInfo.History[1].Date)
 
 	// query revoked model
-	_, err := queryRevokedModel(setup, vid, pid , softwareVersion, hardwareVersion)
+	_, err := queryRevokedModel(setup, vid, pid, softwareVersion, hardwareVersion)
 	require.Equal(t, types.CodeComplianceInfoDoesNotExist, err.Code())
 }
 
@@ -431,7 +431,7 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query certified model
-	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid , softwareVersion, hardwareVersion)
+	receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, hardwareVersion)
 	checkRevokedModel(t, receivedComplianceInfo, revokedModelMsg)
 
 	// certify model

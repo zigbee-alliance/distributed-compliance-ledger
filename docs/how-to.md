@@ -259,22 +259,20 @@ The certificate must be signed by a chain of certificates which must be already 
   
   Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
-##### 2. Add a new model info with the given VID/PID
+##### 2. Add a new model info with the given VID/PID/SoftwareVersion/HardwareVersion
 
 
-Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --productName=<string> --description=<string or path> --sku=<string> 
---softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
---from=<account>`
+Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --hardwareVersion=<uint32> --productName=<string> --description=<string or path> --sku=<string> --softwareVersionString=<string>  --hardwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - hardwareVersion: `uint32` -  version of model hardware (uint32)
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
-  - softwareVersion: `uint32` -  Software Version of model (uint32)
   - softwareVersionString: `string` - Software Version String of model
-  - hardwareVersion: `uint32` -  version of model hardware
   - hardwareVersionString: `string` - Hardware Version String of model
   - cdVersionNumber: `uint32` -  CD Version Number of the Certification
   - from: `string` - Name or address of private key with which to sign
@@ -297,9 +295,9 @@ Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --productN
   - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
   - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
 
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersionString="1.0b123"  --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack`
   
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack --cid=1 --custom="Some Custom information"`
+  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1 --productName="Device #1" --description="Device Description" --sku="SKU12FS" --softwareVersionString="1.0b123"  --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack --cid=1 --custom="Some Custom information"`
 
 
 ## Test House Instructions
@@ -318,23 +316,25 @@ The certificate must be signed by a chain of certificates which must be already 
   
   Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
-##### 1B. Add a new testing result for the device model with the given VID/PID
+##### 1B. Add a new testing result for the device model with the given VID/PID/SoftwareVersion/HardwareVersion
 This step is needed for on-ledger certification use case only, see [use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png).
 
  The corresponding model must present on the ledger.
  
- Command: ` dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
+ Command: ` dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --hardwareVersion=<uint32>  --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - hardwareVersion: `uint32` -  version of model hardware (uint32) 
   - test-result: `string` -  test result (string or path to file containing data)
   - test-date: `string` -  date of test result (rfc3339 encoded)
   - from: `string` - Name or address of private key with which to sign
 
-  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1  --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1  --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
    
 ## Certification Center Instructions
@@ -353,41 +353,45 @@ The certificate must be signed by a chain of certificates which must be already 
   
   Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
-##### 1B. Certify the device model with the given VID/PID
+##### 1B. Certify the device model with the given VID/PID/SoftwareVersion/HardwareVersion
 This step is needed for on-ledger certification use case only, see [use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png).
 
 The corresponding model and the test results must present on the ledger.
 
- Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>`
+ Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --hardwareVersion=<uint32>  --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>`
   
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - hardwareVersion: `uint32` -  version of model hardware (uint32)  
   - certification-type: `string` -  certification type (zb` is the only supported value now)
   - certification-date: `string` -  the date of model certification (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of certification
 
-  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1  --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
 
-##### 2. Revoke certification for the device model with the given VID/PID
+##### 2. Revoke certification for the device model with the given VID/PID/SoftwareVersion/HardwareVersion
 This step can be used in either on-ledger certification use case
  ([use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png))
   or off-ledger certification use case ([use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png)).
  
-  Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>`
+  Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --hardwareVersion=<uint32>  --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - hardwareVersion: `uint32` -  version of model hardware (uint  
   - certification-type: `string` -  certification type (zb` is the only supported value now)
   - revocation-date: `string` -  the date of model revocation (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of revocation
 
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1  --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
+  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --softwareVersion=1 --hardwareVersion=1  --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
  
 ## Node Admin Instructions (Setting up a new Validator Node)

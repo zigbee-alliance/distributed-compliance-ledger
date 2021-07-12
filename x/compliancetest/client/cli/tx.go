@@ -44,6 +44,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return complianceTxCmd
 }
 
+//nolint:funlen
 func GetCmdAddTestingResult(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-test-result",

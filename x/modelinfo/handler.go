@@ -114,7 +114,7 @@ func handleMsgUpdateModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 
 	if msg.OtaURL != "" && modelInfo.Model.OtaURL == "" {
 		return types.ErrOtaURLCannotBeSet(msg.Model.VID, msg.Model.PID,
-		msg.Model.SoftwareVersion, msg.Model.HardwareVersion).Result()
+			msg.Model.SoftwareVersion, msg.Model.HardwareVersion).Result()
 	}
 
 	// updates existing model value only if corresponding value in MsgUpdate is not empty

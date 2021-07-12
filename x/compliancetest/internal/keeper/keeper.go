@@ -33,7 +33,8 @@ func NewKeeper(storeKey sdk.StoreKey, cdc *codec.Codec) Keeper {
 }
 
 // Gets the entire TestingResults record for VID/PID combination.
-func (k Keeper) GetTestingResults(ctx sdk.Context, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) types.TestingResults {
+func (k Keeper) GetTestingResults(ctx sdk.Context, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) types.TestingResults {
 	if !k.IsTestingResultsPresents(ctx, vid, pid, softwareVersion, hardwareVersion) {
 		return types.NewTestingResults(vid, pid, softwareVersion, hardwareVersion)
 	}
@@ -52,29 +53,34 @@ func (k Keeper) GetTestingResults(ctx sdk.Context, vid uint16, pid uint16, softw
 func (k Keeper) SetTestingResults(ctx sdk.Context, testingResult types.TestingResults) {
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.GetTestingResultsKey(
-		testingResult.VID, testingResult.PID, testingResult.SoftwareVersion, testingResult.HardwareVersion), k.cdc.MustMarshalBinaryBare(testingResult))
+		testingResult.VID, testingResult.PID, testingResult.SoftwareVersion,
+		testingResult.HardwareVersion), k.cdc.MustMarshalBinaryBare(testingResult))
 }
 
 // Add single TestingResult for an existing TestingResults record.
 func (k Keeper) AddTestingResult(ctx sdk.Context, testingResult types.TestingResult) {
-	testingResults := k.GetTestingResults(ctx, testingResult.VID, testingResult.PID, testingResult.SoftwareVersion, testingResult.HardwareVersion)
+	testingResults := k.GetTestingResults(ctx, testingResult.VID, testingResult.PID,
+		testingResult.SoftwareVersion, testingResult.HardwareVersion)
 
 	testingResults.AddTestingResult(testingResult)
 
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.GetTestingResultsKey(testingResult.VID, testingResult.PID, testingResult.SoftwareVersion, testingResult.HardwareVersion),
+	store.Set(types.GetTestingResultsKey(testingResult.VID, testingResult.PID,
+		testingResult.SoftwareVersion, testingResult.HardwareVersion),
 		k.cdc.MustMarshalBinaryBare(testingResults))
 }
 
 // Check if the TestingResults record is present in the store or not.
-func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) bool {
+func (k Keeper) IsTestingResultsPresents(ctx sdk.Context, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) bool {
 	store := ctx.KVStore(k.storeKey)
 
 	return store.Has(types.GetTestingResultsKey(vid, pid, softwareVersion, hardwareVersion))
 }
 
 // Iterate over all TestingResults records.
-func (k Keeper) IterateTestingResults(ctx sdk.Context, process func(info types.TestingResults) (stop bool)) {
+func (k Keeper) IterateTestingResults(ctx sdk.Context,
+	process func(info types.TestingResults) (stop bool)) {
 	store := ctx.KVStore(k.storeKey)
 
 	iter := sdk.KVStorePrefixIterator(store, types.TestingResultsPrefix)

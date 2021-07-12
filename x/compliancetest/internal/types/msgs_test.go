@@ -15,7 +15,6 @@
 //nolint:testpackage
 package types
 
-//nolint:goimports
 import (
 	"testing"
 	"time"

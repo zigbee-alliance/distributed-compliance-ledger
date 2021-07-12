@@ -45,12 +45,14 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return complianceTxCmd
 }
 
+//nolint:funlen
 func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "certify-model",
 		Short: "Certify an existing model. Note that the corresponding model info and " +
 			"test results must be present on ledger",
 		Args: cobra.ExactArgs(0),
+		//nolint:dupl
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
@@ -112,11 +114,13 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
+//nolint:funlen
 func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revoke-model",
 		Short: "Revoke compliance of an existing model",
 		Args:  cobra.ExactArgs(0),
+		//nolint:dupl
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 

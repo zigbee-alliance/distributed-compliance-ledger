@@ -57,13 +57,15 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	var complianceInfo types.ComplianceInfo
 
 	// nolint:nestif
-	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
+	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID,
+		msg.SoftwareVersion, msg.HardwareVersion) {
 		// Compliance record already exist. Cases:
 		// 1) Only revocation is tracked on the ledger. We want to certify revoked compliance.
 		//The corresponding Model Info and test results are not required to be on the ledger.
 		// 2) Compliance is tracked on ledger. We want to certify revoked compliance.
 		//`Else` branch was passed on first certification. So Model Info and test results are exists on the ledger.
-		complianceInfo = keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion)
+		complianceInfo = keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID,
+			msg.SoftwareVersion, msg.HardwareVersion)
 
 		// if state changes on `certified` check that certification_date is after revocation_date
 		if complianceInfo.State == types.Revoked {
@@ -78,12 +80,16 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeepe
 	} else {
 		// Compliance is tracked on ledger. There is no compliance record yet.
 		// The corresponding Model Info and test results must be present on ledger.
-		if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
-			return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion).Result()
+		if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID,
+			msg.SoftwareVersion, msg.HardwareVersion) {
+			return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID,
+				msg.SoftwareVersion, msg.HardwareVersion).Result()
 		}
 
-		if !compliancetestKeeper.IsTestingResultsPresents(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
-			return compliancetest.ErrTestingResultDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion).Result()
+		if !compliancetestKeeper.IsTestingResultsPresents(ctx, msg.VID, msg.PID,
+			msg.SoftwareVersion, msg.HardwareVersion) {
+			return compliancetest.ErrTestingResultDoesNotExist(msg.VID, msg.PID,
+				msg.SoftwareVersion, msg.HardwareVersion).Result()
 		}
 
 		complianceInfo = types.NewCertifiedComplianceInfo(
@@ -114,9 +120,11 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper
 	var complianceInfo types.ComplianceInfo
 
 	// nolint: gocritic, nestif
-	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
+	if keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID,
+		msg.SoftwareVersion, msg.HardwareVersion) {
 		// Compliance record already exist.
-		complianceInfo = keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion)
+		complianceInfo = keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID,
+			msg.SoftwareVersion, msg.HardwareVersion)
 
 		// if state changes on `revoked` check that revocation_date is after certification_date
 		if complianceInfo.State == types.Certified {
@@ -128,7 +136,8 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper
 
 			complianceInfo.UpdateComplianceInfo(msg.RevocationDate, msg.Reason)
 		}
-	} else if modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
+	} else if modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID,
+		msg.SoftwareVersion, msg.HardwareVersion) {
 		// Only revocation is tracked on the ledger. There is no compliance record yet.
 		// The corresponding Model Info and test results are not required to be on the ledger.
 		complianceInfo = types.NewRevokedComplianceInfo(
@@ -142,7 +151,8 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper
 			msg.Signer,
 		)
 	} else {
-		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion).Result()
+		return types.ErrModelInfoDoesNotExist(msg.VID, msg.PID,
+			msg.SoftwareVersion, msg.HardwareVersion).Result()
 	}
 
 	// store compliance info
@@ -174,11 +184,13 @@ func checkZbCertificationDone(
 	authKeeper auth.Keeper,
 	signer sdk.AccAddress,
 	msg types.MsgCertifyModel) sdk.Error {
-	if !keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion) {
+	if !keeper.IsComplianceInfoPresent(ctx, msg.CertificationType, msg.VID, msg.PID,
+		msg.SoftwareVersion, msg.HardwareVersion) {
 		return nil
 	}
 
-	complianceInfo := keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID, msg.SoftwareVersion, msg.HardwareVersion)
+	complianceInfo := keeper.GetComplianceInfo(ctx, msg.CertificationType, msg.VID, msg.PID,
+		msg.SoftwareVersion, msg.HardwareVersion)
 
 	if complianceInfo.State != types.Certified {
 		return nil
