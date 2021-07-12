@@ -14,7 +14,6 @@
 
 package keeper
 
-//nolint:goimports
 import (
 	"testing"
 

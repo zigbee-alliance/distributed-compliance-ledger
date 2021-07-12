@@ -967,7 +967,7 @@ func NewMsgAddModelInfo(owner sdk.AccAddress) modelinfo.MsgAddModelInfo {
 	)
 }
 
-func NewMsgUpdateModelInfo(vid uint16, pid uint16, 
+func NewMsgUpdateModelInfo(vid uint16, pid uint16,
 	softwareVersion uint32, hardwareVersion uint32, owner sdk.AccAddress) modelinfo.MsgUpdateModelInfo {
 	model := modelinfo.Model{
 		VID:                        vid,

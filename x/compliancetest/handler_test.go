@@ -108,7 +108,7 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 
 func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 	setup := Setup()
-	
+
 	j := uint32(1)
 	for i := uint16(1); i < uint16(5); i++ {
 		// add model

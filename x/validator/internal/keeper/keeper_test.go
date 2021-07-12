@@ -15,12 +15,11 @@
 //nolint:testpackage
 package keeper
 
-//nolint:goimports
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 

@@ -415,7 +415,8 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 	setup := Setup()
 
 	// revoke non-existent model
-	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, constants.VID, constants.PID, constants.SoftwareVersion, constants.HardwareVersion)
+	revokedModelMsg := msgRevokedModel(setup.CertificationCenter, constants.VID, constants.PID,
+		constants.SoftwareVersion, constants.HardwareVersion)
 	revokedModelMsg.RevocationDate = time.Now().UTC()
 	result := setup.Handler(setup.Ctx, revokedModelMsg)
 	require.Equal(t, types.CodeModelInfoDoesNotExist, result.Code)
@@ -463,7 +464,8 @@ func TestHandler_CheckZbCertificationDone(t *testing.T) {
 	require.Equal(t, types.CodeAlreadyCertifyed, result.Code)
 }
 
-func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfo, sdk.Error) {
+func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
 		[]string{
@@ -483,15 +485,18 @@ func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16, softwareVersio
 	return model, nil
 }
 
-func queryCertifiedModel(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (bool, sdk.Error) {
+func queryCertifiedModel(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (bool, sdk.Error) {
 	return queryComplianceInfoInState(setup, vid, pid, softwareVersion, hardwareVersion, keeper.QueryCertifiedModel)
 }
 
-func queryRevokedModel(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (bool, sdk.Error) {
+func queryRevokedModel(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (bool, sdk.Error) {
 	return queryComplianceInfoInState(setup, vid, pid, softwareVersion, hardwareVersion, keeper.QueryRevokedModel)
 }
 
-func queryComplianceInfoInState(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32, state string) (bool, sdk.Error) {
+func queryComplianceInfoInState(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32, state string) (bool, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
 		[]string{
@@ -539,7 +544,8 @@ func addModel(setup TestSetup, vid uint16, pid uint16,
 	return vid, pid, softwareVersion, hardwareVersion
 }
 
-func addTestingResult(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) (uint16, uint16, uint32, uint32) {
+func addTestingResult(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) (uint16, uint16, uint32, uint32) {
 	testingResult := compliancetest.TestingResult{
 		VID:             vid,
 		PID:             pid,
@@ -567,7 +573,8 @@ func msgCertifyModel(signer sdk.AccAddress, vid uint16, pid uint16,
 	}
 }
 
-func msgRevokedModel(signer sdk.AccAddress, vid uint16, pid uint16, softwareVersion uint32, hardwareVersion uint32) MsgRevokeModel {
+func msgRevokedModel(signer sdk.AccAddress, vid uint16, pid uint16,
+	softwareVersion uint32, hardwareVersion uint32) MsgRevokeModel {
 	return MsgRevokeModel{
 		VID:               vid,
 		PID:               pid,

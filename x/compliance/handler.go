@@ -42,6 +42,7 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
 	}
 }
 
+//nolint:funlen
 func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
 	compliancetestKeeper compliancetest.Keeper, authKeeper auth.Keeper,
 	msg types.MsgCertifyModel) sdk.Result {
