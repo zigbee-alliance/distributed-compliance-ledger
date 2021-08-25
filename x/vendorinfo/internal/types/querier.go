@@ -12,13 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+package types
 
-const (
-	FlagAddress      = "address"
-	FlagAddressUsage = "Bench32 encoded account address"
-	FlagPubKey       = "pubkey"
-	FlagRoles        = "roles"
-	FlagVendorId     = "vendorId"
-	FlagRolesUsage   = "amount of accounts to take"
+import (
+	"encoding/json"
 )
+
+// Response Payload for a list query with pagination.
+type ListVendors struct {
+	Total   int          `json:"total"`
+	Vendors []VendorInfo `json:"vendors"`
+}
+
+// Implement fmt.Stringer.
+func (n ListVendors) String() string {
+	res, err := json.Marshal(n)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(res)
+}

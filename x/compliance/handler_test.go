@@ -67,7 +67,7 @@ func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
 
 	for _, tc := range cases {
 		address := constants.Address2
-		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc})
+		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc}, constants.VendorId1)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// try to certify model
@@ -237,7 +237,7 @@ func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 
 	for _, tc := range cases {
 		address := constants.Address2
-		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc})
+		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc}, constants.VendorId1)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// try to certify model
@@ -426,7 +426,7 @@ func TestHandler_CheckZbCertificationDone(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// create other account certification center
-	account := auth.NewAccount(constants.Address3, constants.PubKey3, auth.AccountRoles{auth.ZBCertificationCenter})
+	account := auth.NewAccount(constants.Address3, constants.PubKey3, auth.AccountRoles{auth.ZBCertificationCenter}, 0)
 	setup.authKeeper.SetAccount(setup.Ctx, account)
 
 	secondCertifyModelMsg := msgCertifyModel(account.Address, vid, pid)

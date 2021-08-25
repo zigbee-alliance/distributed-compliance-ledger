@@ -15,10 +15,9 @@
 package cli
 
 const (
-	FlagAddress      = "address"
-	FlagAddressUsage = "Bench32 encoded account address"
-	FlagPubKey       = "pubkey"
-	FlagRoles        = "roles"
-	FlagVendorId     = "vendorId"
-	FlagRolesUsage   = "amount of accounts to take"
+	FlagVendorId             = "vendorId"
+	FlagVendorName           = "vendorName"
+	FlagCompanyLegalName     = "companyLegalName"
+	FlagCompanyPreferredName = "companyPreferredName"
+	FlagLandingPageUrl       = "landingPageUrl"
 )

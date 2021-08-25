@@ -34,7 +34,7 @@ echo 'test1234' | dclcli keys add bob
 dcld init node0 --chain-id dclchain
 
 dcld add-genesis-account --address=$(dclcli keys show jack -a) --pubkey=$(dclcli keys show jack -p) --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$(dclcli keys show alice -a) --pubkey=$(dclcli keys show alice -p) --roles="Trustee,NodeAdmin"
+dcld add-genesis-account --address=$(dclcli keys show alice -a) --pubkey=$(dclcli keys show alice -p) --roles="Trustee,NodeAdmin,Vendor"
 dcld add-genesis-account --address=$(dclcli keys show bob -a) --pubkey=$(dclcli keys show bob -p) --roles="Trustee,NodeAdmin"
 
 echo 'test1234' | dcld gentx --from jack

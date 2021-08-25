@@ -12,13 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+package types
 
-const (
-	FlagAddress      = "address"
-	FlagAddressUsage = "Bench32 encoded account address"
-	FlagPubKey       = "pubkey"
-	FlagRoles        = "roles"
-	FlagVendorId     = "vendorId"
-	FlagRolesUsage   = "amount of accounts to take"
+import (
+	"github.com/cosmos/cosmos-sdk/codec"
 )
+
+// ModuleCdc is the codec for the module.
+var ModuleCdc = codec.New()
+
+func init() {
+	RegisterCodec(ModuleCdc)
+}
+
+// RegisterCodec registers concrete type on the Amino codec.
+func RegisterCodec(cdc *codec.Codec) {
+	cdc.RegisterConcrete(MsgAddVendorInfo{}, ModuleName+"/AddVendorInfo", nil)
+	cdc.RegisterConcrete(MsgUpdateVendorInfo{}, ModuleName+"/UpdateVendorInfo", nil)
+}

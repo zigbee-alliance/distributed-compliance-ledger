@@ -12,13 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
-
-const (
-	FlagAddress      = "address"
-	FlagAddressUsage = "Bench32 encoded account address"
-	FlagPubKey       = "pubkey"
-	FlagRoles        = "roles"
-	FlagVendorId     = "vendorId"
-	FlagRolesUsage   = "amount of accounts to take"
-)
+package keeper

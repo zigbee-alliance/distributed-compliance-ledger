@@ -37,6 +37,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo"
 )
 
 const appName = "dc-ledger"
@@ -58,6 +59,7 @@ var ModuleBasics = module.NewBasicManager(
 	compliance.AppModuleBasic{},
 	compliancetest.AppModuleBasic{},
 	pki.AppModuleBasic{},
+	vendorinfo.AppModuleBasic{},
 )
 
 // MakeCodec generates the necessary codecs for Amino.
@@ -86,6 +88,7 @@ type dcLedgerApp struct {
 	pkiKeeper            pki.Keeper
 	complianceKeeper     compliance.Keeper
 	compliancetestKeeper compliancetest.Keeper
+	vendorinfoKeeper     vendorinfo.Keeper
 
 	// Module Manager
 	mm *module.Manager
@@ -102,7 +105,7 @@ func NewDcLedgerApp(logger log.Logger, db dbm.DB, baseAppOptions ...func(*bam.Ba
 	bApp.SetAppVersion(version.Version)
 
 	keys := sdk.NewKVStoreKeys(bam.MainStoreKey, auth.StoreKey, validator.StoreKey,
-		modelinfo.StoreKey, compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey)
+		modelinfo.StoreKey, compliance.StoreKey, compliancetest.StoreKey, pki.StoreKey, vendorinfo.StoreKey)
 
 	tkeys := sdk.NewTransientStoreKeys(params.TStoreKey)
 
@@ -152,6 +155,7 @@ func InitModuleManager(app *dcLedgerApp) {
 		compliance.NewAppModule(app.complianceKeeper, app.modelinfoKeeper, app.compliancetestKeeper, app.authKeeper),
 		compliancetest.NewAppModule(app.compliancetestKeeper, app.authKeeper, app.modelinfoKeeper),
 		pki.NewAppModule(app.pkiKeeper, app.authKeeper),
+		vendorinfo.NewAppModule(app.vendorinfoKeeper, app.authKeeper),
 	)
 
 	app.mm.SetOrderBeginBlockers(validator.ModuleName)
@@ -164,6 +168,7 @@ func InitModuleManager(app *dcLedgerApp) {
 		compliance.ModuleName,
 		compliancetest.ModuleName,
 		pki.ModuleName,
+		vendorinfo.ModuleName,
 		genutil.ModuleName,
 	)
 
@@ -189,6 +194,9 @@ func InitKeepers(app *dcLedgerApp, keys map[string]*sdk.KVStoreKey) {
 
 	// The AuthKeeper keeper
 	app.authKeeper = MakeAuthKeeper(keys, app)
+
+	// The Vendor keeper
+	app.vendorinfoKeeper = MakeVendorInfoKeeper(keys, app)
 }
 
 func MakeAuthKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) auth.Keeper {
@@ -201,6 +209,13 @@ func MakeAuthKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) auth.Keep
 func MakeModelinfoKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) modelinfo.Keeper {
 	return modelinfo.NewKeeper(
 		keys[modelinfo.StoreKey],
+		app.cdc,
+	)
+}
+
+func MakeVendorInfoKeeper(keys map[string]*sdk.KVStoreKey, app *dcLedgerApp) vendorinfo.Keeper {
+	return vendorinfo.NewKeeper(
+		keys[vendorinfo.StoreKey],
 		app.cdc,
 	)
 }

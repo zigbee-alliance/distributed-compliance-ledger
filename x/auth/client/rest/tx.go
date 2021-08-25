@@ -26,10 +26,11 @@ import (
 )
 
 type ProposeAddAccountRequest struct {
-	BaseReq restTypes.BaseReq  `json:"base_req"`
-	Address sdk.AccAddress     `json:"address"`
-	Pubkey  string             `json:"pubkey"`
-	Roles   types.AccountRoles `json:"roles"`
+	BaseReq  restTypes.BaseReq  `json:"base_req"`
+	Address  sdk.AccAddress     `json:"address"`
+	Pubkey   string             `json:"pubkey"`
+	Roles    types.AccountRoles `json:"roles"`
+	VendorId uint16             `json:"vendorId"`
 }
 
 func proposeAddAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -51,7 +52,7 @@ func proposeAddAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgProposeAddAccount(req.Address, req.Pubkey, req.Roles, restCtx.Signer())
+		msg := types.NewMsgProposeAddAccount(req.Address, req.Pubkey, req.Roles, req.VendorId, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

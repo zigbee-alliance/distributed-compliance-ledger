@@ -12,13 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cli
+package types
+
+import (
+	"encoding/binary"
+)
 
 const (
-	FlagAddress      = "address"
-	FlagAddressUsage = "Bench32 encoded account address"
-	FlagPubKey       = "pubkey"
-	FlagRoles        = "roles"
-	FlagVendorId     = "vendorId"
-	FlagRolesUsage   = "amount of accounts to take"
+	// ModuleName is the name of the module.
+	ModuleName = "vendorinfo"
+
+	// StoreKey to be used when creating the KVStore.
+	StoreKey = ModuleName // it differs from ModuleName to be compatible with cosmos transaction builder and handler.
 )
+
+var (
+	VendorPrefix = []byte{0x01} // prefix for each key to a pending account
+)
+
+// Key builder for Vendor.
+func GetVendorInfoKey(vendorId uint16) []byte {
+	v := make([]byte, 2)
+	binary.LittleEndian.PutUint16(v, vendorId)
+	return append(VendorPrefix, v...)
+}

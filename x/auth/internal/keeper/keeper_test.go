@@ -35,7 +35,7 @@ func TestKeeper_AccountGetSet(t *testing.T) {
 	})
 
 	// store account
-	account := types.NewAccount(testconstants.Address1, testconstants.PubKey1, types.AccountRoles{types.Trustee})
+	account := types.NewAccount(testconstants.Address1, testconstants.PubKey1, types.AccountRoles{types.Trustee}, 0)
 	setup.Keeper.SetAccount(setup.Ctx, account)
 
 	// check if account present
@@ -85,6 +85,7 @@ func TestKeeper_PendingAccountGetSet(t *testing.T) {
 		testconstants.Address1,
 		testconstants.PubKey1,
 		types.AccountRoles{types.Trustee},
+		testconstants.VendorId1,
 		testconstants.Address2,
 	)
 

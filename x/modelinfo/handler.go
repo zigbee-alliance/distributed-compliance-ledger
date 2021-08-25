@@ -48,7 +48,7 @@ func handleMsgAddModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper aut
 	}
 
 	// check sender has enough rights to add model
-	if err := checkAddModelRights(ctx, authKeeper, msg.Signer); err != nil {
+	if err := checkAddModelRights(ctx, authKeeper, msg.Signer, msg.Model.VID); err != nil {
 		return err.Result()
 	}
 
@@ -198,11 +198,15 @@ func handleMsgDeleteModelInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 	return sdk.Result{}
 }
 
-func checkAddModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress) sdk.Error {
+func checkAddModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress, vid uint16) sdk.Error {
 	// sender must have Vendor role to add new model
 	if !authKeeper.HasRole(ctx, signer, auth.Vendor) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddModelInfo transaction should be "+
 			"signed by an account with the %s role", auth.Vendor))
+	}
+	if !authKeeper.HasVendorId(ctx, signer, vid) {
+		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddModelInfo transaction should be "+
+			"signed by an vendor account containing the vendorId %v ", vid))
 	}
 
 	return nil

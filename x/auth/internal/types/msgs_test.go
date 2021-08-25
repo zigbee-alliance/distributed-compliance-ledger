@@ -29,7 +29,7 @@ import (
 
 func TestNewMsgProposeAddAccount(t *testing.T) {
 	msg := NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
-		AccountRoles{}, testconstants.Signer)
+		AccountRoles{}, testconstants.VendorId1, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "propose_add_account")
@@ -42,17 +42,19 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 		msg   MsgProposeAddAccount
 	}{
 		{true, NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
-			AccountRoles{}, testconstants.Signer)},
+			AccountRoles{}, 0, testconstants.Signer)},
 		{true, NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
-			AccountRoles{Vendor, NodeAdmin}, testconstants.Signer)},
+			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorId1, testconstants.Signer)},
+		{true, NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
+			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorId1, testconstants.Signer)},
 		{false, NewMsgProposeAddAccount(nil, testconstants.Pubkey1Str,
-			AccountRoles{}, testconstants.Signer)},
+			AccountRoles{}, 0, testconstants.Signer)},
 		{false, NewMsgProposeAddAccount(testconstants.Address1, "",
-			AccountRoles{}, testconstants.Signer)},
+			AccountRoles{}, 0, testconstants.Signer)},
 		{false, NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
-			AccountRoles{"Wrong Role"}, testconstants.Signer)},
+			AccountRoles{"Wrong Role"}, 0, testconstants.Signer)},
 		{false, NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
-			AccountRoles{}, nil)},
+			AccountRoles{}, 0, nil)},
 	}
 
 	for _, tc := range cases {
@@ -68,11 +70,11 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 
 func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgProposeAddAccount(testconstants.Address1, testconstants.Pubkey1Str,
-		AccountRoles{}, testconstants.Signer)
+		AccountRoles{}, testconstants.VendorId1, testconstants.Signer)
 
 	expected := `{"type":"auth/ProposeAddAccount","value":{"address":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
 		`"pub_key":"cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h","roles":[],` +
-		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}`
+		`"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","vendorId":1000}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 

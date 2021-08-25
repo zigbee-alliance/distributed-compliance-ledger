@@ -28,9 +28,11 @@ echo "$result"
 
 user_address=$(dclcli keys show $user -a)
 user_pubkey=$(dclcli keys show $user -p)
+vid=$RANDOM
+pid=$RANDOM
 
 echo "Jack proposes account for $user"
-result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --from jack --yes)
+result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vendorId="$vid" --from jack --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -74,13 +76,18 @@ result=$(dclcli query auth account --address=$user_address)
 check_response "$result" "\"address\": \"$user_address\""
 echo "$result"
 
-vid=$RANDOM
-pid=$RANDOM
+
 productName="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$user_address --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
+
+vidPlusOne=$((vid+1))
+echo "$user adds Model with a VID: $vidPlusOne PID: $pid, This fails with Permission denied as the VID is not associated with this vendor account."
+result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vidPlusOne --pid=$pid --productName="$productName" --description="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=$user_address --yes 2>&1) || true
+echo "$result"
+check_response_and_report "$result" "transaction should be signed by an vendor account containing the vendorId $vidPlusOne"
 
 echo "Get Model with VID: $vid PID: $pid"
 result=$(dclcli query modelinfo model --vid=$vid --pid=$pid)
@@ -133,7 +140,7 @@ echo "Get $user account"
 result=$(dclcli query auth account --address=$user_address 2>&1) || true
 check_response_and_report "$result" "No account associated with the address"
 
-vid=$RANDOM
+
 pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"

@@ -35,6 +35,7 @@ type TestSetup struct {
 	Handler         sdk.Handler
 	Querier         sdk.Querier
 	Vendor          sdk.AccAddress
+	VendorId        uint16
 }
 
 func Setup() TestSetup {
@@ -67,7 +68,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(modelinfoKeeper)
 	handler := NewHandler(modelinfoKeeper, authKeeper)
 
-	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.Vendor})
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.Vendor}, testconstants.VendorId1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 

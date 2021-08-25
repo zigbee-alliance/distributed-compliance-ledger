@@ -81,7 +81,7 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.Vendor} {
 		// store account
-		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role})
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorId3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// update existing model by not owner
@@ -124,7 +124,7 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse} {
 		// store account
-		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role})
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorId3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new model

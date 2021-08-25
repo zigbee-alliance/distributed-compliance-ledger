@@ -56,7 +56,7 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.Vendor, auth.ZBCertificationCenter, auth.NodeAdmin} {
 		// store account
-		account := auth.NewAccount(test_constants.Address3, test_constants.PubKey3, auth.AccountRoles{role})
+		account := auth.NewAccount(test_constants.Address3, test_constants.PubKey3, auth.AccountRoles{role}, test_constants.VendorId3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new testing result by non TestHouse
@@ -83,7 +83,7 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 
 	for i, th := range []sdk.AccAddress{test_constants.Address1, test_constants.Address2, test_constants.Address3} {
 		// store account
-		account := auth.NewAccount(th, test_constants.PubKey1, auth.AccountRoles{auth.TestHouse})
+		account := auth.NewAccount(th, test_constants.PubKey1, auth.AccountRoles{auth.TestHouse}, 0)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new testing result

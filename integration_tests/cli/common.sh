@@ -20,8 +20,13 @@ passphrase="test1234"
 random_string() {
   local __resultvar=$1
   local length=${2:-6} # Default is 6
-
-  eval $__resultvar="'$(date +%s.%N | sha1sum | fold -w ${length} | head -n 1)'"
+  # Newer mac might have shasum instead of sha1sum
+  if  command -v shasum &> /dev/null
+    then
+      eval $__resultvar="'$(date +%s.%N | shasum | fold -w ${length} | head -n 1)'"
+    else
+      eval $__resultvar="'$(date +%s.%N | sha1sum | fold -w ${length} | head -n 1)'"
+  fi
 }
 
 check_response() {
@@ -37,7 +42,7 @@ check_response_and_report() {
   result=$1
   expected_string=$2
   check_response "$result" "$expected_string"
-  echo "INFO: Result contains expected substring: $expected_string"
+  echo "SUCCESS: Result contains expected substring: $expected_string"
 }
 
 response_does_not_contain() {
