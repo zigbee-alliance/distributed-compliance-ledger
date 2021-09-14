@@ -72,7 +72,7 @@ func GetCmdVendor(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagVendorId, "", FlagVendorId)
+	cmd.Flags().String(FlagVendorId, "", "Unique ID assigned to the vendor")
 
 	_ = cmd.MarkFlagRequired(FlagVendorId)
 
@@ -82,7 +82,7 @@ func GetCmdVendor(queryRoute string, cdc *codec.Codec) *cobra.Command {
 func GetCmdVendors(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-vendors",
-		Short: "Get all vendors",
+		Short: "Get information about all vendors",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)

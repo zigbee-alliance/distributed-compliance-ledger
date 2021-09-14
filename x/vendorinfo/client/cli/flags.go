@@ -19,5 +19,5 @@ const (
 	FlagVendorName           = "vendorName"
 	FlagCompanyLegalName     = "companyLegalName"
 	FlagCompanyPreferredName = "companyPreferredName"
-	FlagLandingPageUrl       = "landingPageUrl"
+	FlagVendorLandingPageUrl = "vendorLandingPageUrl"
 )

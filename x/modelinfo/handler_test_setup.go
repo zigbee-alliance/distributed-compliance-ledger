@@ -87,7 +87,7 @@ func Setup() TestSetup {
 
 func getTestModel() types.Model {
 	return Model{
-		VID:                                      testconstants.VID,
+		VID:                                      testconstants.VendorId1,
 		PID:                                      testconstants.PID,
 		CID:                                      testconstants.CID,
 		ProductName:                              testconstants.ProductName,
@@ -121,7 +121,7 @@ func getTestModel() types.Model {
 
 func getTestModelForUpdate() types.Model {
 	return Model{
-		VID:                        testconstants.VID,
+		VID:                        testconstants.VendorId1,
 		PID:                        testconstants.PID,
 		CID:                        testconstants.CID + 1,
 		Description:                "New Description",
