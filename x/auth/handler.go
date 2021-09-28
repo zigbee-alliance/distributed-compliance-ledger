@@ -69,11 +69,11 @@ func handleMsgProposeAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 	// if more than 1 trustee's approval is needed, create pending account else create an active account.
 	if AccountApprovalsCount(ctx, keeper) > 1 {
 		// create and store pending account.
-		account := types.NewPendingAccount(msg.Address, pubKey, msg.Roles, msg.Signer)
+		account := types.NewPendingAccount(msg.Address, pubKey, msg.Roles, msg.VendorId, msg.Signer)
 		keeper.SetPendingAccount(ctx, account)
 	} else {
 		// create account, assign account number and store it
-		account := types.NewAccount(msg.Address, pubKey, msg.Roles)
+		account := types.NewAccount(msg.Address, pubKey, msg.Roles, msg.VendorId)
 		account.AccountNumber = keeper.GetNextAccountNumber(ctx)
 		keeper.SetAccount(ctx, account)
 	}
@@ -109,7 +109,7 @@ func handleMsgApproveAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 	// check if pending account has enough approvals
 	if len(pendAcc.Approvals) == AccountApprovalsCount(ctx, keeper) {
 		// create approved account, assign account number and store it
-		account := types.NewAccount(pendAcc.Address, pendAcc.PubKey, pendAcc.Roles)
+		account := types.NewAccount(pendAcc.Address, pendAcc.PubKey, pendAcc.Roles, pendAcc.VendorId)
 		account.AccountNumber = keeper.GetNextAccountNumber(ctx)
 		keeper.SetAccount(ctx, account)
 

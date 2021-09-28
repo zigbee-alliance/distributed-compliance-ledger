@@ -52,6 +52,15 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
+		softwareVersion, err_ := conversions.ParseUInt32FromString(softwareVersion, vars[softwareVersion])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		softwareVersionString := vars[softwareVersionString]
+
 		certificationType := types.CertificationType(vars[certificationType])
 
 		var req CertifyModelRequest
@@ -69,7 +78,7 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCertifyModel(vid, pid, req.CertificationDate,
+		msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, req.CertificationDate,
 			certificationType, req.Reason, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
@@ -103,6 +112,13 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
+		softwareVersion, err_ := conversions.ParseUInt32FromString(softwareVersion, vars[softwareVersion])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
 		certificationType := types.CertificationType(vars[certificationType])
 
 		var req RevokeModelRequest
@@ -120,7 +136,7 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRevokeModel(vid, pid, req.RevocationDate,
+		msg := types.NewMsgRevokeModel(vid, pid, softwareVersion, req.RevocationDate,
 			certificationType, req.Reason, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)

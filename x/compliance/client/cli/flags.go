@@ -17,10 +17,13 @@ package cli
 const (
 	FlagVID                       = "vid"
 	FlagPID                       = "pid"
+	FlagSoftwareVersion           = "softwareVersion"
+	FlagSoftwareVersionString     = "softwareVersionString"
 	FlagCertificationType         = "certification-type"
 	FlagCertificationTypeShortcut = "t"
 	FlagCertificationDate         = "certification-date"
 	FlagCertificationDateShortcut = "d"
+	FlagIsProvisional             = "isProvisional"
 	FlagRevocationDate            = "revocation-date"
 	FlagReason                    = "reason"
 	FlagReasonShortcut            = "r"

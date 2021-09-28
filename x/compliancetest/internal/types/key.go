@@ -29,12 +29,23 @@ const (
 var TestingResultsPrefix = []byte{0x01} // prefix for each key to a testing results
 
 // Key builder for Testing Results.
-func GetTestingResultsKey(vid uint16, pid uint16) []byte {
+func GetTestingResultsKey(vid uint16, pid uint16, softwareVersion uint32) []byte {
+
+	var key []byte
+
+	key = append(key, TestingResultsPrefix...)
 	v := make([]byte, 2)
 	binary.LittleEndian.PutUint16(v, vid)
+	key = append(key, v...)
 
 	p := make([]byte, 2)
 	binary.LittleEndian.PutUint16(p, pid)
+	key = append(key, p...)
 
-	return append(TestingResultsPrefix, append(v, p...)...)
+	sv := make([]byte, 4)
+	binary.LittleEndian.PutUint32(sv, softwareVersion)
+	key = append(key, sv...)
+
+	return key
+
 }

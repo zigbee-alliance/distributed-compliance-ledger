@@ -85,7 +85,7 @@ $ dclcli config trust-node false
 $ dclcli config node tcp://54.73.187.91:26657
 
 # Run `dclci` to connect to one of the testnet nodes
-$ dclcli query modelinfo model --vid=100 --pid=100
+$ dclcli query model get-model --vid=100 --pid=100
 `{
   "result": {
     "vid": 100,
@@ -133,10 +133,10 @@ $ dclcli tx auth approve-add-account \
 --address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 --from=<trustee-account>
 
 # After account approval, you can submit your product information
-$ dclcli tx modelinfo add-model --vid=12345 --pid=675463 --name="Disco Ball" \
---description="CHIP Discoball" --sku=A1234GH --firmware-version=1.0 \
- --hardware-version=1.0 --tis-or-trp-testing-completed=yes \
- --from=cool-vendor
+$ dclcli tx model add-model --vid=12345 --pid=675463 --name="Disco Ball" \
+--productLabel="CHIP Discoball" --sku=A1234GH --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" \
+--hardwareVersionString="5.1.23"  --cdVersionNumber="32" \
+--from=cool-vendor
  
 ----
 

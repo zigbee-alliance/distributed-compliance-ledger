@@ -73,16 +73,18 @@ type PendingAccount struct {
 	Address   sdk.AccAddress   `json:"address"`
 	PubKey    crypto.PubKey    `json:"public_key"`
 	Roles     AccountRoles     `json:"roles"`
+	VendorId  uint16           `json:"vendorId"`
 	Approvals []sdk.AccAddress `json:"approvals"`
 }
 
 // NewPendingAccount creates a new PendingAccount object.
 func NewPendingAccount(address sdk.AccAddress, pubKey crypto.PubKey,
-	roles AccountRoles, approval sdk.AccAddress) PendingAccount {
+	roles AccountRoles, vendorId uint16, approval sdk.AccAddress) PendingAccount {
 	return PendingAccount{
 		Address:   address,
 		PubKey:    pubKey,
 		Roles:     roles,
+		VendorId:  vendorId,
 		Approvals: []sdk.AccAddress{approval},
 	}
 }
@@ -136,14 +138,16 @@ type Account struct {
 	AccountNumber uint64         `json:"account_number"`
 	Sequence      uint64         `json:"sequence"`
 	Roles         AccountRoles   `json:"roles"`
+	VendorId      uint16         `json:"vendorId"`
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(address sdk.AccAddress, pubKey crypto.PubKey, roles AccountRoles) Account {
+func NewAccount(address sdk.AccAddress, pubKey crypto.PubKey, roles AccountRoles, vendorId uint16) Account {
 	return Account{
-		Address: address,
-		PubKey:  pubKey,
-		Roles:   roles,
+		Address:  address,
+		PubKey:   pubKey,
+		Roles:    roles,
+		VendorId: vendorId,
 	}
 }
 
@@ -173,6 +177,11 @@ func (acc Account) Validate() error {
 		return err
 	}
 
+	// If creating an account with Vendor Role, we need to have a associated VendorId
+	if acc.HasRole(Vendor) && acc.VendorId <= 0 {
+		return ErrMissingVendorIdForVendorAccount()
+	}
+
 	return nil
 }
 
@@ -182,7 +191,6 @@ func (acc Account) HasRole(targetRole AccountRole) bool {
 			return true
 		}
 	}
-
 	return false
 }
 

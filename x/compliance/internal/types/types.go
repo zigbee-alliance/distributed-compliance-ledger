@@ -24,69 +24,92 @@ import (
 type ComplianceState string
 
 const (
-	Certified ComplianceState = "certified"
-	Revoked   ComplianceState = "revoked"
+	DevTest     ComplianceState = "dev-test"
+	Provisional ComplianceState = "provisional"
+	Certified   ComplianceState = "certified"
+	Revoked     ComplianceState = "revoked"
+)
+
+type SoftwareVersionCertificationStatus uint8
+
+const (
+	CodeDevTest     SoftwareVersionCertificationStatus = 0
+	CodeProvisional SoftwareVersionCertificationStatus = 1
+	CodeCertified   SoftwareVersionCertificationStatus = 2
+	CodeRevoked     SoftwareVersionCertificationStatus = 3
 )
 
 type CertificationType string
 
 const (
-	ZbCertificationType CertificationType = "zb"
+	ZbCertificationType  CertificationType = "zb"
+	CSACertificationType CertificationType = "csa"
 )
 
 /*
 	Compliance info stored into KVStore
 */
 type ComplianceInfo struct {
-	VID               uint16                  `json:"vid"`
-	PID               uint16                  `json:"pid"`
-	State             ComplianceState         `json:"state"`
-	Date              time.Time               `json:"date"` // rfc3339 encoded date
-	CertificationType CertificationType       `json:"certification_type"`
-	Reason            string                  `json:"reason,omitempty"`
-	Owner             sdk.AccAddress          `json:"owner"`
-	History           []ComplianceHistoryItem `json:"history,omitempty"`
+	VID                                uint16                             `json:"vid"`
+	PID                                uint16                             `json:"pid"`
+	SoftwareVersion                    uint32                             `json:"softwareVersion"`
+	SoftwareVersionString              string                             `json:"softwareVersionString,omitempty"`
+	CDVersionNumber                    uint32                             `json:"CDVersionNumber,omitempty"`
+	SoftwareVersionCertificationStatus SoftwareVersionCertificationStatus `json:"softwareVersionCertificationStatus"`
+	Date                               time.Time                          `json:"date"` // rfc3339 encoded date
+	CertificationType                  CertificationType                  `json:"certification_type"`
+	Reason                             string                             `json:"reason,omitempty"`
+	Owner                              sdk.AccAddress                     `json:"owner"`
+	History                            []ComplianceHistoryItem            `json:"history,omitempty"`
 }
 
-func NewCertifiedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType,
+func NewCertifiedComplianceInfo(vid uint16, pid uint16,
+	softwareVersion uint32, softwareVersionString string,
+	certificationType CertificationType,
 	date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
-		VID:               vid,
-		PID:               pid,
-		State:             Certified,
-		Date:              date,
-		CertificationType: certificationType,
-		Reason:            reason,
-		Owner:             owner,
-		History:           []ComplianceHistoryItem{},
+		VID:                                vid,
+		PID:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		SoftwareVersionString:              softwareVersionString,
+		SoftwareVersionCertificationStatus: CodeCertified,
+		Date:                               date,
+		CertificationType:                  certificationType,
+		Reason:                             reason,
+		Owner:                              owner,
+		History:                            []ComplianceHistoryItem{},
 	}
 }
 
-func NewRevokedComplianceInfo(vid uint16, pid uint16, certificationType CertificationType,
+func NewRevokedComplianceInfo(vid uint16, pid uint16,
+	softwareVersion uint32, softwareVersionString string,
+	certificationType CertificationType,
 	date time.Time, reason string, owner sdk.AccAddress) ComplianceInfo {
 	return ComplianceInfo{
-		VID:               vid,
-		PID:               pid,
-		State:             Revoked,
-		Date:              date,
-		CertificationType: certificationType,
-		Reason:            reason,
-		Owner:             owner,
-		History:           []ComplianceHistoryItem{},
+		VID:                                vid,
+		PID:                                pid,
+		SoftwareVersion:                    softwareVersion,
+		SoftwareVersionString:              softwareVersionString,
+		SoftwareVersionCertificationStatus: CodeRevoked,
+		Date:                               date,
+		CertificationType:                  certificationType,
+		Reason:                             reason,
+		Owner:                              owner,
+		History:                            []ComplianceHistoryItem{},
 	}
 }
 
 func (d *ComplianceInfo) UpdateComplianceInfo(date time.Time, reason string) {
 	// Toggle state
-	var state ComplianceState
-	if d.State == Certified {
-		state = Revoked
+	var svCertificationStatus SoftwareVersionCertificationStatus
+	if d.SoftwareVersionCertificationStatus == CodeCertified {
+		svCertificationStatus = CodeRevoked
 	} else {
-		state = Certified
+		svCertificationStatus = CodeCertified
 	}
 
-	d.History = append(d.History, NewComplianceHistoryItem(d.State, d.Date, d.Reason))
-	d.State = state
+	d.History = append(d.History, NewComplianceHistoryItem(d.SoftwareVersionCertificationStatus, d.Date, d.Reason))
+	d.SoftwareVersionCertificationStatus = svCertificationStatus
 	d.Date = date
 	d.Reason = reason
 }
@@ -104,16 +127,16 @@ func (d ComplianceInfo) String() string {
 	Compliance info state changes
 */
 type ComplianceHistoryItem struct {
-	State  ComplianceState `json:"state"`
-	Date   time.Time       `json:"date"` // rfc3339 encoded date
-	Reason string          `json:"reason,omitempty"`
+	SoftwareVersionCertificationStatus SoftwareVersionCertificationStatus `json:"softwareVersionCertificationStatus"`
+	Date                               time.Time                          `json:"date"` // rfc3339 encoded date
+	Reason                             string                             `json:"reason,omitempty"`
 }
 
-func NewComplianceHistoryItem(state ComplianceState, date time.Time, reason string) ComplianceHistoryItem {
+func NewComplianceHistoryItem(svCertificationStatus SoftwareVersionCertificationStatus, date time.Time, reason string) ComplianceHistoryItem {
 	return ComplianceHistoryItem{
-		State:  state,
-		Date:   date,
-		Reason: reason,
+		SoftwareVersionCertificationStatus: svCertificationStatus,
+		Date:                               date,
+		Reason:                             reason,
 	}
 }
 
@@ -129,5 +152,6 @@ func (d ComplianceHistoryItem) String() string {
 type ComplianceInfoKey struct {
 	VID               uint16            `json:"vid"`
 	PID               uint16            `json:"pid"`
+	SoftwareVersion   uint32            `json:"softwareVersion"`
 	CertificationType CertificationType `json:"certification_type"`
 }

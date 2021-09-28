@@ -29,14 +29,26 @@ const (
 var ComplianceInfoPrefix = []byte{0x01} // prefix for each key to a compliance info
 
 // Key builder for Compliance Info.
-func GetComplianceInfoKey(certificationType CertificationType, vid uint16, pid uint16) []byte {
+func GetComplianceInfoKey(certificationType CertificationType, vid uint16, pid uint16, softwareVersion uint32) []byte {
+
+	var key []byte
+
+	key = append(key, ComplianceInfoPrefix...)
+	key = append(key, []byte(certificationType)...)
+
 	v := make([]byte, 2)
 	binary.LittleEndian.PutUint16(v, vid)
+	key = append(key, v...)
 
 	p := make([]byte, 2)
 	binary.LittleEndian.PutUint16(p, pid)
+	key = append(key, p...)
 
-	return append(ComplianceInfoPrefix, append([]byte(certificationType), append(v, p...)...)...)
+	sv := make([]byte, 4)
+	binary.LittleEndian.PutUint32(sv, softwareVersion)
+	key = append(key, sv...)
+
+	return key
 }
 
 // Key builder for Compliance Info.

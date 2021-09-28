@@ -48,7 +48,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "certify-model",
-		Short: "Certify an existing model. Note that the corresponding model info and " +
+		Short: "Certify an existing model. Note that the corresponding model version and " +
 			"test results must be present on ledger",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -64,6 +64,13 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			softwareVersion, err := conversions.ParseUInt32FromString("SoftwareVersion", viper.GetString(FlagSoftwareVersion))
+			if err != nil {
+				return err
+			}
+
+			softwareVersionString := viper.GetString(FlagSoftwareVersionString)
+
 			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
 			certificationDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagCertificationDate))
@@ -74,7 +81,7 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgCertifyModel(vid, pid, certificationDate, certificationType, reason, cliCtx.FromAddress())
+			msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationDate, certificationType, reason, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -82,15 +89,21 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
+	cmd.Flags().String(FlagSoftwareVersionString, "", "Model software version string")
 	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
 		"Certification type (zb` is the only supported value now)")
 	cmd.Flags().StringP(FlagCertificationDate, FlagCertificationDateShortcut, "",
 		"The date of model certification (rfc3339 encoded)")
 	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
 		"Optional comment describing the reason of certification")
+	cmd.Flags().String(FlagIsProvisional, "",
+		"boolean flag to specify if this is only a provisional certification. This is set to true for a SoftwareVersion when going into certification testing")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagCertificationDate)
 
@@ -115,6 +128,11 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
+			softwareVersion, err := conversions.ParseUInt32FromString("SoftwareVersion", viper.GetString(FlagSoftwareVersion))
+			if err != nil {
+				return err
+			}
+
 			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
 			revocationDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagRevocationDate))
@@ -125,7 +143,7 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgRevokeModel(vid, pid, revocationDate, certificationType, reason, cliCtx.FromAddress())
+			msg := types.NewMsgRevokeModel(vid, pid, softwareVersion, revocationDate, certificationType, reason, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -133,6 +151,8 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
+
 	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
 		"Certification type (zb` is the only supported value now)")
 	cmd.Flags().StringP(FlagRevocationDate, FlagCertificationDateShortcut, "",
@@ -142,6 +162,7 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagRevocationDate)
 

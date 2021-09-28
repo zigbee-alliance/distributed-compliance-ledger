@@ -16,6 +16,7 @@ package utils
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -66,6 +67,7 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 
 	resp, err := client.Do(req)
 	if err != nil {
+		fmt.Printf("Error received from server: %v", err)
 		return nil, http.StatusInternalServerError
 	}
 

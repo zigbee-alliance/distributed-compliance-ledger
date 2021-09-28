@@ -23,21 +23,26 @@ import (
 const RouterKey = ModuleName
 
 type MsgAddTestingResult struct {
-	VID        uint16         `json:"vid"`
-	PID        uint16         `json:"pid"`
-	TestResult string         `json:"test_result"`
-	TestDate   time.Time      `json:"test_date"` // rfc3339 encoded date
-	Signer     sdk.AccAddress `json:"signer"`
+	VID                   uint16         `json:"vid"`
+	PID                   uint16         `json:"pid"`
+	SoftwareVersion       uint32         `json:"softwareVersion"`
+	SoftwareVersionString string         `json:"softwareVersionString"`
+	TestResult            string         `json:"test_result"`
+	TestDate              time.Time      `json:"test_date"` // rfc3339 encoded date
+	Signer                sdk.AccAddress `json:"signer"`
 }
 
-func NewMsgAddTestingResult(vid uint16, pid uint16, testResult string,
+func NewMsgAddTestingResult(vid uint16, pid uint16, softwareVersion uint32,
+	softwareVersionString string, testResult string,
 	testDate time.Time, signer sdk.AccAddress) MsgAddTestingResult {
 	return MsgAddTestingResult{
-		VID:        vid,
-		PID:        pid,
-		TestResult: testResult,
-		TestDate:   testDate,
-		Signer:     signer,
+		VID:                   vid,
+		PID:                   pid,
+		SoftwareVersion:       softwareVersion,
+		SoftwareVersionString: softwareVersionString,
+		TestResult:            testResult,
+		TestDate:              testDate,
+		Signer:                signer,
 	}
 }
 
@@ -60,6 +65,14 @@ func (m MsgAddTestingResult) ValidateBasic() sdk.Error {
 
 	if m.PID == 0 {
 		return sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
+	}
+
+	if m.SoftwareVersion == 0 {
+		return sdk.ErrUnknownRequest("Invalid SoftwareVersion: it must be non zero 32-bit unsigned integer")
+	}
+
+	if len(m.SoftwareVersionString) == 0 {
+		return sdk.ErrUnknownRequest("Invalid SoftwareVersionString: it cannot be empty")
 	}
 
 	if len(m.TestResult) == 0 {

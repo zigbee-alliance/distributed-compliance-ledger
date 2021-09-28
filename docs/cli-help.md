@@ -393,8 +393,9 @@ The set of commands that allows you to manage model infos.
 
   Role: `Vendor`
   
-  Command: `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
---firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account>`
+  Command: `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --productName=<string> --productLabel=<string or path> --sku=<string> 
+--softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
+--from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -402,82 +403,107 @@ The set of commands that allows you to manage model infos.
   - name: `string` -  model name
   - description: `string` -  model description (string or path to file containing data)
   - sku: `string` -  stock keeping unit
-  - firmware-version: `string` -  version of model firmware
-  - hardware-version: `string` -  version of model hardware
-  - tis-or-trp-testing-completed: `bool` -  whether model has successfully completed TIS/TRP testing
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - softwareVersionString: `string` - Software Version String of model
+  - hardwareVersion: `uint32` -  version of model hardware
+  - hardwareVersionString: `string` - Hardware Version String of model
+  - cdVersionNumber: `uint32` -  CD Version Number of the Certification
   - from: `string` - Name or address of private key with which to sign
   - cid: `optional(uint16)` - model category ID (positive non-zero)
-  - custom: `optional(string)` - custom information (string or path to file containing data)
-  - ota-url: `optional(string)` - the URL of the OTA
-  - ota-checksum: `optional(string)` - the checksum of the OTA 
-  - ota-checksum-type: `optional(string)` - the type of the OTA checksum 
-
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true "--from=jack`
+  - revoked: `optional(bool)` - boolean flag to revoke the model
+  - otaURL: `optional(string)` - the URL of the OTA
+  - otaChecksum: `optional(string)` - the checksum of the OTA 
+  - otaChecksumType: `optional(string)` - the type of the OTA checksum 
+  - otaBlob: `optional(string)` - metadata about OTA 
+  - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
+  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
+  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
+  - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
+  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
+  - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
+  - releaseNotesURL: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
+  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
+  - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
   
-  Example: `dclcli tx modelinfo add-model --vid=1 --pid=1 --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from=jack --cid=1 --custom="Some Custom information" --ota-url="http://my-ota.com" --ota-checksum="df56hf" --ota-checksum-type="SHA-256"`
+
+  Example: `dclcli tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from="jack"`
+  
+  Example: `dclcli tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32"  --cid=1 --custom="Some Custom information" --otaURL="http://my-ota.com" --otaChecksum="df56hf" --otaChecksumType="SHA-256" --from=jack `
 
 - Update an existing model info. Only the owner can edit a Model Info.
 
   Role: `Vendor`
 
-  Command: `dclcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account>`
-  existing ModelInfo.
+  Command: `dclcli tx model update-model --vid=<uint16> --pid=<uint16>  --from=<account>`
+  existing Model.
     
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - tis-or-trp-testing-completed: `bool` -  whether model has successfully completed TIS/TRP testing
+  - description: `string` -  model description (string or path to file containing data)
+  - cdVersionNumber: `uint32` -  CD Version Number of the Certification
   - from: `string` - Name or address of private key with which to sign
-  - description: `optional(string)` -  model description (string or path to file containing data)
-  - cid: `optional(uint16)` - model category ID
-  - custom: `optional(string)` - custom information (string or path to file containing data)
-  - ota-url: `optional(string)` - a new OTA URL. Can be edited only if `OTA_checksum` and `OTA_checksum_type` are already set.
+  - revoked: `optional(bool)` - boolean flag to revoke the model
+  - otaURL: `optional(string)` - the URL of the OTA
+  - otaChecksum: `optional(string)` - the checksum of the OTA 
+  - otaChecksumType: `optional(string)` - the type of the OTA checksum 
+  - otaBlob: `optional(string)` - metadata about OTA 
+  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
+  - releaseNotesURL: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
+  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
+  - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
     
-  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --description="New Description"`
+  Example: `dclcli tx model update-model --vid=1 --pid=1 --cdVersionNumber="32" --productLabel="New Description" --from=jack `
   
-  Example: `dclcli tx modelinfo update-model --vid=1 --pid=1 --tis-or-trp-testing-completed=true --from=jack --custom="Custom Data" --ota-url="http://new-ota.com"`
+  Example: `dclcli tx model update-model --vid=1 --pid=1 --supportURL="https://product-support.url.test" --otaURL="http://new-ota.com" --from=jack `
 
 ##### Queries
 - Query a single model info.
 
-  Command: `dclcli query modelinfo model --vid=<uint16> --pid=<uint16>`
+  Command: `dclcli query model get-model --vid=<uint16> --pid=<uint16>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
 
-  Example: `dclcli query modelinfo model --vid=1 --pid=1`
+  Example: `dclcli query model get-model --vid=1 --pid=1`
   
 - Query a list of all model infos. 
 
-  Command: `dclcli query modelinfo all-models`
+  Command: `dclcli query model all-models`
 
   Flags:
   - skip: `optional(int)` - number records to skip (`0` by default)
   - take: `optional(int)` - number records to take (all records are returned by default)
     
-  Example: `dclcli query modelinfo all-models`
+  Example: `dclcli query model all-models`
 
 - Query a list of all vendors.
 
-  Command: `dclcli query modelinfo vendors`
+  Command: `dclcli query model vendors`
   
   Flags:
   - skip: `optional(int)` - number records to skip (`0` by default)
   - take: `optional(int)` - number records to take (all records are returned by default)
     
-  Example: `dclcli query modelinfo vendors`
+  Example: `dclcli query model vendors`
   
 - Query a list of all model infos for the given vendor.
 
-  Command: `dclcli query modelinfo vendor-models --vid=<uint16>`
+  Command: `dclcli query model vendor-models --vid=<uint16>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - skip: `optional(int)` - number records to skip (`0` by default)
   - take: `optional(int)` - number records to take (all records are returned by default)
 
-  Example: `dclcli query modelinfo vendor-models --vid=1`
+  Example: `dclcli query model vendor-models --vid=1`
 
 ### Compliance Test
 

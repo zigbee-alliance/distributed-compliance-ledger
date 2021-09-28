@@ -54,7 +54,7 @@ func TestAuthDemo(t *testing.T) {
 	bobKeyInfo, _ := utils.GetKeyInfo(testconstants.BobAccount)
 
 	// Jack proposes new account
-	utils.ProposeAddAccount(testAccountKeyInfo, jackKeyInfo, auth.AccountRoles{auth.Vendor})
+	utils.ProposeAddAccount(testAccountKeyInfo, jackKeyInfo, auth.AccountRoles{auth.Vendor}, testconstants.VID)
 
 	// Query all active accounts
 	receivedAccounts, _ := utils.GetAccounts()
@@ -89,14 +89,14 @@ func TestAuthDemo(t *testing.T) {
 	require.Equal(t, auth.AccountRoles{auth.Vendor}, testAccount.Roles)
 
 	// Publish model info by test account
-	modelInfo := utils.NewMsgAddModelInfo(testAccountKeyInfo.Address)
-	_, _ = utils.AddModelInfo(modelInfo, testAccountKeyInfo)
+	model := utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
+	_, _ = utils.AddModel(model, testAccountKeyInfo)
 
 	// Check model is created
-	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
+	receivedModel, _ := utils.GetModel(model.VID, model.PID)
+	require.Equal(t, receivedModel.VID, model.VID)
+	require.Equal(t, receivedModel.PID, model.PID)
+	require.Equal(t, receivedModel.ProductName, model.ProductName)
 
 	// Alice proposes to revoke new account
 	utils.ProposeRevokeAccount(testAccountKeyInfo, aliceKeyInfo)
@@ -134,7 +134,7 @@ func TestAuthDemo(t *testing.T) {
 
 	// Try to publish another model info by test account.
 	// Ensure that the request is responded with not OK status code.
-	modelInfo = utils.NewMsgAddModelInfo(testAccountKeyInfo.Address)
-	_, code = utils.AddModelInfo(modelInfo, testAccountKeyInfo)
+	model = utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
+	_, code = utils.AddModel(model, testAccountKeyInfo)
 	require.NotEqual(t, http.StatusOK, code)
 }

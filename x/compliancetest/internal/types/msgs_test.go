@@ -22,11 +22,12 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestNewMsgAddTestingResult(t *testing.T) {
-	msg := NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
+	msg := NewMsgAddTestingResult(testconstants.VID, testconstants.PID,
+		testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.TestResult,
 		testconstants.TestDate, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -40,17 +41,29 @@ func TestMsgAddTestingResultValidation(t *testing.T) {
 		msg   MsgAddTestingResult
 	}{
 		{true, NewMsgAddTestingResult(
-			testconstants.VID, testconstants.PID, testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+			testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			0, testconstants.PID, testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
+			0, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+			testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			testconstants.VID, 0, testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
+			testconstants.VID, 0, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+			testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			testconstants.VID, testconstants.PID, "", testconstants.TestDate, testconstants.Signer)},
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+			"", testconstants.TestDate, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			testconstants.VID, testconstants.PID, testconstants.TestResult, time.Time{}, testconstants.Signer)},
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+			testconstants.TestResult, time.Time{}, testconstants.Signer)},
 		{false, NewMsgAddTestingResult(
-			testconstants.VID, testconstants.PID, testconstants.TestResult, testconstants.TestDate, nil)},
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+			testconstants.TestResult, testconstants.TestDate, nil)},
+		{false, NewMsgAddTestingResult(
+			testconstants.VID, testconstants.PID, 0, testconstants.SoftwareVersionString,
+			testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
+		{false, NewMsgAddTestingResult(
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, "",
+			testconstants.TestResult, testconstants.TestDate, testconstants.Signer)},
 	}
 
 	for _, tc := range cases {
@@ -65,12 +78,12 @@ func TestMsgAddTestingResultValidation(t *testing.T) {
 }
 
 func TestMsgAddTestingResultGetSignBytes(t *testing.T) {
-	msg := NewMsgAddTestingResult(testconstants.VID, testconstants.PID, testconstants.TestResult,
+	msg := NewMsgAddTestingResult(testconstants.VID, testconstants.PID,
+		testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.TestResult,
 		testconstants.TestDate, testconstants.Signer)
 
-	expected := `{"type":"compliancetest/AddTestingResult","value":{"pid":22,"signer":` +
-		`"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
-		`"test_date":"2020-02-02T02:00:00Z","test_result":"http://test.result.com","vid":1}}`
+	expected := `{"type":"compliancetest/AddTestingResult","value":{"pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz",` +
+		`"softwareVersion":1,"softwareVersionString":"1.0","test_date":"2020-02-02T02:00:00Z","test_result":"http://test.result.com","vid":1}}`
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

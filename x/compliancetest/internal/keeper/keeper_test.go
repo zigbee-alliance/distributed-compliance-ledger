@@ -20,7 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestKeeper_TestingResultGetSet(t *testing.T) {
@@ -28,11 +28,11 @@ func TestKeeper_TestingResultGetSet(t *testing.T) {
 
 	// check if testing result present
 	require.False(t, setup.CompliancetestKeeper.IsTestingResultsPresents(
-		setup.Ctx, testconstants.VID, testconstants.PID))
+		setup.Ctx, testconstants.VID, testconstants.PID, testconstants.SoftwareVersion))
 
 	// empty testing result before its created
 	receivedTestingResult := setup.CompliancetestKeeper.GetTestingResults(
-		setup.Ctx, testconstants.VID, testconstants.PID)
+		setup.Ctx, testconstants.VID, testconstants.PID, testconstants.SoftwareVersion)
 	require.Equal(t, 0, len(receivedTestingResult.Results))
 
 	// create testing results
@@ -41,13 +41,14 @@ func TestKeeper_TestingResultGetSet(t *testing.T) {
 
 	// check if testing result present
 	require.True(t, setup.CompliancetestKeeper.IsTestingResultsPresents(
-		setup.Ctx, testconstants.VID, testconstants.PID))
+		setup.Ctx, testconstants.VID, testconstants.PID, testconstants.SoftwareVersion))
 
 	// get testing results
 	receivedTestingResult = setup.CompliancetestKeeper.GetTestingResults(
-		setup.Ctx, testconstants.VID, testconstants.PID)
+		setup.Ctx, testconstants.VID, testconstants.PID, testconstants.SoftwareVersion)
 	require.Equal(t, receivedTestingResult.VID, testconstants.VID)
 	require.Equal(t, receivedTestingResult.PID, testconstants.PID)
+	require.Equal(t, receivedTestingResult.SoftwareVersion, testconstants.SoftwareVersion)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
 	CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 
@@ -59,9 +60,10 @@ func TestKeeper_TestingResultGetSet(t *testing.T) {
 
 	// get testing results
 	receivedTestingResult = setup.CompliancetestKeeper.GetTestingResults(
-		setup.Ctx, testconstants.VID, testconstants.PID)
+		setup.Ctx, testconstants.VID, testconstants.PID, testconstants.SoftwareVersion)
 	require.Equal(t, receivedTestingResult.VID, testconstants.VID)
 	require.Equal(t, receivedTestingResult.PID, testconstants.PID)
+	require.Equal(t, receivedTestingResult.SoftwareVersion, testconstants.SoftwareVersion)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 	CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 	CheckTestingResult(t, receivedTestingResult.Results[1], secondTestingResult)

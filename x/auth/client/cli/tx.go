@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/conversions"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/internal/types"
 )
 
@@ -72,7 +73,17 @@ func GetCmdProposeAddAccount(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			msg := types.NewMsgProposeAddAccount(address, pubkey, roles, cliCtx.FromAddress())
+			var vendorId uint16
+			if viper.GetString(FlagVID) != "" {
+				var err_ sdk.Error
+				vendorId, err_ = conversions.ParseVID(viper.GetString(FlagVID))
+				if err_ != nil {
+					return err_
+				}
+			}
+			fmt.Println(vendorId)
+
+			msg := types.NewMsgProposeAddAccount(address, pubkey, roles, vendorId, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -83,6 +94,7 @@ func GetCmdProposeAddAccount(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
 			types.Roles))
+	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account. Required only for Vendor Roles")
 
 	_ = cmd.MarkFlagRequired(FlagAddress)
 	_ = cmd.MarkFlagRequired(FlagPubKey)

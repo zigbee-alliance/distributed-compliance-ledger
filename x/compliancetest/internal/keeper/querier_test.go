@@ -35,7 +35,8 @@ func TestQuerier_QueryTestingResult(t *testing.T) {
 	// query testing result
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryTestingResult, fmt.Sprintf("%v", testingResult.VID), fmt.Sprintf("%v", testingResult.PID)},
+		[]string{QueryTestingResult, fmt.Sprintf("%v", testingResult.VID),
+			fmt.Sprintf("%v", testingResult.PID), fmt.Sprintf("%v", testingResult.SoftwareVersion)},
 		abci.RequestQuery{},
 	)
 
@@ -45,6 +46,7 @@ func TestQuerier_QueryTestingResult(t *testing.T) {
 	// check
 	require.Equal(t, receivedTestingResult.VID, testingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, testingResult.PID)
+	require.Equal(t, receivedTestingResult.SoftwareVersion, testingResult.SoftwareVersion)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
 	CheckTestingResult(t, receivedTestingResult.Results[0], testingResult)
 }
@@ -55,7 +57,8 @@ func TestQuerier_QueryTestingResultForUnknown(t *testing.T) {
 	// query unknown testing result
 	_, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryTestingResult, fmt.Sprintf("%v", test_constants.VID), fmt.Sprintf("%v", test_constants.PID)},
+		[]string{QueryTestingResult, fmt.Sprintf("%v", test_constants.VID), fmt.Sprintf("%v", test_constants.PID),
+			fmt.Sprintf("%v", test_constants.SoftwareVersion)},
 		abci.RequestQuery{},
 	)
 	require.Equal(t, types.CodeTestingResultsDoNotExist, err.Code())

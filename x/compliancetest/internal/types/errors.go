@@ -26,7 +26,7 @@ const (
 	CodeTestingResultsDoNotExist sdk.CodeType = 201
 )
 
-func ErrTestingResultDoesNotExist(vid interface{}, pid interface{}) sdk.Error {
+func ErrTestingResultDoesNotExist(vid interface{}, pid interface{}, softwareVersion uint32) sdk.Error {
 	return sdk.NewError(Codespace, CodeTestingResultsDoNotExist,
-		fmt.Sprintf("No testing results about the model with vid=%v and pid=%v on the ledger", vid, pid))
+		fmt.Sprintf("No testing results about the model with vid=%v pid=%v and softwareVersion=%v on the ledger", vid, pid, softwareVersion))
 }

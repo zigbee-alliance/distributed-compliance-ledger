@@ -34,7 +34,7 @@ D -> D: X509 Device Cert `DeviceCert(vid,pid)`\nwith `pubKey`, `vid`, `pid`
 V -> D: Sign `DeviceCert` by `VendorCert(vid,pid)`
 
 == 3. Test Device Compliance ==
-T -> T: Run compliance tests for the `ModelInfo(vid, pid)`
+T -> T: Run compliance tests for the `Model(vid, pid)`
 T -> L: ADD_TEST_RESULT(cid, pid)
 
 == 4.1. Attest Device Compliance ==

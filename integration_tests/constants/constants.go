@@ -34,21 +34,41 @@ var (
 	EmptyString  = ""
 
 	// Model Info.
-	VID                      uint16 = 1
-	PID                      uint16 = 22
-	CID                      uint16 = 12345
-	Version                         = "1.0"
-	Name                            = "Device Name"
-	Description                     = "Device Description"
-	SKU                             = "RCU2205A"
-	HardwareVersion                 = "1.1"
-	FirmwareVersion                 = "2.0"
-	OtaURL                          = "http://ota.firmware.com"
-	OtaChecksum                     = "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-	OtaChecksumType                 = "SHA-256"
-	Custom                          = "Custom data"
-	TisOrTrpTestingCompleted        = true
-	Owner                           = Address1
+	VID                                        uint16 = 1
+	PID                                        uint16 = 22
+	DeviceTypeID                               uint16 = 12345
+	Version                                           = "1.0"
+	ProductName                                       = "Device Name"
+	ProductLabel                                      = "Product Label and/or Product Description"
+	PartNumber                                        = "RCU2205A"
+	SoftwareVersion                            uint32 = 1
+	SoftwareVersionString                             = "1.0"
+	HardwareVersion                            uint32 = 21
+	HardwareVersionString                             = "2.1"
+	CDVersionNumber                            uint16 = 312
+	FirmwareDigests                                   = "Firmware Digest String"
+	Revoked                                           = false
+	SoftwareVersionValid                              = true
+	OtaURL                                            = "http://ota.firmware.com"
+	OtaFileSize                                uint64 = 12345678
+	OtaChecksum                                       = "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" //nolint:lll
+	OtaChecksumType                            uint16 = 1
+	OtaBlob                                           = "OTABlob Text"
+	CommissioningCustomFlow                    uint8  = 1
+	CommissioningCustomFlowURL                        = "https://sampleflowurl.dclmodel"
+	CommissioningModeInitialStepsHint          uint32 = 2
+	CommissioningModeInitialStepsInstruction          = "commissioningModeInitialStepsInstruction details"
+	CommissioningModeSecondaryStepsHint        uint32 = 3
+	CommissioningModeSecondaryStepsInstruction        = "commissioningModeSecondaryStepsInstruction steps"
+	ReleaseNotesURL                                   = "https://url.releasenotes.dclmodel"
+	UserManualURL                                     = "https://url.usermanual.dclmodel"
+	SupportURL                                        = "https://url.supporturl.dclmodel"
+	ProductURL                                        = "https://url.producturl.dclmodel"
+	ChipBlob                                          = "Chip Blob Text"
+	VendorBlob                                        = "Vendor Blob Text"
+	MinApplicableSoftwareVersion               uint32 = 1
+	MaxApplicableSoftwareVersion               uint32 = 1000
+	Owner                                             = Address1
 
 	// Compliance.
 	CertificationDate = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -62,20 +82,23 @@ var (
 	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
 
 	//
-	Address1, _       = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
-	Address2, _       = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
-	Address3, _       = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	Pubkey1Str        = "cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h"
-	PubKey1, _        = sdk.GetAccPubKeyBech32(Pubkey1Str)
-	PubKey2Str        = "cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng"
-	PubKey2, _        = sdk.GetAccPubKeyBech32(PubKey2Str)
-	PubKey3Str        = "cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn"
-	PubKey3, _        = sdk.GetAccPubKeyBech32(PubKey3Str)
-	Signer            = Address1
-	ValidatorPubKey1  = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
-	ValidatorPubKey2  = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
-	ValidatorAddress1 = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey1).Address())
-	ValidatorAddress2 = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey2).Address())
+	Address1, _              = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
+	Address2, _              = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
+	Address3, _              = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
+	VendorId1         uint16 = 1000
+	VendorId2         uint16 = 2000
+	VendorId3         uint16 = 3000
+	Pubkey1Str               = "cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h"
+	PubKey1, _               = sdk.GetAccPubKeyBech32(Pubkey1Str)
+	PubKey2Str               = "cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng"
+	PubKey2, _               = sdk.GetAccPubKeyBech32(PubKey2Str)
+	PubKey3Str               = "cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn"
+	PubKey3, _               = sdk.GetAccPubKeyBech32(PubKey3Str)
+	Signer                   = Address1
+	ValidatorPubKey1         = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
+	ValidatorPubKey2         = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
+	ValidatorAddress1        = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey1).Address())
+	ValidatorAddress2        = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey2).Address())
 )
 
 /*

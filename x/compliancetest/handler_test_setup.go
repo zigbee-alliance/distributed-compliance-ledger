@@ -28,7 +28,8 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion"
 )
 
 type TestSetup struct {
@@ -36,7 +37,8 @@ type TestSetup struct {
 	Ctx                  sdk.Context
 	CompliancetestKeeper Keeper
 	authKeeper           auth.Keeper
-	ModelinfoKeeper      modelinfo.Keeper
+	ModelKeeper          model.Keeper
+	ModelversionKeeper   modelversion.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
 	TestHouse            sdk.AccAddress
@@ -59,24 +61,28 @@ func Setup() TestSetup {
 	authKey := sdk.NewKVStoreKey(auth.StoreKey)
 	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, nil)
 
-	modelinfoKey := sdk.NewKVStoreKey(modelinfo.StoreKey)
-	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, nil)
+	modelKey := sdk.NewKVStoreKey(model.StoreKey)
+	dbStore.MountStoreWithDB(modelKey, sdk.StoreTypeIAVL, nil)
+
+	modelversionKey := sdk.NewKVStoreKey(modelversion.StoreKey)
+	dbStore.MountStoreWithDB(modelversionKey, sdk.StoreTypeIAVL, nil)
 
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	compliancetestKeeper := NewKeeper(complianceKey, cdc)
 	authKeeper := auth.NewKeeper(authKey, cdc)
-	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
+	modelKeeper := model.NewKeeper(modelKey, cdc)
+	modelversionKeeper := modelversion.NewKeeper(modelversionKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetestKeeper)
-	handler := NewHandler(compliancetestKeeper, modelinfoKeeper, authKeeper)
+	handler := NewHandler(compliancetestKeeper, modelversionKeeper, authKeeper)
 
-	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.TestHouse})
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.TestHouse}, testconstants.VendorId1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 
@@ -84,7 +90,8 @@ func Setup() TestSetup {
 		Cdc:                  cdc,
 		Ctx:                  ctx,
 		CompliancetestKeeper: compliancetestKeeper,
-		ModelinfoKeeper:      modelinfoKeeper,
+		ModelKeeper:          modelKeeper,
+		ModelversionKeeper:   modelversionKeeper,
 		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,
@@ -94,13 +101,15 @@ func Setup() TestSetup {
 	return setup
 }
 
-func TestMsgAddTestingResult(signer sdk.AccAddress, vid uint16, pid uint16) MsgAddTestingResult {
+func TestMsgAddTestingResult(signer sdk.AccAddress, vid uint16, pid uint16, softwareVersion uint32, softwareVersionString string) MsgAddTestingResult {
 	return MsgAddTestingResult{
-		VID:        vid,
-		PID:        pid,
-		TestResult: testconstants.TestResult,
-		TestDate:   testconstants.TestDate,
-		Signer:     signer,
+		VID:                   vid,
+		PID:                   pid,
+		SoftwareVersion:       softwareVersion,
+		SoftwareVersionString: softwareVersionString,
+		TestResult:            testconstants.TestResult,
+		TestDate:              testconstants.TestDate,
+		Signer:                signer,
 	}
 }
 

@@ -22,11 +22,11 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestNewMsgCertifyModel(t *testing.T) {
-	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
 		ZbCertificationType, testconstants.Reason, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
@@ -40,28 +40,30 @@ func TestMsgCertifyModelValidation(t *testing.T) {
 		msg   MsgCertifyModel
 	}{
 		{true, NewMsgCertifyModel(
-			testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+			testconstants.VID, testconstants.PID,
+			testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
 			CertificationType(testconstants.CertificationType), testconstants.Reason, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
-			testconstants.VID, 0, testconstants.CertificationDate,
+			testconstants.VID, 0, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+			testconstants.CertificationDate, CertificationType(testconstants.CertificationType),
+			testconstants.Reason, testconstants.Signer)},
+		{false, NewMsgCertifyModel(
+			testconstants.VID, 0, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
 			CertificationType(testconstants.CertificationType), testconstants.Reason, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
-			testconstants.VID, 0, testconstants.CertificationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, time.Time{},
 			CertificationType(testconstants.CertificationType), testconstants.Reason, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
-			testconstants.VID, testconstants.PID, time.Time{},
-			CertificationType(testconstants.CertificationType), testconstants.Reason, testconstants.Signer)},
-		{false, NewMsgCertifyModel(
-			testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
 			"", testconstants.Reason, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
-			testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
 			"Other Type", testconstants.Reason, testconstants.Signer)},
 		{true, NewMsgCertifyModel(
-			testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
 			CertificationType(testconstants.CertificationType), "", testconstants.Signer)},
 		{false, NewMsgCertifyModel(
-			testconstants.VID, testconstants.PID, testconstants.CertificationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
 			CertificationType(testconstants.CertificationType), testconstants.Reason, nil)},
 	}
 
@@ -77,18 +79,17 @@ func TestMsgCertifyModelValidation(t *testing.T) {
 }
 
 func TestMsgCertifyModelGetSignBytes(t *testing.T) {
-	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.CertificationDate,
-		CertificationType(testconstants.CertificationType), testconstants.EmptyString, testconstants.Signer)
+	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
+		testconstants.CertificationDate, CertificationType(testconstants.CertificationType), testconstants.EmptyString, testconstants.Signer)
 
-	expected := `{"type":"compliance/CertifyModel","value":{"certification_date":"2020-01-01T00:00:00Z",` +
-		`"certification_type":"zb","pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","vid":1}}`
+	expected := `{"type":"compliance/CertifyModel","value":{"certification_date":"2020-01-01T00:00:00Z","certification_type":"zb","pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","softwareVersion":1,"softwareVersionString":"1.0","vid":1}}`
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
 func TestNewMsgRevokeModel(t *testing.T) {
-	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
-		CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
+	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion,
+		testconstants.RevocationDate, CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "revoke_model")
@@ -101,25 +102,25 @@ func TestMsgRevokeModelValidation(t *testing.T) {
 		msg   MsgRevokeModel
 	}{
 		{true, NewMsgRevokeModel(
-			testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.RevocationDate,
 			CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)},
 		{false, NewMsgRevokeModel(
-			0, testconstants.PID, testconstants.RevocationDate,
+			0, testconstants.PID, testconstants.SoftwareVersion, testconstants.RevocationDate,
 			CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)},
 		{false, NewMsgRevokeModel(
-			testconstants.VID, 0, testconstants.RevocationDate,
+			testconstants.VID, 0, testconstants.SoftwareVersion, testconstants.RevocationDate,
 			CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)},
 		{false, NewMsgRevokeModel(
-			testconstants.VID, testconstants.PID, time.Time{},
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, time.Time{},
 			CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)},
 		{true, NewMsgRevokeModel(
-			testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.RevocationDate,
 			CertificationType(testconstants.CertificationType), "", testconstants.Signer)},
 		{false, NewMsgRevokeModel(
-			testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.RevocationDate,
 			"", testconstants.RevocationReason, testconstants.Signer)},
 		{false, NewMsgRevokeModel(
-			testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.RevocationDate,
 			CertificationType(testconstants.CertificationType), testconstants.RevocationReason, nil)},
 	}
 
@@ -135,10 +136,10 @@ func TestMsgRevokeModelValidation(t *testing.T) {
 }
 
 func TestMsRevokeModelGetSignBytes(t *testing.T) {
-	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.RevocationDate,
+	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.RevocationDate,
 		CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
 
 	expected := `{"type":"compliance/RevokeModel","value":{"certification_type":"zb","pid":22,"reason":"Some Reason",` +
-		`"revocation_date":"2020-03-03T03:30:00Z","signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","vid":1}}`
+		`"revocation_date":"2020-03-03T03:30:00Z","signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","softwareVersion":1,"softwareVersionString":"","vid":1}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

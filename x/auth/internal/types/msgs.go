@@ -25,15 +25,17 @@ type MsgProposeAddAccount struct {
 	Address   sdk.AccAddress `json:"address"`
 	PublicKey string         `json:"pub_key"`
 	Roles     AccountRoles   `json:"roles"`
+	VendorId  uint16         `json:"vendorId"`
 	Signer    sdk.AccAddress `json:"signer"`
 }
 
 func NewMsgProposeAddAccount(address sdk.AccAddress, pubKey string,
-	roles AccountRoles, signer sdk.AccAddress) MsgProposeAddAccount {
+	roles AccountRoles, vendorId uint16, signer sdk.AccAddress) MsgProposeAddAccount {
 	return MsgProposeAddAccount{
 		Address:   address,
 		PublicKey: pubKey,
 		Roles:     roles,
+		VendorId:  vendorId,
 		Signer:    signer,
 	}
 }
@@ -59,6 +61,10 @@ func (m MsgProposeAddAccount) ValidateBasic() sdk.Error {
 		return err
 	}
 
+	if m.HasRole(Vendor) && m.VendorId <= 0 {
+		return ErrMissingVendorIdForVendorAccount()
+	}
+
 	if m.Signer.Empty() {
 		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
 	}
@@ -72,6 +78,15 @@ func (m MsgProposeAddAccount) GetSignBytes() []byte {
 
 func (m MsgProposeAddAccount) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{m.Signer}
+}
+
+func (m MsgProposeAddAccount) HasRole(targetRole AccountRole) bool {
+	for _, role := range m.Roles {
+		if role == targetRole {
+			return true
+		}
+	}
+	return false
 }
 
 /*

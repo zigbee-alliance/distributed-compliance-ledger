@@ -21,19 +21,46 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func ParseUInt16FromString(str string) (uint16, sdk.Error) {
-	val, err := strconv.ParseUint(str, 10, 16)
+func ParseUInt8FromString(str string) (uint8, sdk.Error) {
+	val, err := strconv.ParseUint(str, 10, 8)
 	if err != nil {
-		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: \"%v\" must be 16 bit unsigned integer", str))
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: %v must be 16 bit unsigned integer", str))
+	}
+
+	return uint8(val), nil
+}
+
+func ParseUInt16FromString(name string, value string) (uint16, sdk.Error) {
+	val, err := strconv.ParseUint(value, 10, 16)
+	if err != nil {
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 16 bit unsigned integer", name, value))
 	}
 
 	return uint16(val), nil
 }
 
-func ParseVID(str string) (uint16, sdk.Error) {
-	res, err := ParseUInt16FromString(str)
+func ParseUInt32FromString(name string, value string) (uint32, sdk.Error) {
+	val, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
-		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid VID: %v", err.Data()))
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 32 bit unsigned integer", name, value))
+	}
+
+	return uint32(val), nil
+}
+
+func ParseUInt64FromString(name string, value string) (uint64, sdk.Error) {
+	val, err := strconv.ParseUint(value, 10, 64)
+	if err != nil {
+		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 32 bit unsigned integer", name, value))
+	}
+
+	return uint64(val), nil
+}
+
+func ParseVID(str string) (uint16, sdk.Error) {
+	res, err := ParseUInt16FromString("VID", str)
+	if err != nil {
+		return 0, err
 	}
 
 	if res == 0 {
@@ -44,22 +71,13 @@ func ParseVID(str string) (uint16, sdk.Error) {
 }
 
 func ParsePID(str string) (uint16, sdk.Error) {
-	res, err := ParseUInt16FromString(str)
+	res, err := ParseUInt16FromString("PID", str)
 	if err != nil {
-		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid PID: %v", err.Data()))
+		return 0, err
 	}
 
 	if res == 0 {
 		return 0, sdk.ErrUnknownRequest("Invalid PID: it must be non zero 16-bit unsigned integer")
-	}
-
-	return res, nil
-}
-
-func ParseCID(str string) (uint16, sdk.Error) {
-	res, err := ParseUInt16FromString(str)
-	if err != nil {
-		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CID: %v", err.Data()))
 	}
 
 	return res, nil

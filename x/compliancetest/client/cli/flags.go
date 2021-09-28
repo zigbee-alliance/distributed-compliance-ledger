@@ -15,10 +15,12 @@
 package cli
 
 const (
-	FlagVID                = "vid"
-	FlagPID                = "pid"
-	FlagTestResult         = "test-result"
-	FlagTestResultShortcut = "r"
-	FlagTestDate           = "test-date"
-	FlagTestDateShortcut   = "d"
+	FlagVID                   = "vid"
+	FlagPID                   = "pid"
+	FlagSoftwareVersion       = "softwareVersion"
+	FlagSoftwareVersionString = "softwareVersionString"
+	FlagTestResult            = "test-result"
+	FlagTestResultShortcut    = "r"
+	FlagTestDate              = "test-date"
+	FlagTestDateShortcut      = "d"
 )

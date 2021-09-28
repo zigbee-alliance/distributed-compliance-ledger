@@ -23,7 +23,7 @@ import (
 	"github.com/tendermint/tendermint/libs/common"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 )
 
 //nolint:godox
@@ -35,45 +35,45 @@ import (
 	TODO: provide tests for error cases
 */
 
-func TestModelinfoDemo(t *testing.T) {
+func TestModelDemo(t *testing.T) {
 	// Register new Vendor account
-	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
+	vid := common.RandUint16()
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, vid)
 
 	// Get all model infos
-	inputModelInfos, _ := utils.GetModelInfos()
+	inputModels, _ := utils.GetModels()
 
 	// Get all vendors
 	inputVendors, _ := utils.GetVendors()
 
 	// Prepare model info
-	firstModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	VID := firstModelInfo.VID
+	firstModel := utils.NewMsgAddModel(vendor.Address, vid)
+	VID := firstModel.VID
 
-	// Sign and Broadcast AddModelInfo message
-	utils.SignAndBroadcastMessage(vendor, firstModelInfo)
+	// Sign and Broadcast AddModel message
+	utils.SignAndBroadcastMessage(vendor, firstModel)
 
 	// Check model is created
-	receivedModelInfo, _ := utils.GetModelInfo(firstModelInfo.VID, firstModelInfo.PID)
-	require.Equal(t, receivedModelInfo.VID, firstModelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, firstModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Name, firstModelInfo.Name)
-	require.Equal(t, receivedModelInfo.Description, firstModelInfo.Description)
+	receivedModel, _ := utils.GetModel(firstModel.VID, firstModel.PID)
+	require.Equal(t, receivedModel.VID, firstModel.VID)
+	require.Equal(t, receivedModel.PID, firstModel.PID)
+	require.Equal(t, receivedModel.ProductName, firstModel.ProductName)
+	require.Equal(t, receivedModel.ProductLabel, firstModel.ProductLabel)
 
 	// Publish second model info using POST command with passing name and passphrase. Same Vendor
-	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	secondModelInfo.VID = VID // Set same Vendor as for the first model
-	_, _ = utils.AddModelInfo(secondModelInfo, vendor)
+	secondModel := utils.NewMsgAddModel(vendor.Address, vid)
+	_, _ = utils.AddModel(secondModel, vendor)
 
 	// Check model is created
-	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.VID, secondModelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Name, secondModelInfo.Name)
-	require.Equal(t, receivedModelInfo.Description, secondModelInfo.Description)
+	receivedModel, _ = utils.GetModel(secondModel.VID, secondModel.PID)
+	require.Equal(t, receivedModel.VID, secondModel.VID)
+	require.Equal(t, receivedModel.PID, secondModel.PID)
+	require.Equal(t, receivedModel.ProductName, secondModel.ProductName)
+	require.Equal(t, receivedModel.ProductLabel, secondModel.ProductLabel)
 
 	// Get all model infos
-	modelInfos, _ := utils.GetModelInfos()
-	require.Equal(t, utils.ParseUint(inputModelInfos.Total)+2, utils.ParseUint(modelInfos.Total))
+	models, _ := utils.GetModels()
+	require.Equal(t, utils.ParseUint(inputModels.Total)+2, utils.ParseUint(models.Total))
 
 	// Get all vendors
 	vendors, _ := utils.GetVendors()
@@ -82,73 +82,87 @@ func TestModelinfoDemo(t *testing.T) {
 	// Get vendor models
 	vendorModels, _ := utils.GetVendorModels(VID)
 	require.Equal(t, uint64(2), uint64(len(vendorModels.Products)))
-	require.Equal(t, firstModelInfo.PID, vendorModels.Products[0].PID)
-	require.Equal(t, secondModelInfo.PID, vendorModels.Products[1].PID)
+	require.Equal(t, firstModel.PID, vendorModels.Products[0].PID)
+	require.Equal(t, secondModel.PID, vendorModels.Products[1].PID)
 
 	// Update second model info
-	secondModelInfoUpdate := utils.NewMsgUpdateModelInfo(secondModelInfo.VID, secondModelInfo.PID, vendor.Address)
-	_, _ = utils.UpdateModelInfo(secondModelInfoUpdate, vendor)
+	secondModelUpdate := utils.NewMsgUpdateModel(secondModel.VID, secondModel.PID, vendor.Address)
+	_, _ = utils.UpdateModel(secondModelUpdate, vendor)
 
 	// Check model is updated
-	receivedModelInfo, _ = utils.GetModelInfo(secondModelInfo.VID, secondModelInfo.PID)
-	require.Equal(t, receivedModelInfo.Description, secondModelInfoUpdate.Description)
+	receivedModel, _ = utils.GetModel(secondModel.VID, secondModel.PID)
+	require.Equal(t, receivedModel.ProductLabel, secondModelUpdate.ProductLabel)
 }
 
-func TestModelinfoDemo_Prepare_Sign_Broadcast(t *testing.T) {
+func TestModelDemo_Prepare_Sign_Broadcast(t *testing.T) {
 	// Register new Vendor account
-	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
+	vid := common.RandUint16()
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, vid)
 
 	// Prepare model info
-	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
+	model := utils.NewMsgAddModel(vendor.Address, vid)
 
-	// Prepare Sing Broadcast
-	addModelTransaction, _ := utils.PrepareAddModelInfoTransaction(modelInfo)
+	// Prepare Sign Broadcast
+	addModelTransaction, _ := utils.PrepareAddModelTransaction(model)
 	_, _ = utils.SignAndBroadcastTransaction(vendor, addModelTransaction)
 
 	// Check model is created
-	receivedModelInfo, _ := utils.GetModelInfo(modelInfo.VID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.VID, modelInfo.VID)
-	require.Equal(t, receivedModelInfo.PID, modelInfo.PID)
-	require.Equal(t, receivedModelInfo.Name, modelInfo.Name)
+	receivedModel, _ := utils.GetModel(model.VID, model.PID)
+	require.Equal(t, receivedModel.VID, model.VID)
+	require.Equal(t, receivedModel.PID, model.PID)
+	require.Equal(t, receivedModel.ProductName, model.ProductName)
 }
 
 /* Error cases */
 
-func Test_AddModelinfo_ByNonVendor(t *testing.T) {
+func Test_AddModel_ByNonVendor(t *testing.T) {
 	// register new account
-	testAccount := utils.CreateNewAccount(auth.AccountRoles{})
+	vid := common.RandUint16()
+	testAccount := utils.CreateNewAccount(auth.AccountRoles{}, vid)
 
 	// try to publish model info
-	modelInfo := utils.NewMsgAddModelInfo(testAccount.Address)
-	res, _ := utils.SignAndBroadcastMessage(testAccount, modelInfo)
+	model := utils.NewMsgAddModel(testAccount.Address, vid)
+	res, _ := utils.SignAndBroadcastMessage(testAccount, model)
 	require.Equal(t, sdk.CodeUnauthorized, sdk.CodeType(res.Code))
 }
 
-func Test_AddModelinfo_Twice(t *testing.T) {
+func Test_AddModel_ByDifferentVendor(t *testing.T) {
 	// register new account
-	testAccount := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
+	vid := common.RandUint16()
+	testAccount := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, vid+1)
 
-	// publish model info
-	modelInfo := utils.NewMsgAddModelInfo(testAccount.Address)
-	res, _ := utils.AddModelInfo(modelInfo, testAccount)
+	// try to publish model info
+	model := utils.NewMsgAddModel(testAccount.Address, vid)
+	res, _ := utils.SignAndBroadcastMessage(testAccount, model)
+	require.Equal(t, sdk.CodeUnauthorized, sdk.CodeType(res.Code))
+}
+
+func Test_AddModel_Twice(t *testing.T) {
+	// register new account
+	vid := common.RandUint16()
+	testAccount := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, vid)
+
+	// publish modelMsg info
+	modelMsg := utils.NewMsgAddModel(testAccount.Address, vid)
+	res, _ := utils.AddModel(modelMsg, testAccount)
 	require.Equal(t, sdk.CodeOK, sdk.CodeType(res.Code))
 
 	// publish second time
-	res, _ = utils.AddModelInfo(modelInfo, testAccount)
-	require.Equal(t, modelinfo.CodeModelInfoAlreadyExists, sdk.CodeType(res.Code))
+	res, _ = utils.AddModel(modelMsg, testAccount)
+	require.Equal(t, model.CodeModelAlreadyExists, sdk.CodeType(res.Code))
 }
 
-func Test_GetModelinfo_ForUnknown(t *testing.T) {
-	_, code := utils.GetModelInfo(common.RandUint16(), common.RandUint16())
+func Test_GetModel_ForUnknown(t *testing.T) {
+	_, code := utils.GetModel(common.RandUint16(), common.RandUint16())
 	require.Equal(t, http.StatusNotFound, code)
 }
 
-func Test_GetModelinfo_ForInvalidVidPid(t *testing.T) {
+func Test_GetModel_ForInvalidVidPid(t *testing.T) {
 	// zero vid
-	_, code := utils.GetModelInfo(0, common.RandUint16())
+	_, code := utils.GetModel(0, common.RandUint16())
 	require.Equal(t, http.StatusBadRequest, code)
 
 	// zero pid
-	_, code = utils.GetModelInfo(common.RandUint16(), 0)
+	_, code = utils.GetModel(common.RandUint16(), 0)
 	require.Equal(t, http.StatusBadRequest, code)
 }

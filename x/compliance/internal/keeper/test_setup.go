@@ -25,7 +25,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
@@ -71,6 +71,8 @@ func DefaultCertifiedModel() types.ComplianceInfo {
 	return types.NewCertifiedComplianceInfo(
 		testconstants.VID,
 		testconstants.PID,
+		testconstants.SoftwareVersion,
+		testconstants.SoftwareVersionString,
 		types.CertificationType(testconstants.CertificationType),
 		testconstants.CertificationDate,
 		testconstants.EmptyString,
@@ -82,6 +84,8 @@ func DefaultRevokedModel() types.ComplianceInfo {
 	return types.NewRevokedComplianceInfo(
 		testconstants.VID,
 		testconstants.PID,
+		testconstants.SoftwareVersion,
+		testconstants.SoftwareVersionString,
 		types.CertificationType(testconstants.CertificationType),
 		testconstants.RevocationDate,
 		testconstants.RevocationReason,
@@ -109,6 +113,8 @@ func PopulateStoreWithModels(setup TestSetup, firstID uint16, count int, complia
 		// add model {VID: 1, PID: i}
 		complianceInfo.PID = i
 		complianceInfo.VID = i
+		complianceInfo.SoftwareVersion = uint32(i)
+
 		setup.CompliancetKeeper.SetComplianceInfo(setup.Ctx, complianceInfo)
 	}
 
@@ -118,6 +124,8 @@ func PopulateStoreWithModels(setup TestSetup, firstID uint16, count int, complia
 func CheckComplianceInfo(t *testing.T, expected types.ComplianceInfo, received types.ComplianceInfo) {
 	require.Equal(t, expected.VID, received.VID)
 	require.Equal(t, expected.PID, received.PID)
+	require.Equal(t, expected.SoftwareVersion, received.SoftwareVersion)
+	require.Equal(t, expected.SoftwareVersionString, received.SoftwareVersionString)
 	require.Equal(t, expected.CertificationType, received.CertificationType)
 	require.Equal(t, expected.Date, received.Date)
 	require.Equal(t, expected.Reason, received.Reason)

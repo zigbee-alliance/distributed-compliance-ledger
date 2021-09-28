@@ -18,6 +18,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 )
@@ -33,54 +34,66 @@ import (
 
 func TestCompliancetestDemo(t *testing.T) {
 	// Register new Vendor account
-	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor})
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, testconstants.VID)
 
 	// Register new TestHouse account
-	testHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse})
+	testHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse}, 0)
 
 	// Register new TestHouse account
-	secondTestHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse})
+	secondTestHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse}, 0)
 
 	// Publish model info
-	modelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	_, _ = utils.AddModelInfo(modelInfo, vendor)
+	model := utils.NewMsgAddModel(vendor.Address, testconstants.VID)
+	_, _ = utils.AddModel(model, vendor)
+	// Publish modelVersion
+	modelVersion := utils.NewMsgAddModelVersion(model.VID, model.PID,
+		testconstants.SoftwareVersion, testconstants.SoftwareVersionString, vendor.Address)
+	_, _ = utils.AddModelVersion(modelVersion, vendor)
 
 	// Publish first testing result using Sign and Broadcast AddTestingResult message
-	firstTestingResult := utils.NewMsgAddTestingResult(modelInfo.VID, modelInfo.PID, testHouse.Address)
+	firstTestingResult := utils.NewMsgAddTestingResult(model.VID, model.PID, modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString, testHouse.Address)
 	utils.SignAndBroadcastMessage(testHouse, firstTestingResult)
 
 	// Check testing result is created
-	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID)
+	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID, firstTestingResult.SoftwareVersion)
 	require.Equal(t, receivedTestingResult.VID, firstTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, firstTestingResult.PID)
+	require.Equal(t, receivedTestingResult.SoftwareVersion, firstTestingResult.SoftwareVersion)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, firstTestingResult.TestResult)
 	require.Equal(t, receivedTestingResult.Results[0].TestDate, firstTestingResult.TestDate)
 	require.Equal(t, receivedTestingResult.Results[0].Owner, firstTestingResult.Signer)
 
 	// Publish second model info
-	secondModelInfo := utils.NewMsgAddModelInfo(vendor.Address)
-	_, _ = utils.AddModelInfo(secondModelInfo, vendor)
+	secondModel := utils.NewMsgAddModel(vendor.Address, testconstants.VID)
+	_, _ = utils.AddModel(secondModel, vendor)
+	// Publish second modelVersion
+	secondModelVersion := utils.NewMsgAddModelVersion(secondModel.VID, secondModel.PID,
+		testconstants.SoftwareVersion, testconstants.SoftwareVersionString, vendor.Address)
+	_, _ = utils.AddModelVersion(secondModelVersion, vendor)
 
 	// Publish second testing result using POST
-	secondTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, testHouse.Address)
+	secondTestingResult := utils.NewMsgAddTestingResult(secondModel.VID, secondModel.PID,
+		secondModelVersion.SoftwareVersion, secondModelVersion.SoftwareVersionString, testHouse.Address)
 	_, _ = utils.PublishTestingResult(secondTestingResult, testHouse)
 
 	// Check testing result is created
-	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID, secondTestingResult.SoftwareVersion)
 	require.Equal(t, receivedTestingResult.VID, secondTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, secondTestingResult.PID)
+	require.Equal(t, receivedTestingResult.SoftwareVersion, secondTestingResult.SoftwareVersion)
 	require.Equal(t, 1, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)
 	require.Equal(t, receivedTestingResult.Results[0].TestDate, secondTestingResult.TestDate)
 	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
 
 	// Publish new testing result for second model
-	thirdTestingResult := utils.NewMsgAddTestingResult(secondModelInfo.VID, secondModelInfo.PID, secondTestHouse.Address)
+	thirdTestingResult := utils.NewMsgAddTestingResult(secondModel.VID, secondModel.PID,
+		secondModelVersion.SoftwareVersion, secondModelVersion.SoftwareVersionString, secondTestHouse.Address)
 	_, _ = utils.PublishTestingResult(thirdTestingResult, secondTestHouse)
 
 	// Check testing result is created
-	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID)
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID, secondTestingResult.SoftwareVersion)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)

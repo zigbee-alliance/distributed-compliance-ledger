@@ -49,7 +49,7 @@ func TestPkiDemo(t *testing.T) {
 	aliceKeyInfo, _ := utils.GetKeyInfo(testconstants.AliceAccount)
 
 	// Create account for Anna
-	userKeyInfo := utils.CreateNewAccount(auth.AccountRoles{})
+	userKeyInfo := utils.CreateNewAccount(auth.AccountRoles{}, 0)
 
 	// Request all proposed certificates
 	proposedCertificates, _ := utils.GetAllProposedX509RootCerts()

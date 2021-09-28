@@ -20,7 +20,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
 )
 
@@ -29,12 +29,12 @@ func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
 
 	// check if compliance info present
 	require.False(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
-		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID))
+		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion))
 
 	// no compliance info before its created
 	require.Panics(t, func() {
 		setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-			types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID)
+			types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion)
 	})
 
 	// create compliance info
@@ -43,11 +43,11 @@ func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
 
 	// check if compliance info present
 	require.True(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
-		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID))
+		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion))
 
 	// get compliance info
 	receivedComplianceInfo := setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID)
+		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion)
 	CheckComplianceInfo(t, certifiedModel, receivedComplianceInfo)
 }
 
@@ -68,8 +68,8 @@ func TestKeeper_ComplianceInfoIterator(t *testing.T) {
 	var expectedRecords []types.ComplianceInfo
 
 	setup.CompliancetKeeper.IterateComplianceInfos(setup.Ctx, types.CertificationType(testconstants.CertificationType),
-		func(modelInfo types.ComplianceInfo) (stop bool) {
-			expectedRecords = append(expectedRecords, modelInfo)
+		func(model types.ComplianceInfo) (stop bool) {
+			expectedRecords = append(expectedRecords, model)
 
 			return false
 		})
@@ -90,11 +90,11 @@ func TestKeeper_TwoComplianceInfoWithDifferentType(t *testing.T) {
 
 	// get zb compliance info
 	receivedComplianceInfo := setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-		zbCertifiedModel.CertificationType, zbCertifiedModel.VID, zbCertifiedModel.PID)
+		zbCertifiedModel.CertificationType, zbCertifiedModel.VID, zbCertifiedModel.PID, zbCertifiedModel.SoftwareVersion)
 	CheckComplianceInfo(t, zbCertifiedModel, receivedComplianceInfo)
 
 	// get other compliance info
 	receivedComplianceInfo = setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-		otherCertifiedModel.CertificationType, otherCertifiedModel.VID, otherCertifiedModel.PID)
+		otherCertifiedModel.CertificationType, otherCertifiedModel.VID, otherCertifiedModel.PID, otherCertifiedModel.SoftwareVersion)
 	CheckComplianceInfo(t, otherCertifiedModel, receivedComplianceInfo)
 }

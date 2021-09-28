@@ -20,7 +20,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 )
 
@@ -49,14 +49,14 @@ type PendingAccountInfo struct {
 	Approvals []sdk.AccAddress  `json:"approvals"`
 }
 
-type ModelInfoHeadersResult struct {
-	Total string                    `json:"total"`
-	Items []modelinfo.ModelInfoItem `json:"items"`
+type ModelHeadersResult struct {
+	Total string            `json:"total"`
+	Items []model.ModelItem `json:"items"`
 }
 
 type VendorItemHeadersResult struct {
-	Total string                 `json:"total"`
-	Items []modelinfo.VendorItem `json:"items"`
+	Total string             `json:"total"`
+	Items []model.VendorItem `json:"items"`
 }
 
 type ComplianceInfosHeadersResult struct {
