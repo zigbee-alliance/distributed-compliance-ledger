@@ -16,13 +16,14 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const RouterKey = ModuleName
 
 type MsgAddModelVersion struct {
 	ModelVersion
-	Signer sdk.AccAddress `json:"signer"`
+	Signer sdk.AccAddress `json:"signer" validate:"required"`
 }
 
 func NewMsgAddModelVersion(
@@ -44,37 +45,10 @@ func (m MsgAddModelVersion) Type() string {
 }
 
 func (m MsgAddModelVersion) ValidateBasic() sdk.Error {
-	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
+	err := validator.ValidateAdd(m)
+	if err != nil {
+		return err
 	}
-
-	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.SoftwareVersion == 0 {
-		return sdk.ErrUnknownRequest("Invalid SoftwareVersion: it must be non-zero 32-bit unsigned integer")
-	}
-
-	if len(m.SoftwareVersionString) == 0 {
-		return sdk.ErrUnknownRequest("Invalid SoftwareVersionString: it cannot be empty")
-	}
-
-	if m.CDVersionNumber == 0 {
-		return sdk.ErrUnknownRequest("Invalid CDVersionNumber: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.OtaURL != "" || m.OtaFileSize != 0 || m.OtaChecksum != "" || m.OtaChecksumType != 0 {
-		if m.OtaURL == "" || m.OtaFileSize == 0 || m.OtaChecksum == "" || m.OtaChecksumType == 0 {
-			return sdk.ErrUnknownRequest("Invalid MsgAddModelVersion: the fields OtaURL, OtaFileSize, OtaChecksum and " +
-				"OtaChecksumType must be either specified together, or not specified together")
-		}
-	}
-
 	return nil
 }
 
@@ -110,20 +84,9 @@ func (m MsgUpdateModelVersion) Type() string {
 }
 
 func (m MsgUpdateModelVersion) ValidateBasic() sdk.Error {
-	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
-	}
-
-	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.SoftwareVersion == 0 {
-		return sdk.ErrUnknownRequest("Invalid SoftwareVersion: it must be non-zero 32-bit unsigned integer")
+	err := validator.ValidateUpdate(m)
+	if err != nil {
+		return err
 	}
 
 	return nil

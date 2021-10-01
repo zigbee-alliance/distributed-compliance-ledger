@@ -225,6 +225,8 @@ func GetCmdUpdateModelVersion(cdc *codec.Codec) *cobra.Command {
 
 			softwareVersionValid := viper.GetBool(FlagSoftwareVersionValid)
 
+			firmwareDigests := viper.GetString(FlagFirmwareDigests)
+
 			otaURL := viper.GetString(FlagOtaURL)
 			if len(otaURL) > 256 {
 				types.ErrOtaURLInvalid(otaURL)
@@ -256,6 +258,7 @@ func GetCmdUpdateModelVersion(cdc *codec.Codec) *cobra.Command {
 				PID:                          pid,
 				SoftwareVersion:              softwareVersion,
 				SoftwareVersionValid:         softwareVersionValid,
+				FirmwareDigests:              firmwareDigests,
 				OtaURL:                       otaURL,
 				MinApplicableSoftwareVersion: minApplicableSoftwareVersion,
 				MaxApplicableSoftwareVersion: maxApplicableSofwareVersion,
@@ -278,6 +281,8 @@ func GetCmdUpdateModelVersion(cdc *codec.Codec) *cobra.Command {
 		"Software Version of model (uint32)")
 	cmd.Flags().String(FlagSoftwareVersionValid, "",
 		"boolean flag to revoke the software version model")
+	cmd.Flags().String(FlagFirmwareDigests, "",
+		`FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device`)
 	cmd.Flags().String(FlagOtaURL, "", "URL where to obtain the OTA image")
 	cmd.Flags().String(FlagMinApplicableSoftwareVersion, "",
 		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)

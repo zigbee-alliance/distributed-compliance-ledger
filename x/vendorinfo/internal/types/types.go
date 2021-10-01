@@ -19,11 +19,11 @@ package types
 */
 
 type VendorInfo struct {
-	VendorId             uint16 `json:"vendorId"`
-	VendorName           string `json:"vendorName"`
-	CompanyLegalName     string `json:"companyLegaName"`
-	CompanyPreferredName string `json:"companyPreferredName"`
-	VendorLandingPageUrl string `json:"vendorLandingPageUrl"`
+	VendorId             uint16 `json:"vendorId" validate:"required"`
+	VendorName           string `json:"vendorName" validate:"requiredForAdd,min=2,max=32"`
+	CompanyLegalName     string `json:"companyLegalName" validate:"requiredForAdd,min=2,max=64"`
+	CompanyPreferredName string `json:"companyPreferredName" validate:"max=64"`
+	VendorLandingPageUrl string `json:"vendorLandingPageUrl" validate:"omitempty,max=256,url"`
 }
 
 // NewVendor creates a new Vendor object.
@@ -36,28 +36,4 @@ func NewVendorInfo(vendorId uint16, vendorName string, companyLegalName string,
 		CompanyPreferredName: companyPreferredName,
 		VendorLandingPageUrl: vendorLandingPageUrl,
 	}
-}
-
-// Validate checks for errors on the vesting and module account parameters.
-func (vendor VendorInfo) Validate() error {
-	// if acc.Address == nil {
-	// 	return sdk.ErrUnknownRequest(
-	// 		fmt.Sprintf("Invalid Account: Value: %s. Error: Missing Address", acc.Address))
-	// }
-
-	// if acc.PubKey == nil {
-	// 	return sdk.ErrUnknownRequest(
-	// 		fmt.Sprintf("Invalid Account: Value: %s. Error: Missing PubKey", acc.PubKey))
-	// }
-
-	// if err := acc.Roles.Validate(); err != nil {
-	// 	return err
-	// }
-
-	// // If creating an account with Vendor Role, we need to have a associated VendorId
-	// if acc.HasRole(Vendor) && acc.VendorId <= 0 {
-	// 	return ErrMissingVendorIdForVendorAccount()
-	// }
-
-	return nil
 }

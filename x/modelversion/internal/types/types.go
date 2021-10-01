@@ -20,20 +20,20 @@ import (
 
 //nolint:maligned
 type ModelVersion struct {
-	VID                          uint16 `json:"vid"`
-	PID                          uint16 `json:"pid"`
-	SoftwareVersion              uint32 `json:"softwareVersion"`
-	SoftwareVersionString        string `json:"softwareVersionString,omitempty"`
-	CDVersionNumber              uint16 `json:"CDVersionNumber,omitempty"`
-	FirmwareDigests              string `json:"firmwareDigests,omitempty"`
+	VID                          uint16 `json:"vid" validate:"required"`
+	PID                          uint16 `json:"pid" validate:"required"`
+	SoftwareVersion              uint32 `json:"softwareVersion" validate:"required"`
+	SoftwareVersionString        string `json:"softwareVersionString,omitempty" validate:"requiredForAdd,max=64"`
+	CDVersionNumber              uint16 `json:"CDVersionNumber,omitempty" validate:"requiredForAdd"`
+	FirmwareDigests              string `json:"firmwareDigests,omitempty" validate:"max=512"`
 	SoftwareVersionValid         bool   `json:"softwareVersionValid"`
-	OtaURL                       string `json:"otaURL,omitempty"`
-	OtaFileSize                  uint64 `json:"otaFileSize,omitempty"`
-	OtaChecksum                  string `json:"otaChecksum,omitempty"`
-	OtaChecksumType              uint16 `json:"otaChecksumType,omitempty"`
-	MinApplicableSoftwareVersion uint32 `json:"minApplicableSoftwareVersion,omitempty"`
-	MaxApplicableSoftwareVersion uint32 `json:"maxApplicableSoftwareVersion,omitempty"`
-	ReleaseNotesURL              string `json:"releaseNotesURL,omitempty"`
+	OtaURL                       string `json:"otaURL,omitempty" validate:"omitempty,url,max=256"`
+	OtaFileSize                  uint64 `json:"otaFileSize,omitempty" validate:"required_with_all=OtaURL"`
+	OtaChecksum                  string `json:"otaChecksum,omitempty" validate:"required_with_all=OtaURL,max=64"`
+	OtaChecksumType              uint16 `json:"otaChecksumType,omitempty" validate:"required_with_all=OtaURL"`
+	MinApplicableSoftwareVersion uint32 `json:"minApplicableSoftwareVersion,omitempty" validate:"requiredForAdd"`
+	MaxApplicableSoftwareVersion uint32 `json:"maxApplicableSoftwareVersion,omitempty" validate:"requiredForAdd"`
+	ReleaseNotesURL              string `json:"releaseNotesURL,omitempty" validate:"max=256"`
 }
 
 func (d ModelVersion) String() string {

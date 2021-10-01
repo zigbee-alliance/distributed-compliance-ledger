@@ -16,6 +16,7 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const RouterKey = ModuleName
@@ -25,7 +26,7 @@ const RouterKey = ModuleName
 */
 type MsgAddVendorInfo struct {
 	VendorInfo
-	Signer sdk.AccAddress `json:"signer"`
+	Signer sdk.AccAddress `json:"signer" validate:"required"`
 }
 
 func NewMsgAddVendorInfo(vendor VendorInfo, signer sdk.AccAddress) MsgAddVendorInfo {
@@ -44,29 +45,7 @@ func (m MsgAddVendorInfo) Type() string {
 }
 
 func (m MsgAddVendorInfo) ValidateBasic() sdk.Error {
-	// TODO ADD LOGIC HERE
-	/**
-	if m.Address.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Account Address: it cannot be empty")
-	}
-
-	if len(m.PublicKey) == 0 {
-		return sdk.ErrUnknownRequest("Invalid PublicKey: it cannot be empty")
-	}
-
-	if err := m.Roles.Validate(); err != nil {
-		return err
-	}
-
-	if m.HasRole(Vendor) && m.VendorId <= 0 {
-		return ErrMissingVendorIdForVendorAccount()
-	}
-
-	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
-	} **/
-
-	return nil
+	return validator.ValidateAdd(m)
 }
 
 func (m MsgAddVendorInfo) GetSignBytes() []byte {
@@ -82,7 +61,7 @@ func (m MsgAddVendorInfo) GetSigners() []sdk.AccAddress {
 */
 type MsgUpdateVendorInfo struct {
 	VendorInfo
-	Signer sdk.AccAddress `json:"signer"`
+	Signer sdk.AccAddress `json:"signer" validate:"required"`
 }
 
 func NewMsgUpdateVendorInfo(
@@ -104,21 +83,7 @@ func (m MsgUpdateVendorInfo) Type() string {
 }
 
 func (m MsgUpdateVendorInfo) ValidateBasic() sdk.Error {
-	//TODO add validation
-	/*
-		if m.Signer.Empty() {
-			return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
-		}
-
-		if m.VID == 0 {
-			return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
-		}
-
-		if m.PID == 0 {
-			return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
-		}*/
-
-	return nil
+	return validator.ValidateUpdate(m)
 }
 
 func (m MsgUpdateVendorInfo) GetSignBytes() []byte {

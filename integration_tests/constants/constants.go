@@ -51,7 +51,7 @@ var (
 	SoftwareVersionValid                              = true
 	OtaURL                                            = "http://ota.firmware.com"
 	OtaFileSize                                uint64 = 12345678
-	OtaChecksum                                       = "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" //nolint:lll
+	OtaChecksum                                       = "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" //nolint:lll
 	OtaChecksumType                            uint16 = 1
 	OtaBlob                                           = "OTABlob Text"
 	CommissioningCustomFlow                    uint8  = 1
