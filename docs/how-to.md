@@ -128,7 +128,7 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
   Flags:
   - address: `string` - bench32 encoded account address
   - pubkey: `string` - bench32 encoded public key
-  - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin)
+  - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin)
   - from: `string` - name or address of private key with which to sign
 
   Example: `dclcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --from=jack`
@@ -358,36 +358,36 @@ This step is needed for on-ledger certification use case only, see [use_cases_de
 
 The corresponding model and the test results must present on the ledger.
 
- Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>`
+ Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --certificationDate=<rfc3339 encoded date> --from=<account>`
   
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certification-type: `string` -  certification type (zb` is the only supported value now)
-  - certification-date: `string` -  the date of model certification (rfc3339 encoded)
+  - certificationType: `string` -  certification type (zb` is the only supported value now)
+  - certificationDate: `string` -  the date of model certification (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of certification
 
-  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certificationType="zb" --certificationDate="2020-04-16T06:04:57.05Z" --from=jack`
 
 ##### 2. Revoke certification for the device model with the given VID/PID
 This step can be used in either on-ledger certification use case
  ([use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png))
   or off-ledger certification use case ([use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png)).
  
-  Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>`
+  Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --revocationDate=<rfc3339 encoded date> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certification-type: `string` -  certification type (zb` is the only supported value now)
-  - revocation-date: `string` -  the date of model revocation (rfc3339 encoded)
+  - certificationType: `string` -  certification type (zb` is the only supported value now)
+  - revocationDate: `string` -  the date of model revocation (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of revocation
 
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
+  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
  
 ## Node Admin Instructions (Setting up a new Validator Node)

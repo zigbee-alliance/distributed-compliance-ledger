@@ -142,7 +142,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 func TestHandler_ProposeAddAccount_ByNotTrustee(t *testing.T) {
 	setup := Setup()
 
-	for _, role := range []AccountRole{Vendor, TestHouse, ZBCertificationCenter, NodeAdmin} {
+	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
 		signer := storeAccount(setup, role, testconstants.VendorId1)
 
@@ -220,7 +220,7 @@ func TestHandler_ApproveAddAccount_ByNotTrustee(t *testing.T) {
 	// ensure pending account created
 	require.True(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
 
-	for _, role := range []AccountRole{Vendor, TestHouse, ZBCertificationCenter, NodeAdmin} {
+	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
 		signer := storeAccount(setup, role, testconstants.VendorId1)
 
@@ -410,7 +410,7 @@ func TestHandler_ProposeRevokeAccount_ByNotTrustee(t *testing.T) {
 	// store account
 	address := storeAccount(setup, types.Vendor, testconstants.VendorId1)
 
-	for _, role := range []AccountRole{Vendor, TestHouse, ZBCertificationCenter, NodeAdmin} {
+	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
 		signer := storeAccount(setup, role, testconstants.VendorId1)
 
@@ -477,7 +477,7 @@ func TestHandler_ApproveRevokeAccount_ByNotTrustee(t *testing.T) {
 	// ensure pending account revocation created
 	require.True(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
 
-	for _, role := range []AccountRole{Vendor, TestHouse, ZBCertificationCenter, NodeAdmin} {
+	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
 		signer := storeAccount(setup, role, testconstants.VendorId1)
 

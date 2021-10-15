@@ -75,7 +75,7 @@ var (
 	RevocationDate    = time.Date(2020, 3, 3, 3, 30, 0, 0, time.UTC)
 	Reason            = "Some Reason"
 	RevocationReason  = "Some Reason"
-	CertificationType = "zb"
+	CertificationType = "zigbee"
 
 	// Testing Result.
 	TestResult = "http://test.result.com"

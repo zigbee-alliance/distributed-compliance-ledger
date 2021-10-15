@@ -154,15 +154,15 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelversionKee
 func checkZbCertificationRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress,
 	certificationType types.CertificationType) sdk.Error {
 	// rights are depend on certification type
-	if certificationType == types.ZbCertificationType {
-		// sender must have ZBCertificationCenter role to certify/revoke model
-		if !authKeeper.HasRole(ctx, signer, auth.ZBCertificationCenter) {
+	if IsValidCertificationType(certificationType) {
+		// sender must have CertificationCenter role to certify/revoke model
+		if !authKeeper.HasRole(ctx, signer, auth.CertificationCenter) {
 			return sdk.ErrUnauthorized(fmt.Sprintf("MsgCertifyModel/MsgRevokeMode transaction should be "+
-				"signed by an account with the %s role", auth.ZBCertificationCenter))
+				"signed by an account with the %s role", auth.CertificationCenter))
 		}
 	} else {
 		return sdk.ErrUnknownRequest(fmt.Sprintf("Unexpected CertificationType: \"%s\". Supported types: [%s]",
-			certificationType, ZbCertificationType))
+			certificationType, CertificationTypesList))
 	}
 
 	return nil

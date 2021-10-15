@@ -1124,8 +1124,8 @@ func InitStartData() (KeyInfo, KeyInfo, model.MsgAddModel, modelversion.MsgAddMo
 	// Register new Vendor account
 	vendor := CreateNewAccount(auth.AccountRoles{auth.Vendor}, constants.VID)
 
-	// Register new ZBCertificationCenter account
-	zb := CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter}, 0)
+	// Register new CertificationCenter account
+	zigbee := CreateNewAccount(auth.AccountRoles{auth.CertificationCenter}, 0)
 
 	// Publish model info
 	model := NewMsgAddModel(vendor.Address, constants.VID)
@@ -1143,5 +1143,5 @@ func InitStartData() (KeyInfo, KeyInfo, model.MsgAddModel, modelversion.MsgAddMo
 	// Get all revoked models
 	inputRevokedModels, _ := GetAllRevokedModels()
 
-	return vendor, zb, model, modelVersion, inputCertifiedModels, inputRevokedModels
+	return vendor, zigbee, model, modelVersion, inputCertifiedModels, inputRevokedModels
 }

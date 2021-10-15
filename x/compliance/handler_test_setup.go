@@ -85,7 +85,7 @@ func Setup() TestSetup {
 	handler := NewHandler(compliancetKeeper, modelversionKeeper, compliancetestKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1,
-		auth.AccountRoles{auth.ZBCertificationCenter}, testconstants.VendorId1)
+		auth.AccountRoles{auth.CertificationCenter}, testconstants.VendorId1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 

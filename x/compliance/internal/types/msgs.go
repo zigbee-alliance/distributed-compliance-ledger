@@ -79,9 +79,9 @@ func (m MsgCertifyModel) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid CertificationDate: it cannot be empty")
 	}
 
-	if m.CertificationType != ZbCertificationType {
+	if !IsValidCertificationType(m.CertificationType) {
 		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, ZbCertificationType))
+			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, CertificationTypesList))
 	}
 
 	return nil
@@ -151,9 +151,9 @@ func (m MsgRevokeModel) ValidateBasic() sdk.Error {
 		return sdk.ErrUnknownRequest("Invalid RevocationDate: it cannot be empty")
 	}
 
-	if m.CertificationType != ZbCertificationType {
+	if !IsValidCertificationType(m.CertificationType) {
 		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, ZbCertificationType))
+			fmt.Sprintf("Invalid CertificationType: \"%s\". Supported types: [%s]", m.CertificationType, CertificationTypesList))
 	}
 
 	return nil

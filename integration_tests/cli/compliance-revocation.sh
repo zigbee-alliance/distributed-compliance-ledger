@@ -26,11 +26,11 @@ create_new_vendor_account $vendor_account $vid
 echo "Create TestHouse account"
 create_new_account test_house_account "TestHouse"
 
-echo "Create ZBCertificationCenter account"
-create_new_account zb_account "ZBCertificationCenter"
+echo "Create CertificationCenter account"
+create_new_account zb_account "CertificationCenter"
 
-echo "Create other ZBCertificationCenter account"
-create_new_account second_zb_account "ZBCertificationCenter"
+echo "Create other CertificationCenter account"
+create_new_account second_zb_account "CertificationCenter"
 
 # Body
 
@@ -54,18 +54,18 @@ test_divider
 echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
 revocation_date="2020-02-02T02:20:20Z"
 revocation_reason="some reason"
-certification_type="zb"
-result=$(echo "test1234" | dclcli tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --certification-type="$certification_type" --revocation-date="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
+certification_type="zigbee"
+result=$(echo "test1234" | dclcli tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created"
-result=$(dclcli query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certification-type="zb")
+result=$(dclcli query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "\"value\": false"
 echo "$result"
 
 echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} before compliance record was created"
-result=$(dclcli query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certification-type="zb")
+result=$(dclcli query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "\"value\": true"
 echo "$result"
 

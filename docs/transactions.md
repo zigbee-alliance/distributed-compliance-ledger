@@ -14,7 +14,7 @@ an Account or sign the request.
     - Trustee
     - Vendor
     - TestHouse
-    - ZBCertificationCenter
+    - CertificationCenter
     - NodeAdmin   
 - All read (get) requests return the current `height` of the ledger in addition to the
 requested data. The `height` can be used to get a delta (changes) from the last state that the user has.
@@ -960,9 +960,9 @@ from the revocation list.
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revoked pids>`  
 - Who can send: 
-    - ZBCertificationCenter
+    - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --certificationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/certified/vid/pid/certification_type`
     
@@ -990,9 +990,9 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revocation pids>`  
 - Who can send: 
-    - ZBCertificationCenter
+    - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --revocationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/revoked/vid/pid/certification_type`    
     
@@ -1017,7 +1017,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
 - REST API: 
     -   GET `/compliance/certified/vid/pid/certification_type`
 - Result
@@ -1050,7 +1050,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
 - REST API: 
     -   GET `/compliance/revoked/vid/pid/certification_type`
 - Result:
@@ -1078,7 +1078,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
 - REST API: 
     -   GET `/compliance/vid/pid/certification_type`
 - Result:

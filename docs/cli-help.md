@@ -77,7 +77,7 @@ Roles:
 - `Trustee` - Is able to create accounts, assign roles, approve root certificates.
 - `Vendor` - Is able to add models.
 - `TestHouse` - Is able to add testing results for a model.
-- `ZBCertificationCenter` - Is able to certify and revoke models.
+- `CertificationCenter` - Is able to certify and revoke models.
 - `NodeAdmin` - Is able to add validator nodes to the network.
 
 ##### Transactions
@@ -91,7 +91,7 @@ Roles:
   Flags:
   - address: `string` - bench32 encoded account address
   - pubkey: `string` - bench32 encoded public key
-  - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin)
+  - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin)
   - from: `string` - name or address of private key with which to sign
 
   Example: `dclcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --from=jack`
@@ -546,49 +546,49 @@ The set of commands that allows you to manage model certification information.
 - Certify a model associated with the given VID/PID. Note that the corresponding model and the test results must present on the ledger.
 Only the owner can update an existing record. 
 
-  Role: `ZBCertificationCenter`
+  Role: `CertificationCenter`
 
-  Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account>`
+  Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --certificationDate=<rfc3339 encoded date> --from=<account>`
   
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certification-type: `string` -  certification type (zb` is the only supported value now)
-  - certification-date: `string` -  the date of model certification (rfc3339 encoded)
+  - certificationType: `string` -  certification type (zb` is the only supported value now)
+  - certificationDate: `string` -  the date of model certification (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of certification
 
-  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certification-type="zb" --certification-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certificationType="zb" --certificationDate="2020-04-16T06:04:57.05Z" --from=jack`
  
 - Revoke certification for a model associated with the given VID/PID. Only the owner can update an existing record. 
 
-  Role: `ZBCertificationCenter`
+  Role: `CertificationCenter`
 
-  Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account>`
+  Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --revocationDate=<rfc3339 encoded date> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certification-type: `string` -  certification type (zb` is the only supported value now)
-  - revocation-date: `string` -  the date of model revocation (rfc3339 encoded)
+  - certificationType: `string` -  certification type (zb` is the only supported value now)
+  - revocationDate: `string` -  the date of model revocation (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of revocation
 
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certification-type="zb" --revocation-date="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
+  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
 ##### Queries
 - Check if the model associated with the given VID/PID is certified.
 
-  Command: `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>`
+  Command: `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certificationType=<zb>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certification-type: `string` -  certification type (zb` is the only supported value now)
+  - certificationType: `string` -  certification type (zb` is the only supported value now)
 
-  Example: `dclcli query compliance certified-model --vid=1 --pid=1 --certification-type="zb"`
+  Example: `dclcli query compliance certified-model --vid=1 --pid=1 --certificationType="zb"`
   
 - Query all certified models.
 
@@ -602,14 +602,14 @@ Only the owner can update an existing record.
   
 - Check if the model associated with the given VID/PID is revoked.
 
-  Command: `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb>`
+  Command: `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certificationType=<zb>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certification-type: `string` -  certification type (zb` is the only supported value now)
+  - certificationType: `string` -  certification type (zb` is the only supported value now)
 
-  Example: `dclcli query compliance revoked-model --vid=1 --pid=1 --certification-type="zb"`
+  Example: `dclcli query compliance revoked-model --vid=1 --pid=1 --certificationType="zb"`
   
 - Query all revoked models.
 
@@ -623,14 +623,14 @@ Only the owner can update an existing record.
   
 - Query compliance info for model associated with VID/PID.
 
-  Command: `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb>`
+  Command: `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certificationType=<zb>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certification-type: `string` -  certification type (zb` is the only supported value now)
+  - certificationType: `string` -  certification type (zb` is the only supported value now)
 
-  Example: `dclcli query compliance compliance-info --vid=1 --pid=1 --certification-type="zb"`
+  Example: `dclcli query compliance compliance-info --vid=1 --pid=1 --certificationType="zb"`
   
 - Query all compliance infos. 
 

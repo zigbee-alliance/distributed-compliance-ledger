@@ -24,11 +24,11 @@ const (
 	RouterKey  = types.RouterKey
 	StoreKey   = types.StoreKey
 
-	Vendor                = types.Vendor
-	TestHouse             = types.TestHouse
-	ZBCertificationCenter = types.ZBCertificationCenter
-	Trustee               = types.Trustee
-	NodeAdmin             = types.NodeAdmin
+	Vendor              = types.Vendor
+	TestHouse           = types.TestHouse
+	CertificationCenter = types.CertificationCenter
+	Trustee             = types.Trustee
+	NodeAdmin           = types.NodeAdmin
 )
 
 var (

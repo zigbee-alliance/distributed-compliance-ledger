@@ -492,7 +492,7 @@ func TestHandler_CheckZbCertificationDone(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// create other account certification center
-	account := auth.NewAccount(constants.Address3, constants.PubKey3, auth.AccountRoles{auth.ZBCertificationCenter}, 0)
+	account := auth.NewAccount(constants.Address3, constants.PubKey3, auth.AccountRoles{auth.CertificationCenter}, 0)
 	setup.authKeeper.SetAccount(setup.Ctx, account)
 
 	secondCertifyModelMsg := msgCertifyModel(account.Address, vid, pid, softwareVersion, softwareVersionString)
@@ -505,7 +505,7 @@ func queryComplianceInfo(setup TestSetup, vid uint16, pid uint16, softwareVersio
 		setup.Ctx,
 		[]string{
 			keeper.QueryComplianceInfo, fmt.Sprintf("%v", vid),
-			fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZbCertificationType),
+			fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZigbeeCertificationType),
 		},
 		abci.RequestQuery{},
 	)
@@ -530,7 +530,7 @@ func queryRevokedModel(setup TestSetup, vid uint16, pid uint16, softwareVersion 
 func queryComplianceInfoInState(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, state string) (bool, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZbCertificationType)},
+		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZigbeeCertificationType)},
 		abci.RequestQuery{},
 	)
 	if err != nil {
@@ -619,7 +619,7 @@ func checkCertifiedModel(t *testing.T, receivedComplianceInfo ComplianceInfo, ce
 	require.Equal(t, receivedComplianceInfo.PID, certifyModelMsg.PID)
 	require.Equal(t, receivedComplianceInfo.SoftwareVersionCertificationStatus, types.CodeCertified)
 	require.Equal(t, receivedComplianceInfo.Date, certifyModelMsg.CertificationDate)
-	require.Equal(t, receivedComplianceInfo.CertificationType, types.ZbCertificationType)
+	require.Equal(t, receivedComplianceInfo.CertificationType, types.ZigbeeCertificationType)
 }
 
 func checkRevokedModel(t *testing.T, receivedComplianceInfo ComplianceInfo, revokeModelMsg MsgRevokeModel) {
@@ -628,5 +628,5 @@ func checkRevokedModel(t *testing.T, receivedComplianceInfo ComplianceInfo, revo
 	require.Equal(t, receivedComplianceInfo.SoftwareVersionCertificationStatus, types.CodeRevoked)
 	require.Equal(t, receivedComplianceInfo.Date, revokeModelMsg.RevocationDate)
 	require.Equal(t, receivedComplianceInfo.Reason, revokeModelMsg.Reason)
-	require.Equal(t, receivedComplianceInfo.CertificationType, types.ZbCertificationType)
+	require.Equal(t, receivedComplianceInfo.CertificationType, types.ZigbeeCertificationType)
 }

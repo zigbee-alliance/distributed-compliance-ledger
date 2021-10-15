@@ -29,15 +29,18 @@ const (
 )
 
 var (
-	NewKeeper           = keeper.NewKeeper
-	NewQuerier          = keeper.NewQuerier
-	NewMsgCertifyModel  = types.NewMsgCertifyModel
-	NewMsgRevokeModel   = types.NewMsgRevokeModel
-	ModuleCdc           = types.ModuleCdc
-	RegisterCodec       = types.RegisterCodec
-	CodeCertified       = types.CodeCertified
-	CodeRevoked         = types.CodeRevoked
-	ZbCertificationType = types.ZbCertificationType
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
+	NewMsgCertifyModel       = types.NewMsgCertifyModel
+	NewMsgRevokeModel        = types.NewMsgRevokeModel
+	ModuleCdc                = types.ModuleCdc
+	RegisterCodec            = types.RegisterCodec
+	CodeCertified            = types.CodeCertified
+	CodeRevoked              = types.CodeRevoked
+	ZigbeeCertificationType  = types.ZigbeeCertificationType
+	MatterCertificationType  = types.MatterCertificationType
+	CertificationTypesList   = types.CertificationTypesList
+	IsValidCertificationType = types.IsValidCertificationType
 )
 
 type (

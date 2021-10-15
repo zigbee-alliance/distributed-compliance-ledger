@@ -19,12 +19,14 @@ const (
 	FlagPID                       = "pid"
 	FlagSoftwareVersion           = "softwareVersion"
 	FlagSoftwareVersionString     = "softwareVersionString"
-	FlagCertificationType         = "certification-type"
+	FlagCertificationType         = "certificationType"
 	FlagCertificationTypeShortcut = "t"
-	FlagCertificationDate         = "certification-date"
+	FlagCertificationDate         = "certificationDate"
 	FlagCertificationDateShortcut = "d"
 	FlagIsProvisional             = "isProvisional"
-	FlagRevocationDate            = "revocation-date"
+	FlagRevocationDate            = "revocationDate"
 	FlagReason                    = "reason"
 	FlagReasonShortcut            = "r"
+
+	TextCertificationType = "Certification type - Currently zigbee and matter types are supported"
 )

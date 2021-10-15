@@ -27,7 +27,7 @@ import (
 
 func TestNewMsgCertifyModel(t *testing.T) {
 	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-		ZbCertificationType, testconstants.Reason, testconstants.Signer)
+		ZigbeeCertificationType, testconstants.Reason, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "certify_model")
@@ -82,7 +82,7 @@ func TestMsgCertifyModelGetSignBytes(t *testing.T) {
 	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
 		testconstants.CertificationDate, CertificationType(testconstants.CertificationType), testconstants.EmptyString, testconstants.Signer)
 
-	expected := `{"type":"compliance/CertifyModel","value":{"certification_date":"2020-01-01T00:00:00Z","certification_type":"zb","pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","softwareVersion":1,"softwareVersionString":"1.0","vid":1}}`
+	expected := `{"type":"compliance/CertifyModel","value":{"certification_date":"2020-01-01T00:00:00Z","certification_type":"zigbee","pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","softwareVersion":1,"softwareVersionString":"1.0","vid":1}}`
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
@@ -139,7 +139,7 @@ func TestMsRevokeModelGetSignBytes(t *testing.T) {
 	msg := NewMsgRevokeModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.RevocationDate,
 		CertificationType(testconstants.CertificationType), testconstants.RevocationReason, testconstants.Signer)
 
-	expected := `{"type":"compliance/RevokeModel","value":{"certification_type":"zb","pid":22,"reason":"Some Reason",` +
+	expected := `{"type":"compliance/RevokeModel","value":{"certification_type":"zigbee","pid":22,"reason":"Some Reason",` +
 		`"revocation_date":"2020-03-03T03:30:00Z","signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","softwareVersion":1,"softwareVersionString":"","vid":1}}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

@@ -164,7 +164,7 @@ $ $ dclcli query compliancetest test-result --vid=2020 --pid=10
 ==== Check Zigbee Certification Status
 [source,bash]
 ----
-$ dclcli query compliance certified-model --vid=2020 --pid=10 --certification-type="zb"
+$ dclcli query compliance certified-model --vid=2020 --pid=10 --certificationType="zb"
 `{
   "result": {
     "value": true

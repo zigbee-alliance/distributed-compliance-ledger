@@ -60,7 +60,7 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	msgCreateValidator := types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,
 		types.Description{Name: constants.ProductName}, constants.Address1)
 
-	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor, auth.Trustee} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.CertificationCenter, auth.Vendor, auth.Trustee} {
 		// create signer account
 		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorId1)
 		setup.authKeeper.SetAccount(setup.Ctx, account)

@@ -54,11 +54,11 @@ func ValidateGenesis(data GenesisState) error {
 			return sdk.ErrUnknownRequest("Invalid Date: it cannot be empty")
 		}
 
-		if record.CertificationType != "" && record.CertificationType != types.ZbCertificationType {
+		if record.CertificationType != "" && record.CertificationType != types.ZigbeeCertificationType {
 			return sdk.ErrUnknownRequest(
 				fmt.Sprintf("Invalid CertifiedModelRecord: value: %v."+
 					" Error: Invalid CertificationType: "+
-					"unknown type; supported types: [%s]", record.CertificationType, types.ZbCertificationType))
+					"unknown type; supported types: [%s]", record.CertificationType, types.ZigbeeCertificationType))
 		}
 	}
 

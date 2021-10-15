@@ -30,14 +30,14 @@ import (
 type AccountRole string
 
 const (
-	Vendor                AccountRole = "Vendor"
-	TestHouse             AccountRole = "TestHouse"
-	ZBCertificationCenter AccountRole = "ZBCertificationCenter"
-	Trustee               AccountRole = "Trustee"
-	NodeAdmin             AccountRole = "NodeAdmin"
+	Vendor              AccountRole = "Vendor"
+	TestHouse           AccountRole = "TestHouse"
+	CertificationCenter AccountRole = "CertificationCenter"
+	Trustee             AccountRole = "Trustee"
+	NodeAdmin           AccountRole = "NodeAdmin"
 )
 
-var Roles = AccountRoles{Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin}
+var Roles = AccountRoles{Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin}
 
 func (role AccountRole) Validate() sdk.Error {
 	for _, r := range Roles {

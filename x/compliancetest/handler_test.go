@@ -62,7 +62,7 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	_, _, softwareVersion, softwareVersionString :=
 		addModelVersion(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
 
-	for _, role := range []auth.AccountRole{auth.Vendor, auth.ZBCertificationCenter, auth.NodeAdmin} {
+	for _, role := range []auth.AccountRole{auth.Vendor, auth.CertificationCenter, auth.NodeAdmin} {
 		// store account
 		account := auth.NewAccount(test_constants.Address3, test_constants.PubKey3, auth.AccountRoles{role}, test_constants.VendorId3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)

@@ -44,8 +44,8 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Register new TestHouse account
 	testHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse}, 0)
 
-	// Register new ZBCertificationCenter account
-	zb := utils.CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter}, 0)
+	// Register new CertificationCenter account
+	zigbee := utils.CreateNewAccount(auth.AccountRoles{auth.CertificationCenter}, 0)
 
 	// Get all compliance infos
 	inputComplianceInfos, _ := utils.GetComplianceInfos()
@@ -66,10 +66,10 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	_, _ = utils.AddModelVersion(modelVersion, vendor)
 
 	// Check if model either certified or revoked before Compliance record was created
-	modelIsCertified, _ := utils.GetCertifiedModel(model.VID, model.PID, modelVersion.SoftwareVersion, compliance.ZbCertificationType)
+	modelIsCertified, _ := utils.GetCertifiedModel(model.VID, model.PID, modelVersion.SoftwareVersion, compliance.ZigbeeCertificationType)
 	require.False(t, modelIsCertified.Value)
 
-	modelIsRevoked, _ := utils.GetRevokedModel(model.VID, model.PID, modelVersion.SoftwareVersion, compliance.ZbCertificationType)
+	modelIsRevoked, _ := utils.GetRevokedModel(model.VID, model.PID, modelVersion.SoftwareVersion, compliance.ZigbeeCertificationType)
 	require.False(t, modelIsRevoked.Value)
 
 	// Publish testing result
@@ -78,17 +78,17 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 	// Certify model
 	certifyModelMsg := compliance.NewMsgCertifyModel(model.VID, model.PID, modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString, time.Now().UTC(),
-		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zb.Address)
-	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zb)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zigbee.Address)
+	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zigbee)
 
 	// Check model is certified
 	modelIsCertified, _ = utils.GetCertifiedModel(model.VID, model.PID, modelVersion.SoftwareVersion, certifyModelMsg.CertificationType)
 	require.True(t, modelIsCertified.Value)
 
-	// Register other ZBCertificationCenter account
-	secondZb := utils.CreateNewAccount(auth.AccountRoles{auth.ZBCertificationCenter}, 0)
+	// Register other CertificationCenter account
+	secondZb := utils.CreateNewAccount(auth.AccountRoles{auth.CertificationCenter}, 0)
 
-	// Certify model by other ZBCertificationCenter account
+	// Certify model by other CertificationCenter account
 	secondCertifyModelMsg := compliance.NewMsgCertifyModel(model.VID, model.PID, modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString, time.Now().UTC(),
 		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, secondZb.Address)
 	secondCertifyResult, _ := utils.PublishCertifiedModel(secondCertifyModelMsg, secondZb)
@@ -105,8 +105,8 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Revoke model certification
 	revocationTime := certifyModelMsg.CertificationDate.AddDate(0, 0, 1)
 	revokeModelMsg := compliance.NewMsgRevokeModel(model.VID, model.PID, modelVersion.SoftwareVersion, revocationTime,
-		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zb.Address)
-	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zigbee.Address)
+	_, _ = utils.PublishRevokedModel(revokeModelMsg, zigbee)
 
 	// Check model is revoked
 	modelIsCertified, _ = utils.GetCertifiedModel(model.VID, model.PID, modelVersion.SoftwareVersion, revokeModelMsg.CertificationType)
@@ -135,10 +135,10 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 }
 
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
-	// Register new account Vendor, ZBCertificationCenter
+	// Register new account Vendor, CertificationCenter
 	// Publish model info
 	// Get all certified and revoked models
-	_, zb, model, modelVersion, inputCertifiedModels, inputRevokedModels := utils.InitStartData()
+	_, zigbee, model, modelVersion, inputCertifiedModels, inputRevokedModels := utils.InitStartData()
 
 	vid, pid := model.VID, model.PID
 	sv, svs := modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString
@@ -146,8 +146,8 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Revoke non-existent model
 	revocationTime := time.Now().UTC()
 	revokeModelMsg := compliance.NewMsgRevokeModel(common.RandUint16(), common.RandUint16(), common.RandUint32(), revocationTime,
-		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zb.Address)
-	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zigbee.Address)
+	_, _ = utils.PublishRevokedModel(revokeModelMsg, zigbee)
 
 	// Check non-existent model is revoked
 	modelIsRevoked, _ := utils.GetRevokedModel(revokeModelMsg.VID,
@@ -157,8 +157,8 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Revoke model
 	revocationTime = time.Now().UTC()
 	revokeModelMsg = compliance.NewMsgRevokeModel(vid, pid, sv, revocationTime,
-		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zb.Address)
-	_, _ = utils.PublishRevokedModel(revokeModelMsg, zb)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zigbee.Address)
+	_, _ = utils.PublishRevokedModel(revokeModelMsg, zigbee)
 
 	// Check model is revoked
 	modelIsRevoked, _ = utils.GetRevokedModel(revokeModelMsg.VID,
@@ -176,8 +176,8 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Certify model
 	certificationTime := revocationTime.AddDate(0, 0, 1)
 	certifyModelMsg := compliance.NewMsgCertifyModel(vid, pid, sv, svs, certificationTime,
-		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zb.Address)
-	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zb)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zigbee.Address)
+	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zigbee)
 
 	// Check model is certified
 	modelIsRevoked, _ = utils.GetRevokedModel(certifyModelMsg.VID,

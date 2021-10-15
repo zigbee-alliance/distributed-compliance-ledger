@@ -274,7 +274,7 @@ func getRevokedModels(setup TestSetup, params types.ListQueryParams) types.ListC
 func getSingle(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, state string) (types.ComplianceInfo, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZbCertificationType)},
+		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZigbeeCertificationType)},
 		abci.RequestQuery{},
 	)
 	if err != nil {
@@ -290,7 +290,7 @@ func getSingle(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, 
 func getSingleInState(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, state string) (types.ComplianceInfoInState, sdk.Error) {
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZbCertificationType)},
+		[]string{state, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion), fmt.Sprintf("%v", types.ZigbeeCertificationType)},
 		abci.RequestQuery{},
 	)
 	if err != nil {

@@ -42,9 +42,23 @@ const (
 type CertificationType string
 
 const (
-	ZbCertificationType  CertificationType = "zb"
-	CSACertificationType CertificationType = "csa"
+	ZigbeeCertificationType CertificationType = "zigbee"
+	MatterCertificationType CertificationType = "matter"
 )
+
+//	List of Certification Types
+type CertificationTypes []CertificationType
+
+var CertificationTypesList = CertificationTypes{ZigbeeCertificationType, MatterCertificationType}
+
+func IsValidCertificationType(certificationType CertificationType) bool {
+	for _, i := range CertificationTypesList {
+		if i == certificationType {
+			return true
+		}
+	}
+	return false
+}
 
 /*
 	Compliance info stored into KVStore

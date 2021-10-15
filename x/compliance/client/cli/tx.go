@@ -91,8 +91,7 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
 	cmd.Flags().String(FlagSoftwareVersionString, "", "Model software version string")
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Certification type (zb` is the only supported value now)")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().StringP(FlagCertificationDate, FlagCertificationDateShortcut, "",
 		"The date of model certification (rfc3339 encoded)")
 	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
@@ -153,8 +152,7 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagPID, "", "Model product ID")
 	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
 
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Certification type (zb` is the only supported value now)")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().StringP(FlagRevocationDate, FlagCertificationDateShortcut, "",
 		"The date of model revocation (rfc3339 encoded)")
 	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
