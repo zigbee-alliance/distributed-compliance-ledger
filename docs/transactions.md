@@ -28,8 +28,8 @@ This is useful to avoid correlation by the sender's IP address.
         - it will automatically build a request, sign it by the account's key, and broadcast to the ledger.
     - See `CLI` section for every write request (transaction).
     - Example
-        ```json
-        dclcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
+        ```bash
+        dclcli tx modelinfo add-model --vid 1 --pid 1 --name "Device #1" --description "Device Description" --sku "SKU12FS" --hardware-version "1.0" --firmware-version "2.0" --tis-or-trp-testing-completed true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
         ```
 - CLI (keys at the edge)
     - There are two CLIs are started in a CLI mode.
@@ -42,9 +42,9 @@ This is useful to avoid correlation by the sender's IP address.
     - CLI 1: Sign the transaction manually. `dclcli tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
     - CLI 2: Broadcast signed transaction using CLI (`broadcast command)
     - Example
-        ```json
-        CLI 2: dclcli tx modelinfo add-model 1 1 "Device #1" "Device Description" "SKU12FS" "1.0" "2.0" true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
-        CLI 2: dclcli query auth accounts
+        ```bash
+        CLI 2: dclcli tx modelinfo add-model --vid 1 --pid 1 --name "Device #1" --description "Device Description" --sku "SKU12FS" --hardware-version "1.0" --firmware-version "2.0" --tis-or-trp-testing-completed true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
+        CLI 2: dclcli query auth all-accounts
         CLI 1: dclcli tx sign /home/artem/dc-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
         CLI 2: dclcli tx broadcast /home/artem/dc-ledger/txn.json
         ```
@@ -58,7 +58,7 @@ This is useful to avoid correlation by the sender's IP address.
     - Sign the transaction manually using CLI or `tx/sign` endpoint.
     - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`.     
     - Example
-        ```json
+        ```
         POST /modelinfo/models
         POST tx/sign
         POST tx/broadcast
@@ -71,7 +71,7 @@ This is useful to avoid correlation by the sender's IP address.
      in a way similar to the local CLI case.
     - See `REST API` section for every write request (transaction).
     - Example
-        ```json
+        ```
         POST /modelinfo/models with setting Authorization header 
         ```
 
