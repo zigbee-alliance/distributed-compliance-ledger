@@ -112,3 +112,81 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 		restCtx.EncodeAndRespondWithHeight(vendorProducts, height)
 	}
 }
+
+func getModelVersionsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+
+		vid, err_ := conversions.ParseVID(vars[vid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		pid, err_ := conversions.ParsePID(vars[pid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		res, height, err := cliCtx.QueryStore(types.GetModelVersionsKey(vid, pid), storeName)
+		if err != nil || res == nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrNoModelVersionsExist(vid, pid).Error())
+
+			return
+		}
+
+		var modelVersions types.ModelVersions
+
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &modelVersions)
+
+		restCtx.EncodeAndRespondWithHeight(modelVersions, height)
+
+	}
+}
+
+func getModelVersionHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		vars := restCtx.Variables()
+
+		vid, err_ := conversions.ParseVID(vars[vid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		pid, err_ := conversions.ParsePID(vars[pid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		softwareVersion, err_ := conversions.ParseUInt32FromString(softwareVersion, vars[softwareVersion])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryStore(types.GetModelVersionKey(vid, pid, softwareVersion), storeName)
+		if err != nil || res == nil {
+			restCtx.WriteErrorResponse(http.StatusNotFound, types.ErrModelVersionDoesNotExist(vid, pid, softwareVersion).Error())
+
+			return
+		}
+
+		var ModelVersion types.ModelVersion
+
+		cliCtx.Codec.MustUnmarshalBinaryBare(res, &ModelVersion)
+
+		restCtx.EncodeAndRespondWithHeight(ModelVersion, height)
+
+	}
+}

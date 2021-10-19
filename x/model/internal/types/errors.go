@@ -25,8 +25,19 @@ const (
 
 	CodeModelAlreadyExists       sdk.CodeType = 501
 	CodeModelDoesNotExist        sdk.CodeType = 502
-	CodeOtaURLCannotBeSet        sdk.CodeType = 503
 	CodeVendorProductsDoNotExist sdk.CodeType = 504
+
+	// Model Version Error Codes
+	CodeSoftwareVersionStringInvalid sdk.CodeType = 511
+	CodeFirmwareDigestsInvalid       sdk.CodeType = 512
+	CodeCDVersionNumberInvalid       sdk.CodeType = 513
+	CodeErrOtaURLInvalid             sdk.CodeType = 514
+	CodeErrOtaMissingInformation     sdk.CodeType = 515
+	CodeReleaseNotesUrlInvalid       sdk.CodeType = 516
+	CodeModelVersionDoesNotExist     sdk.CodeType = 517
+	CodeNoModelVersionExist          sdk.CodeType = 518
+	CodeModelVersionAlreadyExists    sdk.CodeType = 519
+	CodeOtaURLCannotBeSet            sdk.CodeType = 520
 )
 
 func ErrModelAlreadyExists(vid interface{}, pid interface{}) sdk.Error {
@@ -36,16 +47,60 @@ func ErrModelAlreadyExists(vid interface{}, pid interface{}) sdk.Error {
 
 func ErrModelDoesNotExist(vid interface{}, pid interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeModelDoesNotExist,
-		fmt.Sprintf("No model info associated with vid=%v and pid=%v exist on the ledger", vid, pid))
-}
-
-func ErrOtaURLCannotBeSet(vid interface{}, pid interface{}) sdk.Error {
-	return sdk.NewError(Codespace, CodeOtaURLCannotBeSet,
-		fmt.Sprintf("OTA URL cannot be set for model info associated with vid=%v and pid=%v "+
-			"because OTA was not set for this model info initially", vid, pid))
+		fmt.Sprintf("No model associated with vid=%v and pid=%v exist on the ledger", vid, pid))
 }
 
 func ErrVendorProductsDoNotExist(vid interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeVendorProductsDoNotExist,
 		fmt.Sprintf("No vendor products associated with vid=%v exist on the ledger", vid))
+}
+
+func ErrSoftwareVersionStringInvalid(softwareVersion interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeSoftwareVersionStringInvalid,
+		fmt.Sprintf("SoftwareVersionString %v is invalid. It should be greater then 1 and less then 64 character long", softwareVersion))
+}
+
+func ErrFirmwareDigestsInvalid(firmwareDigests interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeSoftwareVersionStringInvalid,
+		fmt.Sprintf("firmwareDigests %v is of invalid length. Maximum length should be less then 512", firmwareDigests))
+}
+
+func ErrCDVersionNumberInvalid(cdVersionNumber interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeSoftwareVersionStringInvalid,
+		fmt.Sprintf("CDVersionNumber %v is invalid. It should be a 16 bit unsigned integer", cdVersionNumber))
+}
+
+func ErrOtaURLInvalid(otaURL interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeSoftwareVersionStringInvalid,
+		fmt.Sprintf("OtaURL %v is invalid. Maximum length should be less then 256", otaURL))
+}
+
+func ErrMissingOtaInformation() sdk.Error {
+	return sdk.NewError(Codespace, CodeErrOtaMissingInformation, "OtaFileSize, OtaChecksum and OtaChecksumType are required if OtaUrl is provided")
+}
+
+func ErrReleaseNotesURLInvalid(releaseNotesURL interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeReleaseNotesUrlInvalid,
+		fmt.Sprintf("ReleaseNotesURLInvalid %v is invalid. Maximum length should be less then 256", releaseNotesURL))
+}
+
+func ErrModelVersionDoesNotExist(vid interface{}, pid interface{}, softwareVersion interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeModelVersionDoesNotExist,
+		fmt.Sprintf("No model version associated with vid=%v, pid=%v and softwareVersion=%v exist on the ledger", vid, pid, softwareVersion))
+}
+
+func ErrNoModelVersionsExist(vid interface{}, pid interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeNoModelVersionExist,
+		fmt.Sprintf("No versions associated with vid=%v and pid=%v exist on the ledger", vid, pid))
+}
+
+func ErrModelVersionAlreadyExists(vid interface{}, pid interface{}, softwareVersion interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeModelVersionAlreadyExists,
+		fmt.Sprintf("Model Version already exists on ledger with vid=%v pid=%v and softwareVersion=%v exist on the ledger", vid, pid, softwareVersion))
+}
+
+func ErrOtaURLCannotBeSet(vid interface{}, pid interface{}, softwareVersion interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeOtaURLCannotBeSet,
+		fmt.Sprintf("OTA URL cannot be set for model version associated with vid=%v, pid=%v "+
+			"and softwareVersion=%v because OTA was not set for this model info initially", vid, pid, softwareVersion))
 }

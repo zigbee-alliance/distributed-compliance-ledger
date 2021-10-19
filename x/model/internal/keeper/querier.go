@@ -30,6 +30,9 @@ const (
 	QueryAllModels    = "all_models"
 	QueryVendors      = "vendors"
 	QueryVendorModels = "vendor_models"
+
+	QueryModelVersion     = "modelVersion"
+	QueryAllModelVersions = "allModelVersions"
 )
 
 func NewQuerier(keeper Keeper) sdk.Querier {
@@ -43,6 +46,10 @@ func NewQuerier(keeper Keeper) sdk.Querier {
 			return queryVendors(ctx, req, keeper)
 		case QueryVendorModels:
 			return queryVendorModels(ctx, path[1:], keeper)
+		case QueryModelVersion:
+			return queryModelVersion(ctx, path[1:], req, keeper)
+		case QueryAllModelVersions:
+			return queryModelVersions(ctx, path[1:], req, keeper)
 		default:
 			return nil, sdk.ErrUnknownRequest("unknown model query endpoint")
 		}
@@ -162,6 +169,55 @@ func queryVendorModels(ctx sdk.Context, path []string, keeper Keeper) (res []byt
 	vendorProducts := keeper.GetVendorProducts(ctx, vid)
 
 	res = codec.MustMarshalJSONIndent(keeper.cdc, vendorProducts)
+
+	return res, nil
+}
+
+func queryModelVersion(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+	vid, err := conversions.ParseVID(path[0])
+	if err != nil {
+		return nil, err
+	}
+
+	pid, err := conversions.ParsePID(path[1])
+	if err != nil {
+		return nil, err
+	}
+
+	softwareVersion, err := conversions.ParseUInt32FromString("softwareVersion", path[2])
+	if err != nil {
+		return nil, err
+	}
+
+	if !keeper.IsModelVersionPresent(ctx, vid, pid, softwareVersion) {
+		return nil, types.ErrModelVersionDoesNotExist(vid, pid, softwareVersion)
+	}
+
+	modelVersion := keeper.GetModelVersion(ctx, vid, pid, softwareVersion)
+
+	res = codec.MustMarshalJSONIndent(keeper.cdc, modelVersion)
+
+	return res, nil
+}
+
+func queryModelVersions(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+	vid, err := conversions.ParseVID(path[0])
+	if err != nil {
+		return nil, err
+	}
+
+	pid, err := conversions.ParsePID(path[1])
+	if err != nil {
+		return nil, err
+	}
+
+	if !keeper.IsModelPresent(ctx, vid, pid) {
+		return nil, types.ErrNoModelVersionsExist(vid, pid)
+	}
+
+	modelVersions := keeper.GetModelVersions(ctx, vid, pid)
+
+	res = codec.MustMarshalJSONIndent(keeper.cdc, modelVersions)
 
 	return res, nil
 }

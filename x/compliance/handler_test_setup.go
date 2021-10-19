@@ -26,7 +26,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion"
 )
 
 type TestSetup struct {
@@ -36,7 +35,6 @@ type TestSetup struct {
 	CompliancetestKeeper compliancetest.Keeper
 	authKeeper           auth.Keeper
 	ModelKeeper          model.Keeper
-	ModelversionKeeper   modelversion.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
 	CertificationCenter  sdk.AccAddress
@@ -62,9 +60,6 @@ func Setup() TestSetup {
 	modelKey := sdk.NewKVStoreKey(model.StoreKey)
 	dbStore.MountStoreWithDB(modelKey, sdk.StoreTypeIAVL, nil)
 
-	modelversionKey := sdk.NewKVStoreKey(modelversion.StoreKey)
-	dbStore.MountStoreWithDB(modelversionKey, sdk.StoreTypeIAVL, nil)
-
 	compliancetestKey := sdk.NewKVStoreKey(compliancetest.StoreKey)
 	dbStore.MountStoreWithDB(compliancetestKey, sdk.StoreTypeIAVL, nil)
 
@@ -74,7 +69,6 @@ func Setup() TestSetup {
 	compliancetKeeper := NewKeeper(complianceKey, cdc)
 	compliancetestKeeper := compliancetest.NewKeeper(compliancetestKey, cdc)
 	authKeeper := auth.NewKeeper(authKey, cdc)
-	modelversionKeeper := modelversion.NewKeeper(modelversionKey, cdc)
 	modelKeeper := model.NewKeeper(modelKey, cdc)
 
 	// Create context
@@ -82,7 +76,7 @@ func Setup() TestSetup {
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetKeeper)
-	handler := NewHandler(compliancetKeeper, modelversionKeeper, compliancetestKeeper, authKeeper)
+	handler := NewHandler(compliancetKeeper, modelKeeper, compliancetestKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1,
 		auth.AccountRoles{auth.CertificationCenter}, testconstants.VendorId1)
@@ -95,7 +89,6 @@ func Setup() TestSetup {
 		CompliancetKeeper:    compliancetKeeper,
 		CompliancetestKeeper: compliancetestKeeper,
 		ModelKeeper:          modelKeeper,
-		ModelversionKeeper:   modelversionKeeper,
 		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,

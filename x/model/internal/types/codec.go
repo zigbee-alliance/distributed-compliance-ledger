@@ -30,4 +30,6 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(MsgAddModel{}, ModuleName+"/AddModel", nil)
 	cdc.RegisterConcrete(MsgUpdateModel{}, ModuleName+"/UpdateModel", nil)
 	cdc.RegisterConcrete(MsgDeleteModel{}, ModuleName+"/DeleteModel", nil)
+	cdc.RegisterConcrete(MsgAddModelVersion{}, ModuleName+"/AddModelVersion", nil)
+	cdc.RegisterConcrete(MsgUpdateModelVersion{}, ModuleName+"/UpdateModelVersion", nil)
 }

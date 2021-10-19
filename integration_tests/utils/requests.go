@@ -39,8 +39,6 @@ import (
 	compliancetestRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/rest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 	modelRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/rest"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion"
-	modelVersionRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion/client/rest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	pkiRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/rest"
 )
@@ -279,7 +277,7 @@ func AddModel(model model.MsgAddModel, sender KeyInfo) (TxnResponse, int) {
 	return parseWriteTxnResponse(response, code)
 }
 
-func AddModelVersion(modelVersion modelversion.MsgAddModelVersion, sender KeyInfo) (TxnResponse, int) {
+func AddModelVersion(modelVersion model.MsgAddModelVersion, sender KeyInfo) (TxnResponse, int) {
 	println("Add Model Version")
 
 	response, code := SendAddModelVersionRequest(modelVersion, sender.Name)
@@ -295,7 +293,7 @@ func PrepareAddModelTransaction(model model.MsgAddModel) (types.StdTx, int) {
 	return parseStdTxn(response, code)
 }
 
-func PrepareAddModelVersionTransaction(modelVersion modelversion.MsgAddModelVersion) (types.StdTx, int) {
+func PrepareAddModelVersionTransaction(modelVersion model.MsgAddModelVersion) (types.StdTx, int) {
 	println("Prepare Add Model Version Transaction")
 
 	response, code := SendAddModelVersionRequest(modelVersion, "")
@@ -319,8 +317,8 @@ func SendAddModelRequest(msgAddModel model.MsgAddModel, account string) ([]byte,
 	return SendPostRequest(uri, body, account, constants.Passphrase)
 }
 
-func SendAddModelVersionRequest(msgAddModelVersion modelversion.MsgAddModelVersion, account string) ([]byte, int) {
-	request := modelVersionRest.AddModelVersionRequest{
+func SendAddModelVersionRequest(msgAddModelVersion model.MsgAddModelVersion, account string) ([]byte, int) {
+	request := modelRest.AddModelVersionRequest{
 		ModelVersion: msgAddModelVersion.ModelVersion,
 		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
@@ -330,7 +328,7 @@ func SendAddModelVersionRequest(msgAddModelVersion modelversion.MsgAddModelVersi
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
-	uri := fmt.Sprintf("%s/%s", modelversion.RouterKey, "version")
+	uri := fmt.Sprintf("%s/%s", model.RouterKey, "version")
 
 	return SendPostRequest(uri, body, account, constants.Passphrase)
 }
@@ -343,7 +341,7 @@ func UpdateModel(model model.MsgUpdateModel, sender KeyInfo) (TxnResponse, int) 
 	return parseWriteTxnResponse(response, code)
 }
 
-func UpdateModelVersion(modelVersion modelversion.MsgUpdateModelVersion, sender KeyInfo) (TxnResponse, int) {
+func UpdateModelVersion(modelVersion model.MsgUpdateModelVersion, sender KeyInfo) (TxnResponse, int) {
 	println("Update Model Version")
 
 	response, code := SendUpdateModelVersionRequest(modelVersion, sender.Name)
@@ -359,7 +357,7 @@ func PrepareUpdateModelTransaction(model model.MsgUpdateModel) (types.StdTx, int
 	return parseStdTxn(response, code)
 }
 
-func PrepareUpdateModelVersionTransaction(modelVersion modelversion.MsgUpdateModelVersion) (types.StdTx, int) {
+func PrepareUpdateModelVersionTransaction(modelVersion model.MsgUpdateModelVersion) (types.StdTx, int) {
 	println("Prepare Update Model Version Transaction")
 
 	response, code := SendUpdateModelVersionRequest(modelVersion, "")
@@ -383,8 +381,8 @@ func SendUpdateModelRequest(msgUpdateModel model.MsgUpdateModel, account string)
 	return SendPutRequest(uri, body, account, constants.Passphrase)
 }
 
-func SendUpdateModelVersionRequest(msgUpdateModelVersion modelversion.MsgUpdateModelVersion, account string) ([]byte, int) {
-	request := modelVersionRest.UpdateModelVersionRequest{
+func SendUpdateModelVersionRequest(msgUpdateModelVersion model.MsgUpdateModelVersion, account string) ([]byte, int) {
+	request := modelRest.UpdateModelVersionRequest{
 		ModelVersion: msgUpdateModelVersion.ModelVersion,
 		BaseReq: restTypes.BaseReq{
 			ChainID: constants.ChainID,
@@ -394,7 +392,7 @@ func SendUpdateModelVersionRequest(msgUpdateModelVersion modelversion.MsgUpdateM
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
-	uri := fmt.Sprintf("%s/%s", modelversion.RouterKey, "version")
+	uri := fmt.Sprintf("%s/%s", model.RouterKey, "version")
 
 	return SendPutRequest(uri, body, account, constants.Passphrase)
 }
@@ -412,13 +410,13 @@ func GetModel(vid uint16, pid uint16) (model.Model, int) {
 	return result, code
 }
 
-func GetModelVersion(vid uint16, pid uint16, softwareVersion uint32) (modelversion.ModelVersion, int) {
+func GetModelVersion(vid uint16, pid uint16, softwareVersion uint32) (model.ModelVersion, int) {
 	println(fmt.Sprintf("Get Model Version with VID:%v PID:%v SV:%v", vid, pid, softwareVersion))
 
-	uri := fmt.Sprintf("%s/%s/%v/%v/%v", modelversion.RouterKey, "version", vid, pid, softwareVersion)
+	uri := fmt.Sprintf("%s/%s/%v/%v/%v", model.RouterKey, "version", vid, pid, softwareVersion)
 	response, code := SendGetRequest(uri)
 
-	var result modelversion.ModelVersion
+	var result model.ModelVersion
 
 	parseGetReqResponse(removeResponseWrapper(response), &result, code)
 
@@ -1030,8 +1028,8 @@ func NewMsgUpdateModel(vid uint16, pid uint16, owner sdk.AccAddress) model.MsgUp
 }
 
 func NewMsgAddModelVersion(vid uint16, pid uint16,
-	softwareVersion uint32, softwareVersionString string, owner sdk.AccAddress) modelversion.MsgAddModelVersion {
-	newModelVersion := modelversion.ModelVersion{
+	softwareVersion uint32, softwareVersionString string, owner sdk.AccAddress) model.MsgAddModelVersion {
+	newModelVersion := model.ModelVersion{
 
 		VID:                          vid,
 		PID:                          pid,
@@ -1048,15 +1046,15 @@ func NewMsgAddModelVersion(vid uint16, pid uint16,
 		ReleaseNotesURL:              constants.ReleaseNotesURL,
 	}
 
-	return modelversion.NewMsgAddModelVersion(
+	return model.NewMsgAddModelVersion(
 		newModelVersion,
 		owner,
 	)
 }
 
 func NewMsgUpdateModelVersion(vid uint16, pid uint16,
-	softwareVersion uint32, softwareVersionString string, owner sdk.AccAddress) modelversion.MsgUpdateModelVersion {
-	updateModelVersion := modelversion.ModelVersion{
+	softwareVersion uint32, softwareVersionString string, owner sdk.AccAddress) model.MsgUpdateModelVersion {
+	updateModelVersion := model.ModelVersion{
 		VID:             vid,
 		PID:             pid,
 		SoftwareVersion: softwareVersion,
@@ -1064,7 +1062,7 @@ func NewMsgUpdateModelVersion(vid uint16, pid uint16,
 		ReleaseNotesURL: constants.ReleaseNotesURL + "/new",
 	}
 
-	return modelversion.NewMsgUpdateModelVersion(
+	return model.NewMsgUpdateModelVersion(
 		updateModelVersion,
 		owner,
 	)
@@ -1119,7 +1117,7 @@ func parseGetReqResponse(response []byte, entity interface{}, code int) {
 	}
 }
 
-func InitStartData() (KeyInfo, KeyInfo, model.MsgAddModel, modelversion.MsgAddModelVersion,
+func InitStartData() (KeyInfo, KeyInfo, model.MsgAddModel, model.MsgAddModelVersion,
 	ComplianceInfosHeadersResult, ComplianceInfosHeadersResult) {
 	// Register new Vendor account
 	vendor := CreateNewAccount(auth.AccountRoles{auth.Vendor}, constants.VID)

@@ -111,3 +111,90 @@ func updateModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		restCtx.HandleWriteRequest(msg)
 	}
 }
+
+type AddModelVersionRequest struct {
+	types.ModelVersion
+	BaseReq restTypes.BaseReq `json:"base_req"`
+}
+
+type UpdateModelVersionRequest struct {
+	types.ModelVersion
+	BaseReq restTypes.BaseReq `json:"base_req"`
+}
+
+func addModelVersionHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		var req AddModelVersionRequest
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
+
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
+		}
+
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
+		modelVersion := types.ModelVersion{
+			VID:                          req.VID,
+			PID:                          req.PID,
+			SoftwareVersion:              req.SoftwareVersion,
+			SoftwareVersionString:        req.SoftwareVersionString,
+			CDVersionNumber:              req.CDVersionNumber,
+			FirmwareDigests:              req.FirmwareDigests,
+			SoftwareVersionValid:         req.SoftwareVersionValid,
+			OtaURL:                       req.OtaURL,
+			OtaFileSize:                  req.OtaFileSize,
+			OtaChecksum:                  req.OtaChecksum,
+			OtaChecksumType:              req.OtaChecksumType,
+			MinApplicableSoftwareVersion: req.MinApplicableSoftwareVersion,
+			MaxApplicableSoftwareVersion: req.MaxApplicableSoftwareVersion,
+			ReleaseNotesURL:              req.ReleaseNotesURL,
+		}
+
+		msg := types.NewMsgAddModelVersion(modelVersion, restCtx.Signer())
+		restCtx.HandleWriteRequest(msg)
+	}
+}
+
+func updateModelVersionHandler(cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
+
+		var req UpdateModelVersionRequest
+		if !restCtx.ReadRESTReq(&req) {
+			return
+		}
+
+		restCtx, err := restCtx.WithBaseRequest(req.BaseReq)
+		if err != nil {
+			return
+		}
+
+		restCtx, err = restCtx.WithSigner()
+		if err != nil {
+			return
+		}
+
+		modelVersion := types.ModelVersion{
+			VID:                          req.ModelVersion.VID,
+			PID:                          req.ModelVersion.PID,
+			SoftwareVersion:              req.ModelVersion.SoftwareVersion,
+			SoftwareVersionValid:         req.ModelVersion.SoftwareVersionValid,
+			OtaURL:                       req.ModelVersion.OtaURL,
+			MinApplicableSoftwareVersion: req.ModelVersion.MinApplicableSoftwareVersion,
+			MaxApplicableSoftwareVersion: req.ModelVersion.MaxApplicableSoftwareVersion,
+			ReleaseNotesURL:              req.ModelVersion.ReleaseNotesURL,
+		}
+
+		msg := types.NewMsgUpdateModelVersion(modelVersion, restCtx.Signer())
+		restCtx.HandleWriteRequest(msg)
+	}
+}

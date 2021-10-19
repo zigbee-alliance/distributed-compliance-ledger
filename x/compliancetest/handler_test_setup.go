@@ -29,7 +29,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion"
 )
 
 type TestSetup struct {
@@ -38,7 +37,6 @@ type TestSetup struct {
 	CompliancetestKeeper Keeper
 	authKeeper           auth.Keeper
 	ModelKeeper          model.Keeper
-	ModelversionKeeper   modelversion.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
 	TestHouse            sdk.AccAddress
@@ -64,23 +62,19 @@ func Setup() TestSetup {
 	modelKey := sdk.NewKVStoreKey(model.StoreKey)
 	dbStore.MountStoreWithDB(modelKey, sdk.StoreTypeIAVL, nil)
 
-	modelversionKey := sdk.NewKVStoreKey(modelversion.StoreKey)
-	dbStore.MountStoreWithDB(modelversionKey, sdk.StoreTypeIAVL, nil)
-
 	_ = dbStore.LoadLatestVersion()
 
 	// Init Keepers
 	compliancetestKeeper := NewKeeper(complianceKey, cdc)
 	authKeeper := auth.NewKeeper(authKey, cdc)
 	modelKeeper := model.NewKeeper(modelKey, cdc)
-	modelversionKeeper := modelversion.NewKeeper(modelversionKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetestKeeper)
-	handler := NewHandler(compliancetestKeeper, modelversionKeeper, authKeeper)
+	handler := NewHandler(compliancetestKeeper, modelKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.TestHouse}, testconstants.VendorId1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
@@ -91,7 +85,6 @@ func Setup() TestSetup {
 		Ctx:                  ctx,
 		CompliancetestKeeper: compliancetestKeeper,
 		ModelKeeper:          modelKeeper,
-		ModelversionKeeper:   modelversionKeeper,
 		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,

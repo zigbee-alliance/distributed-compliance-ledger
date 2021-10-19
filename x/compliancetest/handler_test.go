@@ -27,7 +27,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion"
 )
 
 func TestHandler_AddTestingResult(t *testing.T) {
@@ -81,7 +80,7 @@ func TestHandler_AddTestingResultForUnknownModel(t *testing.T) {
 	testingResult := TestMsgAddTestingResult(setup.TestHouse, test_constants.VID, test_constants.PID,
 		test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
 	result := setup.Handler(setup.Ctx, testingResult)
-	require.Equal(t, modelversion.CodeModelVersionDoesNotExist, result.Code)
+	require.Equal(t, model.CodeModelVersionDoesNotExist, result.Code)
 }
 
 func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
@@ -195,7 +194,7 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 }
 
 func addModelVersion(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, softwareVersionString string) (uint16, uint16, uint32, string) {
-	modelVersion := modelversion.ModelVersion{
+	modelVersion := model.ModelVersion{
 		VID:                          vid,
 		PID:                          pid,
 		SoftwareVersion:              softwareVersion,
@@ -205,7 +204,7 @@ func addModelVersion(setup TestSetup, vid uint16, pid uint16, softwareVersion ui
 		MaxApplicableSoftwareVersion: test_constants.MaxApplicableSoftwareVersion,
 	}
 
-	setup.ModelversionKeeper.SetModelVersion(setup.Ctx, modelVersion)
+	setup.ModelKeeper.SetModelVersion(setup.Ctx, modelVersion)
 
 	return vid, pid, softwareVersion, softwareVersionString
 }

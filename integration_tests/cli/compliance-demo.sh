@@ -53,7 +53,7 @@ test_divider
 
 sv=$RANDOM
 echo "Add Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(echo 'test1234' | dclcli tx modelversion add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$vendor_account --yes)
+result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$vendor_account --yes)
 echo $result
 check_response "$result" "\"success\": true"
 

@@ -94,7 +94,7 @@ Roles:
   - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin)
   - from: `string` - name or address of private key with which to sign
 
-  Example: `dclcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --from=jack`
+  Example: `dclcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Trustee,NodeAdmin --from=jack`
 
 - Approve a proposed account.
 
@@ -132,7 +132,20 @@ Roles:
 
   Example: `dclcli tx auth approve-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
+- Propose a new account (Vendor Role). A vendor role is tied to a Vendor ID, hence while proposing a Vendor Role vid is a required field.
 
+  Role: `Trustee`
+
+  Command: `dclcli tx auth propose-add-account --address=<string> --pubkey=<string> --roles=<roles> --vid=<vendorID> --from=<account>`
+
+  Flags:
+  - address: `string` - bench32 encoded account address
+  - pubkey: `string` - bench32 encoded public key
+  - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin)
+  - vid: `string` - Vendor ID associated with this account. Required only for Vendor Roles
+  - from: `string` - name or address of private key with which to sign
+
+  Example: `dclcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --vid=123 --from=jack`
 ##### Queries
 
 - Get a single account. Revoked accounts are not returned.
@@ -386,10 +399,10 @@ The set of commands that allows you to manage X.509 certificates.
 
 ### Model Info
 
-The set of commands that allows you to manage model infos.
+The set of commands that allows you to manage model and model versions.
 
 ##### Transactions
-- Add a new model info.
+- Add a new model.
 
   Role: `Vendor`
   

@@ -30,6 +30,11 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 			return handleMsgAddModel(ctx, keeper, authKeeper, msg)
 		case types.MsgUpdateModel:
 			return handleMsgUpdateModel(ctx, keeper, authKeeper, msg)
+		case types.MsgAddModelVersion:
+			return handleMsgAddModelVersion(ctx, keeper, authKeeper, msg)
+		case types.MsgUpdateModelVersion:
+			return handleMsgUpdateModelVersion(ctx, keeper, authKeeper, msg)
+
 			/*		case type.MsgDeleteModel:
 					return handleMsgDeleteModel(ctx, keeper, authKeeper, msg)*/
 		default:
@@ -157,4 +162,95 @@ func checkModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAdd
 	}
 
 	return nil
+}
+
+func handleMsgAddModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
+	msg types.MsgAddModelVersion) sdk.Result {
+
+	// check sender has enough rights to add model
+	if err := checkModelRights(ctx, authKeeper, msg.Signer, msg.VID, "msgAddModelVersionModelVersion Add/Update"); err != nil {
+		return err.Result()
+	}
+
+	// check if model exists
+	if !keeper.IsModelPresent(ctx, msg.VID, msg.PID) {
+		return types.ErrModelDoesNotExist(msg.VID, msg.PID).Result()
+	}
+
+	// check if model version already exists
+	if keeper.IsModelVersionPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {
+		return types.ErrModelVersionAlreadyExists(msg.VID, msg.PID, msg.SoftwareVersion).Result()
+	}
+
+	modelVersion := types.ModelVersion{
+		VID:                          msg.VID,
+		PID:                          msg.PID,
+		SoftwareVersion:              msg.SoftwareVersion,
+		SoftwareVersionString:        msg.SoftwareVersionString,
+		CDVersionNumber:              msg.CDVersionNumber,
+		FirmwareDigests:              msg.FirmwareDigests,
+		SoftwareVersionValid:         msg.SoftwareVersionValid,
+		OtaURL:                       msg.OtaURL,
+		OtaFileSize:                  msg.OtaFileSize,
+		OtaChecksum:                  msg.OtaChecksum,
+		OtaChecksumType:              msg.OtaChecksumType,
+		MinApplicableSoftwareVersion: msg.MinApplicableSoftwareVersion,
+		MaxApplicableSoftwareVersion: msg.MaxApplicableSoftwareVersion,
+		ReleaseNotesURL:              msg.ReleaseNotesURL,
+	}
+
+	// store new model version
+	keeper.Logger(ctx).Info("Creating a new model version",
+		"ModelVersion :", modelVersion.String())
+
+	keeper.SetModelVersion(ctx, modelVersion)
+	return sdk.Result{}
+}
+
+//nolint:funlen
+func handleMsgUpdateModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
+	msg types.MsgUpdateModelVersion) sdk.Result {
+	// check if model exists
+	if !keeper.IsModelVersionPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {
+		return types.ErrModelVersionDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion).Result()
+	}
+
+	modelVersion := keeper.GetModelVersion(ctx, msg.VID, msg.PID, msg.SoftwareVersion)
+
+	// check if sender has enough rights to update model
+	if err := checkModelRights(ctx, authKeeper, msg.Signer, msg.VID, "ModelVersion Add/Update"); err != nil {
+		return err.Result()
+	}
+
+	if msg.OtaURL != "" && modelVersion.OtaURL == "" {
+		return types.ErrOtaURLCannotBeSet(msg.VID, msg.PID, msg.SoftwareVersion).Result()
+	}
+
+	// updates existing model version value only if corresponding value in MsgUpdate is not empty
+	// p.s. only mutable fields are updated.
+
+	if msg.SoftwareVersionValid != modelVersion.SoftwareVersionValid {
+		modelVersion.SoftwareVersionValid = msg.SoftwareVersionValid
+	}
+
+	if msg.OtaURL != "" {
+		modelVersion.OtaURL = msg.OtaURL
+	}
+
+	if msg.MinApplicableSoftwareVersion != 0 {
+		modelVersion.MinApplicableSoftwareVersion = msg.MinApplicableSoftwareVersion
+	}
+
+	if msg.MaxApplicableSoftwareVersion != 0 {
+		modelVersion.MinApplicableSoftwareVersion = msg.MaxApplicableSoftwareVersion
+	}
+
+	if msg.ReleaseNotesURL != "" {
+		modelVersion.ReleaseNotesURL = msg.ReleaseNotesURL
+	}
+
+	// store updated model
+	keeper.SetModelVersion(ctx, modelVersion)
+
+	return sdk.Result{}
 }

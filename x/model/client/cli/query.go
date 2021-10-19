@@ -40,6 +40,8 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 		GetCmdAllModels(storeKey, cdc),
 		GetCmdVendors(storeKey, cdc),
 		GetCmdVendorModels(storeKey, cdc),
+		GetCmdModelVersion(storeKey, cdc),
+		GetCmdAllModelVersions(storeKey, cdc),
 	)...)
 
 	return modelQueryCmd
@@ -152,6 +154,93 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
+
+	return cmd
+}
+
+func GetCmdModelVersion(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "get-model-version",
+		Short: "Query Model Version by combination of Vendor ID, Product ID and Software Version",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
+			if err_ != nil {
+				return err_
+			}
+
+			pid, err_ := conversions.ParsePID(viper.GetString(FlagPID))
+			if err_ != nil {
+				return err_
+			}
+
+			softwareVersion, err_ := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
+			if err_ != nil {
+				return err_
+			}
+
+			res, height, err := cliCtx.QueryStore(types.GetModelVersionKey(vid, pid, softwareVersion), queryRoute)
+			if err != nil || res == nil {
+				return types.ErrModelVersionDoesNotExist(vid, pid, softwareVersion)
+			}
+
+			var modelVersion types.ModelVersion
+			cdc.MustUnmarshalBinaryBare(res, &modelVersion)
+
+			return cliCtx.EncodeAndPrintWithHeight(modelVersion, height)
+		},
+	}
+
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model Software Version")
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+
+	return cmd
+}
+
+func GetCmdAllModelVersions(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "all-model-versions",
+		Short: "Query the list of all versions for a given Device Model",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := cli.NewCLIContext().WithCodec(cdc)
+
+			vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
+			if err_ != nil {
+				return err_
+			}
+
+			pid, err_ := conversions.ParsePID(viper.GetString(FlagPID))
+			if err_ != nil {
+				return err_
+			}
+
+			res, height, err := cliCtx.QueryStore(types.GetModelVersionsKey(vid, pid), queryRoute)
+			if err != nil || res == nil {
+				return types.ErrNoModelVersionsExist(vid, pid)
+			}
+
+			var modelVersions types.ModelVersions
+			cdc.MustUnmarshalBinaryBare(res, &modelVersions)
+
+			return cliCtx.EncodeAndPrintWithHeight(modelVersions, height)
+		},
+	}
+
+	cmd.Flags().String(FlagVID, "", "Model Vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model Product ID")
+	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
+
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
 
 	return cmd
 }

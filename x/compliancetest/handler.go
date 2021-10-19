@@ -21,15 +21,15 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 )
 
-func NewHandler(keeper keeper.Keeper, modelversionKeeper modelversion.Keeper, authKeeper auth.Keeper) sdk.Handler {
+func NewHandler(keeper keeper.Keeper, modelKeeper model.Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		keeper.Logger(ctx).Info("Inside the handleMsgAddTestingCenter...")
 		switch msg := msg.(type) {
 		case types.MsgAddTestingResult:
-			return handleMsgAddTestingResult(ctx, keeper, modelversionKeeper, authKeeper, msg)
+			return handleMsgAddTestingResult(ctx, keeper, modelKeeper, authKeeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized compliancetest Msg type: %v", msg.Type())
 
@@ -38,7 +38,7 @@ func NewHandler(keeper keeper.Keeper, modelversionKeeper modelversion.Keeper, au
 	}
 }
 
-func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelversionKeeper modelversion.Keeper,
+func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelKeeper model.Keeper,
 	authKeeper auth.Keeper, msg types.MsgAddTestingResult) sdk.Result {
 	// check if sender has enough rights to add testing results
 	keeper.Logger(ctx).Info("Inside the handleMsgAddTestingCenter")
@@ -47,8 +47,8 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelversi
 	}
 
 	// check that corresponding model exists on the ledger
-	if !modelversionKeeper.IsModelVersionPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {
-		return modelversion.ErrModelVersionDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion).Result()
+	if !modelKeeper.IsModelVersionPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {
+		return model.ErrModelVersionDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion).Result()
 	}
 
 	testingResult := types.NewTestingResult(

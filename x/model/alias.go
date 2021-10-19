@@ -20,30 +20,38 @@ import (
 )
 
 const (
-	ModuleName             = types.ModuleName
-	RouterKey              = types.RouterKey
-	StoreKey               = types.StoreKey
-	CodeModelDoesNotExist  = types.CodeModelDoesNotExist
-	CodeModelAlreadyExists = types.CodeModelAlreadyExists
+	ModuleName                   = types.ModuleName
+	RouterKey                    = types.RouterKey
+	StoreKey                     = types.StoreKey
+	CodeModelDoesNotExist        = types.CodeModelDoesNotExist
+	CodeModelAlreadyExists       = types.CodeModelAlreadyExists
+	CodeModelVersionDoesNotExist = types.CodeModelVersionDoesNotExist
 )
 
 var (
-	NewKeeper            = keeper.NewKeeper
-	NewQuerier           = keeper.NewQuerier
-	NewMsgAddModel       = types.NewMsgAddModel
-	NewMsgUpdateModel    = types.NewMsgUpdateModel
-	ModuleCdc            = types.ModuleCdc
-	RegisterCodec        = types.RegisterCodec
-	ErrModelDoesNotExist = types.ErrModelDoesNotExist
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
+	NewMsgAddModel           = types.NewMsgAddModel
+	NewMsgUpdateModel        = types.NewMsgUpdateModel
+	NewMsgAddModelVersion    = types.NewMsgAddModelVersion
+	NewMsgUpdateModelVersion = types.NewMsgUpdateModelVersion
+
+	ModuleCdc                   = types.ModuleCdc
+	RegisterCodec               = types.RegisterCodec
+	ErrModelDoesNotExist        = types.ErrModelDoesNotExist
+	ErrModelVersionDoesNotExist = types.ErrModelVersionDoesNotExist
 )
 
 type (
-	Keeper         = keeper.Keeper
-	MsgAddModel    = types.MsgAddModel
-	MsgUpdateModel = types.MsgUpdateModel
-	MsgDeleteModel = types.MsgDeleteModel
-	Model          = types.Model
-	VendorProducts = types.VendorProducts
-	ModelItem      = types.ModelItem
-	VendorItem     = types.VendorItem
+	Keeper                = keeper.Keeper
+	MsgAddModel           = types.MsgAddModel
+	MsgUpdateModel        = types.MsgUpdateModel
+	MsgAddModelVersion    = types.MsgAddModelVersion
+	MsgUpdateModelVersion = types.MsgUpdateModelVersion
+	MsgDeleteModel        = types.MsgDeleteModel
+	Model                 = types.Model
+	ModelVersion          = types.ModelVersion
+	VendorProducts        = types.VendorProducts
+	ModelItem             = types.ModelItem
+	VendorItem            = types.VendorItem
 )

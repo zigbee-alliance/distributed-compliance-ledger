@@ -15,6 +15,7 @@
 package cli
 
 const (
+	// Flags for Model
 	FlagVID                                        = "vid"
 	FlagPID                                        = "pid"
 	FlagDeviceTypeID                               = "deviceTypeID"
@@ -32,4 +33,19 @@ const (
 	FlagUserManualURL                              = "userManualURL"
 	FlagSupportURL                                 = "supportURL"
 	FlagProductURL                                 = "productURL"
+
+	// Flags for Model Software Version
+	FlagSoftwareVersion              = "softwareVersion"
+	FlagSoftwareVersionShortcut      = "v"
+	FlagSoftwareVersionString        = "softwareVersionString"
+	FlagCDVersionNumber              = "cdVersionNumber"
+	FlagFirmwareDigests              = "firmwareDigests"
+	FlagSoftwareVersionValid         = "softwareVersionValid"
+	FlagOtaURL                       = "otaURL"
+	FlagOtaFileSize                  = "OtaFileSize"
+	FlagOtaChecksum                  = "otaChecksum"
+	FlagOtaChecksumType              = "otaChecksumType"
+	FlagMinApplicableSoftwareVersion = "minApplicableSoftwareVersion"
+	FlagMaxApplicableSoftwareVersion = "maxApplicableSoftwareVersion"
+	FlagReleaseNotesURL              = "releaseNotesURL"
 )

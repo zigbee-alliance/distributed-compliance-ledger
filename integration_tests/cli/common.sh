@@ -118,7 +118,7 @@ create_model_and_version() {
   _user_address=$4
   result=$(echo 'test1234' | dclcli tx model add-model --vid=$_vid --pid=$_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$_user_address --yes)
   check_response "$result" "\"success\": true"
-  result=$(echo 'test1234' | dclcli tx modelversion add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$_vid --pid=$_pid --softwareVersion=$_softwareVersion --softwareVersionString=1 --from=$_user_address --yes)
+  result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$_vid --pid=$_pid --softwareVersion=$_softwareVersion --softwareVersionString=1 --from=$_user_address --yes)
   check_response "$result" "\"success\": true"
 }
 

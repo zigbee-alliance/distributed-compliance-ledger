@@ -28,6 +28,7 @@ const (
 
 var (
 	ModelPrefix          = []byte{0x01} // prefix for each key to a model info
+	ModelVersionPrefix   = []byte{0x02} // prefix for each key to a model version
 	VendorProductsPrefix = []byte{0x02} // prefix for each key to a vendor products
 )
 
@@ -48,4 +49,42 @@ func GetVendorProductsKey(vid uint16) []byte {
 	binary.LittleEndian.PutUint16(b, vid)
 
 	return append(VendorProductsPrefix, b...)
+}
+
+// Key builder for Model Version.
+func GetModelVersionKey(vid uint16, pid uint16, softwareVersion uint32) []byte {
+
+	var key []byte
+
+	key = append(key, ModelVersionPrefix...)
+	v := make([]byte, 2)
+	binary.LittleEndian.PutUint16(v, vid)
+	key = append(key, v...)
+
+	p := make([]byte, 2)
+	binary.LittleEndian.PutUint16(p, pid)
+	key = append(key, p...)
+
+	sv := make([]byte, 4)
+	binary.LittleEndian.PutUint32(sv, softwareVersion)
+	key = append(key, sv...)
+
+	return key
+}
+
+// Key builder for Model Version.
+func GetModelVersionsKey(vid uint16, pid uint16) []byte {
+
+	var key []byte
+
+	key = append(key, ModelVersionPrefix...)
+	v := make([]byte, 2)
+	binary.LittleEndian.PutUint16(v, vid)
+	key = append(key, v...)
+
+	p := make([]byte, 2)
+	binary.LittleEndian.PutUint16(p, pid)
+	key = append(key, p...)
+
+	return key
 }

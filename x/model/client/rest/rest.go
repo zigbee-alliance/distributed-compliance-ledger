@@ -22,8 +22,9 @@ import (
 )
 
 const (
-	vid = "vid"
-	pid = "pid"
+	vid             = "vid"
+	pid             = "pid"
+	softwareVersion = "softwareVersion"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application.
@@ -51,5 +52,24 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	r.HandleFunc(
 		fmt.Sprintf("/%s/vendors", storeName),
 		getVendorsHandler(cliCtx, storeName),
+	).Methods("GET")
+
+	r.HandleFunc(
+		fmt.Sprintf("/%s/version", storeName),
+		addModelVersionHandler(cliCtx),
+	).Methods("POST")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/version", storeName),
+		updateModelVersionHandler(cliCtx),
+	).Methods("PUT")
+
+	r.HandleFunc(
+		fmt.Sprintf("/%s/versions/{%s}/{%s}", storeName, vid, pid),
+		getModelVersionsHandler(cliCtx, storeName),
+	).Methods("GET")
+
+	r.HandleFunc(
+		fmt.Sprintf("/%s/version/{%s}/{%s}/{%s}", storeName, vid, pid, softwareVersion),
+		getModelVersionHandler(cliCtx, storeName),
 	).Methods("GET")
 }

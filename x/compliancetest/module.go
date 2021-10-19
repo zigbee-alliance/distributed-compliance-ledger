@@ -27,7 +27,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/rest"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelversion"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 )
 
 // type check to ensure the interface is properly implemented.
@@ -79,15 +79,15 @@ func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 type AppModule struct {
 	AppModuleBasic
-	keeper             Keeper
-	authKeeper         auth.Keeper
-	modelversionKeeper modelversion.Keeper
+	keeper      Keeper
+	authKeeper  auth.Keeper
+	modelKeeper model.Keeper
 }
 
-func NewAppModule(keeper Keeper, authKeeper auth.Keeper, modelversionKeeper modelversion.Keeper) AppModule {
+func NewAppModule(keeper Keeper, authKeeper auth.Keeper, modelKeeper model.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{}, keeper: keeper,
-		authKeeper: authKeeper, modelversionKeeper: modelversionKeeper,
+		authKeeper: authKeeper, modelKeeper: modelKeeper,
 	}
 }
 
@@ -112,7 +112,7 @@ func (a AppModule) Route() string {
 }
 
 func (a AppModule) NewHandler() sdk.Handler {
-	return NewHandler(a.keeper, a.modelversionKeeper, a.authKeeper)
+	return NewHandler(a.keeper, a.modelKeeper, a.authKeeper)
 }
 
 func (a AppModule) QuerierRoute() string {
