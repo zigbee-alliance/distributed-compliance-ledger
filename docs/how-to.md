@@ -358,17 +358,17 @@ This step is needed for on-ledger certification use case only, see [use_cases_de
 
 The corresponding model and the test results must present on the ledger.
 
- Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --certificationDate=<rfc3339 encoded date> --from=<account>`
+ Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zigbee|matter> --certificationDate=<rfc3339 encoded date> --from=<account>`
   
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certificationType: `string` -  certification type (zb` is the only supported value now)
+  - certificationType: `string` -  certification type (zigbee & matter` are the only supported values for now)
   - certificationDate: `string` -  the date of model certification (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of certification
 
-  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certificationType="zb" --certificationDate="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certificationType="matter" --certificationDate="2020-04-16T06:04:57.05Z" --from=jack`
 
 ##### 2. Revoke certification for the device model with the given VID/PID
 This step can be used in either on-ledger certification use case
@@ -380,7 +380,7 @@ This step can be used in either on-ledger certification use case
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - certificationType: `string` -  certification type (zb` is the only supported value now)
+  - certificationType: `string` -  certification type (zigbee & matter` are the only supported values for now)
   - revocationDate: `string` -  the date of model revocation (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of revocation

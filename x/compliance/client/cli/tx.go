@@ -64,7 +64,7 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			softwareVersion, err := conversions.ParseUInt32FromString("SoftwareVersion", viper.GetString(FlagSoftwareVersion))
+			softwareVersion, err := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 			if err != nil {
 				return err
 			}

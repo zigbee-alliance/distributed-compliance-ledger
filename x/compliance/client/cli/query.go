@@ -184,7 +184,7 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec) error {
 		return err_
 	}
 
-	softwareVersion, err_ := conversions.ParseUInt32FromString("SoftwareVersion", viper.GetString(FlagSoftwareVersion))
+	softwareVersion, err_ := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 	if err_ != nil {
 		return err_
 	}
@@ -216,7 +216,7 @@ func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, status types.
 		return err_
 	}
 
-	softwareVersion, err_ := conversions.ParseUInt32FromString("SoftwareVersion", viper.GetString(FlagSoftwareVersion))
+	softwareVersion, err_ := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 	if err_ != nil {
 		return err_
 	}
