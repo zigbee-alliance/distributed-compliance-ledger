@@ -42,7 +42,11 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	).Methods("GET")
 	r.HandleFunc(
 		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}", storeName, types.Certified, vid, pid, softwareVersion, certificationType),
-		certifyModelHandler(cliCtx),
+		certifyModelHandler(cliCtx, false),
+	).Methods("PUT")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}", storeName, types.Provisional, vid, pid, softwareVersion, certificationType),
+		certifyModelHandler(cliCtx, true),
 	).Methods("PUT")
 	r.HandleFunc(
 		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}", storeName, types.Certified, vid, pid, softwareVersion, certificationType),

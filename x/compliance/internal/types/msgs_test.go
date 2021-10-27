@@ -27,7 +27,7 @@ import (
 
 func TestNewMsgCertifyModel(t *testing.T) {
 	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-		ZigbeeCertificationType, testconstants.Reason, testconstants.Signer)
+		ZigbeeCertificationType, testconstants.Reason, false, testconstants.Signer)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "certify_model")
@@ -42,29 +42,29 @@ func TestMsgCertifyModelValidation(t *testing.T) {
 		{true, NewMsgCertifyModel(
 			testconstants.VID, testconstants.PID,
 			testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-			CertificationType(testconstants.CertificationType), testconstants.Reason, testconstants.Signer)},
+			CertificationType(testconstants.CertificationType), testconstants.Reason, false, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
 			testconstants.VID, 0, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
 			testconstants.CertificationDate, CertificationType(testconstants.CertificationType),
-			testconstants.Reason, testconstants.Signer)},
+			testconstants.Reason, false, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
 			testconstants.VID, 0, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-			CertificationType(testconstants.CertificationType), testconstants.Reason, testconstants.Signer)},
+			CertificationType(testconstants.CertificationType), testconstants.Reason, false, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
 			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, time.Time{},
-			CertificationType(testconstants.CertificationType), testconstants.Reason, testconstants.Signer)},
+			CertificationType(testconstants.CertificationType), testconstants.Reason, false, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
 			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-			"", testconstants.Reason, testconstants.Signer)},
+			"", testconstants.Reason, false, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
 			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-			"Other Type", testconstants.Reason, testconstants.Signer)},
+			"Other Type", testconstants.Reason, false, testconstants.Signer)},
 		{true, NewMsgCertifyModel(
 			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-			CertificationType(testconstants.CertificationType), "", testconstants.Signer)},
+			CertificationType(testconstants.CertificationType), "", false, testconstants.Signer)},
 		{false, NewMsgCertifyModel(
 			testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString, testconstants.CertificationDate,
-			CertificationType(testconstants.CertificationType), testconstants.Reason, nil)},
+			CertificationType(testconstants.CertificationType), testconstants.Reason, false, nil)},
 	}
 
 	for _, tc := range cases {
@@ -80,7 +80,7 @@ func TestMsgCertifyModelValidation(t *testing.T) {
 
 func TestMsgCertifyModelGetSignBytes(t *testing.T) {
 	msg := NewMsgCertifyModel(testconstants.VID, testconstants.PID, testconstants.SoftwareVersion, testconstants.SoftwareVersionString,
-		testconstants.CertificationDate, CertificationType(testconstants.CertificationType), testconstants.EmptyString, testconstants.Signer)
+		testconstants.CertificationDate, CertificationType(testconstants.CertificationType), testconstants.EmptyString, false, testconstants.Signer)
 
 	expected := `{"type":"compliance/CertifyModel","value":{"certification_date":"2020-01-01T00:00:00Z","certification_type":"zigbee","pid":22,"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz","softwareVersion":1,"softwareVersionString":"1.0","vid":1}}`
 

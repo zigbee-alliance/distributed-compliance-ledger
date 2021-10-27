@@ -52,17 +52,26 @@ check_response "$result" "\"success\": true"
 test_divider
 
 sv=$RANDOM
-echo "Add Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$vendor_account --yes)
+svs=$RANDOM
+echo "Add Model Version with VID: $vid PID: $pid SV: $sv SoftwareVersionString:$svs"
+result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --from=$vendor_account --yes)
 echo $result
 check_response "$result" "\"success\": true"
 
 test_divider
 
-echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
+invalid_svs=$RANDOM
 testing_result="http://first.place.com"
 test_date="2020-11-24T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString="1.0" --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv and invalid SoftwareVersionString: $invalid_svs"
+result=$(echo 'test1234' | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$invalid_svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+check_response "$result" "\"success\": false"
+check_response "$result" "ledger does not have  matching softwareVersionString=$invalid_svs"
+
+test_divider
+
+echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv SoftwareVersionString:$svs"
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 echo $result
 check_response "$result" "\"success\": true"
 
@@ -86,13 +95,13 @@ echo "Certify Model with VID: $vid PID: $pid  SV: ${sv} with zigbee certificatio
 certification_date="2020-01-01T00:00:00Z"
 zigbee_certification_type="zigbee"
 matter_certification_type="matter"
-result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1.0 --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
+result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"success\": true"
 
 echo "Certify Model with VID: $vid PID: $pid  SV: ${sv} with matter certification"
-echo "dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1.0 --certificationType="$matter_certification_type" --certificationDate="$certification_date" --from $zb_account --yes"
-result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1.0 --certificationType="$matter_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
+echo "dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$matter_certification_type" --certificationDate="$certification_date" --from $zb_account --yes"
+result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$matter_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
 echo "$result"
 check_response "$result" "\"success\": true"
 
@@ -101,7 +110,7 @@ test_divider
 echo "ReCertify Model with VID: $vid PID: $pid  SV: ${sv} "
 certification_date="2020-01-01T00:00:00Z"
 zigbee_certification_type="zigbee"
-result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid  --softwareVersion=$sv --softwareVersionString=1.0 --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $second_zb_account --yes)
+result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid  --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $second_zb_account --yes)
 check_response "$result" "\"success\": false"
 echo "$result"
 
@@ -185,7 +194,7 @@ echo "$result"
 
 echo "Again Certify Model with VID: $vid PID: $pid SV: ${sv}"
 certification_date="2020-03-03T00:00:00Z"
-result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1.0 --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
+result=$(echo "test1234" | dclcli tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

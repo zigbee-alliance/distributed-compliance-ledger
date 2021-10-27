@@ -46,11 +46,11 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelKeeper mo
 	compliancetestKeeper compliancetest.Keeper, authKeeper auth.Keeper,
 	msg types.MsgCertifyModel) sdk.Result {
 	// check if sender has enough rights to certify model
-	if err := checkZbCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
+	if err := checkCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
 		return err.Result()
 	}
 
-	if err := checkZbCertificationDone(ctx, keeper, authKeeper, msg.Signer, msg); err != nil {
+	if err := checkCertificationDone(ctx, keeper, authKeeper, msg.Signer, msg); err != nil {
 		return err.Result()
 	}
 
@@ -77,9 +77,16 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelKeeper mo
 		}
 	} else {
 		// Compliance is tracked on ledger. There is no compliance record yet.
+
 		// The corresponding Model Info and test results must be present on ledger.
-		if !modelKeeper.IsModelPresent(ctx, msg.VID, msg.PID) {
+		if !modelKeeper.IsModelVersionPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {
 			return model.ErrModelVersionDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion).Result()
+		}
+
+		// check if softwareVersionString matches with what is stored for the given version
+		modelVersion := modelKeeper.GetModelVersion(ctx, msg.VID, msg.PID, msg.SoftwareVersion)
+		if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
+			return types.ErrModelVersionStringDoesNotMatch(msg.VID, msg.PID, msg.SoftwareVersion, msg.SoftwareVersionString).Result()
 		}
 
 		if !compliancetestKeeper.IsTestingResultsPresents(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {
@@ -107,7 +114,7 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelKeeper mo
 func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelKeeper model.Keeper,
 	authKeeper auth.Keeper, msg types.MsgRevokeModel) sdk.Result {
 	// check if sender has enough rights to revoke model
-	if err := checkZbCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
+	if err := checkCertificationRights(ctx, authKeeper, msg.Signer, msg.CertificationType); err != nil {
 		return err.Result()
 	}
 
@@ -151,7 +158,7 @@ func handleMsgRevokeModel(ctx sdk.Context, keeper keeper.Keeper, modelKeeper mod
 	return sdk.Result{}
 }
 
-func checkZbCertificationRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress,
+func checkCertificationRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress,
 	certificationType types.CertificationType) sdk.Error {
 	// rights are depend on certification type
 	if IsValidCertificationType(certificationType) {
@@ -168,7 +175,7 @@ func checkZbCertificationRights(ctx sdk.Context, authKeeper auth.Keeper, signer 
 	return nil
 }
 
-func checkZbCertificationDone(
+func checkCertificationDone(
 	ctx sdk.Context,
 	keeper keeper.Keeper,
 	authKeeper auth.Keeper,

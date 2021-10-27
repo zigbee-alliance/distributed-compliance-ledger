@@ -165,6 +165,21 @@ func TestHandler_AddTestingResultTwiceForSameModelAndSameTestHouse(t *testing.T)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 }
 
+func TestHandler_AddTestingResultWithInvalidSoftwareVersionString(t *testing.T) {
+	setup := Setup()
+
+	// add model
+	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
+	// add model version
+	_, _, softwareVersion, softwareVersionString :=
+		addModelVersion(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
+
+	// add new testing result
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, softwareVersionString+"-modified")
+	result := setup.Handler(setup.Ctx, testingResult)
+	require.Equal(t, types.CodeModelVersionStringDoesNotMatch, result.Code)
+}
+
 func queryTestingResult(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32) types.TestingResults {
 	result, _ := setup.Querier(
 		setup.Ctx,

@@ -32,7 +32,7 @@ type CertifyModelRequest struct {
 }
 
 // nolint:dupl
-func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func certifyModelHandler(cliCtx context.CLIContext, isProvisional bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
@@ -79,7 +79,7 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, req.CertificationDate,
-			certificationType, req.Reason, restCtx.Signer())
+			certificationType, req.Reason, isProvisional, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

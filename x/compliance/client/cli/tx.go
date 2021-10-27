@@ -81,7 +81,10 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, certificationDate, certificationType, reason, cliCtx.FromAddress())
+			isProvisional := viper.GetBool(FlagIsProvisional)
+
+			msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString,
+				certificationDate, certificationType, reason, isProvisional, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},
@@ -127,7 +130,7 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			softwareVersion, err := conversions.ParseUInt32FromString("SoftwareVersion", viper.GetString(FlagSoftwareVersion))
+			softwareVersion, err := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 			if err != nil {
 				return err
 			}

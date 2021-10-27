@@ -38,6 +38,7 @@ type TestSetup struct {
 	Handler              sdk.Handler
 	Querier              sdk.Querier
 	CertificationCenter  sdk.AccAddress
+	CertificationTypes   []CertificationType
 }
 
 func Setup() TestSetup {
@@ -83,6 +84,8 @@ func Setup() TestSetup {
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 
+	certificationTypes := []CertificationType{ZigbeeCertificationType, MatterCertificationType}
+
 	setup := TestSetup{
 		Cdc:                  cdc,
 		Ctx:                  ctx,
@@ -93,6 +96,7 @@ func Setup() TestSetup {
 		Handler:              handler,
 		Querier:              querier,
 		CertificationCenter:  account.Address,
+		CertificationTypes:   certificationTypes,
 	}
 
 	return setup

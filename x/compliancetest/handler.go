@@ -51,6 +51,12 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelKeepe
 		return model.ErrModelVersionDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion).Result()
 	}
 
+	// check if softwareVersionString matches with what is stored for the given version
+	modelVersion := modelKeeper.GetModelVersion(ctx, msg.VID, msg.PID, msg.SoftwareVersion)
+	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
+		return types.ErrModelVersionStringDoesNotMatch(msg.VID, msg.PID, msg.SoftwareVersion, msg.SoftwareVersionString).Result()
+	}
+
 	testingResult := types.NewTestingResult(
 		msg.VID,
 		msg.PID,

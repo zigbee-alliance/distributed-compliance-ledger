@@ -24,7 +24,12 @@ import (
 type ComplianceState string
 
 const (
-	DevTest     ComplianceState = "dev-test"
+	// Used for development and test purposes (Note: these will typically not be placed in DCL,
+	// hence this value is not used)
+	// DevTest ComplianceState = "dev-test"
+
+	// Used for a SoftwareVersion when going into certification testing
+	// (Note: these might or might not be placed in DCL, depending on CSA policy and procedures)
 	Provisional ComplianceState = "provisional"
 	Certified   ComplianceState = "certified"
 	Revoked     ComplianceState = "revoked"
@@ -33,7 +38,7 @@ const (
 type SoftwareVersionCertificationStatus uint8
 
 const (
-	CodeDevTest     SoftwareVersionCertificationStatus = 0
+	// CodeDevTest     SoftwareVersionCertificationStatus = 0
 	CodeProvisional SoftwareVersionCertificationStatus = 1
 	CodeCertified   SoftwareVersionCertificationStatus = 2
 	CodeRevoked     SoftwareVersionCertificationStatus = 3
