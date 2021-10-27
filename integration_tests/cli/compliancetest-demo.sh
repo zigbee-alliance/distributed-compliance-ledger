@@ -33,22 +33,23 @@ create_new_account second_test_house_account "TestHouse"
 
 pid=$RANDOM
 sv=$RANDOM
+svs=$RANDOM
 echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
-create_model_and_version $vid $pid $sv $vendor_account
+create_model_and_version $vid $pid $sv $svs $vendor_account
 
 test_divider
 
 echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="http://first.place.com"
 test_date="2020-01-01T00:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString="1.0" --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Add Second Testing Result for Model VID: $vid PID: $pid SV: $sv"
 second_testing_result="http://second.place.com"
 second_test_date="2020-04-04T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString="1.0" --test-result="$second_testing_result" --test-date=$second_test_date --from $second_test_house_account --yes)
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$second_testing_result" --test-date=$second_test_date --from $second_test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -66,14 +67,14 @@ test_divider
 
 pid=$RANDOM
 echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
-create_model_and_version $vid $pid $sv $vendor_account
+create_model_and_version $vid $pid $sv $svs $vendor_account
 
 test_divider
 
 echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="blob string"
 test_date="2020-11-24T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString="1.0" --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 

@@ -31,13 +31,14 @@ type MsgCertifyModel struct {
 	CertificationDate     time.Time         `json:"certification_date"` // rfc3339 encoded date
 	CertificationType     CertificationType `json:"certification_type"`
 	Reason                string            `json:"reason,omitempty"`
+	Provisional           bool              `json:"provisional,omitempty"`
 	Signer                sdk.AccAddress    `json:"signer"`
 }
 
 func NewMsgCertifyModel(vid uint16, pid uint16,
 	softwareVersion uint32, softwareVersionString string,
 	certificationDate time.Time, certificationType CertificationType,
-	reason string, signer sdk.AccAddress) MsgCertifyModel {
+	reason string, provisional bool, signer sdk.AccAddress) MsgCertifyModel {
 	return MsgCertifyModel{
 		VID:                   vid,
 		PID:                   pid,
@@ -46,6 +47,7 @@ func NewMsgCertifyModel(vid uint16, pid uint16,
 		CertificationDate:     certificationDate,
 		CertificationType:     certificationType,
 		Reason:                reason,
+		Provisional:           provisional,
 		Signer:                signer,
 	}
 }

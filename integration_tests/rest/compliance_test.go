@@ -78,7 +78,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 	// Certify model
 	certifyModelMsg := compliance.NewMsgCertifyModel(model.VID, model.PID, modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString, time.Now().UTC(),
-		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zigbee.Address)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, false, zigbee.Address)
 	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zigbee)
 
 	// Check model is certified
@@ -90,7 +90,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 
 	// Certify model by other CertificationCenter account
 	secondCertifyModelMsg := compliance.NewMsgCertifyModel(model.VID, model.PID, modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString, time.Now().UTC(),
-		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, secondZb.Address)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, false, secondZb.Address)
 	secondCertifyResult, _ := utils.PublishCertifiedModel(secondCertifyModelMsg, secondZb)
 
 	require.Equal(t, compliance.CodeAlreadyCertifyed, sdk.CodeType(secondCertifyResult.Code))
@@ -176,7 +176,7 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Certify model
 	certificationTime := revocationTime.AddDate(0, 0, 1)
 	certifyModelMsg := compliance.NewMsgCertifyModel(vid, pid, sv, svs, certificationTime,
-		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, zigbee.Address)
+		compliance.CertificationType(testconstants.CertificationType), testconstants.EmptyString, false, zigbee.Address)
 	_, _ = utils.PublishCertifiedModel(certifyModelMsg, zigbee)
 
 	// Check model is certified

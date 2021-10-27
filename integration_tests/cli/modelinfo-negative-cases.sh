@@ -119,6 +119,7 @@ test_divider
 echo "Update model with Non Mutable fields" 
 pid=$RANDOM
 sv=$RANDOM
-create_model_and_version $vid $pid $sv $vendor_account 
+svs=$RANDOM
+create_model_and_version $vid $pid $sv $svs $vendor_account 
 echo "dclcli query model get-model --vid=$vid --pid=$pid --from=$vendor_account"
 

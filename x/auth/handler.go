@@ -50,6 +50,11 @@ func handleMsgProposeAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 				types.Trustee)).Result()
 	}
 
+	// check if proposed account has vendor role, vendor id should be present.
+	if msg.HasRole(types.Vendor) && msg.VendorId <= 0 {
+		return types.ErrMissingVendorIdForVendorAccount().Result()
+	}
+
 	// check if active account already exists.
 	if keeper.IsAccountPresent(ctx, msg.Address) {
 		return types.ErrAccountAlreadyExists(msg.Address).Result()
