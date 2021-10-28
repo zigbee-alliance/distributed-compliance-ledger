@@ -64,7 +64,7 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 	).Methods("PUT")
 
 	r.HandleFunc(
-		fmt.Sprintf("/%s/versions/{%s}/{%s}", storeName, vid, pid),
+		fmt.Sprintf("/%s/version/{%s}/{%s}", storeName, vid, pid),
 		getModelVersionsHandler(cliCtx, storeName),
 	).Methods("GET")
 

@@ -35,6 +35,10 @@ var (
 
 	// Model Info.
 	VID                                        uint16 = 1
+	VendorName                                        = "Vendor Name"
+	CompanyLegalName                                  = "Legal Company Name"
+	CompanyPreferredName                              = "Company Preferred Name"
+	VendorLandingPageUrl                              = "https://www.example.com"
 	PID                                        uint16 = 22
 	DeviceTypeID                               uint16 = 12345
 	Version                                           = "1.0"
