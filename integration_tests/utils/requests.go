@@ -539,8 +539,8 @@ func SendCertifiedModelRequest(certifyModel compliance.MsgCertifyModel, name str
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
-	uri := fmt.Sprintf("%s/%v/%v/%v/%v/%v", compliance.RouterKey, compliance.Certified,
-		certifyModel.VID, certifyModel.PID, certifyModel.SoftwareVersion, certifyModel.CertificationType)
+	uri := fmt.Sprintf("%s/%v/%v/%v/%v/%v/%v", compliance.RouterKey, compliance.Certified,
+		certifyModel.VID, certifyModel.PID, certifyModel.SoftwareVersion, certifyModel.SoftwareVersionString, certifyModel.CertificationType)
 
 	return SendPutRequest(uri, body, name, constants.Passphrase)
 }
