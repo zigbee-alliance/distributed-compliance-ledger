@@ -596,15 +596,6 @@ func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorId 
 	return address
 }
 
-func storeAccountWithoutVendorID(setup TestSetup, role types.AccountRole) sdk.AccAddress {
-	address, pubkey, _ := testconstants.TestAddress()
-	account := types.NewAccount(address, pubkey, types.AccountRoles{role}, 0)
-	account.AccountNumber = setup.Keeper.GetNextAccountNumber(setup.Ctx)
-	setup.Keeper.SetAccount(setup.Ctx, account)
-
-	return address
-}
-
 func proposeAddAccount(setup TestSetup, signer sdk.AccAddress) (sdk.Result, sdk.AccAddress, crypto.PubKey) {
 	address, pubkey, pubkeyStr := testconstants.TestAddress()
 	proposeAddAccount := types.NewMsgProposeAddAccount(
