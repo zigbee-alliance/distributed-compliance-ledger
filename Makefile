@@ -7,7 +7,7 @@ ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
 	-X github.com/cosmos/cosmos-sdk/version.ClientName=dclcli \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
-	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) 
+	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 OUTPUT_DIR ?= build
@@ -62,7 +62,20 @@ localnet_start:
 localnet_stop:
 	docker-compose down
 
+localnet_export: localnet_stop
+	docker-compose run node0 dcld export --for-zero-height  >genesis.export.node0.json
+	docker-compose run node1 dcld export --for-zero-height  >genesis.export.node1.json
+	docker-compose run node2 dcld export --for-zero-height  >genesis.export.node2.json
+	docker-compose run node3 dcld export --for-zero-height  >genesis.export.node3.json
+
+
+localnet_reset: localnet_stop
+	docker-compose run node0 dcld unsafe-reset-all
+	docker-compose run node1 dcld unsafe-reset-all
+	docker-compose run node2 dcld unsafe-reset-all
+	docker-compose run node3 dcld unsafe-reset-all
+
 localnet_clean: localnet_stop
 	rm -rf $(LOCALNET_DIR)
 
-.PHONY: all build install test lint clean image localnet_init localnet_start localnet_stop localnet_clean license license-check
+.PHONY: all build install test lint clean image localnet_init localnet_start localnet_stop localnet_clean localnet_export localnet_reset license license-check

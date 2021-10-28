@@ -705,7 +705,7 @@ If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then 
 Edits an existing Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
 by the owner.
 
-Only the fields listed below (besides `vid` and `pid`) can be edited. If other fields need to be edited - 
+Only the fields listed below (except `vid` and `pid`) can be edited. If other fields need to be edited -
 a new model info with a new `vid` or `pid` can be created.
 
 All non-edited fields remain the same.
