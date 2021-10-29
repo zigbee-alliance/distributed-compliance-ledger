@@ -40,13 +40,20 @@ The following [metrics](https://docs.cosmos.network/master/core/telemetry.html#s
 *   `abci_commit`: Duration of ABCI Commit (ms)
 *   `abci_query`: Duration of ABCI Query  (ms)
 
-## Environment
+## Testing Environment
 
-**Note**. For the moment it's not clear enough what production setup will look like, in particular:
+Options:
 
-*   number of vendor companies (number of validators)
-*   type of external endpoints, options are [Cosmos SDK / Tendermint endpoints](https://docs.cosmos.network/master/core/grpc_rest.html)
-*   type and number of proxies for validator-validator and client-validator connections
+*   dedicated, close to production as much as possible (the best option)
+*   local in-docker (for PoC / debugging only)
+*   TestNet, not good: not a clean environment, would be spammed and might be broken by the load testing
+
+Notes:
+
+*   For the moment it's not clear enough what production setup will look like, in particular:
+    *   number of vendor companies (number of validators)
+    *   type of external endpoints, options are [Cosmos SDK / Tendermint endpoints](https://docs.cosmos.network/master/core/grpc_rest.html)
+    *   type and number of proxies for validator-validator and client-validator connections
 
 Current assumptions:
 

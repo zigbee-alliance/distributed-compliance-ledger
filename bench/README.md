@@ -1,6 +1,6 @@
 # DCLedger Load Testing
 
-DCLedger testing is implemented in python3 and bases on [Locust](https://locust.io/) framework.
+DCLedger testing is implemented in python3 and based on [Locust](https://locust.io/) framework.
 
 ## Requirements
 
@@ -25,19 +25,24 @@ Each write transactions is signed and thus requires:
 
 By that reason load test uses prepared load data which can be generated as follows:
 
-```bash
-sudo make localnet_clean
-make localnet_init
+*   Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
 
-# ./gentestaccounts.sh [<NUM-USERS>]
-./gentestaccounts.sh
+    ```bash
+    sudo make localnet_clean
+    make localnet_init
 
-make localnet_start
-# Note: once started ledger may require some time to complete the initialization.
+    # ./gentestaccounts.sh [<NUM-USERS>]
+    ./gentestaccounts.sh
 
-# DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> python bench/generate.py bench/test.spec.yaml bench/txns
-python bench/generate.py bench/test.spec.yaml bench/txns
-```
+    make localnet_start
+    # Note: once started ledger may require some time to complete the initialization.
+    ```
+*   Generate test transactions:
+
+    ```bash
+    # DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> python bench/generate.py bench/test.spec.yaml bench/txns
+    python bench/generate.py bench/test.spec.yaml bench/txns
+    ```
 
 Here the following (**optional**) inputs are considered:
 
@@ -95,6 +100,8 @@ More details can be found in:
 *   [locust stats](https://docs.locust.io/en/stable/retrieving-stats.html)
 
 ### Re-run
+
+**Warning** applicable to local in-docker pool only for now
 
 Next time when you run the test using the same data you will likely get many (all) failures since DCLedger
 will complain about already written data or wrong sequence numbers.
