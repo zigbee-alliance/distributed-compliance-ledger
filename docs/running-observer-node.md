@@ -1,4 +1,4 @@
-## Running a Observer Node
+## Running an Observer Node
 
 This document describes in details how to run a observer node, and add it to the existing network.
 
@@ -79,15 +79,18 @@ and contains the genesis and persistent_peers files.
 
 
 4. Start the local observer node
-   * Init Node: `dcld start`.
+   * Enable the service: `sudo systemctl enable dcld`
+   * Start node: `sudo systemctl start dcld`
+   * For testing purpose the node can be started in CLI mode: `dcld start` (instead of two previous `systemctl` commands).
+   Service mode is recommended for demo and production environment.
+
    You should see it trying to get all the blocks from the testnet. (p.s. It can take upto 12+ hrs for all the transactions to be downloaded depending on network speed)
 
 
-5. Check the observer node is running and getting all the transcations:
+5. Check the observer node is running and getting all the transactions:
 
-    * Get the node status: `dclcli status --node localhost:26657`. 
-     
-    Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
+    * Get the node status: `dclcli status --node localhost:26657`.
+    * Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
        Expected output format: 
         ```json
                     {
@@ -126,4 +129,4 @@ and contains the genesis and persistent_peers files.
             }
         ```
     
-6. Congrats! You are an now running a observer node.
+6. Congrats! You are now running an observer node.
