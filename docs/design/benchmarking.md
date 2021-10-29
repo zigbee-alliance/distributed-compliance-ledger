@@ -5,14 +5,33 @@
 *   `response time` (percentiles): the time between client's initial request and the last byte of a validator response
 *   `requests per second (RPS)`: number of requests per second
     *   `transactions per second (TPS)`: number of write requests (txns) per second
+        *   **Note** to measure that on client side write requests should use to `broadcast_tx_commit` requetss
 *   `number of clients`: number of concurrent clients that ledger serves
-*   (optional) `throughtput` (in/out): number of KB per second. Marked as optional since we don't consider  much in/out data due to relatively small txns payloads.
+*   (optional) `throughtput` (in/out): number of KB per second. Marked as optional since we don't expect much in/out data due to relatively small txns payloads.
 
 ## Server Side Metrics
 
+### Tendermint metrics
+
+Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/master/nodes/metrics.html#metrics).
+
+The following ones makes sense to track:
+
+*   `consensus_height` (Gauge): Height of the chain
+*   `consensus_validators` (Gauge): Number of validators
+*   `consensus_rounds` (Gauge): Number of rounds
+*   `consensus_num_txs` (Gauge): Number of transactions
+*   `consensus_total_txs` (Gauge): Total number of transactions committed
+*   `mempool_size` (Gauge): Number of uncommitted transactions
+*   `mempool_tx_size_bytes` (histogram): transaction sizes in bytes
+*   `mempool_failed_txs` (counter): number of failed transactions
+*   `mempool_recheck_times` (counter): number of transactions rechecked in the mempool
+
+### Cosmos SDK metrics
+
 Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/master/core/telemetry.html) package as a server side support for application performance and behavior explorations.
 
-The following [metrics](https://docs.cosmos.network/master/core/telemetry.html#supported-metrics) make sense to consider:
+The following [metrics](https://docs.cosmos.network/master/core/telemetry.html#supported-metrics) make sense to track:
 
 *   `tx_count`: Total number of txs processed via DeliverTx (tx)
 *   `tx_successful`: Total number of successful txs processed via DeliverTx  (tx)
@@ -20,16 +39,6 @@ The following [metrics](https://docs.cosmos.network/master/core/telemetry.html#s
 *   `abci_deliver_tx`: Duration of ABCI DeliverTx  (ms)
 *   `abci_commit`: Duration of ABCI Commit (ms)
 *   `abci_query`: Duration of ABCI Query  (ms)
-*   `abci_begin_block`: Duration of ABCI BeginBlock (ms)
-*   `abci_end_block`: Duration of ABCI EndBlock   (ms)
-*   `begin_blocker`: Duration of BeginBlock for a given module   (ms)
-*   `end_blocker`: Duration of EndBlock for a given module (ms)
-*   `store_iavl_get`: Duration of an IAVL Store#Get call  (ms)
-*   `store_iavl_set`: Duration of an IAVL Store#Set call  (ms)
-*   `store_iavl_has`: Duration of an IAVL Store#Has call  (ms)
-*   `store_iavl_delete`: Duration of an IAVL Store#Delete call   (ms)
-*   `store_iavl_commit`: Duration of an IAVL Store#Commit call   (ms)
-*   `store_iavl_query`: Duration of an IAVL Store#Query  (ms)
 
 ## Environment
 
@@ -83,7 +92,7 @@ As long as CosmosSDK (Tendermint) provides multiple client [endpoints](https://d
 
 ## Load Generation Framework
 
-As long as DCledger based on Cosmos SDK and Tendermint which provide standard HTTP/websocket RPC and REST  [endpoints](https://docs.cosmos.network/master/core/grpc_rest.html) to perform both read & write txns generic production ready tools like [jMeter](https://jmeter.apache.org/), [Locust](https://locust.io/), [K6](https://k6.io/) may be considered.
+As long as DCledger based on Cosmos SDK and Tendermint which provide standard HTTP/websocket RPC and REST  [endpoints](https://docs.cosmos.network/master/core/grpc_rest.html) to perform both read & write txns generic production ready tools like [jMeter](https://jmeter.apache.org/), [Locust](https://locust.io/), [K6](https://k6.io/) may be used.
 
 [Locust](https://locust.io/) looks like the most easy-to-go option:
 

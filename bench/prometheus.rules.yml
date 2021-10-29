@@ -1,0 +1,7 @@
+groups:
+  - name: dcl-txs
+    rules:
+      - record: dcl_tendermint_mempool
+        expr: '{__name__=~"^tendermint_mempool_(size|failed_txs)"}'
+      # - record: dcl_tendermint_consensus
+        # expr: '{__name__=~"^tendermint_consensus_(num_txs|total_txs)"}'

@@ -14,6 +14,8 @@ Run (consider to use virtual environment):
 pip3 install -r bench/requirements.txt
 ```
 
+**Optional** If you need to monitor server side metrics please install [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/).
+
 ## Preparation
 
 Each write transactions is signed and thus requires:
@@ -43,6 +45,14 @@ Here the following (**optional**) inputs are considered:
 *   `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
 
 ## Run
+
+### (Optional) Launch Prometheus
+
+```bash
+prometheus --config.file=bench/prometheus.yml
+```
+
+And open <http://localhost:9090/> to query and monitor the server side metrics.
 
 ### Headless
 
@@ -114,3 +124,4 @@ Additional sources (linux):
 *   stat gathering and interpretation
 *   non-local setups automation and targeting (e.g. AWS)
 *   harden data generation scripts
+*   consider different types of tx: async, sync (currently used), commit
