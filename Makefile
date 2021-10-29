@@ -17,7 +17,7 @@ LOCALNET_DIR ?= localnet
 LICENSE_TYPE = "apache"
 COPYRIGHT_YEAR = "2020"
 COPYRIGHT_HOLDER = "DSR Corporation"
-LICENSED_FILES = $(shell find . -type f -not -wholename '*/.*')
+LICENSED_FILES = $(shell find . -type f -not -path '*/.*' -not -name '*.md' -not -name 'requirements.txt')
 
 all: install
 
