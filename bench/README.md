@@ -1,5 +1,7 @@
 # DCLedger Load Testing
 
+DCLedger testing is implemented in python3 and bases on [Locust](https://locust.io/) framework.
+
 ## Requirements
 
 *   python >= 3.7
@@ -22,36 +24,43 @@ Each write transactions is signed and thus requires:
 By that reason load test uses prepared load data which can be generated as follows:
 
 ```bash
-$ sudo make localnet_clean
-$ make localnet_init
-$ ./gentestaccounts.sh <NUM-USERS>
-$ make localnet_start
+sudo make localnet_clean
+make localnet_init
+
+# ./gentestaccounts.sh [<NUM-USERS>]
+./gentestaccounts.sh
+
+make localnet_start
 # Note: once started ledger may require some time to complete the initialization.
-$ DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> python bench/generate.py bench/test.spec.yaml ./txns
+
+# DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> python bench/generate.py bench/test.spec.yaml bench/txns
+python bench/generate.py bench/test.spec.yaml bench/txns
 ```
 
-Here the following inputs are considered:
+Here the following (**optional**) inputs are considered:
 
-*   `NUM-USERS`: number of client accounts with write access (created as Vendors)
-*   `NUM-REQ-PER-USER`: number of write txns to perform per a user
+*   `NUM-USERS`: number of client accounts with write access (created as Vendors). Default: 10
+*   `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
 
 ## Run
 
 ### Headless
 
 ```bash
-locust -f bench/locustfile.py --headless --dcl-users <NUM-USERS> -s 10
+locust --headless
 ```
 
 ### Web UI
 
 ```bash
-locust -f bench/locustfile.py --dcl-users <NUM-USERS> -s 10
+locust
 ```
 
 Then you can open <http://localhost:8089/> and launch the tests from the browser.
 
 ### Configuration
+
+Run options (DCLedger custom ones):
 
 *   `--dcl-users`: number of users
 *   `--dcl-spawn-rate` Rate to spawn users at (users per second)
@@ -59,7 +68,21 @@ Then you can open <http://localhost:8089/> and launch the tests from the browser
     E.g. for local ledger `http://localhost:26657,http://localhost:26659,http://localhost:26661,http://localhost:26663` will specify all the nodes.
 *   `--dcl-txn-file` path to a file with generated txns
 
-Please check `locust -f bench/locustfile.py --help` for the more details.
+Statistic options:
+
+[Locust](https://locust.io/) provides the following options to present the results:
+
+*   `--csv <prefix>`: generates a set of stat files (summary, failures, exceptions and stats history) with the provided `<prefix>`
+*   `--csv-full-history`: populates the stats history with more entries (including each specific request type)
+*   `--html <path>`: generates an html report
+*   Web UI also includes `Download Data` tab where the reports can be found.
+
+More details can be found in:
+
+*   [locust.conf](../locust.conf): default values
+*   `locust --help` (being in the project root)
+*   [locust configuration](https://docs.locust.io/en/stable/configuration.html)
+*   [locust stats](https://docs.locust.io/en/stable/retrieving-stats.html)
 
 ### Re-run
 
@@ -69,7 +92,7 @@ will complain about already written data or wrong sequence numbers.
 For that case you may consider to reset the ledger as follows:
 
 ```bash
-$ make localnet_reset localnet_start
+make localnet_reset localnet_start
 ```
 
 ## FAQ

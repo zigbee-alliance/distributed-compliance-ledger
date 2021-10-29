@@ -22,7 +22,7 @@ defaults:
   {%- set ctx = {} %}
 {%- endif %}
 
-{%- set write_users_c = ctx.get("write_users_count", 100) | int  + 1 %}
+{%- set write_users_c = ctx.get("write_users_count", 10) | int  + 1 %}
 {%- set write_users_q_c = ctx.get("write_users_q_count", 1000) | int + 1 %}
 
 users:
