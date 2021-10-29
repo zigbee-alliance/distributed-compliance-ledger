@@ -1,7 +1,16 @@
 settings.json
 .idea
-build
 localnet
 rest-server.out
 .DS_Store
 .vscode
+
+# vim
+*.swp
+
+# go
+build
+vendor
+
+# python
+__pycache__
