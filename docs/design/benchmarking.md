@@ -1,11 +1,25 @@
 # Benchmarking
 
+## Test Phases
+
+1. Phase 1 (MVP)
+   - the main goal is to understand general limitations and get metrics for the core protocol 
+   - just one txn type 
+   - dedicated, but simple environment (simple deployment of validators similar to the current Test Net; no observers, no sentry nodes, no mediators)
+
+2. Phase 2
+   - the main goal is to test DCL specific (DCL business logic and txn types; deployment specific)  
+   - more txn types  
+   - more workload scenarios 
+   - simulate deployment as close to production as possible
+
+
 ## Client Side Metrics
 
 *   `response time` (percentiles): the time between client's initial request and the last byte of a validator response
 *   `requests per second (RPS)`: number of requests per second
-    *   `transactions per second (TPS)`: number of write requests (txns) per second
-        *   **Note** to measure that on client side write requests should use to `broadcast_tx_commit` requetss
+*   `transactions per second (TPS)`: number of write requests (txns) per second
+    *   **Note** to measure that on client side write requests should use to `broadcast_tx_commit` requetss
 *   `number of clients`: number of concurrent clients that ledger serves
 *   (optional) `throughtput` (in/out): number of KB per second. Marked as optional since we don't expect much in/out data due to relatively small txns payloads.
 
@@ -44,21 +58,23 @@ The following [metrics](https://docs.cosmos.network/master/core/telemetry.html#s
 
 Options:
 
-*   dedicated, close to production as much as possible (the best option)
-*   local in-docker (for PoC / debugging only)
-*   TestNet, not good: not a clean environment, would be spammed and might be broken by the load testing
+* dedicated, close to production as much as possible (the best option)
+* dedicated, simple deployment of validators similar to the current Test Net (no observers, no sentry nodes, no mediators);
+  good for initial test phase 
+* local in-docker (for PoC / debugging only)
+* TestNet, not good: not a clean environment, would be spammed and might be broken by the load testing
 
 Notes:
 
 *   For the moment it's not clear enough what production setup will look like, in particular:
-    *   number of vendor companies (number of validators)
+    *   number of validators
     *   type of external endpoints, options are [Cosmos SDK / Tendermint endpoints](https://docs.cosmos.network/master/core/grpc_rest.html)
     *   type and number of proxies for validator-validator and client-validator connections
 
-Current assumptions:
+Current assumptions for production:
 
-*   multiple companies (vendors) will manage one/multiple validators
-*   while some common requirements and recommendations would be provided each vendor will deploy the infrastructure independently with some freedom regarding internal architecture
+*   multiple companies will manage one/multiple validators
+*   while some common requirements and recommendations would be provided each company will deploy the infrastructure independently with some freedom regarding internal architecture
 *   there would be a set of external (for clients) and internal (for validators to support txn flows) endpoints
     *   most likely observer nodes along with REST http servers with clients authentication would be in front of the client endpoints
 
