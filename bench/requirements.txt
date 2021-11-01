@@ -1,0 +1,5 @@
+locust==2.4.1
+# locust-plugins==1.7.3
+Jinja2==3.0.2
+flake8==4.0.1
+PyYAML==6.0

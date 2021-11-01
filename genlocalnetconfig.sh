@@ -139,7 +139,7 @@ sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" loca
 
 # Make RPC endpoint available externally
 sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/node0/config/config.toml
-sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node0/config/config.toml
-sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node1/config/config.toml
-sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node2/config/config.toml
-sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' localnet/node3/config/config.toml
+for idx in 0 1 2 3; do
+    sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "localnet/node${idx}/config/config.toml"
+    sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "localnet/node${idx}/config/config.toml"
+done

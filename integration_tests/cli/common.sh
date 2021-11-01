@@ -82,7 +82,7 @@ create_new_account(){
   check_response "$result" "\"success\": true"
   echo "$result"
 
-  echo "Alice approve account for \"$name\" with roles: \"$roles\""
+  echo "Alice approves account for \"$name\" with roles: \"$roles\""
   result=$(echo $passphrase | dclcli tx auth approve-add-account --address="$address" --from alice --yes)
   check_response "$result" "\"success\": true"
   echo "$result"

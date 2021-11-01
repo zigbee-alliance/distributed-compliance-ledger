@@ -51,7 +51,7 @@ In order to send write transactions to the ledger you need:
       - Sign every transaction by the private key.
  - PoA (proof of authority) approach is used for adding new validator nodes to the network 
  (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
-  [Running Node Instructions](docs/running-node.md).
+  [Running Node Instructions](docs/running-validator-node.md).
 
 
 
@@ -126,15 +126,20 @@ One can either deploy its own network of validator nodes or join one of the pers
 - If you want to deploy your own network for debug purposes,
 you can use the provided Ansible Playbook: [ansible/readme.md](deployment/ansible/README.md).
 - If you want to join an existing network (either a custom or persistent) as a validator node,
-please follow the [Running a Validator Node](docs/running-node.md) instructions.
+please follow the [Running a Validator Node](docs/running-validator-node.md) instructions.
 - If you want to deploy your own persistent network,
 you will need to create a genesis node and a genesis file first as described in [Running a Genesis Validator Node](docs/running-genesis-node.md).
-After this more nodes can be added by following the [Running a Validator Node](docs/running-node.md) instructions.
+After this more nodes can be added by following the [Running a Validator Node](docs/running-validator-node.md) instructions.
 Please note, that [Running a Genesis Validator Node](docs/running-genesis-node.md) describes 
 the case when the genesis block consist of a single node only. This is done just for simplicity, 
 and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
+- If you want to join an existing network  as an observer node,
+please follow the [Running an Observer Node](docs/running-observer-node.md) instructions.
+
+A recommended way for deployment and client connection: [diagram](docs/deployment.png)
 
 ## Useful Links 
+- [Quick Start](docs/quickStartGuide.adoc)
 - [Use Case Diagrams](docs/use_cases)
     - [PKI](docs/use_cases/use_cases_pki.png)
     - [Device on-ledger certification](docs/use_cases/use_cases_device_on_ledger_certification.png)
@@ -148,7 +153,9 @@ and nothing prevents you from adding more nodes to the genesis file by adapting 
 - [CLI Help](docs/cli-help.md)
 - [Deployment](deployment/ansible/README.md)
 - [Running a Genesis Validator Node](docs/running-genesis-node.md)
-- [Running a Validator Node](docs/running-node.md)
+- [Running a Validator Node](docs/running-validator-node.md)
+- [Running an Observer Node](docs/running-observer-node.md)
+- [Deployment Pattern](docs/deployment.png)
 - [Tendermint](https://tendermint.com/)
 - [Cosmos SDK](https://cosmos.network/sdk)
      
