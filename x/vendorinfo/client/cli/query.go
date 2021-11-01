@@ -47,19 +47,19 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 func GetCmdVendor(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "vendor",
-		Short: "Get vendor details for the given vendorId",
+		Short: "Get vendor details for the given vendorID",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vendorId, vidErr := conversions.ParseVID(viper.GetString(FlagVID))
+			vendorID, vidErr := conversions.ParseVID(viper.GetString(FlagVID))
 			if vidErr != nil {
 				return vidErr
 			}
 
-			res, height, err := cliCtx.QueryStore(types.GetVendorInfoKey(vendorId), queryRoute)
+			res, height, err := cliCtx.QueryStore(types.GetVendorInfoKey(vendorID), queryRoute)
 			if err != nil || res == nil {
-				return types.ErrVendorInfoDoesNotExist(vendorId)
+				return types.ErrVendorInfoDoesNotExist(vendorID)
 			}
 
 			var vendorInfo types.VendorInfo

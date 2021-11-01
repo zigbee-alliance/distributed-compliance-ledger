@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:testpackage
 package compliance
 
 import (
@@ -80,7 +81,7 @@ func Setup() TestSetup {
 	handler := NewHandler(compliancetKeeper, modelKeeper, compliancetestKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1,
-		auth.AccountRoles{auth.CertificationCenter}, testconstants.VendorId1)
+		auth.AccountRoles{auth.CertificationCenter}, testconstants.VendorID1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 

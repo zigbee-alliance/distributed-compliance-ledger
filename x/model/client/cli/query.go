@@ -47,6 +47,7 @@ func GetQueryCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return modelQueryCmd
 }
 
+//nolint:dupl
 func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-model",
@@ -87,6 +88,7 @@ func GetCmdModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
+//nolint:dupl
 func GetCmdAllModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-models",
@@ -158,6 +160,7 @@ func GetCmdVendorModels(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
+//nolint:dupl
 func GetCmdModelVersion(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get-model-version",
@@ -205,6 +208,7 @@ func GetCmdModelVersion(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return cmd
 }
 
+//nolint:dupl
 func GetCmdAllModelVersions(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-model-versions",

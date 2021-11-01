@@ -144,7 +144,7 @@ func TestHandler_ProposeAddAccount_ByNotTrustee(t *testing.T) {
 
 	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
-		signer := storeAccountWithVendorID(setup, role, testconstants.VendorId1)
+		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
 		// propose new account
 		result, _, _ := proposeAddAccount(setup, signer)
@@ -171,7 +171,7 @@ func TestHandler_ProposeAddAccount_ForExistingActiveAccount(t *testing.T) {
 		address,
 		sdk.MustBech32ifyAccPub(pubkey),
 		types.AccountRoles{types.Vendor},
-		testconstants.VendorId1,
+		testconstants.VendorID1,
 		trustee2,
 	)
 	result = setup.Handler(setup.Ctx, proposeAddAccount)
@@ -198,7 +198,7 @@ func TestHandler_ProposeAddAccount_ForExistingPendingAccount(t *testing.T) {
 		address,
 		sdk.MustBech32ifyAccPub(pubkey),
 		types.AccountRoles{types.Vendor},
-		testconstants.VendorId1,
+		testconstants.VendorID1,
 		trustee2,
 	)
 	result = setup.Handler(setup.Ctx, proposeAddAccount)
@@ -222,7 +222,7 @@ func TestHandler_ApproveAddAccount_ByNotTrustee(t *testing.T) {
 
 	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
-		signer := storeAccountWithVendorID(setup, role, testconstants.VendorId1)
+		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
 		// try to approve account
 		approveAddAccount := types.NewMsgApproveAddAccount(address, signer)
@@ -294,7 +294,7 @@ func TestHandler_RevokeAccount_OneApprovalIsNeeded(t *testing.T) {
 		trustee := storeTrustee(setup)
 
 		// store account
-		address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+		address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 		// ensure 1 trustee revocation approval is needed
 		require.Equal(t, 1, AccountApprovalsCount(setup.Ctx, setup.Keeper))
@@ -321,7 +321,7 @@ func TestHandler_RevokeAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// ensure 2 trustee revocation approvals are needed
 	require.Equal(t, 2, AccountApprovalsCount(setup.Ctx, setup.Keeper))
@@ -361,7 +361,7 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// ensure 3 trustee revocation approvals are needed
 	require.Equal(t, 3, AccountApprovalsCount(setup.Ctx, setup.Keeper))
@@ -408,11 +408,11 @@ func TestHandler_ProposeRevokeAccount_ByNotTrustee(t *testing.T) {
 	setup := Setup()
 
 	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
-		signer := storeAccountWithVendorID(setup, role, testconstants.VendorId1)
+		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
 		// propose new account
 		proposeRevokeAccount := types.NewMsgProposeRevokeAccount(address, signer)
@@ -442,7 +442,7 @@ func TestHandler_ProposeRevokeAccount_ForExistingPendingAccountRevocation(t *tes
 	_ = storeTrustee(setup)
 
 	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// trustee1 proposes to revoke account
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(address, trustee1)
@@ -467,7 +467,7 @@ func TestHandler_ApproveRevokeAccount_ByNotTrustee(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// trustee1 proposes to revoke account
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(address, trustee1)
@@ -479,7 +479,7 @@ func TestHandler_ApproveRevokeAccount_ByNotTrustee(t *testing.T) {
 
 	for _, role := range []AccountRole{Vendor, TestHouse, CertificationCenter, NodeAdmin} {
 		// store signer account
-		signer := storeAccountWithVendorID(setup, role, testconstants.VendorId1)
+		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
 		// try to approve account
 		approveRevokeAccount := types.NewMsgApproveRevokeAccount(address, signer)
@@ -495,7 +495,7 @@ func TestHandler_ApproveRevokeAccount_ForAbsentPendingAccountRevocation(t *testi
 	trustee := storeTrustee(setup)
 
 	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// approve absent revocation of active account
 	approveRevokeAccount := types.NewMsgApproveRevokeAccount(address, trustee)
@@ -524,7 +524,7 @@ func TestHandler_ApproveRevokeAccount_ForDuplicateApproval(t *testing.T) {
 	_ = storeTrustee(setup)
 
 	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorId1)
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
 	// propose account revocation
 	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(address, trustee1)
@@ -580,16 +580,16 @@ func TestHandler_ProposeAddAccount_VendorIDRequiredForVendorAccounts(t *testing.
 		trustee,
 	)
 	result := setup.Handler(setup.Ctx, proposeTestHouseAccount)
-	require.Equal(t, types.CodeMissingVendorIdForVendorAccount, result.Code)
+	require.Equal(t, types.CodeMissingVendorIDForVendorAccount, result.Code)
 }
 
 func storeTrustee(setup TestSetup) sdk.AccAddress {
 	return storeAccountWithVendorID(setup, types.Trustee, 0)
 }
 
-func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorId uint16) sdk.AccAddress {
+func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID uint16) sdk.AccAddress {
 	address, pubkey, _ := testconstants.TestAddress()
-	account := types.NewAccount(address, pubkey, types.AccountRoles{role}, vendorId)
+	account := types.NewAccount(address, pubkey, types.AccountRoles{role}, vendorID)
 	account.AccountNumber = setup.Keeper.GetNextAccountNumber(setup.Ctx)
 	setup.Keeper.SetAccount(setup.Ctx, account)
 
@@ -602,7 +602,7 @@ func proposeAddAccount(setup TestSetup, signer sdk.AccAddress) (sdk.Result, sdk.
 		address,
 		pubkeyStr,
 		types.AccountRoles{types.Vendor},
-		testconstants.VendorId1,
+		testconstants.VendorID1,
 		signer,
 	)
 	result := setup.Handler(setup.Ctx, proposeAddAccount)

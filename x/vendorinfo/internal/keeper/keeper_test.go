@@ -43,26 +43,25 @@ func TestKeeper_VendorInfoGetSet(t *testing.T) {
 	// get vendorInfo info
 	vendorInfo := setup.VendorInfoKeeper.GetVendorInfo(setup.Ctx, testconstants.VID)
 	require.NotNil(t, vendorInfo)
-	require.Equal(t, testconstants.VID, vendorInfo.VendorId)
+	require.Equal(t, testconstants.VID, vendorInfo.VendorID)
 	require.Equal(t, testconstants.VendorName, vendorInfo.VendorName)
 	require.Equal(t, testconstants.CompanyLegalName, vendorInfo.CompanyLegalName)
 	require.Equal(t, testconstants.CompanyPreferredName, vendorInfo.CompanyPreferredName)
-	require.Equal(t, testconstants.VendorLandingPageUrl, vendorInfo.VendorLandingPageUrl)
+	require.Equal(t, testconstants.VendorLandingPageURL, vendorInfo.VendorLandingPageURL)
 
 	// Update the vendorInfo record with new values
 	vendorInfo.VendorName = testconstants.VendorName + "updated"
 	vendorInfo.CompanyLegalName = testconstants.CompanyLegalName + "updated"
 	vendorInfo.CompanyPreferredName = testconstants.CompanyPreferredName + "updated"
-	vendorInfo.VendorLandingPageUrl = testconstants.VendorLandingPageUrl + "updated"
+	vendorInfo.VendorLandingPageURL = testconstants.VendorLandingPageURL + "updated"
 	setup.VendorInfoKeeper.SetVendorInfo(setup.Ctx, vendorInfo)
 
 	updateVendorInfo := setup.VendorInfoKeeper.GetVendorInfo(setup.Ctx, testconstants.VID)
-	require.Equal(t, testconstants.VID, updateVendorInfo.VendorId)
+	require.Equal(t, testconstants.VID, updateVendorInfo.VendorID)
 	require.Equal(t, testconstants.VendorName+"updated", updateVendorInfo.VendorName)
 	require.Equal(t, testconstants.CompanyLegalName+"updated", updateVendorInfo.CompanyLegalName)
 	require.Equal(t, testconstants.CompanyPreferredName+"updated", updateVendorInfo.CompanyPreferredName)
-	require.Equal(t, testconstants.VendorLandingPageUrl+"updated", updateVendorInfo.VendorLandingPageUrl)
-
+	require.Equal(t, testconstants.VendorLandingPageURL+"updated", updateVendorInfo.VendorLandingPageURL)
 }
 
 func TestKeeper_VendorInfoIterator(t *testing.T) {

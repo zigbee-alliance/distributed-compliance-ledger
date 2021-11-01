@@ -23,15 +23,13 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 )
 
-//nolint:godox
 /*
 	To Run test you need:
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
 		* run RPC service with `dclcli rest-server --chain-id dclchain`
-
-	TODO: provide tests for error cases
 */
 
+//nolint:funlen
 func TestCompliancetestDemo(t *testing.T) {
 	// Register new Vendor account
 	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, testconstants.VID)
@@ -51,11 +49,13 @@ func TestCompliancetestDemo(t *testing.T) {
 	_, _ = utils.AddModelVersion(modelVersion, vendor)
 
 	// Publish first testing result using Sign and Broadcast AddTestingResult message
-	firstTestingResult := utils.NewMsgAddTestingResult(model.VID, model.PID, modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString, testHouse.Address)
+	firstTestingResult := utils.NewMsgAddTestingResult(model.VID, model.PID,
+		modelVersion.SoftwareVersion, modelVersion.SoftwareVersionString, testHouse.Address)
 	utils.SignAndBroadcastMessage(testHouse, firstTestingResult)
 
 	// Check testing result is created
-	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID, firstTestingResult.PID, firstTestingResult.SoftwareVersion)
+	receivedTestingResult, _ := utils.GetTestingResult(firstTestingResult.VID,
+		firstTestingResult.PID, firstTestingResult.SoftwareVersion)
 	require.Equal(t, receivedTestingResult.VID, firstTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, firstTestingResult.PID)
 	require.Equal(t, receivedTestingResult.SoftwareVersion, firstTestingResult.SoftwareVersion)
@@ -78,7 +78,8 @@ func TestCompliancetestDemo(t *testing.T) {
 	_, _ = utils.PublishTestingResult(secondTestingResult, testHouse)
 
 	// Check testing result is created
-	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID, secondTestingResult.SoftwareVersion)
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID,
+		secondTestingResult.PID, secondTestingResult.SoftwareVersion)
 	require.Equal(t, receivedTestingResult.VID, secondTestingResult.VID)
 	require.Equal(t, receivedTestingResult.PID, secondTestingResult.PID)
 	require.Equal(t, receivedTestingResult.SoftwareVersion, secondTestingResult.SoftwareVersion)
@@ -93,7 +94,8 @@ func TestCompliancetestDemo(t *testing.T) {
 	_, _ = utils.PublishTestingResult(thirdTestingResult, secondTestHouse)
 
 	// Check testing result is created
-	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID, secondTestingResult.PID, secondTestingResult.SoftwareVersion)
+	receivedTestingResult, _ = utils.GetTestingResult(secondTestingResult.VID,
+		secondTestingResult.PID, secondTestingResult.SoftwareVersion)
 	require.Equal(t, 2, len(receivedTestingResult.Results))
 	require.Equal(t, receivedTestingResult.Results[0].Owner, secondTestingResult.Signer)
 	require.Equal(t, receivedTestingResult.Results[0].TestResult, secondTestingResult.TestResult)

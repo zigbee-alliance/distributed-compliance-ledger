@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint:testpackage
+//nolint:testpackage,lll
 package compliancetest
 
 import (
@@ -36,7 +36,8 @@ func TestHandler_AddTestingResult(t *testing.T) {
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 	// add model version
 	_, _, softwareVersion, softwareVersionString :=
-		addModelVersion(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
+		addModelVersion(setup, test_constants.VID, test_constants.PID,
+			test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
 
 	// add new testing result
 	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, softwareVersionString)
@@ -59,15 +60,18 @@ func TestHandler_AddTestingResultByNonTestHouse(t *testing.T) {
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 	// add model version
 	_, _, softwareVersion, softwareVersionString :=
-		addModelVersion(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
+		addModelVersion(setup, test_constants.VID, test_constants.PID,
+			test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
 
 	for _, role := range []auth.AccountRole{auth.Vendor, auth.CertificationCenter, auth.NodeAdmin} {
 		// store account
-		account := auth.NewAccount(test_constants.Address3, test_constants.PubKey3, auth.AccountRoles{role}, test_constants.VendorId3)
+		account := auth.NewAccount(test_constants.Address3, test_constants.PubKey3,
+			auth.AccountRoles{role}, test_constants.VendorID3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new testing result by non TestHouse
-		testingResult := TestMsgAddTestingResult(test_constants.Address3, vid, pid, softwareVersion, softwareVersionString)
+		testingResult := TestMsgAddTestingResult(test_constants.Address3, vid, pid,
+			softwareVersion, softwareVersionString)
 		result := setup.Handler(setup.Ctx, testingResult)
 		require.Equal(t, sdk.CodeUnauthorized, result.Code)
 	}
@@ -90,9 +94,13 @@ func TestHandler_AddSeveralTestingResultsForOneModel(t *testing.T) {
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 	// add model version
 	_, _, softwareVersion, softwareVersionString :=
-		addModelVersion(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
+		addModelVersion(setup, test_constants.VID, test_constants.PID,
+			test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
 
-	for i, th := range []sdk.AccAddress{test_constants.Address1, test_constants.Address2, test_constants.Address3} {
+	for i, th := range []sdk.AccAddress{
+		test_constants.Address1,
+		test_constants.Address2, test_constants.Address3,
+	} {
 		// store account
 		account := auth.NewAccount(th, test_constants.PubKey1, auth.AccountRoles{auth.TestHouse}, 0)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
@@ -124,7 +132,8 @@ func TestHandler_AddSeveralTestingResultsForDifferentModels(t *testing.T) {
 			addModelVersion(setup, i, i, uint32(i), fmt.Sprint(i))
 
 		// add new testing result
-		testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, softwareVersionString)
+		testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid,
+			softwareVersion, softwareVersionString)
 		result := setup.Handler(setup.Ctx, testingResult)
 		require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -172,18 +181,24 @@ func TestHandler_AddTestingResultWithInvalidSoftwareVersionString(t *testing.T) 
 	vid, pid := addModel(setup, test_constants.VID, test_constants.PID)
 	// add model version
 	_, _, softwareVersion, softwareVersionString :=
-		addModelVersion(setup, test_constants.VID, test_constants.PID, test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
+		addModelVersion(setup, test_constants.VID, test_constants.PID,
+			test_constants.SoftwareVersion, test_constants.SoftwareVersionString)
 
 	// add new testing result
-	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid, softwareVersion, softwareVersionString+"-modified")
+	testingResult := TestMsgAddTestingResult(setup.TestHouse, vid, pid,
+		softwareVersion, softwareVersionString+"-modified")
 	result := setup.Handler(setup.Ctx, testingResult)
 	require.Equal(t, types.CodeModelVersionStringDoesNotMatch, result.Code)
 }
 
-func queryTestingResult(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32) types.TestingResults {
+func queryTestingResult(setup TestSetup, vid uint16, pid uint16,
+	softwareVersion uint32) types.TestingResults {
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{keeper.QueryTestingResult, fmt.Sprintf("%v", vid), fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion)},
+		[]string{
+			keeper.QueryTestingResult, fmt.Sprintf("%v", vid),
+			fmt.Sprintf("%v", pid), fmt.Sprintf("%v", softwareVersion),
+		},
 		abci.RequestQuery{},
 	)
 
@@ -208,7 +223,8 @@ func addModel(setup TestSetup, vid uint16, pid uint16) (uint16, uint16) {
 	return vid, pid
 }
 
-func addModelVersion(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32, softwareVersionString string) (uint16, uint16, uint32, string) {
+func addModelVersion(setup TestSetup, vid uint16, pid uint16, softwareVersion uint32,
+	softwareVersionString string) (uint16, uint16, uint32, string) {
 	modelVersion := model.ModelVersion{
 		VID:                          vid,
 		PID:                          pid,

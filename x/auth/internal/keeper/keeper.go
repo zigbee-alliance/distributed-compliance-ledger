@@ -117,11 +117,11 @@ func (k Keeper) HasRole(ctx sdk.Context, addr sdk.AccAddress, roleToCheck types.
 	return false
 }
 
-// Check if account has vendorId association.
-func (k Keeper) HasVendorId(ctx sdk.Context, addr sdk.AccAddress, vid uint16) bool {
+// Check if account has vendorID association.
+func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid uint16) bool {
 	account := k.GetAccount(ctx, addr)
 
-	if account.VendorId == vid {
+	if account.VendorID == vid {
 		return true
 	} else {
 		return false

@@ -72,7 +72,8 @@ func TestQuerier_QueryAllAccounts(t *testing.T) {
 	setup.Keeper.SetAccount(setup.Ctx, account1)
 
 	// store second active account
-	account2 := types.NewAccount(testconstants.Address2, testconstants.PubKey2, types.AccountRoles{types.Vendor}, testconstants.VendorId2)
+	account2 := types.NewAccount(testconstants.Address2, testconstants.PubKey2,
+		types.AccountRoles{types.Vendor}, testconstants.VendorID2)
 	setup.Keeper.SetAccount(setup.Ctx, account2)
 
 	// store pending account
@@ -80,7 +81,7 @@ func TestQuerier_QueryAllAccounts(t *testing.T) {
 		testconstants.Address3,
 		testconstants.PubKey3,
 		types.AccountRoles{types.Vendor},
-		testconstants.VendorId3,
+		testconstants.VendorID3,
 		testconstants.Address1,
 	)
 	setup.Keeper.SetPendingAccount(setup.Ctx, pendAcc)
@@ -113,7 +114,7 @@ func TestQuerier_QueryAllPendingAccounts(t *testing.T) {
 		testconstants.Address2,
 		testconstants.PubKey2,
 		types.AccountRoles{types.Trustee},
-		testconstants.VendorId2,
+		testconstants.VendorID2,
 		testconstants.Address1,
 	)
 	setup.Keeper.SetPendingAccount(setup.Ctx, pendAcc1)
@@ -123,7 +124,7 @@ func TestQuerier_QueryAllPendingAccounts(t *testing.T) {
 		testconstants.Address3,
 		testconstants.PubKey3,
 		types.AccountRoles{types.Vendor},
-		testconstants.VendorId3,
+		testconstants.VendorID3,
 		testconstants.Address1,
 	)
 	setup.Keeper.SetPendingAccount(setup.Ctx, pendAcc2)

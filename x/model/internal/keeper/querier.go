@@ -173,7 +173,8 @@ func queryVendorModels(ctx sdk.Context, path []string, keeper Keeper) (res []byt
 	return res, nil
 }
 
-func queryModelVersion(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+func queryModelVersion(ctx sdk.Context, path []string,
+	req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err
@@ -200,7 +201,8 @@ func queryModelVersion(ctx sdk.Context, path []string, req abci.RequestQuery, ke
 	return res, nil
 }
 
-func queryModelVersions(ctx sdk.Context, path []string, req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
+func queryModelVersions(ctx sdk.Context, path []string,
+	req abci.RequestQuery, keeper Keeper) (res []byte, err sdk.Error) {
 	vid, err := conversions.ParseVID(path[0])
 	if err != nil {
 		return nil, err

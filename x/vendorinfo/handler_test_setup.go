@@ -35,7 +35,7 @@ type TestSetup struct {
 	Handler          sdk.Handler
 	Querier          sdk.Querier
 	Vendor           sdk.AccAddress
-	VendorId         uint16
+	VendorID         uint16
 }
 
 func Setup() TestSetup {
@@ -68,7 +68,8 @@ func Setup() TestSetup {
 	querier := NewQuerier(VendorInfoKeeper)
 	handler := NewHandler(VendorInfoKeeper, authKeeper)
 
-	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.Vendor}, testconstants.VendorId1)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1,
+		auth.AccountRoles{auth.Vendor}, testconstants.VendorID1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 
@@ -87,11 +88,11 @@ func Setup() TestSetup {
 
 func getTestVendor() types.VendorInfo {
 	vendorInfo := types.VendorInfo{
-		VendorId:             testconstants.VendorId1,
+		VendorID:             testconstants.VendorID1,
 		VendorName:           testconstants.VendorName,
 		CompanyLegalName:     testconstants.CompanyLegalName,
 		CompanyPreferredName: testconstants.CompanyPreferredName,
-		VendorLandingPageUrl: testconstants.VendorLandingPageUrl,
+		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 
 	return vendorInfo
@@ -99,11 +100,11 @@ func getTestVendor() types.VendorInfo {
 
 func getTestVendorForUpdate() types.VendorInfo {
 	vendorInfo := types.VendorInfo{
-		VendorId:             testconstants.VendorId1,
+		VendorID:             testconstants.VendorID1,
 		VendorName:           testconstants.VendorName + "-updated",
 		CompanyLegalName:     testconstants.CompanyLegalName + "-updated",
 		CompanyPreferredName: testconstants.CompanyPreferredName + "-updated",
-		VendorLandingPageUrl: testconstants.VendorLandingPageUrl + "-updated",
+		VendorLandingPageURL: testconstants.VendorLandingPageURL + "-updated",
 	}
 
 	return vendorInfo

@@ -24,7 +24,7 @@ const (
 	RouterKey                           = types.RouterKey
 	StoreKey                            = types.StoreKey
 	CodeVendorDoesNotExist              = types.CodeVendorDoesNotExist
-	CodeMissingVendorIdForVendorAccount = types.CodeMissingVendorIdForVendorAccount
+	CodeMissingVendorIDForVendorAccount = types.CodeMissingVendorIDForVendorAccount
 )
 
 var (

@@ -43,16 +43,17 @@ func NewHandler(keeper keeper.Keeper, authKeeper auth.Keeper) sdk.Handler {
 func handleMsgAddVendorInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgAddVendorInfo) sdk.Result {
 	// check if model already exists
-	if keeper.IsVendorInfoPresent(ctx, msg.VendorId) {
-		return types.ErrVendorInfoAlreadyExists(msg.VendorId).Result()
+	if keeper.IsVendorInfoPresent(ctx, msg.VendorID) {
+		return types.ErrVendorInfoAlreadyExists(msg.VendorID).Result()
 	}
 
 	// check sender has enough rights to add model
-	if err := checkAddVendorRights(ctx, authKeeper, msg.Signer, msg.VendorId); err != nil {
+	if err := checkAddVendorRights(ctx, authKeeper, msg.Signer, msg.VendorID); err != nil {
 		return err.Result()
 	}
 
-	vendorInfo := types.NewVendorInfo(msg.VendorId, msg.VendorName, msg.CompanyLegalName, msg.CompanyPreferredName, msg.VendorLandingPageUrl)
+	vendorInfo := types.NewVendorInfo(msg.VendorID, msg.VendorName, msg.CompanyLegalName,
+		msg.CompanyPreferredName, msg.VendorLandingPageURL)
 
 	// store new vendorInfo
 	keeper.SetVendorInfo(ctx, vendorInfo)
@@ -64,14 +65,14 @@ func handleMsgAddVendorInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper au
 func handleMsgUpdateVendorInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgUpdateVendorInfo) sdk.Result {
 	// check if Vendor exists
-	if !keeper.IsVendorInfoPresent(ctx, msg.VendorId) {
-		return types.ErrVendorInfoDoesNotExist(msg.VendorId).Result()
+	if !keeper.IsVendorInfoPresent(ctx, msg.VendorID) {
+		return types.ErrVendorInfoDoesNotExist(msg.VendorID).Result()
 	}
 
-	vendorInfo := keeper.GetVendorInfo(ctx, msg.VendorId)
+	vendorInfo := keeper.GetVendorInfo(ctx, msg.VendorID)
 
 	// check if sender has enough rights to update model
-	if err := checkUpdateVendorRights(ctx, authKeeper, msg.Signer, msg.VendorId); err != nil {
+	if err := checkUpdateVendorRights(ctx, authKeeper, msg.Signer, msg.VendorID); err != nil {
 		return err.Result()
 	}
 
@@ -79,7 +80,7 @@ func handleMsgUpdateVendorInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper
 	// VendorName           string `json:"vendorName"`
 	// CompanyLegalName     string `json:"companyLegalName"`
 	// CompanyPreferredName string `json:"companyPreferredName"`
-	// VendorLandingPageUrl string `json:"vendorLandingPageUrl"`
+	// VendorLandingPageURL string `json:"vendorLandingPageURL"`
 
 	if msg.VendorName != "" {
 		vendorInfo.VendorName = msg.VendorName
@@ -93,8 +94,8 @@ func handleMsgUpdateVendorInfo(ctx sdk.Context, keeper keeper.Keeper, authKeeper
 		vendorInfo.CompanyPreferredName = msg.CompanyPreferredName
 	}
 
-	if msg.VendorLandingPageUrl != "" {
-		vendorInfo.VendorLandingPageUrl = msg.VendorLandingPageUrl
+	if msg.VendorLandingPageURL != "" {
+		vendorInfo.VendorLandingPageURL = msg.VendorLandingPageURL
 	}
 
 	// store updated model
@@ -109,9 +110,10 @@ func checkAddVendorRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.Ac
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddVendorInfo transaction should be "+
 			"signed by an account with the %s role", auth.Vendor))
 	}
-	if !authKeeper.HasVendorId(ctx, signer, vid) {
+
+	if !authKeeper.HasVendorID(ctx, signer, vid) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddVendorInfo transaction should be "+
-			"signed by an vendor account associated with the vendorId %v ", vid))
+			"signed by an vendor account associated with the vendorID %v ", vid))
 	}
 
 	return nil
@@ -119,9 +121,9 @@ func checkAddVendorRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.Ac
 
 func checkUpdateVendorRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress, vid uint16) sdk.Error {
 	// sender must be equal to owner to edit vendor info
-	if !authKeeper.HasVendorId(ctx, signer, vid) {
+	if !authKeeper.HasVendorID(ctx, signer, vid) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddVendorInfo transaction should be "+
-			"signed by an vendor account associated with the vendorId %v ", vid))
+			"signed by an vendor account associated with the vendorID %v ", vid))
 	}
 
 	return nil

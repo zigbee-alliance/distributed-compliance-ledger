@@ -26,13 +26,12 @@ const (
 	StoreKey = ModuleName // it differs from ModuleName to be compatible with cosmos transaction builder and handler.
 )
 
-var (
-	VendorPrefix = []byte{0x01} // prefix for each key to a pending account
-)
+var VendorPrefix = []byte{0x01} // prefix for each key to a pending account
 
 // Key builder for Vendor.
-func GetVendorInfoKey(vendorId uint16) []byte {
+func GetVendorInfoKey(vendorID uint16) []byte {
 	v := make([]byte, 2)
-	binary.LittleEndian.PutUint16(v, vendorId)
+	binary.LittleEndian.PutUint16(v, vendorID)
+
 	return append(VendorPrefix, v...)
 }

@@ -35,9 +35,7 @@ type TestingResultRequest struct {
 }
 
 func addTestingResultHandler(cliCtx context.CLIContext) http.HandlerFunc {
-
 	return func(w http.ResponseWriter, r *http.Request) {
-
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
 		var req TestingResultRequest

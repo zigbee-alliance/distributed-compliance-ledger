@@ -37,21 +37,20 @@ func TestHandler_AddVendorInfo(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query vendorInfo
-	receivedVendorInfo := queryVendorInfo(setup, vendorInfo.VendorId)
+	receivedVendorInfo := queryVendorInfo(setup, vendorInfo.VendorID)
 
 	// check
-	require.Equal(t, vendorInfo.VendorId, receivedVendorInfo.VendorId)
+	require.Equal(t, vendorInfo.VendorID, receivedVendorInfo.VendorID)
 	require.Equal(t, vendorInfo.VendorName, receivedVendorInfo.VendorName)
 	require.Equal(t, vendorInfo.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
 	require.Equal(t, vendorInfo.CompanyPreferredName, receivedVendorInfo.CompanyPreferredName)
-	require.Equal(t, vendorInfo.VendorLandingPageUrl, receivedVendorInfo.VendorLandingPageUrl)
-
+	require.Equal(t, vendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
 }
 
 func TestHandler_UpdateVendorInfo(t *testing.T) {
 	setup := Setup()
 
-	// try update vendor for non existant vendor
+	// try update vendor for non existent vendor
 	msgUpdateVendorInfo := TestMsgUpdateVendorInfo(setup.Vendor)
 	result := setup.Handler(setup.Ctx, msgUpdateVendorInfo)
 	require.Equal(t, types.CodeVendorDoesNotExist, result.Code)
@@ -66,14 +65,14 @@ func TestHandler_UpdateVendorInfo(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query updated vendorInfo
-	recievedVendorInfo := queryVendorInfo(setup, msgUpdateVendorInfo.VendorId)
+	recievedVendorInfo := queryVendorInfo(setup, msgUpdateVendorInfo.VendorID)
 
 	// check
-	require.Equal(t, msgUpdateVendorInfo.VendorId, recievedVendorInfo.VendorId)
+	require.Equal(t, msgUpdateVendorInfo.VendorID, recievedVendorInfo.VendorID)
 	require.Equal(t, msgUpdateVendorInfo.VendorName, recievedVendorInfo.VendorName)
 	require.Equal(t, msgUpdateVendorInfo.CompanyLegalName, recievedVendorInfo.CompanyLegalName)
 	require.Equal(t, msgUpdateVendorInfo.CompanyPreferredName, recievedVendorInfo.CompanyPreferredName)
-	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageUrl, recievedVendorInfo.VendorLandingPageUrl)
+	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, recievedVendorInfo.VendorLandingPageURL)
 }
 
 func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
@@ -86,7 +85,8 @@ func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.Vendor} {
 		// store account
-		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorId3)
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3,
+			auth.AccountRoles{role}, testconstants.VendorID3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// update existing VendorInfo by not owner
@@ -116,7 +116,6 @@ func TestHandler_AddVendorInfoWithEmptyOptionalFields(t *testing.T) {
 
 	// check
 	require.Equal(t, receivedVendorInfo.CompanyLegalName, "")
-
 }
 
 func TestHandler_AddVendorByNonVendor(t *testing.T) {
@@ -124,7 +123,8 @@ func TestHandler_AddVendorByNonVendor(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse} {
 		// store account
-		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorId3)
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3,
+			auth.AccountRoles{role}, testconstants.VendorID3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new VendorInfo
@@ -145,16 +145,16 @@ func TestHandler_PartiallyUpdateVendor(t *testing.T) {
 	msgUpdateVendorInfo := TestMsgUpdateVendorInfo(setup.Vendor)
 
 	msgUpdateVendorInfo.CompanyPreferredName = "New Preferred Name"
-	msgUpdateVendorInfo.VendorLandingPageUrl = "https://new.example.com"
+	msgUpdateVendorInfo.VendorLandingPageURL = "https://new.example.com"
 	result = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// query VendorInfo
-	receivedVendorInfo := queryVendorInfo(setup, msgUpdateVendorInfo.VendorId)
+	receivedVendorInfo := queryVendorInfo(setup, msgUpdateVendorInfo.VendorID)
 
 	// check
 	require.Equal(t, receivedVendorInfo.CompanyPreferredName, msgUpdateVendorInfo.CompanyPreferredName)
-	require.Equal(t, receivedVendorInfo.VendorLandingPageUrl, msgUpdateVendorInfo.VendorLandingPageUrl)
+	require.Equal(t, receivedVendorInfo.VendorLandingPageURL, msgUpdateVendorInfo.VendorLandingPageURL)
 }
 
 func queryVendorInfo(setup TestSetup, vid uint16) types.VendorInfo {

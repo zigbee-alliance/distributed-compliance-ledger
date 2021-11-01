@@ -97,7 +97,7 @@ test_divider
 vidPlusOne=$((vid+1))
 echo "$user adds Model with a VID: $vidPlusOne PID: $pid, This fails with Permission denied as the VID is not associated with this vendor account."
 result=$(echo "test1234" | dclcli tx model add-model --vid=$vidPlusOne --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
-check_response_and_report "$result" "transaction should be signed by an vendor account containing the vendorId $vidPlusOne"
+check_response_and_report "$result" "transaction should be signed by an vendor account containing the vendorID $vidPlusOne"
 
 test_divider
 

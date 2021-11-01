@@ -33,7 +33,8 @@ func ParseUInt8FromString(str string) (uint8, sdk.Error) {
 func ParseUInt16FromString(name string, value string) (uint16, sdk.Error) {
 	val, err := strconv.ParseUint(value, 10, 16)
 	if err != nil {
-		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 16 bit unsigned integer", name, value))
+		return 0, sdk.ErrUnknownRequest(
+			fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 16 bit unsigned integer", name, value))
 	}
 
 	return uint16(val), nil
@@ -42,7 +43,8 @@ func ParseUInt16FromString(name string, value string) (uint16, sdk.Error) {
 func ParseUInt32FromString(name string, value string) (uint32, sdk.Error) {
 	val, err := strconv.ParseUint(value, 10, 32)
 	if err != nil {
-		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 32 bit unsigned integer", name, value))
+		return 0, sdk.ErrUnknownRequest(
+			fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 32 bit unsigned integer", name, value))
 	}
 
 	return uint32(val), nil
@@ -51,10 +53,11 @@ func ParseUInt32FromString(name string, value string) (uint32, sdk.Error) {
 func ParseUInt64FromString(name string, value string) (uint64, sdk.Error) {
 	val, err := strconv.ParseUint(value, 10, 64)
 	if err != nil {
-		return 0, sdk.ErrUnknownRequest(fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 64 bit unsigned integer", name, value))
+		return 0, sdk.ErrUnknownRequest(
+			fmt.Sprintf("Parsing Error: %v is set to '%v', but it must be 64 bit unsigned integer", name, value))
 	}
 
-	return uint64(val), nil
+	return val, nil
 }
 
 func ParseVID(str string) (uint16, sdk.Error) {

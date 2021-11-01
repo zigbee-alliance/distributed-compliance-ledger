@@ -37,6 +37,7 @@ func getModelsHandler(cliCtx context.CLIContext, storeName string) http.HandlerF
 	}
 }
 
+// nolint:dupl
 func getModelHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -113,6 +114,7 @@ func getVendorModelsHandler(cliCtx context.CLIContext, storeName string) http.Ha
 	}
 }
 
+// nolint:dupl
 func getModelVersionsHandler(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -145,7 +147,6 @@ func getModelVersionsHandler(cliCtx context.CLIContext, storeName string) http.H
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &modelVersions)
 
 		restCtx.EncodeAndRespondWithHeight(modelVersions, height)
-
 	}
 }
 
@@ -172,6 +173,7 @@ func getModelVersionHandler(cliCtx context.CLIContext, storeName string) http.Ha
 		softwareVersion, err_ := conversions.ParseUInt32FromString(softwareVersion, vars[softwareVersion])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
 			return
 		}
 
@@ -187,6 +189,5 @@ func getModelVersionHandler(cliCtx context.CLIContext, storeName string) http.Ha
 		cliCtx.Codec.MustUnmarshalBinaryBare(res, &ModelVersion)
 
 		restCtx.EncodeAndRespondWithHeight(ModelVersion, height)
-
 	}
 }

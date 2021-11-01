@@ -27,16 +27,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
 )
 
-//nolint:godox
-/*
-	To Run test you need:
-		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
-		* run RPC service with `dclcli rest-server --chain-id dclchain`
-
-	TODO: provide tests for error cases
-*/
-
-//nolint:funlen
+//nolint:funlen,lll
 func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Register new Vendor account
 	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, testconstants.VID)
@@ -134,6 +125,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	require.Equal(t, complianceInfo.History[0].SoftwareVersionCertificationStatus, compliance.CodeCertified)
 }
 
+//nolint:funlen
 func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 	// Register new account Vendor, CertificationCenter
 	// Publish model info
@@ -145,7 +137,8 @@ func TestComplianceDemo_KeepTrackRevocation(t *testing.T) {
 
 	// Revoke non-existent model
 	revocationTime := time.Now().UTC()
-	revokeModelMsg := compliance.NewMsgRevokeModel(common.RandUint16(), common.RandUint16(), common.RandUint32(), revocationTime,
+	revokeModelMsg := compliance.NewMsgRevokeModel(common.RandUint16(),
+		common.RandUint16(), common.RandUint32(), revocationTime,
 		compliance.CertificationType(testconstants.CertificationType), testconstants.RevocationReason, zigbee.Address)
 	_, _ = utils.PublishRevokedModel(revokeModelMsg, zigbee)
 

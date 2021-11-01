@@ -94,7 +94,7 @@ different_vendor_account=vendor_account_$newvid
 create_new_vendor_account $different_vendor_account $newvid
 result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$different_vendor_account --yes)
 check_response "$result" "\"success\": false"
-check_response_and_report "$result" "ModelVersion Add/Update transaction should be signed by an vendor account containing the vendorId $vid"
+check_response_and_report "$result" "ModelVersion Add/Update transaction should be signed by an vendor account containing the vendorID $vid"
 
 test_divider
 
@@ -102,5 +102,5 @@ test_divider
 echo "Update a Device Model Version with VID: $vid PID: $pid SV: $sv from a different vendor account"
 result=$(echo 'test1234' | dclcli tx model update-model-version --vid=$vid --pid=$pid --minApplicableSoftwareVersion=2 --softwareVersion=$sv --softwareVersionValid=false --from=$different_vendor_account --yes)
 check_response "$result" "\"success\": false"
-check_response_and_report "$result" "ModelVersion Add/Update transaction should be signed by an vendor account containing the vendorId $vid"
+check_response_and_report "$result" "ModelVersion Add/Update transaction should be signed by an vendor account containing the vendorID $vid"
 

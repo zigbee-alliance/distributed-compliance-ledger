@@ -73,17 +73,17 @@ func GetCmdProposeAddAccount(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			var vendorId uint16
+			var vendorID uint16
 			if viper.GetString(FlagVID) != "" {
 				var err_ sdk.Error
-				vendorId, err_ = conversions.ParseVID(viper.GetString(FlagVID))
+				vendorID, err_ = conversions.ParseVID(viper.GetString(FlagVID))
 				if err_ != nil {
 					return err_
 				}
 			}
-			fmt.Println(vendorId)
+			fmt.Println(vendorID)
 
-			msg := types.NewMsgProposeAddAccount(address, pubkey, roles, vendorId, cliCtx.FromAddress())
+			msg := types.NewMsgProposeAddAccount(address, pubkey, roles, vendorID, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},

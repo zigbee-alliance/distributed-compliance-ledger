@@ -150,15 +150,17 @@ func handleMsgDeleteModel(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth
 	return sdk.Result{}
 }
 
-func checkModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress, vid uint16, message string) sdk.Error {
+func checkModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAddress,
+	vid uint16, message string) sdk.Error {
 	// sender must have Vendor role to add new model
 	if !authKeeper.HasRole(ctx, signer, auth.Vendor) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("%s transaction should be "+
 			"signed by an account with the %s role", message, auth.Vendor))
 	}
-	if !authKeeper.HasVendorId(ctx, signer, vid) {
+
+	if !authKeeper.HasVendorID(ctx, signer, vid) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("%s transaction should be "+
-			"signed by an vendor account containing the vendorId %v ", message, vid))
+			"signed by an vendor account containing the vendorID %v ", message, vid))
 	}
 
 	return nil
@@ -166,9 +168,9 @@ func checkModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAdd
 
 func handleMsgAddModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth.Keeper,
 	msg types.MsgAddModelVersion) sdk.Result {
-
 	// check sender has enough rights to add model
-	if err := checkModelRights(ctx, authKeeper, msg.Signer, msg.VID, "msgAddModelVersionModelVersion Add/Update"); err != nil {
+	if err := checkModelRights(ctx, authKeeper, msg.Signer,
+		msg.VID, "msgAddModelVersionModelVersion Add/Update"); err != nil {
 		return err.Result()
 	}
 
@@ -204,6 +206,7 @@ func handleMsgAddModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 		"ModelVersion :", modelVersion.String())
 
 	keeper.SetModelVersion(ctx, modelVersion)
+
 	return sdk.Result{}
 }
 

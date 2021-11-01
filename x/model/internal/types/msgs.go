@@ -68,6 +68,7 @@ func (m MsgAddModel) ValidateBasic() sdk.Error {
 	if len(m.PartNumber) == 0 {
 		return sdk.ErrUnknownRequest("Invalid PartNumber: it cannot be empty")
 	}
+
 	return nil
 }
 
@@ -202,6 +203,7 @@ func (m MsgAddModelVersion) ValidateBasic() sdk.Error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 

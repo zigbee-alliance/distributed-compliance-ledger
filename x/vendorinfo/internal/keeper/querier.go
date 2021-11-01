@@ -81,7 +81,6 @@ func queryAllVendors(ctx sdk.Context, req abci.RequestQuery, keeper Keeper) (res
 			return false
 		}
 		if len(result.Vendors) < params.Take || params.Take == 0 {
-
 			result.Vendors = append(result.Vendors, vendorInfo)
 
 			return false

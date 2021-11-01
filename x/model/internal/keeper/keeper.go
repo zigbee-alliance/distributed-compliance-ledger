@@ -229,7 +229,7 @@ func (k Keeper) GetModelVersion(ctx sdk.Context, vid uint16, pid uint16, softwar
 	return modelVersion
 }
 
-// Gets all ModelVersions for a vid/pid
+// Gets all ModelVersions for a vid/pid.
 func (k Keeper) GetModelVersions(ctx sdk.Context, vid uint16, pid uint16) types.ModelVersions {
 	if !k.IsModelPresent(ctx, vid, pid) {
 		panic("Model Versions does not exist")
@@ -288,7 +288,6 @@ func (k Keeper) CountTotalModelVersions(ctx sdk.Context, vid uint16, pid uint16)
 	} else {
 		return len(k.GetModelVersions(ctx, vid, pid).SoftwareVersions)
 	}
-
 }
 
 // Check if the ModelVersion is present in the store or not.
@@ -298,7 +297,6 @@ func (k Keeper) IsModelVersionPresent(ctx sdk.Context, vid uint16, pid uint16, s
 
 // Add Version to a DeviceModel.
 func (k Keeper) AppendModelVersion(ctx sdk.Context, vid uint16, pid uint16, softwareVersion uint32) {
-
 	var modelVersions types.ModelVersions
 
 	if !k.IsModelPresent(ctx, vid, pid) {
@@ -317,16 +315,15 @@ func (k Keeper) AppendModelVersion(ctx sdk.Context, vid uint16, pid uint16, soft
 
 	store := ctx.KVStore(k.storeKey)
 	store.Set(types.GetModelVersionsKey(vid, pid), k.cdc.MustMarshalBinaryBare(modelVersions))
-
 }
 
 func (k Keeper) isSoftwareVersionPresent(softwareVersions []uint32, softwareVersion uint32) bool {
-
 	for _, item := range softwareVersions {
 		if item == softwareVersion {
 			return true
 		}
 	}
+
 	return false
 }
 

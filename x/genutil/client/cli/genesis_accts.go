@@ -74,7 +74,7 @@ func AddGenesisAccountCmd(ctx *server.Context, cdc *codec.Codec,
 					roles = append(roles, auth.AccountRole(role))
 				}
 			}
-			// Passing the VendorId as zero for Genesis accounts
+			// Passing the VendorID as zero for Genesis accounts
 			account := auth.NewAccount(addr, pubkey, roles, 0)
 			if err := account.Validate(); err != nil {
 				return err

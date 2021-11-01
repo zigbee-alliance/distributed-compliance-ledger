@@ -85,7 +85,7 @@ func TestKeeper_PendingAccountGetSet(t *testing.T) {
 		testconstants.Address1,
 		testconstants.PubKey1,
 		types.AccountRoles{types.Trustee},
-		testconstants.VendorId1,
+		testconstants.VendorID1,
 		testconstants.Address2,
 	)
 

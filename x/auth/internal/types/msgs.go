@@ -25,17 +25,17 @@ type MsgProposeAddAccount struct {
 	Address   sdk.AccAddress `json:"address"`
 	PublicKey string         `json:"pub_key"`
 	Roles     AccountRoles   `json:"roles"`
-	VendorId  uint16         `json:"vendorId"`
+	VendorID  uint16         `json:"vendorID"`
 	Signer    sdk.AccAddress `json:"signer"`
 }
 
 func NewMsgProposeAddAccount(address sdk.AccAddress, pubKey string,
-	roles AccountRoles, vendorId uint16, signer sdk.AccAddress) MsgProposeAddAccount {
+	roles AccountRoles, vendorID uint16, signer sdk.AccAddress) MsgProposeAddAccount {
 	return MsgProposeAddAccount{
 		Address:   address,
 		PublicKey: pubKey,
 		Roles:     roles,
-		VendorId:  vendorId,
+		VendorID:  vendorID,
 		Signer:    signer,
 	}
 }
@@ -61,8 +61,8 @@ func (m MsgProposeAddAccount) ValidateBasic() sdk.Error {
 		return err
 	}
 
-	if m.HasRole(Vendor) && m.VendorId <= 0 {
-		return ErrMissingVendorIdForVendorAccount()
+	if m.HasRole(Vendor) && m.VendorID <= 0 {
+		return ErrMissingVendorIDForVendorAccount()
 	}
 
 	if m.Signer.Empty() {
@@ -86,6 +86,7 @@ func (m MsgProposeAddAccount) HasRole(targetRole AccountRole) bool {
 			return true
 		}
 	}
+
 	return false
 }
 

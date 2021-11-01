@@ -41,7 +41,7 @@ test_divider
 # Query vendor info record
 echo "Verify if VendorInfo Record for VID: $vid is present or not"
 result=$(dclcli query vendorinfo vendor --vid=$vid)
-check_response "$result" "\"vendorId\": $vid"
+check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""
 echo "$result"
@@ -51,8 +51,8 @@ test_divider
 # Update vendor info record
 echo "Update vendor info record for VID: $vid"
 companyLegalName="ABC Subsidiary Corporation"
-vendorLandingPageUrl="https://www.w3.org/"
-result=$(echo "test1234" | dclcli tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorLandingPageUrl=$vendorLandingPageUrl --vendorName="$vendorName" --from=$vendor_account --yes)
+vendorLandingPageURL="https://www.w3.org/"
+result=$(echo "test1234" | dclcli tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorLandingPageURL=$vendorLandingPageURL --vendorName="$vendorName" --from=$vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -61,10 +61,10 @@ test_divider
 # Query updated vendor info record
 echo "Verify if VendorInfo Record for VID: $vid is updated or not"
 result=$(dclcli query vendorinfo vendor --vid=$vid)
-check_response "$result" "\"vendorId\": $vid"
+check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""
-check_response "$result" "\"vendorLandingPageUrl\": \"$vendorLandingPageUrl\""
+check_response "$result" "\"vendorLandingPageURL\": \"$vendorLandingPageURL\""
 echo "$result"
 
 test_divider
@@ -73,13 +73,13 @@ test_divider
 vid1=$RANDOM
 result=$(echo "test1234" | dclcli tx vendorinfo add-vendor --vid=$vid1 --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes 2>&1) || true
 echo "$result"
-check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorId $vid1"
+check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorID $vid1"
 
 test_divider
 
 # Update a vendor info record from a vendor account belonging to another vendor_account
 result=$(echo "test1234" | dclcli tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$second_vendor_account --yes 2>&1) || true
 echo "$result"
-check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorId $vid"
+check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorID $vid"
 
 test_divider

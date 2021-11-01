@@ -30,7 +30,6 @@ var TestingResultsPrefix = []byte{0x01} // prefix for each key to a testing resu
 
 // Key builder for Testing Results.
 func GetTestingResultsKey(vid uint16, pid uint16, softwareVersion uint32) []byte {
-
 	var key []byte
 
 	key = append(key, TestingResultsPrefix...)
@@ -47,5 +46,4 @@ func GetTestingResultsKey(vid uint16, pid uint16, softwareVersion uint32) []byte
 	key = append(key, sv...)
 
 	return key
-
 }

@@ -68,7 +68,7 @@ func GetKeyInfo(accountName string) (KeyInfo, int) {
 	return keyInfo, code
 }
 
-func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles, vendorId uint16) (TxnResponse, int) {
+func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles, vendorID uint16) (TxnResponse, int) {
 	println("Propose Add Account for: ", keyInfo.Name)
 
 	request := authRest.ProposeAddAccountRequest{
@@ -79,7 +79,7 @@ func ProposeAddAccount(keyInfo KeyInfo, signer KeyInfo, roles auth.AccountRoles,
 		Address:  keyInfo.Address,
 		Pubkey:   keyInfo.PublicKey,
 		Roles:    roles,
-		VendorId: vendorId,
+		VendorID: vendorID,
 	}
 
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
@@ -201,7 +201,7 @@ func GetProposedAccountsToRevoke() (ProposedAccountToRevokeHeadersResult, int) {
 	return result, code
 }
 
-func CreateNewAccount(roles auth.AccountRoles, vendorId uint16) KeyInfo {
+func CreateNewAccount(roles auth.AccountRoles, vendorID uint16) KeyInfo {
 	name := RandString()
 	println("Register new account on the ledger: ", name)
 
@@ -210,7 +210,7 @@ func CreateNewAccount(roles auth.AccountRoles, vendorId uint16) KeyInfo {
 
 	keyInfo, _ := CreateKey(name)
 
-	ProposeAddAccount(keyInfo, jackKeyInfo, roles, vendorId)
+	ProposeAddAccount(keyInfo, jackKeyInfo, roles, vendorID)
 	ApproveAddAccount(keyInfo, aliceKeyInfo)
 
 	return keyInfo
@@ -540,7 +540,8 @@ func SendCertifiedModelRequest(certifyModel compliance.MsgCertifyModel, name str
 	body, _ := codec.MarshalJSONIndent(app.MakeCodec(), request)
 
 	uri := fmt.Sprintf("%s/%v/%v/%v/%v/%v/%v", compliance.RouterKey, compliance.Certified,
-		certifyModel.VID, certifyModel.PID, certifyModel.SoftwareVersion, certifyModel.SoftwareVersionString, certifyModel.CertificationType)
+		certifyModel.VID, certifyModel.PID, certifyModel.SoftwareVersion,
+		certifyModel.SoftwareVersionString, certifyModel.CertificationType)
 
 	return SendPutRequest(uri, body, name, constants.Passphrase)
 }
@@ -613,7 +614,8 @@ func getComplianceInfo(vid uint16, pid uint16, softwareVersion uint32,
 }
 
 func getComplianceInfoInState(vid uint16, pid uint16, softwareVersion uint32,
-	certificationType compliance.CertificationType, state compliance.ComplianceState) (compliance.ComplianceInfoInState, int) {
+	certificationType compliance.CertificationType,
+	state compliance.ComplianceState) (compliance.ComplianceInfoInState, int) {
 	uri := fmt.Sprintf("%s/%v/%v/%v/%v/%v", compliance.RouterKey, state, vid, pid, softwareVersion, certificationType)
 
 	response, code := SendGetRequest(uri)
@@ -1131,7 +1133,8 @@ func InitStartData() (KeyInfo, KeyInfo, model.MsgAddModel, model.MsgAddModelVers
 	fmt.Printf("%v, %v", txnResponse, errCode)
 
 	// Publish model version
-	modelVersion := NewMsgAddModelVersion(model.VID, model.PID, constants.SoftwareVersion, constants.SoftwareVersionString, vendor.Address)
+	modelVersion := NewMsgAddModelVersion(model.VID, model.PID,
+		constants.SoftwareVersion, constants.SoftwareVersionString, vendor.Address)
 	txnResponse, errCode = AddModelVersion(modelVersion, vendor)
 	fmt.Printf("%v, %v", txnResponse, errCode)
 

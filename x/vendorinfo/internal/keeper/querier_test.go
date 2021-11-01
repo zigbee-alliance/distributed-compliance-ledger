@@ -36,7 +36,7 @@ func TestQuerier_QueryVendorInfo(t *testing.T) {
 	// query vendorInfo
 	result, _ := setup.Querier(
 		setup.Ctx,
-		[]string{QueryVendor, fmt.Sprintf("%v", vendorInfo.VendorId)},
+		[]string{QueryVendor, fmt.Sprintf("%v", vendorInfo.VendorID)},
 		abci.RequestQuery{},
 	)
 
@@ -79,7 +79,7 @@ func TestQuerier_QueryAllVendorInfos(t *testing.T) {
 	require.Equal(t, count, len(receiveModels.Vendors))
 
 	for i, item := range receiveModels.Vendors {
-		require.Equal(t, uint16(i)+firstID, item.VendorId)
+		require.Equal(t, uint16(i)+firstID, item.VendorID)
 	}
 }
 
@@ -101,7 +101,7 @@ func TestQuerier_QueryAllVendorInfosWithPaginationHeaders(t *testing.T) {
 	require.Equal(t, take, len(receivedVendorInfos.Vendors))
 
 	for i, item := range receivedVendorInfos.Vendors {
-		require.Equal(t, uint16(skip)+uint16(i)+firstID, item.VendorId)
+		require.Equal(t, uint16(skip)+uint16(i)+firstID, item.VendorID)
 	}
 }
 

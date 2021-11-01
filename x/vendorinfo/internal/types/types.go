@@ -19,21 +19,21 @@ package types
 */
 
 type VendorInfo struct {
-	VendorId             uint16 `json:"vendorId" validate:"required"`
+	VendorID             uint16 `json:"vendorID" validate:"required"`
 	VendorName           string `json:"vendorName" validate:"requiredForAdd,min=2,max=32"`
 	CompanyLegalName     string `json:"companyLegalName" validate:"requiredForAdd,min=2,max=64"`
 	CompanyPreferredName string `json:"companyPreferredName" validate:"max=64"`
-	VendorLandingPageUrl string `json:"vendorLandingPageUrl" validate:"omitempty,max=256,url"`
+	VendorLandingPageURL string `json:"vendorLandingPageURL" validate:"omitempty,max=256,url"`
 }
 
 // NewVendor creates a new Vendor object.
-func NewVendorInfo(vendorId uint16, vendorName string, companyLegalName string,
-	companyPreferredName string, vendorLandingPageUrl string) VendorInfo {
+func NewVendorInfo(vendorID uint16, vendorName string, companyLegalName string,
+	companyPreferredName string, vendorLandingPageURL string) VendorInfo {
 	return VendorInfo{
-		VendorId:             vendorId,
+		VendorID:             vendorID,
 		VendorName:           vendorName,
 		CompanyLegalName:     companyLegalName,
 		CompanyPreferredName: companyPreferredName,
-		VendorLandingPageUrl: vendorLandingPageUrl,
+		VendorLandingPageURL: vendorLandingPageURL,
 	}
 }

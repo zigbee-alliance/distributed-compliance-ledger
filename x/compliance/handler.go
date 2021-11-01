@@ -42,6 +42,7 @@ func NewHandler(keeper keeper.Keeper, modelKeeper model.Keeper,
 	}
 }
 
+//nolint:funlen
 func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelKeeper model.Keeper,
 	compliancetestKeeper compliancetest.Keeper, authKeeper auth.Keeper,
 	msg types.MsgCertifyModel) sdk.Result {
@@ -86,7 +87,8 @@ func handleMsgCertifyModel(ctx sdk.Context, keeper keeper.Keeper, modelKeeper mo
 		// check if softwareVersionString matches with what is stored for the given version
 		modelVersion := modelKeeper.GetModelVersion(ctx, msg.VID, msg.PID, msg.SoftwareVersion)
 		if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
-			return types.ErrModelVersionStringDoesNotMatch(msg.VID, msg.PID, msg.SoftwareVersion, msg.SoftwareVersionString).Result()
+			return types.ErrModelVersionStringDoesNotMatch(msg.VID, msg.PID, msg.SoftwareVersion,
+				msg.SoftwareVersionString).Result()
 		}
 
 		if !compliancetestKeeper.IsTestingResultsPresents(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {

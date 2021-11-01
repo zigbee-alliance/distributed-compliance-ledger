@@ -62,7 +62,7 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.TestHouse, auth.CertificationCenter, auth.Vendor, auth.Trustee} {
 		// create signer account
-		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorId1)
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorID1)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// try to create validator
@@ -81,7 +81,8 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// create validator
-	account := auth.NewAccount(constants.Address2, constants.PubKey2, auth.AccountRoles{auth.NodeAdmin}, constants.VendorId2)
+	account := auth.NewAccount(constants.Address2, constants.PubKey2,
+		auth.AccountRoles{auth.NodeAdmin}, constants.VendorID2)
 	setup.authKeeper.SetAccount(setup.Ctx, account)
 
 	msgCreateValidator = types.NewMsgCreateValidator(constants.ValidatorAddress1, constants.ValidatorPubKey1,

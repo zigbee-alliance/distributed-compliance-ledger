@@ -30,7 +30,8 @@ const (
 	CodeModelVersionStringDoesNotMatch sdk.CodeType = 305
 )
 
-func ErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}, softwareVersion interface{}, certificationType interface{}) sdk.Error {
+func ErrComplianceInfoDoesNotExist(vid interface{}, pid interface{},
+	softwareVersion interface{}, certificationType interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeComplianceInfoDoesNotExist,
 		fmt.Sprintf("No certification information about the model with vid=%v, pid=%v softwareVersion=%v "+
 			"certification_type=%v on the ledger. This means that the model is either not certified yet or "+

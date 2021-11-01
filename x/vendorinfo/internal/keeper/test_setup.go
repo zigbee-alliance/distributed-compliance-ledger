@@ -65,26 +65,26 @@ func Setup() TestSetup {
 
 func DefaultVendorInfo() types.VendorInfo {
 	vendorInfo := types.VendorInfo{
-		VendorId:             testconstants.VID,
+		VendorID:             testconstants.VID,
 		VendorName:           testconstants.VendorName,
 		CompanyLegalName:     testconstants.CompanyLegalName,
 		CompanyPreferredName: testconstants.CompanyPreferredName,
-		VendorLandingPageUrl: testconstants.VendorLandingPageUrl,
+		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 
 	return vendorInfo
 }
 
-// add vendor info multiple counts
+// add vendor info multiple counts.
 func PopulateStoreWithVendorInfo(setup TestSetup, count int) uint16 {
 	firstID := uint16(1)
 
 	vendorInfo := DefaultVendorInfo()
-	vendorInfo.VendorId = firstID
+	vendorInfo.VendorID = firstID
 
 	for i := firstID; i <= uint16(count); i++ {
 		// add model info {VID: 1, PID: i}
-		vendorInfo.VendorId = i
+		vendorInfo.VendorID = i
 		setup.VendorInfoKeeper.SetVendorInfo(setup.Ctx, vendorInfo)
 	}
 

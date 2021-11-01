@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:testpackage,lll
 package model
 
 import (
@@ -35,7 +36,7 @@ type TestSetup struct {
 	Handler     sdk.Handler
 	Querier     sdk.Querier
 	Vendor      sdk.AccAddress
-	VendorId    uint16
+	VendorID    uint16
 }
 
 func Setup() TestSetup {
@@ -68,7 +69,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(modelKeeper)
 	handler := NewHandler(modelKeeper, authKeeper)
 
-	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.Vendor}, testconstants.VendorId1)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.Vendor}, testconstants.VendorID1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 
@@ -87,7 +88,7 @@ func Setup() TestSetup {
 
 func getTestModel() types.Model {
 	return Model{
-		VID:                                      testconstants.VendorId1,
+		VID:                                      testconstants.VendorID1,
 		PID:                                      testconstants.PID,
 		DeviceTypeID:                             testconstants.DeviceTypeID,
 		ProductName:                              testconstants.ProductName,
@@ -107,7 +108,7 @@ func getTestModel() types.Model {
 
 func getTestModelForUpdate() types.Model {
 	return Model{
-		VID:                        testconstants.VendorId1,
+		VID:                        testconstants.VendorID1,
 		PID:                        testconstants.PID,
 		DeviceTypeID:               testconstants.DeviceTypeID + 1,
 		ProductLabel:               "New Description",

@@ -29,8 +29,8 @@ var (
 	vl  *validator.Validate
 )
 
+//nolint:wrapcheck,errcheck
 func validate(s interface{}, performAddValidation bool) sdk.Error {
-
 	en := en.New()
 	uni = ut.New(en, en)
 
@@ -38,13 +38,14 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 
 	vl = validator.New()
 
-	vl.RegisterValidation("requiredForAdd", onlyRequiredForAdd)
-	en_translations.RegisterDefaultTranslations(vl, trans)
+	_ = vl.RegisterValidation("requiredForAdd", onlyRequiredForAdd)
+	_ = en_translations.RegisterDefaultTranslations(vl, trans)
 
 	_ = vl.RegisterTranslation("required", trans, func(ut ut.Translator) error {
 		return ut.Add("required", "{0} is a required field", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("required", fe.Field())
+
 		return t
 	})
 
@@ -52,20 +53,23 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 		return ut.Add("requiredForAdd", "{0} is a required field", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("requiredForAdd", fe.Field())
+
 		return t
 	})
 
-	_ = vl.RegisterTranslation("max", trans, func(ut ut.Translator) error {
+	vl.RegisterTranslation("max", trans, func(ut ut.Translator) error {
 		return ut.Add("max", "maximum length for {0} allowed is {1}", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("max", fe.Field(), fe.Param())
+
 		return t
 	})
 
-	_ = vl.RegisterTranslation("url", trans, func(ut ut.Translator) error {
+	vl.RegisterTranslation("url", trans, func(ut ut.Translator) error {
 		return ut.Add("url", "Field {0} : {1} is not a valid url", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("url", fe.Field(), fmt.Sprintf("%v", fe.Value()))
+
 		return t
 	})
 
@@ -98,7 +102,6 @@ func ValidateUpdate(s interface{}) sdk.Error {
 
 func ValidateAdd(s interface{}) sdk.Error {
 	return validate(s, true)
-
 }
 
 func onlyRequiredForAdd(fl validator.FieldLevel) bool {

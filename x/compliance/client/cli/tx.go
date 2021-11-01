@@ -45,6 +45,7 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	return complianceTxCmd
 }
 
+//nolint:funlen
 func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "certify-model",
@@ -64,7 +65,8 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			softwareVersion, err := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
+			softwareVersion, err :=
+				conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 			if err != nil {
 				return err
 			}
@@ -73,7 +75,8 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 
 			certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
-			certificationDate, err_ := time.Parse(time.RFC3339, viper.GetString(FlagCertificationDate))
+			certificationDate, err_ :=
+				time.Parse(time.RFC3339, viper.GetString(FlagCertificationDate))
 			if err_ != nil {
 				return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid CertificationDate \"%v\": "+
 					"it must be RFC3339 date. Error: %v", viper.GetString(FlagRevocationDate), err_.Error()))
@@ -100,7 +103,8 @@ func GetCmdCertifyModel(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
 		"Optional comment describing the reason of certification")
 	cmd.Flags().String(FlagIsProvisional, "",
-		"boolean flag to specify if this is only a provisional certification. This is set to true for a SoftwareVersion when going into certification testing")
+		"boolean flag to specify if this is only a provisional certification. "+
+			"This is set to true for a SoftwareVersion when going into certification testing")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
@@ -130,7 +134,8 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			softwareVersion, err := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
+			softwareVersion, err :=
+				conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 			if err != nil {
 				return err
 			}
@@ -145,7 +150,8 @@ func GetCmdRevokeModel(cdc *codec.Codec) *cobra.Command {
 
 			reason := viper.GetString(FlagReason)
 
-			msg := types.NewMsgRevokeModel(vid, pid, softwareVersion, revocationDate, certificationType, reason, cliCtx.FromAddress())
+			msg := types.NewMsgRevokeModel(vid, pid, softwareVersion,
+				revocationDate, certificationType, reason, cliCtx.FromAddress())
 
 			return cliCtx.HandleWriteMessage(msg)
 		},

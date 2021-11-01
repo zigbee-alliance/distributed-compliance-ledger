@@ -81,7 +81,8 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			partNumber := viper.GetString(FlagPartNumber)
 
 			var commissioningCustomFlow uint8
-			if commissioningCustomFlowStr := viper.GetString(FlagCommissioningCustomFlow); len(commissioningCustomFlowStr) != 0 {
+			if commissioningCustomFlowStr :=
+				viper.GetString(FlagCommissioningCustomFlow); len(commissioningCustomFlowStr) != 0 {
 				commissioningCustomFlow, err = conversions.ParseUInt8FromString(commissioningCustomFlowStr)
 				if err != nil {
 					return err
@@ -90,24 +91,32 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 			commissioningCustomFlowURL := viper.GetString(FlagCommissioningCustomFlowURL)
 
 			var commissioningModeInitialStepsHint uint32
-			commissioningModeInitialStepsHintStr := viper.GetString(FlagCommissioningModeInitialStepsHint)
+			commissioningModeInitialStepsHintStr :=
+				viper.GetString(FlagCommissioningModeInitialStepsHint)
 			if len(commissioningModeInitialStepsHintStr) != 0 {
-				commissioningModeInitialStepsHint, err = conversions.ParseUInt32FromString(FlagCommissioningModeInitialStepsHint, commissioningModeInitialStepsHintStr)
+				commissioningModeInitialStepsHint, err =
+					conversions.ParseUInt32FromString(FlagCommissioningModeInitialStepsHint,
+						commissioningModeInitialStepsHintStr)
 				if err != nil {
 					return err
 				}
 			}
-			commissioningModeInitialStepsInstruction := viper.GetString(FlagCommissioningModeInitialStepsInstruction)
+			commissioningModeInitialStepsInstruction :=
+				viper.GetString(FlagCommissioningModeInitialStepsInstruction)
 
 			var commissioningModeSecondaryStepsHint uint32
-			commissioningModeSecondaryStepsHintStr := viper.GetString(FlagCommissioningModeSecondaryStepsHint)
+			commissioningModeSecondaryStepsHintStr :=
+				viper.GetString(FlagCommissioningModeSecondaryStepsHint)
 			if len(commissioningModeSecondaryStepsHintStr) != 0 {
-				commissioningModeSecondaryStepsHint, err = conversions.ParseUInt32FromString(FlagCommissioningModeSecondaryStepsHint, commissioningModeSecondaryStepsHintStr)
+				commissioningModeSecondaryStepsHint, err =
+					conversions.ParseUInt32FromString(FlagCommissioningModeSecondaryStepsHint,
+						commissioningModeSecondaryStepsHintStr)
 				if err != nil {
 					return err
 				}
 			}
-			commissioningModeSecondaryStepsInstruction := viper.GetString(FlagCommissioningModeSecondaryStepsInstruction)
+			commissioningModeSecondaryStepsInstruction :=
+				viper.GetString(FlagCommissioningModeSecondaryStepsInstruction)
 			userManualURL := viper.GetString(FlagUserManualURL)
 			supportURL := viper.GetString(FlagSupportURL)
 			productURL := viper.GetString(FlagProductURL)
@@ -267,6 +276,7 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+
 	return cmd
 }
 
@@ -325,7 +335,8 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			softwareVersion, err := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
+			softwareVersion, err :=
+				conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 			if err != nil {
 				return err
 			}
@@ -337,7 +348,8 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 
 			var cdVersionNumber uint16
 			if len(viper.GetString(FlagCDVersionNumber)) != 0 {
-				cdVersionNumber, err = conversions.ParseUInt16FromString(FlagCDVersionNumber, viper.GetString(FlagCDVersionNumber))
+				cdVersionNumber, err =
+					conversions.ParseUInt16FromString(FlagCDVersionNumber, viper.GetString(FlagCDVersionNumber))
 				if err != nil {
 					return types.ErrCDVersionNumberInvalid(cdVersionNumber)
 				}
@@ -352,12 +364,13 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 
 			otaURL := viper.GetString(FlagOtaURL)
 			if len(otaURL) > 256 {
-				types.ErrOtaURLInvalid(otaURL)
+				return types.ErrOtaURLInvalid(otaURL)
 			}
 
 			var otaFileSize uint64
 			if len(viper.GetString(FlagOtaFileSize)) != 0 {
-				otaFileSize, err = conversions.ParseUInt64FromString(FlagOtaFileSize, viper.GetString(FlagOtaFileSize))
+				otaFileSize, err =
+					conversions.ParseUInt64FromString(FlagOtaFileSize, viper.GetString(FlagOtaFileSize))
 				if err != nil {
 					return err
 				}
@@ -367,7 +380,8 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 
 			var otaChecksumType uint16
 			if len(viper.GetString(FlagOtaChecksumType)) > 0 {
-				otaChecksumType, err = conversions.ParseUInt16FromString(FlagOtaChecksumType, viper.GetString(FlagOtaChecksumType))
+				otaChecksumType, err =
+					conversions.ParseUInt16FromString(FlagOtaChecksumType, viper.GetString(FlagOtaChecksumType))
 				if err != nil {
 					return err
 				}
@@ -379,12 +393,16 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			minApplicableSoftwareVersion, err := conversions.ParseUInt32FromString(FlagMinApplicableSoftwareVersion, viper.GetString(FlagMinApplicableSoftwareVersion))
+			minApplicableSoftwareVersion, err :=
+				conversions.ParseUInt32FromString(FlagMinApplicableSoftwareVersion,
+					viper.GetString(FlagMinApplicableSoftwareVersion))
 			if err != nil {
 				return err
 			}
 
-			maxApplicableSofwareVersion, err := conversions.ParseUInt32FromString(FlagMaxApplicableSoftwareVersion, viper.GetString(FlagMaxApplicableSoftwareVersion))
+			maxApplicableSofwareVersion, err :=
+				conversions.ParseUInt32FromString(FlagMaxApplicableSoftwareVersion,
+					viper.GetString(FlagMaxApplicableSoftwareVersion))
 			if err != nil {
 				return err
 			}
@@ -431,23 +449,32 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 	cmd.Flags().String(FlagCDVersionNumber, "",
 		"CD Version Number of the certification")
 	cmd.Flags().String(FlagFirmwareDigests, "",
-		`FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device`)
+		`FirmwareDigests field included in the Device Attestation response
+		 when this Software Image boots on the device`)
 	cmd.Flags().String(FlagSoftwareVersionValid, "",
 		"boolean flag to revoke the software version model")
 	cmd.Flags().String(FlagOtaURL, "", "URL where to obtain the OTA image")
-	cmd.Flags().String(FlagOtaFileSize, "", "OtaFileSize is the total size of the OTA software image in bytes")
+	cmd.Flags().String(FlagOtaFileSize, "",
+		"OtaFileSize is the total size of the OTA software image in bytes")
 	cmd.Flags().String(FlagOtaChecksum, "",
-		`Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, 
-	encoded in base64 string representation. The digest SHALL have been computed using 
-	the algorithm specified in OtaChecksumType`)
-	cmd.Flags().String(FlagOtaChecksumType, "", `Numberic identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
-	 For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm`)
+		`Digest of the entire contents of the associated OTA 
+		Software Update Image under the OtaUrl attribute, 
+		encoded in base64 string representation. The digest SHALL have been computed using 
+		the algorithm specified in OtaChecksumType`)
+	cmd.Flags().String(FlagOtaChecksumType, "", `Numberic identifier as defined in 
+	 IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
+	 For example, a value of 1 would match the sha-256 identifier, 
+	 which maps to the SHA-256 digest algorithm`)
 	cmd.Flags().String(FlagMinApplicableSoftwareVersion, "",
-		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)
+		`MinApplicableSoftwareVersion should specify the lowest 
+		SoftwareVersion for which this image can be applied`)
 	cmd.Flags().String(FlagMaxApplicableSoftwareVersion, "",
-		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
+		`MaxApplicableSoftwareVersion should specify the highest 
+		SoftwareVersion for which this image can be applied`)
 	cmd.Flags().String(FlagReleaseNotesURL, "",
-		`URL that contains product specific web page that contains release notes for the device model.`)
+		`URL that contains product specific web page that contains 
+		release notes for the device model.`)
+
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
@@ -455,6 +482,7 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagCDVersionNumber)
 	_ = cmd.MarkFlagRequired(FlagMinApplicableSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagMaxApplicableSoftwareVersion)
+
 	return cmd
 }
 
@@ -490,12 +518,13 @@ func GetCmdUpdateModelVersion(cdc *codec.Codec) *cobra.Command {
 
 			otaURL := viper.GetString(FlagOtaURL)
 			if len(otaURL) > 256 {
-				types.ErrOtaURLInvalid(otaURL)
+				return types.ErrOtaURLInvalid(otaURL)
 			}
 
 			var minApplicableSoftwareVersion uint32
 			if len(viper.GetString(FlagMinApplicableSoftwareVersion)) > 0 {
-				minApplicableSoftwareVersion, err = conversions.ParseUInt32FromString(FlagMinApplicableSoftwareVersion, viper.GetString(FlagMinApplicableSoftwareVersion))
+				minApplicableSoftwareVersion, err = conversions.ParseUInt32FromString(
+					FlagMinApplicableSoftwareVersion, viper.GetString(FlagMinApplicableSoftwareVersion))
 				if err != nil {
 					return err
 				}
@@ -503,7 +532,8 @@ func GetCmdUpdateModelVersion(cdc *codec.Codec) *cobra.Command {
 
 			var maxApplicableSofwareVersion uint32
 			if len(viper.GetString(FlagMaxApplicableSoftwareVersion)) > 0 {
-				maxApplicableSofwareVersion, err = conversions.ParseUInt32FromString(FlagMaxApplicableSoftwareVersion, viper.GetString(FlagMaxApplicableSoftwareVersion))
+				maxApplicableSofwareVersion, err = conversions.ParseUInt32FromString(
+					FlagMaxApplicableSoftwareVersion, viper.GetString(FlagMaxApplicableSoftwareVersion))
 				if err != nil {
 					return err
 				}
@@ -551,8 +581,10 @@ func GetCmdUpdateModelVersion(cdc *codec.Codec) *cobra.Command {
 		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().String(FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)
+
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+
 	return cmd
 }

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint:testpackage
+//nolint:testpackage,lll,dupl
 package compliance
 
 import (
@@ -43,7 +43,8 @@ func TestHandler_CertifyModel_Zigbee(t *testing.T) {
 	addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
 
 	// certify model
-	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, ZigbeeCertificationType)
+	certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion,
+		softwareVersionString, ZigbeeCertificationType)
 	result := setup.Handler(setup.Ctx, certifyModelMsg)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
@@ -101,7 +102,7 @@ func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
 
 	for _, tc := range cases {
 		address := constants.Address2
-		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc}, constants.VendorId1)
+		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc}, constants.VendorID1)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// try to certify model
@@ -112,7 +113,6 @@ func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
 		certifyModelMsg = msgCertifyModel(address, vid, pid, softwareVersion, softwareVersionString, MatterCertificationType)
 		result = setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Equal(t, sdk.CodeUnauthorized, result.Code)
-
 	}
 }
 
@@ -127,7 +127,6 @@ func TestHandler_CertifyModelForUnknownModel(t *testing.T) {
 		result := setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Equal(t, model.CodeModelVersionDoesNotExist, result.Code)
 	}
-
 }
 
 func TestHandler_CertifyModelForModelWithoutTestingResults(t *testing.T) {
@@ -179,13 +178,14 @@ func TestHandler_CertifyModelTwice(t *testing.T) {
 
 	// certify model
 	for _, certificationType := range setup.CertificationTypes {
-
-		certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
+		certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion,
+			softwareVersionString, certificationType)
 		result := setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Equal(t, sdk.CodeOK, result.Code)
 
 		// certify model second time
-		secondCertifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
+		secondCertifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid,
+			softwareVersion, softwareVersionString, certificationType)
 		secondCertifyModelMsg.CertificationDate = time.Now().UTC()
 		result = setup.Handler(setup.Ctx, secondCertifyModelMsg)
 		require.Equal(t, sdk.CodeOK, result.Code) // result is OK, BUT CertificationDate must be from the first message
@@ -207,6 +207,7 @@ func TestHandler_CertifyDifferentModels(t *testing.T) {
 			addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
 
 		addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
+
 		for _, certificationType := range setup.CertificationTypes {
 			// add new testing result
 			certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
@@ -272,6 +273,7 @@ func TestHandler_RevokeModel(t *testing.T) {
 		addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
 
 	addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
+
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
 		revokedModelMsg := msgRevokedModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
@@ -299,6 +301,7 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 		addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
 
 	addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
+
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
 		certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
@@ -339,7 +342,7 @@ func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 
 	for _, tc := range cases {
 		address := constants.Address2
-		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc}, constants.VendorId1)
+		account := auth.NewAccount(address, constants.PubKey1, auth.AccountRoles{tc}, constants.VendorID1)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// try to certify model
@@ -362,6 +365,7 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 		addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
 
 	addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
+
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
 		revokedModelMsg := msgRevokedModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
@@ -424,6 +428,7 @@ func TestHandler_RevokeCertifiedModelForRevocationDateBeforeCertificationDate(t 
 		addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
 
 	addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
+
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
 		certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
@@ -452,6 +457,7 @@ func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *
 		addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
 
 	addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
+
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
 		revokedModelMsg := msgRevokedModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
@@ -535,6 +541,7 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 	// add model version
 	_, _, softwareVersion, softwareVersionString :=
 		addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
+
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
 		revokedModelMsg := msgRevokedModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)
@@ -552,7 +559,6 @@ func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
 		result = setup.Handler(setup.Ctx, certifyModelMsg)
 		require.Equal(t, sdk.CodeOK, result.Code)
 	}
-
 }
 
 func TestHandler_CheckCertificationDone(t *testing.T) {
@@ -565,6 +571,7 @@ func TestHandler_CheckCertificationDone(t *testing.T) {
 		addModelVersion(setup, vid, pid, constants.SoftwareVersion, constants.SoftwareVersionString)
 
 	addTestingResult(setup, vid, pid, softwareVersion, softwareVersionString)
+
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
 		certifyModelMsg := msgCertifyModel(setup.CertificationCenter, vid, pid, softwareVersion, softwareVersionString, certificationType)

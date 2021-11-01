@@ -184,14 +184,16 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec) error {
 		return err_
 	}
 
-	softwareVersion, err_ := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
+	softwareVersion, err_ := conversions.ParseUInt32FromString(
+		FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
 	if err_ != nil {
 		return err_
 	}
 
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
-	res, height, err := cliCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion), queryRoute)
+	res, height, err := cliCtx.QueryStore(
+		types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion), queryRoute)
 	if err != nil || res == nil {
 		return types.ErrComplianceInfoDoesNotExist(vid, pid, softwareVersion, certificationType)
 	}
@@ -203,7 +205,8 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec) error {
 	return cliCtx.EncodeAndPrintWithHeight(complianceInfo, height)
 }
 
-func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, status types.SoftwareVersionCertificationStatus) error {
+func getComplianceInfoInState(queryRoute string,
+	cdc *codec.Codec, status types.SoftwareVersionCertificationStatus) error {
 	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 	vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
@@ -220,11 +223,13 @@ func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, status types.
 	if err_ != nil {
 		return err_
 	}
+
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
 	isInState := types.ComplianceInfoInState{Value: false}
 
-	res, height, err := cliCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion), queryRoute)
+	res, height, err := cliCtx.QueryStore(
+		types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion), queryRoute)
 	if res != nil {
 		var complianceInfo types.ComplianceInfo
 

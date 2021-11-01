@@ -27,6 +27,7 @@ import (
 func NewHandler(keeper keeper.Keeper, modelKeeper model.Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
 		keeper.Logger(ctx).Info("Inside the handleMsgAddTestingCenter...")
+
 		switch msg := msg.(type) {
 		case types.MsgAddTestingResult:
 			return handleMsgAddTestingResult(ctx, keeper, modelKeeper, authKeeper, msg)
@@ -42,6 +43,7 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelKeepe
 	authKeeper auth.Keeper, msg types.MsgAddTestingResult) sdk.Result {
 	// check if sender has enough rights to add testing results
 	keeper.Logger(ctx).Info("Inside the handleMsgAddTestingCenter")
+
 	if err := checkAddTestingResultRights(ctx, authKeeper, msg.Signer); err != nil {
 		return err.Result()
 	}
@@ -54,7 +56,8 @@ func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelKeepe
 	// check if softwareVersionString matches with what is stored for the given version
 	modelVersion := modelKeeper.GetModelVersion(ctx, msg.VID, msg.PID, msg.SoftwareVersion)
 	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
-		return types.ErrModelVersionStringDoesNotMatch(msg.VID, msg.PID, msg.SoftwareVersion, msg.SoftwareVersionString).Result()
+		return types.ErrModelVersionStringDoesNotMatch(msg.VID, msg.PID,
+			msg.SoftwareVersion, msg.SoftwareVersionString).Result()
 	}
 
 	testingResult := types.NewTestingResult(

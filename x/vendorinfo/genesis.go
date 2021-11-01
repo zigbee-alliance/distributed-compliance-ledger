@@ -30,7 +30,7 @@ func NewGenesisState() GenesisState {
 
 //nolint:cognit
 func ValidateGenesis(data GenesisState) error {
-	//TODO ADD validation
+	// TODO ADD validation
 
 	// for _, record := range data.VendorInfoRecords {
 	// 	if record.VID == 0 {

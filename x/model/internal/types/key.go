@@ -53,7 +53,6 @@ func GetVendorProductsKey(vid uint16) []byte {
 
 // Key builder for Model Version.
 func GetModelVersionKey(vid uint16, pid uint16, softwareVersion uint32) []byte {
-
 	var key []byte
 
 	key = append(key, ModelVersionPrefix...)
@@ -74,7 +73,6 @@ func GetModelVersionKey(vid uint16, pid uint16, softwareVersion uint32) []byte {
 
 // Key builder for Model Version.
 func GetModelVersionsKey(vid uint16, pid uint16) []byte {
-
 	var key []byte
 
 	key = append(key, ModelVersionPrefix...)

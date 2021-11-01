@@ -406,12 +406,12 @@ The set of commands that allows the Vendor to update contact information.
 
   Role: `Vendor`
   
-  Command: `dclcli tx vendorinfo add-vendor --companyLegalName=<string> --companyPreferredName=<string> --vendorName=<string> --vid=<uint16> ----vendorLandingPageUrl=<url> --from=<account>`
+  Command: `dclcli tx vendorinfo add-vendor --companyLegalName=<string> --companyPreferredName=<string> --vendorName=<string> --vid=<uint16> ----vendorLandingPageURL=<url> --from=<account>`
 
   Flags:
   - companyLegalName `string (max64)` - Company Legal Name
   - companyPreferredName `optional string (max64)` - Company Preferred Name  
-  - vendorLandingPageUrl `optional string (max256)` - Landing Page URL for the Vendor
+  - vendorLandingPageURL `optional string (max256)` - Landing Page URL for the Vendor
   - vendorName `string (max32)` - Vendor Name
   - vid `uint16` - Vendor ID      
   
@@ -422,17 +422,17 @@ The set of commands that allows the Vendor to update contact information.
 
   Role: `Vendor`
 
-  Command: `dclcli tx vendorinfo update-vendor --companyLegalName=<string> --companyPreferredName=<string> --vendorName=<string> --vid=<uint16> ----vendorLandingPageUrl=<url> --from=<account>`
+  Command: `dclcli tx vendorinfo update-vendor --companyLegalName=<string> --companyPreferredName=<string> --vendorName=<string> --vid=<uint16> ----vendorLandingPageURL=<url> --from=<account>`
 
     
   Flags:
   - companyLegalName `string (max64)` - Company Legal Name
   - companyPreferredName `optional string (max64)` - Company Preferred Name  
-  - vendorLandingPageUrl `optional string (max256)` - Landing Page URL for the Vendor
+  - vendorLandingPageURL `optional string (max256)` - Landing Page URL for the Vendor
   - vendorName `string (max32)` - Vendor Name
   - vid `uint16` - Vendor ID     
     
-  Example: `dclcli tx vendorinfo update-vendor --vendorLandingPageUrl="https://producturl.vendor.info" --vid=123 --from="jack"`
+  Example: `dclcli tx vendorinfo update-vendor --vendorLandingPageURL="https://producturl.vendor.info" --vid=123 --from="jack"`
   
 ##### Queries
 - Query a single vendor info.

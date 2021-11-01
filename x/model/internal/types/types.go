@@ -95,7 +95,8 @@ type Product struct {
 	PartNumber string `json:"partNumber"`
 }
 
-// Model Versions
+// Model Versions.
+//nolint:maligned
 type ModelVersion struct {
 	VID                          uint16 `json:"vid" validate:"required"`
 	PID                          uint16 `json:"pid" validate:"required"`

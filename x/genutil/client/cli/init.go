@@ -123,7 +123,8 @@ func InitCmd(ctx *server.Context, cdc *codec.Codec, mbm module.BasicManager,
 
 			toPrint := newPrintInfo(config.Moniker, chainID, nodeID, "", appState)
 
-			config.LogLevel = "x/auth:info,x/complaince:info,x/complaincetest:info,x/model:info,x/modelversion:info,x/pki:info,x/vendorinfo:info,*:error"
+			//nolint:lll
+			config.LogLevel = "x/auth:info,x/compliance:info,x/complaincetest:info,x/model:info,x/modelversion:info,x/pki:info,x/vendorinfo:info,*:error"
 
 			cfg.WriteConfigFile(filepath.Join(config.RootDir, "config", "config.toml"), config)
 

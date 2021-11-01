@@ -53,11 +53,11 @@ func addVendorHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		vendorInfo := types.VendorInfo{
-			VendorId:             req.VendorInfo.VendorId,
+			VendorID:             req.VendorInfo.VendorID,
 			VendorName:           req.VendorInfo.VendorName,
 			CompanyLegalName:     req.VendorInfo.CompanyLegalName,
 			CompanyPreferredName: req.VendorInfo.CompanyPreferredName,
-			VendorLandingPageUrl: req.VendorInfo.VendorLandingPageUrl,
+			VendorLandingPageURL: req.VendorInfo.VendorLandingPageURL,
 		}
 
 		msg := types.NewMsgAddVendorInfo(vendorInfo, restCtx.Signer())
@@ -86,11 +86,11 @@ func updateVendorHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		vendorInfo := types.VendorInfo{
-			VendorId:             req.VendorInfo.VendorId,
+			VendorID:             req.VendorInfo.VendorID,
 			VendorName:           req.VendorInfo.VendorName,
 			CompanyLegalName:     req.VendorInfo.CompanyLegalName,
 			CompanyPreferredName: req.VendorInfo.CompanyPreferredName,
-			VendorLandingPageUrl: req.VendorInfo.VendorLandingPageUrl,
+			VendorLandingPageURL: req.VendorInfo.VendorLandingPageURL,
 		}
 
 		msg := types.NewMsgUpdateVendorInfo(vendorInfo, restCtx.Signer())

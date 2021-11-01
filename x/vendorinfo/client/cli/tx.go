@@ -51,7 +51,7 @@ func GetCmdAddVendor(cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vendorId, err := conversions.ParseVID(viper.GetString(FlagVID))
+			vendorID, err := conversions.ParseVID(viper.GetString(FlagVID))
 			if err != nil {
 				return err
 			}
@@ -59,14 +59,14 @@ func GetCmdAddVendor(cdc *codec.Codec) *cobra.Command {
 			vendorName := viper.GetString(FlagVendorName)
 			companyLegalName := viper.GetString(FlagCompanyLegalName)
 			companyPreferredName := viper.GetString(FlagCompanyPreferredName)
-			vendorLandingPageUrl := viper.GetString(FlagVendorLandingPageUrl)
+			vendorLandingPageURL := viper.GetString(FlagVendorLandingPageURL)
 
 			vendorInfo := types.VendorInfo{
-				VendorId:             vendorId,
+				VendorID:             vendorID,
 				VendorName:           vendorName,
 				CompanyLegalName:     companyLegalName,
 				CompanyPreferredName: companyPreferredName,
-				VendorLandingPageUrl: vendorLandingPageUrl,
+				VendorLandingPageURL: vendorLandingPageURL,
 			}
 
 			msg := types.NewMsgAddVendorInfo(vendorInfo, cliCtx.FromAddress())
@@ -83,11 +83,13 @@ func GetCmdAddVendor(cdc *codec.Codec) *cobra.Command {
 		"Company Legal Name")
 	cmd.Flags().String(FlagCompanyPreferredName, "",
 		"Company Preferred Name")
-	cmd.Flags().String(FlagVendorLandingPageUrl, "",
+	cmd.Flags().String(FlagVendorLandingPageURL, "",
 		"Landing Page URL for the Vendor")
+
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagVendorName)
 	_ = cmd.MarkFlagRequired(FlagCompanyLegalName)
+
 	return cmd
 }
 
@@ -100,7 +102,7 @@ func GetCmdUpdateVendor(cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
-			vendorId, err := conversions.ParseVID(viper.GetString(FlagVID))
+			vendorID, err := conversions.ParseVID(viper.GetString(FlagVID))
 			if err != nil {
 				return err
 			}
@@ -108,14 +110,14 @@ func GetCmdUpdateVendor(cdc *codec.Codec) *cobra.Command {
 			vendorName := viper.GetString(FlagVendorName)
 			companyLegalName := viper.GetString(FlagCompanyLegalName)
 			companyPreferredName := viper.GetString(FlagCompanyPreferredName)
-			vendorLandingPageUrl := viper.GetString(FlagVendorLandingPageUrl)
+			vendorLandingPageURL := viper.GetString(FlagVendorLandingPageURL)
 
 			vendorInfo := types.VendorInfo{
-				VendorId:             vendorId,
+				VendorID:             vendorID,
 				VendorName:           vendorName,
 				CompanyLegalName:     companyLegalName,
 				CompanyPreferredName: companyPreferredName,
-				VendorLandingPageUrl: vendorLandingPageUrl,
+				VendorLandingPageURL: vendorLandingPageURL,
 			}
 			msg := types.NewMsgUpdateVendorInfo(vendorInfo, cliCtx.FromAddress())
 
@@ -130,7 +132,7 @@ func GetCmdUpdateVendor(cdc *codec.Codec) *cobra.Command {
 		"Company Legal Name")
 	cmd.Flags().String(FlagCompanyPreferredName, "",
 		"Company Preferred Name")
-	cmd.Flags().String(FlagVendorLandingPageUrl, "",
+	cmd.Flags().String(FlagVendorLandingPageURL, "",
 		"Landing Page URL for the Vendor")
 
 	_ = cmd.MarkFlagRequired(FlagVID)

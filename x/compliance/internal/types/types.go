@@ -23,6 +23,7 @@ import (
 
 type ComplianceState string
 
+//nolint:godot
 const (
 	// Used for development and test purposes (Note: these will typically not be placed in DCL,
 	// hence this value is not used)
@@ -37,6 +38,7 @@ const (
 
 type SoftwareVersionCertificationStatus uint8
 
+//nolint:godot
 const (
 	// CodeDevTest     SoftwareVersionCertificationStatus = 0
 	CodeProvisional SoftwareVersionCertificationStatus = 1
@@ -62,6 +64,7 @@ func IsValidCertificationType(certificationType CertificationType) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -151,7 +154,8 @@ type ComplianceHistoryItem struct {
 	Reason                             string                             `json:"reason,omitempty"`
 }
 
-func NewComplianceHistoryItem(svCertificationStatus SoftwareVersionCertificationStatus, date time.Time, reason string) ComplianceHistoryItem {
+func NewComplianceHistoryItem(svCertificationStatus SoftwareVersionCertificationStatus,
+	date time.Time, reason string) ComplianceHistoryItem {
 	return ComplianceHistoryItem{
 		SoftwareVersionCertificationStatus: svCertificationStatus,
 		Date:                               date,

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:testpackage,lll
 package validator
 
 //nolint:goimports
@@ -67,7 +68,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(validatorKeeper)
 	handler := NewHandler(validatorKeeper, authKeeper)
 
-	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.NodeAdmin}, testconstants.VendorId1)
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.NodeAdmin}, testconstants.VendorID1)
 	authKeeper.SetAccount(ctx, account)
 
 	setup := TestSetup{

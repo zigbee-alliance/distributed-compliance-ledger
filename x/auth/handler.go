@@ -51,8 +51,8 @@ func handleMsgProposeAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 	}
 
 	// check if proposed account has vendor role, vendor id should be present.
-	if msg.HasRole(types.Vendor) && msg.VendorId <= 0 {
-		return types.ErrMissingVendorIdForVendorAccount().Result()
+	if msg.HasRole(types.Vendor) && msg.VendorID <= 0 {
+		return types.ErrMissingVendorIDForVendorAccount().Result()
 	}
 
 	// check if active account already exists.
@@ -74,11 +74,11 @@ func handleMsgProposeAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 	// if more than 1 trustee's approval is needed, create pending account else create an active account.
 	if AccountApprovalsCount(ctx, keeper) > 1 {
 		// create and store pending account.
-		account := types.NewPendingAccount(msg.Address, pubKey, msg.Roles, msg.VendorId, msg.Signer)
+		account := types.NewPendingAccount(msg.Address, pubKey, msg.Roles, msg.VendorID, msg.Signer)
 		keeper.SetPendingAccount(ctx, account)
 	} else {
 		// create account, assign account number and store it
-		account := types.NewAccount(msg.Address, pubKey, msg.Roles, msg.VendorId)
+		account := types.NewAccount(msg.Address, pubKey, msg.Roles, msg.VendorID)
 		account.AccountNumber = keeper.GetNextAccountNumber(ctx)
 		keeper.SetAccount(ctx, account)
 	}
@@ -114,7 +114,7 @@ func handleMsgApproveAddAccount(ctx sdk.Context, keeper keeper.Keeper, msg types
 	// check if pending account has enough approvals
 	if len(pendAcc.Approvals) == AccountApprovalsCount(ctx, keeper) {
 		// create approved account, assign account number and store it
-		account := types.NewAccount(pendAcc.Address, pendAcc.PubKey, pendAcc.Roles, pendAcc.VendorId)
+		account := types.NewAccount(pendAcc.Address, pendAcc.PubKey, pendAcc.Roles, pendAcc.VendorID)
 		account.AccountNumber = keeper.GetNextAccountNumber(ctx)
 		keeper.SetAccount(ctx, account)
 

@@ -29,12 +29,14 @@ func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
 
 	// check if compliance info present
 	require.False(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
-		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion))
+		types.CertificationType(testconstants.CertificationType), testconstants.VID,
+		testconstants.PID, testconstants.SoftwareVersion))
 
 	// no compliance info before its created
 	require.Panics(t, func() {
 		setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-			types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion)
+			types.CertificationType(testconstants.CertificationType), testconstants.VID,
+			testconstants.PID, testconstants.SoftwareVersion)
 	})
 
 	// create compliance info
@@ -43,11 +45,13 @@ func TestKeeper_ComplianceInfoGetSet(t *testing.T) {
 
 	// check if compliance info present
 	require.True(t, setup.CompliancetKeeper.IsComplianceInfoPresent(setup.Ctx,
-		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion))
+		types.CertificationType(testconstants.CertificationType), testconstants.VID,
+		testconstants.PID, testconstants.SoftwareVersion))
 
 	// get compliance info
 	receivedComplianceInfo := setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-		types.CertificationType(testconstants.CertificationType), testconstants.VID, testconstants.PID, testconstants.SoftwareVersion)
+		types.CertificationType(testconstants.CertificationType), testconstants.VID,
+		testconstants.PID, testconstants.SoftwareVersion)
 	CheckComplianceInfo(t, certifiedModel, receivedComplianceInfo)
 }
 
@@ -95,6 +99,7 @@ func TestKeeper_TwoComplianceInfoWithDifferentType(t *testing.T) {
 
 	// get other compliance info
 	receivedComplianceInfo = setup.CompliancetKeeper.GetComplianceInfo(setup.Ctx,
-		otherCertifiedModel.CertificationType, otherCertifiedModel.VID, otherCertifiedModel.PID, otherCertifiedModel.SoftwareVersion)
+		otherCertifiedModel.CertificationType, otherCertifiedModel.VID, otherCertifiedModel.PID,
+		otherCertifiedModel.SoftwareVersion)
 	CheckComplianceInfo(t, otherCertifiedModel, receivedComplianceInfo)
 }

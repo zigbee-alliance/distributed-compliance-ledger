@@ -15,7 +15,7 @@
 package cli
 
 const (
-	// Flags for Model
+	// Flags for Model.
 	FlagVID                                        = "vid"
 	FlagPID                                        = "pid"
 	FlagDeviceTypeID                               = "deviceTypeID"
@@ -34,7 +34,7 @@ const (
 	FlagSupportURL                                 = "supportURL"
 	FlagProductURL                                 = "productURL"
 
-	// Flags for Model Software Version
+	// Flags for Model Software Version.
 	FlagSoftwareVersion              = "softwareVersion"
 	FlagSoftwareVersionShortcut      = "v"
 	FlagSoftwareVersionString        = "softwareVersionString"

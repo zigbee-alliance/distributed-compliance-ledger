@@ -30,7 +30,7 @@ type ProposeAddAccountRequest struct {
 	Address  sdk.AccAddress     `json:"address"`
 	Pubkey   string             `json:"pubkey"`
 	Roles    types.AccountRoles `json:"roles"`
-	VendorId uint16             `json:"vendorId"`
+	VendorID uint16             `json:"vendorID"`
 }
 
 func proposeAddAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -52,7 +52,7 @@ func proposeAddAccountHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgProposeAddAccount(req.Address, req.Pubkey, req.Roles, req.VendorId, restCtx.Signer())
+		msg := types.NewMsgProposeAddAccount(req.Address, req.Pubkey, req.Roles, req.VendorID, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

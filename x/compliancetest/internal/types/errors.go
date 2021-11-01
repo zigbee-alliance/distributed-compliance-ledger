@@ -29,7 +29,8 @@ const (
 
 func ErrTestingResultDoesNotExist(vid interface{}, pid interface{}, softwareVersion uint32) sdk.Error {
 	return sdk.NewError(Codespace, CodeTestingResultsDoNotExist,
-		fmt.Sprintf("No testing results about the model with vid=%v pid=%v and softwareVersion=%v on the ledger", vid, pid, softwareVersion))
+		fmt.Sprintf("No testing results about the model with vid=%v pid=%v and softwareVersion=%v on the ledger",
+			vid, pid, softwareVersion))
 }
 
 func ErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},

@@ -31,7 +31,6 @@ type CertifyModelRequest struct {
 	Reason            string            `json:"reason,omitempty"`
 }
 
-// nolint:dupl
 func certifyModelHandler(cliCtx context.CLIContext, isProvisional bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -91,7 +90,6 @@ type RevokeModelRequest struct {
 	Reason         string            `json:"reason,omitempty"`
 }
 
-// nolint:dupl
 func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)

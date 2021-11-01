@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint:testpackage
+//nolint:testpackage,lll
 package model
 
 import (
@@ -81,7 +81,7 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.Vendor} {
 		// store account
-		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorId3)
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorID3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// update existing model by not owner
@@ -111,7 +111,6 @@ func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 
 	// check
 	require.Equal(t, receivedModel.DeviceTypeID, uint16(0))
-
 }
 
 func TestHandler_AddModelByNonVendor(t *testing.T) {
@@ -119,7 +118,7 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 
 	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse} {
 		// store account
-		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorId3)
+		account := auth.NewAccount(testconstants.Address3, testconstants.PubKey3, auth.AccountRoles{role}, testconstants.VendorID3)
 		setup.authKeeper.SetAccount(setup.Ctx, account)
 
 		// add new model

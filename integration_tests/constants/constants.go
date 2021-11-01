@@ -38,7 +38,7 @@ var (
 	VendorName                                        = "Vendor Name"
 	CompanyLegalName                                  = "Legal Company Name"
 	CompanyPreferredName                              = "Company Preferred Name"
-	VendorLandingPageUrl                              = "https://www.example.com"
+	VendorLandingPageURL                              = "https://www.example.com"
 	PID                                        uint16 = 22
 	DeviceTypeID                               uint16 = 12345
 	Version                                           = "1.0"
@@ -89,9 +89,9 @@ var (
 	Address1, _              = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
 	Address2, _              = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
 	Address3, _              = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	VendorId1         uint16 = 1000
-	VendorId2         uint16 = 2000
-	VendorId3         uint16 = 3000
+	VendorID1         uint16 = 1000
+	VendorID2         uint16 = 2000
+	VendorID3         uint16 = 3000
 	Pubkey1Str               = "cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h"
 	PubKey1, _               = sdk.GetAccPubKeyBech32(Pubkey1Str)
 	PubKey2Str               = "cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng"

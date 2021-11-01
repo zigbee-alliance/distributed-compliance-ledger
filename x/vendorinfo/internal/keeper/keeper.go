@@ -51,7 +51,7 @@ func (k Keeper) GetVendorInfo(ctx sdk.Context, vid uint16) types.VendorInfo {
 // Sets the entire VendorInfo metadata struct for a VendorID.
 func (k Keeper) SetVendorInfo(ctx sdk.Context, vendorInfo types.VendorInfo) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.GetVendorInfoKey(vendorInfo.VendorId), k.cdc.MustMarshalBinaryBare(vendorInfo))
+	store.Set(types.GetVendorInfoKey(vendorInfo.VendorID), k.cdc.MustMarshalBinaryBare(vendorInfo))
 }
 
 // Iterate over all VendorInfos.
