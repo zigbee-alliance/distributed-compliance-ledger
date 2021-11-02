@@ -23,15 +23,18 @@ import (
 )
 
 const (
-	vid               = "vid"
-	pid               = "pid"
-	certificationType = "certification_type"
+	vid                   = "vid"
+	pid                   = "pid"
+	softwareVersion       = "softwareVersion"
+	softwareVersionString = "softwareVersionString"
+	certificationType     = "certification_type"
 )
 
 // RegisterRoutes - Central function to define routes that get registered by the main application.
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
 	r.HandleFunc(
-		fmt.Sprintf("/%s/{%s}/{%s}/{%s}", storeName, vid, pid, certificationType),
+		fmt.Sprintf("/%s/{%s}/{%s}/{%s}/{%s}",
+			storeName, vid, pid, softwareVersion, certificationType),
 		getComplianceInfoHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
@@ -39,27 +42,36 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) 
 		getComplianceInfosHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Certified, vid, pid, certificationType),
-		certifyModelHandler(cliCtx),
+		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}/{%s}",
+			storeName, types.Certified, vid, pid, softwareVersion, softwareVersionString, certificationType),
+		certifyModelHandler(cliCtx, false),
 	).Methods("PUT")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Certified, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}/{%s}",
+			storeName, types.Provisional, vid, pid, softwareVersion, softwareVersionString, certificationType),
+		certifyModelHandler(cliCtx, true),
+	).Methods("PUT")
+	r.HandleFunc(
+		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}",
+			storeName, types.Certified, vid, pid, softwareVersion, certificationType),
 		getCertifiedModelHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s", storeName, types.Certified),
+		fmt.Sprintf("/%s/%v", storeName, types.Certified),
 		getCertifiedModelsHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Revoked, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}",
+			storeName, types.Revoked, vid, pid, softwareVersion, certificationType),
 		revokeModelHandler(cliCtx),
 	).Methods("PUT")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s/{%s}/{%s}/{%s}", storeName, types.Revoked, vid, pid, certificationType),
+		fmt.Sprintf("/%s/%v/{%s}/{%s}/{%s}/{%s}",
+			storeName, types.Revoked, vid, pid, softwareVersion, certificationType),
 		getRevokedModelHandler(cliCtx, storeName),
 	).Methods("GET")
 	r.HandleFunc(
-		fmt.Sprintf("/%s/%s", storeName, types.Revoked),
+		fmt.Sprintf("/%s/%v", storeName, types.Revoked),
 		getRevokedModelsHandler(cliCtx, storeName),
 	).Methods("GET")
 }

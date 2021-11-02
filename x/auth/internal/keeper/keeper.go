@@ -117,6 +117,17 @@ func (k Keeper) HasRole(ctx sdk.Context, addr sdk.AccAddress, roleToCheck types.
 	return false
 }
 
+// Check if account has vendorID association.
+func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid uint16) bool {
+	account := k.GetAccount(ctx, addr)
+
+	if account.VendorID == vid {
+		return true
+	} else {
+		return false
+	}
+}
+
 // Count account with assigned role.
 func (k Keeper) CountAccountsWithRole(ctx sdk.Context, roleToCount types.AccountRole) int {
 	res := 0

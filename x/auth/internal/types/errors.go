@@ -29,6 +29,7 @@ const (
 	CodePendingAccountDoesNotExist            sdk.CodeType = 104
 	CodePendingAccountRevocationAlreadyExists sdk.CodeType = 105
 	CodePendingAccountRevocationDoesNotExist  sdk.CodeType = 106
+	CodeMissingVendorIDForVendorAccount       sdk.CodeType = 107
 )
 
 func ErrAccountAlreadyExists(address interface{}) sdk.Error {
@@ -59,4 +60,9 @@ func ErrPendingAccountRevocationAlreadyExists(address interface{}) sdk.Error {
 func ErrPendingAccountRevocationDoesNotExist(address interface{}) sdk.Error {
 	return sdk.NewError(DefaultCodespace, CodePendingAccountRevocationDoesNotExist,
 		fmt.Sprintf("No pending account revocation associated with the address=%v on the ledger", address))
+}
+
+func ErrMissingVendorIDForVendorAccount() sdk.Error {
+	return sdk.NewError(DefaultCodespace, CodeMissingVendorIDForVendorAccount,
+		"No Vendor ID is provided in the Vendor Role for the new account")
 }

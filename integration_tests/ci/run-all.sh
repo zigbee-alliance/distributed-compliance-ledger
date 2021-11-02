@@ -94,7 +94,11 @@ cleanup_pool() {
   log "-> Removing configurations" >${DETAILED_OUTPUT_TARGET}
   rm -rf ~/.dclcli
   rm -rf ~/.dcld
-  sudo rm -rf localnet
+  if [ "$(uname)" == "Darwin" ]; then
+    rm -rf localnet 
+  else
+    sudo rm -rf localnet
+  fi
 }
 
 run_rest_server() {
@@ -131,7 +135,7 @@ for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$CLI_SHELL_TEST finished successfully"
   else
-    log "$CLI_SHELL_TEST falied"
+    log "$CLI_SHELL_TEST failed"
     exit 1
   fi
 
@@ -146,13 +150,14 @@ for GO_REST_TEST in ${GO_REST_TESTS}; do
   log "Starting the rest server"
   run_rest_server
 
+  log "*****************************************************************************************"
   log "Running $GO_REST_TEST"
-  
+  log "*****************************************************************************************"
 
   if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$GO_REST_TEST finished successfully"
   else
-    log "$GO_REST_TEST falied"
+    log "$GO_REST_TEST failed"
     exit 1
   fi
 

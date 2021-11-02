@@ -59,12 +59,14 @@ func GetCmdGetComplianceInfo(queryRoute string, cdc *codec.Codec) *cobra.Command
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
 	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Certification type (zb` is the only supported value now)")
+		TextCertificationType)
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 
 	return cmd
@@ -79,8 +81,7 @@ func GetCmdGetAllComplianceInfos(queryRoute string, cdc *codec.Codec) *cobra.Com
 		},
 	}
 
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Requested certification type. `zb` is the default and the only supported value now")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of models to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of models to take")
 
@@ -90,23 +91,24 @@ func GetCmdGetAllComplianceInfos(queryRoute string, cdc *codec.Codec) *cobra.Com
 func GetCmdGetCertifiedModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "certified-model",
-		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid` and " +
-			"`certification_type`) is compliant to ZB standards",
+		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and " +
+			"`certification_type`) is compliant",
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getComplianceInfoInState(queryRoute, cdc, types.Certified)
+			return getComplianceInfoInState(queryRoute, cdc, types.CodeCertified)
 		},
 	}
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
 
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Certification type (zb` is the only supported value now)")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 
 	return cmd
@@ -121,8 +123,7 @@ func GetCmdGetAllCertifiedModels(queryRoute string, cdc *codec.Codec) *cobra.Com
 		},
 	}
 
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Requested certification type. `zb` is the default and the only supported value now")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of models to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of models to take")
 
@@ -135,18 +136,19 @@ func GetCmdGetRevokedModel(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is revoked",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return getComplianceInfoInState(queryRoute, cdc, types.Revoked)
+			return getComplianceInfoInState(queryRoute, cdc, types.CodeRevoked)
 		},
 	}
 
 	cmd.Flags().String(FlagVID, "", "Model vendor ID")
 	cmd.Flags().String(FlagPID, "", "Model product ID")
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Certification type (zb` is the only supported value now)")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 	cmd.Flags().Bool(cli.FlagPreviousHeight, false, cli.FlagPreviousHeightUsage)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 
 	return cmd
@@ -162,7 +164,7 @@ func GetCmdGetAllRevokedModels(queryRoute string, cdc *codec.Codec) *cobra.Comma
 	}
 
 	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "",
-		"Requested certification type. `zb` is the default and the only supported value now")
+		"Certification type - [] types are supported")
 	cmd.Flags().Int(pagination.FlagSkip, 0, "amount of models to skip")
 	cmd.Flags().Int(pagination.FlagTake, 0, "amount of models to take")
 
@@ -182,11 +184,18 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec) error {
 		return err_
 	}
 
+	softwareVersion, err_ := conversions.ParseUInt32FromString(
+		FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
+	if err_ != nil {
+		return err_
+	}
+
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
-	res, height, err := cliCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), queryRoute)
+	res, height, err := cliCtx.QueryStore(
+		types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion), queryRoute)
 	if err != nil || res == nil {
-		return types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
+		return types.ErrComplianceInfoDoesNotExist(vid, pid, softwareVersion, certificationType)
 	}
 
 	var complianceInfo types.ComplianceInfo
@@ -196,7 +205,8 @@ func getComplianceInfo(queryRoute string, cdc *codec.Codec) error {
 	return cliCtx.EncodeAndPrintWithHeight(complianceInfo, height)
 }
 
-func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, state types.ComplianceState) error {
+func getComplianceInfoInState(queryRoute string,
+	cdc *codec.Codec, status types.SoftwareVersionCertificationStatus) error {
 	cliCtx := cli.NewCLIContext().WithCodec(cdc)
 
 	vid, err_ := conversions.ParseVID(viper.GetString(FlagVID))
@@ -209,21 +219,27 @@ func getComplianceInfoInState(queryRoute string, cdc *codec.Codec, state types.C
 		return err_
 	}
 
+	softwareVersion, err_ := conversions.ParseUInt32FromString(FlagSoftwareVersion, viper.GetString(FlagSoftwareVersion))
+	if err_ != nil {
+		return err_
+	}
+
 	certificationType := types.CertificationType(viper.GetString(FlagCertificationType))
 
 	isInState := types.ComplianceInfoInState{Value: false}
 
-	res, height, err := cliCtx.QueryStore(types.GetComplianceInfoKey(certificationType, vid, pid), queryRoute)
+	res, height, err := cliCtx.QueryStore(
+		types.GetComplianceInfoKey(certificationType, vid, pid, softwareVersion), queryRoute)
 	if res != nil {
 		var complianceInfo types.ComplianceInfo
 
 		cdc.MustUnmarshalBinaryBare(res, &complianceInfo)
 
-		isInState.Value = complianceInfo.State == state
+		isInState.Value = complianceInfo.SoftwareVersionCertificationStatus == status
 	}
 
 	if err != nil {
-		return types.ErrComplianceInfoDoesNotExist(vid, pid, certificationType)
+		return types.ErrComplianceInfoDoesNotExist(vid, pid, softwareVersion, certificationType)
 	}
 
 	return cliCtx.EncodeAndPrintWithHeight(isInState, height)

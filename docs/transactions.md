@@ -14,7 +14,7 @@ an Account or sign the request.
     - Trustee
     - Vendor
     - TestHouse
-    - ZBCertificationCenter
+    - CertificationCenter
     - NodeAdmin   
 - All read (get) requests return the current `height` of the ledger in addition to the
 requested data. The `height` can be used to get a delta (changes) from the last state that the user has.
@@ -120,7 +120,7 @@ A summary of KV store and paths used:
         - `5` : `CRL (Certificate Revocation List)`
     - Certificate uniqueness:
         - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
-- KV store name: `modelinfo`
+- KV store name: `model`
     - Model Infos 
         - `1:<vid>:<pid>` : `<model info>`
     - Vendor to products (models) index:
@@ -673,31 +673,48 @@ a new model info with a new `vid` or `pid` can be created.
 If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then the other two must also be set.
 
 - Parameters:
-    - `vid`: 16 bits positive non-zero int 
-    - `pid`: 16 bits positive non-zero int
-    - `cid`: 16 bits positive non-zero int (optional)
-    - `version`: string (optional)
-    - `name`: string
-    - `description`: string
-    - `sku`: string
-    - `firmware_version`: string
-    - `hardware_version`: string
-    - `ota_url`: string (optional)
-    - `ota_checksum`: string (optional)
-    - `ota_checksum_type`: string (optional)
-    - `tis_or_trp_testing_completed`: bool
-    - `custom`: string (optional)
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - name: `string` -  model name
+  - description: `string` -  model description (string or path to file containing data)
+  - sku: `string` -  stock keeping unit
+  - softwareVersion: `uint32` -  Software Version of model (uint32)
+  - softwareVersionString: `string` - Software Version String of model
+  - hardwareVersion: `uint32` -  version of model hardware
+  - hardwareVersionString: `string` - Hardware Version String of model
+  - cdVersionNumber: `uint32` -  CD Version Number of the Certification
+  - from: `string` - Name or address of private key with which to sign
+  - cid: `optional(uint16)` - model category ID (positive non-zero)
+  - revoked: `optional(bool)` - boolean flag to revoke the model
+  - otaURL: `optional(string)` - the URL of the OTA
+  - otaChecksum: `optional(string)` - the checksum of the OTA 
+  - otaChecksumType: `optional(string)` - the type of the OTA checksum 
+  - otaBlob: `optional(string)` - metadata about OTA 
+  - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
+  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
+  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
+  - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
+  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
+  - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
+  - releaseNotesURL: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
+  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
+  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
+  - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
+
 - In State:
-  - `modelinfo` store  
+  - `model` store  
   - `1:<vid>:<pid>` : `<model info>`
   - `2:<vid>` : `<list of pids + metadata>`
 - Who can send: 
     - Vendor
 - CLI command: 
-    -   `dclcli tx modelinfo add-model --vid=<uint16> --pid=<uint16> --name=<string> --description=<string or path> --sku=<string> 
-    --firmware-version=<string> --hardware-version=<string> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
+    -   `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --productName=<string> --productLabel=<string or path> --sku=<string> 
+--softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
+--from=<account> .... `
 - REST API: 
-    -   POST `/modelinfo/models`
+    -   POST `/model/models`
 
 #### EDIT_MODEL_INFO
 **Status: Implemented**
@@ -721,15 +738,15 @@ All non-edited fields remain the same.
     - `tis_or_trp_testing_completed`: bool
     - `custom`: string (optional)
 - In State:
-  - `modelinfo` store  
+  - `model` store  
   - `1:<vid>:<pid>` : `<model info>`
   - `2:<vid>` : `<list of pids + metadata>`
 - Who can send: 
     - Vendor; owner
 - CLI command: 
-    -   `dclcli tx modelinfo update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
+    -   `dclcli tx model update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
 - REST API: 
-    -   PUT `/modelinfo/models/vid/pid`
+    -   PUT `/model/models/vid/pid`
 
 
 #### GET_ALL_MODEL_INFO
@@ -741,9 +758,9 @@ Gets all Model Infos for all vendors.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query modelinfo all-models ...`
+    -   `dclcli query model all-models ...`
 - REST API: 
-    -   GET `/modelinfo/models`
+    -   GET `/model/models`
 - Result
 ```json
 {
@@ -771,9 +788,9 @@ Gets all Model Info by the given Vendor (`vid`).
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `dclcli query modelinfo vendor-models --vid=<uint16>`
+    -   `dclcli query model vendor-models --vid=<uint16>`
 - REST API: 
-    -   GET `/modelinfo/models/vid`
+    -   GET `/model/models/vid`
 - Result
 ```json
 {
@@ -802,9 +819,9 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
     - `pid`: 16 bits int
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query modelinfo model --vid=<uint16> --pid=<uint16> .... `
+    -   `dclcli query model get-model --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
-    -   GET `/modelinfo/models/vid/pid`
+    -   GET `/model/models/vid/pid`
 - Result
 ```json
 {
@@ -837,9 +854,9 @@ Get a list of all Vendors (`vid`s).
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query modelinfo vendors .... `
+    -   `dclcli query model vendors .... `
 - REST API: 
-    -   GET `/modelinfo/vendors`
+    -   GET `/model/vendors`
 - Result
 ```json
 {
@@ -943,9 +960,9 @@ from the revocation list.
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revoked pids>`  
 - Who can send: 
-    - ZBCertificationCenter
+    - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --certification-date=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --certificationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/certified/vid/pid/certification_type`
     
@@ -973,9 +990,9 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
   - `2:<vid>` : `<compliance pids>`  
   - `3:<vid>` : `<revocation pids>`  
 - Who can send: 
-    - ZBCertificationCenter
+    - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> --revocation-date=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --revocationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/revoked/vid/pid/certification_type`    
     
@@ -1000,7 +1017,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
 - REST API: 
     -   GET `/compliance/certified/vid/pid/certification_type`
 - Result
@@ -1033,7 +1050,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
 - REST API: 
     -   GET `/compliance/revoked/vid/pid/certification_type`
 - Result:
@@ -1061,7 +1078,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
     - `certification_type`: string - `zb` is the default and the only supported value now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certification-type=<zb> .... `
+    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
 - REST API: 
     -   GET `/compliance/vid/pid/certification_type`
 - Result:

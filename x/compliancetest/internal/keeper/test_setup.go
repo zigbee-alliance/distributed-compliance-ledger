@@ -25,7 +25,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
 )
 
@@ -69,11 +69,13 @@ func Setup() TestSetup {
 
 func DefaultTestingResult() types.TestingResult {
 	return types.TestingResult{
-		VID:        testconstants.VID,
-		PID:        testconstants.PID,
-		TestResult: testconstants.TestResult,
-		TestDate:   testconstants.TestDate,
-		Owner:      testconstants.Owner,
+		VID:                   testconstants.VID,
+		PID:                   testconstants.PID,
+		SoftwareVersion:       testconstants.SoftwareVersion,
+		SoftwareVersionString: testconstants.SoftwareVersionString,
+		TestResult:            testconstants.TestResult,
+		TestDate:              testconstants.TestDate,
+		Owner:                 testconstants.Owner,
 	}
 }
 

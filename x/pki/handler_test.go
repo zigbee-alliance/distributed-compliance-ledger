@@ -33,9 +33,9 @@ const SerialNumber = "12345678"
 func TestHandler_ProposeAddX509RootCert_ByNotTrustee(t *testing.T) {
 	setup := Setup()
 
-	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.CertificationCenter, auth.Vendor} {
 		// assign role
-		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorID1)
 		setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 		// propose x509 root certificate
@@ -123,7 +123,7 @@ func TestHandler_ProposeAddX509RootCert_ProposedCertificateAlreadyExists(t *test
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store another account
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{}, 0)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// propose adding of the same x509 root certificate again
@@ -192,7 +192,7 @@ func TestHandler_ApproveAddX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	setup := Setup()
 
 	// store account
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{}, 0)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// propose x509 root certificate by account without trustee role
@@ -225,7 +225,7 @@ func TestHandler_ApproveAddX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store second trustee
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee}, 0)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// approve by second trustee
@@ -274,9 +274,9 @@ func TestHandler_ApproveAddX509RootCert_ByNotTrustee(t *testing.T) {
 	result := setup.Handler(setup.Ctx, proposeAddX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.CertificationCenter, auth.Vendor} {
 		// assign role
-		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorID1)
 		setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 		// approve
@@ -291,7 +291,7 @@ func TestHandler_ApproveAddX509RootCert_Twice(t *testing.T) {
 	setup := Setup()
 
 	// store account
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{}, constants.VendorID1)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// propose add x509 root certificate
@@ -317,9 +317,9 @@ func TestHandler_AddX509Cert(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee)
 	setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
-	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.CertificationCenter, auth.Vendor} {
 		// assign role
-		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorID1)
 		setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 		// add x509 certificate
@@ -671,7 +671,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	proposeAndApproveRootCertificate(t, &setup, setup.Trustee)
 
 	// store new trustee
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee}, constants.VendorID1)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// propose revocation of x509 root certificate by new trustee
@@ -705,9 +705,9 @@ func TestHandler_ProposeRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 	// propose and approve x509 root certificate
 	proposeAndApproveRootCertificate(t, &setup, setup.Trustee)
 
-	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.CertificationCenter, auth.Vendor} {
 		// assign role
-		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorID1)
 		setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 		// propose revocation of x509 root certificate
@@ -760,7 +760,7 @@ func TestHandler_ProposeRevokeX509RootCert_ProposedRevocationAlreadyExists(t *te
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store another trustee account
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee}, constants.VendorID1)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// propose revocation of the same x509 root certificate again
@@ -811,7 +811,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store second trustee
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee}, 0)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// approve
@@ -857,7 +857,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.NotNil(t, certificateBeforeRevocation)
 
 	// store second trustee
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee}, 0)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// approve
@@ -895,9 +895,9 @@ func TestHandler_ApproveRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 	result := setup.Handler(setup.Ctx, proposeRevokeX509RootCert)
 	require.Equal(t, sdk.CodeOK, result.Code)
 
-	for _, role := range []auth.AccountRole{auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.TestHouse, auth.CertificationCenter, auth.Vendor} {
 		// assign role
-		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorID1)
 		setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 		// approve
@@ -964,7 +964,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForTree(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store second trustee
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee}, constants.VendorID1)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// approve
@@ -1017,9 +1017,9 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 	rootCertificate := rootCertificate(setup.Trustee)
 	setup.PkiKeeper.AddApprovedCertificate(setup.Ctx, rootCertificate)
 
-	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.ZBCertificationCenter, auth.Vendor} {
+	for _, role := range []auth.AccountRole{auth.Trustee, auth.TestHouse, auth.CertificationCenter, auth.Vendor} {
 		// assign role
-		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role})
+		account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{role}, constants.VendorID1)
 		setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 		// add x509 certificate
@@ -1107,7 +1107,7 @@ func TestHandler_RevokeX509Cert_ByNotOwner(t *testing.T) {
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store another account
-	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address1, constants.PubKey1, auth.AccountRoles{auth.Trustee}, constants.VendorID1)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// revoke x509 certificate by another account
@@ -1185,7 +1185,7 @@ func proposeAndApproveRootCertificate(t *testing.T, setup *TestSetup, ownerTrust
 	require.Equal(t, sdk.CodeOK, result.Code)
 
 	// store another trustee account
-	account := auth.NewAccount(constants.Address3, constants.PubKey3, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(constants.Address3, constants.PubKey3, auth.AccountRoles{auth.Trustee}, constants.VendorID3)
 	setup.AuthKeeper.SetAccount(setup.Ctx, account)
 
 	// approve x509 root certificate by another trustee

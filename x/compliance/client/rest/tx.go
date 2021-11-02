@@ -31,8 +31,7 @@ type CertifyModelRequest struct {
 	Reason            string            `json:"reason,omitempty"`
 }
 
-// nolint:dupl
-func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
+func certifyModelHandler(cliCtx context.CLIContext, isProvisional bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
 
@@ -51,6 +50,15 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 
 			return
 		}
+
+		softwareVersion, err_ := conversions.ParseUInt32FromString(softwareVersion, vars[softwareVersion])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		softwareVersionString := vars[softwareVersionString]
 
 		certificationType := types.CertificationType(vars[certificationType])
 
@@ -69,8 +77,8 @@ func certifyModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgCertifyModel(vid, pid, req.CertificationDate,
-			certificationType, req.Reason, restCtx.Signer())
+		msg := types.NewMsgCertifyModel(vid, pid, softwareVersion, softwareVersionString, req.CertificationDate,
+			certificationType, req.Reason, isProvisional, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}
@@ -82,7 +90,6 @@ type RevokeModelRequest struct {
 	Reason         string            `json:"reason,omitempty"`
 }
 
-// nolint:dupl
 func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		restCtx := rest.NewRestContext(w, r).WithCodec(cliCtx.Codec)
@@ -97,6 +104,13 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 		}
 
 		pid, err_ := conversions.ParsePID(vars[pid])
+		if err_ != nil {
+			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
+
+			return
+		}
+
+		softwareVersion, err_ := conversions.ParseUInt32FromString(softwareVersion, vars[softwareVersion])
 		if err_ != nil {
 			restCtx.WriteErrorResponse(http.StatusBadRequest, err_.Error())
 
@@ -120,7 +134,7 @@ func revokeModelHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgRevokeModel(vid, pid, req.RevocationDate,
+		msg := types.NewMsgRevokeModel(vid, pid, softwareVersion, req.RevocationDate,
 			certificationType, req.Reason, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)

@@ -23,17 +23,19 @@ import (
 const (
 	Codespace sdk.CodespaceType = ModuleName
 
-	CodeComplianceInfoDoesNotExist sdk.CodeType = 301
-	CodeInconsistentDates          sdk.CodeType = 302
-	CodeAlreadyCertifyed           sdk.CodeType = 303
-	CodeModelInfoDoesNotExist      sdk.CodeType = 304
+	CodeComplianceInfoDoesNotExist     sdk.CodeType = 301
+	CodeInconsistentDates              sdk.CodeType = 302
+	CodeAlreadyCertifyed               sdk.CodeType = 303
+	CodeModelDoesNotExist              sdk.CodeType = 304
+	CodeModelVersionStringDoesNotMatch sdk.CodeType = 305
 )
 
-func ErrComplianceInfoDoesNotExist(vid interface{}, pid interface{}, certificationType interface{}) sdk.Error {
+func ErrComplianceInfoDoesNotExist(vid interface{}, pid interface{},
+	softwareVersion interface{}, certificationType interface{}) sdk.Error {
 	return sdk.NewError(Codespace, CodeComplianceInfoDoesNotExist,
-		fmt.Sprintf("No certification information about the model with vid=%v, pid=%v and "+
+		fmt.Sprintf("No certification information about the model with vid=%v, pid=%v softwareVersion=%v "+
 			"certification_type=%v on the ledger. This means that the model is either not certified yet or "+
-			"certified by default (off-ledger).", vid, pid, certificationType))
+			"certified by default (off-ledger).", vid, pid, softwareVersion, certificationType))
 }
 
 func ErrInconsistentDates(error interface{}) sdk.Error {
@@ -45,7 +47,14 @@ func ErrAlreadyCertifyed(vid interface{}, pid interface{}) sdk.Error {
 		fmt.Sprintf("Model with vid=%v, pid=%v already certified on the ledger", vid, pid))
 }
 
-func ErrModelInfoDoesNotExist(vid interface{}, pid interface{}) sdk.Error {
-	return sdk.NewError(Codespace, CodeModelInfoDoesNotExist,
+func ErrModelDoesNotExist(vid interface{}, pid interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeModelDoesNotExist,
 		fmt.Sprintf("Model with vid=%v, pid=%v does not exist on the ledger", vid, pid))
+}
+
+func ErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},
+	softwareVersion interface{}, softwareVersionString interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeModelVersionStringDoesNotMatch,
+		fmt.Sprintf("Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have "+
+			" matching softwareVersionString=%v", vid, pid, softwareVersion, softwareVersionString))
 }

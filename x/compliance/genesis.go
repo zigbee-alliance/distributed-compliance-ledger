@@ -44,21 +44,21 @@ func ValidateGenesis(data GenesisState) error {
 					"Error: Invalid PID: it cannot be 0", record.PID))
 		}
 
-		if len(record.State) == 0 {
+		if record.SoftwareVersionCertificationStatus > types.CodeRevoked {
 			return sdk.ErrUnknownRequest(
 				fmt.Sprintf("Invalid CertifiedModelRecord: value: %d."+
-					" Error: Invalid State: it cannot be empty", record.PID))
+					" Error: Invalid SoftwareVersionCertificationStatus: It should be either 0,1,2 or 3", record.PID))
 		}
 
 		if record.Date.IsZero() {
 			return sdk.ErrUnknownRequest("Invalid Date: it cannot be empty")
 		}
 
-		if record.CertificationType != "" && record.CertificationType != types.ZbCertificationType {
+		if record.CertificationType != "" && IsValidCertificationType(record.CertificationType) {
 			return sdk.ErrUnknownRequest(
 				fmt.Sprintf("Invalid CertifiedModelRecord: value: %v."+
 					" Error: Invalid CertificationType: "+
-					"unknown type; supported types: [%s]", record.CertificationType, types.ZbCertificationType))
+					"unknown type; supported types: [%s]", record.CertificationType, types.ZigbeeCertificationType))
 		}
 	}
 

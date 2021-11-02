@@ -23,19 +23,24 @@ const (
 	ModuleName           = types.ModuleName
 	RouterKey            = types.RouterKey
 	StoreKey             = types.StoreKey
+	Certified            = types.Certified
+	Revoked              = types.Revoked
 	CodeAlreadyCertifyed = types.CodeAlreadyCertifyed
 )
 
 var (
-	NewKeeper           = keeper.NewKeeper
-	NewQuerier          = keeper.NewQuerier
-	NewMsgCertifyModel  = types.NewMsgCertifyModel
-	NewMsgRevokeModel   = types.NewMsgRevokeModel
-	ModuleCdc           = types.ModuleCdc
-	RegisterCodec       = types.RegisterCodec
-	CertifiedState      = types.Certified
-	RevokedState        = types.Revoked
-	ZbCertificationType = types.ZbCertificationType
+	NewKeeper                = keeper.NewKeeper
+	NewQuerier               = keeper.NewQuerier
+	NewMsgCertifyModel       = types.NewMsgCertifyModel
+	NewMsgRevokeModel        = types.NewMsgRevokeModel
+	ModuleCdc                = types.ModuleCdc
+	RegisterCodec            = types.RegisterCodec
+	CodeCertified            = types.CodeCertified
+	CodeRevoked              = types.CodeRevoked
+	ZigbeeCertificationType  = types.ZigbeeCertificationType
+	MatterCertificationType  = types.MatterCertificationType
+	CertificationTypesList   = types.CertificationTypesList
+	IsValidCertificationType = types.IsValidCertificationType
 )
 
 type (
@@ -46,4 +51,5 @@ type (
 	ComplianceInfoKey     = types.ComplianceInfoKey
 	ComplianceInfoInState = types.ComplianceInfoInState
 	CertificationType     = types.CertificationType
+	ComplianceState       = types.ComplianceState
 )

@@ -66,7 +66,8 @@ func Setup() TestSetup {
 	querier := NewQuerier(pkiKeeper)
 	handler := NewHandler(pkiKeeper, authKeeper)
 
-	account := auth.NewAccount(testconstants.Address2, testconstants.PubKey2, auth.AccountRoles{auth.Trustee})
+	account := auth.NewAccount(testconstants.Address2, testconstants.PubKey2,
+		auth.AccountRoles{auth.Trustee}, testconstants.VendorID2)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
 

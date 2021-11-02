@@ -17,18 +17,30 @@ set -euo pipefail
 
 passphrase="test1234"
 
+# RED=`tput setaf 1`
+# GREEN=`tput setaf 2`
+# RESET=`tput sgr0`
+GREEN=""
+RED=""
+RESET=""
+
 random_string() {
   local __resultvar=$1
   local length=${2:-6} # Default is 6
-
-  eval $__resultvar="'$(date +%s.%N | sha1sum | fold -w ${length} | head -n 1)'"
+  # Newer mac might have shasum instead of sha1sum
+  if  command -v shasum &> /dev/null
+    then
+      eval $__resultvar="'$(date +%s.%N | shasum | fold -w ${length} | head -n 1)'"
+    else
+      eval $__resultvar="'$(date +%s.%N | sha1sum | fold -w ${length} | head -n 1)'"
+  fi
 }
 
 check_response() {
   result=$1
   expected_string=$2
   if [[ $result != *$expected_string* ]]; then
-    echo "ERROR: command failed. The expected string: $expected_string not found in the result: $result"
+    echo "${GREEN}ERROR:${RESET} command failed. The expected string: $expected_string not found in the result: $result"
     exit 1
   fi
 }
@@ -37,7 +49,7 @@ check_response_and_report() {
   result=$1
   expected_string=$2
   check_response "$result" "$expected_string"
-  echo "INFO: Result contains expected substring: $expected_string"
+  echo "${GREEN}SUCCESS: ${RESET} Result contains expected substring: $expected_string"
 }
 
 response_does_not_contain() {
@@ -47,6 +59,7 @@ response_does_not_contain() {
     echo "ERROR: command failed. The unexpected string: $unexpected_string found in the result: $result"
     exit 1
   fi
+  echo "${GREEN}SUCCESS: ${RESET}Result does not contain unexpected substring: $unexpected_string"
 }
 
 create_new_account(){
@@ -73,5 +86,46 @@ create_new_account(){
   result=$(echo $passphrase | dclcli tx auth approve-add-account --address="$address" --from alice --yes)
   check_response "$result" "\"success\": true"
   echo "$result"
+}
+
+create_new_vendor_account(){
+
+  _name=$1
+  _vid=$2
+
+  echo $passphrase | dclcli keys add "$_name"
+  address=$(dclcli keys show $_name -a)
+  pubkey=$(dclcli keys show $_name -p)
+
+  test_divider
+
+  echo "Jack proposes account for \"$_name\" with Vendor role"
+  result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
+  check_response "$result" "\"success\": true"
+
+  test_divider
+
+  echo "Alice approves account for \"$_name\" with Vendor role"
+  result=$(echo $passphrase | dclcli tx auth approve-add-account --address="$address" --from alice --yes)
+  check_response "$result" "\"success\": true"
+
+}
+
+create_model_and_version() {
+  _vid=$1
+  _pid=$2
+  _softwareVersion=$3
+  _softwareVersionString=$4
+  _user_address=$5
+  result=$(echo 'test1234' | dclcli tx model add-model --vid=$_vid --pid=$_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$_user_address --yes)
+  check_response "$result" "\"success\": true"
+  result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$_vid --pid=$_pid --softwareVersion=$_softwareVersion --softwareVersionString=$_softwareVersionString --from=$_user_address --yes)
+  check_response "$result" "\"success\": true"
+}
+
+test_divider() {
+  echo ""
+  echo "--------------------------"
+  echo ""
 }
 

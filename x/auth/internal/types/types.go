@@ -30,14 +30,14 @@ import (
 type AccountRole string
 
 const (
-	Vendor                AccountRole = "Vendor"
-	TestHouse             AccountRole = "TestHouse"
-	ZBCertificationCenter AccountRole = "ZBCertificationCenter"
-	Trustee               AccountRole = "Trustee"
-	NodeAdmin             AccountRole = "NodeAdmin"
+	Vendor              AccountRole = "Vendor"
+	TestHouse           AccountRole = "TestHouse"
+	CertificationCenter AccountRole = "CertificationCenter"
+	Trustee             AccountRole = "Trustee"
+	NodeAdmin           AccountRole = "NodeAdmin"
 )
 
-var Roles = AccountRoles{Vendor, TestHouse, ZBCertificationCenter, Trustee, NodeAdmin}
+var Roles = AccountRoles{Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin}
 
 func (role AccountRole) Validate() sdk.Error {
 	for _, r := range Roles {
@@ -73,16 +73,18 @@ type PendingAccount struct {
 	Address   sdk.AccAddress   `json:"address"`
 	PubKey    crypto.PubKey    `json:"public_key"`
 	Roles     AccountRoles     `json:"roles"`
+	VendorID  uint16           `json:"vendorID"`
 	Approvals []sdk.AccAddress `json:"approvals"`
 }
 
 // NewPendingAccount creates a new PendingAccount object.
 func NewPendingAccount(address sdk.AccAddress, pubKey crypto.PubKey,
-	roles AccountRoles, approval sdk.AccAddress) PendingAccount {
+	roles AccountRoles, vendorID uint16, approval sdk.AccAddress) PendingAccount {
 	return PendingAccount{
 		Address:   address,
 		PubKey:    pubKey,
 		Roles:     roles,
+		VendorID:  vendorID,
 		Approvals: []sdk.AccAddress{approval},
 	}
 }
@@ -136,14 +138,16 @@ type Account struct {
 	AccountNumber uint64         `json:"account_number"`
 	Sequence      uint64         `json:"sequence"`
 	Roles         AccountRoles   `json:"roles"`
+	VendorID      uint16         `json:"vendorID"`
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(address sdk.AccAddress, pubKey crypto.PubKey, roles AccountRoles) Account {
+func NewAccount(address sdk.AccAddress, pubKey crypto.PubKey, roles AccountRoles, vendorID uint16) Account {
 	return Account{
-		Address: address,
-		PubKey:  pubKey,
-		Roles:   roles,
+		Address:  address,
+		PubKey:   pubKey,
+		Roles:    roles,
+		VendorID: vendorID,
 	}
 }
 
@@ -171,6 +175,11 @@ func (acc Account) Validate() error {
 
 	if err := acc.Roles.Validate(); err != nil {
 		return err
+	}
+
+	// If creating an account with Vendor Role, we need to have a associated VendorID
+	if acc.HasRole(Vendor) && acc.VendorID <= 0 {
+		return ErrMissingVendorIDForVendorAccount()
 	}
 
 	return nil

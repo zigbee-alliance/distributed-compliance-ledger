@@ -23,10 +23,19 @@ import (
 const (
 	Codespace sdk.CodespaceType = ModuleName
 
-	CodeTestingResultsDoNotExist sdk.CodeType = 201
+	CodeTestingResultsDoNotExist       sdk.CodeType = 201
+	CodeModelVersionStringDoesNotMatch sdk.CodeType = 202
 )
 
-func ErrTestingResultDoesNotExist(vid interface{}, pid interface{}) sdk.Error {
+func ErrTestingResultDoesNotExist(vid interface{}, pid interface{}, softwareVersion uint32) sdk.Error {
 	return sdk.NewError(Codespace, CodeTestingResultsDoNotExist,
-		fmt.Sprintf("No testing results about the model with vid=%v and pid=%v on the ledger", vid, pid))
+		fmt.Sprintf("No testing results about the model with vid=%v pid=%v and softwareVersion=%v on the ledger",
+			vid, pid, softwareVersion))
+}
+
+func ErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},
+	softwareVersion interface{}, softwareVersionString interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeModelVersionStringDoesNotMatch,
+		fmt.Sprintf("Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have "+
+			" matching softwareVersionString=%v", vid, pid, softwareVersion, softwareVersionString))
 }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:testpackage
 package compliance
 
 import (
@@ -25,7 +26,7 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 )
 
 type TestSetup struct {
@@ -34,10 +35,11 @@ type TestSetup struct {
 	CompliancetKeeper    Keeper
 	CompliancetestKeeper compliancetest.Keeper
 	authKeeper           auth.Keeper
-	ModelinfoKeeper      modelinfo.Keeper
+	ModelKeeper          model.Keeper
 	Handler              sdk.Handler
 	Querier              sdk.Querier
 	CertificationCenter  sdk.AccAddress
+	CertificationTypes   []CertificationType
 }
 
 func Setup() TestSetup {
@@ -57,8 +59,8 @@ func Setup() TestSetup {
 	authKey := sdk.NewKVStoreKey(auth.StoreKey)
 	dbStore.MountStoreWithDB(authKey, sdk.StoreTypeIAVL, nil)
 
-	modelinfoKey := sdk.NewKVStoreKey(modelinfo.StoreKey)
-	dbStore.MountStoreWithDB(modelinfoKey, sdk.StoreTypeIAVL, nil)
+	modelKey := sdk.NewKVStoreKey(model.StoreKey)
+	dbStore.MountStoreWithDB(modelKey, sdk.StoreTypeIAVL, nil)
 
 	compliancetestKey := sdk.NewKVStoreKey(compliancetest.StoreKey)
 	dbStore.MountStoreWithDB(compliancetestKey, sdk.StoreTypeIAVL, nil)
@@ -69,30 +71,33 @@ func Setup() TestSetup {
 	compliancetKeeper := NewKeeper(complianceKey, cdc)
 	compliancetestKeeper := compliancetest.NewKeeper(compliancetestKey, cdc)
 	authKeeper := auth.NewKeeper(authKey, cdc)
-	modelinfoKeeper := modelinfo.NewKeeper(modelinfoKey, cdc)
+	modelKeeper := model.NewKeeper(modelKey, cdc)
 
 	// Create context
 	ctx := sdk.NewContext(dbStore, abci.Header{ChainID: testconstants.ChainID}, false, log.NewNopLogger())
 
 	// Create Handler and Querier
 	querier := NewQuerier(compliancetKeeper)
-	handler := NewHandler(compliancetKeeper, modelinfoKeeper, compliancetestKeeper, authKeeper)
+	handler := NewHandler(compliancetKeeper, modelKeeper, compliancetestKeeper, authKeeper)
 
 	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1,
-		auth.AccountRoles{auth.ZBCertificationCenter})
+		auth.AccountRoles{auth.CertificationCenter}, testconstants.VendorID1)
 	account.AccountNumber = authKeeper.GetNextAccountNumber(ctx)
 	authKeeper.SetAccount(ctx, account)
+
+	certificationTypes := []CertificationType{ZigbeeCertificationType, MatterCertificationType}
 
 	setup := TestSetup{
 		Cdc:                  cdc,
 		Ctx:                  ctx,
 		CompliancetKeeper:    compliancetKeeper,
 		CompliancetestKeeper: compliancetestKeeper,
-		ModelinfoKeeper:      modelinfoKeeper,
+		ModelKeeper:          modelKeeper,
 		authKeeper:           authKeeper,
 		Handler:              handler,
 		Querier:              querier,
 		CertificationCenter:  account.Address,
+		CertificationTypes:   certificationTypes,
 	}
 
 	return setup

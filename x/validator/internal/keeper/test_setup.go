@@ -14,7 +14,6 @@
 
 package keeper
 
-//nolint:goimports
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -22,7 +21,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/internal/types"
 )
 
@@ -68,7 +67,7 @@ func DefaultValidator() types.Validator {
 	return types.NewValidator(
 		testconstants.ValidatorAddress1,
 		testconstants.ValidatorPubKey1,
-		types.Description{Name: testconstants.Name},
+		types.Description{Name: testconstants.ProductName},
 		testconstants.Owner,
 	)
 }

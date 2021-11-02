@@ -17,11 +17,16 @@ package cli
 const (
 	FlagVID                       = "vid"
 	FlagPID                       = "pid"
-	FlagCertificationType         = "certification-type"
+	FlagSoftwareVersion           = "softwareVersion"
+	FlagSoftwareVersionString     = "softwareVersionString"
+	FlagCertificationType         = "certificationType"
 	FlagCertificationTypeShortcut = "t"
-	FlagCertificationDate         = "certification-date"
+	FlagCertificationDate         = "certificationDate"
 	FlagCertificationDateShortcut = "d"
-	FlagRevocationDate            = "revocation-date"
+	FlagIsProvisional             = "isProvisional"
+	FlagRevocationDate            = "revocationDate"
 	FlagReason                    = "reason"
 	FlagReasonShortcut            = "r"
+
+	TextCertificationType = "Certification type - Currently zigbee and matter types are supported"
 )

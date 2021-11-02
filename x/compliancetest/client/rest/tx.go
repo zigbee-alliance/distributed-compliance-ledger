@@ -25,11 +25,13 @@ import (
 )
 
 type TestingResultRequest struct {
-	BaseReq    restTypes.BaseReq `json:"base_req"`
-	VID        uint16            `json:"vid"`
-	PID        uint16            `json:"pid"`
-	TestResult string            `json:"test_result"`
-	TestDate   time.Time         `json:"test_date"` // rfc3339 encoded date
+	BaseReq               restTypes.BaseReq `json:"base_req"`
+	VID                   uint16            `json:"vid"`
+	PID                   uint16            `json:"pid"`
+	SoftwareVersion       uint32            `json:"softwareVersion"`
+	SoftwareVersionString string            `json:"softwareVersionString"`
+	TestResult            string            `json:"test_result"`
+	TestDate              time.Time         `json:"test_date"` // rfc3339 encoded date
 }
 
 func addTestingResultHandler(cliCtx context.CLIContext) http.HandlerFunc {
@@ -51,7 +53,8 @@ func addTestingResultHandler(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgAddTestingResult(req.VID, req.PID, req.TestResult, req.TestDate, restCtx.Signer())
+		msg := types.NewMsgAddTestingResult(req.VID, req.PID,
+			req.SoftwareVersion, req.SoftwareVersionString, req.TestResult, req.TestDate, restCtx.Signer())
 
 		restCtx.HandleWriteRequest(msg)
 	}

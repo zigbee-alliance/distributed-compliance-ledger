@@ -48,11 +48,16 @@ func queryTestingResult(ctx sdk.Context, path []string, keeper Keeper) (res []by
 		return nil, err
 	}
 
-	if !keeper.IsTestingResultsPresents(ctx, vid, pid) {
-		return nil, types.ErrTestingResultDoesNotExist(vid, pid)
+	softwareVersion, err := conversions.ParseUInt32FromString("softwareVersion", path[2])
+	if err != nil {
+		return nil, err
 	}
 
-	testingResult := keeper.GetTestingResults(ctx, vid, pid)
+	if !keeper.IsTestingResultsPresents(ctx, vid, pid, softwareVersion) {
+		return nil, types.ErrTestingResultDoesNotExist(vid, pid, softwareVersion)
+	}
+
+	testingResult := keeper.GetTestingResults(ctx, vid, pid, softwareVersion)
 
 	res = codec.MustMarshalJSONIndent(keeper.cdc, testingResult)
 

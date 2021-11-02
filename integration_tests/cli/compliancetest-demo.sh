@@ -18,8 +18,10 @@ source integration_tests/cli/common.sh
 
 # Preparation of Actors
 
-echo "Create Vendor account"
-create_new_account vendor_account "Vendor"
+vid=$RANDOM
+vendor_account=vendor_account_$vid
+echo "Create Vendor account - $vendor_account"
+create_new_vendor_account $vendor_account $vid
 
 echo "Create TestHouse account"
 create_new_account test_house_account "TestHouse"
@@ -29,29 +31,30 @@ create_new_account second_test_house_account "TestHouse"
 
 # Body
 
-vid=$RANDOM
 pid=$RANDOM
-echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
+sv=$RANDOM
+svs=$RANDOM
+echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
+create_model_and_version $vid $pid $sv $svs $vendor_account
 
-echo "Add Testing Result for Model VID: $vid PID: $pid"
+test_divider
+
+echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="http://first.place.com"
 test_date="2020-01-01T00:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Add Second Testing Result for Model VID: $vid PID: $pid"
+echo "Add Second Testing Result for Model VID: $vid PID: $pid SV: $sv"
 second_testing_result="http://second.place.com"
 second_test_date="2020-04-04T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --test-result="$second_testing_result" --test-date=$second_test_date --from $second_test_house_account --yes)
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$second_testing_result" --test-date=$second_test_date --from $second_test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Get Testing Result for Model with VID: ${vid} PID: ${pid}"
-result=$(dclcli query compliancetest test-result --vid=$vid --pid=$pid)
+echo "Get Testing Result for Model with VID: ${vid} PID: ${pid} SV: $sv"
+result=$(dclcli query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"test_result\": \"$testing_result\""
@@ -60,24 +63,28 @@ check_response "$result" "\"test_result\": \"$second_testing_result\""
 check_response "$result" "\"test_date\": \"$second_test_date\""
 echo "$result"
 
-vid=$RANDOM
-pid=$RANDOM
-echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --firmware-version="1.0" --hardware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
-check_response "$result" "\"success\": true"
-echo "$result"
+test_divider
 
-echo "Add Testing Result for Model VID: $vid PID: $pid"
+pid=$RANDOM
+echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
+create_model_and_version $vid $pid $sv $svs $vendor_account
+
+test_divider
+
+echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="blob string"
 test_date="2020-11-24T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
-echo "Get Testing Result for Model with VID: ${vid} PID: ${pid}"
-result=$(dclcli query compliancetest test-result --vid=$vid --pid=$pid)
+test_divider
+
+echo "Get Testing Result for Model with VID: ${vid} PID: ${pid} SV:$sv"
+result=$(dclcli query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"softwareVersion\": $sv"
 check_response "$result" "\"test_result\": \"$testing_result\""
 check_response "$result" "\"test_date\": \"$test_date\""
 echo "$result"

@@ -21,79 +21,105 @@ source integration_tests/cli/common.sh
 echo "Create regular account"
 create_new_account user_account ""
 
-echo "Create Vendor account"
-create_new_account vendor_account "Vendor"
+vid=$RANDOM
+pid=$RANDOM
+vendor_account=vendor_account_$vid
+echo "Create Vendor account - $vendor_account"
+create_new_vendor_account $vendor_account $vid
 
 # Body
 
 # Ledger side errors
 
-vid=$RANDOM
-pid=$RANDOM
-
 echo "Add Model with VID: $vid PID: $pid: Not Vendor"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $user_account --yes)
+
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$user_account --yes)
 check_response_and_report "$result" "\"success\": false"
 check_response_and_report "$result" "\"code\": 4"
 echo "$result"
 
+test_divider
+
+vid1=$RANDOM
+echo "Add Model with VID: $vid1 PID: $pid: Vendor ID does not belong to vendor"
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid1 --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+check_response_and_report "$result" "\"success\": false"
+check_response_and_report "$result" "\"code\": 4"
+echo "$result"
+
+test_divider
+
 echo "Add Model with VID: $vid PID: $pid: Twice"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Device #1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes)
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 check_response_and_report "$result" "\"success\": false"
 check_response_and_report "$result" "\"code\": 501"
 echo "$result"
 
+test_divider
+
 # CLI side errors
 
 echo "Add Model with VID: $vid PID: $pid: Unknown account"
-result=$(dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name 1" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from "Unknown"  2>&1) || true
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from "Unknown"  2>&1) || true
 check_response_and_report "$result" "Key Unknown not found"
 
+test_divider
+
 echo "Add model with invalid VID/PID"
-for i in "0" "string"
-do
-  result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$i --pid=$pid --name="Name" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
-  check_response_and_report "$result" "Invalid VID"
+i="0" 
+result=$(echo "test1234" | dclcli tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Invalid VID"
 
-  result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$i --name="Name" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
-  check_response_and_report "$result" "Invalid PID"
-done
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Invalid PID"
 
-echo "Add model with epmty name"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+i="string" 
+result=$(echo "test1234" | dclcli tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Parsing Error: VID is set to 'string', but it must be 16 bit unsigned integer"
+
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Parsing Error: PID is set to 'string', but it must be 16 bit unsigned integer"
+
+test_divider
+
+echo "Add model with empty name"
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName="" --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid Name"
+check_response_and_report "$result" "Invalid ProductName"
 
-echo "Add model with epmty description"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid Description"
+test_divider
 
-echo "Add model with epmty SKU"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty description"
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="" --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid SKU"
+check_response_and_report "$result" "Invalid ProductLabel"
 
-echo "Add model with epmty Hardware Version"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --hardware-version="" --firmware-version="2.0" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid HardwareVersion"
+test_divider
 
-echo "Add model with epmty Firmwere Version"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="" --tis-or-trp-testing-completed=true --from $vendor_account --yes 2>&1) || true
+echo "Add model with empty partNumber"
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Label" --partNumber="" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid FirmwareVersion"
+check_response_and_report "$result" "Invalid PartNumber"
 
-echo "Add model with Invalid TIS flag"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed="string" --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid Tis-or-trp-testing-completed"
+test_divider
 
 echo "Add model without --from flag"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="Name" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --tis-or-trp-testing-completed=true --yes 2>&1) || true
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --yes 2>&1) || true
 check_response_and_report "$result" "required flag(s) \"from\" not set"
 
-echo "Add model with not enought parameters"
-result=$(echo "test1234" | dclcli tx modelinfo add-model --vid=$vid --pid=$pid --name="" --description="Device Description" --sku="SKU12FS" --hardware-version="1.1" --firmware-version="2.0" --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "required flag(s) \"tis-or-trp-testing-completed\" not set"
+test_divider
+
+echo "Add model without enough parameters"
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct  --partNumber="1" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "required flag(s) \"productLabel\" not set"
+
+test_divider
+echo "Update model with Non Mutable fields" 
+pid=$RANDOM
+sv=$RANDOM
+svs=$RANDOM
+create_model_and_version $vid $pid $sv $svs $vendor_account 
+echo "dclcli query model get-model --vid=$vid --pid=$pid --from=$vendor_account"
+

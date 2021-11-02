@@ -90,8 +90,8 @@
         }
       ]
     },
-    "modelinfo": {
-      "model_info_records": []
+    "model": {
+      "model_records": []
     },
     "compliance": {
       "compliance_model_records": []

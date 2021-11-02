@@ -21,14 +21,16 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/internal/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/modelinfo"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 )
 
-func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authKeeper auth.Keeper) sdk.Handler {
+func NewHandler(keeper keeper.Keeper, modelKeeper model.Keeper, authKeeper auth.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) sdk.Result {
+		keeper.Logger(ctx).Info("Inside the handleMsgAddTestingCenter...")
+
 		switch msg := msg.(type) {
 		case types.MsgAddTestingResult:
-			return handleMsgAddTestingResult(ctx, keeper, modelinfoKeeper, authKeeper, msg)
+			return handleMsgAddTestingResult(ctx, keeper, modelKeeper, authKeeper, msg)
 		default:
 			errMsg := fmt.Sprintf("unrecognized compliancetest Msg type: %v", msg.Type())
 
@@ -37,21 +39,32 @@ func NewHandler(keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper, authKeep
 	}
 }
 
-func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelinfoKeeper modelinfo.Keeper,
+func handleMsgAddTestingResult(ctx sdk.Context, keeper keeper.Keeper, modelKeeper model.Keeper,
 	authKeeper auth.Keeper, msg types.MsgAddTestingResult) sdk.Result {
 	// check if sender has enough rights to add testing results
+	keeper.Logger(ctx).Info("Inside the handleMsgAddTestingCenter")
+
 	if err := checkAddTestingResultRights(ctx, authKeeper, msg.Signer); err != nil {
 		return err.Result()
 	}
 
 	// check that corresponding model exists on the ledger
-	if !modelinfoKeeper.IsModelInfoPresent(ctx, msg.VID, msg.PID) {
-		return modelinfo.ErrModelInfoDoesNotExist(msg.VID, msg.PID).Result()
+	if !modelKeeper.IsModelVersionPresent(ctx, msg.VID, msg.PID, msg.SoftwareVersion) {
+		return model.ErrModelVersionDoesNotExist(msg.VID, msg.PID, msg.SoftwareVersion).Result()
+	}
+
+	// check if softwareVersionString matches with what is stored for the given version
+	modelVersion := modelKeeper.GetModelVersion(ctx, msg.VID, msg.PID, msg.SoftwareVersion)
+	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
+		return types.ErrModelVersionStringDoesNotMatch(msg.VID, msg.PID,
+			msg.SoftwareVersion, msg.SoftwareVersionString).Result()
 	}
 
 	testingResult := types.NewTestingResult(
 		msg.VID,
 		msg.PID,
+		msg.SoftwareVersion,
+		msg.SoftwareVersionString,
 		msg.Signer,
 		msg.TestResult,
 		msg.TestDate,

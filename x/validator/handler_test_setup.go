@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//nolint:testpackage,lll
 package validator
 
 //nolint:goimports
@@ -23,7 +24,7 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 )
 
@@ -67,7 +68,7 @@ func Setup() TestSetup {
 	querier := NewQuerier(validatorKeeper)
 	handler := NewHandler(validatorKeeper, authKeeper)
 
-	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.NodeAdmin})
+	account := auth.NewAccount(testconstants.Address1, testconstants.PubKey1, auth.AccountRoles{auth.NodeAdmin}, testconstants.VendorID1)
 	authKeeper.SetAccount(ctx, account)
 
 	setup := TestSetup{
