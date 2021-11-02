@@ -15,6 +15,8 @@
 
 set -euo pipefail
 
+DCL_OBSERVERS="${DCL_OBSERVERS:-}"
+
 SED_EXT=
 if [ "$(uname)" == "Darwin" ]; then
     # Mac OS X sed needs the file extension when -i flag is used. Keeping it empty as we don't need backupfile
@@ -26,6 +28,10 @@ rm -rf ~/.dcld
 
 rm -rf localnet
 mkdir localnet localnet/client localnet/node0 localnet/node1 localnet/node2 localnet/node3
+
+if [[ -n "$DCL_OBSERVERS" ]]; then
+    mkdir localnet/observer0
+fi
 
 # client
 
@@ -105,8 +111,24 @@ echo 'test1234' | dcld gentx --from anna
 
 cp -r ~/.dcld/* localnet/node3
 
+
+if [[ -d "localnet/observer0" ]]; then
+    rm -rf ~/.dcld/*
+    # observer0
+
+    dcld init observer0 --chain-id dclchain
+
+    dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+    dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
+    dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
+    dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
+
+    cp -r ~/.dcld/* localnet/observer0
+fi
+
 # Collect all validator creation transactions
 
+mkdir -p ~/.dcld/config/gentx
 cp localnet/node0/config/gentx/* ~/.dcld/config/gentx
 cp localnet/node1/config/gentx/* ~/.dcld/config/gentx
 cp localnet/node2/config/gentx/* ~/.dcld/config/gentx
@@ -124,6 +146,10 @@ cp ~/.dcld/config/genesis.json localnet/node1/config/
 cp ~/.dcld/config/genesis.json localnet/node2/config/
 cp ~/.dcld/config/genesis.json localnet/node3/config/
 
+if [[ -d "localnet/observer0" ]]; then
+    cp ~/.dcld/config/genesis.json localnet/observer0/config/
+fi
+
 # Find out node ids
 
 id0=$(ls localnet/node0/config/gentx | sed 's/gentx-\(.*\).json/\1/')
@@ -136,10 +162,14 @@ peers="$id0@192.167.10.2:26656,$id1@192.167.10.3:26656,$id2@192.167.10.4:26656,$
 
 # Update address book of the first node 
 sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/node0/config/config.toml
+if [[ -d "localnet/observer0" ]]; then
+    sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/observer0/config/config.toml
+fi
 
 # Make RPC endpoint available externally
-sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/node0/config/config.toml
-for idx in 0 1 2 3; do
-    sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "localnet/node${idx}/config/config.toml"
-    sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "localnet/node${idx}/config/config.toml"
+for node_id in node0 node1 node2 node3 observer0; do
+    if [[ -d "localnet/${node_id}" ]]; then
+        sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "localnet/${node_id}/config/config.toml"
+        sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "localnet/${node_id}/config/config.toml"
+    fi
 done
