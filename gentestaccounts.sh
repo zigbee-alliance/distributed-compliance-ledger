@@ -41,7 +41,8 @@ done
 dcld validate-genesis
 
 cp -r ~/.dclcli/* localnet/client
-cp -f ~/.dcld/config/genesis.json localnet/node0/config/
-cp -f ~/.dcld/config/genesis.json localnet/node1/config/
-cp -f ~/.dcld/config/genesis.json localnet/node2/config/
-cp -f ~/.dcld/config/genesis.json localnet/node3/config/
+for node_id in node0 node1 node2 node3 observer0; do
+    if [[ -d "localnet/${node_id}" ]]; then
+        cp -f ~/.dcld/config/genesis.json "localnet/${node_id}/config/"
+    fi
+done
