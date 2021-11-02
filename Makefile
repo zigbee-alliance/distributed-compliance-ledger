@@ -57,7 +57,11 @@ localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
 
 localnet_start:
-	docker-compose up -d
+	@if [ -d "localnet/observer0" ]; then\
+		docker-compose --profile observers up -d;\
+	else\
+		docker-compose up -d;\
+	fi
 
 localnet_stop:
 	docker-compose down
@@ -67,6 +71,9 @@ localnet_export: localnet_stop
 	docker-compose run node1 dcld export --for-zero-height  >genesis.export.node1.json
 	docker-compose run node2 dcld export --for-zero-height  >genesis.export.node2.json
 	docker-compose run node3 dcld export --for-zero-height  >genesis.export.node3.json
+	@if [ -d "localnet/observer0" ]; then\
+		docker-compose run observer0 dcld export --for-zero-height  >genesis.export.observer0.json;\
+	fi
 
 
 localnet_reset: localnet_stop
@@ -74,6 +81,9 @@ localnet_reset: localnet_stop
 	docker-compose run node1 dcld unsafe-reset-all
 	docker-compose run node2 dcld unsafe-reset-all
 	docker-compose run node3 dcld unsafe-reset-all
+	@if [ -d "localnet/observer0" ]; then\
+		docker-compose run observer0 dcld unsafe-reset-all;\
+	fi
 
 localnet_clean: localnet_stop
 	rm -rf $(LOCALNET_DIR)
