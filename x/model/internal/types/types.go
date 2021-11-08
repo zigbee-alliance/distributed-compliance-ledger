@@ -26,7 +26,7 @@ type Model struct {
 	ProductName                                string `json:"productName,omitempty"`
 	ProductLabel                               string `json:"productLabel,omitempty"`
 	PartNumber                                 string `json:"partNumber,omitempty"`
-	CommissioningCustomFlow                    uint8  `json:"commissioningCustomFlow,omitempty"`
+	CommissioningCustomFlow                    uint8  `json:"commissioningCustomFlow"`
 	CommissioningCustomFlowURL                 string `json:"commissioningCustomFlowURL,omitempty"`
 	CommissioningModeInitialStepsHint          uint32 `json:"commissioningModeInitialStepsHint,omitempty"`
 	CommissioningModeInitialStepsInstruction   string `json:"commissioningModeInitialStepsInstruction,omitempty"`

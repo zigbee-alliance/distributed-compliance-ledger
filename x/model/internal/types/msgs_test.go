@@ -155,7 +155,7 @@ func TestMsgUpdateModelValidation(t *testing.T) {
 func TestMsgUpdateModelGetSignBytes(t *testing.T) {
 	msg := NewMsgUpdateModel(getTestModelForUpdate(), testconstants.Signer)
 
-	expected := `{"type":"model/UpdateModel","value":{"Model":{"commissioningCustomFlowURL":"https://sampleflowurl.dclmodel","deviceTypeID":12345,"pid":22,"productLabel":"Product Label and/or Product Description","productURL":"https://url.producturl.dclmodel","supportURL":"https://url.supporturl.dclmodel","userManualURL":"https://url.usermanual.dclmodel","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}` //nolint:lll
+	expected := `{"type":"model/UpdateModel","value":{"Model":{"commissioningCustomFlow":0,"commissioningCustomFlowURL":"https://sampleflowurl.dclmodel","deviceTypeID":12345,"pid":22,"productLabel":"Product Label and/or Product Description","productURL":"https://url.producturl.dclmodel","supportURL":"https://url.supporturl.dclmodel","userManualURL":"https://url.usermanual.dclmodel","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}` //nolint:lll
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
