@@ -133,9 +133,8 @@ $ dclcli tx auth approve-add-account \
 --address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 --from=<trustee-account>
 
 # After account approval, you can submit your product information
-$ dclcli tx model add-model --vid=12345 --pid=675463 --name="Disco Ball" \
---productLabel="CHIP Discoball" --sku=A1234GH --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" \
---hardwareVersionString="5.1.23"  --cdVersionNumber="32" \
+$ dclcli tx model add-model --vid=12345 --pid=675463 --deviceTypeID=1 \
+--productName="CHIP Discoball" --partNumber=A1234GH 
 --from=cool-vendor
  
 ----
@@ -143,11 +142,12 @@ $ dclcli tx model add-model --vid=12345 --pid=675463 --name="Disco Ball" \
 ==== Check TestHouse Test Status
 [source,bash]
 ----
-$ $ dclcli query compliancetest test-result --vid=2020 --pid=10
+$ dclcli query compliancetest test-result --vid=2020 --pid=10 --softwareVersion=20
 `{
   "result": {
     "vid": 2020,
     "pid": 10,
+    "softwareVersion": "20",
     "results": [
       {
         "owner": "cosmos1w3waz79mptxt6wtcdcex74apt42x3y7j2n4v39",
@@ -164,7 +164,7 @@ $ $ dclcli query compliancetest test-result --vid=2020 --pid=10
 ==== Check Zigbee Certification Status
 [source,bash]
 ----
-$ dclcli query compliance certified-model --vid=2020 --pid=10 --certificationType="zb"
+$ dclcli query compliance certified-model --vid=2020 --pid=10 --certificationType="matter"
 `{
   "result": {
     "value": true
@@ -180,7 +180,8 @@ $ dclcli query compliance all-certified-models
       {
         "vid": 2020,
         "pid": 10,
-        "certification_type": "zb"
+        "softwareVersion": "20",
+        "certification_type": "matter"
       }
     ]
   },

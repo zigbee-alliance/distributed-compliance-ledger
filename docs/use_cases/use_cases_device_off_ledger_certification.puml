@@ -3,7 +3,7 @@
 hide footbox
 
 actor Vendor as V
-actor "ZigBee Certification / Test House" as ZB
+actor "Certification Center / Test House" as CC
 actor User as U
 entity Device as D
 database Ledger as L
@@ -21,35 +21,33 @@ end note
 note over L
 Setup PKI (see XXX):
 - Root Certificate `RootCert`
-- Vendor Certificate `VendorCert(vid. pid)`
-- ZigBee Certification/TestHouse Certificate `ZBTestHouseCert`
+- Vendor Certificate `VendorCert(vid,pid,sv)`
+- Certification Center /TestHouse Certificate `CCTestHouseCert`
 end note
 
 == 1. Setup Model Info ==
-V -> L: ADD_MODEL_INFO(vid, pid)
+V -> L: ADD_MODEL(vid, pid)
+V -> L: ADD_MODEL_VERSION(vid, pid, sv)
 
 == 2. Issue Device ==
 D -> D: generate `privKey` and `pubKey`
-D -> D: X509 Device Cert `DeviceCert(vid,pid)`\nwith `pubKey`, `vid`, `pid`
-V -> D: Sign `DeviceCert` by `VendorCert(vid,pid)`
-ZB -> V: Attest certification of `vid` and `pid` (Cert Blob)\nsigned by `ZBTestHouseCert`
-V -> D: store `CertBlob(vid, pid)` on device
+D -> D: X509 Device Cert `DeviceCert(vid,pid,sv)`\nwith `pubKey`, `vid`, `pid` and `sv`
+V -> D: Sign `DeviceCert` by `VendorCert(vid,pid,sv)`
+CC -> V: Attest certification of `vid`, `pid` and `sv` (Cert Blob)\nsigned by `CCTestHouseCert`
+V -> D: store `CertBlob(vid, pid, sv)` on device
 
 == 3 Revoke Device Compliance (Optional) ==
-ZB -> L: REVOKE_MODEL_CERTIFICATION(vid, pid)
+CC -> L: REVOKE_MODEL_CERTIFICATION(vid, pid, sv)
 
 == 4. Use Device ==
-U <- D: Get `DeviceCert(vid, pid)`
+U <- D: Get `DeviceCert(vid, pid, sv)`
 U <- D: Get Cert Blob
 U <-> D: Verify proof of privKey possession
 U <-- L: GET_X509_CERT / GET_ALL_X509_ROOT_CERTS\n or GET_ALL_X509_CERTS / GET_ALL_X509_CERTS_SINCE\nor GET_CRL\nupdate cache if needed
-U -> U: Verify `DeviceCert(vid, pid)` signature
-U -> U: Verify `CertBlob(vid, pid)` signature
-U -> U: Verify that `DeviceCert`'s `pid` and `vid`\nequals to `VendorCert`'s `pid` and `vid`\nequals to Cert Blob's `pid` and `vid`
-U <-- L: GET_REVOKED_MODEL(vid, pid)\nor GET_VENDOR_REVOKED_MODELS(vid)\n or GET_ALL_REVOKED_MODELS / GET_ALL_REVOKED_MODELS_SINCE\nupdate cache if needed
+U -> U: Verify `DeviceCert(vid, pid, sv)` signature
+U -> U: Verify `CertBlob(vid, pid, sv)` signature
+U -> U: Verify that `DeviceCert`'s `pid`, `vid` and `sv`\nequals to `VendorCert`'s `vid`, `pid` and `sv`\nequals to Cert Blob's `vid`, `pid` and `sv`
+U <-- L: GET_REVOKED_MODEL(vid, pid, sv)\nor GET_VENDOR_REVOKED_MODELS(vid)\n or GET_ALL_REVOKED_MODELS / GET_ALL_REVOKED_MODELS_SINCE\nupdate cache if needed
 U -> U: Verify that Cert Blob is not revoked
 U -> D: Start using Device
-
-
-
 @enduml
