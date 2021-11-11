@@ -101,16 +101,28 @@ func handleMsgUpdateModel(ctx sdk.Context, keeper keeper.Keeper, authKeeper auth
 
 	// updates existing model value only if corresponding value in MsgUpdate is not empty
 
-	if msg.DeviceTypeID != 0 {
-		model.DeviceTypeID = msg.DeviceTypeID
+	if msg.ProductName != "" {
+		model.ProductName = msg.ProductName
 	}
 
 	if msg.ProductLabel != "" {
 		model.ProductLabel = msg.ProductLabel
 	}
 
+	if msg.PartNumber != "" {
+		model.PartNumber = msg.PartNumber
+	}
+
 	if msg.CommissioningCustomFlowURL != "" {
 		model.CommissioningCustomFlowURL = msg.CommissioningCustomFlowURL
+	}
+
+	if msg.CommissioningModeInitialStepsInstruction != "" {
+		model.CommissioningModeInitialStepsInstruction = msg.CommissioningModeInitialStepsInstruction
+	}
+
+	if msg.CommissioningModeSecondaryStepsInstruction != "" {
+		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
 	}
 
 	if msg.UserManualURL != "" {
@@ -225,6 +237,8 @@ func handleMsgUpdateModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeep
 		return err.Result()
 	}
 
+	// Only OtaURL is modifiable field per specs. This can only be modified if this was set initially
+	// as otaFileSize, otaChecksum and otaChecksumType are non mutable fields
 	if msg.OtaURL != "" && modelVersion.OtaURL == "" {
 		return types.ErrOtaURLCannotBeSet(msg.VID, msg.PID, msg.SoftwareVersion).Result()
 	}
@@ -245,7 +259,7 @@ func handleMsgUpdateModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeep
 	}
 
 	if msg.MaxApplicableSoftwareVersion != 0 {
-		modelVersion.MinApplicableSoftwareVersion = msg.MaxApplicableSoftwareVersion
+		modelVersion.MaxApplicableSoftwareVersion = msg.MaxApplicableSoftwareVersion
 	}
 
 	if msg.ReleaseNotesURL != "" {
