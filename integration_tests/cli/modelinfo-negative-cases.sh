@@ -86,22 +86,22 @@ test_divider
 
 echo "Add model with empty name"
 result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName="" --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid ProductName"
+check_response_and_report "$result" "Code: 900"
+check_response_and_report "$result" "ProductName is a required field"
 
 test_divider
 
 echo "Add model with empty description"
 result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="" --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid ProductLabel"
+check_response_and_report "$result" "Code: 900"
+check_response_and_report "$result" "ProductLabel is a required field"
 
 test_divider
 
 echo "Add model with empty partNumber"
 result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Label" --partNumber="" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Code: 6"
-check_response_and_report "$result" "Invalid PartNumber"
+check_response_and_report "$result" "Code: 900"
+check_response_and_report "$result" "PartNumber is a required field"
 
 test_divider
 

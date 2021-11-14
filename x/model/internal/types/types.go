@@ -18,23 +18,23 @@ import (
 	"encoding/json"
 )
 
-//nolint:maligned
+//nolint:maligned,lll
 type Model struct {
-	VID                                        uint16 `json:"vid"`
-	PID                                        uint16 `json:"pid"`
-	DeviceTypeID                               uint16 `json:"deviceTypeID,omitempty"`
-	ProductName                                string `json:"productName,omitempty"`
-	ProductLabel                               string `json:"productLabel,omitempty"`
-	PartNumber                                 string `json:"partNumber,omitempty"`
-	CommissioningCustomFlow                    uint8  `json:"commissioningCustomFlow"`
-	CommissioningCustomFlowURL                 string `json:"commissioningCustomFlowURL,omitempty"`
+	VID                                        uint16 `json:"vid" validate:"required"`
+	PID                                        uint16 `json:"pid" validate:"required"`
+	DeviceTypeID                               uint16 `json:"deviceTypeID,omitempty" validate:"requiredForAdd"`
+	ProductName                                string `json:"productName,omitempty" validate:"requiredForAdd,max=128"`
+	ProductLabel                               string `json:"productLabel,omitempty" validate:"requiredForAdd,max=256"`
+	PartNumber                                 string `json:"partNumber,omitempty" validate:"requiredForAdd,max=32"`
+	CommissioningCustomFlow                    uint8  `json:"commissioningCustomFlow" validate:"max=2"`
+	CommissioningCustomFlowURL                 string `json:"commissioningCustomFlowURL,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256,required_if=commissioningCustomFlow 2"`
 	CommissioningModeInitialStepsHint          uint32 `json:"commissioningModeInitialStepsHint,omitempty"`
-	CommissioningModeInitialStepsInstruction   string `json:"commissioningModeInitialStepsInstruction,omitempty"`
+	CommissioningModeInitialStepsInstruction   string `json:"commissioningModeInitialStepsInstruction,omitempty" validate:"max=1024"`
 	CommissioningModeSecondaryStepsHint        uint32 `json:"commissioningModeSecondaryStepsHint,omitempty"`
-	CommissioningModeSecondaryStepsInstruction string `json:"commissioningModeSecondaryStepsInstruction,omitempty"`
-	UserManualURL                              string `json:"userManualURL,omitempty"`
-	SupportURL                                 string `json:"supportURL,omitempty"`
-	ProductURL                                 string `json:"productURL,omitempty"`
+	CommissioningModeSecondaryStepsInstruction string `json:"commissioningModeSecondaryStepsInstruction,omitempty" validate:"max=1024"`
+	UserManualURL                              string `json:"userManualURL,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	SupportURL                                 string `json:"supportURL,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	ProductURL                                 string `json:"productURL,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
 }
 
 func (d Model) String() string {
@@ -96,7 +96,7 @@ type Product struct {
 }
 
 // Model Versions.
-//nolint:maligned
+//nolint:maligned,lll
 type ModelVersion struct {
 	VID                          uint16 `json:"vid" validate:"required"`
 	PID                          uint16 `json:"pid" validate:"required"`
@@ -105,13 +105,13 @@ type ModelVersion struct {
 	CDVersionNumber              uint16 `json:"CDVersionNumber,omitempty" validate:"requiredForAdd"`
 	FirmwareDigests              string `json:"firmwareDigests,omitempty" validate:"max=512"`
 	SoftwareVersionValid         bool   `json:"softwareVersionValid"`
-	OtaURL                       string `json:"otaURL,omitempty" validate:"omitempty,url,max=256"`
-	OtaFileSize                  uint64 `json:"otaFileSize,omitempty" validate:"required_with_all=OtaURL"`
-	OtaChecksum                  string `json:"otaChecksum,omitempty" validate:"required_with_all=OtaURL,max=64"`
-	OtaChecksumType              uint16 `json:"otaChecksumType,omitempty" validate:"required_with_all=OtaURL"`
+	OtaURL                       string `json:"otaURL,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	OtaFileSize                  uint64 `json:"otaFileSize,omitempty" validate:"required_with=OtaURL"`
+	OtaChecksum                  string `json:"otaChecksum,omitempty" validate:"required_with=OtaURL,max=64"`
+	OtaChecksumType              uint16 `json:"otaChecksumType,omitempty" validate:"required_with=OtaURL"`
 	MinApplicableSoftwareVersion uint32 `json:"minApplicableSoftwareVersion,omitempty" validate:"requiredForAdd"`
-	MaxApplicableSoftwareVersion uint32 `json:"maxApplicableSoftwareVersion,omitempty" validate:"requiredForAdd"`
-	ReleaseNotesURL              string `json:"releaseNotesURL,omitempty" validate:"max=256"`
+	MaxApplicableSoftwareVersion uint32 `json:"maxApplicableSoftwareVersion,omitempty" validate:"requiredForAdd,gtecsfield=MinApplicableSoftwareVersion"`
+	ReleaseNotesURL              string `json:"releaseNotesURL,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
 }
 
 func (d ModelVersion) String() string {

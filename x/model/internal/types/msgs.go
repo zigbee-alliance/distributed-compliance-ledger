@@ -23,7 +23,7 @@ const RouterKey = ModuleName
 
 type MsgAddModel struct {
 	Model
-	Signer sdk.AccAddress `json:"signer"`
+	Signer sdk.AccAddress `json:"signer" validate:"required,address"`
 }
 
 func NewMsgAddModel(
@@ -45,28 +45,9 @@ func (m MsgAddModel) Type() string {
 }
 
 func (m MsgAddModel) ValidateBasic() sdk.Error {
-	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
-	}
-
-	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if len(m.ProductName) == 0 {
-		return sdk.ErrUnknownRequest("Invalid ProductName: it cannot be empty")
-	}
-
-	if len(m.ProductLabel) == 0 {
-		return sdk.ErrUnknownRequest("Invalid ProductLabel: it cannot be empty")
-	}
-
-	if len(m.PartNumber) == 0 {
-		return sdk.ErrUnknownRequest("Invalid PartNumber: it cannot be empty")
+	err := validator.ValidateAdd(m)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -82,7 +63,7 @@ func (m MsgAddModel) GetSigners() []sdk.AccAddress {
 
 type MsgUpdateModel struct {
 	Model
-	Signer sdk.AccAddress `json:"signer"`
+	Signer sdk.AccAddress `json:"signer" validate:"required,address"`
 }
 
 func NewMsgUpdateModel(
@@ -104,16 +85,9 @@ func (m MsgUpdateModel) Type() string {
 }
 
 func (m MsgUpdateModel) ValidateBasic() sdk.Error {
-	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
-	}
-
-	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
+	err := validator.ValidateUpdate(m)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -128,9 +102,9 @@ func (m MsgUpdateModel) GetSigners() []sdk.AccAddress {
 }
 
 type MsgDeleteModel struct {
-	VID    uint16         `json:"vid"`
-	PID    uint16         `json:"pid"`
-	Signer sdk.AccAddress `json:"signer"`
+	VID    uint16         `json:"vid" validate:"required"`
+	PID    uint16         `json:"pid" validate:"required"`
+	Signer sdk.AccAddress `json:"signer" validate:"required,address"`
 }
 
 func NewMsgDeleteModel(vid uint16, pid uint16, signer sdk.AccAddress) MsgDeleteModel {
@@ -150,16 +124,9 @@ func (m MsgDeleteModel) Type() string {
 }
 
 func (m MsgDeleteModel) ValidateBasic() sdk.Error {
-	if m.Signer.Empty() {
-		return sdk.ErrInvalidAddress("Invalid Signer: it cannot be empty")
-	}
-
-	if m.VID == 0 {
-		return sdk.ErrUnknownRequest("Invalid VID: it must be non-zero 16-bit unsigned integer")
-	}
-
-	if m.PID == 0 {
-		return sdk.ErrUnknownRequest("Invalid PID: it must be non-zero 16-bit unsigned integer")
+	err := validator.ValidateUpdate(m)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -177,7 +144,7 @@ func (m MsgDeleteModel) GetSigners() []sdk.AccAddress {
 
 type MsgAddModelVersion struct {
 	ModelVersion
-	Signer sdk.AccAddress `json:"signer" validate:"required"`
+	Signer sdk.AccAddress `json:"signer" validate:"required,address"`
 }
 
 func NewMsgAddModelVersion(
@@ -217,7 +184,7 @@ func (m MsgAddModelVersion) GetSigners() []sdk.AccAddress {
 
 type MsgUpdateModelVersion struct {
 	ModelVersion
-	Signer sdk.AccAddress `json:"signer"`
+	Signer sdk.AccAddress `json:"signer" validate:"required,address"`
 }
 
 func NewMsgUpdateModelVersion(
