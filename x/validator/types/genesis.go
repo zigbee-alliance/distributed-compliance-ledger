@@ -1,12 +1,14 @@
 package types
 
-/* FIXME issue 99 */
-
 import (
-	"fmt"
+	"encoding/json"
+	fmt "fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
+
+/* FIXME issue 99 */
 
 // DefaultIndex is the default capability global index
 const DefaultIndex uint64 = 1
@@ -19,6 +21,8 @@ func DefaultGenesis() *GenesisState {
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
+
+// TODO issue 99: review - cosmos checks duplication for consensus addr here
 
 // Validate performs basic genesis state validation returning an error upon any
 // failure.
@@ -54,4 +58,16 @@ func (gs GenesisState) Validate() error {
 	// this line is used by starport scaffolding # genesis/types/validate
 
 	return nil
+}
+
+// GetGenesisStateFromAppState returns x/staking GenesisState given raw application
+// genesis state.
+func GetGenesisStateFromAppState(cdc codec.JSONCodec, appState map[string]json.RawMessage) *GenesisState {
+	var genesisState GenesisState
+
+	if appState[ModuleName] != nil {
+		cdc.MustUnmarshalJSON(appState[ModuleName], &genesisState)
+	}
+
+	return &genesisState
 }

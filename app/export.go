@@ -2,15 +2,11 @@ package app
 
 import (
 	"encoding/json"
-	"log"
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
 
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/cosmos/cosmos-sdk/x/staking"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // ExportAppStateAndValidators exports the state of the application for a genesis
@@ -25,10 +21,13 @@ func (app *App) ExportAppStateAndValidators(
 	// We export at last height + 1, because that's the height at which
 	// Tendermint will start InitChain.
 	height := app.LastBlockHeight() + 1
-	if forZeroHeight {
-		height = 0
-		app.prepForZeroHeightGenesis(ctx, jailAllowedAddrs)
-	}
+	// TODO [issue 99]: review whether we need that
+	/*
+		if forZeroHeight {
+			height = 0
+			app.prepForZeroHeightGenesis(ctx, jailAllowedAddrs)
+		}
+	*/
 
 	genState := app.mm.ExportGenesis(ctx, app.appCodec)
 	appState, err := json.MarshalIndent(genState, "", "  ")
@@ -36,7 +35,7 @@ func (app *App) ExportAppStateAndValidators(
 		return servertypes.ExportedApp{}, err
 	}
 
-	validators, err := staking.WriteValidators(ctx, app.StakingKeeper)
+	validators, err := validator.WriteValidators(ctx, app.ValidatorKeeper)
 	if err != nil {
 		return servertypes.ExportedApp{}, err
 	}
@@ -47,6 +46,8 @@ func (app *App) ExportAppStateAndValidators(
 		ConsensusParams: app.BaseApp.GetConsensusParams(ctx),
 	}, nil
 }
+
+/* TODO [issue 99]: review whether we need that
 
 // prepare for fresh start at zero height
 // NOTE zero height genesis is a temporary feature which will be deprecated
@@ -69,10 +70,10 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 		allowedAddrsMap[addr] = true
 	}
 
-	/* Just to be safe, assert the invariants on current state. */
+	// Just to be safe, assert the invariants on current state.
 	app.CrisisKeeper.AssertInvariants(ctx)
 
-	/* Handle fee distribution state. */
+	// Handle fee distribution state.
 
 	// withdraw all validator commission
 	app.StakingKeeper.IterateValidators(ctx, func(_ int64, val stakingtypes.ValidatorI) (stop bool) {
@@ -123,7 +124,7 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 	// reset context height
 	ctx = ctx.WithBlockHeight(height)
 
-	/* Handle staking state. */
+	// Handle staking state.
 
 	// iterate through redelegations, reset creation height
 	app.StakingKeeper.IterateRedelegations(ctx, func(_ int64, red stakingtypes.Redelegation) (stop bool) {
@@ -171,7 +172,7 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 		panic(err)
 	}
 
-	/* Handle slashing state. */
+	// Handle slashing state.
 
 	// reset start height on signing infos
 	app.SlashingKeeper.IterateValidatorSigningInfos(
@@ -183,3 +184,4 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 		},
 	)
 }
+*/
