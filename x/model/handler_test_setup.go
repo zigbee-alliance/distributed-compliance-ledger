@@ -110,7 +110,6 @@ func getTestModelForUpdate() types.Model {
 	return Model{
 		VID:                        testconstants.VendorID1,
 		PID:                        testconstants.PID,
-		DeviceTypeID:               testconstants.DeviceTypeID + 1,
 		ProductLabel:               "New Description",
 		CommissioningCustomFlowURL: testconstants.CommissioningCustomFlowURL,
 		UserManualURL:              testconstants.UserManualURL,
@@ -130,5 +129,57 @@ func TestMsgUpdateModel(signer sdk.AccAddress) MsgUpdateModel {
 	return MsgUpdateModel{
 		Model:  getTestModelForUpdate(),
 		Signer: signer,
+	}
+}
+
+func getTestModelVersion(signer sdk.AccAddress) ModelVersion {
+	return ModelVersion{
+		VID:                          testconstants.VendorID1,
+		PID:                          testconstants.PID,
+		SoftwareVersion:              testconstants.SoftwareVersion,
+		SoftwareVersionString:        testconstants.SoftwareVersionString,
+		CDVersionNumber:              testconstants.CDVersionNumber,
+		FirmwareDigests:              testconstants.FirmwareDigests,
+		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
+		OtaURL:                       testconstants.OtaURL,
+		OtaFileSize:                  testconstants.OtaFileSize,
+		OtaChecksum:                  testconstants.OtaChecksum,
+		OtaChecksumType:              testconstants.OtaChecksumType,
+		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
+		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
+		ReleaseNotesURL:              testconstants.ReleaseNotesURL,
+	}
+}
+
+func TestMsgUpdateModelVersion(signer sdk.AccAddress) MsgUpdateModelVersion {
+	return MsgUpdateModelVersion{
+		ModelVersion: getTestModelVersionForUpdate(),
+		Signer:       signer,
+	}
+}
+
+func TestMsgAddModelVersion(signer sdk.AccAddress) MsgAddModelVersion {
+	return MsgAddModelVersion{
+		ModelVersion: getTestModelVersion(signer),
+		Signer:       signer,
+	}
+}
+
+func getTestModelVersionForUpdate() ModelVersion {
+	return ModelVersion{
+		VID:                          testconstants.VendorID1,
+		PID:                          testconstants.PID,
+		SoftwareVersion:              testconstants.SoftwareVersion,
+		SoftwareVersionString:        testconstants.SoftwareVersionString + "-updated",
+		CDVersionNumber:              testconstants.CDVersionNumber + 1,
+		FirmwareDigests:              testconstants.FirmwareDigests + "-updated",
+		SoftwareVersionValid:         !testconstants.SoftwareVersionValid,
+		OtaURL:                       testconstants.OtaURL + "-updated",
+		OtaFileSize:                  testconstants.OtaFileSize + 1,
+		OtaChecksum:                  testconstants.OtaChecksum + "-updated",
+		OtaChecksumType:              testconstants.OtaChecksumType + 1,
+		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion + 1,
+		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion + 1,
+		ReleaseNotesURL:              testconstants.ReleaseNotesURL + "-updated",
 	}
 }

@@ -159,34 +159,34 @@ func GetCmdAddModel(cdc *codec.Codec) *cobra.Command {
 		"Model Part Number (or sku)")
 	cmd.Flags().String(FlagCommissioningCustomFlow, "",
 		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is 
-	required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 
-	the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with 
-	the necessary details for how to configure the product for initial commissioning.`)
+required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 
+the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with 
+the necessary details for how to configure the product for initial commissioning.`)
 	cmd.Flags().String(FlagCommissioningCustomFlowURL, "",
 		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
-	device model when the commissioningCustomFlow field is set to '2'`)
+device model when the commissioningCustomFlow field is set to '2'`)
 	cmd.Flags().String(FlagCommissioningModeInitialStepsHint, "",
 		`commissioningModeInitialStepsHint SHALL 
-	identify a hint for the steps that can be used to put into commissioning mode a device that 
-	has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
-	For example, a value of 1 (bit 0 is set) indicates 
-	that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.`)
+identify a hint for the steps that can be used to put into commissioning mode a device that 
+has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
+For example, a value of 1 (bit 0 is set) indicates 
+that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.`)
 	cmd.Flags().String(FlagCommissioningModeInitialStepsInstruction, "",
 		`commissioningModeInitialStepsInstruction SHALL contain text which relates to specific 
-	values of commissioningModeSecondaryStepsHint. Certain values of CommissioningModeInitialStepsHint, 
-	as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
-	values the commissioningModeInitialStepsInstruction SHALL be set`)
+values of commissioningModeSecondaryStepsHint. Certain values of CommissioningModeInitialStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
+values the commissioningModeInitialStepsInstruction SHALL be set`)
 	cmd.Flags().String(FlagCommissioningModeSecondaryStepsHint, "",
 		`commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can 
-	be used to put into commissioning mode a device that has already been commissioned. 
-	This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) 
-	indicates that a device that has already been commissioned will require the user to visit a 
-	current CHIP Administrator to put the device into commissioning mode.`)
+be used to put into commissioning mode a device that has already been commissioned. 
+This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) 
+indicates that a device that has already been commissioned will require the user to visit a 
+current CHIP Administrator to put the device into commissioning mode.`)
 	cmd.Flags().String(FlagCommissioningModeSecondaryStepsInstruction, "",
 		`commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values 
-	of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
-	as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
-	and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
+and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
 	cmd.Flags().String(FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().String(FlagSupportURL, "",
@@ -233,21 +233,25 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 			partNumber := viper.GetString(FlagPartNumber)
 
 			commissioningCustomFlowURL := viper.GetString(FlagCommissioningCustomFlowURL)
+			commissioningModeInitialStepsInstruction := viper.GetString(FlagCommissioningModeInitialStepsInstruction)
+			commissioningModeSecondaryStepsInstruction := viper.GetString(FlagCommissioningModeSecondaryStepsInstruction)
 
 			userManualURL := viper.GetString(FlagUserManualURL)
 			supportURL := viper.GetString(FlagSupportURL)
 			productURL := viper.GetString(FlagProductURL)
 
 			model := types.Model{
-				VID:                        vid,
-				PID:                        pid,
-				ProductName:                productName,
-				ProductLabel:               productLabel,
-				PartNumber:                 partNumber,
-				CommissioningCustomFlowURL: commissioningCustomFlowURL,
-				UserManualURL:              userManualURL,
-				SupportURL:                 supportURL,
-				ProductURL:                 productURL,
+				VID:                                      vid,
+				PID:                                      pid,
+				ProductName:                              productName,
+				ProductLabel:                             productLabel,
+				PartNumber:                               partNumber,
+				CommissioningCustomFlowURL:               commissioningCustomFlowURL,
+				CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
+				CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
+				UserManualURL: userManualURL,
+				SupportURL:    supportURL,
+				ProductURL:    productURL,
 			}
 			msg := types.NewMsgUpdateModel(model, cliCtx.FromAddress())
 
@@ -266,7 +270,17 @@ func GetCmdUpdateModel(cdc *codec.Codec) *cobra.Command {
 		"Model Part Number (or sku)")
 	cmd.Flags().String(FlagCommissioningCustomFlowURL, "",
 		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
-	device model when the commissioningCustomFlow field is set to '2'`)
+device model when the commissioningCustomFlow field is set to '2'`)
+	cmd.Flags().String(FlagCommissioningModeInitialStepsInstruction, "",
+		`commissioningModeInitialStepsInstruction SHALL contain text which relates to specific 
+values of commissioningModeSecondaryStepsHint. Certain values of CommissioningModeInitialStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
+values the commissioningModeInitialStepsInstruction SHALL be set`)
+	cmd.Flags().String(FlagCommissioningModeSecondaryStepsInstruction, "",
+		`commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values 
+of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
+and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
 	cmd.Flags().String(FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
 	cmd.Flags().String(FlagSupportURL, "",
@@ -462,18 +476,18 @@ func GetCmdAddModelVersion(cdc *codec.Codec) *cobra.Command {
 		encoded in base64 string representation. The digest SHALL have been computed using 
 		the algorithm specified in OtaChecksumType`)
 	cmd.Flags().String(FlagOtaChecksumType, "", `Numberic identifier as defined in 
-	 IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
-	 For example, a value of 1 would match the sha-256 identifier, 
-	 which maps to the SHA-256 digest algorithm`)
+IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
+For example, a value of 1 would match the sha-256 identifier, 
+which maps to the SHA-256 digest algorithm`)
 	cmd.Flags().String(FlagMinApplicableSoftwareVersion, "",
 		`MinApplicableSoftwareVersion should specify the lowest 
-		SoftwareVersion for which this image can be applied`)
+SoftwareVersion for which this image can be applied`)
 	cmd.Flags().String(FlagMaxApplicableSoftwareVersion, "",
 		`MaxApplicableSoftwareVersion should specify the highest 
-		SoftwareVersion for which this image can be applied`)
+SoftwareVersion for which this image can be applied`)
 	cmd.Flags().String(FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains 
-		release notes for the device model.`)
+release notes for the device model.`)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)
