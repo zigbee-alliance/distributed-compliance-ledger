@@ -196,6 +196,12 @@ func handleMsgAddModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeeper 
 		return types.ErrModelVersionAlreadyExists(msg.VID, msg.PID, msg.SoftwareVersion).Result()
 	}
 
+	// check if maxApllicableSoftwareVersion is less then minApplicableSoftwareVersion
+	if msg.MaxApplicableSoftwareVersion < msg.MinApplicableSoftwareVersion {
+		return types.ErrMaxSVLessThanMinSV(msg.MinApplicableSoftwareVersion,
+			msg.MaxApplicableSoftwareVersion).Result()
+	}
+
 	modelVersion := types.ModelVersion{
 		VID:                          msg.VID,
 		PID:                          msg.PID,
@@ -264,6 +270,11 @@ func handleMsgUpdateModelVersion(ctx sdk.Context, keeper keeper.Keeper, authKeep
 
 	if msg.ReleaseNotesURL != "" {
 		modelVersion.ReleaseNotesURL = msg.ReleaseNotesURL
+	}
+
+	if modelVersion.MaxApplicableSoftwareVersion < modelVersion.MinApplicableSoftwareVersion {
+		return types.ErrMaxSVLessThanMinSV(modelVersion.MinApplicableSoftwareVersion,
+			modelVersion.MaxApplicableSoftwareVersion).Result()
 	}
 
 	// store updated model

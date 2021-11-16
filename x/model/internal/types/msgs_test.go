@@ -16,6 +16,7 @@
 package types
 
 import (
+	"strings"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -79,10 +80,10 @@ func TestMsgAddModelValidation(t *testing.T) {
 	model.PID = 0
 	require.NotNil(t, NewMsgAddModel(model, testconstants.Signer).ValidateBasic())
 
-	// DeviceTypeID is Mandator
+	// DeviceTypeID is Mandatory
 	model = getTestModel()
 	model.DeviceTypeID = 0
-	require.Nil(t, NewMsgAddModel(model, testconstants.Signer).ValidateBasic())
+	require.NotNil(t, NewMsgAddModel(model, testconstants.Signer).ValidateBasic())
 
 	// Name is mandatory
 	model = getTestModel()
@@ -158,4 +159,255 @@ func TestMsgUpdateModelGetSignBytes(t *testing.T) {
 	expected := `{"type":"model/UpdateModel","value":{"Model":{"commissioningCustomFlow":0,"commissioningCustomFlowURL":"https://sampleflowurl.dclmodel","deviceTypeID":12345,"pid":22,"productLabel":"Product Label and/or Product Description","productURL":"https://url.producturl.dclmodel","supportURL":"https://url.supporturl.dclmodel","userManualURL":"https://url.usermanual.dclmodel","vid":1},"signer":"cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz"}}` //nolint:lll
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
+}
+
+//nolint:funlen
+func TestMsgAddModelVersionValidation(t *testing.T) {
+	require.Nil(t, NewMsgAddModelVersion(getTestModelVersion(), testconstants.Signer).ValidateBasic())
+
+	// Invalid VID
+	modelVersion := getTestModelVersion()
+	modelVersion.VID = 0
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Invalid PID
+	modelVersion = getTestModelVersion()
+	modelVersion.PID = 0
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Invalid SoftwareVersion
+	modelVersion = getTestModelVersion()
+	modelVersion.SoftwareVersion = 0
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Invalid SoftwareVersionString
+	modelVersion = getTestModelVersion()
+	modelVersion.SoftwareVersionString = ""
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Long SoftwareVersionString (max length is 64)
+	modelVersion = getTestModelVersion()
+	modelVersion.SoftwareVersionString = strings.Repeat("a", 65)
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// CDVersionNumber is mandatory
+	modelVersion = getTestModelVersion()
+	modelVersion.CDVersionNumber = 0
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// FirmwareDigests is optional
+	modelVersion = getTestModelVersion()
+	modelVersion.FirmwareDigests = ""
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// FirmwareDigests is longer then 512 characters
+	modelVersion = getTestModelVersion()
+	modelVersion.FirmwareDigests = strings.Repeat("a", 513)
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is optional
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = ""
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is longer then 256 characters
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = strings.Repeat("a", 257)
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is not a valid URL
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.NotAValidURL
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is not a valid https URL
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPURL
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is a valid url
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaFileSize is mandatory if otaURL is set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	modelVersion.OtaFileSize = 0
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaFileSize is optional if otaURL is not set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = ""
+	modelVersion.OtaFileSize = 0
+
+	// OtaChecksum is mandatory if otaURL is set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	modelVersion.OtaChecksum = ""
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// OtaChecksum is optional if otaURL is not set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = ""
+	modelVersion.OtaChecksum = ""
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// OtaChecksum is longer then 64 characters
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	modelVersion.OtaChecksum = strings.Repeat("a", 65)
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// OtaChecksum is mandatory if otaURL is set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	modelVersion.OtaChecksum = ""
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// OtaChecksum is optional if otaURL is not set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = ""
+	modelVersion.OtaChecksum = ""
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// OtaChecksum is longer then 64 characters
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	modelVersion.OtaChecksum = strings.Repeat("a", 65)
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaChecksumType is mandatory if otaURL is set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	modelVersion.OtaChecksumType = 0
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaChecksumType is optional if otaURL is not set
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = ""
+	modelVersion.OtaChecksumType = 0
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is optional
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = ""
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is longer then 256 characters
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = "https://" + strings.Repeat("a", 249)
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is not a valid URL
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = testconstants.NotAValidURL
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is not a valid https URL
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = testconstants.NotAValidURL
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is a valid url
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = testconstants.ValidHTTPSURL
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Signer is nil
+	modelVersion = getTestModelVersion()
+	require.NotNil(t, NewMsgAddModelVersion(modelVersion, nil).ValidateBasic())
+}
+
+//nolint:funlen
+func TestMsgUpdateModelVersionValidation(t *testing.T) {
+	require.Nil(t, NewMsgUpdateModelVersion(getTestModelVersion(), testconstants.Signer).ValidateBasic())
+
+	// Invalid VID
+	modelVersion := getTestModelVersion()
+	modelVersion.VID = 0
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Invalid PID
+	modelVersion = getTestModelVersion()
+	modelVersion.PID = 0
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Invalid SoftwareVersion
+	modelVersion = getTestModelVersion()
+	modelVersion.SoftwareVersion = 0
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// SoftwareVersionString is not mandatory for update. Its ignore if value is passed
+	modelVersion = getTestModelVersion()
+	modelVersion.SoftwareVersionString = ""
+	require.Nil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is longer then 256 characters
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = strings.Repeat("a", 257)
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is not a valid URL
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = "not a valid url"
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is not a valid https URL
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPURL
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// otaURL is a valid url
+	modelVersion = getTestModelVersion()
+	modelVersion.OtaURL = testconstants.ValidHTTPSURL
+	require.Nil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is optional
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = ""
+	require.Nil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is longer then 256 characters
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = "https://" + strings.Repeat("a", 249)
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is not a valid URL
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = "not a valid url"
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is not a valid https URL
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = testconstants.ValidHTTPURL
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// releaseNotesURL is a valid url
+	modelVersion = getTestModelVersion()
+	modelVersion.ReleaseNotesURL = testconstants.ValidHTTPSURL
+	require.Nil(t, NewMsgUpdateModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
+
+	// Signer is nil
+	modelVersion = getTestModelVersion()
+	require.NotNil(t, NewMsgUpdateModelVersion(modelVersion, nil).ValidateBasic())
+}
+
+func getTestModelVersion() ModelVersion {
+	return ModelVersion{
+		VID:                          testconstants.VendorID1,
+		PID:                          testconstants.PID,
+		SoftwareVersion:              testconstants.SoftwareVersion,
+		SoftwareVersionString:        testconstants.SoftwareVersionString,
+		CDVersionNumber:              testconstants.CDVersionNumber,
+		FirmwareDigests:              testconstants.FirmwareDigests,
+		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
+		OtaURL:                       testconstants.OtaURL,
+		OtaFileSize:                  testconstants.OtaFileSize,
+		OtaChecksum:                  testconstants.OtaChecksum,
+		OtaChecksumType:              testconstants.OtaChecksumType,
+		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
+		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
+		ReleaseNotesURL:              testconstants.ReleaseNotesURL,
+	}
 }
