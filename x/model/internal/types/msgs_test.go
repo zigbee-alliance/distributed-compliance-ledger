@@ -240,6 +240,7 @@ func TestMsgAddModelVersionValidation(t *testing.T) {
 	modelVersion = getTestModelVersion()
 	modelVersion.OtaURL = ""
 	modelVersion.OtaFileSize = 0
+	require.Nil(t, NewMsgAddModelVersion(modelVersion, testconstants.Signer).ValidateBasic())
 
 	// OtaChecksum is mandatory if otaURL is set
 	modelVersion = getTestModelVersion()
