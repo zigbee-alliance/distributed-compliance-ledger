@@ -32,7 +32,7 @@ test_divider
 
 # Create a new model with minimum fields
 echo "Add Model with minimum required fields with VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dclcli tx model add-model --vid=$vid_1 --pid=$pid_1 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dclcli tx model add-model --vid=$vid_1 --pid=$pid_1 --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --from=$vendor_account_1 --yes)
 check_response "$result" "\"success\": true"
 
 test_divider
@@ -54,7 +54,7 @@ result=$(echo "test1234" | dclcli tx model add-model --vid=$vid_1 --pid=$pid_2 -
 --partNumber="23.456" --commissioningCustomFlow=1 --commissioningCustomFlowURL="https://customflow.url.info" \
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
---userManualURL="https://usermanual.url" --supportURL="https://support.url.info"   --from=$vendor_account_1 --yes)
+--userManualURL="https://usermanual.url" --productURL="https://product.url.info" --supportURL="https://support.url.info"   --from=$vendor_account_1 --yes)
 check_response "$result" "\"success\": true"
 
 test_divider
@@ -76,6 +76,8 @@ check_response_and_report "$result" "\"commissioningModeSecondaryStepsHint\": 2"
 check_response_and_report "$result" "\"commissioningModeSecondaryStepsInstruction\": \"Secondary Steps Instruction\""
 check_response_and_report "$result" "\"userManualURL\": \"https://usermanual.url\""
 check_response_and_report "$result" "\"supportURL\": \"https://support.url.info\""
+check_response_and_report "$result" "\"productURL\": \"https://product.url.info\""
+
 
 test_divider
 
@@ -228,7 +230,7 @@ test_divider
 sv_1=$RANDOM
 # Create a new model version
 echo "Create a Device Model Version with minimum mandatory fields for VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionString=1 --from=$vendor_account_1 --yes)
+result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=20 --minApplicableSoftwareVersion=10 --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --softwareVersionString=1 --from=$vendor_account_1 --yes)
 echo "$result"
 check_response_and_report "$result" "\"success\": true"
 
@@ -244,8 +246,8 @@ check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1\""
 check_response_and_report "$result" "\"CDVersionNumber\": 1"
 check_response_and_report "$result" "\"softwareVersionValid\": true"
-check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 1"
-check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 10"
+check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 10"
+check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 20"
 
 test_divider
 
@@ -266,8 +268,8 @@ check_response_and_report "$result" "\"softwareVersion\": $sv_1"
 check_response_and_report "$result" "\"softwareVersionString\": \"1\""
 check_response_and_report "$result" "\"CDVersionNumber\": 1"
 check_response_and_report "$result" "\"softwareVersionValid\": false"
-check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 1"
-check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 10"
+check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 10"
+check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 20"
 
 test_divider
 
@@ -290,7 +292,7 @@ check_response_and_report "$result" "\"softwareVersionString\": \"1\""
 check_response_and_report "$result" "\"CDVersionNumber\": 1"
 check_response_and_report "$result" "\"softwareVersionValid\": true"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 2"
-check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 10"
+check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 20"
 check_response_and_report "$result" "\"releaseNotesURL\": \"https://release.url.info\""
 
 
@@ -444,5 +446,19 @@ check_response_and_report "$result" "\"otaChecksumType\": 1"
 check_response_and_report "$result" "\"maxApplicableSoftwareVersion\": 32"
 check_response_and_report "$result" "\"minApplicableSoftwareVersion\": 5"
 response_does_not_contain "$result" "\"releaseNotesURL\""
+
+test_divider
+
+# Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion 
+echo "Update the model version with maxApplicableSoftwareVersion less then minApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dclcli tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --maxApplicableSoftwareVersion=3 --from=$vendor_account_1 --yes)
+check_response_and_report "$result" "\"success\": false"
+
+test_divider
+
+# Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion 
+echo "Update the model version with minApplicableSoftwareVersion greater then maxApplicableSoftwareVersion and make sure we get error back VID: $vid_1 PID: $pid_1 SV: $sv_1"
+result=$(echo "test1234" | dclcli tx model update-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1 --minApplicableSoftwareVersion=33 --from=$vendor_account_1 --yes)
+check_response_and_report "$result" "\"success\": false"
 
 test_divider

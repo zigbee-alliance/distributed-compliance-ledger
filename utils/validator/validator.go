@@ -16,6 +16,7 @@ package validator
 
 import (
 	"fmt"
+	"reflect"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/go-playground/locales/en"
@@ -38,13 +39,31 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 
 	vl = validator.New()
 
-	_ = vl.RegisterValidation("requiredForAdd", onlyRequiredForAdd)
+	_ = vl.RegisterValidation("address", validateAddress)
+	_ = en_translations.RegisterDefaultTranslations(vl, trans)
+
+	_ = vl.RegisterValidation("requiredForAdd", validateRequiredForAdd)
 	_ = en_translations.RegisterDefaultTranslations(vl, trans)
 
 	_ = vl.RegisterTranslation("required", trans, func(ut ut.Translator) error {
 		return ut.Add("required", "{0} is a required field", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("required", fe.Field())
+
+		return t
+	})
+
+	_ = vl.RegisterTranslation("required_with", trans, func(ut ut.Translator) error {
+		return ut.Add("required_with", "{0} is a required field", true) // see universal-translator for details
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("required_with", fe.Field())
+
+		return t
+	})
+	_ = vl.RegisterTranslation("address", trans, func(ut ut.Translator) error {
+		return ut.Add("address", "Field {0} : {1} is not a valid address", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("address", fe.Field(), fmt.Sprintf("%v", fe.Value()))
 
 		return t
 	})
@@ -73,6 +92,13 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 		return t
 	})
 
+	vl.RegisterTranslation("startsnotwith", trans, func(ut ut.Translator) error {
+		return ut.Add("startsnotwith", "Field {0} : {1} is not a valid url", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("startsnotwith", fe.Field(), fmt.Sprintf("%v", fe.Value()))
+		return t
+	})
+
 	errs := vl.Struct(s)
 
 	if errs != nil {
@@ -80,13 +106,17 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 			if e.Tag() == "max" {
 				return sdk.NewError(Codespace, CodeFieldMaxLengthExceeded, e.Translate(trans))
 			}
+
+			// currently required_with is only applicable for Additions
+			// (Create custom validator if need for both update and add)
+			if (e.Tag() == "requiredForAdd" || e.Tag() == "required_with") && performAddValidation {
+				return sdk.NewError(Codespace, CodeRequiredFieldMissing, e.Translate(trans))
+			}
+
 			if e.Tag() == "required" {
 				return sdk.NewError(Codespace, CodeRequiredFieldMissing, e.Translate(trans))
 			}
-			if e.Tag() == "requiredForAdd" && performAddValidation {
-				return sdk.NewError(Codespace, CodeRequiredFieldMissing, e.Translate(trans))
-			}
-			if e.Tag() == "url" {
+			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "address" {
 				return sdk.NewError(Codespace, CodeFieldNotValid, e.Translate(trans))
 			}
 
@@ -104,8 +134,23 @@ func ValidateAdd(s interface{}) sdk.Error {
 	return validate(s, true)
 }
 
-func onlyRequiredForAdd(fl validator.FieldLevel) bool {
-	if fl.Field().String() == "" {
+func validateRequiredForAdd(fl validator.FieldLevel) bool {
+	field := fl.Field()
+	//nolint:exhaustive
+	switch field.Kind() {
+	case reflect.String:
+		return field.Len() > 0
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return field.Int() != 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return field.Uint() != 0
+	default:
+		return field.IsValid() && field.Interface() != reflect.Zero(field.Type()).Interface()
+	}
+}
+
+func validateAddress(fl validator.FieldLevel) bool {
+	if sdk.VerifyAddressFormat(fl.Field().Bytes()) != nil {
 		return false
 	} else {
 		return true

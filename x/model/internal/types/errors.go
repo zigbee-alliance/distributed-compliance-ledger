@@ -38,6 +38,7 @@ const (
 	CodeNoModelVersionExist          sdk.CodeType = 518
 	CodeModelVersionAlreadyExists    sdk.CodeType = 519
 	CodeOtaURLCannotBeSet            sdk.CodeType = 520
+	CodeMaxSVLessThanMinSV           sdk.CodeType = 521
 )
 
 func ErrModelAlreadyExists(vid interface{}, pid interface{}) sdk.Error {
@@ -107,4 +108,11 @@ func ErrOtaURLCannotBeSet(vid interface{}, pid interface{}, softwareVersion inte
 	return sdk.NewError(Codespace, CodeOtaURLCannotBeSet,
 		fmt.Sprintf("OTA URL cannot be set for model version associated with vid=%v, pid=%v "+
 			"and softwareVersion=%v because OTA was not set for this model info initially", vid, pid, softwareVersion))
+}
+
+func ErrMaxSVLessThanMinSV(minApplicableSoftwareVersion interface{},
+	maxApplicableSoftwareVersion interface{}) sdk.Error {
+	return sdk.NewError(Codespace, CodeMaxSVLessThanMinSV,
+		fmt.Sprintf("MaxApplicableSoftwareVersion %v is less than MinApplicableSoftwareVersion %v",
+			maxApplicableSoftwareVersion, minApplicableSoftwareVersion))
 }

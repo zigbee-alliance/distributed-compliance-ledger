@@ -53,7 +53,7 @@ var (
 	FirmwareDigests                                   = "Firmware Digest String"
 	Revoked                                           = false
 	SoftwareVersionValid                              = true
-	OtaURL                                            = "http://ota.firmware.com"
+	OtaURL                                            = "https://ota.firmware.com"
 	OtaFileSize                                uint64 = 12345678
 	OtaChecksum                                       = "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" //nolint:lll
 	OtaChecksumType                            uint16 = 1
@@ -103,6 +103,9 @@ var (
 	ValidatorPubKey2         = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
 	ValidatorAddress1        = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey1).Address())
 	ValidatorAddress2        = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey2).Address())
+	ValidHTTPSURL            = "https://valid.url.com"
+	ValidHTTPURL             = "http://valid.url.com"
+	NotAValidURL             = "not a valid url"
 )
 
 /*
