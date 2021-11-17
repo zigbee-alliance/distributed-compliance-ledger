@@ -87,6 +87,30 @@ import (
 	"github.com/tendermint/spm/openapiconsole"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/docs"
+	compliancemodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
+	compliancemodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
+	compliancemoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
+	compliancetestmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
+	compliancetestmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/keeper"
+	compliancetestmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
+	dclauthmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth"
+	dclauthmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
+	dclauthmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	dclgenutilmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
+	dclgenutilmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/keeper"
+	dclgenutilmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
+	modelmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
+	modelmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
+	modelmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
+	pkimodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	pkimodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
+	pkimoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	validatormodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
+	validatormodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
+	validatormoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
+	vendorinfomodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo"
+	vendorinfomodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/keeper"
+	vendorinfomoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -137,6 +161,14 @@ var (
 		evidence.AppModuleBasic{},
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
+		dclauthmodule.AppModuleBasic{},
+		validatormodule.AppModuleBasic{},
+		dclgenutilmodule.AppModuleBasic{},
+		pkimodule.AppModuleBasic{},
+		vendorinfomodule.AppModuleBasic{},
+		modelmodule.AppModuleBasic{},
+		compliancetestmodule.AppModuleBasic{},
+		compliancemodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -205,6 +237,21 @@ type App struct {
 	ScopedIBCKeeper      capabilitykeeper.ScopedKeeper
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
+	DclauthKeeper dclauthmodulekeeper.Keeper
+
+	ValidatorKeeper validatormodulekeeper.Keeper
+
+	DclgenutilKeeper dclgenutilmodulekeeper.Keeper
+
+	PkiKeeper pkimodulekeeper.Keeper
+
+	VendorinfoKeeper vendorinfomodulekeeper.Keeper
+
+	ModelKeeper modelmodulekeeper.Keeper
+
+	CompliancetestKeeper compliancetestmodulekeeper.Keeper
+
+	ComplianceKeeper compliancemodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// the module manager
@@ -238,6 +285,14 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
+		dclauthmoduletypes.StoreKey,
+		validatormoduletypes.StoreKey,
+		dclgenutilmoduletypes.StoreKey,
+		pkimoduletypes.StoreKey,
+		vendorinfomoduletypes.StoreKey,
+		modelmoduletypes.StoreKey,
+		compliancetestmoduletypes.StoreKey,
+		compliancemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -336,6 +391,80 @@ func New(
 		&stakingKeeper, govRouter,
 	)
 
+	app.DclauthKeeper = *dclauthmodulekeeper.NewKeeper(
+		appCodec,
+		keys[dclauthmoduletypes.StoreKey],
+		keys[dclauthmoduletypes.MemStoreKey],
+	)
+	dclauthModule := dclauthmodule.NewAppModule(appCodec, app.DclauthKeeper)
+
+	app.ValidatorKeeper = *validatormodulekeeper.NewKeeper(
+		appCodec,
+		keys[validatormoduletypes.StoreKey],
+		keys[validatormoduletypes.MemStoreKey],
+
+		app.DclauthKeeper,
+	)
+	validatorModule := validatormodule.NewAppModule(appCodec, app.ValidatorKeeper)
+
+	app.DclgenutilKeeper = *dclgenutilmodulekeeper.NewKeeper(
+		appCodec,
+		keys[dclgenutilmoduletypes.StoreKey],
+		keys[dclgenutilmoduletypes.MemStoreKey],
+
+		app.DclauthKeeper,
+		app.ValidatorKeeper,
+	)
+	dclgenutilModule := dclgenutilmodule.NewAppModule(appCodec, app.DclgenutilKeeper)
+
+	app.PkiKeeper = *pkimodulekeeper.NewKeeper(
+		appCodec,
+		keys[pkimoduletypes.StoreKey],
+		keys[pkimoduletypes.MemStoreKey],
+
+		app.DclauthKeeper,
+	)
+	pkiModule := pkimodule.NewAppModule(appCodec, app.PkiKeeper)
+
+	app.VendorinfoKeeper = *vendorinfomodulekeeper.NewKeeper(
+		appCodec,
+		keys[vendorinfomoduletypes.StoreKey],
+		keys[vendorinfomoduletypes.MemStoreKey],
+
+		app.DclauthKeeper,
+	)
+	vendorinfoModule := vendorinfomodule.NewAppModule(appCodec, app.VendorinfoKeeper)
+
+	app.ModelKeeper = *modelmodulekeeper.NewKeeper(
+		appCodec,
+		keys[modelmoduletypes.StoreKey],
+		keys[modelmoduletypes.MemStoreKey],
+
+		app.DclauthKeeper,
+	)
+	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
+
+	app.CompliancetestKeeper = *compliancetestmodulekeeper.NewKeeper(
+		appCodec,
+		keys[compliancetestmoduletypes.StoreKey],
+		keys[compliancetestmoduletypes.MemStoreKey],
+
+		app.DclauthKeeper,
+		app.ModelKeeper,
+	)
+	compliancetestModule := compliancetestmodule.NewAppModule(appCodec, app.CompliancetestKeeper)
+
+	app.ComplianceKeeper = *compliancemodulekeeper.NewKeeper(
+		appCodec,
+		keys[compliancemoduletypes.StoreKey],
+		keys[compliancemoduletypes.MemStoreKey],
+
+		app.DclauthKeeper,
+		app.ModelKeeper,
+		app.CompliancetestKeeper,
+	)
+	complianceModule := compliancemodule.NewAppModule(appCodec, app.ComplianceKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -374,6 +503,14 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
+		dclauthModule,
+		validatorModule,
+		dclgenutilModule,
+		pkiModule,
+		vendorinfoModule,
+		modelModule,
+		compliancetestModule,
+		complianceModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -408,6 +545,14 @@ func New(
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
+		dclauthmoduletypes.ModuleName,
+		validatormoduletypes.ModuleName,
+		dclgenutilmoduletypes.ModuleName,
+		pkimoduletypes.ModuleName,
+		vendorinfomoduletypes.ModuleName,
+		modelmoduletypes.ModuleName,
+		compliancetestmoduletypes.ModuleName,
+		compliancemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -595,6 +740,14 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(crisistypes.ModuleName)
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
+	paramsKeeper.Subspace(dclauthmoduletypes.ModuleName)
+	paramsKeeper.Subspace(validatormoduletypes.ModuleName)
+	paramsKeeper.Subspace(dclgenutilmoduletypes.ModuleName)
+	paramsKeeper.Subspace(pkimoduletypes.ModuleName)
+	paramsKeeper.Subspace(vendorinfomoduletypes.ModuleName)
+	paramsKeeper.Subspace(modelmoduletypes.ModuleName)
+	paramsKeeper.Subspace(compliancetestmoduletypes.ModuleName)
+	paramsKeeper.Subspace(compliancemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
