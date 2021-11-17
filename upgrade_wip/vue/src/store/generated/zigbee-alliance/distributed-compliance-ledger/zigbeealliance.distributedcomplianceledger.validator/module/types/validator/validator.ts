@@ -5,12 +5,19 @@ import { Writer, Reader } from 'protobufjs/minimal'
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator'
 
 export interface Validator {
+  /** description of the validator */
   address: string
+  /** the consensus address of the tendermint validator */
   description: Description | undefined
+  /** the consensus public key of the tendermint validator */
   pubKey: string
+  /** validator consensus power */
   power: number
+  /** has the validator been removed from validator set */
   jailed: boolean
+  /** the reason of validator jailing */
   jailedReason: string
+  /** the account address of validator owner */
   owner: string
 }
 

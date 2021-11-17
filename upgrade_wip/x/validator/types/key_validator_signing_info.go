@@ -6,7 +6,8 @@ var _ binary.ByteOrder
 
 const (
 	// ValidatorSigningInfoKeyPrefix is the prefix to retrieve all ValidatorSigningInfo
-	ValidatorSigningInfoKeyPrefix = "ValidatorSigningInfo/value/"
+	// ValidatorSigningInfoKeyPrefix = "ValidatorSigningInfo/value/"
+	ValidatorSigningInfoKeyPrefix = []byte{0x06} // prefix for validator signing info
 )
 
 // ValidatorSigningInfoKey returns the store key to retrieve a ValidatorSigningInfo from the index fields

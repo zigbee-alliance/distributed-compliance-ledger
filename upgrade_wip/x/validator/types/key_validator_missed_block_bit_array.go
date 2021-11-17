@@ -6,7 +6,8 @@ var _ binary.ByteOrder
 
 const (
 	// ValidatorMissedBlockBitArrayKeyPrefix is the prefix to retrieve all ValidatorMissedBlockBitArray
-	ValidatorMissedBlockBitArrayKeyPrefix = "ValidatorMissedBlockBitArray/value/"
+	// ValidatorMissedBlockBitArrayKeyPrefix = "ValidatorMissedBlockBitArray/value/"
+	ValidatorMissedBlockBitArrayKeyPrefix = []byte{0x07} // prefix for validator missed blocks
 )
 
 // ValidatorMissedBlockBitArrayKey returns the store key to retrieve a ValidatorMissedBlockBitArray from the index fields

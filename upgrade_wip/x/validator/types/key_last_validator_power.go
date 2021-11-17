@@ -6,7 +6,8 @@ var _ binary.ByteOrder
 
 const (
 	// LastValidatorPowerKeyPrefix is the prefix to retrieve all LastValidatorPower
-	LastValidatorPowerKeyPrefix = "LastValidatorPower/value/"
+	// LastValidatorPowerKeyPrefix = "LastValidatorPower/value/"
+	LastValidatorPowerKeyPrefix = []byte{0x02} // prefix for each key to a validator index, by last power
 )
 
 // LastValidatorPowerKey returns the store key to retrieve a LastValidatorPower from the index fields

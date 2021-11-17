@@ -12682,7 +12682,9 @@ paths:
                   properties:
                     address:
                       type: string
+                      title: description of the validator
                     description:
+                      title: the consensus address of the tendermint validator
                       type: object
                       properties:
                         name:
@@ -12695,15 +12697,20 @@ paths:
                           type: string
                     pubKey:
                       type: string
+                      title: the consensus public key of the tendermint validator
                     power:
                       type: integer
                       format: int32
+                      title: validator consensus power
                     jailed:
                       type: boolean
+                      title: has the validator been removed from validator set
                     jailedReason:
                       type: string
+                      title: the reason of validator jailing
                     owner:
                       type: string
+                      title: the account address of validator owner
               pagination:
                 type: object
                 properties:
@@ -12820,7 +12827,9 @@ paths:
                 properties:
                   address:
                     type: string
+                    title: description of the validator
                   description:
+                    title: the consensus address of the tendermint validator
                     type: object
                     properties:
                       name:
@@ -12833,15 +12842,20 @@ paths:
                         type: string
                   pubKey:
                     type: string
+                    title: the consensus public key of the tendermint validator
                   power:
                     type: integer
                     format: int32
+                    title: validator consensus power
                   jailed:
                     type: boolean
+                    title: has the validator been removed from validator set
                   jailedReason:
                     type: string
+                    title: the reason of validator jailing
                   owner:
                     type: string
+                    title: the account address of validator owner
         default:
           description: An unexpected error response.
           schema:
@@ -20829,7 +20843,9 @@ definitions:
           properties:
             address:
               type: string
+              title: description of the validator
             description:
+              title: the consensus address of the tendermint validator
               type: object
               properties:
                 name:
@@ -20842,15 +20858,20 @@ definitions:
                   type: string
             pubKey:
               type: string
+              title: the consensus public key of the tendermint validator
             power:
               type: integer
               format: int32
+              title: validator consensus power
             jailed:
               type: boolean
+              title: has the validator been removed from validator set
             jailedReason:
               type: string
+              title: the reason of validator jailing
             owner:
               type: string
+              title: the account address of validator owner
       pagination:
         type: object
         properties:
@@ -20958,7 +20979,9 @@ definitions:
         properties:
           address:
             type: string
+            title: description of the validator
           description:
+            title: the consensus address of the tendermint validator
             type: object
             properties:
               name:
@@ -20971,15 +20994,20 @@ definitions:
                 type: string
           pubKey:
             type: string
+            title: the consensus public key of the tendermint validator
           power:
             type: integer
             format: int32
+            title: validator consensus power
           jailed:
             type: boolean
+            title: has the validator been removed from validator set
           jailedReason:
             type: string
+            title: the reason of validator jailing
           owner:
             type: string
+            title: the account address of validator owner
   zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorSigningInfoResponse:
     type: object
     properties:
@@ -21002,7 +21030,9 @@ definitions:
     properties:
       address:
         type: string
+        title: description of the validator
       description:
+        title: the consensus address of the tendermint validator
         type: object
         properties:
           name:
@@ -21015,15 +21045,20 @@ definitions:
             type: string
       pubKey:
         type: string
+        title: the consensus public key of the tendermint validator
       power:
         type: integer
         format: int32
+        title: validator consensus power
       jailed:
         type: boolean
+        title: has the validator been removed from validator set
       jailedReason:
         type: string
+        title: the reason of validator jailing
       owner:
         type: string
+        title: the account address of validator owner
   zigbeealliance.distributedcomplianceledger.validator.ValidatorMissedBlockBitArray:
     type: object
     properties:
