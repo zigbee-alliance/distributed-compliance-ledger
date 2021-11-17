@@ -1,0 +1,13 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.validator;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
+
+
+message Description {
+  
+  string name = 1; 
+  string identity = 2; 
+  string website = 3; 
+  string details = 4; 
+}

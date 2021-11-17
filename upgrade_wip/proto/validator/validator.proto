@@ -1,0 +1,18 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.validator;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
+
+import "validator/description.proto"; 
+
+message Validator {
+  string address = 1; 
+  Description description = 2; 
+  string pubKey = 3; 
+  int32 power = 4; 
+  bool jailed = 5; 
+  string jailedReason = 6; 
+  string owner = 7; 
+  
+}
+

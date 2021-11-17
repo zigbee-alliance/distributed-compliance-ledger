@@ -6,12 +6,17 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/cosmos/cosmos-sdk/types/query"
+	query "github.com/cosmos/cosmos-sdk/types/query"
+	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -25,24 +30,1046 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type QueryGetValidatorRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryGetValidatorRequest) Reset()         { *m = QueryGetValidatorRequest{} }
+func (m *QueryGetValidatorRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetValidatorRequest) ProtoMessage()    {}
+func (*QueryGetValidatorRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{0}
+}
+func (m *QueryGetValidatorRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorRequest.Merge(m, src)
+}
+func (m *QueryGetValidatorRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorRequest proto.InternalMessageInfo
+
+func (m *QueryGetValidatorRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type QueryGetValidatorResponse struct {
+	Validator Validator `protobuf:"bytes,1,opt,name=validator,proto3" json:"validator"`
+}
+
+func (m *QueryGetValidatorResponse) Reset()         { *m = QueryGetValidatorResponse{} }
+func (m *QueryGetValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetValidatorResponse) ProtoMessage()    {}
+func (*QueryGetValidatorResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{1}
+}
+func (m *QueryGetValidatorResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorResponse.Merge(m, src)
+}
+func (m *QueryGetValidatorResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorResponse proto.InternalMessageInfo
+
+func (m *QueryGetValidatorResponse) GetValidator() Validator {
+	if m != nil {
+		return m.Validator
+	}
+	return Validator{}
+}
+
+type QueryAllValidatorRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorRequest) Reset()         { *m = QueryAllValidatorRequest{} }
+func (m *QueryAllValidatorRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllValidatorRequest) ProtoMessage()    {}
+func (*QueryAllValidatorRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{2}
+}
+func (m *QueryAllValidatorRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorRequest.Merge(m, src)
+}
+func (m *QueryAllValidatorRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorRequest proto.InternalMessageInfo
+
+func (m *QueryAllValidatorRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllValidatorResponse struct {
+	Validator  []Validator         `protobuf:"bytes,1,rep,name=validator,proto3" json:"validator"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorResponse) Reset()         { *m = QueryAllValidatorResponse{} }
+func (m *QueryAllValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllValidatorResponse) ProtoMessage()    {}
+func (*QueryAllValidatorResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{3}
+}
+func (m *QueryAllValidatorResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorResponse.Merge(m, src)
+}
+func (m *QueryAllValidatorResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorResponse proto.InternalMessageInfo
+
+func (m *QueryAllValidatorResponse) GetValidator() []Validator {
+	if m != nil {
+		return m.Validator
+	}
+	return nil
+}
+
+func (m *QueryAllValidatorResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetLastValidatorPowerRequest struct {
+	ConsensusAddress string `protobuf:"bytes,1,opt,name=consensusAddress,proto3" json:"consensusAddress,omitempty"`
+}
+
+func (m *QueryGetLastValidatorPowerRequest) Reset()         { *m = QueryGetLastValidatorPowerRequest{} }
+func (m *QueryGetLastValidatorPowerRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetLastValidatorPowerRequest) ProtoMessage()    {}
+func (*QueryGetLastValidatorPowerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{4}
+}
+func (m *QueryGetLastValidatorPowerRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetLastValidatorPowerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetLastValidatorPowerRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetLastValidatorPowerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetLastValidatorPowerRequest.Merge(m, src)
+}
+func (m *QueryGetLastValidatorPowerRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetLastValidatorPowerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetLastValidatorPowerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetLastValidatorPowerRequest proto.InternalMessageInfo
+
+func (m *QueryGetLastValidatorPowerRequest) GetConsensusAddress() string {
+	if m != nil {
+		return m.ConsensusAddress
+	}
+	return ""
+}
+
+type QueryGetLastValidatorPowerResponse struct {
+	LastValidatorPower LastValidatorPower `protobuf:"bytes,1,opt,name=lastValidatorPower,proto3" json:"lastValidatorPower"`
+}
+
+func (m *QueryGetLastValidatorPowerResponse) Reset()         { *m = QueryGetLastValidatorPowerResponse{} }
+func (m *QueryGetLastValidatorPowerResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetLastValidatorPowerResponse) ProtoMessage()    {}
+func (*QueryGetLastValidatorPowerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{5}
+}
+func (m *QueryGetLastValidatorPowerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetLastValidatorPowerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetLastValidatorPowerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetLastValidatorPowerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetLastValidatorPowerResponse.Merge(m, src)
+}
+func (m *QueryGetLastValidatorPowerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetLastValidatorPowerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetLastValidatorPowerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetLastValidatorPowerResponse proto.InternalMessageInfo
+
+func (m *QueryGetLastValidatorPowerResponse) GetLastValidatorPower() LastValidatorPower {
+	if m != nil {
+		return m.LastValidatorPower
+	}
+	return LastValidatorPower{}
+}
+
+type QueryAllLastValidatorPowerRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllLastValidatorPowerRequest) Reset()         { *m = QueryAllLastValidatorPowerRequest{} }
+func (m *QueryAllLastValidatorPowerRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllLastValidatorPowerRequest) ProtoMessage()    {}
+func (*QueryAllLastValidatorPowerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{6}
+}
+func (m *QueryAllLastValidatorPowerRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllLastValidatorPowerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllLastValidatorPowerRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllLastValidatorPowerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllLastValidatorPowerRequest.Merge(m, src)
+}
+func (m *QueryAllLastValidatorPowerRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllLastValidatorPowerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllLastValidatorPowerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllLastValidatorPowerRequest proto.InternalMessageInfo
+
+func (m *QueryAllLastValidatorPowerRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllLastValidatorPowerResponse struct {
+	LastValidatorPower []LastValidatorPower `protobuf:"bytes,1,rep,name=lastValidatorPower,proto3" json:"lastValidatorPower"`
+	Pagination         *query.PageResponse  `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllLastValidatorPowerResponse) Reset()         { *m = QueryAllLastValidatorPowerResponse{} }
+func (m *QueryAllLastValidatorPowerResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllLastValidatorPowerResponse) ProtoMessage()    {}
+func (*QueryAllLastValidatorPowerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{7}
+}
+func (m *QueryAllLastValidatorPowerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllLastValidatorPowerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllLastValidatorPowerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllLastValidatorPowerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllLastValidatorPowerResponse.Merge(m, src)
+}
+func (m *QueryAllLastValidatorPowerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllLastValidatorPowerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllLastValidatorPowerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllLastValidatorPowerResponse proto.InternalMessageInfo
+
+func (m *QueryAllLastValidatorPowerResponse) GetLastValidatorPower() []LastValidatorPower {
+	if m != nil {
+		return m.LastValidatorPower
+	}
+	return nil
+}
+
+func (m *QueryAllLastValidatorPowerResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetValidatorSigningInfoRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryGetValidatorSigningInfoRequest) Reset()         { *m = QueryGetValidatorSigningInfoRequest{} }
+func (m *QueryGetValidatorSigningInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetValidatorSigningInfoRequest) ProtoMessage()    {}
+func (*QueryGetValidatorSigningInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{8}
+}
+func (m *QueryGetValidatorSigningInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorSigningInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorSigningInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorSigningInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorSigningInfoRequest.Merge(m, src)
+}
+func (m *QueryGetValidatorSigningInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorSigningInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorSigningInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorSigningInfoRequest proto.InternalMessageInfo
+
+func (m *QueryGetValidatorSigningInfoRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type QueryGetValidatorSigningInfoResponse struct {
+	ValidatorSigningInfo ValidatorSigningInfo `protobuf:"bytes,1,opt,name=validatorSigningInfo,proto3" json:"validatorSigningInfo"`
+}
+
+func (m *QueryGetValidatorSigningInfoResponse) Reset()         { *m = QueryGetValidatorSigningInfoResponse{} }
+func (m *QueryGetValidatorSigningInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetValidatorSigningInfoResponse) ProtoMessage()    {}
+func (*QueryGetValidatorSigningInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{9}
+}
+func (m *QueryGetValidatorSigningInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorSigningInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorSigningInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorSigningInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorSigningInfoResponse.Merge(m, src)
+}
+func (m *QueryGetValidatorSigningInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorSigningInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorSigningInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorSigningInfoResponse proto.InternalMessageInfo
+
+func (m *QueryGetValidatorSigningInfoResponse) GetValidatorSigningInfo() ValidatorSigningInfo {
+	if m != nil {
+		return m.ValidatorSigningInfo
+	}
+	return ValidatorSigningInfo{}
+}
+
+type QueryAllValidatorSigningInfoRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorSigningInfoRequest) Reset()         { *m = QueryAllValidatorSigningInfoRequest{} }
+func (m *QueryAllValidatorSigningInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllValidatorSigningInfoRequest) ProtoMessage()    {}
+func (*QueryAllValidatorSigningInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{10}
+}
+func (m *QueryAllValidatorSigningInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorSigningInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorSigningInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorSigningInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorSigningInfoRequest.Merge(m, src)
+}
+func (m *QueryAllValidatorSigningInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorSigningInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorSigningInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorSigningInfoRequest proto.InternalMessageInfo
+
+func (m *QueryAllValidatorSigningInfoRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllValidatorSigningInfoResponse struct {
+	ValidatorSigningInfo []ValidatorSigningInfo `protobuf:"bytes,1,rep,name=validatorSigningInfo,proto3" json:"validatorSigningInfo"`
+	Pagination           *query.PageResponse    `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorSigningInfoResponse) Reset()         { *m = QueryAllValidatorSigningInfoResponse{} }
+func (m *QueryAllValidatorSigningInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllValidatorSigningInfoResponse) ProtoMessage()    {}
+func (*QueryAllValidatorSigningInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{11}
+}
+func (m *QueryAllValidatorSigningInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorSigningInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorSigningInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorSigningInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorSigningInfoResponse.Merge(m, src)
+}
+func (m *QueryAllValidatorSigningInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorSigningInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorSigningInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorSigningInfoResponse proto.InternalMessageInfo
+
+func (m *QueryAllValidatorSigningInfoResponse) GetValidatorSigningInfo() []ValidatorSigningInfo {
+	if m != nil {
+		return m.ValidatorSigningInfo
+	}
+	return nil
+}
+
+func (m *QueryAllValidatorSigningInfoResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetValidatorMissedBlockBitArrayRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	Index   uint64 `protobuf:"varint,2,opt,name=index,proto3" json:"index,omitempty"`
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) Reset() {
+	*m = QueryGetValidatorMissedBlockBitArrayRequest{}
+}
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryGetValidatorMissedBlockBitArrayRequest) ProtoMessage() {}
+func (*QueryGetValidatorMissedBlockBitArrayRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{12}
+}
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayRequest.Merge(m, src)
+}
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayRequest proto.InternalMessageInfo
+
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) GetIndex() uint64 {
+	if m != nil {
+		return m.Index
+	}
+	return 0
+}
+
+type QueryGetValidatorMissedBlockBitArrayResponse struct {
+	ValidatorMissedBlockBitArray ValidatorMissedBlockBitArray `protobuf:"bytes,1,opt,name=validatorMissedBlockBitArray,proto3" json:"validatorMissedBlockBitArray"`
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) Reset() {
+	*m = QueryGetValidatorMissedBlockBitArrayResponse{}
+}
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryGetValidatorMissedBlockBitArrayResponse) ProtoMessage() {}
+func (*QueryGetValidatorMissedBlockBitArrayResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{13}
+}
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayResponse.Merge(m, src)
+}
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorMissedBlockBitArrayResponse proto.InternalMessageInfo
+
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) GetValidatorMissedBlockBitArray() ValidatorMissedBlockBitArray {
+	if m != nil {
+		return m.ValidatorMissedBlockBitArray
+	}
+	return ValidatorMissedBlockBitArray{}
+}
+
+type QueryAllValidatorMissedBlockBitArrayRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) Reset() {
+	*m = QueryAllValidatorMissedBlockBitArrayRequest{}
+}
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryAllValidatorMissedBlockBitArrayRequest) ProtoMessage() {}
+func (*QueryAllValidatorMissedBlockBitArrayRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{14}
+}
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayRequest.Merge(m, src)
+}
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayRequest proto.InternalMessageInfo
+
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllValidatorMissedBlockBitArrayResponse struct {
+	ValidatorMissedBlockBitArray []ValidatorMissedBlockBitArray `protobuf:"bytes,1,rep,name=validatorMissedBlockBitArray,proto3" json:"validatorMissedBlockBitArray"`
+	Pagination                   *query.PageResponse            `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) Reset() {
+	*m = QueryAllValidatorMissedBlockBitArrayResponse{}
+}
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) String() string {
+	return proto.CompactTextString(m)
+}
+func (*QueryAllValidatorMissedBlockBitArrayResponse) ProtoMessage() {}
+func (*QueryAllValidatorMissedBlockBitArrayResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{15}
+}
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayResponse.Merge(m, src)
+}
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorMissedBlockBitArrayResponse proto.InternalMessageInfo
+
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) GetValidatorMissedBlockBitArray() []ValidatorMissedBlockBitArray {
+	if m != nil {
+		return m.ValidatorMissedBlockBitArray
+	}
+	return nil
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetValidatorOwnerRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryGetValidatorOwnerRequest) Reset()         { *m = QueryGetValidatorOwnerRequest{} }
+func (m *QueryGetValidatorOwnerRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetValidatorOwnerRequest) ProtoMessage()    {}
+func (*QueryGetValidatorOwnerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{16}
+}
+func (m *QueryGetValidatorOwnerRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorOwnerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorOwnerRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorOwnerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorOwnerRequest.Merge(m, src)
+}
+func (m *QueryGetValidatorOwnerRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorOwnerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorOwnerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorOwnerRequest proto.InternalMessageInfo
+
+func (m *QueryGetValidatorOwnerRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type QueryGetValidatorOwnerResponse struct {
+	ValidatorOwner ValidatorOwner `protobuf:"bytes,1,opt,name=validatorOwner,proto3" json:"validatorOwner"`
+}
+
+func (m *QueryGetValidatorOwnerResponse) Reset()         { *m = QueryGetValidatorOwnerResponse{} }
+func (m *QueryGetValidatorOwnerResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetValidatorOwnerResponse) ProtoMessage()    {}
+func (*QueryGetValidatorOwnerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{17}
+}
+func (m *QueryGetValidatorOwnerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetValidatorOwnerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetValidatorOwnerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetValidatorOwnerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetValidatorOwnerResponse.Merge(m, src)
+}
+func (m *QueryGetValidatorOwnerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetValidatorOwnerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetValidatorOwnerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetValidatorOwnerResponse proto.InternalMessageInfo
+
+func (m *QueryGetValidatorOwnerResponse) GetValidatorOwner() ValidatorOwner {
+	if m != nil {
+		return m.ValidatorOwner
+	}
+	return ValidatorOwner{}
+}
+
+type QueryAllValidatorOwnerRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorOwnerRequest) Reset()         { *m = QueryAllValidatorOwnerRequest{} }
+func (m *QueryAllValidatorOwnerRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllValidatorOwnerRequest) ProtoMessage()    {}
+func (*QueryAllValidatorOwnerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{18}
+}
+func (m *QueryAllValidatorOwnerRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorOwnerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorOwnerRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorOwnerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorOwnerRequest.Merge(m, src)
+}
+func (m *QueryAllValidatorOwnerRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorOwnerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorOwnerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorOwnerRequest proto.InternalMessageInfo
+
+func (m *QueryAllValidatorOwnerRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllValidatorOwnerResponse struct {
+	ValidatorOwner []ValidatorOwner    `protobuf:"bytes,1,rep,name=validatorOwner,proto3" json:"validatorOwner"`
+	Pagination     *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllValidatorOwnerResponse) Reset()         { *m = QueryAllValidatorOwnerResponse{} }
+func (m *QueryAllValidatorOwnerResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllValidatorOwnerResponse) ProtoMessage()    {}
+func (*QueryAllValidatorOwnerResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_31b4d73ed8fedd8d, []int{19}
+}
+func (m *QueryAllValidatorOwnerResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllValidatorOwnerResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllValidatorOwnerResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllValidatorOwnerResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllValidatorOwnerResponse.Merge(m, src)
+}
+func (m *QueryAllValidatorOwnerResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllValidatorOwnerResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllValidatorOwnerResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllValidatorOwnerResponse proto.InternalMessageInfo
+
+func (m *QueryAllValidatorOwnerResponse) GetValidatorOwner() []ValidatorOwner {
+	if m != nil {
+		return m.ValidatorOwner
+	}
+	return nil
+}
+
+func (m *QueryAllValidatorOwnerResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+func init() {
+	proto.RegisterType((*QueryGetValidatorRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorRequest")
+	proto.RegisterType((*QueryGetValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorResponse")
+	proto.RegisterType((*QueryAllValidatorRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorRequest")
+	proto.RegisterType((*QueryAllValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorResponse")
+	proto.RegisterType((*QueryGetLastValidatorPowerRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetLastValidatorPowerRequest")
+	proto.RegisterType((*QueryGetLastValidatorPowerResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetLastValidatorPowerResponse")
+	proto.RegisterType((*QueryAllLastValidatorPowerRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllLastValidatorPowerRequest")
+	proto.RegisterType((*QueryAllLastValidatorPowerResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllLastValidatorPowerResponse")
+	proto.RegisterType((*QueryGetValidatorSigningInfoRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorSigningInfoRequest")
+	proto.RegisterType((*QueryGetValidatorSigningInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorSigningInfoResponse")
+	proto.RegisterType((*QueryAllValidatorSigningInfoRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorSigningInfoRequest")
+	proto.RegisterType((*QueryAllValidatorSigningInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorSigningInfoResponse")
+	proto.RegisterType((*QueryGetValidatorMissedBlockBitArrayRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorMissedBlockBitArrayRequest")
+	proto.RegisterType((*QueryGetValidatorMissedBlockBitArrayResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorMissedBlockBitArrayResponse")
+	proto.RegisterType((*QueryAllValidatorMissedBlockBitArrayRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorMissedBlockBitArrayRequest")
+	proto.RegisterType((*QueryAllValidatorMissedBlockBitArrayResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorMissedBlockBitArrayResponse")
+	proto.RegisterType((*QueryGetValidatorOwnerRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorOwnerRequest")
+	proto.RegisterType((*QueryGetValidatorOwnerResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryGetValidatorOwnerResponse")
+	proto.RegisterType((*QueryAllValidatorOwnerRequest)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorOwnerRequest")
+	proto.RegisterType((*QueryAllValidatorOwnerResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.QueryAllValidatorOwnerResponse")
+}
+
 func init() { proto.RegisterFile("validator/query.proto", fileDescriptor_31b4d73ed8fedd8d) }
 
 var fileDescriptor_31b4d73ed8fedd8d = []byte{
-	// 218 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0xcf, 0xb1, 0x4a, 0x04, 0x31,
-	0x10, 0x06, 0xe0, 0xdd, 0x42, 0x85, 0x2b, 0x05, 0x9b, 0x43, 0xf2, 0x00, 0xc2, 0xee, 0x70, 0xea,
-	0x13, 0x58, 0xda, 0xd9, 0xda, 0x4d, 0x36, 0x43, 0x1c, 0xc8, 0x66, 0x62, 0x32, 0x7b, 0x78, 0x3e,
-	0x85, 0x8f, 0x65, 0x79, 0xa5, 0xa5, 0xec, 0xbe, 0x88, 0x78, 0x41, 0xef, 0xda, 0xe1, 0xe7, 0xff,
-	0xbf, 0x59, 0x5d, 0x6d, 0x31, 0xb0, 0x43, 0x95, 0x0c, 0xaf, 0x13, 0xe5, 0x5d, 0x9f, 0xb2, 0xa8,
-	0x5c, 0xde, 0xbf, 0xb3, 0xb7, 0x44, 0x18, 0x02, 0x63, 0x1c, 0xa8, 0x77, 0x5c, 0x34, 0xb3, 0x9d,
-	0x94, 0xdc, 0x20, 0x63, 0xaa, 0xd7, 0x40, 0xce, 0x53, 0xee, 0xff, 0x1b, 0xd6, 0xd7, 0x5e, 0xc4,
-	0x07, 0x02, 0x4c, 0x0c, 0x18, 0xa3, 0x28, 0x2a, 0x4b, 0x2c, 0xb5, 0x73, 0x7d, 0x33, 0x48, 0x19,
-	0xa5, 0x80, 0xc5, 0x42, 0x75, 0x0c, 0xb6, 0x1b, 0x4b, 0x8a, 0x1b, 0x48, 0xe8, 0x39, 0x1e, 0xc2,
-	0x35, 0x7b, 0x7b, 0xb1, 0x3a, 0x7b, 0xfa, 0x4d, 0x3c, 0xb8, 0xcf, 0xd9, 0xb4, 0xfb, 0xd9, 0xb4,
-	0xdf, 0xb3, 0x69, 0x3f, 0x16, 0xd3, 0xec, 0x17, 0xd3, 0x7c, 0x2d, 0xa6, 0x79, 0x7e, 0xf4, 0xac,
-	0x2f, 0x93, 0xed, 0x07, 0x19, 0xa1, 0x6a, 0xbb, 0x3f, 0x2e, 0x9c, 0x70, 0xbb, 0xa3, 0xb7, 0xab,
-	0x60, 0x78, 0x83, 0xe3, 0xd3, 0xba, 0x4b, 0x54, 0xec, 0xf9, 0x61, 0xf5, 0xee, 0x27, 0x00, 0x00,
-	0xff, 0xff, 0xe3, 0xb5, 0x42, 0xdc, 0x0e, 0x01, 0x00, 0x00,
+	// 1091 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x98, 0xcf, 0x8f, 0xdb, 0x44,
+	0x14, 0xc7, 0xd7, 0x4e, 0x0b, 0xda, 0x01, 0x55, 0x30, 0xda, 0xc2, 0x36, 0x5a, 0xb2, 0x30, 0x54,
+	0x05, 0x15, 0xd6, 0xa6, 0xa5, 0x17, 0x4e, 0x25, 0x11, 0xb0, 0xed, 0xb6, 0xcb, 0x76, 0x13, 0xca,
+	0xd2, 0x42, 0x89, 0xc6, 0xf1, 0xd4, 0x58, 0x75, 0x3c, 0xa9, 0xc7, 0x49, 0x5b, 0x56, 0x8b, 0x2a,
+	0xc4, 0x15, 0x09, 0x89, 0x8a, 0x13, 0xdc, 0xe0, 0x46, 0xff, 0x0c, 0xa4, 0x72, 0x40, 0xaa, 0x04,
+	0x07, 0x2e, 0x20, 0xb4, 0xcb, 0x95, 0x13, 0x12, 0x12, 0x37, 0xe4, 0xf1, 0x38, 0x71, 0xea, 0x89,
+	0xbd, 0x8a, 0x27, 0xe5, 0xe6, 0x1f, 0x33, 0xef, 0x3b, 0xef, 0xf3, 0xbe, 0x19, 0xbf, 0x09, 0x38,
+	0x3c, 0xc0, 0x9e, 0x6b, 0xe3, 0x90, 0x06, 0xe6, 0xf5, 0x3e, 0x09, 0x6e, 0x19, 0xbd, 0x80, 0x86,
+	0x14, 0x9e, 0xfa, 0xd8, 0x75, 0x2c, 0x42, 0xb0, 0xe7, 0xb9, 0xd8, 0xef, 0x10, 0xc3, 0x76, 0x59,
+	0x18, 0xb8, 0x56, 0x3f, 0x24, 0x76, 0x87, 0x76, 0x7b, 0xf1, 0x53, 0x8f, 0xd8, 0x0e, 0x09, 0x8c,
+	0x61, 0x84, 0xea, 0x92, 0x43, 0xa9, 0xe3, 0x11, 0x13, 0xf7, 0x5c, 0x13, 0xfb, 0x3e, 0x0d, 0x71,
+	0xe8, 0x52, 0x9f, 0xc5, 0x31, 0xab, 0xc7, 0x3b, 0x94, 0x75, 0x29, 0x33, 0x2d, 0xcc, 0x48, 0x2c,
+	0x66, 0x0e, 0x4e, 0x58, 0x24, 0xc4, 0x27, 0xcc, 0x1e, 0x76, 0x5c, 0x9f, 0x0f, 0x16, 0x63, 0x8f,
+	0x8c, 0x96, 0x35, 0xbc, 0x12, 0xaf, 0x8e, 0x8e, 0x5e, 0x79, 0x98, 0x85, 0xed, 0xe1, 0x6d, 0xbb,
+	0x47, 0x6f, 0x90, 0x64, 0xd4, 0x31, 0x49, 0x80, 0x36, 0x73, 0x1d, 0xdf, 0xf5, 0x9d, 0xb6, 0xeb,
+	0x5f, 0xa5, 0x62, 0xdc, 0x2b, 0xb2, 0x71, 0x5d, 0x97, 0x31, 0x62, 0xb7, 0x2d, 0x8f, 0x76, 0xae,
+	0xb5, 0x2d, 0x37, 0x6c, 0xe3, 0x20, 0xc0, 0x02, 0x4d, 0x75, 0x59, 0x36, 0x83, 0xde, 0xf0, 0x87,
+	0xd2, 0x0b, 0x0e, 0x75, 0x28, 0xbf, 0x34, 0xa3, 0xab, 0xf8, 0x29, 0x3a, 0x05, 0x16, 0x37, 0xa3,
+	0x9c, 0x57, 0x49, 0xf8, 0x6e, 0x32, 0xad, 0x49, 0xae, 0xf7, 0x09, 0x0b, 0xe1, 0x22, 0x78, 0x14,
+	0xdb, 0x76, 0x40, 0x18, 0x5b, 0xd4, 0x9e, 0xd5, 0x5e, 0x9c, 0x6f, 0x26, 0xb7, 0xe8, 0xb6, 0x06,
+	0x8e, 0x48, 0xa6, 0xb1, 0x1e, 0xf5, 0x19, 0x81, 0x1d, 0x30, 0x3f, 0x5c, 0x02, 0x9f, 0xf9, 0xd8,
+	0xc9, 0xd3, 0xc6, 0x34, 0x95, 0x33, 0x86, 0xb1, 0x1b, 0x07, 0xee, 0xfd, 0xbe, 0x3c, 0xd7, 0x1c,
+	0xc5, 0x45, 0x96, 0x58, 0x78, 0xdd, 0xf3, 0x32, 0x0b, 0x7f, 0x0b, 0x80, 0x51, 0xe9, 0xc4, 0x0a,
+	0x8e, 0x19, 0x71, 0x9d, 0x8d, 0xa8, 0xce, 0x46, 0x6c, 0x2a, 0x51, 0x67, 0xe3, 0x02, 0x76, 0x88,
+	0x98, 0xdb, 0x4c, 0xcd, 0x44, 0x3f, 0x26, 0x69, 0x8e, 0x8b, 0xc8, 0xd3, 0xac, 0xcc, 0x22, 0x4d,
+	0xb8, 0x3a, 0x96, 0x8a, 0xce, 0x53, 0x79, 0xa1, 0x30, 0x95, 0x78, 0x85, 0x63, 0xb9, 0x6c, 0x80,
+	0xe7, 0x92, 0x8a, 0x9d, 0xc7, 0x6c, 0x54, 0xb5, 0x0b, 0x91, 0x3b, 0x13, 0x70, 0xc7, 0xc1, 0x13,
+	0x9d, 0x68, 0xa6, 0xcf, 0xfa, 0xac, 0x3e, 0x56, 0xfa, 0xcc, 0x73, 0xf4, 0xad, 0x06, 0x50, 0x5e,
+	0x44, 0x41, 0xe9, 0x13, 0x00, 0xbd, 0xcc, 0x5b, 0x51, 0x93, 0x33, 0xd3, 0xe1, 0xca, 0xaa, 0x09,
+	0x6e, 0x12, 0x25, 0x74, 0x4d, 0xe4, 0x5d, 0xf7, 0xbc, 0xc9, 0x79, 0xab, 0x32, 0xcc, 0x5f, 0x09,
+	0x93, 0x09, 0x6a, 0x05, 0x4c, 0x2a, 0x0f, 0x87, 0x89, 0x3a, 0x53, 0x9d, 0x06, 0xcf, 0x67, 0xb6,
+	0x81, 0x56, 0xbc, 0x9b, 0x9d, 0xf5, 0xaf, 0xd2, 0xe2, 0x8d, 0xe4, 0xae, 0x06, 0x8e, 0xe6, 0x47,
+	0x10, 0xc8, 0x3e, 0xd3, 0xc0, 0xc2, 0x40, 0x32, 0x40, 0x14, 0x6b, 0xad, 0xe4, 0x0f, 0x2f, 0x15,
+	0x51, 0x70, 0x93, 0xaa, 0xa1, 0xae, 0x48, 0x38, 0xbd, 0x21, 0x48, 0x12, 0x56, 0xe5, 0xa7, 0x7f,
+	0x12, 0x3c, 0x13, 0xf5, 0x8a, 0xf1, 0x54, 0x1e, 0x1e, 0x1e, 0x75, 0xc6, 0xba, 0x02, 0x5e, 0xca,
+	0xd8, 0x62, 0x9d, 0x7f, 0xfe, 0x1a, 0xd1, 0xd7, 0xaf, 0xe1, 0x86, 0xf5, 0xe8, 0xdb, 0x57, 0x68,
+	0x30, 0xb8, 0x00, 0x0e, 0xba, 0xbe, 0x4d, 0x6e, 0xf2, 0xc5, 0x1c, 0x68, 0xc6, 0x37, 0xe8, 0x27,
+	0x0d, 0xbc, 0xbc, 0xbf, 0xf8, 0x82, 0xef, 0xd7, 0x1a, 0x58, 0x1a, 0xe4, 0x0c, 0x14, 0x35, 0x6e,
+	0x96, 0xe4, 0x2c, 0x89, 0x2c, 0x78, 0xe7, 0xaa, 0xa3, 0xbe, 0xc0, 0x95, 0xb6, 0x49, 0x0e, 0x2e,
+	0x55, 0xf6, 0xfc, 0x4a, 0x17, 0x18, 0x0b, 0x75, 0xf7, 0x8f, 0xb1, 0xf2, 0xff, 0x61, 0x54, 0x67,
+	0xdf, 0xd7, 0xc0, 0x33, 0x19, 0x7b, 0x6d, 0x44, 0xbd, 0x58, 0xf1, 0x8e, 0x78, 0x47, 0x03, 0xb5,
+	0x49, 0x73, 0x05, 0xc5, 0x00, 0x1c, 0x1a, 0x8c, 0xbd, 0x11, 0x25, 0x7c, 0xa3, 0x24, 0x36, 0x1e,
+	0x4b, 0x80, 0x7a, 0x40, 0x01, 0x39, 0x22, 0xa3, 0x74, 0xa5, 0xc7, 0x32, 0x52, 0xe5, 0xa9, 0xdf,
+	0x92, 0xfc, 0x25, 0x4a, 0x39, 0xf9, 0x57, 0x66, 0x9b, 0xbf, 0x32, 0x6b, 0x9c, 0xfc, 0xfb, 0x29,
+	0x70, 0x90, 0xe7, 0x07, 0x6f, 0xeb, 0x60, 0x7e, 0xa8, 0x0d, 0xdf, 0x9e, 0x6e, 0xf1, 0x93, 0x9a,
+	0xf7, 0xea, 0x86, 0xb2, 0x78, 0x71, 0x12, 0xa8, 0xf9, 0xe9, 0xcf, 0x7f, 0x7e, 0xa9, 0x9f, 0x87,
+	0x6b, 0x66, 0x1c, 0x78, 0x25, 0x89, 0x6c, 0xe6, 0x44, 0x36, 0x25, 0xa7, 0x12, 0x73, 0x5b, 0x78,
+	0x7d, 0x07, 0xfe, 0xab, 0x81, 0xc7, 0x87, 0x4a, 0x75, 0xcf, 0x2b, 0x45, 0x41, 0x72, 0x12, 0x28,
+	0x45, 0x41, 0xd6, 0xf4, 0xa3, 0x33, 0x9c, 0x42, 0x03, 0xbe, 0x5e, 0x96, 0x02, 0xbc, 0xab, 0x03,
+	0x98, 0xed, 0xda, 0xe0, 0x56, 0xb9, 0xba, 0x4d, 0xec, 0x71, 0xab, 0xef, 0xa9, 0x0f, 0x2c, 0x98,
+	0xd8, 0x9c, 0xc9, 0x87, 0xf0, 0x83, 0x29, 0x99, 0x64, 0x3b, 0x54, 0x73, 0xfb, 0xc1, 0xe3, 0xc6,
+	0x0e, 0xfc, 0x46, 0x07, 0x87, 0xb3, 0x8b, 0x88, 0x4c, 0xb3, 0x55, 0xae, 0xc8, 0xb3, 0x41, 0x96,
+	0x7b, 0x02, 0x40, 0x9b, 0x1c, 0xd9, 0x39, 0x78, 0x56, 0x19, 0x32, 0xf8, 0xbd, 0x0e, 0x16, 0x64,
+	0x0d, 0x1b, 0xbc, 0xa4, 0x68, 0x27, 0xc8, 0xf6, 0xb9, 0xd5, 0xcb, 0xb3, 0x08, 0x2d, 0x10, 0x5d,
+	0xe1, 0x88, 0xb6, 0xe0, 0xc5, 0xb2, 0xbf, 0xb4, 0x54, 0xf0, 0xd4, 0xd6, 0xf3, 0x9d, 0x0e, 0x9e,
+	0x96, 0xe9, 0x47, 0x86, 0xba, 0xa4, 0x68, 0xd7, 0x50, 0x4c, 0xac, 0xe0, 0x10, 0x80, 0x5a, 0x9c,
+	0xd8, 0x3a, 0x3c, 0xa7, 0x90, 0x18, 0xfc, 0x45, 0x07, 0x4b, 0x79, 0x8d, 0x15, 0xc4, 0x8a, 0x3c,
+	0x30, 0xb9, 0x5f, 0xad, 0x5a, 0xb3, 0x94, 0x10, 0xf0, 0xba, 0x1c, 0x9e, 0x03, 0x49, 0x59, 0x78,
+	0x12, 0x91, 0x91, 0xed, 0xcc, 0x6d, 0x7e, 0x00, 0xd9, 0x81, 0x3f, 0xe8, 0x60, 0x39, 0x6f, 0x5d,
+	0x91, 0x0d, 0xb1, 0x22, 0xaf, 0xcc, 0x88, 0xec, 0x3e, 0x9b, 0x7e, 0xf4, 0x3e, 0x27, 0x7b, 0x11,
+	0xb6, 0x66, 0x40, 0x16, 0xde, 0xd1, 0xc1, 0xa1, 0xf1, 0x06, 0x0e, 0xb6, 0x14, 0xb9, 0x25, 0xdd,
+	0xde, 0x56, 0xdf, 0x51, 0x1b, 0x54, 0xa0, 0xd9, 0xe2, 0x68, 0x36, 0xe1, 0x46, 0x59, 0x34, 0x3c,
+	0x6c, 0x6a, 0x77, 0xfb, 0x5c, 0x07, 0x4f, 0x8e, 0x6b, 0x46, 0x86, 0x6a, 0x29, 0xaa, 0xb6, 0x32,
+	0x32, 0x13, 0x7b, 0x7c, 0xb4, 0xce, 0xc9, 0xac, 0xc2, 0x37, 0x95, 0x90, 0x69, 0xd8, 0xf7, 0x76,
+	0x6b, 0xda, 0xfd, 0xdd, 0x9a, 0xf6, 0xc7, 0x6e, 0x4d, 0xfb, 0x62, 0xaf, 0x36, 0x77, 0x7f, 0xaf,
+	0x36, 0xf7, 0xeb, 0x5e, 0x6d, 0xee, 0xf2, 0x9a, 0xe3, 0x86, 0x1f, 0xf5, 0x2d, 0xa3, 0x43, 0xbb,
+	0x79, 0x52, 0x2b, 0x23, 0xad, 0x15, 0x21, 0x76, 0x33, 0x25, 0x17, 0xde, 0xea, 0x11, 0x66, 0x3d,
+	0xc2, 0xff, 0x53, 0x7f, 0xf5, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x4f, 0xe2, 0xb0, 0x56, 0xbe,
+	0x18, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -57,6 +1084,26 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
+	// Queries a validator by index.
+	Validator(ctx context.Context, in *QueryGetValidatorRequest, opts ...grpc.CallOption) (*QueryGetValidatorResponse, error)
+	// Queries a list of validator items.
+	ValidatorAll(ctx context.Context, in *QueryAllValidatorRequest, opts ...grpc.CallOption) (*QueryAllValidatorResponse, error)
+	// Queries a lastValidatorPower by index.
+	LastValidatorPower(ctx context.Context, in *QueryGetLastValidatorPowerRequest, opts ...grpc.CallOption) (*QueryGetLastValidatorPowerResponse, error)
+	// Queries a list of lastValidatorPower items.
+	LastValidatorPowerAll(ctx context.Context, in *QueryAllLastValidatorPowerRequest, opts ...grpc.CallOption) (*QueryAllLastValidatorPowerResponse, error)
+	// Queries a validatorSigningInfo by index.
+	ValidatorSigningInfo(ctx context.Context, in *QueryGetValidatorSigningInfoRequest, opts ...grpc.CallOption) (*QueryGetValidatorSigningInfoResponse, error)
+	// Queries a list of validatorSigningInfo items.
+	ValidatorSigningInfoAll(ctx context.Context, in *QueryAllValidatorSigningInfoRequest, opts ...grpc.CallOption) (*QueryAllValidatorSigningInfoResponse, error)
+	// Queries a validatorMissedBlockBitArray by index.
+	ValidatorMissedBlockBitArray(ctx context.Context, in *QueryGetValidatorMissedBlockBitArrayRequest, opts ...grpc.CallOption) (*QueryGetValidatorMissedBlockBitArrayResponse, error)
+	// Queries a list of validatorMissedBlockBitArray items.
+	ValidatorMissedBlockBitArrayAll(ctx context.Context, in *QueryAllValidatorMissedBlockBitArrayRequest, opts ...grpc.CallOption) (*QueryAllValidatorMissedBlockBitArrayResponse, error)
+	// Queries a validatorOwner by index.
+	ValidatorOwner(ctx context.Context, in *QueryGetValidatorOwnerRequest, opts ...grpc.CallOption) (*QueryGetValidatorOwnerResponse, error)
+	// Queries a list of validatorOwner items.
+	ValidatorOwnerAll(ctx context.Context, in *QueryAllValidatorOwnerRequest, opts ...grpc.CallOption) (*QueryAllValidatorOwnerResponse, error)
 }
 
 type queryClient struct {
@@ -67,22 +1114,3383 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
+func (c *queryClient) Validator(ctx context.Context, in *QueryGetValidatorRequest, opts ...grpc.CallOption) (*QueryGetValidatorResponse, error) {
+	out := new(QueryGetValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/Validator", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ValidatorAll(ctx context.Context, in *QueryAllValidatorRequest, opts ...grpc.CallOption) (*QueryAllValidatorResponse, error) {
+	out := new(QueryAllValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) LastValidatorPower(ctx context.Context, in *QueryGetLastValidatorPowerRequest, opts ...grpc.CallOption) (*QueryGetLastValidatorPowerResponse, error) {
+	out := new(QueryGetLastValidatorPowerResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/LastValidatorPower", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) LastValidatorPowerAll(ctx context.Context, in *QueryAllLastValidatorPowerRequest, opts ...grpc.CallOption) (*QueryAllLastValidatorPowerResponse, error) {
+	out := new(QueryAllLastValidatorPowerResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/LastValidatorPowerAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ValidatorSigningInfo(ctx context.Context, in *QueryGetValidatorSigningInfoRequest, opts ...grpc.CallOption) (*QueryGetValidatorSigningInfoResponse, error) {
+	out := new(QueryGetValidatorSigningInfoResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorSigningInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ValidatorSigningInfoAll(ctx context.Context, in *QueryAllValidatorSigningInfoRequest, opts ...grpc.CallOption) (*QueryAllValidatorSigningInfoResponse, error) {
+	out := new(QueryAllValidatorSigningInfoResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorSigningInfoAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ValidatorMissedBlockBitArray(ctx context.Context, in *QueryGetValidatorMissedBlockBitArrayRequest, opts ...grpc.CallOption) (*QueryGetValidatorMissedBlockBitArrayResponse, error) {
+	out := new(QueryGetValidatorMissedBlockBitArrayResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorMissedBlockBitArray", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ValidatorMissedBlockBitArrayAll(ctx context.Context, in *QueryAllValidatorMissedBlockBitArrayRequest, opts ...grpc.CallOption) (*QueryAllValidatorMissedBlockBitArrayResponse, error) {
+	out := new(QueryAllValidatorMissedBlockBitArrayResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorMissedBlockBitArrayAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ValidatorOwner(ctx context.Context, in *QueryGetValidatorOwnerRequest, opts ...grpc.CallOption) (*QueryGetValidatorOwnerResponse, error) {
+	out := new(QueryGetValidatorOwnerResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorOwner", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ValidatorOwnerAll(ctx context.Context, in *QueryAllValidatorOwnerRequest, opts ...grpc.CallOption) (*QueryAllValidatorOwnerResponse, error) {
+	out := new(QueryAllValidatorOwnerResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorOwnerAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
+	// Queries a validator by index.
+	Validator(context.Context, *QueryGetValidatorRequest) (*QueryGetValidatorResponse, error)
+	// Queries a list of validator items.
+	ValidatorAll(context.Context, *QueryAllValidatorRequest) (*QueryAllValidatorResponse, error)
+	// Queries a lastValidatorPower by index.
+	LastValidatorPower(context.Context, *QueryGetLastValidatorPowerRequest) (*QueryGetLastValidatorPowerResponse, error)
+	// Queries a list of lastValidatorPower items.
+	LastValidatorPowerAll(context.Context, *QueryAllLastValidatorPowerRequest) (*QueryAllLastValidatorPowerResponse, error)
+	// Queries a validatorSigningInfo by index.
+	ValidatorSigningInfo(context.Context, *QueryGetValidatorSigningInfoRequest) (*QueryGetValidatorSigningInfoResponse, error)
+	// Queries a list of validatorSigningInfo items.
+	ValidatorSigningInfoAll(context.Context, *QueryAllValidatorSigningInfoRequest) (*QueryAllValidatorSigningInfoResponse, error)
+	// Queries a validatorMissedBlockBitArray by index.
+	ValidatorMissedBlockBitArray(context.Context, *QueryGetValidatorMissedBlockBitArrayRequest) (*QueryGetValidatorMissedBlockBitArrayResponse, error)
+	// Queries a list of validatorMissedBlockBitArray items.
+	ValidatorMissedBlockBitArrayAll(context.Context, *QueryAllValidatorMissedBlockBitArrayRequest) (*QueryAllValidatorMissedBlockBitArrayResponse, error)
+	// Queries a validatorOwner by index.
+	ValidatorOwner(context.Context, *QueryGetValidatorOwnerRequest) (*QueryGetValidatorOwnerResponse, error)
+	// Queries a list of validatorOwner items.
+	ValidatorOwnerAll(context.Context, *QueryAllValidatorOwnerRequest) (*QueryAllValidatorOwnerResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
+func (*UnimplementedQueryServer) Validator(ctx context.Context, req *QueryGetValidatorRequest) (*QueryGetValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Validator not implemented")
+}
+func (*UnimplementedQueryServer) ValidatorAll(ctx context.Context, req *QueryAllValidatorRequest) (*QueryAllValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorAll not implemented")
+}
+func (*UnimplementedQueryServer) LastValidatorPower(ctx context.Context, req *QueryGetLastValidatorPowerRequest) (*QueryGetLastValidatorPowerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LastValidatorPower not implemented")
+}
+func (*UnimplementedQueryServer) LastValidatorPowerAll(ctx context.Context, req *QueryAllLastValidatorPowerRequest) (*QueryAllLastValidatorPowerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LastValidatorPowerAll not implemented")
+}
+func (*UnimplementedQueryServer) ValidatorSigningInfo(ctx context.Context, req *QueryGetValidatorSigningInfoRequest) (*QueryGetValidatorSigningInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorSigningInfo not implemented")
+}
+func (*UnimplementedQueryServer) ValidatorSigningInfoAll(ctx context.Context, req *QueryAllValidatorSigningInfoRequest) (*QueryAllValidatorSigningInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorSigningInfoAll not implemented")
+}
+func (*UnimplementedQueryServer) ValidatorMissedBlockBitArray(ctx context.Context, req *QueryGetValidatorMissedBlockBitArrayRequest) (*QueryGetValidatorMissedBlockBitArrayResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorMissedBlockBitArray not implemented")
+}
+func (*UnimplementedQueryServer) ValidatorMissedBlockBitArrayAll(ctx context.Context, req *QueryAllValidatorMissedBlockBitArrayRequest) (*QueryAllValidatorMissedBlockBitArrayResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorMissedBlockBitArrayAll not implemented")
+}
+func (*UnimplementedQueryServer) ValidatorOwner(ctx context.Context, req *QueryGetValidatorOwnerRequest) (*QueryGetValidatorOwnerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorOwner not implemented")
+}
+func (*UnimplementedQueryServer) ValidatorOwnerAll(ctx context.Context, req *QueryAllValidatorOwnerRequest) (*QueryAllValidatorOwnerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidatorOwnerAll not implemented")
+}
+
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
+}
+
+func _Query_Validator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetValidatorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Validator(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/Validator",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Validator(ctx, req.(*QueryGetValidatorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ValidatorAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllValidatorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValidatorAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValidatorAll(ctx, req.(*QueryAllValidatorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_LastValidatorPower_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetLastValidatorPowerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).LastValidatorPower(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/LastValidatorPower",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).LastValidatorPower(ctx, req.(*QueryGetLastValidatorPowerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_LastValidatorPowerAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllLastValidatorPowerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).LastValidatorPowerAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/LastValidatorPowerAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).LastValidatorPowerAll(ctx, req.(*QueryAllLastValidatorPowerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ValidatorSigningInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetValidatorSigningInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValidatorSigningInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorSigningInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValidatorSigningInfo(ctx, req.(*QueryGetValidatorSigningInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ValidatorSigningInfoAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllValidatorSigningInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValidatorSigningInfoAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorSigningInfoAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValidatorSigningInfoAll(ctx, req.(*QueryAllValidatorSigningInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ValidatorMissedBlockBitArray_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetValidatorMissedBlockBitArrayRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValidatorMissedBlockBitArray(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorMissedBlockBitArray",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValidatorMissedBlockBitArray(ctx, req.(*QueryGetValidatorMissedBlockBitArrayRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ValidatorMissedBlockBitArrayAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllValidatorMissedBlockBitArrayRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValidatorMissedBlockBitArrayAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorMissedBlockBitArrayAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValidatorMissedBlockBitArrayAll(ctx, req.(*QueryAllValidatorMissedBlockBitArrayRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ValidatorOwner_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetValidatorOwnerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValidatorOwner(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorOwner",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValidatorOwner(ctx, req.(*QueryGetValidatorOwnerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ValidatorOwnerAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllValidatorOwnerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValidatorOwnerAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Query/ValidatorOwnerAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValidatorOwnerAll(ctx, req.(*QueryAllValidatorOwnerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.validator.Query",
 	HandlerType: (*QueryServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "validator/query.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Validator",
+			Handler:    _Query_Validator_Handler,
+		},
+		{
+			MethodName: "ValidatorAll",
+			Handler:    _Query_ValidatorAll_Handler,
+		},
+		{
+			MethodName: "LastValidatorPower",
+			Handler:    _Query_LastValidatorPower_Handler,
+		},
+		{
+			MethodName: "LastValidatorPowerAll",
+			Handler:    _Query_LastValidatorPowerAll_Handler,
+		},
+		{
+			MethodName: "ValidatorSigningInfo",
+			Handler:    _Query_ValidatorSigningInfo_Handler,
+		},
+		{
+			MethodName: "ValidatorSigningInfoAll",
+			Handler:    _Query_ValidatorSigningInfoAll_Handler,
+		},
+		{
+			MethodName: "ValidatorMissedBlockBitArray",
+			Handler:    _Query_ValidatorMissedBlockBitArray_Handler,
+		},
+		{
+			MethodName: "ValidatorMissedBlockBitArrayAll",
+			Handler:    _Query_ValidatorMissedBlockBitArrayAll_Handler,
+		},
+		{
+			MethodName: "ValidatorOwner",
+			Handler:    _Query_ValidatorOwner_Handler,
+		},
+		{
+			MethodName: "ValidatorOwnerAll",
+			Handler:    _Query_ValidatorOwnerAll_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "validator/query.proto",
 }
+
+func (m *QueryGetValidatorRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetValidatorResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Validator.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Validator) > 0 {
+		for iNdEx := len(m.Validator) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Validator[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetLastValidatorPowerRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetLastValidatorPowerRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetLastValidatorPowerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ConsensusAddress) > 0 {
+		i -= len(m.ConsensusAddress)
+		copy(dAtA[i:], m.ConsensusAddress)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.ConsensusAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetLastValidatorPowerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetLastValidatorPowerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetLastValidatorPowerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.LastValidatorPower.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllLastValidatorPowerRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllLastValidatorPowerRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllLastValidatorPowerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllLastValidatorPowerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllLastValidatorPowerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllLastValidatorPowerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.LastValidatorPower) > 0 {
+		for iNdEx := len(m.LastValidatorPower) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.LastValidatorPower[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetValidatorSigningInfoRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorSigningInfoRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorSigningInfoRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetValidatorSigningInfoResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorSigningInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorSigningInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.ValidatorSigningInfo.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorSigningInfoRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorSigningInfoRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorSigningInfoRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorSigningInfoResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorSigningInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorSigningInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ValidatorSigningInfo) > 0 {
+		for iNdEx := len(m.ValidatorSigningInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ValidatorSigningInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Index != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Index))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.ValidatorMissedBlockBitArray.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ValidatorMissedBlockBitArray) > 0 {
+		for iNdEx := len(m.ValidatorMissedBlockBitArray) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ValidatorMissedBlockBitArray[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetValidatorOwnerRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorOwnerRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorOwnerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetValidatorOwnerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetValidatorOwnerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetValidatorOwnerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.ValidatorOwner.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorOwnerRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorOwnerRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorOwnerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllValidatorOwnerResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllValidatorOwnerResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllValidatorOwnerResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ValidatorOwner) > 0 {
+		for iNdEx := len(m.ValidatorOwner) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ValidatorOwner[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
+	offset -= sovQuery(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *QueryGetValidatorRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetValidatorResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Validator.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllValidatorRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllValidatorResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Validator) > 0 {
+		for _, e := range m.Validator {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetLastValidatorPowerRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ConsensusAddress)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetLastValidatorPowerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.LastValidatorPower.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllLastValidatorPowerRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllLastValidatorPowerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.LastValidatorPower) > 0 {
+		for _, e := range m.LastValidatorPower {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetValidatorSigningInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetValidatorSigningInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ValidatorSigningInfo.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllValidatorSigningInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllValidatorSigningInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ValidatorSigningInfo) > 0 {
+		for _, e := range m.ValidatorSigningInfo {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	if m.Index != 0 {
+		n += 1 + sovQuery(uint64(m.Index))
+	}
+	return n
+}
+
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ValidatorMissedBlockBitArray.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ValidatorMissedBlockBitArray) > 0 {
+		for _, e := range m.ValidatorMissedBlockBitArray {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetValidatorOwnerRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetValidatorOwnerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ValidatorOwner.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllValidatorOwnerRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllValidatorOwnerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ValidatorOwner) > 0 {
+		for _, e := range m.ValidatorOwner {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func sovQuery(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozQuery(x uint64) (n int) {
+	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *QueryGetValidatorRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetValidatorResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Validator", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Validator.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Validator", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Validator = append(m.Validator, Validator{})
+			if err := m.Validator[len(m.Validator)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetLastValidatorPowerRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetLastValidatorPowerRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetLastValidatorPowerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ConsensusAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ConsensusAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetLastValidatorPowerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetLastValidatorPowerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetLastValidatorPowerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LastValidatorPower", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.LastValidatorPower.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllLastValidatorPowerRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllLastValidatorPowerRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllLastValidatorPowerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllLastValidatorPowerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllLastValidatorPowerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllLastValidatorPowerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LastValidatorPower", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LastValidatorPower = append(m.LastValidatorPower, LastValidatorPower{})
+			if err := m.LastValidatorPower[len(m.LastValidatorPower)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetValidatorSigningInfoRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorSigningInfoRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorSigningInfoRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetValidatorSigningInfoResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorSigningInfoResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorSigningInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorSigningInfo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ValidatorSigningInfo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorSigningInfoRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorSigningInfoRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorSigningInfoRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorSigningInfoResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorSigningInfoResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorSigningInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorSigningInfo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ValidatorSigningInfo = append(m.ValidatorSigningInfo, ValidatorSigningInfo{})
+			if err := m.ValidatorSigningInfo[len(m.ValidatorSigningInfo)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetValidatorMissedBlockBitArrayRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorMissedBlockBitArrayRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorMissedBlockBitArrayRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
+			}
+			m.Index = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Index |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetValidatorMissedBlockBitArrayResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorMissedBlockBitArrayResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorMissedBlockBitArrayResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorMissedBlockBitArray", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ValidatorMissedBlockBitArray.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorMissedBlockBitArrayRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorMissedBlockBitArrayRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorMissedBlockBitArrayRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorMissedBlockBitArrayResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorMissedBlockBitArrayResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorMissedBlockBitArrayResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorMissedBlockBitArray", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ValidatorMissedBlockBitArray = append(m.ValidatorMissedBlockBitArray, ValidatorMissedBlockBitArray{})
+			if err := m.ValidatorMissedBlockBitArray[len(m.ValidatorMissedBlockBitArray)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetValidatorOwnerRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorOwnerRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorOwnerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetValidatorOwnerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetValidatorOwnerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetValidatorOwnerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorOwner", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ValidatorOwner.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorOwnerRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorOwnerRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorOwnerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllValidatorOwnerResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllValidatorOwnerResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllValidatorOwnerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorOwner", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ValidatorOwner = append(m.ValidatorOwner, ValidatorOwner{})
+			if err := m.ValidatorOwner[len(m.ValidatorOwner)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipQuery(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthQuery
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupQuery
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthQuery
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthQuery        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowQuery          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupQuery = fmt.Errorf("proto: unexpected end of group")
+)

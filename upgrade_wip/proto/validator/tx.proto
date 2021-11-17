@@ -2,12 +2,24 @@ syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.validator;
 
 // this line is used by starport scaffolding # proto/tx/import
+import "validator/description.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc CreateValidator(MsgCreateValidator) returns (MsgCreateValidatorResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgCreateValidator {
+  string signer = 1;
+  string address = 2;
+  string pubKey = 3;
+  Description description = 4;
+}
+
+message MsgCreateValidatorResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
