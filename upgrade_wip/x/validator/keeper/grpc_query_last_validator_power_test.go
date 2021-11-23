@@ -30,21 +30,21 @@ func TestLastValidatorPowerQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetLastValidatorPowerRequest{
-				ConsensusAddress: msgs[0].ConsensusAddress,
+				Owner: msgs[0].Owner,
 			},
 			response: &types.QueryGetLastValidatorPowerResponse{LastValidatorPower: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetLastValidatorPowerRequest{
-				ConsensusAddress: msgs[1].ConsensusAddress,
+				Owner: msgs[1].Owner,
 			},
 			response: &types.QueryGetLastValidatorPowerResponse{LastValidatorPower: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetLastValidatorPowerRequest{
-				ConsensusAddress: strconv.Itoa(100000),
+				Owner: strconv.Itoa(100000),
 			},
 			err: status.Error(codes.InvalidArgument, "not found"),
 		},

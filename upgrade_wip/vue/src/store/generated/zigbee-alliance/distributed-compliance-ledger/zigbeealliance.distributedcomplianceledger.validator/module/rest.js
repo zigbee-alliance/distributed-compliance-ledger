@@ -157,10 +157,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryLastValidatorPower
          * @summary Queries a lastValidatorPower by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{consensusAddress}
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}
          */
-        this.queryLastValidatorPower = (consensusAddress, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/${consensusAddress}`,
+        this.queryLastValidatorPower = (owner, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/${owner}`,
             method: "GET",
             format: "json",
             ...params,
@@ -186,97 +186,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryValidator
          * @summary Queries a validator by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator/{address}
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}
          */
-        this.queryValidator = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/validator/${address}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryValidatorMissedBlockBitArrayAll
-         * @summary Queries a list of validatorMissedBlockBitArray items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray
-         */
-        this.queryValidatorMissedBlockBitArrayAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryValidatorMissedBlockBitArray
-         * @summary Queries a validatorMissedBlockBitArray by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray/{address}/{index}
-         */
-        this.queryValidatorMissedBlockBitArray = (address, index, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray/${address}/${index}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryValidatorOwnerAll
-         * @summary Queries a list of validatorOwner items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner
-         */
-        this.queryValidatorOwnerAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryValidatorOwner
-         * @summary Queries a validatorOwner by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner/{address}
-         */
-        this.queryValidatorOwner = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner/${address}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryValidatorSigningInfoAll
-         * @summary Queries a list of validatorSigningInfo items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo
-         */
-        this.queryValidatorSigningInfoAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryValidatorSigningInfo
-         * @summary Queries a validatorSigningInfo by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo/{address}
-         */
-        this.queryValidatorSigningInfo = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo/${address}`,
+        this.queryValidator = (owner, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/validator/${owner}`,
             method: "GET",
             format: "json",
             ...params,

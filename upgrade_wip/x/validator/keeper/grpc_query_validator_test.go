@@ -30,21 +30,21 @@ func TestValidatorQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetValidatorRequest{
-				Address: msgs[0].Address,
+				Owner: msgs[0].Owner,
 			},
 			response: &types.QueryGetValidatorResponse{Validator: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetValidatorRequest{
-				Address: msgs[1].Address,
+				Owner: msgs[1].Owner,
 			},
 			response: &types.QueryGetValidatorResponse{Validator: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetValidatorRequest{
-				Address: strconv.Itoa(100000),
+				Owner: strconv.Itoa(100000),
 			},
 			err: status.Error(codes.InvalidArgument, "not found"),
 		},

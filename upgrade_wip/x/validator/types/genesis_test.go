@@ -23,44 +23,18 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				ValidatorList: []types.Validator{
 					{
-						Address: "0",
+						Owner: "0",
 					},
 					{
-						Address: "1",
+						Owner: "1",
 					},
 				},
 				LastValidatorPowerList: []types.LastValidatorPower{
 					{
-						ConsensusAddress: "0",
+						Owner: "0",
 					},
 					{
-						ConsensusAddress: "1",
-					},
-				},
-				ValidatorSigningInfoList: []types.ValidatorSigningInfo{
-					{
-						Address: "0",
-					},
-					{
-						Address: "1",
-					},
-				},
-				ValidatorMissedBlockBitArrayList: []types.ValidatorMissedBlockBitArray{
-					{
-						Address: "0",
-						Index:   0,
-					},
-					{
-						Address: "1",
-						Index:   1,
-					},
-				},
-				ValidatorOwnerList: []types.ValidatorOwner{
-					{
-						Address: "0",
-					},
-					{
-						Address: "1",
+						Owner: "1",
 					},
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
@@ -72,10 +46,10 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				ValidatorList: []types.Validator{
 					{
-						Address: "0",
+						Owner: "0",
 					},
 					{
-						Address: "0",
+						Owner: "0",
 					},
 				},
 			},
@@ -86,54 +60,10 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				LastValidatorPowerList: []types.LastValidatorPower{
 					{
-						ConsensusAddress: "0",
+						Owner: "0",
 					},
 					{
-						ConsensusAddress: "0",
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated validatorSigningInfo",
-			genState: &types.GenesisState{
-				ValidatorSigningInfoList: []types.ValidatorSigningInfo{
-					{
-						Address: "0",
-					},
-					{
-						Address: "0",
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated validatorMissedBlockBitArray",
-			genState: &types.GenesisState{
-				ValidatorMissedBlockBitArrayList: []types.ValidatorMissedBlockBitArray{
-					{
-						Address: "0",
-						Index:   0,
-					},
-					{
-						Address: "0",
-						Index:   0,
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated validatorOwner",
-			genState: &types.GenesisState{
-				ValidatorOwnerList: []types.ValidatorOwner{
-					{
-						Address: "0",
-					},
-					{
-						Address: "0",
+						Owner: "0",
 					},
 				},
 			},

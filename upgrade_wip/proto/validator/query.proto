@@ -5,19 +5,18 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "validator/validator.proto";
 import "validator/last_validator_power.proto";
-import "validator/validator_signing_info.proto";
-import "validator/validator_missed_block_bit_array.proto";
-import "validator/validator_owner.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
 
+import "cosmos_proto/cosmos.proto";
+
 // Query defines the gRPC querier service.
 service Query {
     // Queries a validator by index.
 	rpc Validator(QueryGetValidatorRequest) returns (QueryGetValidatorResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validator/{address}";
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}";
 	}
 
 	// Queries a list of validator items.
@@ -27,7 +26,7 @@ service Query {
 
 // Queries a lastValidatorPower by index.
 	rpc LastValidatorPower(QueryGetLastValidatorPowerRequest) returns (QueryGetLastValidatorPowerResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{consensusAddress}";
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}";
 	}
 
 	// Queries a list of lastValidatorPower items.
@@ -35,42 +34,11 @@ service Query {
 		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower";
 	}
 
-// Queries a validatorSigningInfo by index.
-	rpc ValidatorSigningInfo(QueryGetValidatorSigningInfoRequest) returns (QueryGetValidatorSigningInfoResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo/{address}";
-	}
-
-	// Queries a list of validatorSigningInfo items.
-	rpc ValidatorSigningInfoAll(QueryAllValidatorSigningInfoRequest) returns (QueryAllValidatorSigningInfoResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo";
-	}
-
-// Queries a validatorMissedBlockBitArray by index.
-	rpc ValidatorMissedBlockBitArray(QueryGetValidatorMissedBlockBitArrayRequest) returns (QueryGetValidatorMissedBlockBitArrayResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray/{address}/{index}";
-	}
-
-	// Queries a list of validatorMissedBlockBitArray items.
-	rpc ValidatorMissedBlockBitArrayAll(QueryAllValidatorMissedBlockBitArrayRequest) returns (QueryAllValidatorMissedBlockBitArrayResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray";
-	}
-
-// Queries a validatorOwner by index.
-	rpc ValidatorOwner(QueryGetValidatorOwnerRequest) returns (QueryGetValidatorOwnerResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner/{address}";
-	}
-
-	// Queries a list of validatorOwner items.
-	rpc ValidatorOwnerAll(QueryAllValidatorOwnerRequest) returns (QueryAllValidatorOwnerResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner";
-	}
-
 // this line is used by starport scaffolding # 2
 }
 
 message QueryGetValidatorRequest {
-	  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-
+	  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 
 message QueryGetValidatorResponse {
@@ -87,7 +55,7 @@ message QueryAllValidatorResponse {
 }
 
 message QueryGetLastValidatorPowerRequest {
-	  string consensusAddress = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+	  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
 }
 
@@ -101,61 +69,6 @@ message QueryAllLastValidatorPowerRequest {
 
 message QueryAllLastValidatorPowerResponse {
 	repeated LastValidatorPower lastValidatorPower = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryGetValidatorSigningInfoRequest {
-	  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-
-}
-
-message QueryGetValidatorSigningInfoResponse {
-	ValidatorSigningInfo validatorSigningInfo = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllValidatorSigningInfoRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllValidatorSigningInfoResponse {
-	repeated ValidatorSigningInfo validatorSigningInfo = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryGetValidatorMissedBlockBitArrayRequest {
-	  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  uint64 index = 2;
-
-}
-
-message QueryGetValidatorMissedBlockBitArrayResponse {
-	ValidatorMissedBlockBitArray validatorMissedBlockBitArray = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllValidatorMissedBlockBitArrayRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllValidatorMissedBlockBitArrayResponse {
-	repeated ValidatorMissedBlockBitArray validatorMissedBlockBitArray = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
-message QueryGetValidatorOwnerRequest {
-	  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-
-}
-
-message QueryGetValidatorOwnerResponse {
-	ValidatorOwner validatorOwner = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllValidatorOwnerRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllValidatorOwnerResponse {
-	repeated ValidatorOwner validatorOwner = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

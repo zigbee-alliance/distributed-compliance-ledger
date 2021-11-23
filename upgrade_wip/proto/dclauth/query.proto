@@ -3,13 +3,113 @@ package zigbeealliance.distributedcomplianceledger.dclauth;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "dclauth/account.proto";
+import "dclauth/pending_account.proto";
+import "dclauth/pending_account_revocation.proto";
+import "dclauth/account_stat.proto";
 // this line is used by starport scaffolding # 1
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
 
+import "cosmos_proto/cosmos.proto";
+
 // Query defines the gRPC querier service.
 service Query {
-    // this line is used by starport scaffolding # 2
+    // Queries a account by index.
+	rpc Account(QueryGetAccountRequest) returns (QueryGetAccountResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/account/{address}";
+	}
+
+	// Queries a list of account items.
+	rpc AccountAll(QueryAllAccountRequest) returns (QueryAllAccountResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/account";
+	}
+
+// Queries a pendingAccount by index.
+	rpc PendingAccount(QueryGetPendingAccountRequest) returns (QueryGetPendingAccountResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/{address}";
+	}
+
+	// Queries a list of pendingAccount items.
+	rpc PendingAccountAll(QueryAllPendingAccountRequest) returns (QueryAllPendingAccountResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount";
+	}
+
+// Queries a pendingAccountRevocation by index.
+	rpc PendingAccountRevocation(QueryGetPendingAccountRevocationRequest) returns (QueryGetPendingAccountRevocationResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/{address}";
+	}
+
+	// Queries a list of pendingAccountRevocation items.
+	rpc PendingAccountRevocationAll(QueryAllPendingAccountRevocationRequest) returns (QueryAllPendingAccountRevocationResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation";
+	}
+
+// Queries a accountStat by index.
+	rpc AccountStat(QueryGetAccountStatRequest) returns (QueryGetAccountStatResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/accountStat";
+	}
+// this line is used by starport scaffolding # 2
 }
 
+message QueryGetAccountRequest {
+	  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+}
+
+message QueryGetAccountResponse {
+	Account account = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllAccountRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllAccountResponse {
+	repeated Account account = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetPendingAccountRequest {
+	  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+}
+
+message QueryGetPendingAccountResponse {
+	PendingAccount pendingAccount = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPendingAccountRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPendingAccountResponse {
+	repeated PendingAccount pendingAccount = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetPendingAccountRevocationRequest {
+	  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+}
+
+message QueryGetPendingAccountRevocationResponse {
+	PendingAccountRevocation pendingAccountRevocation = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllPendingAccountRevocationRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllPendingAccountRevocationResponse {
+	repeated PendingAccountRevocation pendingAccountRevocation = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetAccountStatRequest {}
+
+message QueryGetAccountStatResponse {
+	AccountStat AccountStat = 1 [(gogoproto.nullable) = false];
+}
 // this line is used by starport scaffolding # 3

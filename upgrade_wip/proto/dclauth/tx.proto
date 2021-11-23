@@ -5,9 +5,52 @@ package zigbeealliance.distributedcomplianceledger.dclauth;
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
 
+import "google/protobuf/any.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc ProposeAddAccount(MsgProposeAddAccount) returns (MsgProposeAddAccountResponse);
+  rpc ApproveAddAccount(MsgApproveAddAccount) returns (MsgApproveAddAccountResponse);
+  rpc ProposeRevokeAccount(MsgProposeRevokeAccount) returns (MsgProposeRevokeAccountResponse);
+  rpc ApproveRevokeAccount(MsgApproveRevokeAccount) returns (MsgApproveRevokeAccountResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgProposeAddAccount {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  google.protobuf.Any pubKey = 3 [(cosmos_proto.accepts_interface) = "cosmos.crypto.PubKey"];
+  repeated string roles = 4 [(gogoproto.casttype) = "dclauth/types.AccountRole"];
+  uint64 vendorID = 5;
+}
+
+message MsgProposeAddAccountResponse {
+}
+
+message MsgApproveAddAccount {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+message MsgApproveAddAccountResponse {
+}
+
+message MsgProposeRevokeAccount {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+message MsgProposeRevokeAccountResponse {
+}
+
+message MsgApproveRevokeAccount {
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+message MsgApproveRevokeAccountResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

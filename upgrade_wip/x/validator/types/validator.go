@@ -1,19 +1,13 @@
 package types
 
 import (
-	"bytes"
 	"fmt"
-	"sort"
-	"strings"
-	"time"
 
 	abci "github.com/tendermint/tendermint/abci/types"
-	tmprotocrypto "github.com/tendermint/tendermint/proto/tendermint/crypto"
 	"sigs.k8s.io/yaml"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -34,40 +28,47 @@ import (
 
 // ============= Validator ================
 
-func NewValidator(address sdk.ConsAddress, pubKey string, description Description, owner sdk.AccAddress) Validator {
+func NewValidator(owner sdk.ValAddress, pubKey cryptotypes.PubKey, description Description) Validator {
 	pkAny, err := codectypes.NewAnyWithValue(pubKey)
 	if err != nil {
 		return Validator{}, err
 	}
 
 	return Validator{
+		Owner:       owner.String(),
 		Description: description,
-		Address:     address.String(),
-		PubKey:      pubKey,
-		// Pubkey:   pkAny,
-		Power:  Power,
-		Jailed: false,
-		Owner:  owner.String(),
+		Pubkey:      pkAny,
+		Power:       Power,
+		Jailed:      false,
 	}
 }
 
-// FIXME issue 99
-func (v Validator) GetConsAddress() sdk.ConsAddress {
-	return sdk.ConsAddress(v.GetConsPubKey().Address())
+func (v Validator) GetConsAddress() (sdk.ConsAddress, error) {
+	pk, ok := v.Pubkey.GetCachedValue().(cryptotypes.PubKey)
+	if !ok {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
+	}
+
+	return sdk.ConsAddress(pk.Address()), nil
 }
 
-// FIXME issue 99
-func (v Validator) GetConsPubKey() crypto.PubKey {
-	return sdk.MustGetConsPubKeyBech32(v.PubKey)
+func (v Validator) GetConsPubKey() (cryptotypes.PubKey, error) {
+	pk, ok := v.Pubkey.GetCachedValue().(cryptotypes.PubKey)
+	if !ok {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
+	}
+
+	return pk, nil
+
 }
 
 func (v Validator) GetPower() int32 { return v.Power }
 
-func (v Validator) GetOwner() sdk.AccAddress {
-	if v.Address == "" {
+func (v Validator) GetOwner() sdk.ValAddress {
+	if v.Owner == "" {
 		return nil
 	}
-	addr, err := sdk.AccAddressFromBech32(v.Address)
+	addr, err := sdk.ValAddressFromBech32(v.Owner)
 	if err != nil {
 		panic(err)
 	}
@@ -78,38 +79,32 @@ func (v Validator) GetName() string { return v.Description.Name }
 
 func (v Validator) IsJailed() bool { return v.Jailed }
 
-// FIXME issue 99
 // ABCI ValidatorUpdate message to add new validator to validator set.
 func (v Validator) ABCIValidatorUpdate() abci.ValidatorUpdate {
-	/*
-		tmProtoPk, err := v.TmConsPublicKey()
-		if err != nil {
-			panic(err)
-		}
-	*/
+	tmProtoPk, err := v.TmConsPublicKey()
+	if err != nil {
+		panic(err)
+	}
 
 	return abci.ValidatorUpdate{
-		PubKey: tmtypes.TM2PB.PubKey(v.GetConsPubKey()),
+		PubKey: tmProtoPk,
 		Power:  v.GetPower(),
 	}
 }
 
 // ABCI ValidatorUpdate message to remove validator from validator set.
 func (v Validator) ABCIValidatorUpdateZero() abci.ValidatorUpdate {
-	/*
-		tmProtoPk, err := v.TmConsPublicKey()
-		if err != nil {
-			panic(err)
-		}
-	*/
+	tmProtoPk, err := v.TmConsPublicKey()
+	if err != nil {
+		panic(err)
+	}
 
 	return abci.ValidatorUpdate{
-		PubKey: tmtypes.TM2PB.PubKey(v.GetConsPubKey()),
+		PubKey: tmProtoPk,
 		Power:  ZeroPower,
 	}
 }
 
-// FIXME issue 99
 func (v Validator) String() string {
 	bz, err := codec.ProtoMarshalJSON(&v, nil)
 	if err != nil {
@@ -145,20 +140,7 @@ func UnmarshalValidator(cdc codec.BinaryCodec, value []byte) (v Validator, err e
 	return v, err
 }
 
-/* FIXME issue 99
-
-// ConsPubKey returns the validator PubKey as a cryptotypes.PubKey.
-func (v Validator) ConsPubKey() (cryptotypes.PubKey, error) {
-	pk, ok := v.ConsensusPubkey.GetCachedValue().(cryptotypes.PubKey)
-	if !ok {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
-	}
-
-	return pk, nil
-
-}
-
-// TmConsPublicKey casts Validator.ConsensusPubkey to tmprotocrypto.PubKey.
+// TmConsPublicKey casts Validator.Pubkey to tmprotocrypto.PubKey.
 func (v Validator) TmConsPublicKey() (tmprotocrypto.PublicKey, error) {
 	pk, err := v.ConsPubKey()
 	if err != nil {
@@ -175,7 +157,7 @@ func (v Validator) TmConsPublicKey() (tmprotocrypto.PublicKey, error) {
 
 // GetConsAddr extracts Consensus key address
 func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
-	pk, ok := v.ConsensusPubkey.GetCachedValue().(cryptotypes.PubKey)
+	pk, ok := v.Pubkey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
 	}
@@ -183,7 +165,11 @@ func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
 	return sdk.ConsAddress(pk.Address()), nil
 }
 
-*/
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+func (v Validator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
+	var pk cryptotypes.PubKey
+	return unpacker.UnpackAny(v.Pubkey, &pk)
+}
 
 // ============= Description of Validator ================
 
@@ -235,8 +221,6 @@ func (d Description) Validate() sdk.Error {
 	return nil
 }
 
-// TODO issue 99 review
-// String implements the Stringer interface for a Description object.
 func (d Description) String() string {
 	out, _ := yaml.Marshal(d)
 	return string(out)
@@ -245,60 +229,27 @@ func (d Description) String() string {
 // ============= LastValidatorPower ================
 // needed for taking validator set updates
 
-func NewLastValidatorPower(address sdk.ConsAddress) LastValidatorPower {
+func NewLastValidatorPower(owner sdk.ValAddress) LastValidatorPower {
 	return LastValidatorPower{
-		ConsensusAddress: address.String(),
-		Power:            Power,
+		Owner: address.String(),
+		Power: Power,
 	}
 }
 
-// ============= ValidatorSigninginfo ================
-
-func NewValidatorSigningInfo(address sdk.ConsAddress, startHeight uint64) ValidatorSigningInfo {
-	return ValidatorSigningInfo{
-		Address:             address.String(),
-		StartHeight:         startHeight,
-		IndexOffset:         0,
-		MissedBlocksCounter: 0,
+func (vp LastValidatorPower) GetOwner() sdk.ValAddress {
+	if vp.Owner == "" {
+		return nil
 	}
-}
-
-func (v ValidatorSigningInfo) Reset() ValidatorSigningInfo {
-	v.MissedBlocksCounter = 0
-	v.IndexOffset = 0
-
-	return v
-}
-
-// TODO issue 99 review
-func (v ValidatorSigningInfo) String() string {
-	out, _ := yaml.Marshal(v)
-	return string(out)
-}
-
-// ============= ValidatorMissedBlockBitArray ================
-
-func NewValidatorMissedBlockBitArray(address sdk.ConsAddress, index uint64) ValidatorMissedBlockBitArray {
-	return ValidatorMissedBlockBitArray{
-		Address: address.String(),
-		Index:   index,
+	addr, err := sdk.ValAddressFromBech32(vp.Owner)
+	if err != nil {
+		panic(err)
 	}
+	return addr
 }
 
-func (v ValidatorMissedBlockBitArray) String() string {
-	out, _ := yaml.Marshal(v)
-	return string(out)
-}
+func (vp LastValidatorPower) GetPower() Power { return vp.Power }
 
-// ============= ValidatorOwner ================
-
-func NewValidatorOwner(address sdk.AccAddress, index uint64) ValidatorOwner {
-	return ValidatorOwner{
-		Address: address.String(),
-	}
-}
-
-func (v ValidatorOwner) String() string {
-	out, _ := yaml.Marshal(v)
+func (vp LastValidatorPower) String() string {
+	out, _ := yaml.Marshal(vp)
 	return string(out)
 }

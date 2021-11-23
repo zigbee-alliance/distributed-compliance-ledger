@@ -5,11 +5,19 @@ package types
 
 import (
 	context "context"
+	dclauth_types "dclauth/types"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
+	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -23,21 +31,429 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type MsgProposeAddAccount struct {
+	Signer   string                      `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Address  string                      `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	PubKey   *types.Any                  `protobuf:"bytes,3,opt,name=pubKey,proto3" json:"pubKey,omitempty"`
+	Roles    []dclauth_types.AccountRole `protobuf:"bytes,4,rep,name=roles,proto3,casttype=dclauth/types.AccountRole" json:"roles,omitempty"`
+	VendorID uint64                      `protobuf:"varint,5,opt,name=vendorID,proto3" json:"vendorID,omitempty"`
+}
+
+func (m *MsgProposeAddAccount) Reset()         { *m = MsgProposeAddAccount{} }
+func (m *MsgProposeAddAccount) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeAddAccount) ProtoMessage()    {}
+func (*MsgProposeAddAccount) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{0}
+}
+func (m *MsgProposeAddAccount) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeAddAccount) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeAddAccount.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeAddAccount) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeAddAccount.Merge(m, src)
+}
+func (m *MsgProposeAddAccount) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeAddAccount) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeAddAccount.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeAddAccount proto.InternalMessageInfo
+
+func (m *MsgProposeAddAccount) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgProposeAddAccount) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *MsgProposeAddAccount) GetPubKey() *types.Any {
+	if m != nil {
+		return m.PubKey
+	}
+	return nil
+}
+
+func (m *MsgProposeAddAccount) GetRoles() []dclauth_types.AccountRole {
+	if m != nil {
+		return m.Roles
+	}
+	return nil
+}
+
+func (m *MsgProposeAddAccount) GetVendorID() uint64 {
+	if m != nil {
+		return m.VendorID
+	}
+	return 0
+}
+
+type MsgProposeAddAccountResponse struct {
+}
+
+func (m *MsgProposeAddAccountResponse) Reset()         { *m = MsgProposeAddAccountResponse{} }
+func (m *MsgProposeAddAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeAddAccountResponse) ProtoMessage()    {}
+func (*MsgProposeAddAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{1}
+}
+func (m *MsgProposeAddAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeAddAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeAddAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeAddAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeAddAccountResponse.Merge(m, src)
+}
+func (m *MsgProposeAddAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeAddAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeAddAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeAddAccountResponse proto.InternalMessageInfo
+
+type MsgApproveAddAccount struct {
+	Signer  string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *MsgApproveAddAccount) Reset()         { *m = MsgApproveAddAccount{} }
+func (m *MsgApproveAddAccount) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveAddAccount) ProtoMessage()    {}
+func (*MsgApproveAddAccount) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{2}
+}
+func (m *MsgApproveAddAccount) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveAddAccount) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveAddAccount.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveAddAccount) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveAddAccount.Merge(m, src)
+}
+func (m *MsgApproveAddAccount) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveAddAccount) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveAddAccount.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveAddAccount proto.InternalMessageInfo
+
+func (m *MsgApproveAddAccount) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgApproveAddAccount) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type MsgApproveAddAccountResponse struct {
+}
+
+func (m *MsgApproveAddAccountResponse) Reset()         { *m = MsgApproveAddAccountResponse{} }
+func (m *MsgApproveAddAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveAddAccountResponse) ProtoMessage()    {}
+func (*MsgApproveAddAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{3}
+}
+func (m *MsgApproveAddAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveAddAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveAddAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveAddAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveAddAccountResponse.Merge(m, src)
+}
+func (m *MsgApproveAddAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveAddAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveAddAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveAddAccountResponse proto.InternalMessageInfo
+
+type MsgProposeRevokeAccount struct {
+	Signer  string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *MsgProposeRevokeAccount) Reset()         { *m = MsgProposeRevokeAccount{} }
+func (m *MsgProposeRevokeAccount) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeRevokeAccount) ProtoMessage()    {}
+func (*MsgProposeRevokeAccount) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{4}
+}
+func (m *MsgProposeRevokeAccount) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeRevokeAccount) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeRevokeAccount.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeRevokeAccount) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeRevokeAccount.Merge(m, src)
+}
+func (m *MsgProposeRevokeAccount) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeRevokeAccount) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeRevokeAccount.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeRevokeAccount proto.InternalMessageInfo
+
+func (m *MsgProposeRevokeAccount) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgProposeRevokeAccount) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type MsgProposeRevokeAccountResponse struct {
+}
+
+func (m *MsgProposeRevokeAccountResponse) Reset()         { *m = MsgProposeRevokeAccountResponse{} }
+func (m *MsgProposeRevokeAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeRevokeAccountResponse) ProtoMessage()    {}
+func (*MsgProposeRevokeAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{5}
+}
+func (m *MsgProposeRevokeAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeRevokeAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeRevokeAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeRevokeAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeRevokeAccountResponse.Merge(m, src)
+}
+func (m *MsgProposeRevokeAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeRevokeAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeRevokeAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeRevokeAccountResponse proto.InternalMessageInfo
+
+type MsgApproveRevokeAccount struct {
+	Signer  string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *MsgApproveRevokeAccount) Reset()         { *m = MsgApproveRevokeAccount{} }
+func (m *MsgApproveRevokeAccount) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveRevokeAccount) ProtoMessage()    {}
+func (*MsgApproveRevokeAccount) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{6}
+}
+func (m *MsgApproveRevokeAccount) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveRevokeAccount) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveRevokeAccount.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveRevokeAccount) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveRevokeAccount.Merge(m, src)
+}
+func (m *MsgApproveRevokeAccount) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveRevokeAccount) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveRevokeAccount.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveRevokeAccount proto.InternalMessageInfo
+
+func (m *MsgApproveRevokeAccount) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgApproveRevokeAccount) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type MsgApproveRevokeAccountResponse struct {
+}
+
+func (m *MsgApproveRevokeAccountResponse) Reset()         { *m = MsgApproveRevokeAccountResponse{} }
+func (m *MsgApproveRevokeAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveRevokeAccountResponse) ProtoMessage()    {}
+func (*MsgApproveRevokeAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ba91727cb044acc7, []int{7}
+}
+func (m *MsgApproveRevokeAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveRevokeAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveRevokeAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveRevokeAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveRevokeAccountResponse.Merge(m, src)
+}
+func (m *MsgApproveRevokeAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveRevokeAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveRevokeAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveRevokeAccountResponse proto.InternalMessageInfo
+
+func init() {
+	proto.RegisterType((*MsgProposeAddAccount)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount")
+	proto.RegisterType((*MsgProposeAddAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccountResponse")
+	proto.RegisterType((*MsgApproveAddAccount)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount")
+	proto.RegisterType((*MsgApproveAddAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccountResponse")
+	proto.RegisterType((*MsgProposeRevokeAccount)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount")
+	proto.RegisterType((*MsgProposeRevokeAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccountResponse")
+	proto.RegisterType((*MsgApproveRevokeAccount)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount")
+	proto.RegisterType((*MsgApproveRevokeAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccountResponse")
+}
+
 func init() { proto.RegisterFile("dclauth/tx.proto", fileDescriptor_ba91727cb044acc7) }
 
 var fileDescriptor_ba91727cb044acc7 = []byte{
-	// 162 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x48, 0x49, 0xce, 0x49,
-	0x2c, 0x2d, 0xc9, 0xd0, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x32, 0xaa, 0xca,
-	0x4c, 0x4f, 0x4a, 0x4d, 0x4d, 0xcc, 0xc9, 0xc9, 0x4c, 0xcc, 0x4b, 0x4e, 0xd5, 0x4b, 0xc9, 0x2c,
-	0x2e, 0x29, 0xca, 0x4c, 0x2a, 0x2d, 0x49, 0x4d, 0x49, 0xce, 0xcf, 0x2d, 0x80, 0x88, 0xe6, 0xa4,
-	0xa6, 0xa4, 0xa7, 0x16, 0xe9, 0x41, 0x35, 0x1b, 0xb1, 0x72, 0x31, 0xfb, 0x16, 0xa7, 0x3b, 0x25,
-	0x9d, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb,
-	0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x47, 0x7a, 0x66, 0x49, 0x46,
-	0x69, 0x92, 0x5e, 0x72, 0x7e, 0xae, 0x3e, 0xc4, 0x7c, 0x5d, 0x98, 0x05, 0xfa, 0x48, 0x16, 0xe8,
-	0x22, 0x6c, 0xd0, 0x85, 0x58, 0xa1, 0x5f, 0xa1, 0x0f, 0x77, 0x61, 0x65, 0x41, 0x6a, 0x71, 0x12,
-	0x1b, 0xd8, 0x95, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x9b, 0xa3, 0x29, 0x22, 0xb9, 0x00,
-	0x00, 0x00,
+	// 512 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x94, 0xcd, 0x6e, 0xd3, 0x40,
+	0x10, 0xc7, 0xe3, 0xa6, 0x09, 0x74, 0xb9, 0x80, 0x65, 0x09, 0xc7, 0x02, 0x37, 0xe4, 0x94, 0x4b,
+	0xd6, 0x28, 0x7d, 0x02, 0x47, 0x08, 0x15, 0x45, 0x95, 0x22, 0xf7, 0xc6, 0x05, 0xf9, 0x63, 0xd8,
+	0x5a, 0x38, 0x1e, 0x6b, 0xd7, 0x8e, 0x6a, 0x84, 0xc4, 0x2b, 0x70, 0xe1, 0x39, 0xb8, 0x70, 0xe0,
+	0x11, 0x10, 0xa7, 0x8a, 0x13, 0x27, 0x40, 0xc9, 0x5b, 0x70, 0x42, 0x78, 0xed, 0x84, 0x10, 0x17,
+	0x44, 0x1b, 0xb5, 0xb7, 0xfd, 0x98, 0xf9, 0xcf, 0x6f, 0x46, 0xff, 0x5d, 0x72, 0x3b, 0xf0, 0x23,
+	0x37, 0x4b, 0x4f, 0xac, 0xf4, 0x94, 0x26, 0x1c, 0x53, 0x54, 0x87, 0x2f, 0x43, 0xe6, 0x01, 0xb8,
+	0x51, 0x14, 0xba, 0xb1, 0x0f, 0x34, 0x08, 0x45, 0xca, 0x43, 0x2f, 0x4b, 0x21, 0xf0, 0x71, 0x9a,
+	0xc8, 0xd3, 0x08, 0x02, 0x06, 0x9c, 0x96, 0xc9, 0x46, 0x87, 0x21, 0xb2, 0x08, 0xac, 0x42, 0xc1,
+	0xcb, 0x9e, 0x5b, 0x6e, 0x9c, 0x4b, 0x39, 0x43, 0x63, 0xc8, 0xb0, 0x58, 0x5a, 0xbf, 0x56, 0xe5,
+	0x69, 0xc7, 0x47, 0x31, 0x45, 0xf1, 0x4c, 0x5e, 0xc8, 0x8d, 0xbc, 0xea, 0xbd, 0xdd, 0x21, 0xda,
+	0x91, 0x60, 0x13, 0x8e, 0x09, 0x0a, 0xb0, 0x83, 0xc0, 0xf6, 0x7d, 0xcc, 0xe2, 0x54, 0x7d, 0x48,
+	0xda, 0x22, 0x64, 0x31, 0x70, 0x5d, 0xe9, 0x2a, 0xfd, 0xbd, 0x91, 0xfe, 0xf9, 0xfd, 0x40, 0x2b,
+	0x53, 0xed, 0x20, 0xe0, 0x20, 0xc4, 0x71, 0xca, 0xc3, 0x98, 0x39, 0x65, 0x9c, 0x3a, 0x24, 0x37,
+	0x5c, 0x79, 0xa1, 0xef, 0xfc, 0x23, 0xa5, 0x0a, 0x54, 0x1f, 0x93, 0x76, 0x92, 0x79, 0x63, 0xc8,
+	0xf5, 0x66, 0x57, 0xe9, 0xdf, 0x1a, 0x6a, 0x54, 0xf6, 0x46, 0xab, 0xde, 0xa8, 0x1d, 0xe7, 0x23,
+	0xfd, 0xd3, 0x4a, 0xc8, 0xe7, 0x79, 0x92, 0x22, 0x9d, 0x14, 0x59, 0x4e, 0x99, 0xad, 0x1e, 0x90,
+	0x16, 0xc7, 0x08, 0x84, 0xbe, 0xdb, 0x6d, 0xf6, 0xf7, 0x46, 0xf7, 0x7f, 0x7c, 0xdd, 0xef, 0x2c,
+	0x67, 0x9d, 0x27, 0x20, 0x68, 0xd9, 0x97, 0x83, 0x11, 0x38, 0x32, 0x56, 0x35, 0xc8, 0xcd, 0x19,
+	0xc4, 0x01, 0xf2, 0x27, 0x8f, 0xf4, 0x56, 0x57, 0xe9, 0xef, 0x3a, 0xcb, 0x7d, 0xcf, 0x24, 0xf7,
+	0xea, 0xc6, 0xe2, 0x80, 0x48, 0x30, 0x16, 0xd0, 0x7b, 0x55, 0x8c, 0xcd, 0x4e, 0x12, 0x8e, 0xb3,
+	0x2b, 0x1f, 0x5b, 0x49, 0xb7, 0x51, 0x7d, 0x49, 0xf7, 0x9a, 0xdc, 0x5d, 0xd1, 0x3b, 0x30, 0xc3,
+	0x17, 0x70, 0xb5, 0x80, 0x0f, 0xc8, 0xfe, 0x39, 0x00, 0x7f, 0x30, 0x96, 0x3d, 0x5c, 0x1f, 0x63,
+	0x1d, 0x40, 0xc5, 0x38, 0xfc, 0xd6, 0x22, 0xcd, 0x23, 0xc1, 0xd4, 0x77, 0x0a, 0xb9, 0xb3, 0xf9,
+	0x44, 0x0e, 0xe9, 0xff, 0x3f, 0x5e, 0x5a, 0xe7, 0x2a, 0x63, 0xb2, 0x2d, 0xa5, 0x8a, 0xbc, 0x20,
+	0xde, 0x74, 0xe7, 0x45, 0x89, 0x37, 0x94, 0x2e, 0x4c, 0x7c, 0xae, 0x67, 0xd5, 0x0f, 0x0a, 0xd1,
+	0x6a, 0x1d, 0x3b, 0xbe, 0xdc, 0x70, 0xd6, 0xc4, 0x8c, 0xe3, 0x2d, 0x8a, 0xad, 0xa1, 0xd7, 0x1a,
+	0x79, 0x7c, 0xb9, 0x29, 0x6d, 0x07, 0xfd, 0x6f, 0x0e, 0x1f, 0x79, 0x1f, 0xe7, 0xa6, 0x72, 0x36,
+	0x37, 0x95, 0xef, 0x73, 0x53, 0x79, 0xb3, 0x30, 0x1b, 0x67, 0x0b, 0xb3, 0xf1, 0x65, 0x61, 0x36,
+	0x9e, 0x1e, 0xb2, 0x30, 0x3d, 0xc9, 0x3c, 0xea, 0xe3, 0xd4, 0x92, 0x85, 0x07, 0x55, 0x65, 0xeb,
+	0xb7, 0xca, 0x83, 0x55, 0xe9, 0x81, 0xac, 0x6d, 0x9d, 0x5a, 0x6b, 0x5f, 0xaf, 0xd7, 0x2e, 0x3e,
+	0xf3, 0x83, 0x9f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xa2, 0x0a, 0xc7, 0x03, 0xfe, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -52,6 +468,10 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	ProposeAddAccount(ctx context.Context, in *MsgProposeAddAccount, opts ...grpc.CallOption) (*MsgProposeAddAccountResponse, error)
+	ApproveAddAccount(ctx context.Context, in *MsgApproveAddAccount, opts ...grpc.CallOption) (*MsgApproveAddAccountResponse, error)
+	ProposeRevokeAccount(ctx context.Context, in *MsgProposeRevokeAccount, opts ...grpc.CallOption) (*MsgProposeRevokeAccountResponse, error)
+	ApproveRevokeAccount(ctx context.Context, in *MsgApproveRevokeAccount, opts ...grpc.CallOption) (*MsgApproveRevokeAccountResponse, error)
 }
 
 type msgClient struct {
@@ -62,22 +482,1392 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) ProposeAddAccount(ctx context.Context, in *MsgProposeAddAccount, opts ...grpc.CallOption) (*MsgProposeAddAccountResponse, error) {
+	out := new(MsgProposeAddAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ProposeAddAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveAddAccount(ctx context.Context, in *MsgApproveAddAccount, opts ...grpc.CallOption) (*MsgApproveAddAccountResponse, error) {
+	out := new(MsgApproveAddAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ApproveAddAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ProposeRevokeAccount(ctx context.Context, in *MsgProposeRevokeAccount, opts ...grpc.CallOption) (*MsgProposeRevokeAccountResponse, error) {
+	out := new(MsgProposeRevokeAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ProposeRevokeAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveRevokeAccount(ctx context.Context, in *MsgApproveRevokeAccount, opts ...grpc.CallOption) (*MsgApproveRevokeAccountResponse, error) {
+	out := new(MsgApproveRevokeAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ApproveRevokeAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	ProposeAddAccount(context.Context, *MsgProposeAddAccount) (*MsgProposeAddAccountResponse, error)
+	ApproveAddAccount(context.Context, *MsgApproveAddAccount) (*MsgApproveAddAccountResponse, error)
+	ProposeRevokeAccount(context.Context, *MsgProposeRevokeAccount) (*MsgProposeRevokeAccountResponse, error)
+	ApproveRevokeAccount(context.Context, *MsgApproveRevokeAccount) (*MsgApproveRevokeAccountResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
+func (*UnimplementedMsgServer) ProposeAddAccount(ctx context.Context, req *MsgProposeAddAccount) (*MsgProposeAddAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeAddAccount not implemented")
+}
+func (*UnimplementedMsgServer) ApproveAddAccount(ctx context.Context, req *MsgApproveAddAccount) (*MsgApproveAddAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveAddAccount not implemented")
+}
+func (*UnimplementedMsgServer) ProposeRevokeAccount(ctx context.Context, req *MsgProposeRevokeAccount) (*MsgProposeRevokeAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeRevokeAccount not implemented")
+}
+func (*UnimplementedMsgServer) ApproveRevokeAccount(ctx context.Context, req *MsgApproveRevokeAccount) (*MsgApproveRevokeAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveRevokeAccount not implemented")
+}
+
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_ProposeAddAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeAddAccount)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeAddAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ProposeAddAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeAddAccount(ctx, req.(*MsgProposeAddAccount))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveAddAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveAddAccount)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveAddAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ApproveAddAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveAddAccount(ctx, req.(*MsgApproveAddAccount))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ProposeRevokeAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeRevokeAccount)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeRevokeAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ProposeRevokeAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeRevokeAccount(ctx, req.(*MsgProposeRevokeAccount))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveRevokeAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveRevokeAccount)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveRevokeAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Msg/ApproveRevokeAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveRevokeAccount(ctx, req.(*MsgApproveRevokeAccount))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.dclauth.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "dclauth/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ProposeAddAccount",
+			Handler:    _Msg_ProposeAddAccount_Handler,
+		},
+		{
+			MethodName: "ApproveAddAccount",
+			Handler:    _Msg_ApproveAddAccount_Handler,
+		},
+		{
+			MethodName: "ProposeRevokeAccount",
+			Handler:    _Msg_ProposeRevokeAccount_Handler,
+		},
+		{
+			MethodName: "ApproveRevokeAccount",
+			Handler:    _Msg_ApproveRevokeAccount_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "dclauth/tx.proto",
 }
+
+func (m *MsgProposeAddAccount) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeAddAccount) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeAddAccount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.VendorID != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.VendorID))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Roles) > 0 {
+		for iNdEx := len(m.Roles) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Roles[iNdEx])
+			copy(dAtA[i:], m.Roles[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.Roles[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if m.PubKey != nil {
+		{
+			size, err := m.PubKey.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeAddAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeAddAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeAddAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveAddAccount) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveAddAccount) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveAddAccount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveAddAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveAddAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveAddAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeRevokeAccount) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeRevokeAccount) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeRevokeAccount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeRevokeAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeRevokeAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeRevokeAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveRevokeAccount) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveRevokeAccount) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveRevokeAccount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveRevokeAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveRevokeAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveRevokeAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTx(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *MsgProposeAddAccount) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.PubKey != nil {
+		l = m.PubKey.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.Roles) > 0 {
+		for _, s := range m.Roles {
+			l = len(s)
+			n += 1 + l + sovTx(uint64(l))
+		}
+	}
+	if m.VendorID != 0 {
+		n += 1 + sovTx(uint64(m.VendorID))
+	}
+	return n
+}
+
+func (m *MsgProposeAddAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgApproveAddAccount) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgApproveAddAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgProposeRevokeAccount) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgProposeRevokeAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgApproveRevokeAccount) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgApproveRevokeAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func sovTx(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTx(x uint64) (n int) {
+	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MsgProposeAddAccount) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeAddAccount: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeAddAccount: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PubKey", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PubKey == nil {
+				m.PubKey = &types.Any{}
+			}
+			if err := m.PubKey.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Roles", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Roles = append(m.Roles, dclauth_types.AccountRole(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VendorID", wireType)
+			}
+			m.VendorID = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.VendorID |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeAddAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeAddAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeAddAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveAddAccount) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveAddAccount: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveAddAccount: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveAddAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveAddAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveAddAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeRevokeAccount) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeRevokeAccount: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeRevokeAccount: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeRevokeAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeRevokeAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeRevokeAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveRevokeAccount) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveRevokeAccount: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveRevokeAccount: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveRevokeAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveRevokeAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveRevokeAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipTx(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthTx
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTx
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTx
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthTx        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTx          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTx = fmt.Errorf("proto: unexpected end of group")
+)

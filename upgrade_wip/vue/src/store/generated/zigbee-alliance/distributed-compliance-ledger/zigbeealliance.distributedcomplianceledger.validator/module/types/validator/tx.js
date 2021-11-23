@@ -1,21 +1,19 @@
 /* eslint-disable */
 import { Reader, Writer } from 'protobufjs/minimal';
+import { Any } from '../google/protobuf/any';
 import { Description } from '../validator/description';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
-const baseMsgCreateValidator = { signer: '', address: '', pubKey: '' };
+const baseMsgCreateValidator = { signer: '' };
 export const MsgCreateValidator = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
             writer.uint32(10).string(message.signer);
         }
-        if (message.address !== '') {
-            writer.uint32(18).string(message.address);
-        }
-        if (message.pubKey !== '') {
-            writer.uint32(26).string(message.pubKey);
+        if (message.pubKey !== undefined) {
+            Any.encode(message.pubKey, writer.uint32(18).fork()).ldelim();
         }
         if (message.description !== undefined) {
-            Description.encode(message.description, writer.uint32(34).fork()).ldelim();
+            Description.encode(message.description, writer.uint32(26).fork()).ldelim();
         }
         return writer;
     },
@@ -30,12 +28,9 @@ export const MsgCreateValidator = {
                     message.signer = reader.string();
                     break;
                 case 2:
-                    message.address = reader.string();
+                    message.pubKey = Any.decode(reader, reader.uint32());
                     break;
                 case 3:
-                    message.pubKey = reader.string();
-                    break;
-                case 4:
                     message.description = Description.decode(reader, reader.uint32());
                     break;
                 default:
@@ -53,17 +48,11 @@ export const MsgCreateValidator = {
         else {
             message.signer = '';
         }
-        if (object.address !== undefined && object.address !== null) {
-            message.address = String(object.address);
-        }
-        else {
-            message.address = '';
-        }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = String(object.pubKey);
+            message.pubKey = Any.fromJSON(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.description !== undefined && object.description !== null) {
             message.description = Description.fromJSON(object.description);
@@ -76,8 +65,7 @@ export const MsgCreateValidator = {
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
-        message.address !== undefined && (obj.address = message.address);
-        message.pubKey !== undefined && (obj.pubKey = message.pubKey);
+        message.pubKey !== undefined && (obj.pubKey = message.pubKey ? Any.toJSON(message.pubKey) : undefined);
         message.description !== undefined && (obj.description = message.description ? Description.toJSON(message.description) : undefined);
         return obj;
     },
@@ -89,17 +77,11 @@ export const MsgCreateValidator = {
         else {
             message.signer = '';
         }
-        if (object.address !== undefined && object.address !== null) {
-            message.address = object.address;
-        }
-        else {
-            message.address = '';
-        }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = object.pubKey;
+            message.pubKey = Any.fromPartial(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.description !== undefined && object.description !== null) {
             message.description = Description.fromPartial(object.description);

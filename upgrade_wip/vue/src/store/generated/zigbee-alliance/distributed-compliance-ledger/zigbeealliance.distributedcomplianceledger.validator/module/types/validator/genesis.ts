@@ -1,9 +1,6 @@
 /* eslint-disable */
 import { Validator } from '../validator/validator'
 import { LastValidatorPower } from '../validator/last_validator_power'
-import { ValidatorSigningInfo } from '../validator/validator_signing_info'
-import { ValidatorMissedBlockBitArray } from '../validator/validator_missed_block_bit_array'
-import { ValidatorOwner } from '../validator/validator_owner'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator'
@@ -11,11 +8,8 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.valid
 /** GenesisState defines the validator module's genesis state. */
 export interface GenesisState {
   validatorList: Validator[]
-  lastValidatorPowerList: LastValidatorPower[]
-  validatorSigningInfoList: ValidatorSigningInfo[]
-  validatorMissedBlockBitArrayList: ValidatorMissedBlockBitArray[]
   /** this line is used by starport scaffolding # genesis/proto/state */
-  validatorOwnerList: ValidatorOwner[]
+  lastValidatorPowerList: LastValidatorPower[]
 }
 
 const baseGenesisState: object = {}
@@ -28,15 +22,6 @@ export const GenesisState = {
     for (const v of message.lastValidatorPowerList) {
       LastValidatorPower.encode(v!, writer.uint32(18).fork()).ldelim()
     }
-    for (const v of message.validatorSigningInfoList) {
-      ValidatorSigningInfo.encode(v!, writer.uint32(26).fork()).ldelim()
-    }
-    for (const v of message.validatorMissedBlockBitArrayList) {
-      ValidatorMissedBlockBitArray.encode(v!, writer.uint32(34).fork()).ldelim()
-    }
-    for (const v of message.validatorOwnerList) {
-      ValidatorOwner.encode(v!, writer.uint32(42).fork()).ldelim()
-    }
     return writer
   },
 
@@ -46,9 +31,6 @@ export const GenesisState = {
     const message = { ...baseGenesisState } as GenesisState
     message.validatorList = []
     message.lastValidatorPowerList = []
-    message.validatorSigningInfoList = []
-    message.validatorMissedBlockBitArrayList = []
-    message.validatorOwnerList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -57,15 +39,6 @@ export const GenesisState = {
           break
         case 2:
           message.lastValidatorPowerList.push(LastValidatorPower.decode(reader, reader.uint32()))
-          break
-        case 3:
-          message.validatorSigningInfoList.push(ValidatorSigningInfo.decode(reader, reader.uint32()))
-          break
-        case 4:
-          message.validatorMissedBlockBitArrayList.push(ValidatorMissedBlockBitArray.decode(reader, reader.uint32()))
-          break
-        case 5:
-          message.validatorOwnerList.push(ValidatorOwner.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -79,9 +52,6 @@ export const GenesisState = {
     const message = { ...baseGenesisState } as GenesisState
     message.validatorList = []
     message.lastValidatorPowerList = []
-    message.validatorSigningInfoList = []
-    message.validatorMissedBlockBitArrayList = []
-    message.validatorOwnerList = []
     if (object.validatorList !== undefined && object.validatorList !== null) {
       for (const e of object.validatorList) {
         message.validatorList.push(Validator.fromJSON(e))
@@ -90,21 +60,6 @@ export const GenesisState = {
     if (object.lastValidatorPowerList !== undefined && object.lastValidatorPowerList !== null) {
       for (const e of object.lastValidatorPowerList) {
         message.lastValidatorPowerList.push(LastValidatorPower.fromJSON(e))
-      }
-    }
-    if (object.validatorSigningInfoList !== undefined && object.validatorSigningInfoList !== null) {
-      for (const e of object.validatorSigningInfoList) {
-        message.validatorSigningInfoList.push(ValidatorSigningInfo.fromJSON(e))
-      }
-    }
-    if (object.validatorMissedBlockBitArrayList !== undefined && object.validatorMissedBlockBitArrayList !== null) {
-      for (const e of object.validatorMissedBlockBitArrayList) {
-        message.validatorMissedBlockBitArrayList.push(ValidatorMissedBlockBitArray.fromJSON(e))
-      }
-    }
-    if (object.validatorOwnerList !== undefined && object.validatorOwnerList !== null) {
-      for (const e of object.validatorOwnerList) {
-        message.validatorOwnerList.push(ValidatorOwner.fromJSON(e))
       }
     }
     return message
@@ -122,21 +77,6 @@ export const GenesisState = {
     } else {
       obj.lastValidatorPowerList = []
     }
-    if (message.validatorSigningInfoList) {
-      obj.validatorSigningInfoList = message.validatorSigningInfoList.map((e) => (e ? ValidatorSigningInfo.toJSON(e) : undefined))
-    } else {
-      obj.validatorSigningInfoList = []
-    }
-    if (message.validatorMissedBlockBitArrayList) {
-      obj.validatorMissedBlockBitArrayList = message.validatorMissedBlockBitArrayList.map((e) => (e ? ValidatorMissedBlockBitArray.toJSON(e) : undefined))
-    } else {
-      obj.validatorMissedBlockBitArrayList = []
-    }
-    if (message.validatorOwnerList) {
-      obj.validatorOwnerList = message.validatorOwnerList.map((e) => (e ? ValidatorOwner.toJSON(e) : undefined))
-    } else {
-      obj.validatorOwnerList = []
-    }
     return obj
   },
 
@@ -144,9 +84,6 @@ export const GenesisState = {
     const message = { ...baseGenesisState } as GenesisState
     message.validatorList = []
     message.lastValidatorPowerList = []
-    message.validatorSigningInfoList = []
-    message.validatorMissedBlockBitArrayList = []
-    message.validatorOwnerList = []
     if (object.validatorList !== undefined && object.validatorList !== null) {
       for (const e of object.validatorList) {
         message.validatorList.push(Validator.fromPartial(e))
@@ -155,21 +92,6 @@ export const GenesisState = {
     if (object.lastValidatorPowerList !== undefined && object.lastValidatorPowerList !== null) {
       for (const e of object.lastValidatorPowerList) {
         message.lastValidatorPowerList.push(LastValidatorPower.fromPartial(e))
-      }
-    }
-    if (object.validatorSigningInfoList !== undefined && object.validatorSigningInfoList !== null) {
-      for (const e of object.validatorSigningInfoList) {
-        message.validatorSigningInfoList.push(ValidatorSigningInfo.fromPartial(e))
-      }
-    }
-    if (object.validatorMissedBlockBitArrayList !== undefined && object.validatorMissedBlockBitArrayList !== null) {
-      for (const e of object.validatorMissedBlockBitArrayList) {
-        message.validatorMissedBlockBitArrayList.push(ValidatorMissedBlockBitArray.fromPartial(e))
-      }
-    }
-    if (object.validatorOwnerList !== undefined && object.validatorOwnerList !== null) {
-      for (const e of object.validatorOwnerList) {
-        message.validatorOwnerList.push(ValidatorOwner.fromPartial(e))
       }
     }
     return message

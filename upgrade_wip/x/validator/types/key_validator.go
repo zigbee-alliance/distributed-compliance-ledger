@@ -1,23 +1,33 @@
 package types
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 var _ binary.ByteOrder
 
-const (
-	// ValidatorKeyPrefix is the prefix to retrieve all Validator
-	//ValidatorKeyPrefix = "Validator/value/"
-	ValidatorKeyPrefix = []byte{0x01} // prefix for each key to a validator
-)
-
 // ValidatorKey returns the store key to retrieve a Validator from the index fields
 func ValidatorKey(
-	address string,
+	owner sdk.ValAddress,
 ) []byte {
 	var key []byte
 
-	addressBytes := []byte(address)
-	key = append(key, addressBytes...)
+	ownerBytes := []byte(owner)
+	key = append(key, ownerBytes...)
+	key = append(key, []byte("/")...)
+
+	return key
+}
+
+func ValidatorByConsAddrKey(
+	addr sdk.ConsAddress,
+) []byte {
+	var key []byte
+
+	ownerBytes := []byte(addr)
+	key = append(key, ownerBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

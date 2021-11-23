@@ -17,6 +17,16 @@ const (
 	MemStoreKey = "mem_dclauth"
 )
 
+var (
+	PendingAccountKeyPrefix           = []byte{0x01} // prefix for each key to a pending account
+	AccountKeyPrefix                  = []byte{0x02} // prefix for each key to an account
+	PendingAccountRevocationKeyPrefix = []byte{0x03} // prefix for each key to a pending account revocation
+)
+
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
+
+const (
+	AccountStatKey = "AccountStat-value-"
+)

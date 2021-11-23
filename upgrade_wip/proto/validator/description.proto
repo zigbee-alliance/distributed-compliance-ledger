@@ -3,9 +3,13 @@ package zigbeealliance.distributedcomplianceledger.validator;
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
 
+import "gogoproto/gogo.proto";
+
 
 message Description {
-Website string `json:"website,omitempty"`
+  option (gogoproto.equal)            = true;
+  option (gogoproto.goproto_stringer) = false;
+
   // name.
   string name = 1; 
   // optional identity signature.

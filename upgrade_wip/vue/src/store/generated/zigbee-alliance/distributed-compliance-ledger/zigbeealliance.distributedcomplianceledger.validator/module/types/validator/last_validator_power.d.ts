@@ -1,7 +1,7 @@
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 export interface LastValidatorPower {
-    consensusAddress: string;
+    owner: string;
     power: number;
 }
 export declare const LastValidatorPower: {

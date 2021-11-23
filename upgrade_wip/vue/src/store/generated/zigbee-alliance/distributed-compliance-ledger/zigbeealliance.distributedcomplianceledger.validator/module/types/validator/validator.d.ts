@@ -1,21 +1,20 @@
 import { Description } from '../validator/description';
+import { Any } from '../google/protobuf/any';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 export interface Validator {
+    /** the account address of validator owner */
+    owner: string;
     /** description of the validator */
-    address: string;
-    /** the consensus address of the tendermint validator */
     description: Description | undefined;
     /** the consensus public key of the tendermint validator */
-    pubKey: string;
+    pubKey: Any | undefined;
     /** validator consensus power */
     power: number;
     /** has the validator been removed from validator set */
     jailed: boolean;
     /** the reason of validator jailing */
     jailedReason: string;
-    /** the account address of validator owner */
-    owner: string;
 }
 export declare const Validator: {
     encode(message: Validator, writer?: Writer): Writer;

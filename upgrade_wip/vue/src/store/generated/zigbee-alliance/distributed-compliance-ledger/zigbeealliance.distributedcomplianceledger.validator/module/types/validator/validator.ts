@@ -1,38 +1,37 @@
 /* eslint-disable */
 import { Description } from '../validator/description'
+import { Any } from '../google/protobuf/any'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator'
 
 export interface Validator {
+  /** the account address of validator owner */
+  owner: string
   /** description of the validator */
-  address: string
-  /** the consensus address of the tendermint validator */
   description: Description | undefined
   /** the consensus public key of the tendermint validator */
-  pubKey: string
+  pubKey: Any | undefined
   /** validator consensus power */
   power: number
   /** has the validator been removed from validator set */
   jailed: boolean
   /** the reason of validator jailing */
   jailedReason: string
-  /** the account address of validator owner */
-  owner: string
 }
 
-const baseValidator: object = { address: '', pubKey: '', power: 0, jailed: false, jailedReason: '', owner: '' }
+const baseValidator: object = { owner: '', power: 0, jailed: false, jailedReason: '' }
 
 export const Validator = {
   encode(message: Validator, writer: Writer = Writer.create()): Writer {
-    if (message.address !== '') {
-      writer.uint32(10).string(message.address)
+    if (message.owner !== '') {
+      writer.uint32(10).string(message.owner)
     }
     if (message.description !== undefined) {
       Description.encode(message.description, writer.uint32(18).fork()).ldelim()
     }
-    if (message.pubKey !== '') {
-      writer.uint32(26).string(message.pubKey)
+    if (message.pubKey !== undefined) {
+      Any.encode(message.pubKey, writer.uint32(26).fork()).ldelim()
     }
     if (message.power !== 0) {
       writer.uint32(32).int32(message.power)
@@ -42,9 +41,6 @@ export const Validator = {
     }
     if (message.jailedReason !== '') {
       writer.uint32(50).string(message.jailedReason)
-    }
-    if (message.owner !== '') {
-      writer.uint32(58).string(message.owner)
     }
     return writer
   },
@@ -57,13 +53,13 @@ export const Validator = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.address = reader.string()
+          message.owner = reader.string()
           break
         case 2:
           message.description = Description.decode(reader, reader.uint32())
           break
         case 3:
-          message.pubKey = reader.string()
+          message.pubKey = Any.decode(reader, reader.uint32())
           break
         case 4:
           message.power = reader.int32()
@@ -73,9 +69,6 @@ export const Validator = {
           break
         case 6:
           message.jailedReason = reader.string()
-          break
-        case 7:
-          message.owner = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -87,10 +80,10 @@ export const Validator = {
 
   fromJSON(object: any): Validator {
     const message = { ...baseValidator } as Validator
-    if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address)
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner)
     } else {
-      message.address = ''
+      message.owner = ''
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = Description.fromJSON(object.description)
@@ -98,9 +91,9 @@ export const Validator = {
       message.description = undefined
     }
     if (object.pubKey !== undefined && object.pubKey !== null) {
-      message.pubKey = String(object.pubKey)
+      message.pubKey = Any.fromJSON(object.pubKey)
     } else {
-      message.pubKey = ''
+      message.pubKey = undefined
     }
     if (object.power !== undefined && object.power !== null) {
       message.power = Number(object.power)
@@ -117,32 +110,26 @@ export const Validator = {
     } else {
       message.jailedReason = ''
     }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = String(object.owner)
-    } else {
-      message.owner = ''
-    }
     return message
   },
 
   toJSON(message: Validator): unknown {
     const obj: any = {}
-    message.address !== undefined && (obj.address = message.address)
+    message.owner !== undefined && (obj.owner = message.owner)
     message.description !== undefined && (obj.description = message.description ? Description.toJSON(message.description) : undefined)
-    message.pubKey !== undefined && (obj.pubKey = message.pubKey)
+    message.pubKey !== undefined && (obj.pubKey = message.pubKey ? Any.toJSON(message.pubKey) : undefined)
     message.power !== undefined && (obj.power = message.power)
     message.jailed !== undefined && (obj.jailed = message.jailed)
     message.jailedReason !== undefined && (obj.jailedReason = message.jailedReason)
-    message.owner !== undefined && (obj.owner = message.owner)
     return obj
   },
 
   fromPartial(object: DeepPartial<Validator>): Validator {
     const message = { ...baseValidator } as Validator
-    if (object.address !== undefined && object.address !== null) {
-      message.address = object.address
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner
     } else {
-      message.address = ''
+      message.owner = ''
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = Description.fromPartial(object.description)
@@ -150,9 +137,9 @@ export const Validator = {
       message.description = undefined
     }
     if (object.pubKey !== undefined && object.pubKey !== null) {
-      message.pubKey = object.pubKey
+      message.pubKey = Any.fromPartial(object.pubKey)
     } else {
-      message.pubKey = ''
+      message.pubKey = undefined
     }
     if (object.power !== undefined && object.power !== null) {
       message.power = object.power
@@ -168,11 +155,6 @@ export const Validator = {
       message.jailedReason = object.jailedReason
     } else {
       message.jailedReason = ''
-    }
-    if (object.owner !== undefined && object.owner !== null) {
-      message.owner = object.owner
-    } else {
-      message.owner = ''
     }
     return message
   }

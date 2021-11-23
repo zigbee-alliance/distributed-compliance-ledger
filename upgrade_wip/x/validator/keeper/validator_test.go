@@ -17,7 +17,7 @@ var _ = strconv.IntSize
 func createNValidator(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Validator {
 	items := make([]types.Validator, n)
 	for i := range items {
-		items[i].Address = strconv.Itoa(i)
+		items[i].Owner = strconv.Itoa(i)
 
 		keeper.SetValidator(ctx, items[i])
 	}
@@ -29,7 +29,7 @@ func TestValidatorGet(t *testing.T) {
 	items := createNValidator(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetValidator(ctx,
-			item.Address,
+			item.Owner,
 		)
 		require.True(t, found)
 		require.Equal(t, item, rst)
@@ -40,10 +40,10 @@ func TestValidatorRemove(t *testing.T) {
 	items := createNValidator(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveValidator(ctx,
-			item.Address,
+			item.Owner,
 		)
 		_, found := keeper.GetValidator(ctx,
-			item.Address,
+			item.Owner,
 		)
 		require.False(t, found)
 	}

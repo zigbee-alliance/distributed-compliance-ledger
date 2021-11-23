@@ -1,23 +1,21 @@
 package types
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 var _ binary.ByteOrder
 
-const (
-	// LastValidatorPowerKeyPrefix is the prefix to retrieve all LastValidatorPower
-	// LastValidatorPowerKeyPrefix = "LastValidatorPower/value/"
-	LastValidatorPowerKeyPrefix = []byte{0x02} // prefix for each key to a validator index, by last power
-)
-
 // LastValidatorPowerKey returns the store key to retrieve a LastValidatorPower from the index fields
 func LastValidatorPowerKey(
-	consensusAddress string,
+	owner sdk.ValAddress,
 ) []byte {
 	var key []byte
 
-	consensusAddressBytes := []byte(consensusAddress)
-	key = append(key, consensusAddressBytes...)
+	ownerBytes := []byte(owner)
+	key = append(key, ownerBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

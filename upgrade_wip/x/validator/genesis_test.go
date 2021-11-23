@@ -13,44 +13,18 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		ValidatorList: []types.Validator{
 			{
-				Address: "0",
+				Owner: "0",
 			},
 			{
-				Address: "1",
+				Owner: "1",
 			},
 		},
 		LastValidatorPowerList: []types.LastValidatorPower{
 			{
-				ConsensusAddress: "0",
+				Owner: "0",
 			},
 			{
-				ConsensusAddress: "1",
-			},
-		},
-		ValidatorSigningInfoList: []types.ValidatorSigningInfo{
-			{
-				Address: "0",
-			},
-			{
-				Address: "1",
-			},
-		},
-		ValidatorMissedBlockBitArrayList: []types.ValidatorMissedBlockBitArray{
-			{
-				Address: "0",
-				Index:   0,
-			},
-			{
-				Address: "1",
-				Index:   1,
-			},
-		},
-		ValidatorOwnerList: []types.ValidatorOwner{
-			{
-				Address: "0",
-			},
-			{
-				Address: "1",
+				Owner: "1",
 			},
 		},
 		// this line is used by starport scaffolding # genesis/test/state
@@ -65,11 +39,5 @@ func TestGenesis(t *testing.T) {
 	require.Subset(t, genesisState.ValidatorList, got.ValidatorList)
 	require.Len(t, got.LastValidatorPowerList, len(genesisState.LastValidatorPowerList))
 	require.Subset(t, genesisState.LastValidatorPowerList, got.LastValidatorPowerList)
-	require.Len(t, got.ValidatorSigningInfoList, len(genesisState.ValidatorSigningInfoList))
-	require.Subset(t, genesisState.ValidatorSigningInfoList, got.ValidatorSigningInfoList)
-	require.Len(t, got.ValidatorMissedBlockBitArrayList, len(genesisState.ValidatorMissedBlockBitArrayList))
-	require.Subset(t, genesisState.ValidatorMissedBlockBitArrayList, got.ValidatorMissedBlockBitArrayList)
-	require.Len(t, got.ValidatorOwnerList, len(genesisState.ValidatorOwnerList))
-	require.Subset(t, genesisState.ValidatorOwnerList, got.ValidatorOwnerList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

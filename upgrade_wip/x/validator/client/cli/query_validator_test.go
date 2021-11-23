@@ -28,7 +28,7 @@ func networkWithValidatorObjects(t *testing.T, n int) (*network.Network, []types
 
 	for i := 0; i < n; i++ {
 		state.ValidatorList = append(state.ValidatorList, types.Validator{
-			Address: strconv.Itoa(i),
+			Owner: strconv.Itoa(i),
 		})
 	}
 	buf, err := cfg.Codec.MarshalJSON(&state)
@@ -45,23 +45,23 @@ func TestShowValidator(t *testing.T) {
 		fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 	}
 	for _, tc := range []struct {
-		desc      string
-		idAddress string
+		desc    string
+		idOwner string
 
 		args []string
 		err  error
 		obj  types.Validator
 	}{
 		{
-			desc:      "found",
-			idAddress: objs[0].Address,
+			desc:    "found",
+			idOwner: objs[0].Owner,
 
 			args: common,
 			obj:  objs[0],
 		},
 		{
-			desc:      "not found",
-			idAddress: strconv.Itoa(100000),
+			desc:    "not found",
+			idOwner: strconv.Itoa(100000),
 
 			args: common,
 			err:  status.Error(codes.InvalidArgument, "not found"),
@@ -70,7 +70,7 @@ func TestShowValidator(t *testing.T) {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				tc.idAddress,
+				tc.idOwner,
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowValidator(), args)

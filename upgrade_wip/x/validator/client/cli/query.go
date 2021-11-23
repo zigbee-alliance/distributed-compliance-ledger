@@ -26,14 +26,11 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 
 	cmd.AddCommand(CmdListValidator())
 	cmd.AddCommand(CmdShowValidator())
+
+	// XXX issue 99: do we need that actually (auto-scaffolded)
+	// TODO verify commands implementation if we need them
 	cmd.AddCommand(CmdListLastValidatorPower())
 	cmd.AddCommand(CmdShowLastValidatorPower())
-	cmd.AddCommand(CmdListValidatorSigningInfo())
-	cmd.AddCommand(CmdShowValidatorSigningInfo())
-	cmd.AddCommand(CmdListValidatorMissedBlockBitArray())
-	cmd.AddCommand(CmdShowValidatorMissedBlockBitArray())
-	cmd.AddCommand(CmdListValidatorOwner())
-	cmd.AddCommand(CmdShowValidatorOwner())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

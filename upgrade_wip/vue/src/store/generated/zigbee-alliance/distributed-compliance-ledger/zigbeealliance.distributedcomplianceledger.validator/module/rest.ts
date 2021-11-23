@@ -9,7 +9,120 @@
  * ---------------------------------------------------------------
  */
 
+/**
+* `Any` contains an arbitrary serialized protocol buffer message along with a
+URL that describes the type of the serialized message.
+
+Protobuf library provides support to pack/unpack Any values in the form
+of utility functions or additional generated methods of the Any type.
+
+Example 1: Pack and unpack a message in C++.
+
+    Foo foo = ...;
+    Any any;
+    any.PackFrom(foo);
+    ...
+    if (any.UnpackTo(&foo)) {
+      ...
+    }
+
+Example 2: Pack and unpack a message in Java.
+
+    Foo foo = ...;
+    Any any = Any.pack(foo);
+    ...
+    if (any.is(Foo.class)) {
+      foo = any.unpack(Foo.class);
+    }
+
+ Example 3: Pack and unpack a message in Python.
+
+    foo = Foo(...)
+    any = Any()
+    any.Pack(foo)
+    ...
+    if any.Is(Foo.DESCRIPTOR):
+      any.Unpack(foo)
+      ...
+
+ Example 4: Pack and unpack a message in Go
+
+     foo := &pb.Foo{...}
+     any, err := anypb.New(foo)
+     if err != nil {
+       ...
+     }
+     ...
+     foo := &pb.Foo{}
+     if err := any.UnmarshalTo(foo); err != nil {
+       ...
+     }
+
+The pack methods provided by protobuf library will by default use
+'type.googleapis.com/full.type.name' as the type URL and the unpack
+methods only use the fully qualified type name after the last '/'
+in the type URL, for example "foo.bar.com/x/y.z" will yield type
+name "y.z".
+
+
+JSON
+====
+The JSON representation of an `Any` value uses the regular
+representation of the deserialized, embedded message, with an
+additional field `@type` which contains the type URL. Example:
+
+    package google.profile;
+    message Person {
+      string first_name = 1;
+      string last_name = 2;
+    }
+
+    {
+      "@type": "type.googleapis.com/google.profile.Person",
+      "firstName": <string>,
+      "lastName": <string>
+    }
+
+If the embedded message type is well-known and has a custom JSON
+representation, that representation will be embedded adding a field
+`value` which holds the custom JSON in addition to the `@type`
+field. Example (for message [google.protobuf.Duration][]):
+
+    {
+      "@type": "type.googleapis.com/google.protobuf.Duration",
+      "value": "1.212s"
+    }
+*/
 export interface ProtobufAny {
+  /**
+   * A URL/resource name that uniquely identifies the type of the serialized
+   * protocol buffer message. This string must contain at least
+   * one "/" character. The last segment of the URL's path must represent
+   * the fully qualified name of the type (as in
+   * `path/google.protobuf.Duration`). The name should be in a canonical form
+   * (e.g., leading "." is not accepted).
+   *
+   * In practice, teams usually precompile into the binary all types that they
+   * expect it to use in the context of Any. However, for URLs which use the
+   * scheme `http`, `https`, or no scheme, one can optionally set up a type
+   * server that maps type URLs to message definitions as follows:
+   *
+   * * If no scheme is provided, `https` is assumed.
+   * * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+   *   value in binary format, or produce an error.
+   * * Applications are allowed to cache lookup results based on the
+   *   URL, or have them precompiled into a binary to avoid any
+   *   lookup. Therefore, binary compatibility needs to be preserved
+   *   on changes to types. (Use versioned type names to manage
+   *   breaking changes.)
+   *
+   * Note: this functionality is not currently available in the official
+   * protobuf release, and it is not used for type URLs beginning with
+   * type.googleapis.com.
+   *
+   * Schemes other than `http`, `https` (or the empty scheme) might be
+   * used with implementation specific semantics.
+   */
   "@type"?: string;
 }
 
@@ -58,7 +171,11 @@ export interface V1Beta1PageRequest {
    */
   countTotal?: boolean;
 
-  /** reverse is set to true if results are to be returned in the descending order. */
+  /**
+   * reverse is set to true if results are to be returned in the descending order.
+   *
+   * Since: cosmos-sdk 0.43
+   */
   reverse?: boolean;
 }
 
@@ -80,14 +197,21 @@ export interface V1Beta1PageResponse {
 }
 
 export interface ValidatorDescription {
+  /** name. */
   name?: string;
+
+  /** optional identity signature. */
   identity?: string;
+
+  /** optional website link. */
   website?: string;
+
+  /** optional details. */
   details?: string;
 }
 
 export interface ValidatorLastValidatorPower {
-  consensusAddress?: string;
+  owner?: string;
 
   /** @format int32 */
   power?: number;
@@ -97,36 +221,6 @@ export type ValidatorMsgCreateValidatorResponse = object;
 
 export interface ValidatorQueryAllLastValidatorPowerResponse {
   lastValidatorPower?: ValidatorLastValidatorPower[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
-export interface ValidatorQueryAllValidatorMissedBlockBitArrayResponse {
-  validatorMissedBlockBitArray?: ValidatorValidatorMissedBlockBitArray[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
-export interface ValidatorQueryAllValidatorOwnerResponse {
-  validatorOwner?: ValidatorValidatorOwner[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -155,75 +249,108 @@ export interface ValidatorQueryAllValidatorResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface ValidatorQueryAllValidatorSigningInfoResponse {
-  validatorSigningInfo?: ValidatorValidatorSigningInfo[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
 export interface ValidatorQueryGetLastValidatorPowerResponse {
   lastValidatorPower?: ValidatorLastValidatorPower;
-}
-
-export interface ValidatorQueryGetValidatorMissedBlockBitArrayResponse {
-  validatorMissedBlockBitArray?: ValidatorValidatorMissedBlockBitArray;
-}
-
-export interface ValidatorQueryGetValidatorOwnerResponse {
-  validatorOwner?: ValidatorValidatorOwner;
 }
 
 export interface ValidatorQueryGetValidatorResponse {
   validator?: ValidatorValidator;
 }
 
-export interface ValidatorQueryGetValidatorSigningInfoResponse {
-  validatorSigningInfo?: ValidatorValidatorSigningInfo;
-}
-
 export interface ValidatorValidator {
-  address?: string;
+  owner?: string;
   description?: ValidatorDescription;
-  pubKey?: string;
+
+  /**
+   * `Any` contains an arbitrary serialized protocol buffer message along with a
+   * URL that describes the type of the serialized message.
+   *
+   * Protobuf library provides support to pack/unpack Any values in the form
+   * of utility functions or additional generated methods of the Any type.
+   *
+   * Example 1: Pack and unpack a message in C++.
+   *
+   *     Foo foo = ...;
+   *     Any any;
+   *     any.PackFrom(foo);
+   *     ...
+   *     if (any.UnpackTo(&foo)) {
+   *       ...
+   *     }
+   *
+   * Example 2: Pack and unpack a message in Java.
+   *
+   *     Foo foo = ...;
+   *     Any any = Any.pack(foo);
+   *     ...
+   *     if (any.is(Foo.class)) {
+   *       foo = any.unpack(Foo.class);
+   *     }
+   *
+   *  Example 3: Pack and unpack a message in Python.
+   *
+   *     foo = Foo(...)
+   *     any = Any()
+   *     any.Pack(foo)
+   *     ...
+   *     if any.Is(Foo.DESCRIPTOR):
+   *       any.Unpack(foo)
+   *       ...
+   *
+   *  Example 4: Pack and unpack a message in Go
+   *
+   *      foo := &pb.Foo{...}
+   *      any, err := anypb.New(foo)
+   *      if err != nil {
+   *        ...
+   *      }
+   *      ...
+   *      foo := &pb.Foo{}
+   *      if err := any.UnmarshalTo(foo); err != nil {
+   *        ...
+   *      }
+   *
+   * The pack methods provided by protobuf library will by default use
+   * 'type.googleapis.com/full.type.name' as the type URL and the unpack
+   * methods only use the fully qualified type name after the last '/'
+   * in the type URL, for example "foo.bar.com/x/y.z" will yield type
+   * name "y.z".
+   *
+   *
+   * JSON
+   * ====
+   * The JSON representation of an `Any` value uses the regular
+   * representation of the deserialized, embedded message, with an
+   * additional field `@type` which contains the type URL. Example:
+   *
+   *     package google.profile;
+   *     message Person {
+   *       string first_name = 1;
+   *       string last_name = 2;
+   *     }
+   *
+   *     {
+   *       "@type": "type.googleapis.com/google.profile.Person",
+   *       "firstName": <string>,
+   *       "lastName": <string>
+   *     }
+   *
+   * If the embedded message type is well-known and has a custom JSON
+   * representation, that representation will be embedded adding a field
+   * `value` which holds the custom JSON in addition to the `@type`
+   * field. Example (for message [google.protobuf.Duration][]):
+   *
+   *     {
+   *       "@type": "type.googleapis.com/google.protobuf.Duration",
+   *       "value": "1.212s"
+   *     }
+   */
+  pubKey?: ProtobufAny;
 
   /** @format int32 */
   power?: number;
   jailed?: boolean;
   jailedReason?: string;
-  owner?: string;
-}
-
-export interface ValidatorValidatorMissedBlockBitArray {
-  address?: string;
-
-  /** @format uint64 */
-  index?: string;
-}
-
-export interface ValidatorValidatorOwner {
-  address?: string;
-}
-
-export interface ValidatorValidatorSigningInfo {
-  address?: string;
-
-  /** @format uint64 */
-  startHeight?: string;
-
-  /** @format uint64 */
-  indexOffset?: string;
-
-  /** @format uint64 */
-  missedBlocksCounter?: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -454,11 +581,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryLastValidatorPower
    * @summary Queries a lastValidatorPower by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{consensusAddress}
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}
    */
-  queryLastValidatorPower = (consensusAddress: string, params: RequestParams = {}) =>
+  queryLastValidatorPower = (owner: string, params: RequestParams = {}) =>
     this.request<ValidatorQueryGetLastValidatorPowerResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/${consensusAddress}`,
+      path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/${owner}`,
       method: "GET",
       format: "json",
       ...params,
@@ -496,137 +623,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryValidator
    * @summary Queries a validator by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator/{address}
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}
    */
-  queryValidator = (address: string, params: RequestParams = {}) =>
+  queryValidator = (owner: string, params: RequestParams = {}) =>
     this.request<ValidatorQueryGetValidatorResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validator/${address}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryValidatorMissedBlockBitArrayAll
-   * @summary Queries a list of validatorMissedBlockBitArray items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray
-   */
-  queryValidatorMissedBlockBitArrayAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<ValidatorQueryAllValidatorMissedBlockBitArrayResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryValidatorMissedBlockBitArray
-   * @summary Queries a validatorMissedBlockBitArray by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray/{address}/{index}
-   */
-  queryValidatorMissedBlockBitArray = (address: string, index: string, params: RequestParams = {}) =>
-    this.request<ValidatorQueryGetValidatorMissedBlockBitArrayResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorMissedBlockBitArray/${address}/${index}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryValidatorOwnerAll
-   * @summary Queries a list of validatorOwner items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner
-   */
-  queryValidatorOwnerAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<ValidatorQueryAllValidatorOwnerResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryValidatorOwner
-   * @summary Queries a validatorOwner by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner/{address}
-   */
-  queryValidatorOwner = (address: string, params: RequestParams = {}) =>
-    this.request<ValidatorQueryGetValidatorOwnerResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorOwner/${address}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryValidatorSigningInfoAll
-   * @summary Queries a list of validatorSigningInfo items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo
-   */
-  queryValidatorSigningInfoAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<ValidatorQueryAllValidatorSigningInfoResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryValidatorSigningInfo
-   * @summary Queries a validatorSigningInfo by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo/{address}
-   */
-  queryValidatorSigningInfo = (address: string, params: RequestParams = {}) =>
-    this.request<ValidatorQueryGetValidatorSigningInfoResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validatorSigningInfo/${address}`,
+      path: `/zigbee-alliance/distributedcomplianceledger/validator/validator/${owner}`,
       method: "GET",
       format: "json",
       ...params,

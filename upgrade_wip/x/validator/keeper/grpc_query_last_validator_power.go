@@ -43,11 +43,21 @@ func (k Keeper) LastValidatorPower(c context.Context, req *types.QueryGetLastVal
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
+
+	if req.Owner == "" {
+		return nil, status.Error(codes.InvalidArgument, "validator address cannot be empty")
+	}
+
+	valAddr, err := sdk.ValAddressFromBech32(req.Owner)
+	if err != nil {
+		return nil, err
+	}
+
 	ctx := sdk.UnwrapSDKContext(c)
 
 	val, found := k.GetLastValidatorPower(
 		ctx,
-		req.ConsensusAddress,
+		valAddr,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")

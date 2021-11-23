@@ -1,10 +1,10 @@
 import { Reader, Writer } from 'protobufjs/minimal';
+import { Any } from '../google/protobuf/any';
 import { Description } from '../validator/description';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 export interface MsgCreateValidator {
     signer: string;
-    address: string;
-    pubKey: string;
+    pubKey: Any | undefined;
     description: Description | undefined;
 }
 export interface MsgCreateValidatorResponse {

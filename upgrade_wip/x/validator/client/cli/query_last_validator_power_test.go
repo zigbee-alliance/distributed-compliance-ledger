@@ -28,7 +28,7 @@ func networkWithLastValidatorPowerObjects(t *testing.T, n int) (*network.Network
 
 	for i := 0; i < n; i++ {
 		state.LastValidatorPowerList = append(state.LastValidatorPowerList, types.LastValidatorPower{
-			ConsensusAddress: strconv.Itoa(i),
+			Owner: strconv.Itoa(i),
 		})
 	}
 	buf, err := cfg.Codec.MarshalJSON(&state)
@@ -45,23 +45,23 @@ func TestShowLastValidatorPower(t *testing.T) {
 		fmt.Sprintf("--%s=json", tmcli.OutputFlag),
 	}
 	for _, tc := range []struct {
-		desc               string
-		idConsensusAddress string
+		desc    string
+		idOwner string
 
 		args []string
 		err  error
 		obj  types.LastValidatorPower
 	}{
 		{
-			desc:               "found",
-			idConsensusAddress: objs[0].ConsensusAddress,
+			desc:    "found",
+			idOwner: objs[0].Owner,
 
 			args: common,
 			obj:  objs[0],
 		},
 		{
-			desc:               "not found",
-			idConsensusAddress: strconv.Itoa(100000),
+			desc:    "not found",
+			idOwner: strconv.Itoa(100000),
 
 			args: common,
 			err:  status.Error(codes.InvalidArgument, "not found"),
@@ -70,7 +70,7 @@ func TestShowLastValidatorPower(t *testing.T) {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				tc.idConsensusAddress,
+				tc.idOwner,
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowLastValidatorPower(), args)

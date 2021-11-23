@@ -45,7 +45,7 @@ func CmdListLastValidatorPower() *cobra.Command {
 
 func CmdShowLastValidatorPower() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-last-validator-power [consensus-address]",
+		Use:   "show-last-validator-power [owner]",
 		Short: "shows a LastValidatorPower",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -53,10 +53,13 @@ func CmdShowLastValidatorPower() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argConsensusAddress := args[0]
+			addr, err := sdk.ValAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
 
 			params := &types.QueryGetLastValidatorPowerRequest{
-				ConsensusAddress: argConsensusAddress,
+				Owner: addr.String(),
 			}
 
 			res, err := queryClient.LastValidatorPower(context.Background(), params)

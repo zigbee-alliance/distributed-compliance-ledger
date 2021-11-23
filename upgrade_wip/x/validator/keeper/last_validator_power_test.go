@@ -17,7 +17,7 @@ var _ = strconv.IntSize
 func createNLastValidatorPower(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.LastValidatorPower {
 	items := make([]types.LastValidatorPower, n)
 	for i := range items {
-		items[i].ConsensusAddress = strconv.Itoa(i)
+		items[i].Owner = strconv.Itoa(i)
 
 		keeper.SetLastValidatorPower(ctx, items[i])
 	}
@@ -29,7 +29,7 @@ func TestLastValidatorPowerGet(t *testing.T) {
 	items := createNLastValidatorPower(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetLastValidatorPower(ctx,
-			item.ConsensusAddress,
+			item.Owner,
 		)
 		require.True(t, found)
 		require.Equal(t, item, rst)
@@ -40,10 +40,10 @@ func TestLastValidatorPowerRemove(t *testing.T) {
 	items := createNLastValidatorPower(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveLastValidatorPower(ctx,
-			item.ConsensusAddress,
+			item.Owner,
 		)
 		_, found := keeper.GetLastValidatorPower(ctx,
-			item.ConsensusAddress,
+			item.Owner,
 		)
 		require.False(t, found)
 	}
