@@ -3,7 +3,7 @@ module github.com/zigbee-alliance/distributed-compliance-ledger
 go 1.16
 
 require (
-	github.com/cosmos/cosmos-proto v0.0.0-20211117110609-f005f0a39750
+	github.com/cosmos/cosmos-proto v0.0.0-20210914142853-23ed61ac79ce
 	github.com/cosmos/cosmos-sdk v0.44.0
 	github.com/cosmos/ibc-go v1.2.0
 	github.com/gogo/protobuf v1.3.3
@@ -13,6 +13,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/spf13/cast v1.3.1
 	github.com/spf13/cobra v1.1.3
+	github.com/spf13/viper v1.8.0
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/spm v0.1.5
 	github.com/tendermint/tendermint v0.34.13

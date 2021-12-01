@@ -52,10 +52,13 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argAddress := args[0]
+			argAddress, err := sdk.ValAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
 
 			params := &types.QueryGetPendingAccountRevocationRequest{
-				Address: argAddress,
+				Address: argAddress.String(),
 			}
 
 			res, err := queryClient.PendingAccountRevocation(context.Background(), params)

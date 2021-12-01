@@ -1,19 +1,25 @@
 /* eslint-disable */
+import { Account } from '../dclauth/account'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
 
+/**
+ * TODO issue 99: do we need that ???
+ * option (gogoproto.goproto_getters)  = false;
+ * option (gogoproto.goproto_stringer) = false;
+ */
 export interface PendingAccount {
-  address: string
+  address: Account | undefined
   approvals: string[]
 }
 
-const basePendingAccount: object = { address: '', approvals: '' }
+const basePendingAccount: object = { approvals: '' }
 
 export const PendingAccount = {
   encode(message: PendingAccount, writer: Writer = Writer.create()): Writer {
-    if (message.address !== '') {
-      writer.uint32(10).string(message.address)
+    if (message.address !== undefined) {
+      Account.encode(message.address, writer.uint32(10).fork()).ldelim()
     }
     for (const v of message.approvals) {
       writer.uint32(18).string(v!)
@@ -30,7 +36,7 @@ export const PendingAccount = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.address = reader.string()
+          message.address = Account.decode(reader, reader.uint32())
           break
         case 2:
           message.approvals.push(reader.string())
@@ -47,9 +53,9 @@ export const PendingAccount = {
     const message = { ...basePendingAccount } as PendingAccount
     message.approvals = []
     if (object.address !== undefined && object.address !== null) {
-      message.address = String(object.address)
+      message.address = Account.fromJSON(object.address)
     } else {
-      message.address = ''
+      message.address = undefined
     }
     if (object.approvals !== undefined && object.approvals !== null) {
       for (const e of object.approvals) {
@@ -61,7 +67,7 @@ export const PendingAccount = {
 
   toJSON(message: PendingAccount): unknown {
     const obj: any = {}
-    message.address !== undefined && (obj.address = message.address)
+    message.address !== undefined && (obj.address = message.address ? Account.toJSON(message.address) : undefined)
     if (message.approvals) {
       obj.approvals = message.approvals.map((e) => e)
     } else {
@@ -74,9 +80,9 @@ export const PendingAccount = {
     const message = { ...basePendingAccount } as PendingAccount
     message.approvals = []
     if (object.address !== undefined && object.address !== null) {
-      message.address = object.address
+      message.address = Account.fromPartial(object.address)
     } else {
-      message.address = ''
+      message.address = undefined
     }
     if (object.approvals !== undefined && object.approvals !== null) {
       for (const e of object.approvals) {

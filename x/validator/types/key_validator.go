@@ -10,7 +10,7 @@ var _ binary.ByteOrder
 
 // ValidatorKey returns the store key to retrieve a Validator from the index fields
 func ValidatorKey(
-	owner string,
+	owner sdk.ValAddress,
 ) []byte {
 	var key []byte
 

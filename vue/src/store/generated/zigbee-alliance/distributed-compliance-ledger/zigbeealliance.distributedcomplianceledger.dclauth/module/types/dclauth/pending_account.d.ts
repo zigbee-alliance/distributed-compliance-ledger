@@ -1,7 +1,13 @@
+import { Account } from '../dclauth/account';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
+/**
+ * TODO issue 99: do we need that ???
+ * option (gogoproto.goproto_getters)  = false;
+ * option (gogoproto.goproto_stringer) = false;
+ */
 export interface PendingAccount {
-    address: string;
+    address: Account | undefined;
     approvals: string[];
 }
 export declare const PendingAccount: {

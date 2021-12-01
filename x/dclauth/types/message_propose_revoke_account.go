@@ -9,10 +9,10 @@ const TypeMsgProposeRevokeAccount = "propose_revoke_account"
 
 var _ sdk.Msg = &MsgProposeRevokeAccount{}
 
-func NewMsgProposeRevokeAccount(signer string, address string) *MsgProposeRevokeAccount {
+func NewMsgProposeRevokeAccount(signer sdk.AccAddress, address sdk.AccAddress) *MsgProposeRevokeAccount {
 	return &MsgProposeRevokeAccount{
-		Signer:  signer,
-		Address: address,
+		Signer:  signer.String(),
+		Address: address.String(),
 	}
 }
 
@@ -38,9 +38,23 @@ func (msg *MsgProposeRevokeAccount) GetSignBytes() []byte {
 }
 
 func (msg *MsgProposeRevokeAccount) ValidateBasic() error {
+	if m.Address.Empty() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: it cannot be empty")
+	}
+
+	_, err := sdk.AccAddressFromBech32(msg.Address)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid Account Address: (%s)", err)
+	}
+
+	if m.Signer.Empty() {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
+	}
+
 	_, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid Signer: (%s)", err)
 	}
+
 	return nil
 }

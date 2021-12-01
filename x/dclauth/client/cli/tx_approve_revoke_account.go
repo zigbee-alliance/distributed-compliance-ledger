@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -18,7 +19,10 @@ func CmdApproveRevokeAccount() *cobra.Command {
 		Short: "Broadcast message ApproveRevokeAccount",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argAddress := args[0]
+			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -26,7 +30,7 @@ func CmdApproveRevokeAccount() *cobra.Command {
 			}
 
 			msg := types.NewMsgApproveRevokeAccount(
-				clientCtx.GetFromAddress().String(),
+				clientCtx.GetFromAddress(),
 				argAddress,
 			)
 			if err := msg.ValidateBasic(); err != nil {
@@ -36,7 +40,12 @@ func CmdApproveRevokeAccount() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+
 	flags.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(flags.FlagFrom) // XXX issue 99: was absent in legacy code ???
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

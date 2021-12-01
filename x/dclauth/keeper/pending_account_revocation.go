@@ -18,7 +18,7 @@ func (k Keeper) SetPendingAccountRevocation(ctx sdk.Context, pendingAccountRevoc
 // GetPendingAccountRevocation returns a pendingAccountRevocation from its index
 func (k Keeper) GetPendingAccountRevocation(
 	ctx sdk.Context,
-	address string,
+	address sdk.AccAddress,
 
 ) (val types.PendingAccountRevocation, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
@@ -32,6 +32,15 @@ func (k Keeper) GetPendingAccountRevocation(
 
 	k.cdc.MustUnmarshal(b, &val)
 	return val, true
+}
+
+// Check if the Pending Account Revocation record associated with an address is present in the store or not.
+func (k Keeper) IsAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
+
+	return store.Has(types.PendingAccountRevocationKey(
+		address,
+	))
 }
 
 // RemovePendingAccountRevocation removes a pendingAccountRevocation from the store
@@ -48,6 +57,15 @@ func (k Keeper) RemovePendingAccountRevocation(
 
 // GetAllPendingAccountRevocation returns all pendingAccountRevocation
 func (k Keeper) GetAllPendingAccountRevocation(ctx sdk.Context) (list []types.PendingAccountRevocation) {
+	k.IterateAccounts(ctx, func(acc types.PendingAccountRevocation) (stop bool) {
+		list = append(list, acc)
+		return false
+	})
+
+	return
+}
+
+func (k Keeper) IteratePendingAccountRevocations(ctx sdk.Context, cb func(account types.PendingAccountRevocation) (stop bool)) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
@@ -56,8 +74,8 @@ func (k Keeper) GetAllPendingAccountRevocation(ctx sdk.Context) (list []types.Pe
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.PendingAccountRevocation
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
-		list = append(list, val)
+		if cb(val) {
+			break
+		}
 	}
-
-	return
 }

@@ -1,9 +1,10 @@
 import { Reader, Writer } from 'protobufjs/minimal';
+import { Any } from '../google/protobuf/any';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 export interface MsgProposeAddAccount {
     signer: string;
     address: string;
-    pubKey: string;
+    pubKey: Any | undefined;
     roles: string[];
     vendorID: number;
 }

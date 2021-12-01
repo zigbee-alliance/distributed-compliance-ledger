@@ -1,12 +1,13 @@
 /* eslint-disable */
 import * as Long from 'long';
 import { util, configure, Writer, Reader } from 'protobufjs/minimal';
+import { BaseAccount } from '../cosmos/auth/v1beta1/auth';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
-const baseAccount = { address: '', roles: '', vendorID: 0 };
+const baseAccount = { roles: '', vendorID: 0 };
 export const Account = {
     encode(message, writer = Writer.create()) {
-        if (message.address !== '') {
-            writer.uint32(10).string(message.address);
+        if (message.baseAccount !== undefined) {
+            BaseAccount.encode(message.baseAccount, writer.uint32(10).fork()).ldelim();
         }
         for (const v of message.roles) {
             writer.uint32(18).string(v);
@@ -25,7 +26,7 @@ export const Account = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.address = reader.string();
+                    message.baseAccount = BaseAccount.decode(reader, reader.uint32());
                     break;
                 case 2:
                     message.roles.push(reader.string());
@@ -43,11 +44,11 @@ export const Account = {
     fromJSON(object) {
         const message = { ...baseAccount };
         message.roles = [];
-        if (object.address !== undefined && object.address !== null) {
-            message.address = String(object.address);
+        if (object.baseAccount !== undefined && object.baseAccount !== null) {
+            message.baseAccount = BaseAccount.fromJSON(object.baseAccount);
         }
         else {
-            message.address = '';
+            message.baseAccount = undefined;
         }
         if (object.roles !== undefined && object.roles !== null) {
             for (const e of object.roles) {
@@ -64,7 +65,7 @@ export const Account = {
     },
     toJSON(message) {
         const obj = {};
-        message.address !== undefined && (obj.address = message.address);
+        message.baseAccount !== undefined && (obj.baseAccount = message.baseAccount ? BaseAccount.toJSON(message.baseAccount) : undefined);
         if (message.roles) {
             obj.roles = message.roles.map((e) => e);
         }
@@ -77,11 +78,11 @@ export const Account = {
     fromPartial(object) {
         const message = { ...baseAccount };
         message.roles = [];
-        if (object.address !== undefined && object.address !== null) {
-            message.address = object.address;
+        if (object.baseAccount !== undefined && object.baseAccount !== null) {
+            message.baseAccount = BaseAccount.fromPartial(object.baseAccount);
         }
         else {
-            message.address = '';
+            message.baseAccount = undefined;
         }
         if (object.roles !== undefined && object.roles !== null) {
             for (const e of object.roles) {

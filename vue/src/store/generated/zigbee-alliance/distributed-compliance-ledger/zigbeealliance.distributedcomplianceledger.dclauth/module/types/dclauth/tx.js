@@ -1,8 +1,9 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from 'protobufjs/minimal';
 import * as Long from 'long';
+import { Any } from '../google/protobuf/any';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
-const baseMsgProposeAddAccount = { signer: '', address: '', pubKey: '', roles: '', vendorID: 0 };
+const baseMsgProposeAddAccount = { signer: '', address: '', roles: '', vendorID: 0 };
 export const MsgProposeAddAccount = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -11,8 +12,8 @@ export const MsgProposeAddAccount = {
         if (message.address !== '') {
             writer.uint32(18).string(message.address);
         }
-        if (message.pubKey !== '') {
-            writer.uint32(26).string(message.pubKey);
+        if (message.pubKey !== undefined) {
+            Any.encode(message.pubKey, writer.uint32(26).fork()).ldelim();
         }
         for (const v of message.roles) {
             writer.uint32(34).string(v);
@@ -37,7 +38,7 @@ export const MsgProposeAddAccount = {
                     message.address = reader.string();
                     break;
                 case 3:
-                    message.pubKey = reader.string();
+                    message.pubKey = Any.decode(reader, reader.uint32());
                     break;
                 case 4:
                     message.roles.push(reader.string());
@@ -68,10 +69,10 @@ export const MsgProposeAddAccount = {
             message.address = '';
         }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = String(object.pubKey);
+            message.pubKey = Any.fromJSON(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.roles !== undefined && object.roles !== null) {
             for (const e of object.roles) {
@@ -90,7 +91,7 @@ export const MsgProposeAddAccount = {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
         message.address !== undefined && (obj.address = message.address);
-        message.pubKey !== undefined && (obj.pubKey = message.pubKey);
+        message.pubKey !== undefined && (obj.pubKey = message.pubKey ? Any.toJSON(message.pubKey) : undefined);
         if (message.roles) {
             obj.roles = message.roles.map((e) => e);
         }
@@ -116,10 +117,10 @@ export const MsgProposeAddAccount = {
             message.address = '';
         }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = object.pubKey;
+            message.pubKey = Any.fromPartial(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.roles !== undefined && object.roles !== null) {
             for (const e of object.roles) {

@@ -13,7 +13,7 @@ var (
 )
 
 func NewMsgCreateValidator(
-	signer string,
+	signer sdk.ValAddress,
 	pubKey cryptotypes.PubKey, //nolint:interfacer
 	description *Description,
 ) (*MsgCreateValidator, error) {
@@ -26,7 +26,7 @@ func NewMsgCreateValidator(
 	}
 
 	return &MsgCreateValidator{
-		Signer:      signer,
+		Signer:      signer.String(),
 		PubKey:      pkAny,
 		Description: description,
 	}, nil
@@ -71,7 +71,7 @@ func (msg *MsgCreateValidator) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidPubKey, "Invalid Validator PubKey: it cannot be empty")
 	}
 
-	_, err := v.Pubkey.GetCachedValue().(cryptotypes.PubKey)
+	_, err := msg.Pubkey.GetCachedValue().(cryptotypes.PubKey)
 	if !err {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
 	}

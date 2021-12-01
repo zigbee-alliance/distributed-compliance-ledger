@@ -11,14 +11,14 @@ func (k Keeper) SetPendingAccount(ctx sdk.Context, pendingAccount types.PendingA
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 	b := k.cdc.MustMarshal(&pendingAccount)
 	store.Set(types.PendingAccountKey(
-		pendingAccount.Address,
+		pendingAccount.GetAddress(),
 	), b)
 }
 
 // GetPendingAccount returns a pendingAccount from its index
 func (k Keeper) GetPendingAccount(
 	ctx sdk.Context,
-	address string,
+	address sdk.AccAddress,
 
 ) (val types.PendingAccount, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
@@ -34,10 +34,19 @@ func (k Keeper) GetPendingAccount(
 	return val, true
 }
 
+// Check if the Account record associated with an address is present in the store or not.
+func (k Keeper) IsAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
+
+	return store.Has(types.PendingAccountKey(
+		address,
+	))
+}
+
 // RemovePendingAccount removes a pendingAccount from the store
 func (k Keeper) RemovePendingAccount(
 	ctx sdk.Context,
-	address string,
+	address sdk.AccAddress,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
@@ -48,6 +57,15 @@ func (k Keeper) RemovePendingAccount(
 
 // GetAllPendingAccount returns all pendingAccount
 func (k Keeper) GetAllPendingAccount(ctx sdk.Context) (list []types.PendingAccount) {
+	k.IteratePendingAccounts(ctx, func(acc types.PendingAccount) (stop bool) {
+		list = append(list, acc)
+		return false
+	})
+
+	return
+}
+
+func (k Keeper) IteratePendingAccounts(ctx sdk.Context, cb func(account types.PendingAccount) (stop bool)) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
@@ -56,8 +74,8 @@ func (k Keeper) GetAllPendingAccount(ctx sdk.Context) (list []types.PendingAccou
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.PendingAccount
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
-		list = append(list, val)
+		if cb(val) {
+			break
+		}
 	}
-
-	return
 }

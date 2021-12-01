@@ -52,10 +52,13 @@ func CmdShowAccount() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argAddress := args[0]
+			argAddress, err := sdk.ValAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
 
 			params := &types.QueryGetAccountRequest{
-				Address: argAddress,
+				Address: argAddress.String(),
 			}
 
 			res, err := queryClient.Account(context.Background(), params)

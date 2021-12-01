@@ -85,7 +85,7 @@ func newBuildCreateValidatorMsg(clientCtx client.Context, txf tx.Factory, fs *fl
 		details,
 	)
 
-	msg, err := types.NewMsgCreateValidator(valAddr, pk, description)
+	msg, err := types.NewMsgCreateValidator(sdk.ValAddress(valAddr), pk, description)
 	if err != nil {
 		return txf, nil, err
 	}

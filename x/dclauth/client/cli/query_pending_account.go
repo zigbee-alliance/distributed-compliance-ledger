@@ -52,10 +52,13 @@ func CmdShowPendingAccount() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argAddress := args[0]
+			argAddress, err := sdk.ValAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
 
 			params := &types.QueryGetPendingAccountRequest{
-				Address: argAddress,
+				Address: argAddress.String(),
 			}
 
 			res, err := queryClient.PendingAccount(context.Background(), params)
