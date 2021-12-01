@@ -9,6 +9,22 @@ import (
 // InitGenesis initializes the capability module's state from a provided genesis
 // state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
+	// Set all the account
+	for _, elem := range genState.AccountList {
+		k.SetAccount(ctx, elem)
+	}
+	// Set all the pendingAccount
+	for _, elem := range genState.PendingAccountList {
+		k.SetPendingAccount(ctx, elem)
+	}
+	// Set all the pendingAccountRevocation
+	for _, elem := range genState.PendingAccountRevocationList {
+		k.SetPendingAccountRevocation(ctx, elem)
+	}
+	// Set if defined
+	if genState.AccountStat != nil {
+		k.SetAccountStat(ctx, *genState.AccountStat)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
 
@@ -16,6 +32,14 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 
+	genesis.AccountList = k.GetAllAccount(ctx)
+	genesis.PendingAccountList = k.GetAllPendingAccount(ctx)
+	genesis.PendingAccountRevocationList = k.GetAllPendingAccountRevocation(ctx)
+	// Get all accountStat
+	accountStat, found := k.GetAccountStat(ctx)
+	if found {
+		genesis.AccountStat = &accountStat
+	}
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

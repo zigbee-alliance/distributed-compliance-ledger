@@ -1,11 +1,20 @@
 syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.dclauth;
 
+import "dclauth/account.proto";
+import "dclauth/pending_account.proto";
+import "dclauth/pending_account_revocation.proto";
+import "dclauth/account_stat.proto";
 // this line is used by starport scaffolding # genesis/proto/import
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
 
 // GenesisState defines the dclauth module's genesis state.
 message GenesisState {
-    // this line is used by starport scaffolding # genesis/proto/state
+    repeated Account accountList = 1 [(gogoproto.nullable) = false];
+  repeated PendingAccount pendingAccountList = 2 [(gogoproto.nullable) = false];
+  repeated PendingAccountRevocation pendingAccountRevocationList = 3 [(gogoproto.nullable) = false];
+  AccountStat accountStat = 4;
+  // this line is used by starport scaffolding # genesis/proto/state
 }

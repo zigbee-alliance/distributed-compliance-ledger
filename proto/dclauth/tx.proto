@@ -7,7 +7,46 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc ProposeAddAccount(MsgProposeAddAccount) returns (MsgProposeAddAccountResponse);
+  rpc ApproveAddAccount(MsgApproveAddAccount) returns (MsgApproveAddAccountResponse);
+  rpc ProposeRevokeAccount(MsgProposeRevokeAccount) returns (MsgProposeRevokeAccountResponse);
+  rpc ApproveRevokeAccount(MsgApproveRevokeAccount) returns (MsgApproveRevokeAccountResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgProposeAddAccount {
+  string signer = 1;
+  string address = 2;
+  string pubKey = 3;
+  repeated string roles = 4;
+  uint64 vendorID = 5;
+}
+
+message MsgProposeAddAccountResponse {
+}
+
+message MsgApproveAddAccount {
+  string signer = 1;
+  string address = 2;
+}
+
+message MsgApproveAddAccountResponse {
+}
+
+message MsgProposeRevokeAccount {
+  string signer = 1;
+  string address = 2;
+}
+
+message MsgProposeRevokeAccountResponse {
+}
+
+message MsgApproveRevokeAccount {
+  string signer = 1;
+  string address = 2;
+}
+
+message MsgApproveRevokeAccountResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

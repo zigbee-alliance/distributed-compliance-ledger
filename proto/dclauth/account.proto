@@ -1,0 +1,12 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.dclauth;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
+
+message Account {
+  string address = 1; 
+  repeated string roles = 2; 
+  uint64 vendorID = 3; 
+  
+}
+

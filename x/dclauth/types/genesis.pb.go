@@ -5,6 +5,7 @@ package types
 
 import (
 	fmt "fmt"
+	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -24,6 +25,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // GenesisState defines the dclauth module's genesis state.
 type GenesisState struct {
+	AccountList                  []Account                  `protobuf:"bytes,1,rep,name=accountList,proto3" json:"accountList"`
+	PendingAccountList           []PendingAccount           `protobuf:"bytes,2,rep,name=pendingAccountList,proto3" json:"pendingAccountList"`
+	PendingAccountRevocationList []PendingAccountRevocation `protobuf:"bytes,3,rep,name=pendingAccountRevocationList,proto3" json:"pendingAccountRevocationList"`
+	AccountStat                  *AccountStat               `protobuf:"bytes,4,opt,name=accountStat,proto3" json:"accountStat,omitempty"`
 }
 
 func (m *GenesisState) Reset()         { *m = GenesisState{} }
@@ -59,6 +64,34 @@ func (m *GenesisState) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 
+func (m *GenesisState) GetAccountList() []Account {
+	if m != nil {
+		return m.AccountList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetPendingAccountList() []PendingAccount {
+	if m != nil {
+		return m.PendingAccountList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetPendingAccountRevocationList() []PendingAccountRevocation {
+	if m != nil {
+		return m.PendingAccountRevocationList
+	}
+	return nil
+}
+
+func (m *GenesisState) GetAccountStat() *AccountStat {
+	if m != nil {
+		return m.AccountStat
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*GenesisState)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.GenesisState")
 }
@@ -66,18 +99,29 @@ func init() {
 func init() { proto.RegisterFile("dclauth/genesis.proto", fileDescriptor_b9b33ac10a70c596) }
 
 var fileDescriptor_b9b33ac10a70c596 = []byte{
-	// 173 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4d, 0x49, 0xce, 0x49,
-	0x2c, 0x2d, 0xc9, 0xd0, 0x4f, 0x4f, 0xcd, 0x4b, 0x2d, 0xce, 0x2c, 0xd6, 0x2b, 0x28, 0xca, 0x2f,
-	0xc9, 0x17, 0x32, 0xaa, 0xca, 0x4c, 0x4f, 0x4a, 0x4d, 0x4d, 0xcc, 0xc9, 0xc9, 0x4c, 0xcc, 0x4b,
-	0x4e, 0xd5, 0x4b, 0xc9, 0x2c, 0x2e, 0x29, 0xca, 0x4c, 0x2a, 0x2d, 0x49, 0x4d, 0x49, 0xce, 0xcf,
-	0x2d, 0x80, 0x88, 0xe6, 0xa4, 0xa6, 0xa4, 0xa7, 0x16, 0xe9, 0x41, 0x4d, 0x50, 0xe2, 0xe3, 0xe2,
-	0x71, 0x87, 0x18, 0x12, 0x5c, 0x92, 0x58, 0x92, 0xea, 0x94, 0x74, 0xe2, 0x91, 0x1c, 0xe3, 0x85,
-	0x47, 0x72, 0x8c, 0x0f, 0x1e, 0xc9, 0x31, 0x4e, 0x78, 0x2c, 0xc7, 0x70, 0xe1, 0xb1, 0x1c, 0xc3,
-	0x8d, 0xc7, 0x72, 0x0c, 0x51, 0x1e, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9,
-	0xfa, 0x10, 0x8b, 0x74, 0x61, 0x36, 0xe9, 0x23, 0xd9, 0xa4, 0x8b, 0xb0, 0x4a, 0x17, 0x62, 0x97,
-	0x7e, 0x85, 0x3e, 0xcc, 0xbd, 0x25, 0x95, 0x05, 0xa9, 0xc5, 0x49, 0x6c, 0x60, 0xe7, 0x1a, 0x03,
-	0x02, 0x00, 0x00, 0xff, 0xff, 0x70, 0xb0, 0xad, 0xed, 0xc7, 0x00, 0x00, 0x00,
+	// 344 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x92, 0xb1, 0x4e, 0xf3, 0x30,
+	0x10, 0xc7, 0x93, 0xaf, 0xd5, 0x37, 0xa4, 0x4c, 0x11, 0x48, 0x55, 0x05, 0xa1, 0x62, 0xea, 0xd2,
+	0x58, 0x2a, 0x23, 0x03, 0x6a, 0x17, 0x18, 0x3a, 0xa0, 0xb2, 0xb1, 0x54, 0x8e, 0x73, 0x72, 0x2d,
+	0xa5, 0x76, 0x14, 0x5f, 0x50, 0xe1, 0x29, 0x98, 0x78, 0xa6, 0x8e, 0x1d, 0x99, 0x10, 0x6a, 0x27,
+	0xde, 0x02, 0x35, 0x76, 0xda, 0x14, 0x01, 0x12, 0x74, 0xb3, 0xce, 0xc9, 0xef, 0xf7, 0xbf, 0xf3,
+	0x79, 0x47, 0x31, 0x4b, 0x68, 0x8e, 0x13, 0xc2, 0x41, 0x82, 0x16, 0x3a, 0x4c, 0x33, 0x85, 0xca,
+	0xef, 0x3d, 0x0a, 0x1e, 0x01, 0xd0, 0x24, 0x11, 0x54, 0x32, 0x08, 0x63, 0xa1, 0x31, 0x13, 0x51,
+	0x8e, 0x10, 0x33, 0x35, 0x4d, 0x4d, 0x35, 0x81, 0x98, 0x43, 0x16, 0x5a, 0x42, 0x6b, 0x83, 0xa2,
+	0x8c, 0xa9, 0x5c, 0xa2, 0x41, 0xb5, 0x4e, 0xca, 0x72, 0x0a, 0x32, 0x16, 0x92, 0x8f, 0x77, 0xaf,
+	0x3b, 0xdf, 0x5c, 0x8f, 0x33, 0xb8, 0x57, 0x8c, 0xa2, 0x50, 0xd2, 0x7e, 0xd9, 0xfa, 0xc4, 0x1f,
+	0x6b, 0xa4, 0x25, 0xe5, 0x90, 0x2b, 0xae, 0x8a, 0x23, 0x59, 0x9f, 0x4c, 0xf5, 0xec, 0xbd, 0xe6,
+	0x1d, 0x5c, 0x99, 0xbe, 0x6e, 0x91, 0x22, 0xf8, 0xcc, 0x6b, 0xd8, 0x9f, 0x87, 0x42, 0x63, 0xd3,
+	0x6d, 0xd7, 0x3a, 0x8d, 0xde, 0x45, 0xf8, 0xfb, 0x66, 0xc3, 0xbe, 0xc1, 0x0c, 0xea, 0xf3, 0xd7,
+	0x53, 0x67, 0x54, 0xa5, 0xfa, 0x33, 0xcf, 0xb7, 0xbd, 0xf4, 0x2b, 0xae, 0x7f, 0x85, 0x6b, 0xf0,
+	0x17, 0xd7, 0xcd, 0x0e, 0xcd, 0x2a, 0xbf, 0x70, 0xf8, 0xcf, 0xae, 0x77, 0xbc, 0x5b, 0x1e, 0x6d,
+	0x86, 0x58, 0x84, 0xa8, 0x15, 0x21, 0x86, 0xfb, 0x87, 0xd8, 0x72, 0x6d, 0x9c, 0x1f, 0xbd, 0x3e,
+	0xdd, 0xcc, 0x7d, 0xfd, 0x0e, 0xcd, 0x7a, 0xdb, 0xed, 0x34, 0x7a, 0x97, 0x7b, 0xcc, 0x7d, 0x8d,
+	0x19, 0x55, 0x99, 0x83, 0x68, 0xbe, 0x0c, 0xdc, 0xc5, 0x32, 0x70, 0xdf, 0x96, 0x81, 0xfb, 0xb4,
+	0x0a, 0x9c, 0xc5, 0x2a, 0x70, 0x5e, 0x56, 0x81, 0x73, 0x77, 0xcd, 0x05, 0x4e, 0xf2, 0x28, 0x64,
+	0x6a, 0x4a, 0x8c, 0xb1, 0x5b, 0x2a, 0x49, 0x45, 0xd9, 0xdd, 0x3a, 0xbb, 0x46, 0x4a, 0x66, 0xa4,
+	0x5c, 0x39, 0x7c, 0x48, 0x41, 0x47, 0xff, 0x8b, 0xb5, 0x3a, 0xff, 0x08, 0x00, 0x00, 0xff, 0xff,
+	0x87, 0x8f, 0x4f, 0xe8, 0x35, 0x03, 0x00, 0x00,
 }
 
 func (m *GenesisState) Marshal() (dAtA []byte, err error) {
@@ -100,6 +144,60 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.AccountStat != nil {
+		{
+			size, err := m.AccountStat.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGenesis(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.PendingAccountRevocationList) > 0 {
+		for iNdEx := len(m.PendingAccountRevocationList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PendingAccountRevocationList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.PendingAccountList) > 0 {
+		for iNdEx := len(m.PendingAccountList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PendingAccountList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.AccountList) > 0 {
+		for iNdEx := len(m.AccountList) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.AccountList[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGenesis(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
 	return len(dAtA) - i, nil
 }
 
@@ -120,6 +218,28 @@ func (m *GenesisState) Size() (n int) {
 	}
 	var l int
 	_ = l
+	if len(m.AccountList) > 0 {
+		for _, e := range m.AccountList {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if len(m.PendingAccountList) > 0 {
+		for _, e := range m.PendingAccountList {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if len(m.PendingAccountRevocationList) > 0 {
+		for _, e := range m.PendingAccountRevocationList {
+			l = e.Size()
+			n += 1 + l + sovGenesis(uint64(l))
+		}
+	}
+	if m.AccountStat != nil {
+		l = m.AccountStat.Size()
+		n += 1 + l + sovGenesis(uint64(l))
+	}
 	return n
 }
 
@@ -158,6 +278,144 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: GenesisState: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AccountList = append(m.AccountList, Account{})
+			if err := m.AccountList[len(m.AccountList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PendingAccountList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PendingAccountList = append(m.PendingAccountList, PendingAccount{})
+			if err := m.PendingAccountList[len(m.PendingAccountList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PendingAccountRevocationList", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PendingAccountRevocationList = append(m.PendingAccountRevocationList, PendingAccountRevocation{})
+			if err := m.PendingAccountRevocationList[len(m.PendingAccountRevocationList)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountStat", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGenesis
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGenesis
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AccountStat == nil {
+				m.AccountStat = &AccountStat{}
+			}
+			if err := m.AccountStat.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGenesis(dAtA[iNdEx:])

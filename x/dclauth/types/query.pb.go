@@ -6,12 +6,17 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/cosmos/cosmos-sdk/types/query"
+	query "github.com/cosmos/cosmos-sdk/types/query"
+	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -25,24 +30,718 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type QueryGetAccountRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryGetAccountRequest) Reset()         { *m = QueryGetAccountRequest{} }
+func (m *QueryGetAccountRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAccountRequest) ProtoMessage()    {}
+func (*QueryGetAccountRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{0}
+}
+func (m *QueryGetAccountRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAccountRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAccountRequest.Merge(m, src)
+}
+func (m *QueryGetAccountRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAccountRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAccountRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAccountRequest proto.InternalMessageInfo
+
+func (m *QueryGetAccountRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type QueryGetAccountResponse struct {
+	Account Account `protobuf:"bytes,1,opt,name=account,proto3" json:"account"`
+}
+
+func (m *QueryGetAccountResponse) Reset()         { *m = QueryGetAccountResponse{} }
+func (m *QueryGetAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAccountResponse) ProtoMessage()    {}
+func (*QueryGetAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{1}
+}
+func (m *QueryGetAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAccountResponse.Merge(m, src)
+}
+func (m *QueryGetAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAccountResponse proto.InternalMessageInfo
+
+func (m *QueryGetAccountResponse) GetAccount() Account {
+	if m != nil {
+		return m.Account
+	}
+	return Account{}
+}
+
+type QueryAllAccountRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllAccountRequest) Reset()         { *m = QueryAllAccountRequest{} }
+func (m *QueryAllAccountRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllAccountRequest) ProtoMessage()    {}
+func (*QueryAllAccountRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{2}
+}
+func (m *QueryAllAccountRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllAccountRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllAccountRequest.Merge(m, src)
+}
+func (m *QueryAllAccountRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllAccountRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllAccountRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllAccountRequest proto.InternalMessageInfo
+
+func (m *QueryAllAccountRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllAccountResponse struct {
+	Account    []Account           `protobuf:"bytes,1,rep,name=account,proto3" json:"account"`
+	Pagination *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllAccountResponse) Reset()         { *m = QueryAllAccountResponse{} }
+func (m *QueryAllAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllAccountResponse) ProtoMessage()    {}
+func (*QueryAllAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{3}
+}
+func (m *QueryAllAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllAccountResponse.Merge(m, src)
+}
+func (m *QueryAllAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllAccountResponse proto.InternalMessageInfo
+
+func (m *QueryAllAccountResponse) GetAccount() []Account {
+	if m != nil {
+		return m.Account
+	}
+	return nil
+}
+
+func (m *QueryAllAccountResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetPendingAccountRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryGetPendingAccountRequest) Reset()         { *m = QueryGetPendingAccountRequest{} }
+func (m *QueryGetPendingAccountRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetPendingAccountRequest) ProtoMessage()    {}
+func (*QueryGetPendingAccountRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{4}
+}
+func (m *QueryGetPendingAccountRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPendingAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPendingAccountRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPendingAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPendingAccountRequest.Merge(m, src)
+}
+func (m *QueryGetPendingAccountRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPendingAccountRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPendingAccountRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPendingAccountRequest proto.InternalMessageInfo
+
+func (m *QueryGetPendingAccountRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type QueryGetPendingAccountResponse struct {
+	PendingAccount PendingAccount `protobuf:"bytes,1,opt,name=pendingAccount,proto3" json:"pendingAccount"`
+}
+
+func (m *QueryGetPendingAccountResponse) Reset()         { *m = QueryGetPendingAccountResponse{} }
+func (m *QueryGetPendingAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetPendingAccountResponse) ProtoMessage()    {}
+func (*QueryGetPendingAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{5}
+}
+func (m *QueryGetPendingAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPendingAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPendingAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPendingAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPendingAccountResponse.Merge(m, src)
+}
+func (m *QueryGetPendingAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPendingAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPendingAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPendingAccountResponse proto.InternalMessageInfo
+
+func (m *QueryGetPendingAccountResponse) GetPendingAccount() PendingAccount {
+	if m != nil {
+		return m.PendingAccount
+	}
+	return PendingAccount{}
+}
+
+type QueryAllPendingAccountRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllPendingAccountRequest) Reset()         { *m = QueryAllPendingAccountRequest{} }
+func (m *QueryAllPendingAccountRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllPendingAccountRequest) ProtoMessage()    {}
+func (*QueryAllPendingAccountRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{6}
+}
+func (m *QueryAllPendingAccountRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllPendingAccountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllPendingAccountRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllPendingAccountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllPendingAccountRequest.Merge(m, src)
+}
+func (m *QueryAllPendingAccountRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllPendingAccountRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllPendingAccountRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllPendingAccountRequest proto.InternalMessageInfo
+
+func (m *QueryAllPendingAccountRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllPendingAccountResponse struct {
+	PendingAccount []PendingAccount    `protobuf:"bytes,1,rep,name=pendingAccount,proto3" json:"pendingAccount"`
+	Pagination     *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllPendingAccountResponse) Reset()         { *m = QueryAllPendingAccountResponse{} }
+func (m *QueryAllPendingAccountResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllPendingAccountResponse) ProtoMessage()    {}
+func (*QueryAllPendingAccountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{7}
+}
+func (m *QueryAllPendingAccountResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllPendingAccountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllPendingAccountResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllPendingAccountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllPendingAccountResponse.Merge(m, src)
+}
+func (m *QueryAllPendingAccountResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllPendingAccountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllPendingAccountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllPendingAccountResponse proto.InternalMessageInfo
+
+func (m *QueryAllPendingAccountResponse) GetPendingAccount() []PendingAccount {
+	if m != nil {
+		return m.PendingAccount
+	}
+	return nil
+}
+
+func (m *QueryAllPendingAccountResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetPendingAccountRevocationRequest struct {
+	Address string `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+}
+
+func (m *QueryGetPendingAccountRevocationRequest) Reset() {
+	*m = QueryGetPendingAccountRevocationRequest{}
+}
+func (m *QueryGetPendingAccountRevocationRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetPendingAccountRevocationRequest) ProtoMessage()    {}
+func (*QueryGetPendingAccountRevocationRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{8}
+}
+func (m *QueryGetPendingAccountRevocationRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPendingAccountRevocationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPendingAccountRevocationRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPendingAccountRevocationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPendingAccountRevocationRequest.Merge(m, src)
+}
+func (m *QueryGetPendingAccountRevocationRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPendingAccountRevocationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPendingAccountRevocationRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPendingAccountRevocationRequest proto.InternalMessageInfo
+
+func (m *QueryGetPendingAccountRevocationRequest) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+type QueryGetPendingAccountRevocationResponse struct {
+	PendingAccountRevocation PendingAccountRevocation `protobuf:"bytes,1,opt,name=pendingAccountRevocation,proto3" json:"pendingAccountRevocation"`
+}
+
+func (m *QueryGetPendingAccountRevocationResponse) Reset() {
+	*m = QueryGetPendingAccountRevocationResponse{}
+}
+func (m *QueryGetPendingAccountRevocationResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetPendingAccountRevocationResponse) ProtoMessage()    {}
+func (*QueryGetPendingAccountRevocationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{9}
+}
+func (m *QueryGetPendingAccountRevocationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetPendingAccountRevocationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetPendingAccountRevocationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetPendingAccountRevocationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetPendingAccountRevocationResponse.Merge(m, src)
+}
+func (m *QueryGetPendingAccountRevocationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetPendingAccountRevocationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetPendingAccountRevocationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetPendingAccountRevocationResponse proto.InternalMessageInfo
+
+func (m *QueryGetPendingAccountRevocationResponse) GetPendingAccountRevocation() PendingAccountRevocation {
+	if m != nil {
+		return m.PendingAccountRevocation
+	}
+	return PendingAccountRevocation{}
+}
+
+type QueryAllPendingAccountRevocationRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllPendingAccountRevocationRequest) Reset() {
+	*m = QueryAllPendingAccountRevocationRequest{}
+}
+func (m *QueryAllPendingAccountRevocationRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllPendingAccountRevocationRequest) ProtoMessage()    {}
+func (*QueryAllPendingAccountRevocationRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{10}
+}
+func (m *QueryAllPendingAccountRevocationRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllPendingAccountRevocationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllPendingAccountRevocationRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllPendingAccountRevocationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllPendingAccountRevocationRequest.Merge(m, src)
+}
+func (m *QueryAllPendingAccountRevocationRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllPendingAccountRevocationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllPendingAccountRevocationRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllPendingAccountRevocationRequest proto.InternalMessageInfo
+
+func (m *QueryAllPendingAccountRevocationRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllPendingAccountRevocationResponse struct {
+	PendingAccountRevocation []PendingAccountRevocation `protobuf:"bytes,1,rep,name=pendingAccountRevocation,proto3" json:"pendingAccountRevocation"`
+	Pagination               *query.PageResponse        `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllPendingAccountRevocationResponse) Reset() {
+	*m = QueryAllPendingAccountRevocationResponse{}
+}
+func (m *QueryAllPendingAccountRevocationResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllPendingAccountRevocationResponse) ProtoMessage()    {}
+func (*QueryAllPendingAccountRevocationResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{11}
+}
+func (m *QueryAllPendingAccountRevocationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllPendingAccountRevocationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllPendingAccountRevocationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllPendingAccountRevocationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllPendingAccountRevocationResponse.Merge(m, src)
+}
+func (m *QueryAllPendingAccountRevocationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllPendingAccountRevocationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllPendingAccountRevocationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllPendingAccountRevocationResponse proto.InternalMessageInfo
+
+func (m *QueryAllPendingAccountRevocationResponse) GetPendingAccountRevocation() []PendingAccountRevocation {
+	if m != nil {
+		return m.PendingAccountRevocation
+	}
+	return nil
+}
+
+func (m *QueryAllPendingAccountRevocationResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetAccountStatRequest struct {
+}
+
+func (m *QueryGetAccountStatRequest) Reset()         { *m = QueryGetAccountStatRequest{} }
+func (m *QueryGetAccountStatRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAccountStatRequest) ProtoMessage()    {}
+func (*QueryGetAccountStatRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{12}
+}
+func (m *QueryGetAccountStatRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAccountStatRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAccountStatRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAccountStatRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAccountStatRequest.Merge(m, src)
+}
+func (m *QueryGetAccountStatRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAccountStatRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAccountStatRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAccountStatRequest proto.InternalMessageInfo
+
+type QueryGetAccountStatResponse struct {
+	AccountStat AccountStat `protobuf:"bytes,1,opt,name=AccountStat,proto3" json:"AccountStat"`
+}
+
+func (m *QueryGetAccountStatResponse) Reset()         { *m = QueryGetAccountStatResponse{} }
+func (m *QueryGetAccountStatResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetAccountStatResponse) ProtoMessage()    {}
+func (*QueryGetAccountStatResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ea8dcf317d352d49, []int{13}
+}
+func (m *QueryGetAccountStatResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetAccountStatResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetAccountStatResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetAccountStatResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetAccountStatResponse.Merge(m, src)
+}
+func (m *QueryGetAccountStatResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetAccountStatResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetAccountStatResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetAccountStatResponse proto.InternalMessageInfo
+
+func (m *QueryGetAccountStatResponse) GetAccountStat() AccountStat {
+	if m != nil {
+		return m.AccountStat
+	}
+	return AccountStat{}
+}
+
+func init() {
+	proto.RegisterType((*QueryGetAccountRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountRequest")
+	proto.RegisterType((*QueryGetAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountResponse")
+	proto.RegisterType((*QueryAllAccountRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryAllAccountRequest")
+	proto.RegisterType((*QueryAllAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryAllAccountResponse")
+	proto.RegisterType((*QueryGetPendingAccountRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRequest")
+	proto.RegisterType((*QueryGetPendingAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountResponse")
+	proto.RegisterType((*QueryAllPendingAccountRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountRequest")
+	proto.RegisterType((*QueryAllPendingAccountResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountResponse")
+	proto.RegisterType((*QueryGetPendingAccountRevocationRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationRequest")
+	proto.RegisterType((*QueryGetPendingAccountRevocationResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationResponse")
+	proto.RegisterType((*QueryAllPendingAccountRevocationRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountRevocationRequest")
+	proto.RegisterType((*QueryAllPendingAccountRevocationResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountRevocationResponse")
+	proto.RegisterType((*QueryGetAccountStatRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatRequest")
+	proto.RegisterType((*QueryGetAccountStatResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse")
+}
+
 func init() { proto.RegisterFile("dclauth/query.proto", fileDescriptor_ea8dcf317d352d49) }
 
 var fileDescriptor_ea8dcf317d352d49 = []byte{
-	// 216 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0xcf, 0xb1, 0x4e, 0x03, 0x31,
-	0x0c, 0x06, 0xe0, 0xbb, 0x01, 0x90, 0x3a, 0xc2, 0x56, 0xa1, 0x3c, 0x00, 0xd2, 0x9d, 0xd5, 0xf2,
-	0x06, 0x4c, 0xac, 0xac, 0x6c, 0x4e, 0xce, 0x4a, 0x2d, 0xe5, 0xe2, 0x70, 0x71, 0x10, 0xe5, 0x29,
-	0x78, 0x2c, 0xc6, 0x8e, 0x8c, 0xe8, 0xee, 0x45, 0x10, 0x0d, 0x15, 0x5d, 0xad, 0xdf, 0xfe, 0x3f,
-	0xaf, 0x6e, 0x06, 0x17, 0xb0, 0xe8, 0x0e, 0x5e, 0x0a, 0x4d, 0xfb, 0x3e, 0x4d, 0xa2, 0x72, 0xbd,
-	0x7d, 0x67, 0x6f, 0x89, 0x30, 0x04, 0xc6, 0xe8, 0xa8, 0x1f, 0x38, 0xeb, 0xc4, 0xb6, 0x28, 0x0d,
-	0x4e, 0xc6, 0x54, 0xa7, 0x81, 0x06, 0x4f, 0x53, 0xff, 0xb7, 0xbf, 0xbe, 0xf5, 0x22, 0x3e, 0x10,
-	0x60, 0x62, 0xc0, 0x18, 0x45, 0x51, 0x59, 0x62, 0xae, 0x17, 0xd7, 0x77, 0x4e, 0xf2, 0x28, 0x19,
-	0x2c, 0x66, 0xaa, 0x55, 0xf0, 0xba, 0xb1, 0xa4, 0xb8, 0x81, 0x84, 0x9e, 0xe3, 0x31, 0x5c, 0xb3,
-	0xdb, 0xab, 0xd5, 0xc5, 0xd3, 0x6f, 0xe2, 0xc1, 0x7e, 0xce, 0xa6, 0x3d, 0xcc, 0xa6, 0xfd, 0x9e,
-	0x4d, 0xfb, 0xb1, 0x98, 0xe6, 0xb0, 0x98, 0xe6, 0x6b, 0x31, 0xcd, 0xf3, 0xa3, 0x67, 0xdd, 0x15,
-	0xdb, 0x3b, 0x19, 0xa1, 0x5a, 0xbb, 0x13, 0x16, 0xce, 0xb0, 0xdd, 0xbf, 0xb6, 0xab, 0x5c, 0x78,
-	0x83, 0xd3, 0xc3, 0xba, 0x4f, 0x94, 0xed, 0xe5, 0xb1, 0xf3, 0xfe, 0x27, 0x00, 0x00, 0xff, 0xff,
-	0x91, 0xc4, 0xfa, 0x19, 0x08, 0x01, 0x00, 0x00,
+	// 804 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x57, 0xcf, 0x4f, 0xd4, 0x40,
+	0x18, 0xdd, 0x2e, 0x2a, 0x71, 0x48, 0x48, 0x1c, 0x7f, 0x6d, 0x0a, 0xac, 0xa6, 0x07, 0x21, 0x26,
+	0xb4, 0x61, 0x3d, 0x19, 0x8d, 0xba, 0xa0, 0x40, 0x44, 0xf9, 0xb1, 0xc6, 0x18, 0xc5, 0x64, 0x9d,
+	0x6d, 0x27, 0xa5, 0x49, 0xe9, 0x94, 0xed, 0x2c, 0x11, 0x8d, 0x17, 0x63, 0xf4, 0x46, 0x8c, 0xfe,
+	0x21, 0xde, 0xbc, 0x78, 0xf0, 0xca, 0x91, 0xc4, 0x8b, 0x89, 0x89, 0x31, 0xe0, 0x8d, 0x9b, 0x27,
+	0x8f, 0x66, 0xdb, 0xaf, 0x6e, 0x5b, 0xda, 0x05, 0xe9, 0xe0, 0xad, 0x4c, 0x3b, 0xef, 0x7d, 0xef,
+	0xbd, 0x6f, 0xe6, 0x63, 0xd1, 0x49, 0x43, 0xb7, 0x49, 0x8b, 0x2f, 0x69, 0x2b, 0x2d, 0xda, 0x5c,
+	0x53, 0xdd, 0x26, 0xe3, 0x0c, 0x57, 0x9e, 0x59, 0x66, 0x83, 0x52, 0x62, 0xdb, 0x16, 0x71, 0x74,
+	0xaa, 0x1a, 0x96, 0xc7, 0x9b, 0x56, 0xa3, 0xc5, 0xa9, 0xa1, 0xb3, 0x65, 0x37, 0x58, 0xb5, 0xa9,
+	0x61, 0xd2, 0xa6, 0x0a, 0xfb, 0xe5, 0x41, 0x93, 0x31, 0xd3, 0xa6, 0x1a, 0x71, 0x2d, 0x8d, 0x38,
+	0x0e, 0xe3, 0x84, 0x5b, 0xcc, 0xf1, 0x02, 0x44, 0xf9, 0xa2, 0xce, 0xbc, 0x65, 0xe6, 0x69, 0x0d,
+	0xe2, 0xd1, 0x80, 0x4a, 0x5b, 0x1d, 0x6b, 0x50, 0x4e, 0xc6, 0x34, 0x97, 0x98, 0x96, 0xe3, 0x7f,
+	0x0c, 0xdf, 0x9e, 0x0e, 0x4b, 0x22, 0xba, 0xce, 0x5a, 0x0e, 0x87, 0xe5, 0xa1, 0x70, 0xd9, 0xa5,
+	0x8e, 0x61, 0x39, 0x66, 0x3d, 0xfe, 0x7a, 0x24, 0xe3, 0x75, 0xbd, 0x49, 0x57, 0x99, 0x1e, 0xc5,
+	0x97, 0x13, 0xf8, 0x75, 0x8f, 0x93, 0x10, 0xe5, 0x94, 0xc9, 0x4c, 0xe6, 0x3f, 0x6a, 0xed, 0xa7,
+	0x60, 0x55, 0xa9, 0xa0, 0x33, 0x0b, 0xed, 0x9a, 0xa7, 0x28, 0xaf, 0x06, 0x7b, 0x6a, 0x74, 0xa5,
+	0x45, 0x3d, 0x8e, 0x4b, 0xa8, 0x97, 0x18, 0x46, 0x93, 0x7a, 0x5e, 0x49, 0x3a, 0x2f, 0x8d, 0x1c,
+	0xaf, 0x85, 0x7f, 0x2a, 0xab, 0xe8, 0xec, 0xae, 0x3d, 0x9e, 0xcb, 0x1c, 0x8f, 0xe2, 0x45, 0xd4,
+	0x0b, 0xd4, 0xfe, 0xa6, 0xbe, 0xca, 0x15, 0xf5, 0xdf, 0x0d, 0x57, 0x01, 0x75, 0xfc, 0xc8, 0xc6,
+	0xf7, 0x73, 0x85, 0x5a, 0x88, 0xa8, 0x3c, 0x81, 0x5a, 0xab, 0xb6, 0x9d, 0xa8, 0x75, 0x12, 0xa1,
+	0x8e, 0xd7, 0xc0, 0x7c, 0x41, 0x0d, 0x82, 0x51, 0xdb, 0xc1, 0xa8, 0x41, 0x0f, 0x40, 0x30, 0xea,
+	0x3c, 0x31, 0x29, 0xec, 0xad, 0x45, 0x76, 0x2a, 0x9f, 0x25, 0x90, 0x16, 0xa5, 0x48, 0x93, 0xd6,
+	0x23, 0x56, 0x1a, 0x9e, 0x8a, 0x09, 0x28, 0xfa, 0x02, 0x86, 0xf7, 0x14, 0x10, 0x54, 0x16, 0x53,
+	0x70, 0x19, 0x0d, 0x85, 0xd9, 0xcc, 0x07, 0xdd, 0xb2, 0xef, 0x58, 0xdf, 0x49, 0xa8, 0x9c, 0xb5,
+	0x17, 0x3c, 0x70, 0x51, 0xbf, 0x1b, 0x7b, 0x03, 0x5e, 0x8f, 0x1f, 0xc4, 0x8a, 0x38, 0x07, 0x38,
+	0x92, 0xc0, 0x57, 0x4c, 0xd0, 0x53, 0xb5, 0xed, 0x74, 0x3d, 0xa2, 0xa2, 0xff, 0x16, 0xaa, 0x4f,
+	0x61, 0xea, 0xa2, 0xbe, 0xe7, 0x30, 0xd5, 0x8b, 0x6b, 0x8b, 0x09, 0x34, 0x9c, 0x15, 0x6d, 0x78,
+	0x85, 0xec, 0xdd, 0x20, 0x9f, 0x24, 0x34, 0xb2, 0x37, 0x0a, 0x98, 0xb5, 0x2e, 0xa1, 0x92, 0x9b,
+	0xf1, 0x11, 0xc4, 0x74, 0x27, 0xbf, 0x6f, 0x1d, 0x4c, 0x70, 0x30, 0x93, 0x53, 0x59, 0x01, 0x0b,
+	0x52, 0xf2, 0x4d, 0x5a, 0x20, 0xaa, 0xa7, 0x5e, 0x15, 0xc1, 0xb0, 0xae, 0x9c, 0xfb, 0x33, 0xac,
+	0xe7, 0x7f, 0x1b, 0x26, 0xae, 0xf9, 0x06, 0x91, 0x9c, 0x98, 0x17, 0xf7, 0x38, 0x09, 0x0f, 0xb0,
+	0xf2, 0x5a, 0x42, 0x03, 0xa9, 0xaf, 0xc1, 0x17, 0x13, 0xf5, 0x45, 0x96, 0x21, 0x8d, 0xeb, 0x39,
+	0xee, 0xde, 0x36, 0x0c, 0x88, 0x8f, 0x22, 0x57, 0x76, 0xfa, 0xd1, 0x51, 0xbf, 0x10, 0xfc, 0x4b,
+	0x42, 0xbd, 0xe1, 0x11, 0xbc, 0x7d, 0x10, 0xa6, 0xf4, 0x91, 0x2a, 0xcf, 0x08, 0xc1, 0x0a, 0x7c,
+	0x51, 0x66, 0x5f, 0x7e, 0xf9, 0xf9, 0xbe, 0x38, 0x8d, 0x27, 0xb5, 0x00, 0x74, 0x34, 0x44, 0xd5,
+	0xba, 0xa0, 0x6a, 0x89, 0x7f, 0x10, 0xb4, 0xe7, 0x70, 0xb8, 0x5f, 0xe0, 0x1d, 0x09, 0x21, 0xe0,
+	0xa8, 0xda, 0x76, 0x0e, 0xdd, 0xbb, 0xc6, 0x73, 0x0e, 0xdd, 0xbb, 0xe7, 0xb0, 0x72, 0xd3, 0xd7,
+	0x7d, 0x0d, 0x5f, 0xcd, 0xa3, 0x1b, 0xaf, 0x17, 0x51, 0x7f, 0xfc, 0x64, 0xe0, 0x85, 0x3c, 0xe9,
+	0xa4, 0x0e, 0x27, 0xb9, 0x26, 0x12, 0x12, 0xf4, 0xdf, 0xf7, 0xf5, 0xcf, 0xe1, 0xbb, 0x07, 0xd2,
+	0x1f, 0x3f, 0xed, 0x91, 0xf8, 0xdf, 0x14, 0xd1, 0x89, 0x38, 0x63, 0xbb, 0x0b, 0x16, 0xf2, 0x24,
+	0x27, 0xda, 0x93, 0xcc, 0xc9, 0xac, 0xcc, 0xf8, 0x9e, 0xdc, 0xc2, 0x13, 0x02, 0x3c, 0xc1, 0x1f,
+	0x8b, 0xa8, 0x94, 0x75, 0x69, 0xe2, 0x45, 0x91, 0x89, 0x26, 0xe6, 0x8e, 0xfc, 0xf8, 0x70, 0xc0,
+	0xc1, 0xa4, 0xba, 0x6f, 0xd2, 0x43, 0xfc, 0x40, 0x80, 0x49, 0x1d, 0xf8, 0x48, 0x0b, 0x7d, 0x28,
+	0xa2, 0x81, 0xac, 0x2a, 0xda, 0xcd, 0xb4, 0x28, 0x32, 0x79, 0x71, 0xde, 0xed, 0x63, 0x38, 0x0b,
+	0x3d, 0x74, 0x91, 0x6e, 0xfa, 0x2d, 0xc5, 0x86, 0x1b, 0x9e, 0x15, 0x30, 0x20, 0x22, 0xb3, 0x55,
+	0x9e, 0x13, 0x86, 0x07, 0x3e, 0x4c, 0xfb, 0x3e, 0x8c, 0xe3, 0x1b, 0x79, 0x2e, 0x5f, 0x7f, 0x00,
+	0x37, 0x36, 0xb6, 0xca, 0xd2, 0xe6, 0x56, 0x59, 0xfa, 0xb1, 0x55, 0x96, 0xde, 0x6e, 0x97, 0x0b,
+	0x9b, 0xdb, 0xe5, 0xc2, 0xd7, 0xed, 0x72, 0xe1, 0xd1, 0xb4, 0x69, 0xf1, 0xa5, 0x56, 0x43, 0xd5,
+	0xd9, 0x72, 0x37, 0x96, 0xd1, 0x0e, 0xcd, 0x28, 0xf0, 0x3c, 0xfd, 0xcb, 0xc4, 0xd7, 0x5c, 0xea,
+	0x35, 0x8e, 0xf9, 0xbf, 0x71, 0x2f, 0xfd, 0x09, 0x00, 0x00, 0xff, 0xff, 0x06, 0x8c, 0xa6, 0x40,
+	0x0a, 0x10, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -57,6 +756,20 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
+	// Queries a account by index.
+	Account(ctx context.Context, in *QueryGetAccountRequest, opts ...grpc.CallOption) (*QueryGetAccountResponse, error)
+	// Queries a list of account items.
+	AccountAll(ctx context.Context, in *QueryAllAccountRequest, opts ...grpc.CallOption) (*QueryAllAccountResponse, error)
+	// Queries a pendingAccount by index.
+	PendingAccount(ctx context.Context, in *QueryGetPendingAccountRequest, opts ...grpc.CallOption) (*QueryGetPendingAccountResponse, error)
+	// Queries a list of pendingAccount items.
+	PendingAccountAll(ctx context.Context, in *QueryAllPendingAccountRequest, opts ...grpc.CallOption) (*QueryAllPendingAccountResponse, error)
+	// Queries a pendingAccountRevocation by index.
+	PendingAccountRevocation(ctx context.Context, in *QueryGetPendingAccountRevocationRequest, opts ...grpc.CallOption) (*QueryGetPendingAccountRevocationResponse, error)
+	// Queries a list of pendingAccountRevocation items.
+	PendingAccountRevocationAll(ctx context.Context, in *QueryAllPendingAccountRevocationRequest, opts ...grpc.CallOption) (*QueryAllPendingAccountRevocationResponse, error)
+	// Queries a accountStat by index.
+	AccountStat(ctx context.Context, in *QueryGetAccountStatRequest, opts ...grpc.CallOption) (*QueryGetAccountStatResponse, error)
 }
 
 type queryClient struct {
@@ -67,22 +780,2309 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
+func (c *queryClient) Account(ctx context.Context, in *QueryGetAccountRequest, opts ...grpc.CallOption) (*QueryGetAccountResponse, error) {
+	out := new(QueryGetAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Query/Account", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) AccountAll(ctx context.Context, in *QueryAllAccountRequest, opts ...grpc.CallOption) (*QueryAllAccountResponse, error) {
+	out := new(QueryAllAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Query/AccountAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PendingAccount(ctx context.Context, in *QueryGetPendingAccountRequest, opts ...grpc.CallOption) (*QueryGetPendingAccountResponse, error) {
+	out := new(QueryGetPendingAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PendingAccountAll(ctx context.Context, in *QueryAllPendingAccountRequest, opts ...grpc.CallOption) (*QueryAllPendingAccountResponse, error) {
+	out := new(QueryAllPendingAccountResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccountAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PendingAccountRevocation(ctx context.Context, in *QueryGetPendingAccountRevocationRequest, opts ...grpc.CallOption) (*QueryGetPendingAccountRevocationResponse, error) {
+	out := new(QueryGetPendingAccountRevocationResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccountRevocation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) PendingAccountRevocationAll(ctx context.Context, in *QueryAllPendingAccountRevocationRequest, opts ...grpc.CallOption) (*QueryAllPendingAccountRevocationResponse, error) {
+	out := new(QueryAllPendingAccountRevocationResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccountRevocationAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) AccountStat(ctx context.Context, in *QueryGetAccountStatRequest, opts ...grpc.CallOption) (*QueryGetAccountStatResponse, error) {
+	out := new(QueryGetAccountStatResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclauth.Query/AccountStat", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
+	// Queries a account by index.
+	Account(context.Context, *QueryGetAccountRequest) (*QueryGetAccountResponse, error)
+	// Queries a list of account items.
+	AccountAll(context.Context, *QueryAllAccountRequest) (*QueryAllAccountResponse, error)
+	// Queries a pendingAccount by index.
+	PendingAccount(context.Context, *QueryGetPendingAccountRequest) (*QueryGetPendingAccountResponse, error)
+	// Queries a list of pendingAccount items.
+	PendingAccountAll(context.Context, *QueryAllPendingAccountRequest) (*QueryAllPendingAccountResponse, error)
+	// Queries a pendingAccountRevocation by index.
+	PendingAccountRevocation(context.Context, *QueryGetPendingAccountRevocationRequest) (*QueryGetPendingAccountRevocationResponse, error)
+	// Queries a list of pendingAccountRevocation items.
+	PendingAccountRevocationAll(context.Context, *QueryAllPendingAccountRevocationRequest) (*QueryAllPendingAccountRevocationResponse, error)
+	// Queries a accountStat by index.
+	AccountStat(context.Context, *QueryGetAccountStatRequest) (*QueryGetAccountStatResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
+func (*UnimplementedQueryServer) Account(ctx context.Context, req *QueryGetAccountRequest) (*QueryGetAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Account not implemented")
+}
+func (*UnimplementedQueryServer) AccountAll(ctx context.Context, req *QueryAllAccountRequest) (*QueryAllAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AccountAll not implemented")
+}
+func (*UnimplementedQueryServer) PendingAccount(ctx context.Context, req *QueryGetPendingAccountRequest) (*QueryGetPendingAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingAccount not implemented")
+}
+func (*UnimplementedQueryServer) PendingAccountAll(ctx context.Context, req *QueryAllPendingAccountRequest) (*QueryAllPendingAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingAccountAll not implemented")
+}
+func (*UnimplementedQueryServer) PendingAccountRevocation(ctx context.Context, req *QueryGetPendingAccountRevocationRequest) (*QueryGetPendingAccountRevocationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingAccountRevocation not implemented")
+}
+func (*UnimplementedQueryServer) PendingAccountRevocationAll(ctx context.Context, req *QueryAllPendingAccountRevocationRequest) (*QueryAllPendingAccountRevocationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PendingAccountRevocationAll not implemented")
+}
+func (*UnimplementedQueryServer) AccountStat(ctx context.Context, req *QueryGetAccountStatRequest) (*QueryGetAccountStatResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AccountStat not implemented")
+}
+
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
+}
+
+func _Query_Account_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Account(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Query/Account",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Account(ctx, req.(*QueryGetAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_AccountAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).AccountAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Query/AccountAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).AccountAll(ctx, req.(*QueryAllAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PendingAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetPendingAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PendingAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PendingAccount(ctx, req.(*QueryGetPendingAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PendingAccountAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllPendingAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PendingAccountAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccountAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PendingAccountAll(ctx, req.(*QueryAllPendingAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PendingAccountRevocation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetPendingAccountRevocationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PendingAccountRevocation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccountRevocation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PendingAccountRevocation(ctx, req.(*QueryGetPendingAccountRevocationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_PendingAccountRevocationAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllPendingAccountRevocationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).PendingAccountRevocationAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Query/PendingAccountRevocationAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).PendingAccountRevocationAll(ctx, req.(*QueryAllPendingAccountRevocationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_AccountStat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetAccountStatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).AccountStat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclauth.Query/AccountStat",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).AccountStat(ctx, req.(*QueryGetAccountStatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.dclauth.Query",
 	HandlerType: (*QueryServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "dclauth/query.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Account",
+			Handler:    _Query_Account_Handler,
+		},
+		{
+			MethodName: "AccountAll",
+			Handler:    _Query_AccountAll_Handler,
+		},
+		{
+			MethodName: "PendingAccount",
+			Handler:    _Query_PendingAccount_Handler,
+		},
+		{
+			MethodName: "PendingAccountAll",
+			Handler:    _Query_PendingAccountAll_Handler,
+		},
+		{
+			MethodName: "PendingAccountRevocation",
+			Handler:    _Query_PendingAccountRevocation_Handler,
+		},
+		{
+			MethodName: "PendingAccountRevocationAll",
+			Handler:    _Query_PendingAccountRevocationAll_Handler,
+		},
+		{
+			MethodName: "AccountStat",
+			Handler:    _Query_AccountStat_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "dclauth/query.proto",
 }
+
+func (m *QueryGetAccountRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAccountRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAccountRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Account.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllAccountRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllAccountRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllAccountRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Account) > 0 {
+		for iNdEx := len(m.Account) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Account[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetPendingAccountRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPendingAccountRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPendingAccountRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetPendingAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPendingAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPendingAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.PendingAccount.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllPendingAccountRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllPendingAccountRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllPendingAccountRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllPendingAccountResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllPendingAccountResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllPendingAccountResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PendingAccount) > 0 {
+		for iNdEx := len(m.PendingAccount) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PendingAccount[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetPendingAccountRevocationRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPendingAccountRevocationRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPendingAccountRevocationRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetPendingAccountRevocationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetPendingAccountRevocationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetPendingAccountRevocationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.PendingAccountRevocation.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllPendingAccountRevocationRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllPendingAccountRevocationRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllPendingAccountRevocationRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllPendingAccountRevocationResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllPendingAccountRevocationResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllPendingAccountRevocationResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.PendingAccountRevocation) > 0 {
+		for iNdEx := len(m.PendingAccountRevocation) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.PendingAccountRevocation[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetAccountStatRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAccountStatRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAccountStatRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetAccountStatResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetAccountStatResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetAccountStatResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.AccountStat.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
+	offset -= sovQuery(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *QueryGetAccountRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Account.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllAccountRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Account) > 0 {
+		for _, e := range m.Account {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetPendingAccountRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetPendingAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.PendingAccount.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllPendingAccountRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllPendingAccountResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.PendingAccount) > 0 {
+		for _, e := range m.PendingAccount {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetPendingAccountRevocationRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetPendingAccountRevocationResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.PendingAccountRevocation.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllPendingAccountRevocationRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllPendingAccountRevocationResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.PendingAccountRevocation) > 0 {
+		for _, e := range m.PendingAccountRevocation {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetAccountStatRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *QueryGetAccountStatResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.AccountStat.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func sovQuery(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozQuery(x uint64) (n int) {
+	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *QueryGetAccountRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAccountRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Account", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Account.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllAccountRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllAccountRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Account", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Account = append(m.Account, Account{})
+			if err := m.Account[len(m.Account)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPendingAccountRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPendingAccountRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPendingAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPendingAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPendingAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPendingAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PendingAccount", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.PendingAccount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllPendingAccountRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllPendingAccountRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllPendingAccountRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllPendingAccountResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllPendingAccountResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllPendingAccountResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PendingAccount", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PendingAccount = append(m.PendingAccount, PendingAccount{})
+			if err := m.PendingAccount[len(m.PendingAccount)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPendingAccountRevocationRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPendingAccountRevocationRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPendingAccountRevocationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetPendingAccountRevocationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetPendingAccountRevocationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetPendingAccountRevocationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PendingAccountRevocation", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.PendingAccountRevocation.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllPendingAccountRevocationRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllPendingAccountRevocationRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllPendingAccountRevocationRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllPendingAccountRevocationResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllPendingAccountRevocationResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllPendingAccountRevocationResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PendingAccountRevocation", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PendingAccountRevocation = append(m.PendingAccountRevocation, PendingAccountRevocation{})
+			if err := m.PendingAccountRevocation[len(m.PendingAccountRevocation)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetAccountStatRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAccountStatRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAccountStatRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetAccountStatResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetAccountStatResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetAccountStatResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountStat", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.AccountStat.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipQuery(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthQuery
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupQuery
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthQuery
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthQuery        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowQuery          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupQuery = fmt.Errorf("proto: unexpected end of group")
+)
