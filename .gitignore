@@ -1,3 +1,7 @@
+vue/node_modules
+vue/dist
+release/
+
 settings.json
 .idea
 localnet
