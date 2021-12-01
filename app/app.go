@@ -97,7 +97,6 @@ import (
 	dclauthmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	dclauthmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	dclgenutilmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
-	dclgenutilmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/keeper"
 	dclgenutilmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
 	modelmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 	modelmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
@@ -240,8 +239,6 @@ type App struct {
 	DclauthKeeper dclauthmodulekeeper.Keeper
 
 	ValidatorKeeper validatormodulekeeper.Keeper
-
-	DclgenutilKeeper dclgenutilmodulekeeper.Keeper
 
 	PkiKeeper pkimodulekeeper.Keeper
 
@@ -407,15 +404,7 @@ func New(
 	)
 	validatorModule := validatormodule.NewAppModule(appCodec, app.ValidatorKeeper)
 
-	app.DclgenutilKeeper = *dclgenutilmodulekeeper.NewKeeper(
-		appCodec,
-		keys[dclgenutilmoduletypes.StoreKey],
-		keys[dclgenutilmoduletypes.MemStoreKey],
-
-		app.DclauthKeeper,
-		app.ValidatorKeeper,
-	)
-	dclgenutilModule := dclgenutilmodule.NewAppModule(appCodec, app.DclgenutilKeeper)
+	dclgenutilModule := dclgenutilmodule.NewAppModule(appCodec) // FIXME issue 99
 
 	app.PkiKeeper = *pkimodulekeeper.NewKeeper(
 		appCodec,

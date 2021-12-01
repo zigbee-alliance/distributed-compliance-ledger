@@ -9,6 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,12 +31,17 @@ func CmdProposeAddAccount() *cobra.Command {
 				return err
 			}
 
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
 			var argPubKey cryptotypes.PubKey
 			if err := clientCtx.Codec.UnmarshalInterfaceJSON(
 				[]byte(viper.GetString(FlagPubKey)),
 				&argPubKey,
 			); err != nil {
-				return txf, nil, err
+				return err
 			}
 
 			var argRoles types.AccountRoles
@@ -44,26 +51,25 @@ func CmdProposeAddAccount() *cobra.Command {
 				}
 			}
 
-			var vendorID uint64
+			var argVendorID uint64
 			if viper.GetString(FlagVID) != "" {
-				argVendorID, err := cast.ToUint64E(viper.GetString(FlagVID))
+				argVendorID, err = cast.ToUint64E(viper.GetString(FlagVID))
 				if err != nil {
 					return err
 				}
 			}
 
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgProposeAddAccount(
+			msg, err := types.NewMsgProposeAddAccount(
 				clientCtx.GetFromAddress(),
 				argAddress,
 				argPubKey,
 				argRoles,
 				argVendorID,
 			)
+			if err != nil {
+				return err
+			}
+
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

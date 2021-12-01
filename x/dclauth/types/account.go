@@ -18,7 +18,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/bank/exported"
 )
 
 /*
@@ -185,4 +187,20 @@ func (revoc PendingAccountRevocation) HasApprovalFrom(address sdk.AccAddress) bo
 	}
 
 	return false
+}
+
+// GenesisAccountsIterator implements genesis account iteration.
+type GenesisAccountsIterator struct{}
+
+// IterateGenesisAccounts iterates over all the genesis accounts found in
+// appGenesis and invokes a callback on each genesis account. If any call
+// returns true, iteration stops.
+func (GenesisAccountsIterator) IterateGenesisAccounts(
+	cdc codec.JSONCodec, appState map[string]json.RawMessage, cb func(exported.GenesisAccount) (stop bool),
+) {
+	for _, account := range GetGenesisStateFromAppState(cdc, appState).AccountList {
+		if cb(account) {
+			break
+		}
+	}
 }

@@ -1,5 +1,6 @@
 package types
 
+/*
 // DONTCOVER
 
 import (
@@ -10,3 +11,4 @@ import (
 var (
 	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
 )
+*/

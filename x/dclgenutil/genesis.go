@@ -1,22 +1,20 @@
 package dclgenutil
 
 import (
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/keeper"
+	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
 )
 
-// InitGenesis initializes the capability module's state from a provided genesis
-// state.
-func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
-	// this line is used by starport scaffolding # genesis/module/init
-}
-
-// ExportGenesis returns the capability module's exported genesis.
-func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
-	genesis := types.DefaultGenesis()
-
-	// this line is used by starport scaffolding # genesis/module/export
-
-	return genesis
+// InitGenesis - initialize accounts and deliver genesis transactions
+func InitGenesis(
+	ctx sdk.Context, validatorKeeper types.ValidatorKeeper,
+	deliverTx deliverTxfn, genesisState types.GenesisState,
+	txEncodingConfig client.TxEncodingConfig,
+) (validators []abci.ValidatorUpdate, err error) {
+	if len(genesisState.GenTxs) > 0 {
+		validators, err = DeliverGenTxs(ctx, genesisState.GenTxs, validatorKeeper, deliverTx, txEncodingConfig)
+	}
+	return
 }

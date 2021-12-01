@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -36,6 +37,9 @@ func CmdCreateValidator() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().AddFlagSet(FlagSetPublicKey())
+	cmd.Flags().AddFlagSet(flagSetDescriptionCreate())
+
 	fsCreateValidator := InitValidatorFlags()
 	cmd.Flags().AddFlagSet(fsCreateValidator)
 
@@ -48,17 +52,6 @@ func CmdCreateValidator() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagName)
 
 	return cmd
-}
-
-func InitValidatorFlags() (fs *flag.FlagSet) {
-	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
-	fsCreateValidator.String(FlagPubKey, "", "The validator's Protobuf JSON encoded public key")
-	fsCreateValidator.String(FlagName, "", "The validator's name")
-	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
-	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
-	fsCreateValidator.String(FlagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
-
-	return fsCreateValidator
 }
 
 func newBuildCreateValidatorMsg(clientCtx client.Context, txf tx.Factory, fs *flag.FlagSet) (tx.Factory, *types.MsgCreateValidator, error) {
@@ -106,6 +99,127 @@ func newBuildCreateValidatorMsg(clientCtx client.Context, txf tx.Factory, fs *fl
 	return txf, msg, nil
 }
 
+// Return the flagset, particular flags, and a description of defaults
+// this is anticipated to be used with the gen-tx
+func CreateValidatorMsgFlagSet(ipDefault string) (fs *flag.FlagSet) {
+	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
+	fsCreateValidator.String(FlagIP, ipDefault, "The node's public IP")
+	fsCreateValidator.String(FlagNodeID, "", "The node's NodeID")
+	fsCreateValidator.String(FlagName, "", "The validator's (optional) name")
+	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
+	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
+	fsCreateValidator.String(FlagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
+	fsCreateValidator.AddFlagSet(FlagSetPublicKey())
+
+	return fsCreateValidator
+}
+
+type TxCreateValidatorConfig struct {
+	ChainID string
+	NodeID  string
+	Name    string
+
+	PubKey cryptotypes.PubKey
+
+	IP       string
+	Website  string
+	Details  string
+	Identity string
+}
+
+func PrepareConfigForTxCreateValidator(flagSet *flag.FlagSet, name, nodeID, chainID string, valPubKey cryptotypes.PubKey) (TxCreateValidatorConfig, error) {
+	c := TxCreateValidatorConfig{}
+
+	ip, err := flagSet.GetString(FlagIP)
+	if err != nil {
+		return c, err
+	}
+	if ip == "" {
+		_, _ = fmt.Fprintf(os.Stderr, "couldn't retrieve an external IP; "+
+			"the tx's memo field will be unset")
+	}
+	c.IP = ip
+
+	website, err := flagSet.GetString(FlagWebsite)
+	if err != nil {
+		return c, err
+	}
+	c.Website = website
+
+	details, err := flagSet.GetString(FlagDetails)
+	if err != nil {
+		return c, err
+	}
+	c.SecurityContact = details
+
+	identity, err := flagSet.GetString(FlagIdentity)
+	if err != nil {
+		return c, err
+	}
+	c.Identity = identity
+
+	c.NodeID = nodeID
+	c.PubKey = valPubKey
+	c.Website = website
+	c.Details = details
+	c.Identity = identity
+	c.ChainID = chainID
+	c.Name = name
+
+	return c, nil
+}
+
+// BuildCreateValidatorMsg makes a new MsgCreateValidator.
+func BuildCreateValidatorMsg(clientCtx client.Context, config TxCreateValidatorConfig, txBldr tx.Factory, generateOnly bool) (tx.Factory, sdk.Msg, error) {
+	if err != nil {
+		return txBldr, nil, err
+	}
+
+	valAddr := clientCtx.GetFromAddress()
+	description := types.NewDescription(
+		config.Name,
+		config.Identity,
+		config.Website,
+		config.SecurityContact,
+		config.Details,
+	)
+
+	// get the initial validator commission parameters
+	rateStr := config.CommissionRate
+	maxRateStr := config.CommissionMaxRate
+	maxChangeRateStr := config.CommissionMaxChangeRate
+	commissionRates, err := buildCommissionRates(rateStr, maxRateStr, maxChangeRateStr)
+
+	if err != nil {
+		return txBldr, nil, err
+	}
+
+	// get the initial validator min self delegation
+	msbStr := config.MinSelfDelegation
+	minSelfDelegation, ok := sdk.NewIntFromString(msbStr)
+
+	if !ok {
+		return txBldr, nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "minimum self delegation must be a positive integer")
+	}
+
+	msg, err := types.NewMsgCreateValidator(
+		sdk.ValAddress(valAddr), config.PubKey, description,
+	)
+	if err != nil {
+		return txBldr, msg, err
+	}
+	if generateOnly {
+		ip := config.IP
+		nodeID := config.NodeID
+
+		if nodeID != "" && ip != "" {
+			txBldr = txBldr.WithMemo(fmt.Sprintf("%s@%s:26656", nodeID, ip))
+		}
+	}
+
+	return txBldr, msg, nil
+}
+
 /* FIXME issue 99, from old DCL
 // prepare flags in config.
 func PrepareFlagsForTxCreateValidator(
@@ -115,9 +229,9 @@ func PrepareFlagsForTxCreateValidator(
 	viper.Set(FlagNodeID, nodeID)
 	viper.Set(FlagAddress, sdk.ConsAddress(valPubKey.Address()).String())
 	viper.Set(FlagPubKey, sdk.MustBech32ifyConsPub(valPubKey))
-	viper.Set(FlagName, config.Moniker)
+	viper.Set(FlagName, config.Name)
 
-	if config.Moniker == "" {
+	if config.Name == "" {
 		viper.Set(FlagName, viper.GetString(flags.FlagName))
 	}
 }
