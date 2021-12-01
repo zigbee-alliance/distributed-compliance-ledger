@@ -1,0 +1,34 @@
+.sidebar-sticky {
+  top: 0;
+  bottom: 0;
+
+  .nav-item {
+    width: 100%;
+  }
+
+  .nav-link {
+    font-weight: 500;
+    color: rgba(0, 0, 0, .65);
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    i {
+      width: 25px;
+    }
+  }
+
+  .nav-link.active {
+    color: rgba(0, 0, 0, .85);
+  }
+
+  .nav-link:hover {
+    color: #0275d8;
+  }
+}
+
+.sidebar-container {
+  @media (min-width: 768px) {
+    min-height: calc(100vh - 56px); /* Height of navbar */
+    border-right: 1px solid #dee2e6 !important;
+  }
+}

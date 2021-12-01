@@ -1,0 +1,4 @@
+<span class="badge mr-2"
+      [ngClass]="{'badge-dark': role == 'administrator', 'badge-info': role == 'manufacturer'}"
+      *ngFor="let role of roles">{{role}}</span>
+<span *ngIf="!roles || !roles.length">-</span>

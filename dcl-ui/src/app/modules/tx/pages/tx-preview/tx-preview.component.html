@@ -1,0 +1,52 @@
+<ng-container *ngIf="{ message: message$ | async, keyInfos: keyInfos$ | async} as data">
+  <ng-container *ngIf="data.message && data.keyInfos else loading">
+
+    <div
+      class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 pt-3 border-bottom">
+      <h1 class="h2">Preview Transaction</h1>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+          <button class="btn btn-sm btn-outline-secondary" (click)="isCollapsed = !isCollapsed"
+                  [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample">{{isCollapsed ? 'Preview' : 'Hide' }}</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="collapseExample" [ngbCollapse]="isCollapsed">
+      <code>{{data.message | json}}</code>
+      <hr class="mb-3">
+    </div>
+
+    <form #signatureForm="ngForm" (ngSubmit)="onSubmit(signatureForm, data.message, signer)">
+
+      <div class="row">
+        <div class="col-xl-6 col-lg-9 col-md-12 mb-3">
+          <label for="signer">Signer:</label>
+          <select class="custom-select d-block w-100" required
+                  #signerModel="ngModel" id="signer" name="signer"
+                  [(ngModel)]="signer"
+                  [ngClass]="getValidityClasses(signerModel)"
+                  [disabled]="isBusy">
+            <option [ngValue]="undefined">Choose...</option>
+            <option *ngFor="let keyInfo of data.keyInfos" [ngValue]="keyInfo">{{keyInfo | keyinfo}}</option>
+          </select>
+          <div class="invalid-feedback">
+            Please select a valid signer.
+          </div>
+        </div>
+      </div>
+
+      <hr class="mb-3">
+
+      <button class="btn btn-primary" type="submit" [disabled]="isBusy">
+        <span class="spinner-border spinner-border-sm" role="status" [hidden]="!isBusy"></span>
+        Sign And Broadcast
+      </button>
+
+    </form>
+  </ng-container>
+</ng-container>
+
+<ng-template #loading>
+  <div>Loading...</div>
+</ng-template>

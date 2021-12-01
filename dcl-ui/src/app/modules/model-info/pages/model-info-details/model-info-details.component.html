@@ -1,0 +1,102 @@
+<ng-container *ngIf="{ item: item$ | async, certificationInfo: certificationInfo$ | async} as data">
+  <ng-container *ngIf="data.item && data.certificationInfo else loadingItem">
+
+    <div
+      class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 pt-3 border-bottom">
+      <h1 class="h2"><span [routerLink]="['../..']" class="cursor-pointer">Model Infos</span> → {{data.item.name}}</h1>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+          <button class="btn btn-sm btn-outline-secondary m-1" [routerLink]="['update']"
+                  [queryParams]="{'prev_height':'true'}">Update
+          </button>
+          <button class="btn btn-sm btn-outline-secondary m-1" [routerLink]="['add-testing-result']">Add Testing
+            Result
+          </button>
+          <button class="btn btn-sm btn-outline-secondary m-1" [routerLink]="['certify']"
+                  *ngIf="!data.certificationInfo.isCertified()">Certify
+          </button>
+          <button class="btn btn-sm btn-outline-secondary m-1" [routerLink]="['revoke']"
+                  *ngIf="data.certificationInfo.isCertified()">Revoke
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <table class="table w-75">
+      <colgroup>
+        <col class="w-25">
+        <col>
+      </colgroup>
+      <tbody>
+      <tr>
+        <td>Vendor ID</td>
+        <td>{{data.item.vid}}</td>
+      </tr>
+      <tr>
+        <td>Product ID</td>
+        <td>{{data.item.pid}}</td>
+      </tr>
+      <tr>
+        <td>Cathegory ID</td>
+        <td>{{data.item.cid || '-'}}</td>
+      </tr>
+      <tr>
+        <td>Name</td>
+        <td>{{data.item.name}}</td>
+      </tr>
+      <tr>
+        <td>Description</td>
+        <td>{{data.item.description}}</td>
+      </tr>
+      <tr>
+        <td>SKU</td>
+        <td>{{data.item.sku}}</td>
+      </tr>
+      <tr>
+        <td>Firmware Version</td>
+        <td>{{data.item.firmwareVersion}}</td>
+      </tr>
+      <tr>
+        <td>Hardware Version</td>
+        <td>{{data.item.hardwareVersion}}</td>
+      </tr>
+      <tr>
+        <td>Custom</td>
+        <td>{{data.item.custom || '-'}}</td>
+      </tr>
+      <tr>
+        <td>Owner</td>
+        <td>{{data.item.owner}}</td>
+      </tr>
+      <tr>
+        <td>Product has successfully completed TIS/TRP testing</td>
+        <td>{{data.item.tisOrTrpTestingCompleted ? 'Yes' : 'No'}}</td>
+      </tr>
+      <tr>
+        <td>Certified</td>
+        <td>{{data.certificationInfo.isCertified() ? 'Yes' : 'No'}}</td>
+      </tr>
+      <tr *ngIf="data.certificationInfo.isCertified()">
+        <td>Certification Date</td>
+        <td>{{data.certificationInfo.date | date:'medium'}}</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="row mb-3 pb-2 border-bottom">
+      <div class="col-12 d-flex">
+        <button class="btn btn-sm btn-outline-secondary ml-auto" (click)="showTestingResult = !showTestingResult">
+          {{showTestingResult ? 'Hide Testing Results' : 'Show Testing Results'}}
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="showTestingResult" class="container-fluid mb-5">
+      <app-testing-result-list></app-testing-result-list>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #loadingItem>
+  <div>Loading model info...</div>
+</ng-template>

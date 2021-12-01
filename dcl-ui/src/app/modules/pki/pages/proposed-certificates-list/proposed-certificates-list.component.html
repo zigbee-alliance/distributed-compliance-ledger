@@ -1,0 +1,32 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 pt-3 border-bottom">
+  <h1 class="h2">Proposed Root Certificates</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <button class="btn btn-sm btn-outline-secondary mr-1" (click)="findCertificate()">Find Certificate</button>
+    <button class="btn btn-sm btn-outline-secondary" [routerLink]="['propose']">Propose Certificate</button>
+  </div>
+</div>
+
+<ng-container *ngIf="items$ | async as items; else loadingBlock">
+  <table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th class="w-25">Subject</th>
+      <th class="w-25">Serial Number</th>
+      <th class="w-25">Owner</th>
+      <th class="w-25"></th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items" [routerLink]="[item.subject, item.subjectKeyId]" class="cursor-pointer">
+        <td>{{item.subject}}</td>
+        <td>{{item.serialNumber}}</td>
+        <td>{{item.owner}}</td>
+        <td (click)="pkiService.approveCertificate(item)" class="btn-link">Approve</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<ng-template #loadingBlock>
+  <div>Loading proposed root certificates...</div>
+</ng-template>

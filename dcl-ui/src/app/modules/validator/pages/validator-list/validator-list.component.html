@@ -1,0 +1,28 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 pt-3 border-bottom">
+  <h1 class="h2">Pool Nodes</h1>
+</div>
+
+<ng-container *ngIf="items$ | async as items; else loadingBlock">
+  <table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+      <th>Owner</th>
+      <th>State</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let header of items">
+      <td>{{header.description.name}}</td>
+      <td>{{header.address}}</td>
+      <td>{{header.owner}}</td>
+      <td>{{header.jailed ? 'Jailed' : 'Active'}} <i class="fa fa-question-circle" aria-hidden="true" ngbPopover="{{header.jailed ? header.jailedReason : 'Node is running'}}" triggers="mouseenter:mouseleave"></i></td>
+    </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<ng-template #loadingBlock>
+  <div>Loading pool nodes...</div>
+</ng-template>

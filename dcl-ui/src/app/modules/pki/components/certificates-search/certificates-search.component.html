@@ -1,0 +1,25 @@
+<form #findCertificateForm="ngForm" (ngSubmit)="activeModal.close(item)" class="p-2">
+  <div class="modal-header">
+    <h4>Find Certificate</h4>
+    <button tabindex="-1" type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="input-group mb-3">
+      <input class="form-control"
+              placeholder="Subject"
+              #subject="ngModel" id="subject" name="subject"
+              [(ngModel)]="item.subject">
+    </div>
+    <div class="input-group mb-3">
+      <input class="form-control"
+              placeholder="Subject Key ID"
+              #subjectKeyId="ngModel" id="subjectKeyId" name="subjectKeyId"
+              [(ngModel)]="item.subjectKeyId">   
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-sm btn-outline-secondary">Find</button>
+  </div>
+</form>

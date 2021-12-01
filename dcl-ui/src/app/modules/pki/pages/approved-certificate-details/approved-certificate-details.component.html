@@ -1,0 +1,60 @@
+<ng-container *ngIf="items$ | async as items; else loadingItem">
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 pt-3 border-bottom">
+    <h1 class="h2">Certificate</h1>
+  </div>
+
+  <div *ngFor="let item of items">
+    <table class="table w-75">
+      <colgroup>
+        <col class="w-25">
+        <col>
+      </colgroup>
+      <tbody>
+      <tr>
+        <td>Subject</td>
+        <td>{{item.subject}}</td>
+      </tr>
+      <tr>
+        <td>Serial Number</td>
+        <td>{{item.serialNumber}}</td>
+      </tr>
+      <tr>
+        <td>Subject Key ID</td>
+        <td>{{item.subjectKeyId}}</td>
+      </tr>
+      <tr *ngIf="item.rootSubject">
+        <td>Root Subject</td>
+        <td>{{item.rootSubject}}</td>
+      </tr>
+      <tr *ngIf="item.rootSubjectKeyId">
+        <td>Root Subject Key ID</td>
+        <td>{{item.rootSubjectKeyId}}</td>
+      </tr>
+      <tr>
+        <td>Owner</td>
+        <td>{{item.owner}}</td>
+      </tr>
+      <tr>
+        <td>Certificate Type</td>
+        <td>{{item.isRoot}}</td>
+      </tr>
+      <tr>
+        <td>Pem Certificate</td>
+        <td>
+          <div>{{item.pemCert}}</div>
+          <div>
+            <div class="col-12 d-flex">
+                <button class="btn btn-sm btn-light ml-auto" (click)="viewCertificate(item.pemCert)">View certificate</button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
+
+<ng-template #loadingItem>
+  <div>Loading certificate...</div>
+</ng-template>

@@ -1,0 +1,26 @@
+<div class="pb-2 mb-3 pt-3 border-bottom">
+  <h1 class="h2">Accounts</h1>
+</div>
+
+<ng-container *ngIf="items$ | async as items; else loadingAccounts">
+  <table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Address</th>
+      <th>Roles</th>
+      <th>Sequence Number</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of items" [routerLink]="[item.address]" class="cursor-pointer">
+      <td>{{item.address}}</td>
+      <td><app-account-roles [roles]="item.roles"></app-account-roles></td>
+      <td>{{item.sequence}}</td>
+    </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<ng-template #loadingAccounts>
+  <div>Loading accounts...</div>
+</ng-template>

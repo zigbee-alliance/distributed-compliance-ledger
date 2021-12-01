@@ -1,0 +1,61 @@
+<div class="container-fluid">
+  <div class="row flex-xl-nowrap">
+    <div class="col-xl-2 col-md-3 col-12 border-right sidebar-container">
+      <nav class="sidebar-sticky d-lg-block position-sticky my-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Keys" [routerLink]="['key']" routerLinkActive="active">
+              <i class="fas fa-key"></i>
+              Keys
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Accounts" [routerLink]="['account']" routerLinkActive="active">
+              <i class="fas fa-users"></i>
+              Accounts
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Model Infos" [routerLink]="['model-info']" routerLinkActive="active">
+              <i class="fas fa-server"></i>
+              Model Infos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Compliance Infos" [routerLink]="['compliance-info']" routerLinkActive="active">
+              <i class="fas fa-server"></i>
+              Compliance Infos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Certificates" [routerLink]="['certificates']" routerLinkActive="active">
+              <i class="fas fa-certificate"></i>
+              Certificates
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Proposed Root Certificates" [routerLink]="['proposed-certificates']" routerLinkActive="active">
+              <i class="fas fa-certificate"></i>
+              Proposed Root Certificates
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Nodes" [routerLink]="['validators']" routerLinkActive="active">
+              <i class="fas fa-database"></i>
+              Nodes
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-nowrap" title="Blocks" [routerLink]="['block']" routerLinkActive="active">
+              <i class="fas fa-link"></i>
+              Blocks
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="col-xl-10 col-md-9 col-12">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

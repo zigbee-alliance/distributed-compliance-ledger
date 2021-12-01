@@ -1,0 +1,76 @@
+<ng-container *ngIf="{ item: item$ | async} as data">
+  <ng-container>
+    <div>
+      <div class="pb-2 mb-3 pt-3 border-bottom">
+        <h1 class="h2">Add Testing Result</h1>
+      </div>
+
+      <form #testingResultForm="ngForm" (ngSubmit)="onSubmit(testingResultForm, data.item)">
+
+        <div class="row">
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="vid">Vednor ID</label>
+            <input type="number" class="form-control" required
+                   #vid="ngModel" id="vid" name="vid"
+                   [disabled]="true"
+                   [(ngModel)]="data.item.vid"
+                   [ngClass]="getValidityClasses(vid)">
+            <div class="invalid-feedback">
+              Please enter Vendor ID
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="pid">Product ID</label>
+            <input type="number" class="form-control" required
+                   #pid="ngModel" id="pid" name="pid"
+                   [disabled]="true"
+                   [(ngModel)]="data.item.pid"
+                   [ngClass]="getValidityClasses(pid)">
+            <div class="invalid-feedback">
+              Please enter Product ID
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="testDate">Test Date</label>
+
+            <div class="form-group">
+              <div class="input-group">
+                <input ngbDatepicker class="form-control" placeholder="yyyy-mm-dd" required
+                       #dp="ngbDatepicker" #testDate="ngModel" id="testDate" name="testDate"
+                       [(ngModel)]="data.item.testDate"
+                       [ngClass]="getValidityClasses(testDate)">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary fa fa-calendar-alt" (click)="dp.toggle()"
+                          type="button"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="invalid-feedback">
+              Valid test date is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-5 col-lg-8 col-md-11 mb-3">
+            <label for="testResult">Test Result</label>
+            <textarea rows="5" type="text" class="form-control" required
+                   #testResult="ngModel" id="testResult" name="testResult"
+                   [(ngModel)]="data.item.testResult"
+                   [ngClass]="getValidityClasses(testResult)">
+           </textarea>
+
+            <div class="invalid-feedback">
+              Please enter test result.
+            </div>
+          </div>
+        </div>
+
+        <hr class="mb-3">
+        <button class="btn btn-primary" type="submit">Next</button>
+
+      </form>
+    </div>
+  </ng-container>
+</ng-container>

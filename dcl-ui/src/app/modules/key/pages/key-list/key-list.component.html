@@ -1,0 +1,26 @@
+<div class="pb-2 mb-3 pt-3 border-bottom">
+  <h1 class="h2">Keys</h1>
+</div>
+
+<ng-container *ngIf="items$ | async as items; else loadingKeys">
+  <table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Address</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of items" [routerLink]="[item.name]" class="cursor-pointer">
+      <td>{{item.name}}</td>
+      <td>{{item.type}}</td>
+      <td>{{item.address}}</td>
+    </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<ng-template #loadingKeys>
+  <div>Loading accounts...</div>
+</ng-template>

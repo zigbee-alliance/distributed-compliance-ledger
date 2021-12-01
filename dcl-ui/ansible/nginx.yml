@@ -1,0 +1,9 @@
+- hosts: clients
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes

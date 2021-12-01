@@ -1,0 +1,24 @@
+<ng-container>
+  <div>
+    <div class="pb-2 mb-3 pt-3 border-bottom">
+      <h1 class="h2">Propose Root Certificate</h1>
+    </div>
+    <form #proposeCertificateForm="ngForm" (ngSubmit)="onSubmit(proposeCertificateForm, item)">
+      <div class="row">
+        <div class="col-8 mb-3">
+          <label for="cert">Certificate</label>
+          <textarea rows="20" type="text" class="form-control" required
+                  #cert="ngModel" id="cert" name="cert"
+                  [(ngModel)]="item.cert"
+                  [ngClass]="getValidityClasses(cert)">
+          </textarea>
+          <div class="invalid-feedback">
+            Please enter certificate.
+          </div>
+        </div>
+      </div>
+      <hr class="mb-3">
+      <button class="btn btn-primary" type="submit">Next</button>
+    </form>
+  </div>
+</ng-container>

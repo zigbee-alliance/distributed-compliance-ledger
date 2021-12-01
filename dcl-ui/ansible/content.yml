@@ -1,0 +1,14 @@
+- hosts: clients
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Remove existing content
+      file:
+        path: "/www/dcl-ui/"
+        state: absent
+    - name: Copy new content
+      copy:
+        src: "./../dist/dcl-ui/"
+        dest: "/www/dcl-ui/"
+        owner: "ubuntu"
+        group: "ubuntu"

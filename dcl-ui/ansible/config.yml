@@ -1,0 +1,12 @@
+- hosts: clients
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Remove default config
+      file:
+        path: "/etc/nginx/sites-enabled/default"
+        state: absent
+    - name: Copy nginx configuratioin
+      copy:
+        src: "./templates/dcl_ssl.conf"
+        dest: "/etc/nginx/conf.d/dcl.conf"

@@ -1,0 +1,14 @@
+<div>
+  <div class="modal-header">
+    <h4 class="modal-title">{{header}}</h4>
+    <button tabindex="-1" type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    {{content}}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.close('Close click')">Close</button>
+  </div>
+</div>

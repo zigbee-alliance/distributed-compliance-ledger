@@ -1,0 +1,13 @@
+<ng-container *ngIf="item$ | async as item">
+  <div class="pb-2 mb-3 pt-3 border-bottom">
+    <h1 class="h2"><span [routerLink]="['..']" class="cursor-pointer">Keys</span> → {{item.name}}</h1>
+  </div>
+
+  <p>Type: {{item.type}}</p>
+  <p>Address: {{item.address}}</p>
+  <p>Public key: {{item.publicKey}}</p>
+</ng-container>
+
+<ng-template #loadingKey>
+  <div>Loading key info...</div>
+</ng-template>

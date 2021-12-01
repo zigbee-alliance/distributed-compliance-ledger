@@ -1,0 +1,6 @@
+- hosts: clients
+  user: ubuntu
+  become: yes
+  tasks:
+    - name: Reload nginx
+      service: "name=nginx state=reloaded enabled=yes"

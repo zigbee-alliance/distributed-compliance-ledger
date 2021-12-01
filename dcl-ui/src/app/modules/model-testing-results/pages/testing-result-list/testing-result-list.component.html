@@ -1,0 +1,27 @@
+<ng-container *ngIf="testingResults$ | async as testingResults; else loadingBlock">
+  <table class="table w-auto justify-content-center" *ngIf="testingResults.length > 0">
+    <thead>
+    <tr>
+      <th>Owner</th>
+      <th>Test Result</th>
+      <th>Test Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of testingResults" class="cursor-pointer" (click)="viewTestingResult(item.testResult)">
+      <td>{{item.owner}}</td>
+      <td>
+        <span class="d-inline-block text-truncate" style="max-width: 500px;">{{item.testResult}}</span>
+      </td>
+      <td>{{item.testDate | date:'medium'}}</td>
+    </tr>
+    </tbody>
+  </table>
+  <h5 *ngIf="testingResults.length == 0">
+    No Testing Results
+  </h5>
+</ng-container>
+
+<ng-template #loadingBlock>
+  <div>Loading testing results...</div>
+</ng-template>
