@@ -3,6 +3,7 @@ module github.com/zigbee-alliance/distributed-compliance-ledger
 go 1.16
 
 require (
+	github.com/cosmos/cosmos-proto v0.0.0-20210914142853-23ed61ac79ce
 	github.com/cosmos/cosmos-sdk v0.44.0
 	github.com/cosmos/ibc-go v1.2.0
 	github.com/google/go-cmp v0.5.6 // indirect
