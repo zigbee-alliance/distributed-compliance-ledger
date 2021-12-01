@@ -1,0 +1,74 @@
+<!--
+ Copyright 2020 DSR Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<ng-container *ngIf="item$ | async as item; else loadingItem">
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 pt-3 border-bottom">
+    <h1 class="h2">Proposed Root Certificate</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group mr-2">
+        <button class="btn btn-sm btn-outline-secondary m-1" (click)="pkiService.approveCertificate(item)">Approve</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+
+  <table class="table">
+    <colgroup>
+      <col class="w-25">
+      <col>
+    </colgroup>
+    <tbody>
+    <tr>
+      <td>Subject</td>
+      <td>{{item.subject}}</td>
+    </tr>
+    <tr>
+      <td>Serial Number</td>
+      <td>{{item.serialNumber}}</td>
+    </tr>
+    <tr>
+      <td>Subject Key ID</td>
+      <td>{{item.subjectKeyId}}</td>
+    </tr>
+    <tr>
+      <td>Owner</td>
+      <td>{{item.owner}}</td>
+    </tr>
+    <tr>
+      <td>Approvals</td>
+      <td>{{item.approvals}}</td>
+    </tr>
+    <tr>
+      <td>Pem Certificate</td>
+      <td>
+        <div class="trunc">{{item.pemCert}}</div>
+        <div>
+          <div class="col-12 d-flex">
+              <button class="btn btn-sm btn-light ml-auto" (click)="viewCertificate(item.pemCert)">View certificate</button>
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  </div>
+</ng-container>
+
+<ng-template #loadingItem>
+  <div>Loading certificate...</div>
+</ng-template>
