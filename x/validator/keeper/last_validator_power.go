@@ -9,16 +9,29 @@ import (
 // SetLastValidatorPower set a specific lastValidatorPower in the store from its index
 func (k Keeper) SetLastValidatorPower(ctx sdk.Context, lastValidatorPower types.LastValidatorPower) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
+
+	addr, err := sdk.ValAddressFromBech32(lastValidatorPower.Owner)
+	if err != nil {
+		panic(err)
+	}
+
 	b := k.cdc.MustMarshal(&lastValidatorPower)
 	store.Set(types.LastValidatorPowerKey(
 		lastValidatorPower.Owner,
 	), b)
 }
 
+// Check if the validator power record associated with validator address is present in the store or not.
+func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, owner sdk.ValAddress) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
+
+	return store.Has(types.LastValidatorPowerKey(owner))
+}
+
 // GetLastValidatorPower returns a lastValidatorPower from its index
 func (k Keeper) GetLastValidatorPower(
 	ctx sdk.Context,
-	owner string,
+	owner sdk.ValAddress,
 
 ) (val types.LastValidatorPower, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
@@ -37,7 +50,7 @@ func (k Keeper) GetLastValidatorPower(
 // RemoveLastValidatorPower removes a lastValidatorPower from the store
 func (k Keeper) RemoveLastValidatorPower(
 	ctx sdk.Context,
-	owner string,
+	owner sdk.ValAddress,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
@@ -60,4 +73,54 @@ func (k Keeper) GetAllLastValidatorPower(ctx sdk.Context) (list []types.LastVali
 	}
 
 	return
+}
+
+// count total number of active validators.
+func (k Keeper) CountLastValidators(ctx sdk.Context) (count int) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		count++
+	}
+
+	return count
+}
+
+// get all active validator set.
+func (k Keeper) GetAllLastValidators(ctx sdk.Context) (validators []types.Validator) {
+	k.IterateLastValidators(ctx, func(validator types.Validator) (stop bool) {
+		validators = append(validators, validator)
+
+		return false
+	})
+
+	return validators
+}
+
+// iterate through the active validator set and perform the provided function.
+func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator types.Validator) (stop bool)) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var vp types.LastValidatorPower
+		k.cdc.MustUnmarshal(iterator.Value(), &vp)
+
+		addr, err := sdk.ValAddressFromBech32(vp.Owner)
+		if err != nil {
+			panic(err)
+		}
+
+		var val types.Validator
+		validator := k.GetValidator(ctx, addr)
+
+		if process(validator) {
+			return
+		}
+	}
 }

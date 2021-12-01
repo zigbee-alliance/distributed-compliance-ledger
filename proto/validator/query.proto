@@ -10,6 +10,8 @@ import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
 
+import "cosmos_proto/cosmos.proto";
+
 // Query defines the gRPC querier service.
 service Query {
     // Queries a validator by index.
@@ -36,8 +38,7 @@ service Query {
 }
 
 message QueryGetValidatorRequest {
-	  string owner = 1;
-
+	  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 
 message QueryGetValidatorResponse {
@@ -54,7 +55,7 @@ message QueryAllValidatorResponse {
 }
 
 message QueryGetLastValidatorPowerRequest {
-	  string owner = 1;
+	  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 
 }
 

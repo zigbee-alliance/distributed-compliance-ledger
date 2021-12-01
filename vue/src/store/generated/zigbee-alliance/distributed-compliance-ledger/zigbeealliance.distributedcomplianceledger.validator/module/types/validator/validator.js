@@ -1,8 +1,9 @@
 /* eslint-disable */
 import { Description } from '../validator/description';
+import { Any } from '../google/protobuf/any';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
-const baseValidator = { owner: '', pubKey: '', power: 0, jailed: false, jailedReason: '' };
+const baseValidator = { owner: '', power: 0, jailed: false, jailedReason: '' };
 export const Validator = {
     encode(message, writer = Writer.create()) {
         if (message.owner !== '') {
@@ -11,8 +12,8 @@ export const Validator = {
         if (message.description !== undefined) {
             Description.encode(message.description, writer.uint32(18).fork()).ldelim();
         }
-        if (message.pubKey !== '') {
-            writer.uint32(26).string(message.pubKey);
+        if (message.pubKey !== undefined) {
+            Any.encode(message.pubKey, writer.uint32(26).fork()).ldelim();
         }
         if (message.power !== 0) {
             writer.uint32(32).int32(message.power);
@@ -39,7 +40,7 @@ export const Validator = {
                     message.description = Description.decode(reader, reader.uint32());
                     break;
                 case 3:
-                    message.pubKey = reader.string();
+                    message.pubKey = Any.decode(reader, reader.uint32());
                     break;
                 case 4:
                     message.power = reader.int32();
@@ -72,10 +73,10 @@ export const Validator = {
             message.description = undefined;
         }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = String(object.pubKey);
+            message.pubKey = Any.fromJSON(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.power !== undefined && object.power !== null) {
             message.power = Number(object.power);
@@ -101,7 +102,7 @@ export const Validator = {
         const obj = {};
         message.owner !== undefined && (obj.owner = message.owner);
         message.description !== undefined && (obj.description = message.description ? Description.toJSON(message.description) : undefined);
-        message.pubKey !== undefined && (obj.pubKey = message.pubKey);
+        message.pubKey !== undefined && (obj.pubKey = message.pubKey ? Any.toJSON(message.pubKey) : undefined);
         message.power !== undefined && (obj.power = message.power);
         message.jailed !== undefined && (obj.jailed = message.jailed);
         message.jailedReason !== undefined && (obj.jailedReason = message.jailedReason);
@@ -122,10 +123,10 @@ export const Validator = {
             message.description = undefined;
         }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = object.pubKey;
+            message.pubKey = Any.fromPartial(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.power !== undefined && object.power !== null) {
             message.power = object.power;

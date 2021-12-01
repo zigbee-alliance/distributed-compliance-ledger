@@ -53,10 +53,13 @@ func CmdShowLastValidatorPower() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argOwner := args[0]
+			addr, err := sdk.ValAddressFromBech32(args[0])
+			if err != nil {
+				return err
+			}
 
 			params := &types.QueryGetLastValidatorPowerRequest{
-				Owner: argOwner,
+				Owner: addr.String(),
 			}
 
 			res, err := queryClient.LastValidatorPower(context.Background(), params)

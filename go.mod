@@ -3,6 +3,7 @@ module github.com/zigbee-alliance/distributed-compliance-ledger
 go 1.16
 
 require (
+	github.com/cosmos/cosmos-proto v0.0.0-20211117110609-f005f0a39750
 	github.com/cosmos/cosmos-sdk v0.44.0
 	github.com/cosmos/ibc-go v1.2.0
 	github.com/gogo/protobuf v1.3.3
@@ -16,8 +17,9 @@ require (
 	github.com/tendermint/spm v0.1.5
 	github.com/tendermint/tendermint v0.34.13
 	github.com/tendermint/tm-db v0.6.4
-	google.golang.org/genproto v0.0.0-20210903162649-d08c68adba83
-	google.golang.org/grpc v1.40.0
+	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1
+	google.golang.org/grpc v1.42.0
+	sigs.k8s.io/yaml v1.1.0
 )
 
 replace (

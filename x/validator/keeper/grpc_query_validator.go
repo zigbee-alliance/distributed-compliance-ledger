@@ -22,6 +22,7 @@ func (k Keeper) ValidatorAll(c context.Context, req *types.QueryAllValidatorRequ
 	store := ctx.KVStore(k.storeKey)
 	validatorStore := prefix.NewStore(store, types.KeyPrefix(types.ValidatorKeyPrefix))
 
+	// TODO issue 99: add filtering per State support here
 	pageRes, err := query.Paginate(validatorStore, req.Pagination, func(key []byte, value []byte) error {
 		var validator types.Validator
 		if err := k.cdc.Unmarshal(value, &validator); err != nil {
@@ -43,11 +44,21 @@ func (k Keeper) Validator(c context.Context, req *types.QueryGetValidatorRequest
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
+
+	if req.Owner == "" {
+		return nil, status.Error(codes.InvalidArgument, "validator address cannot be empty")
+	}
+
+	valAddr, err := sdk.ValAddressFromBech32(req.Owner)
+	if err != nil {
+		return nil, err
+	}
+
 	ctx := sdk.UnwrapSDKContext(c)
 
 	val, found := k.GetValidator(
 		ctx,
-		req.Owner,
+		valAddr,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")

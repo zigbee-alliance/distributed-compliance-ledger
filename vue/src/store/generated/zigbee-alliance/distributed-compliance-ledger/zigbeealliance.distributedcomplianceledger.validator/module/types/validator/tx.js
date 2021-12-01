@@ -1,15 +1,16 @@
 /* eslint-disable */
 import { Reader, Writer } from 'protobufjs/minimal';
+import { Any } from '../google/protobuf/any';
 import { Description } from '../validator/description';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
-const baseMsgCreateValidator = { signer: '', pubKey: '' };
+const baseMsgCreateValidator = { signer: '' };
 export const MsgCreateValidator = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
             writer.uint32(10).string(message.signer);
         }
-        if (message.pubKey !== '') {
-            writer.uint32(18).string(message.pubKey);
+        if (message.pubKey !== undefined) {
+            Any.encode(message.pubKey, writer.uint32(18).fork()).ldelim();
         }
         if (message.description !== undefined) {
             Description.encode(message.description, writer.uint32(26).fork()).ldelim();
@@ -27,7 +28,7 @@ export const MsgCreateValidator = {
                     message.signer = reader.string();
                     break;
                 case 2:
-                    message.pubKey = reader.string();
+                    message.pubKey = Any.decode(reader, reader.uint32());
                     break;
                 case 3:
                     message.description = Description.decode(reader, reader.uint32());
@@ -48,10 +49,10 @@ export const MsgCreateValidator = {
             message.signer = '';
         }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = String(object.pubKey);
+            message.pubKey = Any.fromJSON(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.description !== undefined && object.description !== null) {
             message.description = Description.fromJSON(object.description);
@@ -64,7 +65,7 @@ export const MsgCreateValidator = {
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
-        message.pubKey !== undefined && (obj.pubKey = message.pubKey);
+        message.pubKey !== undefined && (obj.pubKey = message.pubKey ? Any.toJSON(message.pubKey) : undefined);
         message.description !== undefined && (obj.description = message.description ? Description.toJSON(message.description) : undefined);
         return obj;
     },
@@ -77,10 +78,10 @@ export const MsgCreateValidator = {
             message.signer = '';
         }
         if (object.pubKey !== undefined && object.pubKey !== null) {
-            message.pubKey = object.pubKey;
+            message.pubKey = Any.fromPartial(object.pubKey);
         }
         else {
-            message.pubKey = '';
+            message.pubKey = undefined;
         }
         if (object.description !== undefined && object.description !== null) {
             message.description = Description.fromPartial(object.description);
