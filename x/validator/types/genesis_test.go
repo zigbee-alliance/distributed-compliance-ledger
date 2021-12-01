@@ -19,11 +19,55 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
+				ValidatorList: []types.Validator{
+					{
+						Owner: "0",
+					},
+					{
+						Owner: "1",
+					},
+				},
+				LastValidatorPowerList: []types.LastValidatorPower{
+					{
+						Owner: "0",
+					},
+					{
+						Owner: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated validator",
+			genState: &types.GenesisState{
+				ValidatorList: []types.Validator{
+					{
+						Owner: "0",
+					},
+					{
+						Owner: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated lastValidatorPower",
+			genState: &types.GenesisState{
+				LastValidatorPowerList: []types.LastValidatorPower{
+					{
+						Owner: "0",
+					},
+					{
+						Owner: "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {

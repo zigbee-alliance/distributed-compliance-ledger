@@ -11,6 +11,22 @@ import (
 
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
+		ValidatorList: []types.Validator{
+			{
+				Owner: "0",
+			},
+			{
+				Owner: "1",
+			},
+		},
+		LastValidatorPowerList: []types.LastValidatorPower{
+			{
+				Owner: "0",
+			},
+			{
+				Owner: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -19,5 +35,9 @@ func TestGenesis(t *testing.T) {
 	got := validator.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
+	require.Len(t, got.ValidatorList, len(genesisState.ValidatorList))
+	require.Subset(t, genesisState.ValidatorList, got.ValidatorList)
+	require.Len(t, got.LastValidatorPowerList, len(genesisState.LastValidatorPowerList))
+	require.Subset(t, genesisState.LastValidatorPowerList, got.LastValidatorPowerList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
