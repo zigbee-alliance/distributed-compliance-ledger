@@ -1,6 +1,6 @@
 package cmd_test
 
-/*
+/* FIXME issue 99
 
 import (
 	"context"

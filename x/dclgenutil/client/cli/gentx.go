@@ -13,7 +13,6 @@ import (
 	"github.com/spf13/cobra"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -24,15 +23,16 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
-	"github.com/cosmos/cosmos-sdk/x/genutil/types"
-	"github.com/cosmos/cosmos-sdk/x/staking/client/cli"
+
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
+	validatorcli "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/client/cli"
 )
 
 // GenTxCmd builds the application's gentx command.
-func GenTxCmd(mbm module.BasicManager, txEncCfg client.TxEncodingConfig, genAccIterator types.GenesisAccountsIterator, defaultNodeHome string) *cobra.Command {
+func GenTxCmd(mbm module.BasicManager, txEncCfg client.TxEncodingConfig, genAccIterator dclauthtypes.GenesisAccountsIterator, defaultNodeHome string) *cobra.Command {
 	ipDefault, _ := server.ExternalIP()
-	fsCreateValidator := cli.CreateValidatorMsgFlagSet(ipDefault)
+	fsCreateValidator := validatorcli.CreateValidatorMsgFlagSet(ipDefault)
 
 	cmd := &cobra.Command{
 		Use:   "gentx [key_name]",
@@ -61,18 +61,18 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 			config := serverCtx.Config
 			config.SetRoot(clientCtx.HomeDir)
 
-			nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(serverCtx.Config)
+			nodeID, valPubKey, err := dclgenutil.InitializeNodeValidatorFiles(serverCtx.Config)
 			if err != nil {
 				return errors.Wrap(err, "failed to initialize node validator files")
 			}
 
 			// read --nodeID, if empty take it from priv_validator.json
-			if nodeIDString, _ := cmd.Flags().GetString(cli.FlagNodeID); nodeIDString != "" {
+			if nodeIDString, _ := cmd.Flags().GetString(validatorcli.FlagNodeID); nodeIDString != "" {
 				nodeID = nodeIDString
 			}
 
 			// read --pubkey, if empty take it from priv_validator.json
-			if pkStr, _ := cmd.Flags().GetString(cli.FlagPubKey); pkStr != "" {
+			if pkStr, _ := cmd.Flags().GetString(validatorcli.FlagPubKey); pkStr != "" {
 				if err := clientCtx.Codec.UnmarshalInterfaceJSON([]byte(pkStr), &valPubKey); err != nil {
 					return errors.Wrap(err, "failed to unmarshal validator public key")
 				}
@@ -100,21 +100,18 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 				return errors.Wrapf(err, "failed to fetch '%s' from the keyring", name)
 			}
 
-			name := config.Name
-			if m, _ := cmd.Flags().GetString(cli.FlagName); m != "" {
+			moniker := config.Moniker
+			if m, _ := cmd.Flags().GetString(validatorcli.FlagName); m != "" {
 				name = m
 			}
 
 			// set flags for creating a gentx
-			createValCfg, err := cli.PrepareConfigForTxCreateValidator(cmd.Flags(), name, nodeID, genDoc.ChainID, valPubKey)
+			createValCfg, err := validatorcli.PrepareConfigForTxCreateValidator(cmd.Flags(), moniker, nodeID, genDoc.ChainID, valPubKey)
 			if err != nil {
 				return errors.Wrap(err, "error creating configuration to create validator msg")
 			}
 
-			addr, err := key.GetAddress()
-			if err != nil {
-				return err
-			}
+			addr := key.GetAddress()
 			err = dclgenutil.ValidateAccountInGenesis(genesisState, genAccIterator, addr, cdc)
 			if err != nil {
 				return errors.Wrap(err, "failed to validate account in genesis")
@@ -124,14 +121,11 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 			if err != nil {
 				return errors.Wrap(err, "error creating tx builder")
 			}
-			pub, err := key.GetAddress()
-			if err != nil {
-				return err
-			}
+			pub := key.GetAddress()
 			clientCtx = clientCtx.WithInput(inBuf).WithFromAddress(pub)
 
 			// create a 'create-validator' message
-			txBldr, msg, err := cli.BuildCreateValidatorMsg(clientCtx, createValCfg, txFactory, true)
+			txBldr, msg, err := validatorcli.BuildCreateValidatorMsg(clientCtx, createValCfg, txFactory, true)
 			if err != nil {
 				return errors.Wrap(err, "failed to build create-validator message")
 			}

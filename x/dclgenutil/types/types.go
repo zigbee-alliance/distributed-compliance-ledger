@@ -2,11 +2,6 @@ package types
 
 // DONTCOVER
 
-const (
-	// ModuleName defines the module name
-	ModuleName = "dclgenutil"
-)
-
 /* FIXME issue 99
 type GenesisAccounts []auth.Account
 

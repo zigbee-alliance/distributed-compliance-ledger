@@ -1,5 +1,7 @@
 package dclauth_test
 
+/*
+
 import (
 	"testing"
 
@@ -52,3 +54,4 @@ func TestGenesis(t *testing.T) {
 	require.Equal(t, genesisState.AccountStat, got.AccountStat)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
+*/

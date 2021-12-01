@@ -38,7 +38,7 @@ func (msg *MsgApproveRevokeAccount) GetSignBytes() []byte {
 }
 
 func (msg *MsgApproveRevokeAccount) ValidateBasic() error {
-	if m.Address.Empty() {
+	if msg.Address == "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: it cannot be empty")
 	}
 
@@ -47,11 +47,11 @@ func (msg *MsgApproveRevokeAccount) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid Account Address: (%s)", err)
 	}
 
-	if m.Signer.Empty() {
+	if msg.Signer == "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
 	}
 
-	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid Signer: (%s)", err)
 	}

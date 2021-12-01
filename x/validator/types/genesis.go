@@ -1,7 +1,11 @@
 package types
 
+/* FIXME issue 99 */
+
 import (
 	"fmt"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DefaultIndex is the default capability global index
@@ -23,7 +27,11 @@ func (gs GenesisState) Validate() error {
 	validatorIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.ValidatorList {
-		index := string(ValidatorKey(elem.Owner))
+		owner, err := sdk.ValAddressFromBech32(elem.Owner)
+		if err != nil {
+			return err
+		}
+		index := string(ValidatorKey(owner))
 		if _, ok := validatorIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for validator")
 		}
@@ -33,7 +41,11 @@ func (gs GenesisState) Validate() error {
 	lastValidatorPowerIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.LastValidatorPowerList {
-		index := string(LastValidatorPowerKey(elem.Owner))
+		owner, err := sdk.ValAddressFromBech32(elem.Owner)
+		if err != nil {
+			return err
+		}
+		index := string(LastValidatorPowerKey(owner))
 		if _, ok := lastValidatorPowerIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for lastValidatorPower")
 		}

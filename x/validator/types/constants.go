@@ -20,10 +20,10 @@ import (
 
 const (
 	// Default power every validator created with.
-	Power int64 = 10
+	Power int32 = 10
 
 	// Zero power is used to demote validator.
-	ZeroPower int64 = 0
+	ZeroPower int32 = 0
 
 	// Maximum number of nodes.
 	MaxNodes = 100

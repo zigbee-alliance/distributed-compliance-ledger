@@ -16,11 +16,10 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/bank/exported"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 /*
@@ -39,14 +38,14 @@ const (
 
 var Roles = AccountRoles{Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin}
 
-func (role AccountRole) Validate() sdk.Error {
+func (role AccountRole) Validate() error {
 	for _, r := range Roles {
 		if role == r {
 			return nil
 		}
 	}
 
-	return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Account Role: %v. Supported roles: [%v]", role, Roles))
+	return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Invalid Account Role: %v. Supported roles: [%v]", role, Roles)
 }
 
 /*
@@ -56,7 +55,7 @@ func (role AccountRole) Validate() sdk.Error {
 type AccountRoles []AccountRole
 
 // Validate checks for errors on the account roles.
-func (roles AccountRoles) Validate() sdk.Error {
+func (roles AccountRoles) Validate() error {
 	for _, role := range roles {
 		if err := role.Validate(); err != nil {
 			return err
@@ -66,12 +65,22 @@ func (roles AccountRoles) Validate() sdk.Error {
 	return nil
 }
 
+// TODO: think about better way
+func fromSlice(roles []AccountRole) *AccountRoles {
+	var res AccountRoles
+	for _, role := range roles {
+		res = append(res, role)
+	}
+
+	return &res
+}
+
 /*
 	Account
 */
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *BaseAccount, roles AccountRoles, vendorID uint64) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID uint64) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
@@ -81,23 +90,15 @@ func NewAccount(ba *BaseAccount, roles AccountRoles, vendorID uint64) *Account {
 
 // Validate checks for errors on the vesting and module account parameters.
 func (acc Account) Validate() error {
-	err = acc.BaseAccount.Validate()
+	err := acc.BaseAccount.Validate()
 
 	if err != nil {
-		if acc.Address == nil {
-			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid Account: Value: %s. Error: Missing Address", acc.Address))
-		}
-
-		if acc.PubKey == nil {
-			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid Account: Value: %s. Error: Missing PubKey", acc.PubKey))
-		}
-
 		return err
 	}
 
-	if err := acc.Roles.Validate(); err != nil {
+	roles := fromSlice(acc.Roles)
+
+	if err := roles.Validate(); err != nil {
 		return err
 	}
 
@@ -119,26 +120,28 @@ func (acc Account) HasRole(targetRole AccountRole) bool {
 	return false
 }
 
+func (acc Account) String() string {
+	out, _ := acc.MarshalYAML()
+	return out.(string)
+}
+
 /*
 	Pending Account
 */
 
 // NewPendingAccount creates a new PendingAccount object.
 func NewPendingAccount(acc *Account, approval sdk.AccAddress) *PendingAccount {
-	acc = &PendingAccount{
+	return &PendingAccount{
 		Account:   acc,
-		Approvals: []sdk.AccAddress{approval.String()},
+		Approvals: []string{approval.String()},
 	}
-
-	return acc
-
 }
 
 //nolint:interfacer
 func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
 	for _, approval := range acc.Approvals {
-		if approval.Equals(addrStr) {
+		if approval == addrStr {
 			return true
 		}
 	}
@@ -153,8 +156,8 @@ func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 // NewPendingAccountRevocation creates a new PendingAccountRevocation object.
 func NewPendingAccountRevocation(address sdk.AccAddress, approval sdk.AccAddress) PendingAccountRevocation {
 	return PendingAccountRevocation{
-		Address:   address,
-		Approvals: []sdk.AccAddress{approval},
+		Address:   address.String(),
+		Approvals: []string{approval.String()},
 	}
 }
 
@@ -169,10 +172,11 @@ func (revoc PendingAccountRevocation) String() string {
 }
 
 // Validate checks for errors on the vesting and module account parameters.
-func (revoc PendingAccountRevocation) Validate() sdk.Error {
-	if revoc.Address == nil {
-		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Invalid Pending Account Revocation: Value: %s. Error: Missing Address", revoc.Address))
+func (revoc PendingAccountRevocation) Validate() error {
+	if revoc.Address == "" {
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"Invalid Pending Account Revocation: Value: %s. Error: Missing Address", revoc.Address,
+		)
 	}
 
 	return nil
@@ -180,27 +184,12 @@ func (revoc PendingAccountRevocation) Validate() sdk.Error {
 
 //nolint:interfacer
 func (revoc PendingAccountRevocation) HasApprovalFrom(address sdk.AccAddress) bool {
+	addrStr := address.String()
 	for _, approval := range revoc.Approvals {
-		if approval.Equals(address) {
+		if approval == addrStr {
 			return true
 		}
 	}
 
 	return false
-}
-
-// GenesisAccountsIterator implements genesis account iteration.
-type GenesisAccountsIterator struct{}
-
-// IterateGenesisAccounts iterates over all the genesis accounts found in
-// appGenesis and invokes a callback on each genesis account. If any call
-// returns true, iteration stops.
-func (GenesisAccountsIterator) IterateGenesisAccounts(
-	cdc codec.JSONCodec, appState map[string]json.RawMessage, cb func(exported.GenesisAccount) (stop bool),
-) {
-	for _, account := range GetGenesisStateFromAppState(cdc, appState).AccountList {
-		if cb(account) {
-			break
-		}
-	}
 }

@@ -11,14 +11,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
-	"github.com/cosmos/cosmos-sdk/x/genutil/types"
+
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 )
 
 const flagGenTxDir = "gentx-dir"
 
 // CollectGenTxsCmd - return the cobra command to collect genesis transactions
-func CollectGenTxsCmd(genAccIterator types.GenesisAccountsIterator, defaultNodeHome string) *cobra.Command {
+func CollectGenTxsCmd(genAccIterator dclauthtypes.GenesisAccountsIterator, defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "collect-gentxs",
 		Short: "Collect genesis txs and output a genesis.json file",
@@ -31,7 +32,7 @@ func CollectGenTxsCmd(genAccIterator types.GenesisAccountsIterator, defaultNodeH
 
 			config.SetRoot(clientCtx.HomeDir)
 
-			nodeID, valPubKey, err := genutil.InitializeNodeValidatorFiles(config)
+			nodeID, valPubKey, err := dclgenutil.InitializeNodeValidatorFiles(config)
 			if err != nil {
 				return errors.Wrap(err, "failed to initialize node validator files")
 			}
@@ -47,10 +48,10 @@ func CollectGenTxsCmd(genAccIterator types.GenesisAccountsIterator, defaultNodeH
 				genTxsDir = filepath.Join(config.RootDir, "config", "gentx")
 			}
 
-			toPrint := newPrintInfo(config.Name, genDoc.ChainID, nodeID, genTxsDir, json.RawMessage(""))
-			initCfg := types.NewInitConfig(genDoc.ChainID, genTxsDir, nodeID, valPubKey)
+			toPrint := newPrintInfo(config.Moniker, genDoc.ChainID, nodeID, genTxsDir, json.RawMessage(""))
+			initCfg := dclgenutil.NewInitConfig(genDoc.ChainID, genTxsDir, nodeID, valPubKey)
 
-			appMessage, err := genutil.GenAppStateFromConfig(cdc,
+			appMessage, err := dclgenutil.GenAppStateFromConfig(cdc,
 				clientCtx.TxConfig,
 				config, initCfg, *genDoc, genAccIterator)
 			if err != nil {

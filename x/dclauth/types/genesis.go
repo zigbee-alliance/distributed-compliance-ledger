@@ -5,10 +5,15 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+// TODO issue 99: do we need that
 // DefaultIndex is the default capability global index
 const DefaultIndex uint64 = 1
+
+// TODO issue 99: review - do we need pack/unpack/sanitize for accounts
+//	              data in genesis as it is implemented in cosmos now
 
 // DefaultGenesis returns the default Capability genesis state
 func DefaultGenesis() *GenesisState {
@@ -28,7 +33,11 @@ func (gs GenesisState) Validate() error {
 	accountIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.AccountList {
-		index := string(AccountKey(elem.Address))
+		addr, err := sdk.AccAddressFromBech32(elem.Address)
+		if err != nil {
+			return err
+		}
+		index := string(AccountKey(addr))
 		if _, ok := accountIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for account")
 		}
@@ -38,7 +47,11 @@ func (gs GenesisState) Validate() error {
 	pendingAccountIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.PendingAccountList {
-		index := string(PendingAccountKey(elem.Address))
+		addr, err := sdk.AccAddressFromBech32(elem.Address)
+		if err != nil {
+			return err
+		}
+		index := string(PendingAccountKey(addr))
 		if _, ok := pendingAccountIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for pendingAccount")
 		}
@@ -48,7 +61,11 @@ func (gs GenesisState) Validate() error {
 	pendingAccountRevocationIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.PendingAccountRevocationList {
-		index := string(PendingAccountRevocationKey(elem.Address))
+		addr, err := sdk.AccAddressFromBech32(elem.Address)
+		if err != nil {
+			return err
+		}
+		index := string(PendingAccountRevocationKey(addr))
 		if _, ok := pendingAccountRevocationIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for pendingAccountRevocation")
 		}
@@ -69,4 +86,20 @@ func GetGenesisStateFromAppState(cdc codec.JSONCodec, appState map[string]json.R
 	}
 
 	return &genesisState
+}
+
+// GenesisAccountsIterator implements genesis account iteration.
+type GenesisAccountsIterator struct{}
+
+// IterateGenesisAccounts iterates over all the genesis accounts found in
+// appGenesis and invokes a callback on each genesis account. If any call
+// returns true, iteration stops.
+func (GenesisAccountsIterator) IterateGenesisAccounts(
+	cdc codec.JSONCodec, appState map[string]json.RawMessage, cb func(GenesisAccount) (stop bool),
+) {
+	for _, account := range GetGenesisStateFromAppState(cdc, appState).AccountList {
+		if cb(account) {
+			break
+		}
+	}
 }

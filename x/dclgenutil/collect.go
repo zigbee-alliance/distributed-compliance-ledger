@@ -19,13 +19,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil/types"
+
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 // GenAppStateFromConfig gets the genesis app state from the config
 func GenAppStateFromConfig(cdc codec.JSONCodec, txEncodingConfig client.TxEncodingConfig,
-	config *cfg.Config, initCfg types.InitConfig, genDoc tmtypes.GenesisDoc, genAccIterator types.GenesisAccountsIterator,
+	config *cfg.Config, initCfg types.InitConfig, genDoc tmtypes.GenesisDoc, genAccIterator dclauthtypes.GenesisAccountsIterator,
 ) (appState json.RawMessage, err error) {
 
 	// process genesis transactions, else create default genesis.json
@@ -68,8 +69,8 @@ func GenAppStateFromConfig(cdc codec.JSONCodec, txEncodingConfig client.TxEncodi
 
 // CollectTxs processes and validates application's genesis Txs and returns
 // the list of appGenTxs, and persistent peers required to generate genesis.json.
-func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, moniker, genTxsDir string,
-	genDoc tmtypes.GenesisDoc, genAccIterator types.GenesisAccountsIterator,
+func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, name, genTxsDir string,
+	genDoc tmtypes.GenesisDoc, genAccIterator dclauthtypes.GenesisAccountsIterator,
 ) (appGenTxs []sdk.Tx, persistentPeers string, err error) {
 	// prepare a map of all accounts in genesis state to then validate
 	// against the validators addresses
@@ -146,13 +147,13 @@ func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, moniker, genTx
 		if !valOk {
 			_, file, no, ok := runtime.Caller(1)
 			if ok {
-				fmt.Printf("CollectTxs-2, called from %s#%d - %s\n", file, no, sdk.AccAddress(msg.ValidatorAddress).String())
+				fmt.Printf("CollectTxs-2, called from %s#%d - %s\n", file, no, sdk.AccAddress(valAddr).String())
 			}
 			return appGenTxs, persistentPeers, fmt.Errorf("account %s not in genesis state: %+v", valAddr, accountsMap)
 		}
 
 		// exclude itself from persistent peers
-		if msg.Description.Name != moniker {
+		if msg.Description.Name != name {
 			addressesIPs = append(addressesIPs, nodeAddrIP)
 		}
 	}

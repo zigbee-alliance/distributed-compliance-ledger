@@ -20,7 +20,7 @@ func (k Keeper) PendingAccountAll(c context.Context, req *types.QueryAllPendingA
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	pendingAccountStore := prefix.NewStore(store, types.KeyPrefix(types.PendingAccountKeyPrefix))
+	pendingAccountStore := prefix.NewStore(store, types.PendingAccountKeyPrefix)
 
 	pageRes, err := query.Paginate(pendingAccountStore, req.Pagination, func(key []byte, value []byte) error {
 		var pendingAccount types.PendingAccount
@@ -45,9 +45,15 @@ func (k Keeper) PendingAccount(c context.Context, req *types.QueryGetPendingAcco
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
+	addr, err := sdk.AccAddressFromBech32(req.Address)
+
+	if err != nil {
+		return nil, err
+	}
+
 	val, found := k.GetPendingAccount(
 		ctx,
-		req.Address,
+		addr,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")

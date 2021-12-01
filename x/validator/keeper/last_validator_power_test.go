@@ -1,5 +1,7 @@
 package keeper_test
 
+/* FIXME issue 99
+
 import (
 	"strconv"
 	"testing"
@@ -54,3 +56,4 @@ func TestLastValidatorPowerGetAll(t *testing.T) {
 	items := createNLastValidatorPower(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllLastValidatorPower(ctx))
 }
+*/

@@ -8,4 +8,5 @@ import (
 // address retrieval.
 type GenesisAccount interface {
 	GetAddress() sdk.AccAddress
+	Validate() error
 }

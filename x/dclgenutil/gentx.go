@@ -2,15 +2,16 @@ package dclgenutil
 
 import (
 	"encoding/json"
-	"fmt"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/genutil/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
 )
 
 // SetGenTxsInAppGenesisState - sets the genesis transactions in the app genesis state
@@ -37,7 +38,7 @@ func SetGenTxsInAppGenesisState(
 // ValidateAccountInGenesis checks that the provided account is presented in
 // the set of genesis accounts.
 func ValidateAccountInGenesis(
-	appGenesisState map[string]json.RawMessage, genAccIterator types.GenesisAccountsIterator,
+	appGenesisState map[string]json.RawMessage, genAccIterator dclauthtypes.GenesisAccountsIterator,
 	addr sdk.Address, cdc codec.JSONCodec,
 ) error {
 	var err error
@@ -63,8 +64,9 @@ func ValidateAccountInGenesis(
 	}
 
 	if !accountIsInGenesis {
-		return sdk.ErrUnknownRequest(
-			fmt.Sprintf("Error account %s in not in the app_state.accounts array of genesis.json", addr))
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"Error account %s in not in the app_state.accounts array of genesis.json", addr,
+		)
 	}
 
 	return nil

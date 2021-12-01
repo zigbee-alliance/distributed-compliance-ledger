@@ -20,7 +20,7 @@ func (k Keeper) PendingAccountRevocationAll(c context.Context, req *types.QueryA
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	pendingAccountRevocationStore := prefix.NewStore(store, types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
+	pendingAccountRevocationStore := prefix.NewStore(store, types.PendingAccountRevocationKeyPrefix)
 
 	pageRes, err := query.Paginate(pendingAccountRevocationStore, req.Pagination, func(key []byte, value []byte) error {
 		var pendingAccountRevocation types.PendingAccountRevocation
@@ -45,9 +45,15 @@ func (k Keeper) PendingAccountRevocation(c context.Context, req *types.QueryGetP
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
+	addr, err := sdk.AccAddressFromBech32(req.Address)
+
+	if err != nil {
+		return nil, err
+	}
+
 	val, found := k.GetPendingAccountRevocation(
 		ctx,
-		req.Address,
+		addr,
 	)
 	if !found {
 		return nil, status.Error(codes.InvalidArgument, "not found")

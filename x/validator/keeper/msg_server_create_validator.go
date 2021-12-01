@@ -2,10 +2,15 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
-	// sdkvalerrors "github.com/cosmos/cosmos-sdk/staking/types/errors"
+	tmstrings "github.com/tendermint/tendermint/libs/strings"
+
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -18,31 +23,33 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	}
 
 	// check if sender has enough rights to create a validator node
-	if !k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(valAddr), auth.NodeAdmin) {
-		return sdk.ErrUnauthorized(fmt.Sprintf("CreateValidator transaction should be "+
-			"signed by an account with the \"%s\" role", auth.NodeAdmin)).Result()
+	if !k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(valAddr), dclauthtypes.NodeAdmin) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"CreateValidator transaction should be signed by an account with the \"%s\" role",
+			dclauthtypes.NodeAdmin,
+		)
 	}
 
 	// check if we has not reached the limit of nodes
 	if k.CountLastValidators(ctx) == types.MaxNodes {
-		return types.ErrPoolIsFull().Result()
+		return nil, types.ErrPoolIsFull()
 	}
 
 	// check to see if the pubkey or sender has been registered before
 	if _, found := k.GetValidator(ctx, valAddr); found {
-		return nil, types.ErrValidatorExists(msg.Signer).Result()
+		return nil, types.ErrValidatorExists(msg.Signer)
 	}
 
-	pk, ok := msg.Pubkey.GetCachedValue().(cryptotypes.PubKey)
+	pk, ok := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
-		return nil, sdk.Wrapf(sdk.ErrInvalidType, "Expecting cryptotypes.PubKey, got %T", pk)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "Expecting cryptotypes.PubKey, got %T", pk)
 	}
 
 	if _, found := k.GetValidatorByConsAddr(ctx, sdk.GetConsAddress(pk)); found {
-		return nil, sdkvalerrors.ErrValidatorPubKeyExists
+		return nil, sdkstakingtypes.ErrValidatorPubKeyExists
 	}
 
-	if _, err := msg.Description.Validate(); err != nil {
+	if err := msg.Description.Validate(); err != nil {
 		return nil, err
 	}
 
@@ -50,14 +57,15 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	cp := ctx.ConsensusParams()
 	if cp != nil && cp.Validator != nil {
 		if !tmstrings.StringInSlice(pk.Type(), cp.Validator.PubKeyTypes) {
-			return nil, sdk.Wrapf(
-				sdkvalerrors.ErrValidatorPubKeyTypeNotSupported,
+			return nil, sdkerrors.Wrapf(
+				sdkstakingtypes.ErrValidatorPubKeyTypeNotSupported,
 				"got: %s, expected: %s", pk.Type(), cp.Validator.PubKeyTypes,
 			)
 		}
 	}
 
 	validator, err := types.NewValidator(valAddr, pk, msg.Description)
+
 	if err != nil {
 		return nil, err
 	}
@@ -65,13 +73,13 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	k.SetValidator(ctx, validator)
 	k.SetValidatorByConsAddr(ctx, validator)
 
-	// TODO issue 99: vall after- hooks if needed
+	// TODO issue 99: val after-hooks if needed
 	// ...
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeCreateValidator,
-			sdk.NewAttribute(types.AttributeKeyValidator, msg.Address.String()),
+			sdk.NewAttribute(types.AttributeKeyValidator, valAddr.String()),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,

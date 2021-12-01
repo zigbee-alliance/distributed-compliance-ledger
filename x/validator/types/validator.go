@@ -1,13 +1,13 @@
 package types
 
 import (
-	"fmt"
-
 	abci "github.com/tendermint/tendermint/abci/types"
+	tmprotocrypto "github.com/tendermint/tendermint/proto/tendermint/crypto"
 	"sigs.k8s.io/yaml"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -28,7 +28,7 @@ import (
 
 // ============= Validator ================
 
-func NewValidator(owner sdk.ValAddress, pubKey cryptotypes.PubKey, description Description) Validator {
+func NewValidator(owner sdk.ValAddress, pubKey cryptotypes.PubKey, description Description) (Validator, error) {
 	pkAny, err := codectypes.NewAnyWithValue(pubKey)
 	if err != nil {
 		return Validator{}, err
@@ -36,15 +36,15 @@ func NewValidator(owner sdk.ValAddress, pubKey cryptotypes.PubKey, description D
 
 	return Validator{
 		Owner:       owner.String(),
-		Description: description,
-		Pubkey:      pkAny,
+		Description: &description,
+		PubKey:      pkAny,
 		Power:       Power,
 		Jailed:      false,
-	}
+	}, nil
 }
 
 func (v Validator) GetConsAddress() (sdk.ConsAddress, error) {
-	pk, ok := v.Pubkey.GetCachedValue().(cryptotypes.PubKey)
+	pk, ok := v.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
 	}
@@ -53,7 +53,7 @@ func (v Validator) GetConsAddress() (sdk.ConsAddress, error) {
 }
 
 func (v Validator) GetConsPubKey() (cryptotypes.PubKey, error) {
-	pk, ok := v.Pubkey.GetCachedValue().(cryptotypes.PubKey)
+	pk, ok := v.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
 	}
@@ -88,7 +88,7 @@ func (v Validator) ABCIValidatorUpdate() abci.ValidatorUpdate {
 
 	return abci.ValidatorUpdate{
 		PubKey: tmProtoPk,
-		Power:  v.GetPower(),
+		Power:  int64(v.GetPower()),
 	}
 }
 
@@ -101,7 +101,7 @@ func (v Validator) ABCIValidatorUpdateZero() abci.ValidatorUpdate {
 
 	return abci.ValidatorUpdate{
 		PubKey: tmProtoPk,
-		Power:  ZeroPower,
+		Power:  int64(ZeroPower),
 	}
 }
 
@@ -142,7 +142,7 @@ func UnmarshalValidator(cdc codec.BinaryCodec, value []byte) (v Validator, err e
 
 // TmConsPublicKey casts Validator.Pubkey to tmprotocrypto.PubKey.
 func (v Validator) TmConsPublicKey() (tmprotocrypto.PublicKey, error) {
-	pk, err := v.ConsPubKey()
+	pk, err := v.GetConsPubKey()
 	if err != nil {
 		return tmprotocrypto.PublicKey{}, err
 	}
@@ -157,7 +157,7 @@ func (v Validator) TmConsPublicKey() (tmprotocrypto.PublicKey, error) {
 
 // GetConsAddr extracts Consensus key address
 func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
-	pk, ok := v.Pubkey.GetCachedValue().(cryptotypes.PubKey)
+	pk, ok := v.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey, got %T", pk)
 	}
@@ -168,7 +168,7 @@ func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
 func (v Validator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pk cryptotypes.PubKey
-	return unpacker.UnpackAny(v.Pubkey, &pk)
+	return unpacker.UnpackAny(v.PubKey, &pk)
 }
 
 // ============= Description of Validator ================
@@ -191,31 +191,36 @@ const (
 )
 
 // Ensure the length of a validator's description.
-func (d Description) Validate() sdk.Error {
+func (d Description) Validate() error {
 	if len(d.Name) == 0 {
-		return sdk.ErrUnknownRequest("Invalid Description Name: it cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid Description Name: it cannot be empty")
 	}
 
 	if len(d.Name) > MaxNameLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf(
-			"Invalid Description Name: received string of length %v, max is %v", len(d.Name), MaxNameLength))
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"Invalid Description Name: received string of length %v, max is %v", len(d.Name), MaxNameLength,
+		)
 	}
 
 	if len(d.Identity) > MaxIdentityLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf(
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Invalid Description Identity: "+
-				"received string of length %v, max is %v", len(d.Identity), MaxIdentityLength))
+				"received string of length %v, max is %v", len(d.Identity), MaxIdentityLength,
+		)
 	}
 
 	if len(d.Website) > MaxWebsiteLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf(
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
 			"Invalid Description Website: "+
-				"received string of length %v, max is %v", len(d.Website), MaxWebsiteLength))
+				"received string of length %v, max is %v", len(d.Website), MaxWebsiteLength,
+		)
 	}
 
 	if len(d.Details) > MaxDetailsLength {
-		return sdk.ErrUnknownRequest(fmt.Sprintf("Invalid Description Details: "+
-			"received string of length %v, max is %v", len(d.Details), MaxDetailsLength))
+		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
+			"Invalid Description Details: received string of length %v, max is %v",
+			len(d.Details), MaxDetailsLength,
+		)
 	}
 
 	return nil
@@ -231,7 +236,7 @@ func (d Description) String() string {
 
 func NewLastValidatorPower(owner sdk.ValAddress) LastValidatorPower {
 	return LastValidatorPower{
-		Owner: address.String(),
+		Owner: owner.String(),
 		Power: Power,
 	}
 }
@@ -247,7 +252,7 @@ func (vp LastValidatorPower) GetOwner() sdk.ValAddress {
 	return addr
 }
 
-func (vp LastValidatorPower) GetPower() Power { return vp.Power }
+func (vp LastValidatorPower) GetPower() int32 { return vp.Power }
 
 func (vp LastValidatorPower) String() string {
 	out, _ := yaml.Marshal(vp)

@@ -2,9 +2,9 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -19,9 +19,10 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 	// check that sender has enough rights to approve account revocation
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
-		return nil, sdk.ErrUnauthorized(
-			fmt.Sprintf("MsgApproveRevokeAccount transaction should be signed by an account with the %s role",
-				types.Trustee))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"MsgApproveRevokeAccount transaction should be signed by an account with the %s role",
+			types.Trustee,
+		)
 	}
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
@@ -36,25 +37,27 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 	}
 
 	// get pending account revocation
-	revoc := k.GetPendingAccountRevocation(ctx, accAddr)
+	revoc, _ := k.GetPendingAccountRevocation(ctx, accAddr)
 
 	// check if pending account revocation already has approval from signer
 	if revoc.HasApprovalFrom(signerAddr) {
-		return nil, sdk.ErrUnauthorized(
-			fmt.Sprintf("Pending account revocation associated with the address=%v already has approval from=%v",
-				msg.Address, msg.Signer))
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"Pending account revocation associated with the address=%v already has approval from=%v",
+			msg.Address,
+			msg.Signer,
+		)
 	}
 
 	// append approval
-	revoc.Approvals = append(revoc.Approvals, signerAddr)
+	revoc.Approvals = append(revoc.Approvals, signerAddr.String())
 
 	// check if pending account revocation has enough approvals
-	if len(revoc.Approvals) == AccountApprovalsCount(ctx, k) {
+	if len(revoc.Approvals) == AccountApprovalsCount(ctx, k.Keeper) {
 		// delete account record
-		k.DeleteAccount(ctx, accAddr)
+		k.RemoveAccount(ctx, accAddr)
 
 		// delete pending account revocation record
-		k.DeletePendingAccountRevocation(ctx, accAddr)
+		k.RemovePendingAccountRevocation(ctx, accAddr)
 	} else {
 		// update pending account revocation record
 		k.SetPendingAccountRevocation(ctx, revoc)

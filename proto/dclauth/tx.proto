@@ -22,7 +22,7 @@ message MsgProposeAddAccount {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   google.protobuf.Any pubKey = 3 [(cosmos_proto.accepts_interface) = "cosmos.crypto.PubKey"];
-  repeated string roles = 4 [(gogoproto.casttype) = "dclauth/types.AccountRole"];
+  repeated string roles = 4 [(gogoproto.casttype) = "AccountRole"];
   uint64 vendorID = 5;
 }
 

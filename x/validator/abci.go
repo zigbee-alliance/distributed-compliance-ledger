@@ -7,8 +7,9 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/staking/keeper"
-	"github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
@@ -20,18 +21,24 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 
-	return k.ApplyAndReturnValidatorSetUpdates(ctx)
+	return ApplyAndReturnValidatorSetUpdates(ctx, k)
 }
 
 // Apply and return accumulated updates to the bonded validator set.
 // It gets called once after genesis and at every EndBlock.
 //
 // Only validators that were added or were removed from the validator set are returned to Tendermint.
-func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []abci.ValidatorUpdate) {
+func ApplyAndReturnValidatorSetUpdates(ctx sdk.Context, k keeper.Keeper) (updates []abci.ValidatorUpdate) {
 	// Iterate over validators.
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
+		owner := validator.GetOwner()
+
 		// power on the last height.
-		lastValidatorPower := k.GetLastValidatorPower(ctx, validator.Address)
+		lastValidatorPower, found := k.GetLastValidatorPower(ctx, owner)
+
+		if !found {
+			return false
+		}
 
 		// if last power was more then 0 and potential power 0 it
 		// means that validator was jailed or removed within the block.
@@ -39,7 +46,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 			updates = append(updates, validator.ABCIValidatorUpdateZero())
 
 			// set validator power on lookup index.
-			k.DeleteLastValidatorPower(ctx, validator.Address)
+			k.RemoveLastValidatorPower(ctx, owner)
 
 			return false
 		}
@@ -49,11 +56,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 			updates = append(updates, validator.ABCIValidatorUpdate())
 
 			// set validator power on lookup index.
-			k.SetLastValidatorPower(ctx, types.NewLastValidatorPower(validator.Address))
-
-			// init signing info for validator.
-			signingInfo := types.NewValidatorSigningInfo(validator.GetConsAddress(), ctx.BlockHeight())
-			k.SetValidatorSigningInfo(ctx, signingInfo)
+			k.SetLastValidatorPower(ctx, types.NewLastValidatorPower(owner))
 
 			return false
 		}

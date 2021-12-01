@@ -28,7 +28,7 @@ func NewMsgCreateValidator(
 	return &MsgCreateValidator{
 		Signer:      signer.String(),
 		PubKey:      pkAny,
-		Description: description,
+		Description: *description,
 	}, nil
 }
 
@@ -60,24 +60,20 @@ func (msg *MsgCreateValidator) ValidateBasic() error {
 	}
 
 	if accAddr.Empty() {
-		return sdkerrors.Wrap(sdk.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
 	}
 
-	if valAddr.Empty() {
-		return sdkerrors.Wrap(sdk.ErrUnknownRequest, "Invalid Validator Address: it cannot be empty")
+	if msg.PubKey == nil {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidPubKey, "Invalid Validator PubKey: it cannot be empty")
 	}
 
-	if msg.Pubkey == nil {
-		return sdkerrors.Wrap(ErrInvalidPubKey, "Invalid Validator PubKey: it cannot be empty")
-	}
-
-	_, err := msg.Pubkey.GetCachedValue().(cryptotypes.PubKey)
-	if !err {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
+	_, err2 := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)
+	if !err2 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
 	}
 
 	if msg.Description == (Description{}) {
-		return sdkerrors.Wrap(sdkerrors.Wrap, sdkerrors.ErrInvalidRequest, "empty description")
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "empty description")
 	}
 
 	if err := msg.Description.Validate(); err != nil {
@@ -90,5 +86,5 @@ func (msg *MsgCreateValidator) ValidateBasic() error {
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
 func (msg MsgCreateValidator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
-	return unpacker.UnpackAny(msg.Pubkey, &pubKey)
+	return unpacker.UnpackAny(msg.PubKey, &pubKey)
 }

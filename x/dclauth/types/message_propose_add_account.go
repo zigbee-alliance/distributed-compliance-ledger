@@ -3,6 +3,8 @@ package types
 import (
 	"bytes"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -44,6 +46,16 @@ func (msg *MsgProposeAddAccount) Type() string {
 	return TypeMsgProposeAddAccount
 }
 
+func (msg *MsgProposeAddAccount) HasRole(targetRole AccountRole) bool {
+	for _, role := range msg.Roles {
+		if role == targetRole {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (msg *MsgProposeAddAccount) GetSigners() []sdk.AccAddress {
 	signer, err := sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
@@ -58,7 +70,7 @@ func (msg *MsgProposeAddAccount) GetSignBytes() []byte {
 }
 
 func (msg *MsgProposeAddAccount) ValidateBasic() error {
-	if m.Address.Empty() {
+	if msg.Address == "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Account Address: it cannot be empty")
 	}
 
@@ -67,33 +79,34 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid Account Address: (%s)", err)
 	}
 
-	if m.Signer.Empty() {
+	if msg.Signer == "" {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: it cannot be empty")
 	}
 
-	_, err := sdk.AccAddressFromBech32(msg.Signer)
+	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid Signer: (%s)", err)
 	}
 
-	if len(m.PubKey) == 0 {
+	if msg.PubKey == nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "Invalid PublicKey: it cannot be empty")
 	}
 
-	pk, err := msg.Pubkey.GetCachedValue().(cryptotypes.PubKey)
-	if !err {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
+	pk, err2 := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)
+	if !err2 {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidType, "expecting cryptotypes.PubKey for PubKey, got %T", err)
 	}
 
 	if !bytes.Equal(pk.Address().Bytes(), accAddr.Bytes()) {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "account address and pubkey address do not match")
 	}
 
-	if err := m.Roles.Validate(); err != nil {
+	roles := fromSlice(msg.Roles)
+	if err := roles.Validate(); err != nil {
 		return err
 	}
 
-	if m.HasRole(Vendor) && m.VendorID <= 0 {
+	if msg.HasRole(Vendor) && msg.VendorID <= 0 {
 		return ErrMissingVendorIDForVendorAccount()
 	}
 
@@ -103,5 +116,5 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
 func (msg MsgProposeAddAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
-	return unpacker.UnpackAny(msg.Pubkey, &pubKey)
+	return unpacker.UnpackAny(msg.PubKey, &pubKey)
 }

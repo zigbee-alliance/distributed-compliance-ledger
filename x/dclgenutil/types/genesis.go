@@ -5,9 +5,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/codec"
+	tmos "github.com/tendermint/tendermint/libs/os"
 	tmtypes "github.com/tendermint/tendermint/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
+
+	"github.com/cosmos/cosmos-sdk/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 // this line is used by starport scaffolding # genesis/types/import
@@ -22,16 +26,6 @@ func DefaultGenesis() *GenesisState {
 
 		// this line is used by starport scaffolding # genesis/types/default
 	}
-}
-
-// FIXME issue 99 review
-
-// Validate performs basic genesis state validation returning an error upon any
-// failure.
-func (gs GenesisState) Validate() error {
-	// this line is used by starport scaffolding # genesis/types/validate
-
-	return nil
 }
 
 // FIXME issue 99 review
@@ -126,7 +120,7 @@ func ValidateGenesis(genesisState *GenesisState, txJSONDecoder sdk.TxDecoder) er
 				"must provide genesis Tx with exactly 1 CreateValidator message")
 		}
 
-		if _, ok := msgs[0].(*validator.MsgCreateValidator); !ok {
+		if _, ok := msgs[0].(*validatortypes.MsgCreateValidator); !ok {
 			return fmt.Errorf(
 				"genesis transaction %v does not contain a MsgCreateValidator", i)
 		}

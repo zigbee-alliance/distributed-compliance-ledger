@@ -1,5 +1,7 @@
 package keeper_test
 
+/*
+
 import (
 	"strconv"
 	"testing"
@@ -61,3 +63,4 @@ func TestPendingAccountGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllPendingAccount(ctx)),
 	)
 }
+*/
