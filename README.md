@@ -32,12 +32,13 @@ The ledger consists of
         - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)
         - [Rust Light Client implementation](https://docs.rs/tendermint/0.13.0/tendermint/lite/index.html)  
  - Public UI
-    - https://dcl.dev.dsr-corporation.com.
-    - based onf the REST API
+    - https://dcl.dev.dsr-corporation.com
+    - based on the REST API
     - can be used to browse the ledger
         - please note that it doesn't show all the accounts on the ledger
         - it shows only the default (demo) accounts created on the UI server
     - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
+    - source code and documentation are located in [dcl-ui](/dcl-ui) directory
 
 #### Public Permissioned Ledger
 DC Ledger is a public permissioned ledger in the following sense:
