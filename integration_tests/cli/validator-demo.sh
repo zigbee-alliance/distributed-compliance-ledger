@@ -16,6 +16,8 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
+LOCALNET_DIR=".localnet"
+
 random_string account
 container="validator-demo"
 node="node-demo"
@@ -51,8 +53,8 @@ test_divider
 
 echo "$account Prepare Node configuration files"
 docker exec $container dcld init $node --chain-id $chain_id
-docker cp ./localnet/node0/config/genesis.json $container:/root/.dcld/config
-peers=$(cat localnet/node0/config/config.toml | grep -o -E "persistent_peers = \".*\"")
+docker cp "$LOCALNET_DIR/node0/config/genesis.json" $container:/root/.dcld/config
+peers="$(cat "$LOCALNET_DIR/node0/config/config.toml" | grep -o -E "persistent_peers = \".*\"")"
 docker exec $container sed -i "s/persistent_peers = \"\"/$peers/g" /root/.dcld/config/config.toml
 docker exec $container sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' /root/.dcld/config/config.toml
 
