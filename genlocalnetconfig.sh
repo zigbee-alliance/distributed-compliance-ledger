@@ -16,6 +16,7 @@
 set -euo pipefail
 
 DCL_OBSERVERS="${DCL_OBSERVERS:-}"
+LOCALNET_DIR=".localnet"
 
 SED_EXT=
 if [ "$(uname)" == "Darwin" ]; then
@@ -26,11 +27,11 @@ fi
 rm -rf ~/.dclcli
 rm -rf ~/.dcld
 
-rm -rf localnet
-mkdir localnet localnet/client localnet/node0 localnet/node1 localnet/node2 localnet/node3
+rm -rf "$LOCALNET_DIR"
+mkdir "$LOCALNET_DIR" "$LOCALNET_DIR"/{client,node0,node1,node2,node3}
 
 if [[ -n "$DCL_OBSERVERS" ]]; then
-    mkdir localnet/observer0
+    mkdir "$LOCALNET_DIR/observer0"
 fi
 
 # client
@@ -45,7 +46,7 @@ echo 'test1234' | dclcli keys add alice
 echo 'test1234' | dclcli keys add bob
 echo 'test1234' | dclcli keys add anna
 
-cp -r ~/.dclcli/* localnet/client
+cp -r ~/.dclcli/* "$LOCALNET_DIR/client"
 
 # node 0
 
@@ -70,7 +71,7 @@ dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="
 
 echo 'test1234' | dcld gentx --from jack
 
-mv ~/.dcld/* localnet/node0
+mv ~/.dcld/* "$LOCALNET_DIR/node0"
 
 # node 1
 
@@ -83,7 +84,7 @@ dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="
 
 echo 'test1234' | dcld gentx --from alice
 
-mv ~/.dcld/* localnet/node1
+mv ~/.dcld/* "$LOCALNET_DIR/node1"
 
 # node 2
 
@@ -96,7 +97,7 @@ dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="
 
 echo 'test1234' | dcld gentx --from bob
 
-mv ~/.dcld/* localnet/node2
+mv ~/.dcld/* "$LOCALNET_DIR/node2"
 
 # node 3
 
@@ -109,10 +110,10 @@ dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="
 
 echo 'test1234' | dcld gentx --from anna
 
-cp -r ~/.dcld/* localnet/node3
+cp -r ~/.dcld/* "$LOCALNET_DIR/node3"
 
 
-if [[ -d "localnet/observer0" ]]; then
+if [[ -d "$LOCALNET_DIR/observer0" ]]; then
     rm -rf ~/.dcld/*
     # observer0
 
@@ -123,16 +124,16 @@ if [[ -d "localnet/observer0" ]]; then
     dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
     dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-    cp -r ~/.dcld/* localnet/observer0
+    cp -r ~/.dcld/* "$LOCALNET_DIR/observer0"
 fi
 
 # Collect all validator creation transactions
 
 mkdir -p ~/.dcld/config/gentx
-cp localnet/node0/config/gentx/* ~/.dcld/config/gentx
-cp localnet/node1/config/gentx/* ~/.dcld/config/gentx
-cp localnet/node2/config/gentx/* ~/.dcld/config/gentx
-cp localnet/node3/config/gentx/* ~/.dcld/config/gentx
+cp "$LOCALNET_DIR"/node0/config/gentx/* ~/.dcld/config/gentx
+cp "$LOCALNET_DIR"/node1/config/gentx/* ~/.dcld/config/gentx
+cp "$LOCALNET_DIR"/node2/config/gentx/* ~/.dcld/config/gentx
+cp "$LOCALNET_DIR"/node3/config/gentx/* ~/.dcld/config/gentx
 
 # Embed them into genesis
 
@@ -141,35 +142,35 @@ dcld validate-genesis
 
 # Update genesis for all nodes
 
-cp ~/.dcld/config/genesis.json localnet/node0/config/
-cp ~/.dcld/config/genesis.json localnet/node1/config/
-cp ~/.dcld/config/genesis.json localnet/node2/config/
-cp ~/.dcld/config/genesis.json localnet/node3/config/
+cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node0/config/"
+cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node1/config/"
+cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node2/config/"
+cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node3/config/"
 
-if [[ -d "localnet/observer0" ]]; then
-    cp ~/.dcld/config/genesis.json localnet/observer0/config/
+if [[ -d "$LOCALNET_DIR/observer0" ]]; then
+    cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/observer0/config/"
 fi
 
 # Find out node ids
 
-id0=$(ls localnet/node0/config/gentx | sed 's/gentx-\(.*\).json/\1/')
-id1=$(ls localnet/node1/config/gentx | sed 's/gentx-\(.*\).json/\1/')
-id2=$(ls localnet/node2/config/gentx | sed 's/gentx-\(.*\).json/\1/')
-id3=$(ls localnet/node3/config/gentx | sed 's/gentx-\(.*\).json/\1/')
+id0=$(ls "$LOCALNET_DIR/node0/config/gentx" | sed 's/gentx-\(.*\).json/\1/')
+id1=$(ls "$LOCALNET_DIR/node1/config/gentx" | sed 's/gentx-\(.*\).json/\1/')
+id2=$(ls "$LOCALNET_DIR/node2/config/gentx" | sed 's/gentx-\(.*\).json/\1/')
+id3=$(ls "$LOCALNET_DIR/node3/config/gentx" | sed 's/gentx-\(.*\).json/\1/')
 
 # Update address book of the first node
 peers="$id0@192.167.10.2:26656,$id1@192.167.10.3:26656,$id2@192.167.10.4:26656,$id3@192.167.10.5:26656"
 
 # Update address book of the first node 
-sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/node0/config/config.toml
-if [[ -d "localnet/observer0" ]]; then
-    sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" localnet/observer0/config/config.toml
+sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" "$LOCALNET_DIR/node0/config/config.toml"
+if [[ -d "$LOCALNET_DIR/observer0" ]]; then
+    sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" "$LOCALNET_DIR/observer0/config/config.toml"
 fi
 
 # Make RPC endpoint available externally
 for node_id in node0 node1 node2 node3 observer0; do
-    if [[ -d "localnet/${node_id}" ]]; then
-        sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "localnet/${node_id}/config/config.toml"
-        sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "localnet/${node_id}/config/config.toml"
+    if [[ -d "$LOCALNET_DIR/${node_id}" ]]; then
+        sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "$LOCALNET_DIR/${node_id}/config/config.toml"
+        sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_id}/config/config.toml"
     fi
 done

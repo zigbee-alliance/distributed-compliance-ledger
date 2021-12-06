@@ -21,7 +21,9 @@ if [ "$(uname)" == "Darwin" ]; then
     SED_EXT="''"
 fi
 
-rm -rf localnet/client/*
+LOCALNET_DIR=".localnet"
+
+rm -rf "$LOCALNET_DIR"/client/*
 
 PASSWD=test1234
 NUMUSERS="${1:-10}"
@@ -40,9 +42,9 @@ done
 
 dcld validate-genesis
 
-cp -r ~/.dclcli/* localnet/client
+cp -r ~/.dclcli/* "$LOCALNET_DIR"/client
 for node_id in node0 node1 node2 node3 observer0; do
-    if [[ -d "localnet/${node_id}" ]]; then
-        cp -f ~/.dcld/config/genesis.json "localnet/${node_id}/config/"
+    if [[ -d "$LOCALNET_DIR/${node_id}" ]]; then
+        cp -f ~/.dcld/config/genesis.json "$LOCALNET_DIR/${node_id}/config/"
     fi
 done

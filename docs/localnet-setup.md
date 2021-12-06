@@ -45,5 +45,5 @@
   - Then you can start the network again with the existing data using `make localnet_start`
   - If you need to start a new clean network then do the following steps prior to executing `make localnet_start`:
     - Remove `.dclcli` and `.dcld` directories from your user home directory (`~`)
-    - Remove `localnet` directory from the root directory of the cloned project
+    - Remove `.localnet` directory from the root directory of the cloned project
     - Initialize the new network data using `make localnet_init`

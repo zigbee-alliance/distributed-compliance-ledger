@@ -15,6 +15,8 @@
 
 DETAILED_OUTPUT=true
 
+LOCALNET_DIR=".localnet"
+
 LOG_PREFIX="[run all] "
 SED_EXT=
 if [ "$(uname)" == "Darwin" ]; then
@@ -61,7 +63,7 @@ wait_for_height() {
 }
 
 patch_consensus_config() {
-  local NODE_CONFIGS=$(find localnet -type f -name "config.toml" -wholename "*node*")
+  local NODE_CONFIGS="$(find "$LOCALNET_DIR" -type f -name "config.toml" -wholename "*node*")"
 
   for NODE_CONFIG in ${NODE_CONFIGS}; do
     sed -i $SED_EXT 's/timeout_propose = "3s"/timeout_propose = "500ms"/g' "${NODE_CONFIG}"
@@ -95,9 +97,9 @@ cleanup_pool() {
   rm -rf ~/.dclcli
   rm -rf ~/.dcld
   if [ "$(uname)" == "Darwin" ]; then
-    rm -rf localnet 
+    rm -rf "$LOCALNET_DIR"
   else
-    sudo rm -rf localnet
+    sudo rm -rf "$LOCALNET_DIR"
   fi
 }
 
