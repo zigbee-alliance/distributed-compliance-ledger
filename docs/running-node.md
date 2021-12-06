@@ -7,7 +7,7 @@ This document describes in details how to configure different types of DCLedger 
 *   Common release artifacts:
     * Binary artifacts (part of the release):
         * dcld: The binary used for running a node.
-        * dclcli: The binary that allow users to interact with the network of nodes.
+        * dclcli: The binary that allows users to interact with the network of nodes.
     * The service configuration file `dcld.service` 
     (either part of the release or [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment) folder).    
     * where to get:
@@ -38,7 +38,7 @@ Current delivery is compiled and tested under `Ubuntu 18.04.3 LTS` so we recomme
 Notes:
     * the deployment commands below will try to setup and run `dcld` systemd service on Ubuntu
     * that will require `sudo` for a user
-    * in case non-Ubuntu system these steps will be scipped so you would need to take case about
+    * in case non-Ubuntu system these steps will be scipped so you would need to take care about
 
 ## Deployment
 
@@ -63,7 +63,7 @@ $ run_dcl_node -t genesis -c <chain-id> node0
 ```
 
 This command:
-    - configures dclcli to communicate with the genesis node (the local one)
+
     - generates a new key entry for a node admin account
     - generates `genesis.json` file with the following entries:
         - a genenesis account for the key entry above with `Trustee` and `NodeAdmin` roles
@@ -71,8 +71,10 @@ This command:
     - configures and starts the node
 
 Outputs:
-    - key data (address, public key, mnemonic) as `*.dclkey.json` file in the current directory
-    - genesis file `$HOME/.dcld/config/genesis.json`
+
+    - `*.dclkey.json` file in the current directory with node admint key data (address, public key, mnemonic)
+    - standard output:
+        - genesis file `$HOME/.dcld/config/genesis.json`
 
 ## Validator Node
 
@@ -87,9 +89,7 @@ $ run_dcl_node -c <chain-id> <node-name>
 ```
 
 This command:
-    - configures dclcli to communicate with the genesis node:
-        - by default it will evaluate it from the `persisten_peers.txt` (using its first entry)
-        - you can specify the peer explicitly using `-p/--peer`: `-p <node-id@host:port>` (port is usually considered as `26656` here)
+
     - generates a new key entry for a node admin account
         - by default `<node_name>admin` key name is used
         - can be configured using `-k/--key-name` option
@@ -97,9 +97,11 @@ This command:
     - configures and starts the node
 
 Outputs:
-    - key data (address, public key, mnemonic) as `*.dclkey.json` file in the current directory
-    - node admin key data: `address` and `pubkey`
-    - validator data: `address` and `pubkey`
+
+    - `*.dclkey.json` file in the current directory with node admint key data (address, public key, mnemonic)
+    - standard output:
+        - node admin key data: `address` and `pubkey`
+        - validator data: `address` and `pubkey`
 
 2. Provide generated node admin key `address` and `pubkey` to any `Trustee`(s). So they may create
    an account with `NodeAdmin` role. And **wait** until:

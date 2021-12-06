@@ -71,10 +71,10 @@ Options:
   -c,  --chain-id   chain id, default: '$DEF_CHAIN_ID'
   -h,  --help       print this help and exit
   -k,  --key-name   account key-name, default: '<node-name>admin'
-  -p,  --peer       peer hostspec as 'HOST:PORT', default: first entry of 'persistent_peers.txt'
   -u,  --user       node service user, default: '$DEF_NODE_USER'
   -t,  --type       node type, one of 'genesis', 'validator', 'observer', default: '$DEF_NODE_TYPE'
 "
+#-p,  --peer       peer hostspec as 'HOST:PORT', default: first entry of 'persistent_peers.txt'
 #  -v,  --verbose    be more verbose
 }
 
@@ -264,6 +264,7 @@ function config_node {
                 exit 1
             fi
 
+            # TODO move ot a separate script
             # Open '26656' (p2p) and '26657' (RPC) ports. 
             sudo ufw allow 26656/tcp
             sudo ufw allow 26657/tcp
@@ -313,6 +314,7 @@ function verify_node {
     check1="$(dclcli status --node "$_node_ip" | grep latest_block_height)"
 
     echo "sync_info.latest_block_height Try 2"
+    # TODO it should depend on empty block creation setting value
     sleep 6
     check2="$(dclcli status --node "$_node_ip" | grep latest_block_height)"
 
@@ -381,13 +383,8 @@ fi
 
 echo "Configuring CLI"
 
-if [[ "$NODE_TYPE" == "observer" ]]; then
-    # FIXME is it right
-    config_cli "$CHAIN_ID"
-else
-    config_cli "$CHAIN_ID" "$PEER_ADDR:$CLI_PORT"
-fi
-
+# Note. we consider that cli would connect to local node (default setting)
+config_cli "$CHAIN_ID"
 
 if [[ "$NODE_TYPE" != "observer" ]]; then
     echo "Generating genesis account keys..."
