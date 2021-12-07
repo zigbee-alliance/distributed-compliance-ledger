@@ -17,7 +17,7 @@ This document describes in details how to configure different types of DCLedger 
     *   The list of alive peers: `persistent_peers.txt` with the following format: `<node id>@<ip:port>,<node2 id>@<ip:port>,...`.
     *   where to get:
         *   If you want to join an existing persistent network (such as Test Net), then look at the [Persistent Chains](../deployment/persistent_chains)
-            folder for a list of available networks. Each subfolder there represents a `<chain-id>` and contains the genesis and persistent_peers files.
+            folder for a list of available networks. Each sub-directory there represents a `<chain-id>` and contains the genesis. Also it may contain `persistent_peers.txt` files.
 
 ## Hardware requirements
 
@@ -35,27 +35,108 @@ Recommended (for highload applications):
 
 ## Operating System
 
-Current delivery is compiled and tested under `Ubuntu 18.04.3 LTS` so we recommend using this distribution for now. In future, it will be possible to compile the application for a wide range of operating systems thanks to Go language.
+Current delivery is compiled and tested under `Ubuntu 20.04 LTS` so we recommend using this distribution for now.
+In future, it will be possible to compile the application for a wide range of operating systems (thanks to Go language).
 
-Notes:
+**Notes**
 
-*   the deployment commands below will try to setup and run `dcld` systemd service on Ubuntu
-*   that will require `sudo` for a user
-*   in case non-Ubuntu system these steps will be scipped so you would need to take care about
+*   A part of the deployment commands below will try to enable and run `dcld` as a systemd service, it means:
+    *   that will require `sudo` for a user
+    *   you may consider to use non-Ubuntu systemd systems but it's not officially supported for the moment
+    *   in case non systemd system you would need to take care about `dlcd` service enablement and run as well
 
 ## Deployment
 
-Pre-requisites:
+### Preparation
 
-1.  `dcld` and `dclcli` binaries are located in `/usr/bin`
-2.  (for systemd systems) `dcld.service` is available in the current directory
-3.  (for validator and observer) `genesis.json` and `persistent_peers.txt` are available in the current directory
+#### (Optional) System cleanup
+
+Required if a host has been already used in another DCLedger setup.
+
+<details>
+<summary>Cleanup (click to expand)</summary>
+<p>
+
+```bash
+$ sudo systemctl stop dcld 
+$ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
+$ sudo rm -f "$(which dcld)" "$(which dclcli)"
+```
+
+</p>
+</details>
+
+#### Get the artifacts
+
+*   download `dclcli`, `dcld` and `dcld.service` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
+*   Get setup scripts either from [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases) or
+    from [repository](../deployment/scripts) if you need latest development version.
+*   (for validator and observer) Get the running DCLedegr network data:
+    *   `genesis.json` can be found in a `<chain-id>` sub-directory of the [persistent_chains](../deployment/persistent_chains) folder and `persistent_peers.txt`
+    *   `persistent_peers.txt`: that file may be published there as well or can be requested from the DCLedger network administrators otherwise
+
+<details>
+<summary>Example (click to expand)</summary>
+<p>
+
+```bash
+# release artifacts
+curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dclcli
+curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
+curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld.service
+curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/run_dcl_node
+
+# OR latest dev version in case of some not yet released improvements
+curl -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/run_dcl_node
+
+curl -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/genesis.json
+```
+
+</p>
+</details>
+
+#### Setup DCL binaries
+
+*   located `dlcd` and `dclcli` binaries in a folder listed in `$PATH` (e.g. `/usr/bin/`)
+*   set a proper owner and executable permissions
+
+<details>
+<summary>Example for ubuntu user (click to expand)</summary>
+<p>
+
+```bash
+$ sudo cp ./dclcli ./dcld -t /usr/bin
+$ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
+$ sudo chown ubuntu /usr/bin/dclcli /usr/bin/dcld
+```
+
+</p>
+</details>
+
+#### Configure the firewall
+
+Ports `26656` (p2p) and `26657` (RPC) should be available for TCP connections.
+
+<details>
+<summary>Example for Ubuntu (click to expand)</summary>
+<p>
+
+```bash
+$ sudo ufw allow 26656/tcp
+$ sudo ufw allow 26657/tcp
+```
+
+</p>
+</details>
 
 ### Genesis Validator Node
 
 This part describes how to configure a genesis node - a starting point of any new network.
 
 The following steps automates a set of instructions that you can find in [Running Genesis Node](running-genesis-node.md) document.
+
+**Note** This part is not requried for all validator owners: it si performed only once for the initial (genesis) node of a DCLedger network.
+If you are not going to become a genesis node administrator you may jump to [Validator Node](#validator-node).
 
 #### Choose the chain ID
 
@@ -66,16 +147,17 @@ Every network (for example, test-net, main-net, etc.) must have a unique chain I
 Run
 
 ```bash
-$ run_dcl_node -t genesis -c <chain-id> node0
+$ ./run_dcl_node -t genesis -c <chain-id> node0
 ```
 
 This command:
 
 *   generates a new key entry for a node admin account
 *   generates `genesis.json` file with the following entries:
-    *   a genenesis account for the key entry above with `Trustee` and `NodeAdmin` roles
+    *   a genesis account for the key entry above with `Trustee` and `NodeAdmin` roles
     *   a genesis txn that makes the local node a validator
 *   configures and starts the node
+*   if `-u` option is specified the command will set a custom user the `dcld` service is executed as
 
 Outputs:
 
@@ -83,12 +165,12 @@ Outputs:
 *   standard output:
     *   genesis file `$HOME/.dcld/config/genesis.json`
 
-**Note**. Once more validator nodes are added it's important to update:
+**Notes**
 
-*   `persistent_peers.txt` file by including the entries for every added initial node
-*   update the `persistent_peers` field in `$HOME/.dcld/config/config.toml`
+    * by default the command will try to setup a systemd `dcld` service to start under `ubuntu` user
+    * if needed you may consier to specify a different service user `-u user`
 
-## Validator Node
+### Validator Node
 
 This part describes how to configure a validator node and add it to the existing network.
 
@@ -99,7 +181,7 @@ The following steps automates a set of instructions that you can find in [Runnin
 Run
 
 ```bash
-$ run_dcl_node -c <chain-id> <node-name>
+$ ./run_dcl_node -c <chain-id> [-u <user>] <node-name>
 ```
 
 This command:
@@ -112,7 +194,7 @@ This command:
 
 Outputs:
 
-*   `*.dclkey.json` file in the current directory with node admint key data (address, public key, mnemonic)
+*   `*.dclkey.json` file in the current directory with node admin key data (address, public key, mnemonic)
 *   standard output:
     *   node admin key data: `address` and `pubkey`
     *   validator data: `address` and `pubkey`
@@ -136,6 +218,10 @@ $ dclcli tx validator add-node \
 
 If the transaction has been successfully written you would find `"success": true` in the output JSON.
 
+#### Notify other validator administrators
+
+Provide the node's `id`, `ip` and peer port (by default `26656`) to other validator administrators
+
 ### Observer Node
 
 This part describes how to configure an observer node and add it to the existing network.
@@ -145,8 +231,12 @@ The following command automates a set of instructions that you can find in [Runn
 Run
 
 ```bash
-$ run_dcl_node -t observer -c <chain-id> <node-name>
+$ ./run_dcl_node -t observer -c <chain-id> [-u <user>] <node-name>
 ```
+
+Notes:
+
+    *   if `-u` option is specified the command will set a custom user the `dcld` service is executed as
 
 ## Deployment Verification
 
@@ -159,3 +249,8 @@ $ run_dcl_node -t observer -c <chain-id> <node-name>
 *   Get the list of nodes participating in the consensus for the last block:
     *   `dclcli tendermint-validator-set`.
     *   You can pass the additional value to get the result for a specific height: `dclcli tendermint-validator-set 100`.
+
+## Validator Node Maintenance
+
+*   `persistent_peers` field in `$HOME/.dcld/config/config.toml` should include the latest version of the validators list
+    *   **Note** `dcld` service should be restarted on any configuration changes
