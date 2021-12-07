@@ -72,7 +72,7 @@ $ sudo rm -f "$(which dcld)" "$(which dclcli)"
 *   Get setup scripts either from [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases) or
     from [repository](../deployment/scripts) if you need latest development version.
 *   (for validator and observer) Get the running DCLedegr network data:
-    *   `genesis.json` can be found in a `<chain-id>` sub-directory of the [persistent_chains](../deployment/persistent_chains) folder and `persistent_peers.txt`
+    
     *   `persistent_peers.txt`: that file may be published there as well or can be requested from the DCLedger network administrators otherwise
 
 <details>
@@ -81,15 +81,15 @@ $ sudo rm -f "$(which dcld)" "$(which dclcli)"
 
 ```bash
 # release artifacts
-curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dclcli
-curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
-curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld.service
-curl -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/run_dcl_node
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dclcli
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld.service
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/run_dcl_node
 
 # OR latest dev version in case of some not yet released improvements
-curl -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/run_dcl_node
+curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/run_dcl_node
 
-curl -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/genesis.json
+curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/genesis.json
 ```
 
 </p>
@@ -105,9 +105,9 @@ curl -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance
 <p>
 
 ```bash
-$ sudo cp ./dclcli ./dcld -t /usr/bin
-$ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
+$ sudo cp -f ./dclcli ./dcld -t /usr/bin
 $ sudo chown ubuntu /usr/bin/dclcli /usr/bin/dcld
+$ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
 ```
 
 </p>
