@@ -38,7 +38,7 @@ Recommended (for highload applications):
 Current delivery is compiled and tested under `Ubuntu 20.04 LTS` so we recommend using this distribution for now.
 In future, it will be possible to compile the application for a wide range of operating systems (thanks to Go language).
 
-**Notes**
+*Notes*
 
 *   A part of the deployment commands below will try to enable and run `dcld` as a systemd service, it means:
     *   that will require `sudo` for a user
@@ -95,7 +95,7 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/genesis.json
 
 # persistent peers file (if available)
-curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/genesis.json
+curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/persistent_peers.txt
 ```
 
 </p>
@@ -103,8 +103,8 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 
 #### Setup DCL binaries
 
-*   located `dlcd` and `dclcli` binaries in a folder listed in `$PATH` (e.g. `/usr/bin/`)
-*   set a proper owner user and executable permissions
+*   put `dlcd` and `dclcli` binaries in a folder listed in `$PATH` (e.g. `/usr/bin/`)
+*   set a proper owner and executable permissions
 
 <details>
 <summary>Example for ubuntu user (click to expand)</summary>
@@ -121,8 +121,8 @@ $ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
 
 #### Configure the firewall
 
-*   Ports `26656` (p2p) and `26657` (RPC) should be available for TCP connections.
-*   If you use IP filtering rules they should be in sync with the persistent peers list.
+*   ports `26656` (p2p) and `26657` (RPC) should be available for TCP connections
+*   if you use IP filtering rules they should be in sync with the persistent peers list
 
 <details>
 <summary>Example for Ubuntu (click to expand)</summary>
@@ -147,7 +147,7 @@ If you are not going to become a genesis node admin you may jump to [Validator N
 
 #### Choose the chain ID
 
-Every network (for example, test-net, main-net, etc.) must have a unique chain ID.
+Every network (e.g. `test-net`, `main-net` etc.) must have a unique chain ID.
 
 #### Create keys for a node admin and a trustee genesis accounts
 
@@ -155,10 +155,9 @@ Every network (for example, test-net, main-net, etc.) must have a unique chain I
 dclcli keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
 ```
 
-**Notes**
+*Notes*
 
 *   it's improtant to keep the generated data (especially a mnemonic that allows to recover a key) in a safe place
-*   note address and public key - they would be needed for a ledger `NodeAdmin` account creation
 
 #### Setup a node
 
@@ -168,7 +167,7 @@ Run
 $ ./run_dcl_node -t genesis -c <chain-id> node0
 ```
 
-**Notes**
+*Notes*
 
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
@@ -183,12 +182,6 @@ This command:
     *   a genesis txn that makes the local node a validator
 *   configures and starts the node
 
-Outputs:
-
-*   `*.dclkey.json` file in the current directory with node admin key data (address, public key, mnemonic)
-*   standard output:
-    *   genesis file `$HOME/.dcld/config/genesis.json`
-
 ### Validator Node
 
 This part describes how to configure a validator node and add it to the existing network.
@@ -201,10 +194,10 @@ The following steps automates a set of instructions that you can find in [Runnin
 dclcli keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
 ```
 
-**Notes**
+*Notes*
 
 *   it's improtant to keep the generated data (especially a mnemonic that allows to recover the key) in a safe place
-*   note address and public key - they would be needed for a ledger `NodeAdmin` account creation
+*   note address and public key - they would be needed for a ledger account creation
 
 #### Setup a node
 
@@ -214,7 +207,7 @@ Run
 $ ./run_dcl_node -c <chain-id> <node-name>
 ```
 
-**Notes**
+*Notes*
 
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
@@ -228,13 +221,6 @@ This command:
     *   can be configured using `-k/--key-name` option
 *   properly locates `genesis.json`
 *   configures and starts the node
-
-Outputs:
-
-*   `*.dclkey.json` file in the current directory with node admin key data (address, public key, mnemonic)
-*   standard output:
-    *   node admin key data: `address` and `pubkey`
-    *   validator data: `address` and `pubkey`
 
 #### Ask for a ledger account
 
@@ -257,7 +243,7 @@ If the transaction has been successfully written you would find `"success": true
 
 #### Notify other validator admins
 
-Provide the node's `id`, `ip` and peer port (by default `26656`) to other validator admins
+Provide the node's `id`, `ip` and peer port (by default `26656`) to other validator admins.
 
 ### Observer Node
 
@@ -265,18 +251,18 @@ This part describes how to configure an observer node and add it to the existing
 
 The following command automates a set of instructions that you can find in [Running Observer Node](running-observer-node.md) document
 
-**Notes**
-
-*   the script assumes that:
-    *   current user is going to be used for `dcld` service to run as
-    *   current user is in sudoers list
-*   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](running-observer-node.md)
-
 Run
 
 ```bash
 $ ./run_dcl_node -t observer -c <chain-id> <node-name>
 ```
+
+*Notes*
+
+*   the script assumes that:
+    *   current user is going to be used for `dcld` service to run as
+    *   current user is in sudoers list
+*   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](running-observer-node.md)
 
 ## Deployment Verification
 
@@ -301,6 +287,6 @@ $ ./run_dcl_node -t observer -c <chain-id> <node-name>
         ./update_peers [PATH-TO-PEERS-FILE]
         ```
 
-    *   **Notes**
+    *   *Notes*
         *   `dcld` service should be restarted on any configuration changes
-        *   in case of any related firewall rules they should be updated as well to allow peer and/or client connections to updated list of peers
+        *   in case of any IP filtering firewall rules they should be updated as well
