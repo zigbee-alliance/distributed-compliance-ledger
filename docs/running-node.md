@@ -1,6 +1,9 @@
 # Running a DCLedger Node
 
-This document describes in details how to configure different types of DCLedger nodes.
+This document describes in how to:
+
+*   configure different types of DCLedger nodes: genesis, validator and observer
+*   create a node administrator (or admin) account as a necessary part of validator and genesis node configuration
 
 ## Components
 
@@ -10,14 +13,11 @@ This document describes in details how to configure different types of DCLedger 
         *   dclcli: The binary that allows users to interact with the network of nodes.
     *   The service configuration file `dcld.service`
         (either part of the release or [deployment](../deployment) folder).
-    *   where to get:
-        *   The latest release can be found at [DCL Releases](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases).
 *   Additional generated data (for validators and observers):
     *   Genesis transactions file: `genesis.json`
     *   The list of alive peers: `persistent_peers.txt` with the following format: `<node id>@<ip:port>,<node2 id>@<ip:port>,...`.
-    *   where to get:
-        *   If you want to join an existing persistent network (such as Test Net), then look at the [Persistent Chains](../deployment/persistent_chains)
-            folder for a list of available networks. Each sub-directory there represents a `<chain-id>` and contains the genesis. Also it may contain `persistent_peers.txt` files.
+
+Please check [Get the artifacts](#get-the-artifacts) for the details how to get them.
 
 ## Hardware requirements
 
@@ -59,8 +59,8 @@ Required if a host has been already used in another DCLedger setup.
 
 ```bash
 $ sudo systemctl stop dcld 
-$ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
 $ sudo rm -f "$(which dcld)" "$(which dclcli)"
+$ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
 ```
 
 </p>
@@ -72,8 +72,8 @@ $ sudo rm -f "$(which dcld)" "$(which dclcli)"
 *   Get setup scripts either from [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases) or
     from [repository](../deployment/scripts) if you need latest development version.
 *   (for validator and observer) Get the running DCLedegr network data:
-    
-    *   `persistent_peers.txt`: that file may be published there as well or can be requested from the DCLedger network administrators otherwise
+    *   `genesis.json` can be found in a `<chain-id>` sub-directory of the [persistent_chains](../deployment/persistent_chains) folder
+    *   `persistent_peers.txt`: that file may be published there as well or can be requested from the DCLedger network admins otherwise
 
 <details>
 <summary>Example (click to expand)</summary>
@@ -84,11 +84,17 @@ $ sudo rm -f "$(which dcld)" "$(which dclcli)"
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dclcli
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld.service
-curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/run_dcl_node
 
-# OR latest dev version in case of some not yet released improvements
+# deployment scripts
+    # from release (if available)
+curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/run_dcl_node
+    # OR latest dev version
 curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/run_dcl_node
 
+# genesis file
+curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/genesis.json
+
+# persistent peers file (if available)
 curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/<chain-id>/genesis.json
 ```
 
@@ -98,7 +104,7 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 #### Setup DCL binaries
 
 *   located `dlcd` and `dclcli` binaries in a folder listed in `$PATH` (e.g. `/usr/bin/`)
-*   set a proper owner and executable permissions
+*   set a proper owner user and executable permissions
 
 <details>
 <summary>Example for ubuntu user (click to expand)</summary>
@@ -115,7 +121,8 @@ $ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
 
 #### Configure the firewall
 
-Ports `26656` (p2p) and `26657` (RPC) should be available for TCP connections.
+*   Ports `26656` (p2p) and `26657` (RPC) should be available for TCP connections.
+*   If you use IP filtering rules they should be in sync with the persistent peers list.
 
 <details>
 <summary>Example for Ubuntu (click to expand)</summary>
@@ -135,12 +142,23 @@ This part describes how to configure a genesis node - a starting point of any ne
 
 The following steps automates a set of instructions that you can find in [Running Genesis Node](running-genesis-node.md) document.
 
-**Note** This part is not requried for all validator owners: it si performed only once for the initial (genesis) node of a DCLedger network.
-If you are not going to become a genesis node administrator you may jump to [Validator Node](#validator-node).
+**Note** This part is not required for all validator owners: it is performed only once for the initial (genesis) node of a DCLedger network.
+If you are not going to become a genesis node admin you may jump to [Validator Node](#validator-node).
 
 #### Choose the chain ID
 
 Every network (for example, test-net, main-net, etc.) must have a unique chain ID.
+
+#### Create keys for a node admin and a trustee genesis accounts
+
+```bash
+dclcli keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
+```
+
+**Notes**
+
+*   it's improtant to keep the generated data (especially a mnemonic that allows to recover a key) in a safe place
+*   note address and public key - they would be needed for a ledger `NodeAdmin` account creation
 
 #### Setup a node
 
@@ -150,6 +168,13 @@ Run
 $ ./run_dcl_node -t genesis -c <chain-id> node0
 ```
 
+**Notes**
+
+*   the script assumes that:
+    *   current user is going to be used for `dcld` service to run as
+    *   current user is in sudoers list
+*   if it's not acceptable for your case please consult a less automated guide [Running Genesis Node](running-genesis-node.md)
+
 This command:
 
 *   generates a new key entry for a node admin account
@@ -157,18 +182,12 @@ This command:
     *   a genesis account for the key entry above with `Trustee` and `NodeAdmin` roles
     *   a genesis txn that makes the local node a validator
 *   configures and starts the node
-*   if `-u` option is specified the command will set a custom user the `dcld` service is executed as
 
 Outputs:
 
-*   `*.dclkey.json` file in the current directory with node admint key data (address, public key, mnemonic)
+*   `*.dclkey.json` file in the current directory with node admin key data (address, public key, mnemonic)
 *   standard output:
     *   genesis file `$HOME/.dcld/config/genesis.json`
-
-**Notes**
-
-    * by default the command will try to setup a systemd `dcld` service to start under `ubuntu` user
-    * if needed you may consier to specify a different service user `-u user`
 
 ### Validator Node
 
@@ -176,13 +195,31 @@ This part describes how to configure a validator node and add it to the existing
 
 The following steps automates a set of instructions that you can find in [Running Validator Node](running-validator-node.md) document
 
+#### Create a key for a node admin
+
+```bash
+dclcli keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
+```
+
+**Notes**
+
+*   it's improtant to keep the generated data (especially a mnemonic that allows to recover the key) in a safe place
+*   note address and public key - they would be needed for a ledger `NodeAdmin` account creation
+
 #### Setup a node
 
 Run
 
 ```bash
-$ ./run_dcl_node -c <chain-id> [-u <user>] <node-name>
+$ ./run_dcl_node -c <chain-id> <node-name>
 ```
+
+**Notes**
+
+*   the script assumes that:
+    *   current user is going to be used for `dcld` service to run as
+    *   current user is in sudoers list
+*   if it's not acceptable for your case please consult a less automated guide [Running Validator Node](running-validator-node.md)
 
 This command:
 
@@ -218,9 +255,9 @@ $ dclcli tx validator add-node \
 
 If the transaction has been successfully written you would find `"success": true` in the output JSON.
 
-#### Notify other validator administrators
+#### Notify other validator admins
 
-Provide the node's `id`, `ip` and peer port (by default `26656`) to other validator administrators
+Provide the node's `id`, `ip` and peer port (by default `26656`) to other validator admins
 
 ### Observer Node
 
@@ -228,15 +265,18 @@ This part describes how to configure an observer node and add it to the existing
 
 The following command automates a set of instructions that you can find in [Running Observer Node](running-observer-node.md) document
 
+**Notes**
+
+*   the script assumes that:
+    *   current user is going to be used for `dcld` service to run as
+    *   current user is in sudoers list
+*   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](running-observer-node.md)
+
 Run
 
 ```bash
-$ ./run_dcl_node -t observer -c <chain-id> [-u <user>] <node-name>
+$ ./run_dcl_node -t observer -c <chain-id> <node-name>
 ```
-
-Notes:
-
-    *   if `-u` option is specified the command will set a custom user the `dcld` service is executed as
 
 ## Deployment Verification
 
@@ -253,4 +293,14 @@ Notes:
 ## Validator Node Maintenance
 
 *   `persistent_peers` field in `$HOME/.dcld/config/config.toml` should include the latest version of the validators list
-    *   **Note** `dcld` service should be restarted on any configuration changes
+
+    *   you can use [update_peers](..deployment/scripts/update_peers)
+
+        ```bash
+        # by default path to a file is './persistent_peers'
+        ./update_peers [PATH-TO-PEERS-FILE]
+        ```
+
+    *   **Notes**
+        *   `dcld` service should be restarted on any configuration changes
+        *   in case of any related firewall rules they should be updated as well to allow peer and/or client connections to updated list of peers
