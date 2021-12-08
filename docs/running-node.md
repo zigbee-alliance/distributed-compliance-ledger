@@ -112,6 +112,8 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 $ sudo cp -f ./dclcli ./dcld -t /usr/bin
 $ sudo chown ubuntu /usr/bin/dclcli /usr/bin/dcld
 $ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
+$ dcld version
+$ dclcli version
 ```
 
 </p>
@@ -270,6 +272,12 @@ $ ./run_dcl_node -t observer -c <chain-id> <node-name>
     *   current user is going to be used for `dcld` service to run as
     *   current user is in sudoers list
 *   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](running-observer-node.md)
+
+### Observer Peers
+
+The list of persistent peers for an observer is not required to match the one used by the validators.
+
+As a general guidance you may consider to use only the peers you own and/or trust.
 
 ## Deployment Verification
 
