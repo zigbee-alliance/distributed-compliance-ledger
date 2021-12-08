@@ -1,13 +1,14 @@
 package cli
 
 import (
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
-	"strings"
 )
 
 func CmdCreateModelVersions() *cobra.Command {
@@ -27,7 +28,7 @@ func CmdCreateModelVersions() *cobra.Command {
 			}
 
 			// Get value arguments
-			argCastSoftwareVersions := strings.Split(args[2], listSeparator)
+			argCastSoftwareVersions := strings.Split(args[2], ",")
 			argSoftwareVersions := make([]uint64, len(argCastSoftwareVersions))
 			for i, arg := range argCastSoftwareVersions {
 				value, err := cast.ToUint64E(arg)
@@ -77,7 +78,7 @@ func CmdUpdateModelVersions() *cobra.Command {
 			}
 
 			// Get value arguments
-			argCastSoftwareVersions := strings.Split(args[2], listSeparator)
+			argCastSoftwareVersions := strings.Split(args[2], ",")
 			argSoftwareVersions := make([]uint64, len(argCastSoftwareVersions))
 			for i, arg := range argCastSoftwareVersions {
 				value, err := cast.ToUint64E(arg)

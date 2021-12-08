@@ -1,5 +1,7 @@
 package model
 
+/* FIXME issue 110
+
 import (
 	"math/rand"
 
@@ -234,3 +236,4 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 
 	return operations
 }
+*/

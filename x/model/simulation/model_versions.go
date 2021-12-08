@@ -13,12 +13,14 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
+// FIXME issue 110: fix dependencies on AccountKeeper and BankKeeper
+
 // Prevent strconv unused error
 var _ = strconv.IntSize
 
 func SimulateMsgCreateModelVersions(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
+	// ak types.AccountKeeper,
+	// bk types.BankKeeper,
 	k keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
@@ -48,16 +50,16 @@ func SimulateMsgCreateModelVersions(
 			SimAccount:      simAccount,
 			ModuleName:      types.ModuleName,
 			CoinsSpentInMsg: sdk.NewCoins(),
-			AccountKeeper:   ak,
-			Bankkeeper:      bk,
+			// AccountKeeper:   ak,
+			// Bankkeeper:      bk,
 		}
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
 func SimulateMsgUpdateModelVersions(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
+	// ak types.AccountKeeper,
+	// bk types.BankKeeper,
 	k keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
@@ -95,16 +97,16 @@ func SimulateMsgUpdateModelVersions(
 			SimAccount:      simAccount,
 			ModuleName:      types.ModuleName,
 			CoinsSpentInMsg: sdk.NewCoins(),
-			AccountKeeper:   ak,
-			Bankkeeper:      bk,
+			// AccountKeeper:   ak,
+			// Bankkeeper:      bk,
 		}
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
 
 func SimulateMsgDeleteModelVersions(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
+	// ak types.AccountKeeper,
+	// bk types.BankKeeper,
 	k keeper.Keeper,
 ) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
@@ -142,8 +144,8 @@ func SimulateMsgDeleteModelVersions(
 			SimAccount:      simAccount,
 			ModuleName:      types.ModuleName,
 			CoinsSpentInMsg: sdk.NewCoins(),
-			AccountKeeper:   ak,
-			Bankkeeper:      bk,
+			// AccountKeeper:   ak,
+			// Bankkeeper:      bk,
 		}
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
