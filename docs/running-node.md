@@ -282,7 +282,7 @@ $ ./run_dcl_node -t observer -c <chain-id> <node-name>
 
 *   Check the account:
     *   `dclcli query auth account --address=<address>`
-*   Check the node is running and participates in consensus:
+*   Check the node is running properly:
     *   `dclcli status --node <ip:port>`
     *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcld/config/config.toml`
     *   Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).

@@ -35,6 +35,9 @@ CONFIG_FILE="$HOME/.dcld/config/config.toml"
 GENESIS_FILE="$HOME/.dcld/config/genesis.json"
 
 CLI_PORT=26657
+NT_GENESIS="genesis"
+NT_VALIDATOR="validator"
+NT_OBSERVER="observer"
 
 PERSISTENT_PEERS=
 PEER=
@@ -43,18 +46,19 @@ PEER_HOSTSPEC="localhost:$CLI_PORT"
 
 
 # ================ FUNCTIONS ============================
-DEF_NODE_TYPE="validator"
+DEF_NODE_TYPE="$NT_VALIDATOR"
 DEF_CHAIN_ID="testnet"
 DEF_NODE_USER="ubuntu"
 
 verbosity=0
 NODE_NAME=
 KEY_NAME=
+KEY_NAME_GEN_TRUSTEE=
 PEER=
 
 NODE_TYPE="$DEF_NODE_TYPE"
 CHAIN_ID="$DEF_CHAIN_ID"
-NODE_USER="$DEF_NODE_USER"
+NODE_USER="${USER:-$DEF_NODE_USER}"
 
 
 function usage {
@@ -64,12 +68,13 @@ Usage: $0 [options] node-name
 Initializes DCL node of a given type.
 
 Options:
-  -c,  --chain-id   chain id, default: '$DEF_CHAIN_ID'
-  -h,  --help       print this help and exit
-  -k,  --key-name   account key-name, default: '<node-name>-admin'
-  -u,  --user       node service user, default: '$DEF_NODE_USER'
-  -t,  --type       node type, one of 'genesis', 'validator', 'observer', default: '$DEF_NODE_TYPE'
+  -c,  --chain-id               chain id, default: '$DEF_CHAIN_ID'
+  -h,  --help                   print this help and exit
+  -k,  --gen-key-name           node admin account key name, required for genesis account
+       --gen-key-name-trustee   genesis Trustee account key name, optional, expected for genesis account only
+  -t,  --type                   node type, one of '$NT_GENESIS', '$NT_VALIDATOR', '$NT_OBSERVER', default: '$DEF_NODE_TYPE'
 "
+#  -u,  --user                   node service user, default: '$DEF_NODE_USER'
 #-p,  --peer       peer hostspec as 'HOST:PORT', default: first entry of 'persistent_peers.txt'
 #  -v,  --verbose    be more verbose
 }
@@ -85,7 +90,7 @@ function parse_args {
     #fi
 
     local _opts=hc:k:p:u:t:v
-    local _long_opts=help,chain-id:,key-name:,peer:,user:type:,verbose
+    local _long_opts=help,chain-id:,gen-key-name:,gen-key-name-trustee:,peer:,user:type:,verbose
 
     local _getopt_res
     _getopt_res="$(getopt --name "$0" --options=$_opts --longoptions=$_long_opts -- "$@")" || exit 1
@@ -105,8 +110,12 @@ function parse_args {
                 CHAIN_ID="$2"
                 shift 2
                 ;;
-            -k|--key-name)
+            -k|--gen-key-name)
                 KEY_NAME="$2"
+                shift 2
+                ;;
+            --gen-key-name-trustee)
+                KEY_NAME_GEN_TRUSTEE="$2"
                 shift 2
                 ;;
             -p|--peer)
@@ -147,11 +156,12 @@ function parse_args {
 
     NODE_NAME="$1"
 
-    if [[ -z "$KEY_NAME" ]]; then
-        KEY_NAME="${NODE_NAME}-admin"
+    if [[ "$NODE_TYPE" == "$NT_GENESIS" && -z "$KEY_NAME" ]]; then
+        echo "Error. key name is required for a genesis node run"
+        exit 1
     fi
 
-    if [[ "$NODE_TYPE" == "genesis" ]]; then
+    if [[ "$NODE_TYPE" == "$NT_GENESIS" ]]; then
         PEER_ADDR="localhost"
     else
         if [[ ! -f "$PERSISTENT_PEERS_FILE" ]]; then
@@ -222,13 +232,17 @@ function build_genesis {
     set -eu
     set -o pipefail
 
-    local _key_name="$1"
+    local _key_name_admin="$1"
     local _acc_address="$2"
     local _acc_pubkey="$3"
-    local _acc_roles="${4:-Trustee,NodeAdmin}"
+    local _acc_address_tr="${4:-}"
+    local _acc_pubkey_tr="${5:-}"
 
-    dcld add-genesis-account --address="$_acc_address" --pubkey="$_acc_pubkey" --roles="$_acc_roles"
-    dcld gentx --from "$_key_name"
+    dcld add-genesis-account --address="$_acc_address" --pubkey="$_acc_pubkey" --roles="NodeAdmin"
+    if [[ -n "$_acc_address_tr" && -n "$_acc_pubkey_tr" ]]; then
+        dcld add-genesis-account --address="$_acc_address_tr" --pubkey="$_acc_pubkey_tr" --roles="Trustee"
+    fi
+    dcld gentx --from "$_key_name_admin"
     dcld collect-gentxs
     dcld validate-genesis
 }
@@ -398,21 +412,25 @@ echo "Configuring CLI"
 # Note. we consider that cli would connect to local node (default setting)
 config_cli "$CHAIN_ID"
 
-if [[ "$NODE_TYPE" != "observer" ]]; then
-    echo "Generating genesis account keys..."
-    add_key "$KEY_NAME"
+ACC_ADDR="<acc-addr>"
+ACC_PUBKEY="<acc-pubkey>"
+if [[ -n "$KEY_NAME" ]]; then
+    ACC_ADDR="$(dclcli keys show "${KEY_NAME}" | grep address | awk -F'"' '{print $4}')"
+    ACC_PUBKEY="$(dclcli keys show "${KEY_NAME}" | grep pubkey | awk -F'"' '{print $4}')"
 fi
 
-ACC_ADDR="$(dclcli keys show "${KEY_NAME}" | grep address | awk -F'"' '{print $4}')"
-ACC_PUBKEY="$(dclcli keys show "${KEY_NAME}" | grep pubkey | awk -F'"' '{print $4}')"
+if [[ -n "$KEY_NAME_GEN_TRUSTEE" ]]; then
+    ACC_ADDR_TR="$(dclcli keys show "${KEY_NAME_GEN_TRUSTEE}" | grep address | awk -F'"' '{print $4}')"
+    ACC_PUBKEY_TR="$(dclcli keys show "${KEY_NAME_GEN_TRUSTEE}" | grep pubkey | awk -F'"' '{print $4}')"
+fi
 
 echo "Initializing the node"
 node_init "$NODE_NAME" "$CHAIN_ID"
 
 
-if [[ "$NODE_TYPE" == "genesis" ]]; then
+if [[ "$NODE_TYPE" == "$NT_GENESIS" ]]; then
     echo "Building genesis file"
-    build_genesis "$KEY_NAME" "$ACC_ADDR" "$ACC_PUBKEY"
+    build_genesis "$KEY_NAME" "$ACC_ADDR" "$ACC_PUBKEY" "$ACC_ADDR_TR" "$ACC_PUBKEY_TR"
 else
     echo "Locating the genesis file at $GENESIS_FILE"
     cp -f "$GENESIS_IN_FILE" "$GENESIS_FILE" 
@@ -437,22 +455,22 @@ echo "Done"
 echo -e "\n====================================\n"
 
 echo "Generated data:"
-echo -e "\n\tAccount data:"
-echo -e "\t\tkey name: '$KEY_NAME'"
-echo -e "\t\taddress: '$ACC_ADDR'"
-echo -e "\t\tpublic key: '$ACC_PUBKEY'"
 echo -e "\n\tValidator node data:"
 echo -e "\t\tname: '$NODE_NAME'"
 echo -e "\t\taddress: '$VAL_ADDR'"
 echo -e "\t\tpublic key: '$VAL_PUBKEY'"
 echo -e "\t\tID: '$VAL_ID'"
 
-if [[ "$NODE_TYPE" == "genesis" ]]; then
+if [[ "$NODE_TYPE" == "$NT_GENESIS" ]]; then
     echo -e "\n\tGenesis file: '$GENESIS_FILE'"
 
-elif [[ "$NODE_TYPE" == "validator" ]]; then
+elif [[ "$NODE_TYPE" == "$NT_VALIDATOR" ]]; then
+    if [[ -z "$KEY_NAME" ]]; then
+        KEY_NAME="<acc-keyname>"
+    fi
+
     echo -e "\nNext steps:"
-    echo -e "\t1. Share generated account addres and pubkey to any 'Trustee' to create an account with 'NodeAdmin' role."
+    echo -e "\t1. Share a node admin account addres and pubkey to any 'Trustee' to create an account with 'NodeAdmin' role."
     echo -e "\t(e.g. dclcli tx auth propose-add-account --address=$ACC_ADDR --pubkey=$ACC_PUBKEY --roles=NodeAdmin --from=<signer>)"
     echo -e "\n\t2. Once the account is approved, please run the following command to make the node a validator:"
     echo -e "\t\t'dclcli tx validator add-node --validator-address=$VAL_ADDR --validator-pubkey=$VAL_PUBKEY --name=$NODE_NAME --from=$KEY_NAME'"
