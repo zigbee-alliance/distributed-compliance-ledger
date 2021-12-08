@@ -112,6 +112,8 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 $ sudo cp -f ./dclcli ./dcld -t /usr/bin
 $ sudo chown ubuntu /usr/bin/dclcli /usr/bin/dcld
 $ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
+$ dcld version
+$ dclcli version
 ```
 
 </p>

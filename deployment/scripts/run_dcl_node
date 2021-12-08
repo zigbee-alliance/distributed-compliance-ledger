@@ -470,11 +470,9 @@ elif [[ "$NODE_TYPE" == "$NT_VALIDATOR" ]]; then
     fi
 
     echo -e "\nNext steps:"
-    echo -e "\t1. Share a node admin account addres and pubkey to any 'Trustee' to create an account with 'NodeAdmin' role."
-    echo -e "\t(e.g. dclcli tx auth propose-add-account --address=$ACC_ADDR --pubkey=$ACC_PUBKEY --roles=NodeAdmin --from=<signer>)"
-    echo -e "\n\t2. Once the account is approved, please run the following command to make the node a validator:"
+    echo -e "\n\t1. If you have an approved NodeAdmin account please run the following command to make the node a validator:"
     echo -e "\t\t'dclcli tx validator add-node --validator-address=$VAL_ADDR --validator-pubkey=$VAL_PUBKEY --name=$NODE_NAME --from=$KEY_NAME'"
-    echo -e "\n\t3. Explore the node external IP and provide it along with validator ID '$VAL_ID'"
+    echo -e "\n\t2. Explore the node external IP and provide it along with validator ID '$VAL_ID'"
     echo -e "\t\t to DCLedger '$CHAIN_ID' network validator administrators"
 
 fi
