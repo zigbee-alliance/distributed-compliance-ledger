@@ -195,7 +195,7 @@ Run the following to create a key:
 dclcli keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
 ```
 
-And provide an address and a public key to the network trustees.
+And provide the output address and a public key to the network trustees.
 
 *Notes*
 
