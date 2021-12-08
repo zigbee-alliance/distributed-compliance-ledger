@@ -273,6 +273,12 @@ $ ./run_dcl_node -t observer -c <chain-id> <node-name>
     *   current user is in sudoers list
 *   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](running-observer-node.md)
 
+### Observer Peers
+
+The list of persistent peers for an observer is not required to match the one used by the validators.
+
+As a general guidance you may consider to use only the peers you own and/or trust.
+
 ## Deployment Verification
 
 *   Check the account:
