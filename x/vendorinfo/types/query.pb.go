@@ -6,12 +6,17 @@ package types
 import (
 	context "context"
 	fmt "fmt"
-	_ "github.com/cosmos/cosmos-sdk/types/query"
+	query "github.com/cosmos/cosmos-sdk/types/query"
+	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -25,24 +30,231 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type QueryGetNewVendorInfoRequest struct {
+	Index string `protobuf:"bytes,1,opt,name=index,proto3" json:"index,omitempty"`
+}
+
+func (m *QueryGetNewVendorInfoRequest) Reset()         { *m = QueryGetNewVendorInfoRequest{} }
+func (m *QueryGetNewVendorInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNewVendorInfoRequest) ProtoMessage()    {}
+func (*QueryGetNewVendorInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e4af47a04389bb67, []int{0}
+}
+func (m *QueryGetNewVendorInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNewVendorInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNewVendorInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNewVendorInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNewVendorInfoRequest.Merge(m, src)
+}
+func (m *QueryGetNewVendorInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNewVendorInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNewVendorInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNewVendorInfoRequest proto.InternalMessageInfo
+
+func (m *QueryGetNewVendorInfoRequest) GetIndex() string {
+	if m != nil {
+		return m.Index
+	}
+	return ""
+}
+
+type QueryGetNewVendorInfoResponse struct {
+	NewVendorInfo NewVendorInfo `protobuf:"bytes,1,opt,name=newVendorInfo,proto3" json:"newVendorInfo"`
+}
+
+func (m *QueryGetNewVendorInfoResponse) Reset()         { *m = QueryGetNewVendorInfoResponse{} }
+func (m *QueryGetNewVendorInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetNewVendorInfoResponse) ProtoMessage()    {}
+func (*QueryGetNewVendorInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e4af47a04389bb67, []int{1}
+}
+func (m *QueryGetNewVendorInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetNewVendorInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetNewVendorInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetNewVendorInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetNewVendorInfoResponse.Merge(m, src)
+}
+func (m *QueryGetNewVendorInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetNewVendorInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetNewVendorInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetNewVendorInfoResponse proto.InternalMessageInfo
+
+func (m *QueryGetNewVendorInfoResponse) GetNewVendorInfo() NewVendorInfo {
+	if m != nil {
+		return m.NewVendorInfo
+	}
+	return NewVendorInfo{}
+}
+
+type QueryAllNewVendorInfoRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllNewVendorInfoRequest) Reset()         { *m = QueryAllNewVendorInfoRequest{} }
+func (m *QueryAllNewVendorInfoRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllNewVendorInfoRequest) ProtoMessage()    {}
+func (*QueryAllNewVendorInfoRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e4af47a04389bb67, []int{2}
+}
+func (m *QueryAllNewVendorInfoRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllNewVendorInfoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllNewVendorInfoRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllNewVendorInfoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllNewVendorInfoRequest.Merge(m, src)
+}
+func (m *QueryAllNewVendorInfoRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllNewVendorInfoRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllNewVendorInfoRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllNewVendorInfoRequest proto.InternalMessageInfo
+
+func (m *QueryAllNewVendorInfoRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllNewVendorInfoResponse struct {
+	NewVendorInfo []NewVendorInfo     `protobuf:"bytes,1,rep,name=newVendorInfo,proto3" json:"newVendorInfo"`
+	Pagination    *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllNewVendorInfoResponse) Reset()         { *m = QueryAllNewVendorInfoResponse{} }
+func (m *QueryAllNewVendorInfoResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllNewVendorInfoResponse) ProtoMessage()    {}
+func (*QueryAllNewVendorInfoResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e4af47a04389bb67, []int{3}
+}
+func (m *QueryAllNewVendorInfoResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllNewVendorInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllNewVendorInfoResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllNewVendorInfoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllNewVendorInfoResponse.Merge(m, src)
+}
+func (m *QueryAllNewVendorInfoResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllNewVendorInfoResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllNewVendorInfoResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllNewVendorInfoResponse proto.InternalMessageInfo
+
+func (m *QueryAllNewVendorInfoResponse) GetNewVendorInfo() []NewVendorInfo {
+	if m != nil {
+		return m.NewVendorInfo
+	}
+	return nil
+}
+
+func (m *QueryAllNewVendorInfoResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+func init() {
+	proto.RegisterType((*QueryGetNewVendorInfoRequest)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.QueryGetNewVendorInfoRequest")
+	proto.RegisterType((*QueryGetNewVendorInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.QueryGetNewVendorInfoResponse")
+	proto.RegisterType((*QueryAllNewVendorInfoRequest)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.QueryAllNewVendorInfoRequest")
+	proto.RegisterType((*QueryAllNewVendorInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.QueryAllNewVendorInfoResponse")
+}
+
 func init() { proto.RegisterFile("vendorinfo/query.proto", fileDescriptor_e4af47a04389bb67) }
 
 var fileDescriptor_e4af47a04389bb67 = []byte{
-	// 220 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0xcf, 0xb1, 0x4e, 0xc3, 0x30,
-	0x10, 0x06, 0xe0, 0x64, 0x00, 0xa4, 0x8e, 0x0c, 0x0c, 0x15, 0xf2, 0x03, 0x20, 0x25, 0xa7, 0x82,
-	0x78, 0x01, 0x56, 0x26, 0x56, 0xb6, 0x73, 0x7c, 0x98, 0x93, 0x1c, 0x9f, 0xb1, 0x2f, 0x15, 0xe5,
-	0x29, 0x78, 0x2c, 0xc6, 0x8e, 0x8c, 0x28, 0x79, 0x11, 0x44, 0x2d, 0xd4, 0xae, 0xa7, 0x5f, 0xff,
-	0xff, 0xdd, 0xea, 0x6a, 0x4b, 0xd1, 0x49, 0xe6, 0xf8, 0x22, 0xf0, 0x36, 0x51, 0xde, 0xf5, 0x29,
-	0x8b, 0xca, 0xe5, 0xfd, 0x07, 0x7b, 0x4b, 0x84, 0x21, 0x30, 0xc6, 0x81, 0x7a, 0xc7, 0x45, 0x33,
-	0xdb, 0x49, 0xc9, 0x0d, 0x32, 0xa6, 0x7a, 0x0d, 0xe4, 0x3c, 0xe5, 0xfe, 0x58, 0xb1, 0xbe, 0xf6,
-	0x22, 0x3e, 0x10, 0x60, 0x62, 0xc0, 0x18, 0x45, 0x51, 0x59, 0x62, 0xa9, 0xa5, 0xeb, 0x9b, 0x41,
-	0xca, 0x28, 0x05, 0x2c, 0x16, 0xaa, 0x6b, 0xb0, 0xdd, 0x58, 0x52, 0xdc, 0x40, 0x42, 0xcf, 0xf1,
-	0x10, 0xae, 0xd9, 0xdb, 0x8b, 0xd5, 0xd9, 0xd3, 0x5f, 0xe2, 0x81, 0xbe, 0x66, 0xd3, 0xee, 0x67,
-	0xd3, 0xfe, 0xcc, 0xa6, 0xfd, 0x5c, 0x4c, 0xb3, 0x5f, 0x4c, 0xf3, 0xbd, 0x98, 0xe6, 0xf9, 0xd1,
-	0xb3, 0xbe, 0x4e, 0xb6, 0x1f, 0x64, 0x84, 0xca, 0xed, 0xfe, 0xbd, 0x70, 0xe2, 0xed, 0x8e, 0xe0,
-	0xae, 0x8a, 0xe1, 0x1d, 0x4e, 0xde, 0xd6, 0x5d, 0xa2, 0x62, 0xcf, 0x0f, 0xb3, 0x77, 0xbf, 0x01,
-	0x00, 0x00, 0xff, 0xff, 0x64, 0x6a, 0x75, 0x16, 0x11, 0x01, 0x00, 0x00,
+	// 480 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0x4d, 0x6b, 0x13, 0x41,
+	0x18, 0xc7, 0xb3, 0xb1, 0x15, 0x1c, 0x29, 0xc8, 0x50, 0x44, 0x42, 0x5d, 0xcb, 0x1e, 0x54, 0x84,
+	0xcc, 0xd0, 0xaa, 0x1f, 0xa0, 0x45, 0x0d, 0x22, 0xf5, 0x25, 0xbe, 0x1c, 0xbc, 0x94, 0xd9, 0xec,
+	0x93, 0x71, 0x60, 0x33, 0xcf, 0x76, 0x67, 0xd2, 0x17, 0xc5, 0x8b, 0x67, 0x0f, 0x16, 0xbf, 0x85,
+	0x9f, 0xa4, 0xc7, 0x82, 0x17, 0xf1, 0x20, 0x92, 0xf8, 0x41, 0x24, 0x33, 0x5b, 0xb2, 0x8b, 0x6e,
+	0x84, 0x36, 0xde, 0x66, 0x66, 0xe7, 0xf9, 0xff, 0x9f, 0xdf, 0x7f, 0x9f, 0x5d, 0x72, 0x79, 0x17,
+	0x74, 0x82, 0xb9, 0xd2, 0x7d, 0xe4, 0x3b, 0x43, 0xc8, 0x0f, 0x58, 0x96, 0xa3, 0x45, 0x7a, 0xf7,
+	0xad, 0x92, 0x31, 0x80, 0x48, 0x53, 0x25, 0x74, 0x0f, 0x58, 0xa2, 0x8c, 0xcd, 0x55, 0x3c, 0xb4,
+	0x90, 0xf4, 0x70, 0x90, 0xf9, 0xd3, 0x14, 0x12, 0x09, 0x39, 0x9b, 0x4a, 0xb4, 0x56, 0x24, 0xa2,
+	0x4c, 0x81, 0x8b, 0x4c, 0x71, 0xa1, 0x35, 0x5a, 0x61, 0x15, 0x6a, 0xe3, 0x45, 0x5b, 0xb7, 0x7a,
+	0x68, 0x06, 0x68, 0x78, 0x2c, 0x0c, 0x78, 0x37, 0xbe, 0xbb, 0x16, 0x83, 0x15, 0x6b, 0x3c, 0x13,
+	0x52, 0x69, 0x77, 0xb9, 0xb8, 0xbb, 0x5a, 0x6a, 0x4c, 0xc3, 0xde, 0xb6, 0xdf, 0x6e, 0x4f, 0xf6,
+	0xc5, 0x8d, 0x65, 0x89, 0x12, 0xdd, 0x92, 0x4f, 0x56, 0xfe, 0x34, 0xba, 0x43, 0x56, 0x9e, 0x4d,
+	0x94, 0x3b, 0x60, 0x1f, 0xc3, 0xde, 0x2b, 0x57, 0xf5, 0x50, 0xf7, 0xb1, 0x0b, 0x3b, 0x43, 0x30,
+	0x96, 0x2e, 0x93, 0x45, 0xa5, 0x13, 0xd8, 0xbf, 0x12, 0xac, 0x06, 0x37, 0x2f, 0x74, 0xfd, 0x26,
+	0x3a, 0x0c, 0xc8, 0xd5, 0x9a, 0x32, 0x93, 0xa1, 0x36, 0x40, 0x33, 0xb2, 0xa4, 0xcb, 0x0f, 0x5c,
+	0xfd, 0xc5, 0xf5, 0x7b, 0xec, 0x54, 0x41, 0xb1, 0x8a, 0xc9, 0xe6, 0xc2, 0xd1, 0x8f, 0x6b, 0x8d,
+	0x6e, 0xd5, 0x20, 0xea, 0x17, 0x24, 0x1b, 0x69, 0xfa, 0x57, 0x92, 0x07, 0x84, 0x4c, 0x53, 0x2b,
+	0xda, 0xb9, 0xce, 0x7c, 0xc4, 0x6c, 0x12, 0x31, 0xf3, 0x2f, 0xb4, 0x88, 0x98, 0x3d, 0x15, 0x12,
+	0x8a, 0xda, 0x6e, 0xa9, 0x32, 0xfa, 0x7e, 0xc2, 0xfe, 0xa7, 0x51, 0x3d, 0xfb, 0xb9, 0xff, 0xca,
+	0x4e, 0x3b, 0x15, 0xb6, 0xa6, 0x63, 0xbb, 0xf1, 0x4f, 0x36, 0xdf, 0x6e, 0x19, 0x6e, 0xfd, 0xcb,
+	0x02, 0x59, 0x74, 0x70, 0xf4, 0xb0, 0x49, 0x96, 0x2a, 0xce, 0xf4, 0xf9, 0x29, 0xfb, 0x9f, 0x35,
+	0x5f, 0xad, 0x17, 0xf3, 0x15, 0xf5, 0x48, 0xd1, 0xcb, 0x0f, 0x5f, 0x7f, 0x7d, 0x6e, 0x3e, 0xa1,
+	0x5b, 0xdc, 0xab, 0xb7, 0x4f, 0xe4, 0xf9, 0x0c, 0x79, 0x5e, 0xfd, 0x84, 0xa6, 0xb2, 0xfc, 0x9d,
+	0x9b, 0xfa, 0xf7, 0xf4, 0x63, 0x93, 0x5c, 0xaa, 0x18, 0x6e, 0xa4, 0xe9, 0xd9, 0x62, 0xa9, 0x19,
+	0xd6, 0xb3, 0xc5, 0x52, 0x37, 0x98, 0xd1, 0x96, 0x8b, 0xa5, 0x43, 0xef, 0xcf, 0x25, 0x96, 0x4d,
+	0x38, 0x1a, 0x85, 0xc1, 0xf1, 0x28, 0x0c, 0x7e, 0x8e, 0xc2, 0xe0, 0xd3, 0x38, 0x6c, 0x1c, 0x8f,
+	0xc3, 0xc6, 0xb7, 0x71, 0xd8, 0x78, 0xfd, 0x48, 0x2a, 0xfb, 0x66, 0x18, 0xb3, 0x1e, 0x0e, 0x66,
+	0x59, 0xb5, 0xa7, 0x5e, 0xed, 0xc2, 0x6c, 0xbf, 0x6c, 0x67, 0x0f, 0x32, 0x30, 0xf1, 0x79, 0xf7,
+	0xa7, 0xba, 0xfd, 0x3b, 0x00, 0x00, 0xff, 0xff, 0x69, 0xbc, 0x32, 0x3d, 0x7c, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -57,6 +269,10 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
+	// Queries a newVendorInfo by index.
+	NewVendorInfo(ctx context.Context, in *QueryGetNewVendorInfoRequest, opts ...grpc.CallOption) (*QueryGetNewVendorInfoResponse, error)
+	// Queries a list of newVendorInfo items.
+	NewVendorInfoAll(ctx context.Context, in *QueryAllNewVendorInfoRequest, opts ...grpc.CallOption) (*QueryAllNewVendorInfoResponse, error)
 }
 
 type queryClient struct {
@@ -67,22 +283,772 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 	return &queryClient{cc}
 }
 
+func (c *queryClient) NewVendorInfo(ctx context.Context, in *QueryGetNewVendorInfoRequest, opts ...grpc.CallOption) (*QueryGetNewVendorInfoResponse, error) {
+	out := new(QueryGetNewVendorInfoResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.vendorinfo.Query/NewVendorInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) NewVendorInfoAll(ctx context.Context, in *QueryAllNewVendorInfoRequest, opts ...grpc.CallOption) (*QueryAllNewVendorInfoResponse, error) {
+	out := new(QueryAllNewVendorInfoResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.vendorinfo.Query/NewVendorInfoAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
+	// Queries a newVendorInfo by index.
+	NewVendorInfo(context.Context, *QueryGetNewVendorInfoRequest) (*QueryGetNewVendorInfoResponse, error)
+	// Queries a list of newVendorInfo items.
+	NewVendorInfoAll(context.Context, *QueryAllNewVendorInfoRequest) (*QueryAllNewVendorInfoResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
 type UnimplementedQueryServer struct {
 }
 
+func (*UnimplementedQueryServer) NewVendorInfo(ctx context.Context, req *QueryGetNewVendorInfoRequest) (*QueryGetNewVendorInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewVendorInfo not implemented")
+}
+func (*UnimplementedQueryServer) NewVendorInfoAll(ctx context.Context, req *QueryAllNewVendorInfoRequest) (*QueryAllNewVendorInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewVendorInfoAll not implemented")
+}
+
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
 	s.RegisterService(&_Query_serviceDesc, srv)
+}
+
+func _Query_NewVendorInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetNewVendorInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NewVendorInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.vendorinfo.Query/NewVendorInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NewVendorInfo(ctx, req.(*QueryGetNewVendorInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_NewVendorInfoAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllNewVendorInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).NewVendorInfoAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.vendorinfo.Query/NewVendorInfoAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).NewVendorInfoAll(ctx, req.(*QueryAllNewVendorInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.vendorinfo.Query",
 	HandlerType: (*QueryServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "vendorinfo/query.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "NewVendorInfo",
+			Handler:    _Query_NewVendorInfo_Handler,
+		},
+		{
+			MethodName: "NewVendorInfoAll",
+			Handler:    _Query_NewVendorInfoAll_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "vendorinfo/query.proto",
 }
+
+func (m *QueryGetNewVendorInfoRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNewVendorInfoRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNewVendorInfoRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Index) > 0 {
+		i -= len(m.Index)
+		copy(dAtA[i:], m.Index)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Index)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetNewVendorInfoResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetNewVendorInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetNewVendorInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.NewVendorInfo.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllNewVendorInfoRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllNewVendorInfoRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllNewVendorInfoRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllNewVendorInfoResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllNewVendorInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllNewVendorInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.NewVendorInfo) > 0 {
+		for iNdEx := len(m.NewVendorInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.NewVendorInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
+	offset -= sovQuery(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *QueryGetNewVendorInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Index)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetNewVendorInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.NewVendorInfo.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllNewVendorInfoRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllNewVendorInfoResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.NewVendorInfo) > 0 {
+		for _, e := range m.NewVendorInfo {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func sovQuery(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozQuery(x uint64) (n int) {
+	return sovQuery(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *QueryGetNewVendorInfoRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNewVendorInfoRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNewVendorInfoRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Index = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetNewVendorInfoResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetNewVendorInfoResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetNewVendorInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewVendorInfo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.NewVendorInfo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllNewVendorInfoRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllNewVendorInfoRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllNewVendorInfoRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllNewVendorInfoResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllNewVendorInfoResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllNewVendorInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewVendorInfo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.NewVendorInfo = append(m.NewVendorInfo, NewVendorInfo{})
+			if err := m.NewVendorInfo[len(m.NewVendorInfo)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipQuery(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthQuery
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupQuery
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthQuery
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthQuery        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowQuery          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupQuery = fmt.Errorf("proto: unexpected end of group")
+)

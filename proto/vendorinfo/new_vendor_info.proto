@@ -1,0 +1,13 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.vendorinfo;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types";
+
+import "vendorinfo/vendor_info.proto"; 
+
+message NewVendorInfo {
+  string index = 1; 
+  VendorInfo vendorInfo = 2; 
+  string creator = 3;
+}
+

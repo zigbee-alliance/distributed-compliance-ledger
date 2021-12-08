@@ -1,13 +1,40 @@
 syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.vendorinfo;
 
+import "vendorinfo/new_vendor_info.proto";
 // this line is used by starport scaffolding # proto/tx/import
+import "vendorinfo/vendor_info.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc CreateNewVendorInfo(MsgCreateNewVendorInfo) returns (MsgCreateNewVendorInfoResponse);
+  rpc UpdateNewVendorInfo(MsgUpdateNewVendorInfo) returns (MsgUpdateNewVendorInfoResponse);
+  rpc DeleteNewVendorInfo(MsgDeleteNewVendorInfo) returns (MsgDeleteNewVendorInfoResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
 }
+
+message MsgCreateNewVendorInfo {
+  string creator = 1;
+  string index = 2;
+
+  VendorInfo vendorInfo = 3;
+}
+message MsgCreateNewVendorInfoResponse {}
+
+message MsgUpdateNewVendorInfo {
+  string creator = 1;
+  string index = 2;
+
+  VendorInfo vendorInfo = 3;
+}
+message MsgUpdateNewVendorInfoResponse {}
+
+message MsgDeleteNewVendorInfo {
+  string creator = 1;
+  string index = 2;
+}
+message MsgDeleteNewVendorInfoResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

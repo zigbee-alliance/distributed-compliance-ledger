@@ -11,6 +11,14 @@ import (
 
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
+		NewVendorInfoList: []types.NewVendorInfo{
+			{
+				Index: "0",
+			},
+			{
+				Index: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -19,5 +27,7 @@ func TestGenesis(t *testing.T) {
 	got := vendorinfo.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
+	require.Len(t, got.NewVendorInfoList, len(genesisState.NewVendorInfoList))
+	require.Subset(t, genesisState.NewVendorInfoList, got.NewVendorInfoList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
