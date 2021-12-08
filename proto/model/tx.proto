@@ -1,13 +1,147 @@
 syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.model;
 
+import "model/model.proto";
+import "model/model_version.proto";
+import "model/model_versions.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc CreateModel(MsgCreateModel) returns (MsgCreateModelResponse);
+  rpc UpdateModel(MsgUpdateModel) returns (MsgUpdateModelResponse);
+  rpc DeleteModel(MsgDeleteModel) returns (MsgDeleteModelResponse);
+  rpc CreateModelVersion(MsgCreateModelVersion) returns (MsgCreateModelVersionResponse);
+  rpc UpdateModelVersion(MsgUpdateModelVersion) returns (MsgUpdateModelVersionResponse);
+  rpc DeleteModelVersion(MsgDeleteModelVersion) returns (MsgDeleteModelVersionResponse);
+  rpc CreateModelVersions(MsgCreateModelVersions) returns (MsgCreateModelVersionsResponse);
+  rpc UpdateModelVersions(MsgUpdateModelVersions) returns (MsgUpdateModelVersionsResponse);
+  rpc DeleteModelVersions(MsgDeleteModelVersions) returns (MsgDeleteModelVersionsResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
 }
+
+message MsgCreateModel {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+
+  int32 device_type_id = 4;
+  string product_name = 5;
+  string product_label = 6;
+  string part_number = 7;
+  int32 commissioning_custom_flow = 8;
+  string commissioning_custom_flow_url = 9;
+  uint64 commissioning_mode_initial_steps_hint = 10;
+  string commissioning_mode_initial_steps_instruction = 11;
+  uint64 commissioning_mode_secondary_steps_hint = 12;
+  string commissioning_mode_secondary_steps_instruction = 13;
+  string user_manual_url = 14;
+  string support_url = 15;
+  string product_url = 16;
+}
+message MsgCreateModelResponse {}
+
+message MsgUpdateModel {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+
+  int32 device_type_id = 4;
+  string product_name = 5;
+  string product_label = 6;
+  string part_number = 7;
+  int32 commissioning_custom_flow = 8;
+  string commissioning_custom_flow_url = 9;
+  uint64 commissioning_mode_initial_steps_hint = 10;
+  string commissioning_mode_initial_steps_instruction = 11;
+  uint64 commissioning_mode_secondary_steps_hint = 12;
+  string commissioning_mode_secondary_steps_instruction = 13;
+  string user_manual_url = 14;
+  string support_url = 15;
+  string product_url = 16;
+}
+message MsgUpdateModelResponse {}
+
+message MsgDeleteModel {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+}
+message MsgDeleteModelResponse {}
+
+message MsgCreateModelVersion {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+  uint64 software_version = 4;
+
+  string software_version_string = 5;
+  int32 cd_version_number = 6;
+  string firmware_digests = 7;
+  bool software_version_valid = 8;
+  string ota_url = 9;
+  uint64 ota_file_size = 10;
+  string ota_checksum = 11;
+  int32 ota_checksum_type = 12;
+  uint64 min_applicable_software_version = 13;
+  uint64 max_applicable_software_version = 14;
+  string release_notes_url = 15;
+}
+message MsgCreateModelVersionResponse {}
+
+message MsgUpdateModelVersion {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+  uint64 software_version = 4;
+
+  string software_version_string = 5;
+  int32 cd_version_number = 6;
+  string firmware_digests = 7;
+  bool software_version_valid = 8;
+  string ota_url = 9;
+  uint64 ota_file_size = 10;
+  string ota_checksum = 11;
+  int32 ota_checksum_type = 12;
+  uint64 min_applicable_software_version = 13;
+  uint64 max_applicable_software_version = 14;
+  string release_notes_url = 15;
+}
+message MsgUpdateModelVersionResponse {}
+
+message MsgDeleteModelVersion {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+  uint64 software_version = 4;
+}
+message MsgDeleteModelVersionResponse {}
+
+message MsgCreateModelVersions {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+
+  repeated uint64 software_versions = 4;
+}
+message MsgCreateModelVersionsResponse {}
+
+message MsgUpdateModelVersions {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+
+  repeated uint64 software_versions = 4;
+}
+message MsgUpdateModelVersionsResponse {}
+
+message MsgDeleteModelVersions {
+  string creator = 1;
+  int32 vid = 2;
+  int32 pid = 3;
+}
+message MsgDeleteModelVersionsResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

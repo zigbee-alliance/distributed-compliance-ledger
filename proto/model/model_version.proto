@@ -1,0 +1,23 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.model;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";
+
+message ModelVersion {
+  int32 vid = 1; 
+  int32 pid = 2; 
+  uint64 software_version = 3; 
+  string software_version_string = 4; 
+  int32 cd_version_number = 5; 
+  string firmware_digests = 6; 
+  bool software_version_valid = 7; 
+  string ota_url = 8; 
+  uint64 ota_file_size = 9; 
+  string ota_checksum = 10; 
+  int32 ota_checksum_type = 11; 
+  uint64 min_applicable_software_version = 12; 
+  uint64 max_applicable_software_version = 13; 
+  string release_notes_url = 14; 
+  string creator = 15;
+}
+

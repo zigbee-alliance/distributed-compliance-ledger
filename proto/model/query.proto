@@ -3,13 +3,135 @@ package zigbeealliance.distributedcomplianceledger.model;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "model/vendor_products.proto";
+import "model/model.proto";
+import "model/model_version.proto";
+import "model/model_versions.proto";
 // this line is used by starport scaffolding # 1
+import "model/product.proto";
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";
 
 // Query defines the gRPC querier service.
 service Query {
-    // this line is used by starport scaffolding # 2
+    // Queries a VendorProducts by index.
+	rpc VendorProducts(QueryGetVendorProductsRequest) returns (QueryGetVendorProductsResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/vendor_products/{vid}";
+	}
+
+	// Queries a list of VendorProducts items.
+	rpc VendorProductsAll(QueryAllVendorProductsRequest) returns (QueryAllVendorProductsResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/vendor_products";
+	}
+
+// Queries a Model by index.
+	rpc Model(QueryGetModelRequest) returns (QueryGetModelResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/model/{vid}/{pid}";
+	}
+
+	// Queries a list of Model items.
+	rpc ModelAll(QueryAllModelRequest) returns (QueryAllModelResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/model";
+	}
+
+// Queries a ModelVersion by index.
+	rpc ModelVersion(QueryGetModelVersionRequest) returns (QueryGetModelVersionResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{software_version}";
+	}
+
+	// Queries a list of ModelVersion items.
+	rpc ModelVersionAll(QueryAllModelVersionRequest) returns (QueryAllModelVersionResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/model_version";
+	}
+
+// Queries a ModelVersions by index.
+	rpc ModelVersions(QueryGetModelVersionsRequest) returns (QueryGetModelVersionsResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/model_versions/{vid}/{pid}";
+	}
+
+	// Queries a list of ModelVersions items.
+	rpc ModelVersionsAll(QueryAllModelVersionsRequest) returns (QueryAllModelVersionsResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/model/model_versions";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+message QueryGetVendorProductsRequest {
+	  int32 vid = 1;
+
+}
+
+message QueryGetVendorProductsResponse {
+	VendorProducts vendorProducts = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllVendorProductsRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllVendorProductsResponse {
+	repeated VendorProducts vendorProducts = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetModelRequest {
+	  int32 vid = 1;
+  int32 pid = 2;
+
+}
+
+message QueryGetModelResponse {
+	Model model = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllModelRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllModelResponse {
+	repeated Model model = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetModelVersionRequest {
+	  int32 vid = 1;
+  int32 pid = 2;
+  uint64 software_version = 3;
+
+}
+
+message QueryGetModelVersionResponse {
+	ModelVersion modelVersion = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllModelVersionRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllModelVersionResponse {
+	repeated ModelVersion modelVersion = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetModelVersionsRequest {
+	  int32 vid = 1;
+  int32 pid = 2;
+
+}
+
+message QueryGetModelVersionsResponse {
+	ModelVersions modelVersions = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllModelVersionsRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllModelVersionsResponse {
+	repeated ModelVersions modelVersions = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

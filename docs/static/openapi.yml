@@ -11769,738 +11769,6 @@ paths:
           type: boolean
       tags:
         - Query
-  /ibc/apps/transfer/v1/denom_traces:
-    get:
-      summary: DenomTraces queries all denomination traces.
-      operationId: IbcApplicationsTransferV1DenomTraces
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              denomTraces:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    path:
-                      type: string
-                      description: >-
-                        path defines the chain of port/channel identifiers used
-                        for tracing the
-
-                        source of the fungible token.
-                    baseDenom:
-                      type: string
-                      description: base denomination of the relayed fungible token.
-                  description: >-
-                    DenomTrace contains the base denomination for ICS20 fungible
-                    tokens and the
-
-                    source tracing information path.
-                description: denom_traces returns all denominations trace information.
-              pagination:
-                description: pagination defines the pagination in the response.
-                type: object
-                properties:
-                  nextKey:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-            description: >-
-              QueryConnectionsResponse is the response type for the
-              Query/DenomTraces RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.countTotal
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  '/ibc/apps/transfer/v1/denom_traces/{hash}':
-    get:
-      summary: DenomTrace queries a denomination trace information.
-      operationId: IbcApplicationsTransferV1DenomTrace
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              denomTrace:
-                type: object
-                properties:
-                  path:
-                    type: string
-                    description: >-
-                      path defines the chain of port/channel identifiers used
-                      for tracing the
-
-                      source of the fungible token.
-                  baseDenom:
-                    type: string
-                    description: base denomination of the relayed fungible token.
-                description: >-
-                  DenomTrace contains the base denomination for ICS20 fungible
-                  tokens and the
-
-                  source tracing information path.
-            description: >-
-              QueryDenomTraceResponse is the response type for the
-              Query/DenomTrace RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      parameters:
-        - name: hash
-          description: hash (in hex format) of the denomination trace information.
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /ibc/apps/transfer/v1/params:
-    get:
-      summary: Params queries all parameters of the ibc-transfer module.
-      operationId: IbcApplicationsTransferV1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params defines the parameters of the module.
-                type: object
-                properties:
-                  sendEnabled:
-                    type: boolean
-                    description: >-
-                      send_enabled enables or disables all cross-chain token
-                      transfers from this
-
-                      chain.
-                  receiveEnabled:
-                    type: boolean
-                    description: >-
-                      receive_enabled enables or disables all cross-chain token
-                      transfers to this
-
-                      chain.
-            description: >-
-              QueryParamsResponse is the response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      tags:
-        - Query
   /zigbee-alliance/distributedcomplianceledger/dclauth/account:
     get:
       summary: Queries a list of account items.
@@ -12715,6 +11983,11 @@ paths:
                       type: array
                       items:
                         type: string
+                      title: >-
+                        NOTE. we do not user AccountRoles casting here to
+                        preserve repeated form
+                              so protobuf takes care about repeated items in generated code,
+                              (but that might be not the final solution)
                     vendorID:
                       type: string
                       format: uint64
@@ -13200,6 +12473,11 @@ paths:
                     type: array
                     items:
                       type: string
+                    title: >-
+                      NOTE. we do not user AccountRoles casting here to preserve
+                      repeated form
+                            so protobuf takes care about repeated items in generated code,
+                            (but that might be not the final solution)
                   vendorID:
                     type: string
                     format: uint64
@@ -13816,6 +13094,11 @@ paths:
                           type: array
                           items:
                             type: string
+                          title: >-
+                            NOTE. we do not user AccountRoles casting here to
+                            preserve repeated form
+                                  so protobuf takes care about repeated items in generated code,
+                                  (but that might be not the final solution)
                         vendorID:
                           type: string
                           format: uint64
@@ -14310,6 +13593,11 @@ paths:
                         type: array
                         items:
                           type: string
+                        title: >-
+                          NOTE. we do not user AccountRoles casting here to
+                          preserve repeated form
+                                so protobuf takes care about repeated items in generated code,
+                                (but that might be not the final solution)
                       vendorID:
                         type: string
                         format: uint64
@@ -15011,6 +14299,862 @@ paths:
           in: path
           required: true
           type: string
+      tags:
+        - Query
+  /zigbee-alliance/distributedcomplianceledger/model/model:
+    get:
+      summary: Queries a list of Model items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              model:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    deviceTypeId:
+                      type: integer
+                      format: int32
+                    productName:
+                      type: string
+                    productLabel:
+                      type: string
+                    partNumber:
+                      type: string
+                    commissioningCustomFlow:
+                      type: integer
+                      format: int32
+                    commissioningCustomFlowUrl:
+                      type: string
+                    commissioningModeInitialStepsHint:
+                      type: string
+                      format: uint64
+                    commissioningModeInitialStepsInstruction:
+                      type: string
+                    commissioningModeSecondaryStepsHint:
+                      type: string
+                      format: uint64
+                    commissioningModeSecondaryStepsInstruction:
+                      type: string
+                    userManualUrl:
+                      type: string
+                    supportUrl:
+                      type: string
+                    productUrl:
+                      type: string
+                    creator:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/model/{vid}/{pid}':
+    get:
+      summary: Queries a Model by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModel
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              model:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  deviceTypeId:
+                    type: integer
+                    format: int32
+                  productName:
+                    type: string
+                  productLabel:
+                    type: string
+                  partNumber:
+                    type: string
+                  commissioningCustomFlow:
+                    type: integer
+                    format: int32
+                  commissioningCustomFlowUrl:
+                    type: string
+                  commissioningModeInitialStepsHint:
+                    type: string
+                    format: uint64
+                  commissioningModeInitialStepsInstruction:
+                    type: string
+                  commissioningModeSecondaryStepsHint:
+                    type: string
+                    format: uint64
+                  commissioningModeSecondaryStepsInstruction:
+                    type: string
+                  userManualUrl:
+                    type: string
+                  supportUrl:
+                    type: string
+                  productUrl:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
+  /zigbee-alliance/distributedcomplianceledger/model/model_version:
+    get:
+      summary: Queries a list of ModelVersion items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersionAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersion:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersion:
+                      type: string
+                      format: uint64
+                    softwareVersionString:
+                      type: string
+                    cdVersionNumber:
+                      type: integer
+                      format: int32
+                    firmwareDigests:
+                      type: string
+                    softwareVersionValid:
+                      type: boolean
+                    otaUrl:
+                      type: string
+                    otaFileSize:
+                      type: string
+                      format: uint64
+                    otaChecksum:
+                      type: string
+                    otaChecksumType:
+                      type: integer
+                      format: int32
+                    minApplicableSoftwareVersion:
+                      type: string
+                      format: uint64
+                    maxApplicableSoftwareVersion:
+                      type: string
+                      format: uint64
+                    releaseNotesUrl:
+                      type: string
+                    creator:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{softwareVersion}':
+    get:
+      summary: Queries a ModelVersion by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersion
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersion:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersion:
+                    type: string
+                    format: uint64
+                  softwareVersionString:
+                    type: string
+                  cdVersionNumber:
+                    type: integer
+                    format: int32
+                  firmwareDigests:
+                    type: string
+                  softwareVersionValid:
+                    type: boolean
+                  otaUrl:
+                    type: string
+                  otaFileSize:
+                    type: string
+                    format: uint64
+                  otaChecksum:
+                    type: string
+                  otaChecksumType:
+                    type: integer
+                    format: int32
+                  minApplicableSoftwareVersion:
+                    type: string
+                    format: uint64
+                  maxApplicableSoftwareVersion:
+                    type: string
+                    format: uint64
+                  releaseNotesUrl:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: softwareVersion
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /zigbee-alliance/distributedcomplianceledger/model/model_versions:
+    get:
+      summary: Queries a list of ModelVersions items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersionsAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersions:
+                      type: array
+                      items:
+                        type: string
+                        format: uint64
+                    creator:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/model_versions/{vid}/{pid}':
+    get:
+      summary: Queries a ModelVersions by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersions
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersions:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersions:
+                    type: array
+                    items:
+                      type: string
+                      format: uint64
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
+  /zigbee-alliance/distributedcomplianceledger/model/vendor_products:
+    get:
+      summary: Queries a list of VendorProducts items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelVendorProductsAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorProducts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    products:
+                      type: object
+                      properties:
+                        pid:
+                          type: integer
+                          format: int32
+                        name:
+                          type: string
+                        partNumber:
+                          type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/vendor_products/{vid}':
+    get:
+      summary: Queries a VendorProducts by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelVendorProducts
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorProducts:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  products:
+                    type: object
+                    properties:
+                      pid:
+                        type: integer
+                        format: int32
+                      name:
+                        type: string
+                      partNumber:
+                        type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
       tags:
         - Query
   /zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower:
@@ -23562,171 +23706,6 @@ definitions:
     description: >-
       MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount
       response type.
-  ibc.applications.transfer.v1.DenomTrace:
-    type: object
-    properties:
-      path:
-        type: string
-        description: >-
-          path defines the chain of port/channel identifiers used for tracing
-          the
-
-          source of the fungible token.
-      baseDenom:
-        type: string
-        description: base denomination of the relayed fungible token.
-    description: >-
-      DenomTrace contains the base denomination for ICS20 fungible tokens and
-      the
-
-      source tracing information path.
-  ibc.applications.transfer.v1.MsgTransferResponse:
-    type: object
-    description: MsgTransferResponse defines the Msg/Transfer response type.
-  ibc.applications.transfer.v1.Params:
-    type: object
-    properties:
-      sendEnabled:
-        type: boolean
-        description: >-
-          send_enabled enables or disables all cross-chain token transfers from
-          this
-
-          chain.
-      receiveEnabled:
-        type: boolean
-        description: >-
-          receive_enabled enables or disables all cross-chain token transfers to
-          this
-
-          chain.
-    description: >-
-      Params defines the set of IBC transfer parameters.
-
-      NOTE: To prevent a single token from being transferred, set the
-
-      TransfersEnabled parameter to true and then set the bank module's
-      SendEnabled
-
-      parameter for the denomination to false.
-  ibc.applications.transfer.v1.QueryDenomTraceResponse:
-    type: object
-    properties:
-      denomTrace:
-        type: object
-        properties:
-          path:
-            type: string
-            description: >-
-              path defines the chain of port/channel identifiers used for
-              tracing the
-
-              source of the fungible token.
-          baseDenom:
-            type: string
-            description: base denomination of the relayed fungible token.
-        description: >-
-          DenomTrace contains the base denomination for ICS20 fungible tokens
-          and the
-
-          source tracing information path.
-    description: |-
-      QueryDenomTraceResponse is the response type for the Query/DenomTrace RPC
-      method.
-  ibc.applications.transfer.v1.QueryDenomTracesResponse:
-    type: object
-    properties:
-      denomTraces:
-        type: array
-        items:
-          type: object
-          properties:
-            path:
-              type: string
-              description: >-
-                path defines the chain of port/channel identifiers used for
-                tracing the
-
-                source of the fungible token.
-            baseDenom:
-              type: string
-              description: base denomination of the relayed fungible token.
-          description: >-
-            DenomTrace contains the base denomination for ICS20 fungible tokens
-            and the
-
-            source tracing information path.
-        description: denom_traces returns all denominations trace information.
-      pagination:
-        description: pagination defines the pagination in the response.
-        type: object
-        properties:
-          nextKey:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-    description: >-
-      QueryConnectionsResponse is the response type for the Query/DenomTraces
-      RPC
-
-      method.
-  ibc.applications.transfer.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params defines the parameters of the module.
-        type: object
-        properties:
-          sendEnabled:
-            type: boolean
-            description: >-
-              send_enabled enables or disables all cross-chain token transfers
-              from this
-
-              chain.
-          receiveEnabled:
-            type: boolean
-            description: >-
-              receive_enabled enables or disables all cross-chain token
-              transfers to this
-
-              chain.
-    description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  ibc.core.client.v1.Height:
-    type: object
-    properties:
-      revisionNumber:
-        type: string
-        format: uint64
-        title: the revision that the client is currently on
-      revisionHeight:
-        type: string
-        format: uint64
-        title: the height within the given revision
-    description: |-
-      Normally the RevisionHeight is incremented at each height while keeping
-      RevisionNumber the same. However some consensus algorithms may choose to
-      reset the height in certain conditions e.g. hard forks, state-machine
-      breaking changes In these cases, the RevisionNumber is incremented so that
-      height continues to be monitonically increasing even as the RevisionHeight
-      gets reset
-    title: >-
-      Height is a monotonically increasing data type
-
-      that can be compared against another Height for the purposes of updating
-      and
-
-      freezing clients
   cosmos.auth.v1beta1.BaseAccount:
     type: object
     properties:
@@ -24092,6 +24071,11 @@ definitions:
         type: array
         items:
           type: string
+        title: >-
+          NOTE. we do not user AccountRoles casting here to preserve repeated
+          form
+                so protobuf takes care about repeated items in generated code,
+                (but that might be not the final solution)
       vendorID:
         type: string
         format: uint64
@@ -24307,6 +24291,11 @@ definitions:
             type: array
             items:
               type: string
+            title: >-
+              NOTE. we do not user AccountRoles casting here to preserve
+              repeated form
+                    so protobuf takes care about repeated items in generated code,
+                    (but that might be not the final solution)
           vendorID:
             type: string
             format: uint64
@@ -24527,6 +24516,11 @@ definitions:
               type: array
               items:
                 type: string
+              title: >-
+                NOTE. we do not user AccountRoles casting here to preserve
+                repeated form
+                      so protobuf takes care about repeated items in generated code,
+                      (but that might be not the final solution)
             vendorID:
               type: string
               format: uint64
@@ -24764,6 +24758,11 @@ definitions:
                   type: array
                   items:
                     type: string
+                  title: >-
+                    NOTE. we do not user AccountRoles casting here to preserve
+                    repeated form
+                          so protobuf takes care about repeated items in generated code,
+                          (but that might be not the final solution)
                 vendorID:
                   type: string
                   format: uint64
@@ -25033,6 +25032,11 @@ definitions:
             type: array
             items:
               type: string
+            title: >-
+              NOTE. we do not user AccountRoles casting here to preserve
+              repeated form
+                    so protobuf takes care about repeated items in generated code,
+                    (but that might be not the final solution)
           vendorID:
             type: string
             format: uint64
@@ -25250,6 +25254,11 @@ definitions:
                 type: array
                 items:
                   type: string
+                title: >-
+                  NOTE. we do not user AccountRoles casting here to preserve
+                  repeated form
+                        so protobuf takes care about repeated items in generated code,
+                        (but that might be not the final solution)
               vendorID:
                 type: string
                 format: uint64
@@ -25269,6 +25278,508 @@ definitions:
             type: array
             items:
               type: string
+  zigbeealliance.distributedcomplianceledger.model.Model:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      deviceTypeId:
+        type: integer
+        format: int32
+      productName:
+        type: string
+      productLabel:
+        type: string
+      partNumber:
+        type: string
+      commissioningCustomFlow:
+        type: integer
+        format: int32
+      commissioningCustomFlowUrl:
+        type: string
+      commissioningModeInitialStepsHint:
+        type: string
+        format: uint64
+      commissioningModeInitialStepsInstruction:
+        type: string
+      commissioningModeSecondaryStepsHint:
+        type: string
+        format: uint64
+      commissioningModeSecondaryStepsInstruction:
+        type: string
+      userManualUrl:
+        type: string
+      supportUrl:
+        type: string
+      productUrl:
+        type: string
+      creator:
+        type: string
+  zigbeealliance.distributedcomplianceledger.model.ModelVersion:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersion:
+        type: string
+        format: uint64
+      softwareVersionString:
+        type: string
+      cdVersionNumber:
+        type: integer
+        format: int32
+      firmwareDigests:
+        type: string
+      softwareVersionValid:
+        type: boolean
+      otaUrl:
+        type: string
+      otaFileSize:
+        type: string
+        format: uint64
+      otaChecksum:
+        type: string
+      otaChecksumType:
+        type: integer
+        format: int32
+      minApplicableSoftwareVersion:
+        type: string
+        format: uint64
+      maxApplicableSoftwareVersion:
+        type: string
+        format: uint64
+      releaseNotesUrl:
+        type: string
+      creator:
+        type: string
+  zigbeealliance.distributedcomplianceledger.model.ModelVersions:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersions:
+        type: array
+        items:
+          type: string
+          format: uint64
+      creator:
+        type: string
+  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionsResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersionResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersionsResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersionResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersionsResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.Product:
+    type: object
+    properties:
+      pid:
+        type: integer
+        format: int32
+      name:
+        type: string
+      partNumber:
+        type: string
+  zigbeealliance.distributedcomplianceledger.model.QueryAllModelResponse:
+    type: object
+    properties:
+      model:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            deviceTypeId:
+              type: integer
+              format: int32
+            productName:
+              type: string
+            productLabel:
+              type: string
+            partNumber:
+              type: string
+            commissioningCustomFlow:
+              type: integer
+              format: int32
+            commissioningCustomFlowUrl:
+              type: string
+            commissioningModeInitialStepsHint:
+              type: string
+              format: uint64
+            commissioningModeInitialStepsInstruction:
+              type: string
+            commissioningModeSecondaryStepsHint:
+              type: string
+              format: uint64
+            commissioningModeSecondaryStepsInstruction:
+              type: string
+            userManualUrl:
+              type: string
+            supportUrl:
+              type: string
+            productUrl:
+              type: string
+            creator:
+              type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryAllModelVersionResponse:
+    type: object
+    properties:
+      modelVersion:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersion:
+              type: string
+              format: uint64
+            softwareVersionString:
+              type: string
+            cdVersionNumber:
+              type: integer
+              format: int32
+            firmwareDigests:
+              type: string
+            softwareVersionValid:
+              type: boolean
+            otaUrl:
+              type: string
+            otaFileSize:
+              type: string
+              format: uint64
+            otaChecksum:
+              type: string
+            otaChecksumType:
+              type: integer
+              format: int32
+            minApplicableSoftwareVersion:
+              type: string
+              format: uint64
+            maxApplicableSoftwareVersion:
+              type: string
+              format: uint64
+            releaseNotesUrl:
+              type: string
+            creator:
+              type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryAllModelVersionsResponse:
+    type: object
+    properties:
+      modelVersions:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersions:
+              type: array
+              items:
+                type: string
+                format: uint64
+            creator:
+              type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryAllVendorProductsResponse:
+    type: object
+    properties:
+      vendorProducts:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            products:
+              type: object
+              properties:
+                pid:
+                  type: integer
+                  format: int32
+                name:
+                  type: string
+                partNumber:
+                  type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryGetModelResponse:
+    type: object
+    properties:
+      model:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          deviceTypeId:
+            type: integer
+            format: int32
+          productName:
+            type: string
+          productLabel:
+            type: string
+          partNumber:
+            type: string
+          commissioningCustomFlow:
+            type: integer
+            format: int32
+          commissioningCustomFlowUrl:
+            type: string
+          commissioningModeInitialStepsHint:
+            type: string
+            format: uint64
+          commissioningModeInitialStepsInstruction:
+            type: string
+          commissioningModeSecondaryStepsHint:
+            type: string
+            format: uint64
+          commissioningModeSecondaryStepsInstruction:
+            type: string
+          userManualUrl:
+            type: string
+          supportUrl:
+            type: string
+          productUrl:
+            type: string
+          creator:
+            type: string
+  zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
+    type: object
+    properties:
+      modelVersion:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersion:
+            type: string
+            format: uint64
+          softwareVersionString:
+            type: string
+          cdVersionNumber:
+            type: integer
+            format: int32
+          firmwareDigests:
+            type: string
+          softwareVersionValid:
+            type: boolean
+          otaUrl:
+            type: string
+          otaFileSize:
+            type: string
+            format: uint64
+          otaChecksum:
+            type: string
+          otaChecksumType:
+            type: integer
+            format: int32
+          minApplicableSoftwareVersion:
+            type: string
+            format: uint64
+          maxApplicableSoftwareVersion:
+            type: string
+            format: uint64
+          releaseNotesUrl:
+            type: string
+          creator:
+            type: string
+  zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:
+    type: object
+    properties:
+      modelVersions:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersions:
+            type: array
+            items:
+              type: string
+              format: uint64
+          creator:
+            type: string
+  zigbeealliance.distributedcomplianceledger.model.QueryGetVendorProductsResponse:
+    type: object
+    properties:
+      vendorProducts:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          products:
+            type: object
+            properties:
+              pid:
+                type: integer
+                format: int32
+              name:
+                type: string
+              partNumber:
+                type: string
+  zigbeealliance.distributedcomplianceledger.model.VendorProducts:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      products:
+        type: object
+        properties:
+          pid:
+            type: integer
+            format: int32
+          name:
+            type: string
+          partNumber:
+            type: string
   zigbeealliance.distributedcomplianceledger.validator.Description:
     type: object
     properties:

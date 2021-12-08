@@ -1,0 +1,12 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.model;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";
+
+message ModelVersions {
+  int32 vid = 1; 
+  int32 pid = 2; 
+  repeated uint64 software_versions = 3; 
+  string creator = 4;
+}
+
