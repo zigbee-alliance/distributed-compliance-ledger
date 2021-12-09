@@ -295,7 +295,7 @@ As a general guidance you may consider to use only the peers you own and/or trus
 
 *   `persistent_peers` field in `$HOME/.dcld/config/config.toml` should include the latest version of the validators list
 
-    *   you can use [update_peers](..deployment/scripts/update_peers)
+    *   you can use [update_peers](../deployment/scripts/update_peers)
 
         ```bash
         # by default path to a file is './persistent_peers'
