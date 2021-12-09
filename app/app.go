@@ -44,6 +44,7 @@ import (
 	compliancetestmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/keeper"
 	compliancetestmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
 	dclauthmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/ante"
 	dclauthmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	dclauthmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	dclgenutilmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
@@ -551,14 +552,11 @@ func New(
 	app.SetInitChainer(app.InitChainer)
 	app.SetBeginBlocker(app.BeginBlocker)
 
-	/* FIXME issue 99
 	anteHandler, err := ante.NewAnteHandler(
 		ante.HandlerOptions{
-			AccountKeeper: app.AccountKeeper,
-			// BankKeeper:      app.BankKeeper,
+			AccountKeeper:   app.AccountKeeper,
 			SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
-			// FeegrantKeeper:  app.FeeGrantKeeper,
-			SigGasConsumer: ante.DefaultSigVerificationGasConsumer,
+			SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 		},
 	)
 	if err != nil {
@@ -566,7 +564,6 @@ func New(
 	}
 
 	app.SetAnteHandler(anteHandler)
-	*/
 	app.SetEndBlocker(app.EndBlocker)
 
 	if loadLatest {
