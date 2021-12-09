@@ -79,6 +79,13 @@ func fromSlice(roles []AccountRole) *AccountRoles {
 	Account
 */
 
+type DCLAccountI interface {
+	authtypes.AccountI
+
+	GetRoles() []AccountRole
+	GetVendorID() uint64
+}
+
 // NewAccount creates a new Account object.
 func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID uint64) *Account {
 	return &Account{

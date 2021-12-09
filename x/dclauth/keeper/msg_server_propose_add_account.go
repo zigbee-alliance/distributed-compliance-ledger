@@ -65,7 +65,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	} else {
 		// create account, assign account number and store it
 		account.AccountNumber = k.GetNextAccountNumber(ctx)
-		k.SetAccount(ctx, *account)
+		k.SetAccountO(ctx, *account)
 	}
 
 	return &types.MsgProposeAddAccountResponse{}, nil

@@ -51,7 +51,7 @@ func (k Keeper) Account(c context.Context, req *types.QueryGetAccountRequest) (*
 		return nil, err
 	}
 
-	val, found := k.GetAccount(
+	val, found := k.GetAccountO(
 		ctx,
 		addr,
 	)
