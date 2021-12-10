@@ -64,15 +64,9 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
-// TODO MIGRATE
-/*
-
-const appName = "dc-ledger"
-*/
-
 const (
 	AccountAddressPrefix = "cosmos"
-	Name                 = "distributed-compliance-ledger"
+	Name                 = "dcl"
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
