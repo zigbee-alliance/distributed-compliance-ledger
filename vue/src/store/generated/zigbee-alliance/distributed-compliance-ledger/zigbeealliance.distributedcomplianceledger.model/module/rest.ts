@@ -86,19 +86,11 @@ export type ModelMsgCreateModelResponse = object;
 
 export type ModelMsgCreateModelVersionResponse = object;
 
-export type ModelMsgCreateModelVersionsResponse = object;
-
 export type ModelMsgDeleteModelResponse = object;
-
-export type ModelMsgDeleteModelVersionResponse = object;
-
-export type ModelMsgDeleteModelVersionsResponse = object;
 
 export type ModelMsgUpdateModelResponse = object;
 
 export type ModelMsgUpdateModelVersionResponse = object;
-
-export type ModelMsgUpdateModelVersionsResponse = object;
 
 export interface ModelProduct {
   /** @format int32 */

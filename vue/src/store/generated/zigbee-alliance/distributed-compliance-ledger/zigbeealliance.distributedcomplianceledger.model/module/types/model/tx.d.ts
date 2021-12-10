@@ -75,37 +75,6 @@ export interface MsgUpdateModelVersion {
 }
 export interface MsgUpdateModelVersionResponse {
 }
-export interface MsgDeleteModelVersion {
-    creator: string;
-    vid: number;
-    pid: number;
-    softwareVersion: number;
-}
-export interface MsgDeleteModelVersionResponse {
-}
-export interface MsgCreateModelVersions {
-    creator: string;
-    vid: number;
-    pid: number;
-    softwareVersions: number[];
-}
-export interface MsgCreateModelVersionsResponse {
-}
-export interface MsgUpdateModelVersions {
-    creator: string;
-    vid: number;
-    pid: number;
-    softwareVersions: number[];
-}
-export interface MsgUpdateModelVersionsResponse {
-}
-export interface MsgDeleteModelVersions {
-    creator: string;
-    vid: number;
-    pid: number;
-}
-export interface MsgDeleteModelVersionsResponse {
-}
 export declare const MsgCreateModel: {
     encode(message: MsgCreateModel, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateModel;
@@ -176,74 +145,14 @@ export declare const MsgUpdateModelVersionResponse: {
     toJSON(_: MsgUpdateModelVersionResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateModelVersionResponse>): MsgUpdateModelVersionResponse;
 };
-export declare const MsgDeleteModelVersion: {
-    encode(message: MsgDeleteModelVersion, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersion;
-    fromJSON(object: any): MsgDeleteModelVersion;
-    toJSON(message: MsgDeleteModelVersion): unknown;
-    fromPartial(object: DeepPartial<MsgDeleteModelVersion>): MsgDeleteModelVersion;
-};
-export declare const MsgDeleteModelVersionResponse: {
-    encode(_: MsgDeleteModelVersionResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersionResponse;
-    fromJSON(_: any): MsgDeleteModelVersionResponse;
-    toJSON(_: MsgDeleteModelVersionResponse): unknown;
-    fromPartial(_: DeepPartial<MsgDeleteModelVersionResponse>): MsgDeleteModelVersionResponse;
-};
-export declare const MsgCreateModelVersions: {
-    encode(message: MsgCreateModelVersions, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateModelVersions;
-    fromJSON(object: any): MsgCreateModelVersions;
-    toJSON(message: MsgCreateModelVersions): unknown;
-    fromPartial(object: DeepPartial<MsgCreateModelVersions>): MsgCreateModelVersions;
-};
-export declare const MsgCreateModelVersionsResponse: {
-    encode(_: MsgCreateModelVersionsResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgCreateModelVersionsResponse;
-    fromJSON(_: any): MsgCreateModelVersionsResponse;
-    toJSON(_: MsgCreateModelVersionsResponse): unknown;
-    fromPartial(_: DeepPartial<MsgCreateModelVersionsResponse>): MsgCreateModelVersionsResponse;
-};
-export declare const MsgUpdateModelVersions: {
-    encode(message: MsgUpdateModelVersions, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateModelVersions;
-    fromJSON(object: any): MsgUpdateModelVersions;
-    toJSON(message: MsgUpdateModelVersions): unknown;
-    fromPartial(object: DeepPartial<MsgUpdateModelVersions>): MsgUpdateModelVersions;
-};
-export declare const MsgUpdateModelVersionsResponse: {
-    encode(_: MsgUpdateModelVersionsResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgUpdateModelVersionsResponse;
-    fromJSON(_: any): MsgUpdateModelVersionsResponse;
-    toJSON(_: MsgUpdateModelVersionsResponse): unknown;
-    fromPartial(_: DeepPartial<MsgUpdateModelVersionsResponse>): MsgUpdateModelVersionsResponse;
-};
-export declare const MsgDeleteModelVersions: {
-    encode(message: MsgDeleteModelVersions, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersions;
-    fromJSON(object: any): MsgDeleteModelVersions;
-    toJSON(message: MsgDeleteModelVersions): unknown;
-    fromPartial(object: DeepPartial<MsgDeleteModelVersions>): MsgDeleteModelVersions;
-};
-export declare const MsgDeleteModelVersionsResponse: {
-    encode(_: MsgDeleteModelVersionsResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgDeleteModelVersionsResponse;
-    fromJSON(_: any): MsgDeleteModelVersionsResponse;
-    toJSON(_: MsgDeleteModelVersionsResponse): unknown;
-    fromPartial(_: DeepPartial<MsgDeleteModelVersionsResponse>): MsgDeleteModelVersionsResponse;
-};
 /** Msg defines the Msg service. */
 export interface Msg {
     CreateModel(request: MsgCreateModel): Promise<MsgCreateModelResponse>;
     UpdateModel(request: MsgUpdateModel): Promise<MsgUpdateModelResponse>;
     DeleteModel(request: MsgDeleteModel): Promise<MsgDeleteModelResponse>;
     CreateModelVersion(request: MsgCreateModelVersion): Promise<MsgCreateModelVersionResponse>;
-    UpdateModelVersion(request: MsgUpdateModelVersion): Promise<MsgUpdateModelVersionResponse>;
-    DeleteModelVersion(request: MsgDeleteModelVersion): Promise<MsgDeleteModelVersionResponse>;
-    CreateModelVersions(request: MsgCreateModelVersions): Promise<MsgCreateModelVersionsResponse>;
-    UpdateModelVersions(request: MsgUpdateModelVersions): Promise<MsgUpdateModelVersionsResponse>;
     /** this line is used by starport scaffolding # proto/tx/rpc */
-    DeleteModelVersions(request: MsgDeleteModelVersions): Promise<MsgDeleteModelVersionsResponse>;
+    UpdateModelVersion(request: MsgUpdateModelVersion): Promise<MsgUpdateModelVersionResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
@@ -253,10 +162,6 @@ export declare class MsgClientImpl implements Msg {
     DeleteModel(request: MsgDeleteModel): Promise<MsgDeleteModelResponse>;
     CreateModelVersion(request: MsgCreateModelVersion): Promise<MsgCreateModelVersionResponse>;
     UpdateModelVersion(request: MsgUpdateModelVersion): Promise<MsgUpdateModelVersionResponse>;
-    DeleteModelVersion(request: MsgDeleteModelVersion): Promise<MsgDeleteModelVersionResponse>;
-    CreateModelVersions(request: MsgCreateModelVersions): Promise<MsgCreateModelVersionsResponse>;
-    UpdateModelVersions(request: MsgUpdateModelVersions): Promise<MsgUpdateModelVersionsResponse>;
-    DeleteModelVersions(request: MsgDeleteModelVersions): Promise<MsgDeleteModelVersionsResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

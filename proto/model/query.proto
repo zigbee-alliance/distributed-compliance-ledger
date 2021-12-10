@@ -8,7 +8,6 @@ import "model/model.proto";
 import "model/model_version.proto";
 import "model/model_versions.proto";
 // this line is used by starport scaffolding # 1
-import "model/product.proto";
 import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";

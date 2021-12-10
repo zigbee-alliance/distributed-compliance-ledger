@@ -25384,19 +25384,11 @@ definitions:
     type: object
   zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionResponse:
     type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionsResponse:
-    type: object
   zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersionResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersionsResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersionResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersionsResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.model.Product:
     type: object

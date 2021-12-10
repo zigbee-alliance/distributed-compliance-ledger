@@ -76,32 +76,3 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 
 	return &types.MsgUpdateModelVersionResponse{}, nil
 }
-
-func (k msgServer) DeleteModelVersion(goCtx context.Context, msg *types.MsgDeleteModelVersion) (*types.MsgDeleteModelVersionResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Check if the value exists
-	valFound, isFound := k.GetModelVersion(
-		ctx,
-		msg.Vid,
-		msg.Pid,
-		msg.SoftwareVersion,
-	)
-	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
-	}
-
-	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != valFound.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
-	k.RemoveModelVersion(
-		ctx,
-		msg.Vid,
-		msg.Pid,
-		msg.SoftwareVersion,
-	)
-
-	return &types.MsgDeleteModelVersionResponse{}, nil
-}

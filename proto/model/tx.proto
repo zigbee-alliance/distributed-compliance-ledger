@@ -3,7 +3,6 @@ package zigbeealliance.distributedcomplianceledger.model;
 
 import "model/model.proto";
 import "model/model_version.proto";
-import "model/model_versions.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 import "cosmos_proto/cosmos.proto";
@@ -17,10 +16,6 @@ service Msg {
   rpc DeleteModel(MsgDeleteModel) returns (MsgDeleteModelResponse);
   rpc CreateModelVersion(MsgCreateModelVersion) returns (MsgCreateModelVersionResponse);
   rpc UpdateModelVersion(MsgUpdateModelVersion) returns (MsgUpdateModelVersionResponse);
-  rpc DeleteModelVersion(MsgDeleteModelVersion) returns (MsgDeleteModelVersionResponse);
-  rpc CreateModelVersions(MsgCreateModelVersions) returns (MsgCreateModelVersionsResponse);
-  rpc UpdateModelVersions(MsgUpdateModelVersions) returns (MsgUpdateModelVersionsResponse);
-  rpc DeleteModelVersions(MsgDeleteModelVersions) returns (MsgDeleteModelVersionsResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -102,38 +97,5 @@ message MsgUpdateModelVersion {
   string release_notes_url = 9;
 }
 message MsgUpdateModelVersionResponse {}
-
-message MsgDeleteModelVersion {
-  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  int32 vid = 2;
-  int32 pid = 3;
-  uint64 software_version = 4;
-}
-message MsgDeleteModelVersionResponse {}
-
-message MsgCreateModelVersions {
-  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  int32 vid = 2;
-  int32 pid = 3;
-
-  repeated uint64 software_versions = 4;
-}
-message MsgCreateModelVersionsResponse {}
-
-message MsgUpdateModelVersions {
-  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  int32 vid = 2;
-  int32 pid = 3;
-
-  repeated uint64 software_versions = 4;
-}
-message MsgUpdateModelVersionsResponse {}
-
-message MsgDeleteModelVersions {
-  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  int32 vid = 2;
-  int32 pid = 3;
-}
-message MsgDeleteModelVersionsResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

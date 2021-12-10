@@ -57,13 +57,9 @@ export interface ModelModelVersions {
 }
 export declare type ModelMsgCreateModelResponse = object;
 export declare type ModelMsgCreateModelVersionResponse = object;
-export declare type ModelMsgCreateModelVersionsResponse = object;
 export declare type ModelMsgDeleteModelResponse = object;
-export declare type ModelMsgDeleteModelVersionResponse = object;
-export declare type ModelMsgDeleteModelVersionsResponse = object;
 export declare type ModelMsgUpdateModelResponse = object;
 export declare type ModelMsgUpdateModelVersionResponse = object;
-export declare type ModelMsgUpdateModelVersionsResponse = object;
 export interface ModelProduct {
     /** @format int32 */
     pid?: number;
