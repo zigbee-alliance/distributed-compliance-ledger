@@ -67,14 +67,8 @@ export interface MsgUpdateModelVersion {
     vid: number;
     pid: number;
     softwareVersion: number;
-    softwareVersionString: string;
-    cdVersionNumber: number;
-    firmwareDigests: string;
     softwareVersionValid: boolean;
     otaUrl: string;
-    otaFileSize: number;
-    otaChecksum: string;
-    otaChecksumType: number;
     minApplicableSoftwareVersion: number;
     maxApplicableSoftwareVersion: number;
     releaseNotesUrl: string;

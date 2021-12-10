@@ -96,7 +96,7 @@ func CmdCreateModelVersion() *cobra.Command {
 
 func CmdUpdateModelVersion() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-model-version [vid] [pid] [software-version] [software-version-string] [cd-version-number] [firmware-digests] [software-version-valid] [ota-url] [ota-file-size] [ota-checksum] [ota-checksum-type] [min-applicable-software-version] [max-applicable-software-version] [release-notes-url]",
+		Use:   "update-model-version [vid] [pid] [software-version] [software-version-valid] [ota-url] [min-applicable-software-version] [max-applicable-software-version] [release-notes-url]",
 		Short: "Update a ModelVersion",
 		Args:  cobra.ExactArgs(14),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -115,35 +115,20 @@ func CmdUpdateModelVersion() *cobra.Command {
 			}
 
 			// Get value arguments
-			argSoftwareVersionString := args[3]
-			argCdVersionNumber, err := cast.ToInt32E(args[4])
+			argSoftwareVersionValid, err := cast.ToBoolE(args[3])
 			if err != nil {
 				return err
 			}
-			argFirmwareDigests := args[5]
-			argSoftwareVersionValid, err := cast.ToBoolE(args[6])
+			argOtaUrl := args[4]
+			argMinApplicableSoftwareVersion, err := cast.ToUint64E(args[5])
 			if err != nil {
 				return err
 			}
-			argOtaUrl := args[7]
-			argOtaFileSize, err := cast.ToUint64E(args[8])
+			argMaxApplicableSoftwareVersion, err := cast.ToUint64E(args[6])
 			if err != nil {
 				return err
 			}
-			argOtaChecksum := args[9]
-			argOtaChecksumType, err := cast.ToInt32E(args[10])
-			if err != nil {
-				return err
-			}
-			argMinApplicableSoftwareVersion, err := cast.ToUint64E(args[11])
-			if err != nil {
-				return err
-			}
-			argMaxApplicableSoftwareVersion, err := cast.ToUint64E(args[12])
-			if err != nil {
-				return err
-			}
-			argReleaseNotesUrl := args[13]
+			argReleaseNotesUrl := args[7]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -155,14 +140,8 @@ func CmdUpdateModelVersion() *cobra.Command {
 				indexVid,
 				indexPid,
 				indexSoftwareVersion,
-				argSoftwareVersionString,
-				argCdVersionNumber,
-				argFirmwareDigests,
 				argSoftwareVersionValid,
 				argOtaUrl,
-				argOtaFileSize,
-				argOtaChecksum,
-				argOtaChecksumType,
 				argMinApplicableSoftwareVersion,
 				argMaxApplicableSoftwareVersion,
 				argReleaseNotesUrl,

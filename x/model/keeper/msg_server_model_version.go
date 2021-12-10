@@ -51,7 +51,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	valFound, isFound := k.GetModelVersion(
+	modelVersion, isFound := k.GetModelVersion(
 		ctx,
 		msg.Vid,
 		msg.Pid,
@@ -62,27 +62,15 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	}
 
 	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != valFound.Creator {
+	if msg.Creator != modelVersion.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var modelVersion = types.ModelVersion{
-		Creator:                      msg.Creator,
-		Vid:                          msg.Vid,
-		Pid:                          msg.Pid,
-		SoftwareVersion:              msg.SoftwareVersion,
-		SoftwareVersionString:        msg.SoftwareVersionString,
-		CdVersionNumber:              msg.CdVersionNumber,
-		FirmwareDigests:              msg.FirmwareDigests,
-		SoftwareVersionValid:         msg.SoftwareVersionValid,
-		OtaUrl:                       msg.OtaUrl,
-		OtaFileSize:                  msg.OtaFileSize,
-		OtaChecksum:                  msg.OtaChecksum,
-		OtaChecksumType:              msg.OtaChecksumType,
-		MinApplicableSoftwareVersion: msg.MinApplicableSoftwareVersion,
-		MaxApplicableSoftwareVersion: msg.MaxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              msg.ReleaseNotesUrl,
-	}
+	modelVersion.SoftwareVersionValid = msg.SoftwareVersionValid
+	modelVersion.OtaUrl = msg.OtaUrl
+	modelVersion.MinApplicableSoftwareVersion = msg.MinApplicableSoftwareVersion
+	modelVersion.MaxApplicableSoftwareVersion = msg.MaxApplicableSoftwareVersion
+	modelVersion.ReleaseNotesUrl = msg.ReleaseNotesUrl
 
 	k.SetModelVersion(ctx, modelVersion)
 

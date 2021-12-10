@@ -115,14 +115,8 @@ func NewMsgUpdateModelVersion(
 	vid int32,
 	pid int32,
 	softwareVersion uint64,
-	softwareVersionString string,
-	cdVersionNumber int32,
-	firmwareDigests string,
 	softwareVersionValid bool,
 	otaUrl string,
-	otaFileSize uint64,
-	otaChecksum string,
-	otaChecksumType int32,
 	minApplicableSoftwareVersion uint64,
 	maxApplicableSoftwareVersion uint64,
 	releaseNotesUrl string,
@@ -133,14 +127,8 @@ func NewMsgUpdateModelVersion(
 		Vid:                          vid,
 		Pid:                          pid,
 		SoftwareVersion:              softwareVersion,
-		SoftwareVersionString:        softwareVersionString,
-		CdVersionNumber:              cdVersionNumber,
-		FirmwareDigests:              firmwareDigests,
 		SoftwareVersionValid:         softwareVersionValid,
 		OtaUrl:                       otaUrl,
-		OtaFileSize:                  otaFileSize,
-		OtaChecksum:                  otaChecksum,
-		OtaChecksumType:              otaChecksumType,
 		MinApplicableSoftwareVersion: minApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: maxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              releaseNotesUrl,
@@ -184,14 +172,6 @@ func (msg *MsgUpdateModelVersion) ValidateBasic() error {
 
 	if msg.SoftwareVersion > 4294967295 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "SoftwareVersion must not be greater than 4294967295")
-	}
-
-	if msg.CdVersionNumber < 0 || msg.CdVersionNumber > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CdVersionNumber must be in range from 0 to 65535")
-	}
-
-	if msg.OtaChecksumType < 0 || msg.OtaChecksumType > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "OtaChecksumType must be in range from 0 to 65535")
 	}
 
 	if msg.MinApplicableSoftwareVersion > 4294967295 {

@@ -95,17 +95,11 @@ message MsgUpdateModelVersion {
   int32 pid = 3;
   uint64 software_version = 4;
 
-  string software_version_string = 5;
-  int32 cd_version_number = 6;
-  string firmware_digests = 7;
-  bool software_version_valid = 8;
-  string ota_url = 9;
-  uint64 ota_file_size = 10;
-  string ota_checksum = 11;
-  int32 ota_checksum_type = 12;
-  uint64 min_applicable_software_version = 13;
-  uint64 max_applicable_software_version = 14;
-  string release_notes_url = 15;
+  bool software_version_valid = 5;
+  string ota_url = 6;
+  uint64 min_applicable_software_version = 7;
+  uint64 max_applicable_software_version = 8;
+  string release_notes_url = 9;
 }
 message MsgUpdateModelVersionResponse {}
 

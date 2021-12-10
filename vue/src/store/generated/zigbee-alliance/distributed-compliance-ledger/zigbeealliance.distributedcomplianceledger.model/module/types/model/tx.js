@@ -1187,14 +1187,8 @@ const baseMsgUpdateModelVersion = {
     vid: 0,
     pid: 0,
     softwareVersion: 0,
-    softwareVersionString: '',
-    cdVersionNumber: 0,
-    firmwareDigests: '',
     softwareVersionValid: false,
     otaUrl: '',
-    otaFileSize: 0,
-    otaChecksum: '',
-    otaChecksumType: 0,
     minApplicableSoftwareVersion: 0,
     maxApplicableSoftwareVersion: 0,
     releaseNotesUrl: ''
@@ -1213,38 +1207,20 @@ export const MsgUpdateModelVersion = {
         if (message.softwareVersion !== 0) {
             writer.uint32(32).uint64(message.softwareVersion);
         }
-        if (message.softwareVersionString !== '') {
-            writer.uint32(42).string(message.softwareVersionString);
-        }
-        if (message.cdVersionNumber !== 0) {
-            writer.uint32(48).int32(message.cdVersionNumber);
-        }
-        if (message.firmwareDigests !== '') {
-            writer.uint32(58).string(message.firmwareDigests);
-        }
         if (message.softwareVersionValid === true) {
-            writer.uint32(64).bool(message.softwareVersionValid);
+            writer.uint32(40).bool(message.softwareVersionValid);
         }
         if (message.otaUrl !== '') {
-            writer.uint32(74).string(message.otaUrl);
-        }
-        if (message.otaFileSize !== 0) {
-            writer.uint32(80).uint64(message.otaFileSize);
-        }
-        if (message.otaChecksum !== '') {
-            writer.uint32(90).string(message.otaChecksum);
-        }
-        if (message.otaChecksumType !== 0) {
-            writer.uint32(96).int32(message.otaChecksumType);
+            writer.uint32(50).string(message.otaUrl);
         }
         if (message.minApplicableSoftwareVersion !== 0) {
-            writer.uint32(104).uint64(message.minApplicableSoftwareVersion);
+            writer.uint32(56).uint64(message.minApplicableSoftwareVersion);
         }
         if (message.maxApplicableSoftwareVersion !== 0) {
-            writer.uint32(112).uint64(message.maxApplicableSoftwareVersion);
+            writer.uint32(64).uint64(message.maxApplicableSoftwareVersion);
         }
         if (message.releaseNotesUrl !== '') {
-            writer.uint32(122).string(message.releaseNotesUrl);
+            writer.uint32(74).string(message.releaseNotesUrl);
         }
         return writer;
     },
@@ -1268,36 +1244,18 @@ export const MsgUpdateModelVersion = {
                     message.softwareVersion = longToNumber(reader.uint64());
                     break;
                 case 5:
-                    message.softwareVersionString = reader.string();
-                    break;
-                case 6:
-                    message.cdVersionNumber = reader.int32();
-                    break;
-                case 7:
-                    message.firmwareDigests = reader.string();
-                    break;
-                case 8:
                     message.softwareVersionValid = reader.bool();
                     break;
-                case 9:
+                case 6:
                     message.otaUrl = reader.string();
                     break;
-                case 10:
-                    message.otaFileSize = longToNumber(reader.uint64());
-                    break;
-                case 11:
-                    message.otaChecksum = reader.string();
-                    break;
-                case 12:
-                    message.otaChecksumType = reader.int32();
-                    break;
-                case 13:
+                case 7:
                     message.minApplicableSoftwareVersion = longToNumber(reader.uint64());
                     break;
-                case 14:
+                case 8:
                     message.maxApplicableSoftwareVersion = longToNumber(reader.uint64());
                     break;
-                case 15:
+                case 9:
                     message.releaseNotesUrl = reader.string();
                     break;
                 default:
@@ -1333,24 +1291,6 @@ export const MsgUpdateModelVersion = {
         else {
             message.softwareVersion = 0;
         }
-        if (object.softwareVersionString !== undefined && object.softwareVersionString !== null) {
-            message.softwareVersionString = String(object.softwareVersionString);
-        }
-        else {
-            message.softwareVersionString = '';
-        }
-        if (object.cdVersionNumber !== undefined && object.cdVersionNumber !== null) {
-            message.cdVersionNumber = Number(object.cdVersionNumber);
-        }
-        else {
-            message.cdVersionNumber = 0;
-        }
-        if (object.firmwareDigests !== undefined && object.firmwareDigests !== null) {
-            message.firmwareDigests = String(object.firmwareDigests);
-        }
-        else {
-            message.firmwareDigests = '';
-        }
         if (object.softwareVersionValid !== undefined && object.softwareVersionValid !== null) {
             message.softwareVersionValid = Boolean(object.softwareVersionValid);
         }
@@ -1362,24 +1302,6 @@ export const MsgUpdateModelVersion = {
         }
         else {
             message.otaUrl = '';
-        }
-        if (object.otaFileSize !== undefined && object.otaFileSize !== null) {
-            message.otaFileSize = Number(object.otaFileSize);
-        }
-        else {
-            message.otaFileSize = 0;
-        }
-        if (object.otaChecksum !== undefined && object.otaChecksum !== null) {
-            message.otaChecksum = String(object.otaChecksum);
-        }
-        else {
-            message.otaChecksum = '';
-        }
-        if (object.otaChecksumType !== undefined && object.otaChecksumType !== null) {
-            message.otaChecksumType = Number(object.otaChecksumType);
-        }
-        else {
-            message.otaChecksumType = 0;
         }
         if (object.minApplicableSoftwareVersion !== undefined && object.minApplicableSoftwareVersion !== null) {
             message.minApplicableSoftwareVersion = Number(object.minApplicableSoftwareVersion);
@@ -1407,14 +1329,8 @@ export const MsgUpdateModelVersion = {
         message.vid !== undefined && (obj.vid = message.vid);
         message.pid !== undefined && (obj.pid = message.pid);
         message.softwareVersion !== undefined && (obj.softwareVersion = message.softwareVersion);
-        message.softwareVersionString !== undefined && (obj.softwareVersionString = message.softwareVersionString);
-        message.cdVersionNumber !== undefined && (obj.cdVersionNumber = message.cdVersionNumber);
-        message.firmwareDigests !== undefined && (obj.firmwareDigests = message.firmwareDigests);
         message.softwareVersionValid !== undefined && (obj.softwareVersionValid = message.softwareVersionValid);
         message.otaUrl !== undefined && (obj.otaUrl = message.otaUrl);
-        message.otaFileSize !== undefined && (obj.otaFileSize = message.otaFileSize);
-        message.otaChecksum !== undefined && (obj.otaChecksum = message.otaChecksum);
-        message.otaChecksumType !== undefined && (obj.otaChecksumType = message.otaChecksumType);
         message.minApplicableSoftwareVersion !== undefined && (obj.minApplicableSoftwareVersion = message.minApplicableSoftwareVersion);
         message.maxApplicableSoftwareVersion !== undefined && (obj.maxApplicableSoftwareVersion = message.maxApplicableSoftwareVersion);
         message.releaseNotesUrl !== undefined && (obj.releaseNotesUrl = message.releaseNotesUrl);
@@ -1446,24 +1362,6 @@ export const MsgUpdateModelVersion = {
         else {
             message.softwareVersion = 0;
         }
-        if (object.softwareVersionString !== undefined && object.softwareVersionString !== null) {
-            message.softwareVersionString = object.softwareVersionString;
-        }
-        else {
-            message.softwareVersionString = '';
-        }
-        if (object.cdVersionNumber !== undefined && object.cdVersionNumber !== null) {
-            message.cdVersionNumber = object.cdVersionNumber;
-        }
-        else {
-            message.cdVersionNumber = 0;
-        }
-        if (object.firmwareDigests !== undefined && object.firmwareDigests !== null) {
-            message.firmwareDigests = object.firmwareDigests;
-        }
-        else {
-            message.firmwareDigests = '';
-        }
         if (object.softwareVersionValid !== undefined && object.softwareVersionValid !== null) {
             message.softwareVersionValid = object.softwareVersionValid;
         }
@@ -1475,24 +1373,6 @@ export const MsgUpdateModelVersion = {
         }
         else {
             message.otaUrl = '';
-        }
-        if (object.otaFileSize !== undefined && object.otaFileSize !== null) {
-            message.otaFileSize = object.otaFileSize;
-        }
-        else {
-            message.otaFileSize = 0;
-        }
-        if (object.otaChecksum !== undefined && object.otaChecksum !== null) {
-            message.otaChecksum = object.otaChecksum;
-        }
-        else {
-            message.otaChecksum = '';
-        }
-        if (object.otaChecksumType !== undefined && object.otaChecksumType !== null) {
-            message.otaChecksumType = object.otaChecksumType;
-        }
-        else {
-            message.otaChecksumType = 0;
         }
         if (object.minApplicableSoftwareVersion !== undefined && object.minApplicableSoftwareVersion !== null) {
             message.minApplicableSoftwareVersion = object.minApplicableSoftwareVersion;
