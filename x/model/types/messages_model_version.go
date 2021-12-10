@@ -76,6 +76,35 @@ func (msg *MsgCreateModelVersion) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.Vid < 0 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	}
+
+	if msg.Pid < 0 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	}
+
+	if msg.SoftwareVersion > 4294967295 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "SoftwareVersion must not be greater than 4294967295")
+	}
+
+	if msg.CdVersionNumber < 0 || msg.CdVersionNumber > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CdVersionNumber must be in range from 0 to 65535")
+	}
+
+	if msg.OtaChecksumType < 0 || msg.OtaChecksumType > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "OtaChecksumType must be in range from 0 to 65535")
+	}
+
+	if msg.MinApplicableSoftwareVersion > 4294967295 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MinApplicableSoftwareVersion must not be greater than 4294967295")
+	}
+
+	if msg.MaxApplicableSoftwareVersion > 4294967295 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MaxApplicableSoftwareVersion must not be greater than 4294967295")
+	}
+
 	return nil
 }
 
@@ -144,6 +173,35 @@ func (msg *MsgUpdateModelVersion) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.Vid < 0 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	}
+
+	if msg.Pid < 0 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	}
+
+	if msg.SoftwareVersion > 4294967295 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "SoftwareVersion must not be greater than 4294967295")
+	}
+
+	if msg.CdVersionNumber < 0 || msg.CdVersionNumber > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CdVersionNumber must be in range from 0 to 65535")
+	}
+
+	if msg.OtaChecksumType < 0 || msg.OtaChecksumType > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "OtaChecksumType must be in range from 0 to 65535")
+	}
+
+	if msg.MinApplicableSoftwareVersion > 4294967295 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MinApplicableSoftwareVersion must not be greater than 4294967295")
+	}
+
+	if msg.MaxApplicableSoftwareVersion > 4294967295 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MaxApplicableSoftwareVersion must not be greater than 4294967295")
+	}
+
 	return nil
 }
 
@@ -189,5 +247,18 @@ func (msg *MsgDeleteModelVersion) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.Vid < 0 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	}
+
+	if msg.Pid < 0 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	}
+
+	if msg.SoftwareVersion > 4294967295 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "SoftwareVersion must not be greater than 4294967295")
+	}
+
 	return nil
 }

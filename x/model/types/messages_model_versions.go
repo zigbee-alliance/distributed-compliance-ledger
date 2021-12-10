@@ -54,6 +54,21 @@ func (msg *MsgCreateModelVersions) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.Vid < 0 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	}
+
+	if msg.Pid < 0 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	}
+
+	for _, softwareVersion := range msg.SoftwareVersions {
+		if softwareVersion > 4294967295 {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Each element of SoftwareVersions must not be greater than 4294967295")
+		}
+	}
+
 	return nil
 }
 
@@ -100,6 +115,21 @@ func (msg *MsgUpdateModelVersions) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.Vid < 0 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	}
+
+	if msg.Pid < 0 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	}
+
+	for _, softwareVersion := range msg.SoftwareVersions {
+		if softwareVersion > 4294967295 {
+			return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Each element of SoftwareVersions must not be greater than 4294967295")
+		}
+	}
+
 	return nil
 }
 
@@ -143,5 +173,14 @@ func (msg *MsgDeleteModelVersions) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.Vid < 0 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	}
+
+	if msg.Pid < 0 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	}
+
 	return nil
 }
