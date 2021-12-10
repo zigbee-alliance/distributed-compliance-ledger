@@ -29,15 +29,11 @@ export interface MsgUpdateModel {
   creator: string
   vid: number
   pid: number
-  deviceTypeId: number
   productName: string
   productLabel: string
   partNumber: string
-  commissioningCustomFlow: number
   commissioningCustomFlowUrl: string
-  commissioningModeInitialStepsHint: number
   commissioningModeInitialStepsInstruction: string
-  commissioningModeSecondaryStepsHint: number
   commissioningModeSecondaryStepsInstruction: string
   userManualUrl: string
   supportUrl: string
@@ -500,15 +496,11 @@ const baseMsgUpdateModel: object = {
   creator: '',
   vid: 0,
   pid: 0,
-  deviceTypeId: 0,
   productName: '',
   productLabel: '',
   partNumber: '',
-  commissioningCustomFlow: 0,
   commissioningCustomFlowUrl: '',
-  commissioningModeInitialStepsHint: 0,
   commissioningModeInitialStepsInstruction: '',
-  commissioningModeSecondaryStepsHint: 0,
   commissioningModeSecondaryStepsInstruction: '',
   userManualUrl: '',
   supportUrl: '',
@@ -526,44 +518,32 @@ export const MsgUpdateModel = {
     if (message.pid !== 0) {
       writer.uint32(24).int32(message.pid)
     }
-    if (message.deviceTypeId !== 0) {
-      writer.uint32(32).int32(message.deviceTypeId)
-    }
     if (message.productName !== '') {
-      writer.uint32(42).string(message.productName)
+      writer.uint32(34).string(message.productName)
     }
     if (message.productLabel !== '') {
-      writer.uint32(50).string(message.productLabel)
+      writer.uint32(42).string(message.productLabel)
     }
     if (message.partNumber !== '') {
-      writer.uint32(58).string(message.partNumber)
-    }
-    if (message.commissioningCustomFlow !== 0) {
-      writer.uint32(64).int32(message.commissioningCustomFlow)
+      writer.uint32(50).string(message.partNumber)
     }
     if (message.commissioningCustomFlowUrl !== '') {
-      writer.uint32(74).string(message.commissioningCustomFlowUrl)
-    }
-    if (message.commissioningModeInitialStepsHint !== 0) {
-      writer.uint32(80).uint64(message.commissioningModeInitialStepsHint)
+      writer.uint32(58).string(message.commissioningCustomFlowUrl)
     }
     if (message.commissioningModeInitialStepsInstruction !== '') {
-      writer.uint32(90).string(message.commissioningModeInitialStepsInstruction)
-    }
-    if (message.commissioningModeSecondaryStepsHint !== 0) {
-      writer.uint32(96).uint64(message.commissioningModeSecondaryStepsHint)
+      writer.uint32(66).string(message.commissioningModeInitialStepsInstruction)
     }
     if (message.commissioningModeSecondaryStepsInstruction !== '') {
-      writer.uint32(106).string(message.commissioningModeSecondaryStepsInstruction)
+      writer.uint32(74).string(message.commissioningModeSecondaryStepsInstruction)
     }
     if (message.userManualUrl !== '') {
-      writer.uint32(114).string(message.userManualUrl)
+      writer.uint32(82).string(message.userManualUrl)
     }
     if (message.supportUrl !== '') {
-      writer.uint32(122).string(message.supportUrl)
+      writer.uint32(90).string(message.supportUrl)
     }
     if (message.productUrl !== '') {
-      writer.uint32(130).string(message.productUrl)
+      writer.uint32(98).string(message.productUrl)
     }
     return writer
   },
@@ -585,42 +565,30 @@ export const MsgUpdateModel = {
           message.pid = reader.int32()
           break
         case 4:
-          message.deviceTypeId = reader.int32()
-          break
-        case 5:
           message.productName = reader.string()
           break
-        case 6:
+        case 5:
           message.productLabel = reader.string()
           break
-        case 7:
+        case 6:
           message.partNumber = reader.string()
           break
-        case 8:
-          message.commissioningCustomFlow = reader.int32()
-          break
-        case 9:
+        case 7:
           message.commissioningCustomFlowUrl = reader.string()
           break
-        case 10:
-          message.commissioningModeInitialStepsHint = longToNumber(reader.uint64() as Long)
-          break
-        case 11:
+        case 8:
           message.commissioningModeInitialStepsInstruction = reader.string()
           break
-        case 12:
-          message.commissioningModeSecondaryStepsHint = longToNumber(reader.uint64() as Long)
-          break
-        case 13:
+        case 9:
           message.commissioningModeSecondaryStepsInstruction = reader.string()
           break
-        case 14:
+        case 10:
           message.userManualUrl = reader.string()
           break
-        case 15:
+        case 11:
           message.supportUrl = reader.string()
           break
-        case 16:
+        case 12:
           message.productUrl = reader.string()
           break
         default:
@@ -648,11 +616,6 @@ export const MsgUpdateModel = {
     } else {
       message.pid = 0
     }
-    if (object.deviceTypeId !== undefined && object.deviceTypeId !== null) {
-      message.deviceTypeId = Number(object.deviceTypeId)
-    } else {
-      message.deviceTypeId = 0
-    }
     if (object.productName !== undefined && object.productName !== null) {
       message.productName = String(object.productName)
     } else {
@@ -668,30 +631,15 @@ export const MsgUpdateModel = {
     } else {
       message.partNumber = ''
     }
-    if (object.commissioningCustomFlow !== undefined && object.commissioningCustomFlow !== null) {
-      message.commissioningCustomFlow = Number(object.commissioningCustomFlow)
-    } else {
-      message.commissioningCustomFlow = 0
-    }
     if (object.commissioningCustomFlowUrl !== undefined && object.commissioningCustomFlowUrl !== null) {
       message.commissioningCustomFlowUrl = String(object.commissioningCustomFlowUrl)
     } else {
       message.commissioningCustomFlowUrl = ''
     }
-    if (object.commissioningModeInitialStepsHint !== undefined && object.commissioningModeInitialStepsHint !== null) {
-      message.commissioningModeInitialStepsHint = Number(object.commissioningModeInitialStepsHint)
-    } else {
-      message.commissioningModeInitialStepsHint = 0
-    }
     if (object.commissioningModeInitialStepsInstruction !== undefined && object.commissioningModeInitialStepsInstruction !== null) {
       message.commissioningModeInitialStepsInstruction = String(object.commissioningModeInitialStepsInstruction)
     } else {
       message.commissioningModeInitialStepsInstruction = ''
-    }
-    if (object.commissioningModeSecondaryStepsHint !== undefined && object.commissioningModeSecondaryStepsHint !== null) {
-      message.commissioningModeSecondaryStepsHint = Number(object.commissioningModeSecondaryStepsHint)
-    } else {
-      message.commissioningModeSecondaryStepsHint = 0
     }
     if (object.commissioningModeSecondaryStepsInstruction !== undefined && object.commissioningModeSecondaryStepsInstruction !== null) {
       message.commissioningModeSecondaryStepsInstruction = String(object.commissioningModeSecondaryStepsInstruction)
@@ -721,16 +669,12 @@ export const MsgUpdateModel = {
     message.creator !== undefined && (obj.creator = message.creator)
     message.vid !== undefined && (obj.vid = message.vid)
     message.pid !== undefined && (obj.pid = message.pid)
-    message.deviceTypeId !== undefined && (obj.deviceTypeId = message.deviceTypeId)
     message.productName !== undefined && (obj.productName = message.productName)
     message.productLabel !== undefined && (obj.productLabel = message.productLabel)
     message.partNumber !== undefined && (obj.partNumber = message.partNumber)
-    message.commissioningCustomFlow !== undefined && (obj.commissioningCustomFlow = message.commissioningCustomFlow)
     message.commissioningCustomFlowUrl !== undefined && (obj.commissioningCustomFlowUrl = message.commissioningCustomFlowUrl)
-    message.commissioningModeInitialStepsHint !== undefined && (obj.commissioningModeInitialStepsHint = message.commissioningModeInitialStepsHint)
     message.commissioningModeInitialStepsInstruction !== undefined &&
       (obj.commissioningModeInitialStepsInstruction = message.commissioningModeInitialStepsInstruction)
-    message.commissioningModeSecondaryStepsHint !== undefined && (obj.commissioningModeSecondaryStepsHint = message.commissioningModeSecondaryStepsHint)
     message.commissioningModeSecondaryStepsInstruction !== undefined &&
       (obj.commissioningModeSecondaryStepsInstruction = message.commissioningModeSecondaryStepsInstruction)
     message.userManualUrl !== undefined && (obj.userManualUrl = message.userManualUrl)
@@ -756,11 +700,6 @@ export const MsgUpdateModel = {
     } else {
       message.pid = 0
     }
-    if (object.deviceTypeId !== undefined && object.deviceTypeId !== null) {
-      message.deviceTypeId = object.deviceTypeId
-    } else {
-      message.deviceTypeId = 0
-    }
     if (object.productName !== undefined && object.productName !== null) {
       message.productName = object.productName
     } else {
@@ -776,30 +715,15 @@ export const MsgUpdateModel = {
     } else {
       message.partNumber = ''
     }
-    if (object.commissioningCustomFlow !== undefined && object.commissioningCustomFlow !== null) {
-      message.commissioningCustomFlow = object.commissioningCustomFlow
-    } else {
-      message.commissioningCustomFlow = 0
-    }
     if (object.commissioningCustomFlowUrl !== undefined && object.commissioningCustomFlowUrl !== null) {
       message.commissioningCustomFlowUrl = object.commissioningCustomFlowUrl
     } else {
       message.commissioningCustomFlowUrl = ''
     }
-    if (object.commissioningModeInitialStepsHint !== undefined && object.commissioningModeInitialStepsHint !== null) {
-      message.commissioningModeInitialStepsHint = object.commissioningModeInitialStepsHint
-    } else {
-      message.commissioningModeInitialStepsHint = 0
-    }
     if (object.commissioningModeInitialStepsInstruction !== undefined && object.commissioningModeInitialStepsInstruction !== null) {
       message.commissioningModeInitialStepsInstruction = object.commissioningModeInitialStepsInstruction
     } else {
       message.commissioningModeInitialStepsInstruction = ''
-    }
-    if (object.commissioningModeSecondaryStepsHint !== undefined && object.commissioningModeSecondaryStepsHint !== null) {
-      message.commissioningModeSecondaryStepsHint = object.commissioningModeSecondaryStepsHint
-    } else {
-      message.commissioningModeSecondaryStepsHint = 0
     }
     if (object.commissioningModeSecondaryStepsInstruction !== undefined && object.commissioningModeSecondaryStepsInstruction !== null) {
       message.commissioningModeSecondaryStepsInstruction = object.commissioningModeSecondaryStepsInstruction

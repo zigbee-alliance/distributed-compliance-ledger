@@ -51,7 +51,7 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	valFound, isFound := k.GetModel(
+	model, isFound := k.GetModel(
 		ctx,
 		msg.Vid,
 		msg.Pid,
@@ -61,28 +61,19 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 	}
 
 	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != valFound.Creator {
+	if msg.Creator != model.Creator {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
 	}
 
-	var model = types.Model{
-		Creator:                                  msg.Creator,
-		Vid:                                      msg.Vid,
-		Pid:                                      msg.Pid,
-		DeviceTypeId:                             msg.DeviceTypeId,
-		ProductName:                              msg.ProductName,
-		ProductLabel:                             msg.ProductLabel,
-		PartNumber:                               msg.PartNumber,
-		CommissioningCustomFlow:                  msg.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               msg.CommissioningCustomFlowUrl,
-		CommissioningModeInitialStepsHint:        msg.CommissioningModeInitialStepsHint,
-		CommissioningModeInitialStepsInstruction: msg.CommissioningModeInitialStepsInstruction,
-		CommissioningModeSecondaryStepsHint:      msg.CommissioningModeSecondaryStepsHint,
-		CommissioningModeSecondaryStepsInstruction: msg.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: msg.UserManualUrl,
-		SupportUrl:    msg.SupportUrl,
-		ProductUrl:    msg.ProductUrl,
-	}
+	model.ProductName = msg.ProductName
+	model.ProductLabel = msg.ProductLabel
+	model.PartNumber = msg.PartNumber
+	model.CommissioningCustomFlowUrl = msg.CommissioningCustomFlowUrl
+	model.CommissioningModeInitialStepsInstruction = msg.CommissioningModeInitialStepsInstruction
+	model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
+	model.UserManualUrl = msg.UserManualUrl
+	model.SupportUrl = msg.SupportUrl
+	model.ProductUrl = msg.ProductUrl
 
 	k.SetModel(ctx, model)
 

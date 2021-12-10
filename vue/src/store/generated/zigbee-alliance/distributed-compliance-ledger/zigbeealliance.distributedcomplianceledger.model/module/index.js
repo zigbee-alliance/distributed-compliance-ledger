@@ -2,25 +2,25 @@
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgCreateModelVersion } from "./types/model/tx";
-import { MsgUpdateModel } from "./types/model/tx";
-import { MsgCreateModelVersions } from "./types/model/tx";
 import { MsgDeleteModelVersion } from "./types/model/tx";
-import { MsgCreateModel } from "./types/model/tx";
+import { MsgUpdateModel } from "./types/model/tx";
 import { MsgUpdateModelVersion } from "./types/model/tx";
 import { MsgDeleteModel } from "./types/model/tx";
-import { MsgUpdateModelVersions } from "./types/model/tx";
+import { MsgCreateModel } from "./types/model/tx";
 import { MsgDeleteModelVersions } from "./types/model/tx";
+import { MsgCreateModelVersions } from "./types/model/tx";
+import { MsgUpdateModelVersions } from "./types/model/tx";
+import { MsgCreateModelVersion } from "./types/model/tx";
 const types = [
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", MsgCreateModelVersion],
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", MsgUpdateModel],
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersions", MsgCreateModelVersions],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersion", MsgDeleteModelVersion],
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", MsgCreateModel],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", MsgUpdateModel],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", MsgUpdateModelVersion],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", MsgDeleteModel],
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersions", MsgUpdateModelVersions],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", MsgCreateModel],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersions", MsgDeleteModelVersions],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersions", MsgCreateModelVersions],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersions", MsgUpdateModelVersions],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", MsgCreateModelVersion],
 ];
 export const MissingWalletError = new Error("wallet is required");
 export const registry = new Registry(types);
@@ -41,15 +41,15 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
     const { address } = (await wallet.getAccounts())[0];
     return {
         signAndBroadcast: (msgs, { fee, memo } = { fee: defaultFee, memo: "" }) => client.signAndBroadcast(address, msgs, fee, memo),
-        msgCreateModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial(data) }),
-        msgUpdateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", value: MsgUpdateModel.fromPartial(data) }),
-        msgCreateModelVersions: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersions", value: MsgCreateModelVersions.fromPartial(data) }),
         msgDeleteModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersion", value: MsgDeleteModelVersion.fromPartial(data) }),
-        msgCreateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial(data) }),
+        msgUpdateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", value: MsgUpdateModel.fromPartial(data) }),
         msgUpdateModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", value: MsgUpdateModelVersion.fromPartial(data) }),
         msgDeleteModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", value: MsgDeleteModel.fromPartial(data) }),
-        msgUpdateModelVersions: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersions", value: MsgUpdateModelVersions.fromPartial(data) }),
+        msgCreateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial(data) }),
         msgDeleteModelVersions: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelVersions", value: MsgDeleteModelVersions.fromPartial(data) }),
+        msgCreateModelVersions: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersions", value: MsgCreateModelVersions.fromPartial(data) }),
+        msgUpdateModelVersions: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersions", value: MsgUpdateModelVersions.fromPartial(data) }),
+        msgCreateModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial(data) }),
     };
 };
 const queryClient = async ({ addr: addr } = { addr: "http://localhost:1317" }) => {

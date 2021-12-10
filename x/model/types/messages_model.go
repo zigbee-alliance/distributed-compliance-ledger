@@ -112,15 +112,11 @@ func NewMsgUpdateModel(
 	creator string,
 	vid int32,
 	pid int32,
-	deviceTypeId int32,
 	productName string,
 	productLabel string,
 	partNumber string,
-	commissioningCustomFlow int32,
 	commissioningCustomFlowUrl string,
-	commissioningModeInitialStepsHint uint64,
 	commissioningModeInitialStepsInstruction string,
-	commissioningModeSecondaryStepsHint uint64,
 	commissioningModeSecondaryStepsInstruction string,
 	userManualUrl string,
 	supportUrl string,
@@ -131,15 +127,11 @@ func NewMsgUpdateModel(
 		Creator:                                  creator,
 		Vid:                                      vid,
 		Pid:                                      pid,
-		DeviceTypeId:                             deviceTypeId,
 		ProductName:                              productName,
 		ProductLabel:                             productLabel,
 		PartNumber:                               partNumber,
-		CommissioningCustomFlow:                  commissioningCustomFlow,
 		CommissioningCustomFlowUrl:               commissioningCustomFlowUrl,
-		CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
-		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
 		UserManualUrl: userManualUrl,
 		SupportUrl:    supportUrl,
@@ -180,22 +172,6 @@ func (msg *MsgUpdateModel) ValidateBasic() error {
 
 	if msg.Pid < 0 || msg.Pid > 65535 {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
-	}
-
-	if msg.DeviceTypeId < 0 || msg.DeviceTypeId > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "DeviceTypeId must be in range from 0 to 65535")
-	}
-
-	if msg.CommissioningCustomFlow < 0 || msg.CommissioningCustomFlow > 255 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CommissioningCustomFlow must be in range from 0 to 255")
-	}
-
-	if msg.CommissioningModeInitialStepsHint > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CommissioningModeInitialStepsHint must not be greater than 4294967295")
-	}
-
-	if msg.CommissioningModeSecondaryStepsHint > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CommissioningModeSecondaryStepsHint must not be greater than 4294967295")
 	}
 
 	return nil

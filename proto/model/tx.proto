@@ -50,19 +50,15 @@ message MsgUpdateModel {
   int32 vid = 2;
   int32 pid = 3;
 
-  int32 device_type_id = 4;
-  string product_name = 5;
-  string product_label = 6;
-  string part_number = 7;
-  int32 commissioning_custom_flow = 8;
-  string commissioning_custom_flow_url = 9;
-  uint64 commissioning_mode_initial_steps_hint = 10;
-  string commissioning_mode_initial_steps_instruction = 11;
-  uint64 commissioning_mode_secondary_steps_hint = 12;
-  string commissioning_mode_secondary_steps_instruction = 13;
-  string user_manual_url = 14;
-  string support_url = 15;
-  string product_url = 16;
+  string product_name = 4;
+  string product_label = 5;
+  string part_number = 6;
+  string commissioning_custom_flow_url = 7;
+  string commissioning_mode_initial_steps_instruction = 8;
+  string commissioning_mode_secondary_steps_instruction = 9;
+  string user_manual_url = 10;
+  string support_url = 11;
+  string product_url = 12;
 }
 message MsgUpdateModelResponse {}
 

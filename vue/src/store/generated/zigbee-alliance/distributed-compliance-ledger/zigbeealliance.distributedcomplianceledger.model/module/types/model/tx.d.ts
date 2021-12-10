@@ -24,15 +24,11 @@ export interface MsgUpdateModel {
     creator: string;
     vid: number;
     pid: number;
-    deviceTypeId: number;
     productName: string;
     productLabel: string;
     partNumber: string;
-    commissioningCustomFlow: number;
     commissioningCustomFlowUrl: string;
-    commissioningModeInitialStepsHint: number;
     commissioningModeInitialStepsInstruction: string;
-    commissioningModeSecondaryStepsHint: number;
     commissioningModeSecondaryStepsInstruction: string;
     userManualUrl: string;
     supportUrl: string;
