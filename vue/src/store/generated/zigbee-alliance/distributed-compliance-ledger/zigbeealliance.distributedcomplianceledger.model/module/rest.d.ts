@@ -137,7 +137,7 @@ export interface ModelQueryGetVendorProductsResponse {
 export interface ModelVendorProducts {
     /** @format int32 */
     vid?: number;
-    products?: ModelProduct;
+    products?: ModelProduct[];
 }
 export interface ProtobufAny {
     "@type"?: string;

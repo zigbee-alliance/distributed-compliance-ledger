@@ -3,7 +3,7 @@ import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.model";
 export interface VendorProducts {
     vid: number;
-    products: Product | undefined;
+    products: Product[];
 }
 export declare const VendorProducts: {
     encode(message: VendorProducts, writer?: Writer): Writer;

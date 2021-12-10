@@ -6,7 +6,7 @@ import "model/product.proto";
 
 message VendorProducts {
   int32 vid = 1; 
-  Product products = 2; 
+  repeated Product products = 2; 
   
 }
 

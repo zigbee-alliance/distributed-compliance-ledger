@@ -6,7 +6,7 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.model
 
 export interface VendorProducts {
   vid: number
-  products: Product | undefined
+  products: Product[]
 }
 
 const baseVendorProducts: object = { vid: 0 }
@@ -16,8 +16,8 @@ export const VendorProducts = {
     if (message.vid !== 0) {
       writer.uint32(8).int32(message.vid)
     }
-    if (message.products !== undefined) {
-      Product.encode(message.products, writer.uint32(18).fork()).ldelim()
+    for (const v of message.products) {
+      Product.encode(v!, writer.uint32(18).fork()).ldelim()
     }
     return writer
   },
@@ -26,6 +26,7 @@ export const VendorProducts = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseVendorProducts } as VendorProducts
+    message.products = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -33,7 +34,7 @@ export const VendorProducts = {
           message.vid = reader.int32()
           break
         case 2:
-          message.products = Product.decode(reader, reader.uint32())
+          message.products.push(Product.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -45,15 +46,16 @@ export const VendorProducts = {
 
   fromJSON(object: any): VendorProducts {
     const message = { ...baseVendorProducts } as VendorProducts
+    message.products = []
     if (object.vid !== undefined && object.vid !== null) {
       message.vid = Number(object.vid)
     } else {
       message.vid = 0
     }
     if (object.products !== undefined && object.products !== null) {
-      message.products = Product.fromJSON(object.products)
-    } else {
-      message.products = undefined
+      for (const e of object.products) {
+        message.products.push(Product.fromJSON(e))
+      }
     }
     return message
   },
@@ -61,21 +63,26 @@ export const VendorProducts = {
   toJSON(message: VendorProducts): unknown {
     const obj: any = {}
     message.vid !== undefined && (obj.vid = message.vid)
-    message.products !== undefined && (obj.products = message.products ? Product.toJSON(message.products) : undefined)
+    if (message.products) {
+      obj.products = message.products.map((e) => (e ? Product.toJSON(e) : undefined))
+    } else {
+      obj.products = []
+    }
     return obj
   },
 
   fromPartial(object: DeepPartial<VendorProducts>): VendorProducts {
     const message = { ...baseVendorProducts } as VendorProducts
+    message.products = []
     if (object.vid !== undefined && object.vid !== null) {
       message.vid = object.vid
     } else {
       message.vid = 0
     }
     if (object.products !== undefined && object.products !== null) {
-      message.products = Product.fromPartial(object.products)
-    } else {
-      message.products = undefined
+      for (const e of object.products) {
+        message.products.push(Product.fromPartial(e))
+      }
     }
     return message
   }

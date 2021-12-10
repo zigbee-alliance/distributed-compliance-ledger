@@ -14992,15 +14992,17 @@ paths:
                       type: integer
                       format: int32
                     products:
-                      type: object
-                      properties:
-                        pid:
-                          type: integer
-                          format: int32
-                        name:
-                          type: string
-                        partNumber:
-                          type: string
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pid:
+                            type: integer
+                            format: int32
+                          name:
+                            type: string
+                          partNumber:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -15122,15 +15124,17 @@ paths:
                     type: integer
                     format: int32
                   products:
-                    type: object
-                    properties:
-                      pid:
-                        type: integer
-                        format: int32
-                      name:
-                        type: string
-                      partNumber:
-                        type: string
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pid:
+                          type: integer
+                          format: int32
+                        name:
+                          type: string
+                        partNumber:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -25604,15 +25608,17 @@ definitions:
               type: integer
               format: int32
             products:
-              type: object
-              properties:
-                pid:
-                  type: integer
-                  format: int32
-                name:
-                  type: string
-                partNumber:
-                  type: string
+              type: array
+              items:
+                type: object
+                properties:
+                  pid:
+                    type: integer
+                    format: int32
+                  name:
+                    type: string
+                  partNumber:
+                    type: string
       pagination:
         type: object
         properties:
@@ -25755,15 +25761,17 @@ definitions:
             type: integer
             format: int32
           products:
-            type: object
-            properties:
-              pid:
-                type: integer
-                format: int32
-              name:
-                type: string
-              partNumber:
-                type: string
+            type: array
+            items:
+              type: object
+              properties:
+                pid:
+                  type: integer
+                  format: int32
+                name:
+                  type: string
+                partNumber:
+                  type: string
   zigbeealliance.distributedcomplianceledger.model.VendorProducts:
     type: object
     properties:
@@ -25771,15 +25779,17 @@ definitions:
         type: integer
         format: int32
       products:
-        type: object
-        properties:
-          pid:
-            type: integer
-            format: int32
-          name:
-            type: string
-          partNumber:
-            type: string
+        type: array
+        items:
+          type: object
+          properties:
+            pid:
+              type: integer
+              format: int32
+            name:
+              type: string
+            partNumber:
+              type: string
   zigbeealliance.distributedcomplianceledger.validator.Description:
     type: object
     properties:
