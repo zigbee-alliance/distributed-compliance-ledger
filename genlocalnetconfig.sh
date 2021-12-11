@@ -24,8 +24,11 @@ if [ "$(uname)" == "Darwin" ]; then
     SED_EXT="''"
 fi
 
-rm -rf ~/.dclcli
-rm -rf ~/.dcld
+DCL_DIR="$HOME/.dcl"
+KEYPASSWD=test1234
+CHAIN_ID=dclchain
+
+rm -rf "$DCL_DIR"
 
 rm -rf "$LOCALNET_DIR"
 mkdir "$LOCALNET_DIR" "$LOCALNET_DIR"/{client,node0,node1,node2,node3}
@@ -36,88 +39,101 @@ fi
 
 # client
 
-dclcli config chain-id dclchain
-dclcli config output json
-dclcli config indent true
-dclcli config trust-node false
+dcld config chain-id "$CHAIN_ID"
+dcld config output json
+# TODO issue 99: check the replacement for the setting
+# dcld config indent true
+# TODO issue 99: check the replacement for the setting
+# dcld config trust-node false
+dcld config keyring-backend file
 
-echo 'test1234' | dclcli keys add jack
-echo 'test1234' | dclcli keys add alice
-echo 'test1234' | dclcli keys add bob
-echo 'test1234' | dclcli keys add anna
 
 cp -r ~/.dclcli/* "$LOCALNET_DIR/client"
 
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add jack
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add alice
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add bob
+(echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add anna
+
+# common keyring (client) data for all the nodes
+# TODO issue 99: do we need all the keys on all the nodes
+mv ~/.dcl/* localnet/client
+
+jack_address=$(echo "$KEYPASSWD" | dcld keys show jack -a)
+jack_pubkey=$(echo "$KEYPASSWD" | dcld keys show jack -p)
+
+alice_address=$(echo "$KEYPASSWD" | dcld keys show alice -a)
+alice_pubkey=$(echo "$KEYPASSWD" | dcld keys show alice -p)
+
+bob_address=$(echo "$KEYPASSWD" | dcld keys show bob -a)
+bob_pubkey=$(echo "$KEYPASSWD" | dcld keys show bob -p)
+
+anna_address=$(echo "$KEYPASSWD" | dcld keys show anna -a)
+anna_pubkey=$(echo "$KEYPASSWD" | dcld keys show anna -p)
+
 # node 0
 
-dcld init node0 --chain-id dclchain
+dcld init node0 --chain-id "$CHAIN_ID"
+cp -R localnet/client/* ~/.dcl
 
-jack_address=$(dclcli keys show jack -a)
-jack_pubkey=$(dclcli keys show jack -p)
-
-alice_address=$(dclcli keys show alice -a)
-alice_pubkey=$(dclcli keys show alice -p)
-
-bob_address=$(dclcli keys show bob -a)
-bob_pubkey=$(dclcli keys show bob -p)
-
-anna_address=$(dclcli keys show anna -a)
-anna_pubkey=$(dclcli keys show anna -p)
-
-dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+# TODO issue 99: do we really need to create multiple the same 4 accounts per each node
+dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | dcld gentx --from jack
+echo "$KEYPASSWD" | dcld gentx jack --chain-id "$CHAIN_ID"
 
 mv ~/.dcld/* "$LOCALNET_DIR/node0"
 
 # node 1
 
-dcld init node1 --chain-id dclchain
+dcld init node1 --chain-id "$CHAIN_ID"
+cp -R localnet/client/* ~/.dcl
 
 dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | dcld gentx --from alice
+echo "$KEYPASSWD" | dcld gentx alice --chain-id "$CHAIN_ID"
 
 mv ~/.dcld/* "$LOCALNET_DIR/node1"
 
 # node 2
 
-dcld init node2 --chain-id dclchain
+dcld init node2 --chain-id "$CHAIN_ID"
+cp -R localnet/client/* ~/.dcl
 
 dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | dcld gentx --from bob
+echo "$KEYPASSWD" | dcld gentx bob --chain-id "$CHAIN_ID"
 
 mv ~/.dcld/* "$LOCALNET_DIR/node2"
 
 # node 3
 
-dcld init node3 --chain-id dclchain
+dcld init node3 --chain-id "$CHAIN_ID"
+cp -R localnet/client/* ~/.dcl
 
 dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
 dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
 
-echo 'test1234' | dcld gentx --from anna
+echo "$KEYPASSWD" | dcld gentx anna --chain-id "$CHAIN_ID"
 
 cp -r ~/.dcld/* "$LOCALNET_DIR/node3"
-
 
 if [[ -d "$LOCALNET_DIR/observer0" ]]; then
     rm -rf ~/.dcld/*
     # observer0
 
-    dcld init observer0 --chain-id dclchain
+    dcld init observer0 --chain-id "$CHAIN_ID"
+    cp -R localnet/client/* ~/.dcl
 
     dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
     dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"

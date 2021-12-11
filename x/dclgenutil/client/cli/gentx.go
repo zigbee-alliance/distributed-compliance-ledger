@@ -37,7 +37,7 @@ func GenTxCmd(mbm module.BasicManager, txEncCfg client.TxEncodingConfig, genAccI
 	cmd := &cobra.Command{
 		Use:   "gentx [key_name]",
 		Short: "Generate a genesis transaction to create a validator",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		Long: fmt.Sprintf(`Generate a genesis transaction that creates a validator,
 that is signed by the key in the Keyring referenced by a given name. A node ID and Bech32 consensus
 pubkey may optionally be provided. If they are omitted, they will be retrieved from the priv_validator.json

@@ -15,6 +15,8 @@
 
 set -euo pipefail
 
+# FIXME issue 99: update (check ./genlocalnetconfig.sh)
+
 rm -rf ~/.dclcli
 rm -rf ~/.dcld
 
