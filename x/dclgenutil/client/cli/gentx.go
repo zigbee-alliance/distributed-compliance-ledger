@@ -94,15 +94,15 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 
-			name := args[0]
-			key, err := clientCtx.Keyring.Key(name)
+			keyName := args[0]
+			key, err := clientCtx.Keyring.Key(keyName)
 			if err != nil {
-				return errors.Wrapf(err, "failed to fetch '%s' from the keyring", name)
+				return errors.Wrapf(err, "failed to fetch '%s' from the keyring", keyName)
 			}
 
 			moniker := config.Moniker
 			if m, _ := cmd.Flags().GetString(validatorcli.FlagName); m != "" {
-				name = m
+				moniker = m
 			}
 
 			// set flags for creating a gentx
@@ -155,7 +155,7 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 				return fmt.Errorf("error creating tx builder: %w", err)
 			}
 
-			err = authclient.SignTx(txFactory, clientCtx, name, txBuilder, true, true)
+			err = authclient.SignTx(txFactory, clientCtx, keyName, txBuilder, true, true)
 			if err != nil {
 				return errors.Wrap(err, "failed to sign std tx")
 			}

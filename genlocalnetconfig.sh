@@ -57,8 +57,6 @@ cp -r ~/.dclcli/* "$LOCALNET_DIR/client"
 
 # common keyring (client) data for all the nodes
 # TODO issue 99: do we need all the keys on all the nodes
-mv ~/.dcl/* localnet/client
-
 jack_address=$(echo "$KEYPASSWD" | dcld keys show jack -a)
 jack_pubkey=$(echo "$KEYPASSWD" | dcld keys show jack -p)
 
@@ -71,85 +69,64 @@ bob_pubkey=$(echo "$KEYPASSWD" | dcld keys show bob -p)
 anna_address=$(echo "$KEYPASSWD" | dcld keys show anna -a)
 anna_pubkey=$(echo "$KEYPASSWD" | dcld keys show anna -p)
 
-# node 0
+mv "$DCL_DIR"/* $LOCALNET_DIR/client
 
-dcld init node0 --chain-id "$CHAIN_ID"
-cp -R localnet/client/* ~/.dcl
 
-# TODO issue 99: do we really need to create multiple the same 4 accounts per each node
-dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
-
-echo "$KEYPASSWD" | dcld gentx jack --chain-id "$CHAIN_ID"
-
-mv ~/.dcld/* "$LOCALNET_DIR/node0"
-
-# node 1
-
-dcld init node1 --chain-id "$CHAIN_ID"
-cp -R localnet/client/* ~/.dcl
-
-dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
-
-echo "$KEYPASSWD" | dcld gentx alice --chain-id "$CHAIN_ID"
-
-mv ~/.dcld/* "$LOCALNET_DIR/node1"
-
-# node 2
-
-dcld init node2 --chain-id "$CHAIN_ID"
-cp -R localnet/client/* ~/.dcl
-
-dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
-
-echo "$KEYPASSWD" | dcld gentx bob --chain-id "$CHAIN_ID"
-
-mv ~/.dcld/* "$LOCALNET_DIR/node2"
-
-# node 3
-
-dcld init node3 --chain-id "$CHAIN_ID"
-cp -R localnet/client/* ~/.dcl
-
-dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
-dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
-
-echo "$KEYPASSWD" | dcld gentx anna --chain-id "$CHAIN_ID"
-
-cp -r ~/.dcld/* "$LOCALNET_DIR/node3"
-
-if [[ -d "$LOCALNET_DIR/observer0" ]]; then
-    rm -rf ~/.dcld/*
-    # observer0
-
-    dcld init observer0 --chain-id "$CHAIN_ID"
-    cp -R localnet/client/* ~/.dcl
-
-    dcld add-genesis-account --address=$jack_address --pubkey=$jack_pubkey --roles="Trustee,NodeAdmin"
+function add_genesis_accounts {
+    dcld add-genesis-account --address="$jack_address" --pubkey="$jack_pubkey" --roles="Trustee,NodeAdmin"
     dcld add-genesis-account --address=$alice_address --pubkey=$alice_pubkey --roles="Trustee,NodeAdmin"
     dcld add-genesis-account --address=$bob_address --pubkey=$bob_pubkey --roles="Trustee,NodeAdmin"
     dcld add-genesis-account --address=$anna_address --pubkey=$anna_pubkey --roles="NodeAdmin"
+}
 
-    cp -r ~/.dcld/* "$LOCALNET_DIR/observer0"
+
+function gentx {
+    local _node_name="$1"
+    local _key_name="$2"
+    echo "$KEYPASSWD" | dcld gentx "$_key_name" --chain-id "$CHAIN_ID" --name "$_node_name"
+}
+
+
+function init_node {
+    local _node_name="$1"
+    local _key_name="${2:-}"
+    local _copy_only="${3:-}"
+
+    dcld init "$_node_name" --chain-id "$CHAIN_ID"
+    cp -R "$LOCALNET_DIR"/client/* "$DCL_DIR"
+
+    # we need to make them in an app state for each node
+    add_genesis_accounts
+
+    if [[ -n "$_key_name" ]]; then
+        gentx "$_node_name" "$_key_name"
+    fi
+
+    if [[ -n "$_copy_only" ]]; then
+        cp -r "$DCL_DIR"/* "$LOCALNET_DIR/$_node_name"
+    else
+        mv "$DCL_DIR"/* "$LOCALNET_DIR/$_node_name"
+    fi
+}
+
+
+init_node node0 jack
+init_node node1 alice
+init_node node2 bob
+init_node node3 anna yes
+
+
+if [[ -d "$LOCALNET_DIR/observer0" ]]; then
+    rm -rf "$DCL_DIR"/*
+    init_node observer0 "" yes
 fi
 
 # Collect all validator creation transactions
 
-mkdir -p ~/.dcld/config/gentx
-cp "$LOCALNET_DIR"/node0/config/gentx/* ~/.dcld/config/gentx
-cp "$LOCALNET_DIR"/node1/config/gentx/* ~/.dcld/config/gentx
-cp "$LOCALNET_DIR"/node2/config/gentx/* ~/.dcld/config/gentx
-cp "$LOCALNET_DIR"/node3/config/gentx/* ~/.dcld/config/gentx
+mkdir -p "$DCL_DIR"/config/gentx
+for node_name in node0 node1 node2 node3; do
+    cp "$LOCALNET_DIR/$node_name"/config/gentx/* "$DCL_DIR"/config/gentx
+done
 
 # Embed them into genesis
 
@@ -158,10 +135,9 @@ dcld validate-genesis
 
 # Update genesis for all nodes
 
-cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node0/config/"
-cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node1/config/"
-cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node2/config/"
-cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/node3/config/"
+for node_name in node0 node1 node2 node3; do
+    cp "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR/$node_name/config/"
+done
 
 if [[ -d "$LOCALNET_DIR/observer0" ]]; then
     cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/observer0/config/"
@@ -184,9 +160,9 @@ if [[ -d "$LOCALNET_DIR/observer0" ]]; then
 fi
 
 # Make RPC endpoint available externally
-for node_id in node0 node1 node2 node3 observer0; do
-    if [[ -d "$LOCALNET_DIR/${node_id}" ]]; then
-        sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "$LOCALNET_DIR/${node_id}/config/config.toml"
-        sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_id}/config/config.toml"
+for node_name in node0 node1 node2 node3 observer0; do
+    if [[ -d "$LOCALNET_DIR/${node_name}" ]]; then
+        sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
+        sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
     fi
 done
