@@ -117,6 +117,14 @@ func (acc Account) Validate() error {
 	return nil
 }
 
+func (acc Account) GetRoles() []AccountRole {
+	return acc.Roles
+}
+
+func (acc Account) GetVendorID() uint64 {
+	return acc.VendorID
+}
+
 func (acc Account) HasRole(targetRole AccountRole) bool {
 	for _, role := range acc.Roles {
 		if role == targetRole {

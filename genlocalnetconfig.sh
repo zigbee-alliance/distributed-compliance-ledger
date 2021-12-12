@@ -37,6 +37,10 @@ if [[ -n "$DCL_OBSERVERS" ]]; then
     mkdir "$LOCALNET_DIR/observer0"
 fi
 
+# FIXME issue 99: why we need that (it starts to fail without that from some point)
+mkdir -p "$DCL_DIR/config"
+touch "$DCL_DIR"/config/client.toml
+
 # client
 
 dcld config chain-id "$CHAIN_ID"
@@ -47,8 +51,6 @@ dcld config output json
 # dcld config trust-node false
 dcld config keyring-backend file
 
-
-cp -r ~/.dclcli/* "$LOCALNET_DIR/client"
 
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add jack
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add alice

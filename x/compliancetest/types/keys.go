@@ -5,7 +5,7 @@ const (
 	ModuleName = "compliancetest"
 
 	// StoreKey defines the primary module store key
-	StoreKey = ModuleName
+	StoreKey = "xxx_" + ModuleName // FIXME compliancetests conflicts with compliance as a key prefix
 
 	// RouterKey is the message route for slashing
 	RouterKey = ModuleName
@@ -14,7 +14,7 @@ const (
 	QuerierRoute = ModuleName
 
 	// MemStoreKey defines the in-memory store key
-	MemStoreKey = "mem_compliancetest"
+	MemStoreKey = "xxx_" + "mem_compliancetest" // FIXME issue 99: the same is likely here too
 )
 
 func KeyPrefix(p string) []byte {
