@@ -1,0 +1,171 @@
+<!--
+ Copyright 2020 DSR Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<ng-container *ngIf="{ item: item$ | async, accounts: accounts$ | async} as data">
+  <ng-container *ngIf="data.item && data.accounts else loading">
+    <div>
+      <div class="pb-2 mb-3 pt-3 border-bottom">
+        <h1 class="h2">{{isNew ? 'Add Model Info' : 'Update model info'}}</h1>
+      </div>
+
+      <form #modelInfoForm="ngForm" (ngSubmit)="onSubmit(modelInfoForm, data.item)">
+
+        <div class="row">
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="vid">Vendor ID</label>
+            <input type="number" class="form-control" required
+                   #vid="ngModel" id="vid" name="vid"
+                   [disabled]="!isNew"
+                   [(ngModel)]="data.item.vid"
+                   [ngClass]="getValidityClasses(vid)">
+            <div class="invalid-feedback">
+              Please enter Vendor ID
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="pid">Product ID</label>
+            <input type="number" class="form-control" required
+                   #pid="ngModel" id="pid" name="pid"
+                   [disabled]="!isNew"
+                   [(ngModel)]="data.item.pid"
+                   [ngClass]="getValidityClasses(pid)">
+            <div class="invalid-feedback">
+              Please enter Product ID
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="cid">Cathegory ID</label>
+            <input type="number" class="form-control"
+                   #cid="ngModel" id="cid" name="cid"
+                   [(ngModel)]="data.item.cid"
+                   [ngClass]="getValidityClasses(cid)">
+            <div class="invalid-feedback">
+              Please enter Cathegory ID
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-4 col-lg-6 col-md-8 mb-3">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" required
+                   #name="ngModel" id="name" name="name"
+                   [disabled]="!isNew"
+                   [(ngModel)]="data.item.name"
+                   [ngClass]="getValidityClasses(name)">
+            <div class="invalid-feedback">
+              Please enter device name.
+            </div>
+          </div>
+          <div *ngIf="!isNew" class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="owner">Owner</label>
+            <select class="custom-select d-block w-100" required
+                    #owner="ngModel" id="owner" name="owner"
+                    [(ngModel)]="data.item.owner"
+                    [disabled]="!isNew"
+                    [ngClass]="getValidityClasses(owner)">
+              <option [ngValue]="undefined">Choose...</option>
+              <option *ngFor="let account of data.accounts.items" [value]="account.address">{{account | account}}</option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid owner.
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-6 col-lg-9 col-md-12 mb-3">
+            <label for="description">Description</label>
+            <textarea rows="3" type="text" class="form-control" required
+                   #description="ngModel" id="description" name="description"
+                   [(ngModel)]="data.item.description"
+                   [ngClass]="getValidityClasses(description)">
+           </textarea>
+            <div class="invalid-feedback">
+              Please enter description.
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="sku">SKU</label>
+            <input type="text" class="form-control" required
+                   #sku="ngModel" id="sku" name="sku"
+                   [disabled]="!isNew"
+                   [(ngModel)]="data.item.sku"
+                   [ngClass]="getValidityClasses(sku)">
+            <div class="invalid-feedback">
+              Please enter SKU.
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="firmwareVersion">Firmware Version</label>
+            <input type="text" class="form-control" required
+                   #firmwareVersion="ngModel" id="firmwareVersion" name="firmwareVersion"
+                   [disabled]="!isNew"
+                   [(ngModel)]="data.item.firmwareVersion"
+                   [ngClass]="getValidityClasses(firmwareVersion)">
+            <div class="invalid-feedback">
+              Valid firmware version is required.
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="hardwareVersion">Hardware Version</label>
+            <input type="text" class="form-control" required
+                   #hardwareVersion="ngModel" id="hardwareVersion" name="hardwareVersion"
+                   [disabled]="!isNew"
+                   [(ngModel)]="data.item.hardwareVersion"
+                   [ngClass]="getValidityClasses(hardwareVersion)">
+            <div class="invalid-feedback">
+              Valid hardware version is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-6 col-lg-9 col-md-12 mb-3">
+            <label for="custom">Custom</label>
+            <input type="text" class="form-control"
+                   #custom="ngModel" id="custom" name="custom"
+                   [(ngModel)]="data.item.custom"
+                   [ngClass]="getValidityClasses(custom)">
+            <div class="invalid-feedback">
+              Please enter custom.
+            </div>
+          </div>
+        </div>
+
+        <div class="custom-control custom-checkbox mb-3">
+          <input type="checkbox" class="custom-control-input"
+                 #testingCompleted="ngModel" id="testingCompleted" name="testingCompleted"
+                 [(ngModel)]="data.item.tisOrTrpTestingCompleted"
+                 [ngClass]="getValidityClasses(testingCompleted)">
+          <label class="custom-control-label" for="testingCompleted">Product has successfully completed TIS/TRP
+            testing</label>
+        </div>
+
+        <hr class="mb-3">
+        <button class="btn btn-primary" type="submit">Next</button>
+
+      </form>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #loading>
+  <div>Loading model info...</div>
+</ng-template>

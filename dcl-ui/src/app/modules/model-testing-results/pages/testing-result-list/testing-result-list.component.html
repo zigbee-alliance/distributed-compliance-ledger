@@ -1,0 +1,43 @@
+<!--
+ Copyright 2020 DSR Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<ng-container *ngIf="testingResults$ | async as testingResults; else loadingBlock">
+  <table class="table w-auto justify-content-center" *ngIf="testingResults.length > 0">
+    <thead>
+    <tr>
+      <th>Owner</th>
+      <th>Test Result</th>
+      <th>Test Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of testingResults" class="cursor-pointer" (click)="viewTestingResult(item.testResult)">
+      <td>{{item.owner}}</td>
+      <td>
+        <span class="d-inline-block text-truncate" style="max-width: 500px;">{{item.testResult}}</span>
+      </td>
+      <td>{{item.testDate | date:'medium'}}</td>
+    </tr>
+    </tbody>
+  </table>
+  <h5 *ngIf="testingResults.length == 0">
+    No Testing Results
+  </h5>
+</ng-container>
+
+<ng-template #loadingBlock>
+  <div>Loading testing results...</div>
+</ng-template>

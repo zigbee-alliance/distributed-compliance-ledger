@@ -1,0 +1,44 @@
+#!/bin/bash
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+DEBUG="${DEBUG:-}"
+
+NODE_IP="${1:-0.0.0.0:26657}"
+
+set -eu
+set -o pipefail
+
+export PATH="$PATH:/usr/bin"
+
+echo "Checking the node 'sync_info.latest_block_height' value is not increasing..."
+
+echo "sync_info.latest_block_height Try 1"
+check1="$(dclcli status --node "$NODE_IP" | grep latest_block_height)"
+
+echo "sync_info.latest_block_height Try 2"
+# TODO it should depend on empty block creation setting value
+sleep 6
+check2="$(dclcli status --node "$NODE_IP" | grep latest_block_height)"
+
+if [[ "$check1" == "$check2" ]]; then
+    echo "Error: sync_info.latest_block_height value is not increasing..."
+    exit 1
+fi
+
+# TODO improve
+echo "Checking the node is participating in consensus..."
+dclcli tendermint-validator-set | grep -q address
+
+echo "Passed"
