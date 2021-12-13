@@ -66,7 +66,7 @@ func (roles AccountRoles) Validate() error {
 }
 
 // TODO: think about better way
-func fromSlice(roles []AccountRole) *AccountRoles {
+func FromSlice(roles []AccountRole) *AccountRoles {
 	var res AccountRoles
 	for _, role := range roles {
 		res = append(res, role)
@@ -103,7 +103,7 @@ func (acc Account) Validate() error {
 		return err
 	}
 
-	roles := fromSlice(acc.Roles)
+	roles := FromSlice(acc.Roles)
 
 	if err := roles.Validate(); err != nil {
 		return err

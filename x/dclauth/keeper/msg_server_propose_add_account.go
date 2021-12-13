@@ -10,12 +10,22 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
+// TODO refactor duplication of msg ValidateBasic
 func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgProposeAddAccount) (*types.MsgProposeAddAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
 	// TODO issue 99: good error
 	if err != nil {
+		return nil, err
+	}
+
+	roles := types.FromSlice(msg.Roles)
+	if len(*roles) == 0 {
+		return nil, types.ErrMissingRoles()
+	}
+
+	if err := roles.Validate(); err != nil {
 		return nil, err
 	}
 
