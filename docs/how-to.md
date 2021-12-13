@@ -63,11 +63,11 @@ In order to connect the CLI to a DC Ledger Network (Chain), the following parame
 * `dclcli config indent true` - Add indent to JSON response.
 * `dclcli config trust-node false` - Verify proofs for node responses.
 * `dclcli config node <address>` - Address of a node to connect.
-    * Example: `tcp://18.157.114.34:26657`.
-    * The IP address there is the IP of one of the nodes from the Network you are going to connect to.
-    * One of the persistent peer's IP can be used here
-    * A list of persistent peer IPs for persistent networks (such as the Test Net)
-    can be found in the corresponding subfolders within [Persistent Chains](../deployment/persistent_chains). 
+    * Example: `tcp://18.157.114.34:26657` or `on1.testnet.dcl.dev.dsr-corporation.com:26657`.
+    * The address there is the address (IP or domain name) of one of the nodes (Validators or Observers) from the Network you are going to connect to.
+    * A list of Observer Node addresses for persistent networks (such as the Test Net)
+    can be found in the corresponding subfolders within [Persistent Chains](../deployment/persistent_chains).
+    * Please look at [Observer Nodes](../deployment/persistent_chains/testnet/nodes.md) for a list of Observer nodes for the current `testnet`.
 
 
 ## Getting Account
