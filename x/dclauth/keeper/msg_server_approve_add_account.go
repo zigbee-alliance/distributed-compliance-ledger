@@ -61,7 +61,7 @@ func (k msgServer) ApproveAddAccount(
 		//		AccountNumber and Sequence set to zero
 		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.VendorID)
 		account.AccountNumber = k.GetNextAccountNumber(ctx)
-		k.SetAccount(ctx, *account)
+		k.SetAccountO(ctx, *account)
 
 		// delete pending account record
 		k.RemovePendingAccount(ctx, accAddr)

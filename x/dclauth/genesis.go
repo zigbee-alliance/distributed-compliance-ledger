@@ -11,7 +11,7 @@ import (
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
 	// Set all the account
 	for _, elem := range genState.AccountList {
-		k.SetAccount(ctx, elem)
+		k.SetAccountO(ctx, elem)
 	}
 	// Set all the pendingAccount
 	for _, elem := range genState.PendingAccountList {

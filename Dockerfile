@@ -36,11 +36,9 @@ RUN make
 FROM alpine:latest
 
 COPY --from=builder /go/bin/dcld /usr/bin/dcld
-COPY --from=builder /go/bin/dclcli /usr/bin/dclcli
 COPY --from=builder /go/bin/dlv /usr/bin/dlv
 
-VOLUME /root/.dcld
-VOLUME /root/.dclcli
+VOLUME /root/.dcl
 
 EXPOSE 26656 26657
 

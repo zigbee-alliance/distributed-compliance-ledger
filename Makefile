@@ -5,7 +5,6 @@ COMMIT := $(shell git log -1 --format='%H')
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
-	-X github.com/cosmos/cosmos-sdk/version.ClientName=dclcli \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)
 
@@ -23,11 +22,9 @@ all: install
 
 build: go.sum
 	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
-	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/dclcli ./cmd/dclcli
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/dcld
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/dclcli
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"

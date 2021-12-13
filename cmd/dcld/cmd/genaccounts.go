@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -10,8 +11,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/codec"
 
 	// "github.com/cosmos/cosmos-sdk/crypto/keyring"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -31,7 +34,7 @@ const (
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
 func AddGenesisAccountCmd(defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-genesis-account",
+		Use:   "add-genesis-account ",
 		Short: "Add a genesis account to genesis.json",
 		Long: `Add a genesis account to genesis.json. The provided account must specify
 the account address or key name. If a key name is given,
@@ -40,43 +43,40 @@ the address will be looked up in the local Keybase.
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
+			depCdc := clientCtx.JSONCodec
+			cdc := depCdc.(codec.Codec)
+
 			serverCtx := server.GetServerContextFromCmd(cmd)
 			config := serverCtx.Config
 
 			config.SetRoot(clientCtx.HomeDir)
 
 			addr, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
-			if err != nil {
-				return err
-			}
+			//if err != nil {
+			//	return err
+			//}
 
-			/* TODO migration of keyring was not released yet in cosmos (in v.0.44.4)
-			var kr keyring.Keyring
+			// TODO migration of keyring was not released yet in cosmos (in v.0.44.4)
 			if err != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())
-				keyringBackend, _ := cmd.Flags().GetString(flags.FlagKeyringBackend)
-
-				if keyringBackend != "" && clientCtx.Keyring == nil {
-					var err error
-					kr, err = keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf, clientCtx.Codec)
-					if err != nil {
-						return err
-					}
-				} else {
-					kr = clientCtx.Keyring
-				}
-
-				k, err := kr.Key(viper.GetString(FlagAddress))
-				if err != nil {
-					return fmt.Errorf("failed to get address from Keyring: %w", err)
-				}
-
-				addr, err = k.GetAddress()
+				keyringBackend, err := cmd.Flags().GetString(flags.FlagKeyringBackend)
 				if err != nil {
 					return err
 				}
+
+				// attempt to lookup address from Keybase if no address was provided
+				kb, err := keyring.New(sdk.KeyringServiceName(), keyringBackend, clientCtx.HomeDir, inBuf)
+				if err != nil {
+					return err
+				}
+
+				info, err := kb.Key(args[0])
+				if err != nil {
+					return fmt.Errorf("failed to get address from Keybase: %w", err)
+				}
+
+				addr = info.GetAddress()
 			}
-			*/
 
 			pkStr := viper.GetString(FlagPubKey)
 
@@ -111,7 +111,7 @@ the address will be looked up in the local Keybase.
 				return fmt.Errorf("failed to unmarshal genesis state: %w", err)
 			}
 
-			authGenState := dclauthtypes.GetGenesisStateFromAppState(clientCtx.Codec, appState)
+			authGenState := dclauthtypes.GetGenesisStateFromAppState(cdc, appState)
 			accs := authGenState.AccountList
 
 			// Add the new account to the set of genesis accounts and sanitize the
@@ -120,7 +120,7 @@ the address will be looked up in the local Keybase.
 
 			authGenState.AccountList = accs
 
-			authGenStateBz, err := clientCtx.Codec.MarshalJSON(authGenState)
+			authGenStateBz, err := cdc.MarshalJSON(authGenState)
 			if err != nil {
 				return fmt.Errorf("failed to marshal auth genesis state: %w", err)
 			}
@@ -144,6 +144,16 @@ the address will be looked up in the local Keybase.
 
 	cmd.Flags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|kwallet|pass|test)")
+
+	/*
+		cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|kwallet|pass|test)")
+		cmd.Flags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
+		cmd.Flags().String(flagVestingAmt, "", "amount of coins for vesting accounts")
+		cmd.Flags().Int64(flagVestingStart, 0, "schedule start time (unix epoch) for vesting accounts")
+		flags.AddQueryFlagsToCmd(cmd)
+
+
+	*/
 
 	_ = cmd.MarkFlagRequired(FlagAddress)
 	_ = cmd.MarkFlagRequired(FlagPubKey)

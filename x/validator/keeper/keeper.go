@@ -53,11 +53,7 @@ func (k Keeper) ApplyAndReturnValidatorSetUpdates(ctx sdk.Context) (updates []ab
 		owner := validator.GetOwner()
 
 		// power on the last height.
-		lastValidatorPower, found := k.GetLastValidatorPower(ctx, owner)
-
-		if !found {
-			return false
-		}
+		lastValidatorPower, _ := k.GetLastValidatorPower(ctx, owner)
 
 		// if last power was more then 0 and potential power 0 it
 		// means that validator was jailed or removed within the block.

@@ -41,11 +41,11 @@ func (msg *MsgCreateValidator) Type() string {
 }
 
 func (msg *MsgCreateValidator) GetSigners() []sdk.AccAddress {
-	signer, err := sdk.AccAddressFromBech32(msg.Signer)
+	signer, err := sdk.ValAddressFromBech32(msg.Signer)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{signer}
+	return []sdk.AccAddress{sdk.AccAddress(signer)}
 }
 
 func (msg *MsgCreateValidator) GetSignBytes() []byte {
@@ -54,7 +54,7 @@ func (msg *MsgCreateValidator) GetSignBytes() []byte {
 }
 
 func (msg *MsgCreateValidator) ValidateBasic() error {
-	accAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	accAddr, err := sdk.ValAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
