@@ -4,6 +4,9 @@ const (
 	// ModuleName defines the module name
 	ModuleName = "dclauth"
 
+	// command name for the module
+	CmdName = "auth"
+
 	// StoreKey defines the primary module store key
 	StoreKey = ModuleName
 
