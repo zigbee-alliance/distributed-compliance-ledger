@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -46,15 +47,15 @@ func CmdListLastValidatorPower() *cobra.Command {
 
 func CmdShowLastValidatorPower() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-last-validator-power [owner]",
+		Use:   "show-last-validator-power",
 		Short: "shows a LastValidatorPower",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			addr, err := sdk.ValAddressFromBech32(args[0])
+			addr, err := sdk.ValAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
@@ -72,7 +73,10 @@ func CmdShowLastValidatorPower() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded validator address")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

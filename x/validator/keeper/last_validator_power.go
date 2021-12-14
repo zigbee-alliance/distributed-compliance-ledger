@@ -3,6 +3,8 @@ package keeper
 import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -118,7 +120,7 @@ func (k Keeper) IterateLastValidators(ctx sdk.Context, process func(validator ty
 
 		validator, found := k.GetValidator(ctx, addr)
 		if !found {
-			panic(types.ErrValidatorDoesNotExist(addr))
+			panic(sdkstakingtypes.ErrNoValidatorFound)
 		}
 
 		if process(validator) {

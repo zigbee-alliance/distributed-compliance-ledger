@@ -142,7 +142,7 @@ for node_name in node0 node1 node2 node3; do
 done
 
 if [[ -d "$LOCALNET_DIR/observer0" ]]; then
-    cp ~/.dcld/config/genesis.json "$LOCALNET_DIR/observer0/config/"
+    cp "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR/observer0/config/"
 fi
 
 # Find out node ids
