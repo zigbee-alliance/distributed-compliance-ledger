@@ -16,9 +16,9 @@ var _ = strconv.Itoa(0)
 
 func CmdApproveAddAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "approve-add-account [address]",
+		Use:   "approve-add-account",
 		Short: "Broadcast message ApproveAddAccount",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
@@ -42,7 +42,6 @@ func CmdApproveAddAccount() *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
-
 	flags.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom) // XXX issue 99: was absent in legacy code ???

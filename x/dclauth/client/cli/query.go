@@ -17,7 +17,7 @@ import (
 func GetQueryCmd(queryRoute string) *cobra.Command {
 	// Group dclauth queries under a subcommand
 	cmd := &cobra.Command{
-		Use:                        types.ModuleName,
+		Use:                        types.CmdName,
 		Short:                      fmt.Sprintf("Querying commands for the %s module", types.ModuleName),
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,

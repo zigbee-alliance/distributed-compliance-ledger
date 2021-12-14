@@ -37,7 +37,7 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 
 	// check to see if the pubkey or sender has been registered before
 	if _, found := k.GetValidator(ctx, valAddr); found {
-		return nil, types.ErrValidatorExists(msg.Signer)
+		return nil, sdkstakingtypes.ErrValidatorOwnerExists
 	}
 
 	pk, ok := msg.PubKey.GetCachedValue().(cryptotypes.PubKey)

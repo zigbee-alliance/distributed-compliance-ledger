@@ -19,6 +19,7 @@ const (
 	CodePendingAccountRevocationAlreadyExists uint32 = 105
 	CodePendingAccountRevocationDoesNotExist  uint32 = 106
 	CodeMissingVendorIDForVendorAccount       uint32 = 107
+	CodeMissingRoles                          uint32 = 108
 )
 
 func ErrAccountAlreadyExists(address interface{}) *sdkerrors.Error {
@@ -54,4 +55,9 @@ func ErrPendingAccountRevocationDoesNotExist(address interface{}) *sdkerrors.Err
 func ErrMissingVendorIDForVendorAccount() *sdkerrors.Error {
 	return sdkerrors.Register(DefaultCodespace, CodeMissingVendorIDForVendorAccount,
 		"No Vendor ID is provided in the Vendor Role for the new account")
+}
+
+func ErrMissingRoles() *sdkerrors.Error {
+	return sdkerrors.Register(DefaultCodespace, CodeMissingRoles,
+		"No roles provided")
 }

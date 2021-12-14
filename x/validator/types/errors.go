@@ -29,23 +29,28 @@ const (
 	CodeAccountAlreadyHasNode uint32 = 604
 )
 
-func ErrValidatorExists(address interface{}) *sdkerrors.Error {
+// TODO issue 99: either remove completely or replace cosmos's staking errors
+
+/*
+func ErrValidatorExists(owner sdk.ConsAddress) *sdkerrors.Error {
 	return sdkerrors.Register(Codespace, CodeValidatorAlreadyExist,
-		fmt.Sprintf("Validator associated with the validator_address=%v already exists on the ledger", address))
+		fmt.Sprintf("Validator with the consensus address %v already exists on the ledger", owner))
 }
 
-func ErrValidatorDoesNotExist(address interface{}) *sdkerrors.Error {
+func ErrValidatorDoesNotExist(owner sdk.ValAddress) *sdkerrors.Error {
 	return sdkerrors.Register(Codespace, CodeValidatorDoesNotExist,
-		fmt.Sprintf("No validator associated with the validator_address=%v on the ledger", address))
+		fmt.Sprintf("No validator associated with the account address %v exists on the ledger", owner))
 }
+*/
 
 func ErrPoolIsFull() *sdkerrors.Error {
 	return sdkerrors.Register(Codespace, CodePoolIsFull,
 		fmt.Sprintf("Pool ledger already contains maximum number of active nodes: \"%v\"", MaxNodes))
 }
 
-func ErrAccountAlreadyHasNode(address interface{}) *sdkerrors.Error {
+/*
+func ErrAccountAlreadyHasNode(owner sdk.AccAddress) *sdkerrors.Error {
 	return sdkerrors.Register(Codespace, CodeAccountAlreadyHasNode,
-		fmt.Sprintf("There is already node stored on the ledger managed by an account"+
-			" associated with the address=\"%v\"", address))
+		fmt.Sprintf("Validator associated with the account address %v already exists on the ledger", owner))
 }
+*/

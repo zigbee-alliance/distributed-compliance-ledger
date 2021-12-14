@@ -23,7 +23,6 @@ func CmdProposeAddAccount() *cobra.Command {
 	cmd := &cobra.Command{
 		// TODO issue 99: move from required flags to positional arguments
 		//		(to keep the same direction as in cosmos sdk https://github.com/cosmos/cosmos-sdk/issues/1956)
-		// Use:   "propose-add-account [address] [pub-key] [roles]",
 		Use:   "propose-add-account",
 		Short: "Broadcast message ProposeAddAccount",
 		Args:  cobra.ExactArgs(0),
@@ -73,9 +72,11 @@ func CmdProposeAddAccount() *cobra.Command {
 				return err
 			}
 
+			/* it is done inside next step
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
+			*/
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
