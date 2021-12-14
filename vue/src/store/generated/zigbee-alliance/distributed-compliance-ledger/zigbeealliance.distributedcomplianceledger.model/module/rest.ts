@@ -79,7 +79,6 @@ export interface ModelModelVersions {
   /** @format int32 */
   pid?: number;
   softwareVersions?: string[];
-  creator?: string;
 }
 
 export type ModelMsgCreateModelResponse = object;

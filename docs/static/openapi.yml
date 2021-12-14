@@ -14810,8 +14810,6 @@ paths:
                       items:
                         type: string
                         format: uint64
-                    creator:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -14940,8 +14938,6 @@ paths:
                     items:
                       type: string
                       format: uint64
-                  creator:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -25378,8 +25374,6 @@ definitions:
         items:
           type: string
           format: uint64
-      creator:
-        type: string
   zigbeealliance.distributedcomplianceledger.model.MsgCreateModelResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionResponse:
@@ -25561,8 +25555,6 @@ definitions:
               items:
                 type: string
                 format: uint64
-            creator:
-              type: string
       pagination:
         type: object
         properties:
@@ -25741,8 +25733,6 @@ definitions:
             items:
               type: string
               format: uint64
-          creator:
-            type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetVendorProductsResponse:
     type: object
     properties:

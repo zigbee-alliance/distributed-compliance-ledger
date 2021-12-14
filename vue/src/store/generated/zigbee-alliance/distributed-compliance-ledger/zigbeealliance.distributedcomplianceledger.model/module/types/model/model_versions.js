@@ -2,7 +2,7 @@
 import * as Long from 'long';
 import { util, configure, Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.model';
-const baseModelVersions = { vid: 0, pid: 0, softwareVersions: 0, creator: '' };
+const baseModelVersions = { vid: 0, pid: 0, softwareVersions: 0 };
 export const ModelVersions = {
     encode(message, writer = Writer.create()) {
         if (message.vid !== 0) {
@@ -16,9 +16,6 @@ export const ModelVersions = {
             writer.uint64(v);
         }
         writer.ldelim();
-        if (message.creator !== '') {
-            writer.uint32(34).string(message.creator);
-        }
         return writer;
     },
     decode(input, length) {
@@ -45,9 +42,6 @@ export const ModelVersions = {
                     else {
                         message.softwareVersions.push(longToNumber(reader.uint64()));
                     }
-                    break;
-                case 4:
-                    message.creator = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -76,12 +70,6 @@ export const ModelVersions = {
                 message.softwareVersions.push(Number(e));
             }
         }
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = '';
-        }
         return message;
     },
     toJSON(message) {
@@ -94,7 +82,6 @@ export const ModelVersions = {
         else {
             obj.softwareVersions = [];
         }
-        message.creator !== undefined && (obj.creator = message.creator);
         return obj;
     },
     fromPartial(object) {
@@ -116,12 +103,6 @@ export const ModelVersions = {
             for (const e of object.softwareVersions) {
                 message.softwareVersions.push(e);
             }
-        }
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = '';
         }
         return message;
     }

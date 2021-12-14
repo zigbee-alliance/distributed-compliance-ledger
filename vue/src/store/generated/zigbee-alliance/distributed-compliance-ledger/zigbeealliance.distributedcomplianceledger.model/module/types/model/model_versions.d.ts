@@ -4,7 +4,6 @@ export interface ModelVersions {
     vid: number;
     pid: number;
     softwareVersions: number[];
-    creator: string;
 }
 export declare const ModelVersions: {
     encode(message: ModelVersions, writer?: Writer): Writer;
