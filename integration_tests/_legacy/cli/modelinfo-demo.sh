@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# FIXME issue 99: enable once implemented
+exit 0
+
 set -euo pipefail
 source integration_tests/cli/common.sh
 
@@ -29,14 +32,14 @@ test_divider
 
 productLabel="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dclcli tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 test_divider
 
 echo "Get Model with VID: $vid PID: $pid"
-result=$(dclcli query model get-model --vid=$vid --pid=$pid)
+result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$productLabel\""
@@ -45,7 +48,7 @@ echo "$result"
 test_divider
 
 echo "Get all model infos"
-result=$(dclcli query model all-models)
+result=$(dcld query model all-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 echo "$result"
@@ -53,14 +56,14 @@ echo "$result"
 test_divider
 
 echo "Get all vendors"
-result=$(dclcli query model vendors)
+result=$(dcld query model vendors)
 check_response "$result" "\"vid\": $vid"
 echo "$result"
 
 test_divider
 
 echo "Get Vendor Models with VID: ${vid}"
-result=$(dclcli query model vendor-models --vid=$vid)
+result=$(dcld query model vendor-models --vid=$vid)
 check_response "$result" "\"pid\": $pid"
 echo "$result"
 
@@ -68,14 +71,14 @@ test_divider
 
 echo "Update Model with VID: ${vid} PID: ${pid} with new description"
 description="New Device Description"
-result=$(echo "test1234" | dclcli tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description")
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description")
 check_response "$result" "\"success\": true"
 echo "$result"
 
 test_divider
 
 echo "Get Model with VID: ${vid} PID: ${pid}"
-result=$(dclcli query model get-model --vid=$vid --pid=$pid)
+result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$description\""
@@ -85,14 +88,14 @@ test_divider
 
 echo "Update Model with VID: ${vid} PID: ${pid} modifying supportURL"
 supportURL="https://newsupporturl.test"
-result=$(echo "test1234" | dclcli tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --supportURL "$supportURL")
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --supportURL "$supportURL")
 check_response "$result" "\"success\": true"
 echo "$result"
 
 test_divider
 
 echo "Get Model with VID: ${vid} PID: ${pid}"
-result=$(dclcli query model get-model --vid=$vid --pid=$pid)
+result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"supportURL\": \"$supportURL\""

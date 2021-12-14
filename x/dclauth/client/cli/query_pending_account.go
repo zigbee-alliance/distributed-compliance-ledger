@@ -13,7 +13,7 @@ import (
 
 func CmdListPendingAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-pending-account",
+		Use:   "all-proposed-accounts",
 		Short: "list all PendingAccount",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -46,7 +46,7 @@ func CmdListPendingAccount() *cobra.Command {
 
 func CmdShowPendingAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-pending-account",
+		Use:   "proposed-account",
 		Short: "shows a PendingAccount",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

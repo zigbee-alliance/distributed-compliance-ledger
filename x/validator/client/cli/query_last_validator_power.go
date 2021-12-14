@@ -14,7 +14,7 @@ import (
 
 func CmdListLastValidatorPower() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-last-validator-power",
+		Use:   "all-last-powers",
 		Short: "list all LastValidatorPower",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -47,7 +47,7 @@ func CmdListLastValidatorPower() *cobra.Command {
 
 func CmdShowLastValidatorPower() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-last-validator-power",
+		Use:   "last-powers",
 		Short: "shows a LastValidatorPower",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

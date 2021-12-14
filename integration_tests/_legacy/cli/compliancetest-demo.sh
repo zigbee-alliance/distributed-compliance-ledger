@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# FIXME issue 99: enable once implemented
+exit 0
+
 set -euo pipefail
 source integration_tests/cli/common.sh
 
@@ -42,19 +45,19 @@ test_divider
 echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="http://first.place.com"
 test_date="2020-01-01T00:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Add Second Testing Result for Model VID: $vid PID: $pid SV: $sv"
 second_testing_result="http://second.place.com"
 second_test_date="2020-04-04T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$second_testing_result" --test-date=$second_test_date --from $second_test_house_account --yes)
+result=$(echo "test1234" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$second_testing_result" --test-date=$second_test_date --from $second_test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get Testing Result for Model with VID: ${vid} PID: ${pid} SV: $sv"
-result=$(dclcli query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
+result=$(dcld query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"test_result\": \"$testing_result\""
@@ -74,14 +77,14 @@ test_divider
 echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="blob string"
 test_date="2020-11-24T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 test_divider
 
 echo "Get Testing Result for Model with VID: ${vid} PID: ${pid} SV:$sv"
-result=$(dclcli query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
+result=$(dcld query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"softwareVersion\": $sv"

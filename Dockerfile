@@ -26,6 +26,7 @@ RUN apk update && apk add --no-cache git make build-base
 RUN go get github.com/go-delve/delve/cmd/dlv
 
 WORKDIR /go/src/dc-ledger
+# FIXME issue 99: that is dirty and invalidates the cache almost always during the dev
 COPY . .
 
 RUN make
