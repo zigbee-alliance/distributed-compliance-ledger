@@ -4,21 +4,25 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel) (*types.MsgCreateModelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the value already exists
+	// check if signer has enough rights to create model
+	if err := checkModelRights(ctx, k.Keeper, msg.GetSigners()[0], msg.Vid, "MsgCreateModel"); err != nil {
+		return nil, err
+	}
+
+	// check if model exists
 	_, isFound := k.GetModel(
 		ctx,
 		msg.Vid,
 		msg.Pid,
 	)
 	if isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
+		return nil, types.NewErrModelAlreadyExists(msg.Vid, msg.Pid)
 	}
 
 	var model = types.Model{
@@ -40,41 +44,72 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		ProductUrl:    msg.ProductUrl,
 	}
 
+	// store new model
 	k.SetModel(
 		ctx,
 		model,
 	)
+
 	return &types.MsgCreateModelResponse{}, nil
 }
 
 func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel) (*types.MsgUpdateModelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the value exists
+	// check if signer has enough rights to update model
+	if err := checkModelRights(ctx, k.Keeper, msg.GetSigners()[0], msg.Vid, "MsgUpdateModel"); err != nil {
+		return nil, err
+	}
+
+	// check if model exists
 	model, isFound := k.GetModel(
 		ctx,
 		msg.Vid,
 		msg.Pid,
 	)
 	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		return nil, types.NewErrModelDoesNotExist(msg.Vid, msg.Pid)
 	}
 
-	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != model.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	// update existing model value only if corresponding value in MsgUpdate is not empty
+
+	if msg.ProductName != "" {
+		model.ProductName = msg.ProductName
 	}
 
-	model.ProductName = msg.ProductName
-	model.ProductLabel = msg.ProductLabel
-	model.PartNumber = msg.PartNumber
-	model.CommissioningCustomFlowUrl = msg.CommissioningCustomFlowUrl
-	model.CommissioningModeInitialStepsInstruction = msg.CommissioningModeInitialStepsInstruction
-	model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
-	model.UserManualUrl = msg.UserManualUrl
-	model.SupportUrl = msg.SupportUrl
-	model.ProductUrl = msg.ProductUrl
+	if msg.ProductLabel != "" {
+		model.ProductLabel = msg.ProductLabel
+	}
 
+	if msg.PartNumber != "" {
+		model.PartNumber = msg.PartNumber
+	}
+
+	if msg.CommissioningCustomFlowUrl != "" {
+		model.CommissioningCustomFlowUrl = msg.CommissioningCustomFlowUrl
+	}
+
+	if msg.CommissioningModeInitialStepsInstruction != "" {
+		model.CommissioningModeInitialStepsInstruction = msg.CommissioningModeInitialStepsInstruction
+	}
+
+	if msg.CommissioningModeSecondaryStepsInstruction != "" {
+		model.CommissioningModeSecondaryStepsInstruction = msg.CommissioningModeSecondaryStepsInstruction
+	}
+
+	if msg.UserManualUrl != "" {
+		model.UserManualUrl = msg.UserManualUrl
+	}
+
+	if msg.SupportUrl != "" {
+		model.SupportUrl = msg.SupportUrl
+	}
+
+	if msg.ProductUrl != "" {
+		model.ProductUrl = msg.ProductUrl
+	}
+
+	// store updated model
 	k.SetModel(ctx, model)
 
 	return &types.MsgUpdateModelResponse{}, nil
@@ -83,21 +118,22 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel) (*types.MsgDeleteModelResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the value exists
-	valFound, isFound := k.GetModel(
+	// check if signer has enough rights to delete model
+	if err := checkModelRights(ctx, k.Keeper, msg.GetSigners()[0], msg.Vid, "MsgDeleteModel"); err != nil {
+		return nil, err
+	}
+
+	// check if model exists
+	_, isFound := k.GetModel(
 		ctx,
 		msg.Vid,
 		msg.Pid,
 	)
 	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+		return nil, types.NewErrModelDoesNotExist(msg.Vid, msg.Pid)
 	}
 
-	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != valFound.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
-
+	// remove model from store
 	k.RemoveModel(
 		ctx,
 		msg.Vid,
