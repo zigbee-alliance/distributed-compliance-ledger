@@ -47,7 +47,7 @@ func CmdListLastValidatorPower() *cobra.Command {
 
 func CmdShowLastValidatorPower() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "last-powers",
+		Use:   "last-power",
 		Short: "shows a LastValidatorPower",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

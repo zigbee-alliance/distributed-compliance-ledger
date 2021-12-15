@@ -18,37 +18,41 @@ import "cosmos_proto/cosmos.proto";
 service Query {
     // Queries a account by index.
 	rpc Account(QueryGetAccountRequest) returns (QueryGetAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/account/{address}";
+		option (google.api.http).get = "/dcl/auth/account/{address}";
 	}
 
 	// Queries a list of account items.
 	rpc AccountAll(QueryAllAccountRequest) returns (QueryAllAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/account";
+		option (google.api.http).get = "/dcl/auth/accounts";
 	}
 
 // Queries a pendingAccount by index.
+    /*
 	rpc PendingAccount(QueryGetPendingAccountRequest) returns (QueryGetPendingAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/{address}";
+		option (google.api.http).get = "/dcl/auth/pendingAccount/{address}";
 	}
+    */
 
 	// Queries a list of pendingAccount items.
 	rpc PendingAccountAll(QueryAllPendingAccountRequest) returns (QueryAllPendingAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount";
+		option (google.api.http).get = "/dcl/auth/proposedAccounts";
 	}
 
 // Queries a pendingAccountRevocation by index.
+    /*
 	rpc PendingAccountRevocation(QueryGetPendingAccountRevocationRequest) returns (QueryGetPendingAccountRevocationResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/{address}";
+		option (google.api.http).get = "/dcl/auth/pendingAccountRevocation/{address}";
 	}
+    */
 
 	// Queries a list of pendingAccountRevocation items.
 	rpc PendingAccountRevocationAll(QueryAllPendingAccountRevocationRequest) returns (QueryAllPendingAccountRevocationResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation";
+		option (google.api.http).get = "/dcl/auth/proposedAccountsToRevoke";
 	}
 
 // Queries a accountStat by index.
 	rpc AccountStat(QueryGetAccountStatRequest) returns (QueryGetAccountStatResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/accountStat";
+		option (google.api.http).get = "/dcl/auth/accountStat";
 	}
 // this line is used by starport scaffolding # 2
 }
