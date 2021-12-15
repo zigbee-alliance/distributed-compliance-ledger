@@ -21,7 +21,7 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 //nolint:godox
@@ -54,7 +54,7 @@ func TestAuthDemo(t *testing.T) {
 	bobKeyInfo, _ := utils.GetKeyInfo(testconstants.BobAccount)
 
 	// Jack proposes new account
-	utils.ProposeAddAccount(testAccountKeyInfo, jackKeyInfo, auth.AccountRoles{auth.Vendor}, testconstants.VID)
+	utils.ProposeAddAccount(testAccountKeyInfo, jackKeyInfo, dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.VID)
 
 	// Query all active accounts
 	receivedAccounts, _ := utils.GetAccounts()
@@ -86,17 +86,20 @@ func TestAuthDemo(t *testing.T) {
 	// Get info for new account
 	testAccount, _ := utils.GetAccount(testAccountKeyInfo.Address)
 	require.Equal(t, testAccountKeyInfo.Address, testAccount.Address)
-	require.Equal(t, auth.AccountRoles{auth.Vendor}, testAccount.Roles)
+	require.Equal(t, dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testAccount.Roles)
 
-	// Publish model info by test account
-	model := utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
-	_, _ = utils.AddModel(model, testAccountKeyInfo)
+	// FIXME issue 99: enable once implemented
+	/*
+		// Publish model info by test account
+		model := utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
+		_, _ = utils.AddModel(model, testAccountKeyInfo)
 
-	// Check model is created
-	receivedModel, _ := utils.GetModel(model.VID, model.PID)
-	require.Equal(t, receivedModel.VID, model.VID)
-	require.Equal(t, receivedModel.PID, model.PID)
-	require.Equal(t, receivedModel.ProductName, model.ProductName)
+		// Check model is created
+		receivedModel, _ := utils.GetModel(model.VID, model.PID)
+		require.Equal(t, receivedModel.VID, model.VID)
+		require.Equal(t, receivedModel.PID, model.PID)
+		require.Equal(t, receivedModel.ProductName, model.ProductName)
+	*/
 
 	// Alice proposes to revoke new account
 	utils.ProposeRevokeAccount(testAccountKeyInfo, aliceKeyInfo)
@@ -132,9 +135,12 @@ func TestAuthDemo(t *testing.T) {
 	_, code := utils.GetAccount(testAccountKeyInfo.Address)
 	require.Equal(t, http.StatusNotFound, code)
 
-	// Try to publish another model info by test account.
-	// Ensure that the request is responded with not OK status code.
-	model = utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
-	_, code = utils.AddModel(model, testAccountKeyInfo)
-	require.NotEqual(t, http.StatusOK, code)
+	// FIXME issue 99: enable once implemented
+	/*
+		// Try to publish another model info by test account.
+		// Ensure that the request is responded with not OK status code.
+		model = utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
+		_, code = utils.AddModel(model, testAccountKeyInfo)
+		require.NotEqual(t, http.StatusOK, code)
+	*/
 }

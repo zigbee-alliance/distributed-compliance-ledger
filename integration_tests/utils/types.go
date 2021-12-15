@@ -19,9 +19,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
+	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
+	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 )
 
 type ResponseWrapper struct {
@@ -49,6 +49,8 @@ type PendingAccountInfo struct {
 	Approvals []sdk.AccAddress  `json:"approvals"`
 }
 
+// FIXME issue 99: enable once implemented
+/*
 type ModelHeadersResult struct {
 	Total string            `json:"total"`
 	Items []model.ModelItem `json:"items"`
@@ -78,6 +80,7 @@ type ProposedCertificateRevocationsHeadersResult struct {
 	Total string                              `json:"total"`
 	Items []pki.ProposedCertificateRevocation `json:"items"`
 }
+*/
 
 type AccountHeadersResult struct {
 	Total string        `json:"total"`
