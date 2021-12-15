@@ -129,8 +129,7 @@ log "Compiling local binaries"
 make install &>${DETAILED_OUTPUT_TARGET}
 
 log "Building docker image"
-# FIXME issue 99: enable that
-#make image &>${DETAILED_OUTPUT_TARGET}
+make image &>${DETAILED_OUTPUT_TARGET}
 
 cleanup_pool
 
