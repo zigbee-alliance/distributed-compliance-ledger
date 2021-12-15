@@ -50,6 +50,13 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		model,
 	)
 
+	// store new product in VendorProducts
+	k.SetVendorProduct(ctx, model.Vid, types.Product{
+		Pid:        model.Pid,
+		Name:       model.ProductName,
+		PartNumber: model.PartNumber,
+	})
+
 	return &types.MsgCreateModelResponse{}, nil
 }
 
@@ -112,6 +119,13 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 	// store updated model
 	k.SetModel(ctx, model)
 
+	// store updated product in VendorProducts
+	k.SetVendorProduct(ctx, model.Vid, types.Product{
+		Pid:        model.Pid,
+		Name:       model.ProductName,
+		PartNumber: model.PartNumber,
+	})
+
 	return &types.MsgUpdateModelResponse{}, nil
 }
 
@@ -139,6 +153,9 @@ func (k msgServer) DeleteModel(goCtx context.Context, msg *types.MsgDeleteModel)
 		msg.Vid,
 		msg.Pid,
 	)
+
+	// remove product from VendorProducts
+	k.RemoveVendorProduct(ctx, msg.Vid, msg.Pid)
 
 	return &types.MsgDeleteModelResponse{}, nil
 }

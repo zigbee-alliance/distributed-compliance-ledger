@@ -62,8 +62,8 @@ func (k Keeper) GetAllVendorProducts(ctx sdk.Context) (list []types.VendorProduc
 	return
 }
 
-// AddVendorProduct adds a product to existing or new VendorProducts
-func (k Keeper) AddVendorProduct(
+// SetVendorProduct sets a product to existing or new VendorProducts
+func (k Keeper) SetVendorProduct(
 	ctx sdk.Context,
 	vid int32,
 	product types.Product,
