@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# FIXME issue 99: enable once implemented
+exit 0
+
 set -euo pipefail
 source integration_tests/cli/common.sh
 
@@ -46,7 +49,7 @@ test_divider
 echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="http://first.place.com"
 test_date="2020-11-24T10:00:00Z"
-result=$(echo "test1234" | dclcli tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "test1234" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -56,17 +59,17 @@ echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
 revocation_date="2020-02-02T02:20:20Z"
 revocation_reason="some reason"
 certification_type="zigbee"
-result=$(echo "test1234" | dclcli tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
+result=$(echo "test1234" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created"
-result=$(dclcli query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="zigbee")
+result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "\"value\": false"
 echo "$result"
 
 echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} before compliance record was created"
-result=$(dclcli query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="zigbee")
+result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "\"value\": true"
 echo "$result"
 

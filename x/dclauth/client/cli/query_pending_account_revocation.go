@@ -13,7 +13,7 @@ import (
 
 func CmdListPendingAccountRevocation() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-pending-account-revocation",
+		Use:   "all-proposed-accounts-to-revoke",
 		Short: "list all PendingAccountRevocation",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -46,7 +46,7 @@ func CmdListPendingAccountRevocation() *cobra.Command {
 
 func CmdShowPendingAccountRevocation() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-pending-account-revocation",
+		Use:   "proposed-account-to-revoke",
 		Short: "shows a PendingAccountRevocation",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
