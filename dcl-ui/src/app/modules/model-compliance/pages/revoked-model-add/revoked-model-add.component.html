@@ -1,0 +1,100 @@
+<!--
+ Copyright 2020 DSR Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<ng-container *ngIf="{ item: item$ | async} as data">
+  <ng-container>
+    <div>
+      <div class="pb-2 mb-3 pt-3 border-bottom">
+        <h1 class="h2">Revoke Model</h1>
+      </div>
+
+      <form #revokeModelForm="ngForm" (ngSubmit)="onSubmit(revokeModelForm, data.item)">
+
+        <div class="row">
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="vid">Vednor ID</label>
+            <input type="number" class="form-control" required
+                   #vid="ngModel" id="vid" name="vid"
+                   [disabled]="!editIDs"
+                   [(ngModel)]="data.item.vid"
+                   [ngClass]="getValidityClasses(vid)">
+            <div class="invalid-feedback">
+              Please enter Vendor ID
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="pid">Product ID</label>
+            <input type="number" class="form-control" required
+                   #pid="ngModel" id="pid" name="pid"
+                   [disabled]="!editIDs"
+                   [(ngModel)]="data.item.pid"
+                   [ngClass]="getValidityClasses(pid)">
+            <div class="invalid-feedback">
+              Please enter Product ID
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="certificationType">Certification Type</label>
+            <select class="custom-select d-block w-100"
+                    #certificationType="ngModel" id="certificationType" name="certificationType"
+                    [(ngModel)]="data.item.certificationType"
+                    [ngClass]="getValidityClasses(certificationType)">
+              <option [ngValue]="undefined">Choose...</option>
+              <option *ngFor="let certificationType of certificationTypes">{{certificationType}}</option>
+            </select>
+          </div>
+
+          <div class="col-xl-2 col-lg-3 col-md-4 mb-3">
+            <label for="date">Revocation Date</label>
+
+            <div class="form-group">
+              <div class="input-group">
+                <input ngbDatepicker class="form-control" placeholder="yyyy-mm-dd" required
+                       #dp="ngbDatepicker" #date="ngModel" id="date" name="date"
+                       [(ngModel)]="data.item.date"
+                       [ngClass]="getValidityClasses(date)">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary fa fa-calendar-alt" (click)="dp.toggle()"
+                          type="button"></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="invalid-feedback">
+              Valid revocation date is required.
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xl-5 col-lg-8 col-md-11 mb-3">
+            <label for="reason">Reason</label>
+            <input type="text" class="form-control"
+                   #testResult="ngModel" id="reason" name="reason"
+                   [(ngModel)]="data.item.reason">
+          </div>
+        </div>
+
+        <hr class="mb-3">
+        <button class="btn btn-primary" type="submit">Next</button>
+
+      </form>
+    </div>
+  </ng-container>
+</ng-container>

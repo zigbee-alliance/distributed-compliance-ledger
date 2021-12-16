@@ -12,7 +12,7 @@ import (
 //TODO issue 99: review
 type AccountKeeper interface {
 	// NewAccount(sdk.Context, auth.Account) auth.Account
-	SetAccount(sdk.Context, dclauthtypes.Account)
+	SetAccountO(sdk.Context, dclauthtypes.Account)
 	IterateAccounts(ctx sdk.Context, process func(dclauthtypes.Account) (stop bool))
 	GetNextAccountNumber(sdk.Context) uint64
 }

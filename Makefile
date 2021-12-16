@@ -5,14 +5,13 @@ COMMIT := $(shell git log -1 --format='%H')
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
-	-X github.com/cosmos/cosmos-sdk/version.ClientName=dclcli \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 OUTPUT_DIR ?= build
 
-LOCALNET_DIR ?= localnet
+LOCALNET_DIR ?= .localnet
 
 LICENSE_TYPE = "apache"
 COPYRIGHT_YEAR = "2020"
@@ -23,11 +22,9 @@ all: install
 
 build: go.sum
 	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/dcld ./cmd/dcld
-	go build -mod=readonly $(BUILD_FLAGS) -o $(OUTPUT_DIR)/dclcli ./cmd/dclcli
 
 install: go.sum
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/dcld
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/dclcli
 
 go.sum: go.mod
 	@echo "--> Ensure dependencies have not been modified"
@@ -57,7 +54,7 @@ localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
 
 localnet_start:
-	@if [ -d "localnet/observer0" ]; then\
+	@if [ -d "${LOCALNET_DIR}/observer0" ]; then\
 		docker-compose --profile observers up -d;\
 	else\
 		docker-compose up -d;\
@@ -71,7 +68,7 @@ localnet_export: localnet_stop
 	docker-compose run node1 dcld export --for-zero-height  >genesis.export.node1.json
 	docker-compose run node2 dcld export --for-zero-height  >genesis.export.node2.json
 	docker-compose run node3 dcld export --for-zero-height  >genesis.export.node3.json
-	@if [ -d "localnet/observer0" ]; then\
+	@if [ -d "${LOCALNET_DIR}/observer0" ]; then\
 		docker-compose run observer0 dcld export --for-zero-height  >genesis.export.observer0.json;\
 	fi
 
@@ -81,7 +78,7 @@ localnet_reset: localnet_stop
 	docker-compose run node1 dcld unsafe-reset-all
 	docker-compose run node2 dcld unsafe-reset-all
 	docker-compose run node3 dcld unsafe-reset-all
-	@if [ -d "localnet/observer0" ]; then\
+	@if [ -d "${LOCALNET_DIR}/observer0" ]; then\
 		docker-compose run observer0 dcld unsafe-reset-all;\
 	fi
 

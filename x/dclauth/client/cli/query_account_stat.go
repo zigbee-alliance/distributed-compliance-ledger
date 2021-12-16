@@ -11,7 +11,7 @@ import (
 
 func CmdShowAccountStat() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-account-stat",
+		Use:   "account-stat",
 		Short: "shows AccountStat",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

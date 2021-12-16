@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	FlagAddressValidator = "validator"
-	FlagPubKey           = "pubkey"
+	FlagAddress = "address"
+	FlagPubKey  = "pubkey"
 
 	FlagName     = "name"
 	FlagIdentity = "identity"
@@ -24,10 +24,6 @@ const (
 var (
 	fsValidator = flag.NewFlagSet("", flag.ContinueOnError)
 )
-
-func init() {
-	fsValidator.String(FlagAddressValidator, "", "The Bech32 address of the validator")
-}
 
 // FlagSetPublicKey Returns the flagset for Public Key related operations.
 func FlagSetPublicKey() *flag.FlagSet {

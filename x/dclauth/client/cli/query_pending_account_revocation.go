@@ -7,12 +7,13 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 func CmdListPendingAccountRevocation() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-pending-account-revocation",
+		Use:   "all-proposed-accounts-to-revoke",
 		Short: "list all PendingAccountRevocation",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -45,15 +46,15 @@ func CmdListPendingAccountRevocation() *cobra.Command {
 
 func CmdShowPendingAccountRevocation() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-pending-account-revocation [address]",
+		Use:   "proposed-account-to-revoke",
 		Short: "shows a PendingAccountRevocation",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argAddress, err := sdk.ValAddressFromBech32(args[0])
+			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
@@ -71,7 +72,10 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

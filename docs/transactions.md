@@ -29,7 +29,7 @@ This is useful to avoid correlation by the sender's IP address.
     - See `CLI` section for every write request (transaction).
     - Example
         ```bash
-        dclcli tx modelinfo add-model --vid 1 --pid 1 --name "Device #1" --description "Device Description" --sku "SKU12FS" --hardware-version "1.0" --firmware-version "2.0" --tis-or-trp-testing-completed true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
+        dclcli tx model add-model --vid 1 --pid 1 --deviceTypeID 1 --productName "Device #1" --productLabel "Device Description" --partNumber "SKU12FS" --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
         ```
 - CLI (keys at the edge)
     - There are two CLIs are started in a CLI mode.
@@ -43,7 +43,7 @@ This is useful to avoid correlation by the sender's IP address.
     - CLI 2: Broadcast signed transaction using CLI (`broadcast command)
     - Example
         ```bash
-        CLI 2: dclcli tx modelinfo add-model --vid 1 --pid 1 --name "Device #1" --description "Device Description" --sku "SKU12FS" --hardware-version "1.0" --firmware-version "2.0" --tis-or-trp-testing-completed true --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
+        CLI 2: dclcli tx model add-model --vid 1 --pid 1 --deviceTypeID 1 --productName "Device #1" --productLabel "Device Description" --partNumber "SKU12FS" --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
         CLI 2: dclcli query auth all-accounts
         CLI 1: dclcli tx sign /home/artem/dc-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
         CLI 2: dclcli tx broadcast /home/artem/dc-ledger/txn.json
@@ -59,7 +59,7 @@ This is useful to avoid correlation by the sender's IP address.
     - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`.     
     - Example
         ```
-        POST /modelinfo/models
+        POST /model/models
         POST tx/sign
         POST tx/broadcast
         ```
@@ -72,7 +72,7 @@ This is useful to avoid correlation by the sender's IP address.
     - See `REST API` section for every write request (transaction).
     - Example
         ```
-        POST /modelinfo/models with setting Authorization header 
+        POST /model/models with setting Authorization header 
         ```
 
 ## How to read from the Ledger
@@ -121,16 +121,20 @@ A summary of KV store and paths used:
     - Certificate uniqueness:
         - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
 - KV store name: `model`
-    - Model Infos 
+    - Model  
         - `1:<vid>:<pid>` : `<model info>`
+    - Model  Versions
+        - `2:<vid>:<pid>` : ` list of model versions`
+    - Model  Version
+        - `2:<vid>:<pid>:<softwareVersion>` : `<model version>`
     - Vendor to products (models) index:
-        - `2:<vid>` : `<list of pids + metadata>`
+        - `3:<vid>` : `<list of pids + metadata>`
 - KV store name: `compliancetest`
     - Test results for every model
-        - `1:<vid>:<pid>` : `<list of test results>`
+        - `1:<vid>:<pid>:<softwareVersion>` : `<list of test results>`
 - KV store name: `compliance`
     - Compliance results for every model       
-       - `1:<certification_type>:<vid>:<pid>` : `<compliance info>`
+       - `1:<certification_type>:<vid>:<pid>:<softwareVersion>` : `<compliance info>`
     - A list of compliant models (`pid`s) for the given vendor. 
        - `2:<vid>` : `<compliance pids>`  
     - A list of revoked models (`pid`s) for the given vendor.       
@@ -660,91 +664,80 @@ only the certificate chains started with the given root certificate are returned
     -   GET `/pki/certs?since=<>`
     -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
     
-## MODEL INFO
+## MODEL and MODEL_VERSION
 
-#### ADD_MODEL_INFO
+#### ADD_MODEL
 **Status: Implemented**
 
-Adds a new Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID).
+Adds a new Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID).
 
-Only some of Model Info fields can be edited (see `EDIT_MODEL_INFO`). If other fields need to be edited - 
+Only some of Model Info fields can be edited (see `EDIT_MODEL`). If other fields need to be edited - 
 a new model info with a new `vid` or `pid` can be created.
 
-If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then the other two must also be set.
 
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
-  - name: `string` -  model name
-  - description: `string` -  model description (string or path to file containing data)
-  - sku: `string` -  stock keeping unit
-  - softwareVersion: `uint32` -  Software Version of model (uint32)
-  - softwareVersionString: `string` - Software Version String of model
-  - hardwareVersion: `uint32` -  version of model hardware
-  - hardwareVersionString: `string` - Hardware Version String of model
-  - cdVersionNumber: `uint32` -  CD Version Number of the Certification
-  - from: `string` - Name or address of private key with which to sign
-  - cid: `optional(uint16)` - model category ID (positive non-zero)
-  - revoked: `optional(bool)` - boolean flag to revoke the model
-  - otaURL: `optional(string)` - the URL of the OTA
-  - otaChecksum: `optional(string)` - the checksum of the OTA 
-  - otaChecksumType: `optional(string)` - the type of the OTA checksum 
-  - otaBlob: `optional(string)` - metadata about OTA 
+  - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
+  - productName: `string` -  model name
+  - productLabel: `string` -  model description (string or path to file containing data)
+  - partNumber: `string` -  stock keeping unit
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
   - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
-  - releaseNotesURL: `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
-  - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
-  - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
-
+  
+  Example: `dclcli tx model add-model --vid=1 --pid=1 --deviceTypeID=1 --productName="Device #1" --productLabel="Device Description" --partNumber="SKU12FS"  --from="jack"`
 - In State:
   - `model` store  
   - `1:<vid>:<pid>` : `<model info>`
   - `2:<vid>` : `<list of pids + metadata>`
 - Who can send: 
-    - Vendor
+    - Vendor account who is associated with given vid
 - CLI command: 
-    -   `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --productName=<string> --productLabel=<string or path> --sku=<string> 
---softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
---from=<account> .... `
+    -   `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint32> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
+--commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string> --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<uint32> --productURL=<string> --from=<account> .... `
 - REST API: 
     -   POST `/model/models`
 
 #### EDIT_MODEL_INFO
 **Status: Implemented**
 
-Edits an existing Model Info identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
-by the owner.
+Edits an existing Model identified by a unique combination of `vid` (vendor ID) and `pid` (product ID)
+by the vendor account.
 
 Only the fields listed below (except `vid` and `pid`) can be edited. If other fields need to be edited -
 a new model info with a new `vid` or `pid` can be created.
 
 All non-edited fields remain the same.
 
-`OTA_URL` can be edited only if  `OTA_checksum` and `OTA_checksum_type` are already set.
 
 - Parameters:
-    - `vid`: 16 bits int
-    - `pid`: 16 bits int
-    - `cid`: 16 bits int (optional)
-    - `OTA_URL`: string (optional)
-    - `description`: string (optional)
-    - `tis_or_trp_testing_completed`: bool
-    - `custom`: string (optional)
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - productName: `string` -  model name
+  - productLabel: `string` -  model description (string or path to file containing data)
+  - partNumber: `string` -  stock keeping unit
+  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
+  - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
+  - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
+  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
+  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+
 - In State:
   - `model` store  
   - `1:<vid>:<pid>` : `<model info>`
   - `2:<vid>` : `<list of pids + metadata>`
 - Who can send: 
-    - Vendor; owner
+    - Vendor account associated with the same vid
 - CLI command: 
-    -   `dclcli tx model update-model --vid=<uint16> --pid=<uint16> --tis-or-trp-testing-completed=<bool> --from=<account> .... `
+    -   `dclcli tx model update-model --vid=<uint16> --pid=<uint16> --userManualUrl=<string> --from=<account> .... `
 - REST API: 
     -   PUT `/model/models/vid/pid`
 
@@ -771,9 +764,9 @@ Gets all Model Infos for all vendors.
       {
         "vid": 16 bits int,
         "pid": 16 bits int,
-        "name": string,
+        "productName": string,
         "owner": string,
-        "sku": string
+        "partNumber": string
       }
     ]
   }
@@ -800,9 +793,9 @@ Gets all Model Info by the given Vendor (`vid`).
     "products": [
       {
         "pid": 16 bits int,
-        "name": string,
+        "productName": string,
         "owner": string,
-        "sku": string
+        "partNumber": string
       }
     ]
   }
@@ -829,18 +822,21 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
   "result": {
     "vid": 16 bits int,
     "pid": 16 bits int,
+    "deviceTypeID" : 32 bits int
     "cid": (optional) 16 bits int,
-    "name": string,
+    "productName": string,
+    "productLabel": string,
     "owner": string,
-    "description": string,
-    "sku": string,
-    "firmware_version": string,
-    "hardware_version": string,
-    "OTA_URL": string (optional),
-    "OTA_checksum" string (optional),
-    "OTA_checksum_type": string (optional),
-    "custom": (optional) string,
-    "tis_or_trp_testing_completed": bool
+    "partNumber": string,
+    "commissioningCustomFlow" : 8 bits int - default 0
+    "commissioningCustomFlowUrl" : string,
+    "commissioningModeInitialStepsHint" : 32 bits int
+    "commissioningModeInitialStepsInstruction" : string 
+    "commissioningModeSecondaryStepsHint" : 32 bits int
+    "commissioningModeSecondaryStepsInstruction" : string 
+    "userManualUrl" : string 
+    "supportUrl" : string 
+    "productURL" : string 
   }
 }
 ```
@@ -872,12 +868,113 @@ Get a list of all Vendors (`vid`s).
 }
 ```
 
+#### ADD_MODEL_VERSION
+**Status: Implemented**
+
+Adds a new Model Software Version identified by a unique combination of `vid` (vendor ID) `pid` (product ID) and `softwareVersion` 
+
+Only some of Model Software Version Info fields can be edited (see `EDIT_MODEL_VERSION`). 
+
+If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then the other two must also be set.
+
+- Parameters:
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version (positive non-zero)
+  - softwareVersionString: `string` - model software version string
+  - cdVersionNumber: `uint16` - model cd version number (positive non-zero)
+  - firmwareDigests `string` - FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device
+  - softwareVersionValid `bool` - Flag to indicate whether the software version is valid or not (default true)
+  - otaURL `string` - URL where to obtain the OTA image
+  - otaFileSize `string`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `string` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
+  - otaChecksumType `string` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
+  - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
+  - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
+  - releaseNotesURL `string` - URL that contains product specific web page that contains release notes for the device model.
+
+- In State:
+  - `model` store  
+  - `2:<vid>:<pid>:<softwareversion>` : `<model version>`
+  - `2:<vid>:<pid>` : `<list of softwareVersions + metadata>`
+- Who can send: 
+    - Vendor with same vendorID
+- CLI command: 
+    -   dclcli tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack" .... `
+- REST API: 
+    -   POST `/model/version`
+
+#### EDIT_MODEL_VERSION
+**Status: Implemented**
+
+Edits an existing Model Software Version identified by a unique combination of `vid` (vendor ID) `pid` (product ID) and `softwareVersion`
+by the vendor.
+
+Only the fields listed below (except `vid` `pid` and `softwareVersion`)  can be edited. 
+
+All non-edited fields remain the same.
+
+`otaURL` can be edited only if  `otaFileSize`, `otaChecksum` and `otaChecksumType` are already set.
+
+- Parameters:
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version (positive non-zero)
+  - softwareVersionValid `bool` - Flag to indicate whether the software version is valid or not (default true)
+  - otaURL `string` - URL where to obtain the OTA image
+  - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
+  - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
+  - releaseNotesURL `string` - URL that contains product specific web page that contains release notes for the device model.
+
+- In State:
+  - `model` store  
+  - `2:<vid>:<pid>:<softwareversion>` : `<model version>`
+  - `2:<vid>:<pid>` : `<list of softwareVersions + metadata>`
+- Who can send: 
+    - Vendor associated with the same vid
+- CLI command: 
+    -   `dclcli tx model update-model-version --vid=1 --pid=1 --softwareVersion=1 --releaseNotesURL="https://release.notes.url.info" --from=jack .... `
+- REST API: 
+    -   PUT `/model/version/vid/pid/softwareVersion`
+
+
+#### GET_ALL_MODEL_VERSIONS
+**Status: Implemented**
+
+Gets all Model Software Versions for give `vid` `pid` combination.
+
+- Parameters:
+  - `skip`: optional(int)  - number records to skip (`0` by default)
+  - `take`: optional(int)  - number records to take (all records are returned by default)
+- CLI command: 
+    -   `dclcli query model all-model-versions ...`
+- REST API: 
+    -   GET `/model/versions/vid/pid`
+- Result
+```json
+{
+  "height": string,
+  "result": {
+    "total": string,
+    "items": [
+      {
+        "vid": 16 bits int,
+        "pid": 16 bits int,
+        "softwareVersion": 32 bit int,
+        "softwareVersionString": string,
+        "partNumber": string
+      }
+    ]
+  }
+}
+```
+
 ## TEST_DEVICE_COMPLIANCE
 
 #### ADD_TEST_RESULT
 **Status: Implemented**
 
-Submits result of a compliance testing for the given device (`vid` and `pid`).
+Submits result of a compliance testing for the given device (`vid` `pid` `softwareVersion` and `softwareVersionString`).
 The test result can be a blob of data or a reference (URL) to an external storage.
 
 Multiple test results (potentially from different test houses) can be added for the same device type. 
@@ -888,6 +985,8 @@ Another test result can be submitted instead.
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `softwareVersion` : 32 bits int 
+    - `softwareVersionString` : string
     - `test_result`: string
     - `test_date`: rfc3339 encoded date
 - In State:
@@ -896,23 +995,24 @@ Another test result can be submitted instead.
 - Who can send: 
     - TestHouse
 - CLI command: 
-    -   `dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
+    -   `dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 - REST API: 
     -   POST `/compliancetest/testresults`
 
 #### GET_TEST_RESULT
 **Status: Implemented**
 
-Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
+Gets a test result for the given `vid` (vendor ID) `pid` (product ID) and `softwareVersion`.
 
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `softwareVersion` : 32 bits int
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16> .... `
+    -   `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> .... `
 - REST API: 
-    -   GET `/compliancetest/testresults/vid/pid`
+    -   GET `/compliancetest/testresults/vid/pid/softwareVersion`
 - Result:
 ```json
 {
@@ -920,6 +1020,8 @@ Gets a test result for the given `vid` (vendor ID) and `pid` (product ID).
   "result": {
     "vid": 16 bits int,
     "pid": 16 bits int,
+    "softwareVersion": 32 bits int
+    "softwareVersionString" : string
     "results": [
       {
         "test_result": string,
@@ -951,8 +1053,10 @@ from the revocation list.
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `softwareVersion` : 32 bits int 
+    - `softwareVersionString` : string
     - `certification_date`: rfc3339 encoded date - date of certification
-    - `certification_type`: string  - `zb` is the default and the only supported value now
+    - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `reason` (optional): string  - optional comment describing the reason of the certification
 - In State:
   - `compliance` store  
@@ -962,9 +1066,9 @@ from the revocation list.
 - Who can send: 
     - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --certificationDate=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
-    -   PUT `/compliance/certified/vid/pid/certification_type`
+    -   PUT `/compliance/certified/vid/pid/softwareVersion/softwareVersionString/certification_type`
     
 #### REVOKE_MODEL_CERTIFICATION
 **Status: Implemented**
@@ -981,8 +1085,9 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
+    - `softwareVersion` : 32 bits int 
     - `revocation_date`: rfc3339 encoded date - date of revocation
-    - `certification_type` string - `zb` is the default and the only supported value now
+    - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `reason` (optional): string - optional comment describing the reason of the revocation
 - In State:
   - `compliance` store  
@@ -992,14 +1097,14 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Who can send: 
     - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --revocationDate=<rfc3339 encoded date> --from=<account> .... `
+    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --revocationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
-    -   PUT `/compliance/revoked/vid/pid/certification_type`    
+    -   PUT `/compliance/revoked/vid/pid/softwareVersion/certification_type`    
     
 #### GET_CERTIFIED_MODEL
 **Status: Implemented**
 
-Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is compliant to ZB standards. 
+Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`) is compliant to ZB standards. 
 
 This is the aggregation of compliance and
 revocation information for every vid/pid. It should be used in cases where compliance 
@@ -1014,12 +1119,13 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `certification_type`: string - `zb` is the default and the only supported value now
+    - `softwareVersion` : 32 bits int 
+    - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
+    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
 - REST API: 
-    -   GET `/compliance/certified/vid/pid/certification_type`
+    -   GET `/compliance/certified/vid/pid/softwareVersion/certification_type`
 - Result
 ```json
 {
@@ -1047,12 +1153,13 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `certification_type`: string - `zb` is the default and the only supported value now
+    - `softwareVersion` : 32 bits int 
+    - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
+    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
 - REST API: 
-    -   GET `/compliance/revoked/vid/pid/certification_type`
+    -   GET `/compliance/revoked/vid/pid/softwareVersion/certification_type`
 - Result:
 ```json
 {
@@ -1066,7 +1173,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 #### GET_COMPLIANCE_INFO
 **Status: Implemented**
 
-Gets compliance information associated with the Model (identified by the `vid` and `pid` and `certification_type`).
+Gets compliance information associated with the Model (identified by the `vid` `pid` `softwareVersion` and `certification_type`).
 
 It can be used instead of GET_CERTIFIED_MODEL / GET_REVOKED_MODEL methods 
  to get the whole compliance information without additional state check.
@@ -1075,18 +1182,21 @@ This function responds with `NotFoundError` (404 code) if compliance information
 - Parameters:
     - `vid`: 16 bits int
     - `pid`: 16 bits int
-    - `certification_type`: string - `zb` is the default and the only supported value now
+    - `softwareVersion` : 32 bits int 
+    - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --certificationType=<zb> .... `
+    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
 - REST API: 
-    -   GET `/compliance/vid/pid/certification_type`
+    -   GET `/compliance/vid/pid/softwareVersion/certification_type`
 - Result:
 ```json
 {
   "result": {
     "vid": 16 bits int,
     "pid": 16 bits int,
+    "softwareVersion" : 32 bits int,
+    "softwareVersionString" : string,
     "state": string, // certified or revoked
     "date": rfc3339 encoded date,
     "certification_type": string,
@@ -1102,6 +1212,8 @@ This function responds with `NotFoundError` (404 code) if compliance information
   "result": {
     "vid": 16 bits int,
     "pid": 16 bits int,
+    "softwareVersion" : 32 bits int,
+    "softwareVersionString" : string,
     "state": string, // certified or revoked
     "date": rfc3339 encoded date,
     "certification_type": string,
@@ -1122,7 +1234,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
 #### GET_ALL_REVOKED_MODELS
 **Status: Implemented**
 
-Gets all revoked Models (`pid`s) for all vendors (`vid`s).
+Gets all revoked Model Versions for all vendors (`vid`s).
 
 It contains information about revocation only, so it should be used in cases
  where only revocation is tracked on the ledger.
@@ -1146,6 +1258,8 @@ It contains information about revocation only, so it should be used in cases
       {
         "vid": 16 bits int,
         "pid": 16 bits int,
+        "softwareVersion" : 32 bits int,
+        "softwareVersionString" : string,
         "certification_type": string,
       }
     ]
@@ -1157,7 +1271,7 @@ It contains information about revocation only, so it should be used in cases
 #### GET_ALL_CERTIFIED_MODELS
 **Status: Implemented**
 
-Gets all compliant Models (`pid`s) for all the vendors (`vid`s).
+Gets all compliant Model Versions all the vendors (`vid`s).
 
 This is the aggregation of compliance and
 revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
@@ -1181,6 +1295,8 @@ revocation information for every vid/pid. It should be used in cases where compl
       {
         "vid": 16 bits int,
         "pid": 16 bits int,
+        "softwareVersion" : 32 bits int,
+        "softwareVersionString" : string,
         "certification_type": string,
       }
     ]
@@ -1213,6 +1329,8 @@ Gets all stored compliance information records.
       {
         "vid": 16 bits int,
         "pid": 16 bits int,
+        "softwareVersion" : 32 bits int,
+        "softwareVersionString" : string,
         "state": string, // certified or revoked
         "date": rfc3339 encoded date,
         "certification_type": string,
@@ -1229,10 +1347,10 @@ Gets all stored compliance information records.
 #### GET_VENDOR_CERTIFIED_MODELS
 **Status: Not Implemented**
 
-Gets all the Models (`pid`s) issued by the given Vendor (`vid`) which are complaint to ZB standards.
+Gets all the Model versions (`pid` and `softwareVersions`) issued by the given Vendor (`vid`) which are complaint to zigbee or matter standards.
 
 This is the aggregation of compliance and
-revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+revocation information for every vid/pid/softwareVersion. It should be used in cases where compliance is tracked on ledger.
 
 - Parameters:
     - `vid`: 16 bits int
@@ -1314,6 +1432,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Parameters:
     - `address`: string // account address; bech32 encoded
     - `pub_key`: string // account public key; bech32 encoded
+    - `vid`: 16 bit number // vendor id (only needed for vendor role)
     - `roles`: array<string> // the list of roles to assign to account 
 - In State:
   - `auth` store  
@@ -1322,7 +1441,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
+    -   `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --vid=<uint16> --from=<trustee name>`
 - REST API: 
     -   POST `/auth/accounts/proposed`
     

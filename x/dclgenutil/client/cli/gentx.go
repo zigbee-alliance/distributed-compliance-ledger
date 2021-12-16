@@ -37,7 +37,7 @@ func GenTxCmd(mbm module.BasicManager, txEncCfg client.TxEncodingConfig, genAccI
 	cmd := &cobra.Command{
 		Use:   "gentx [key_name]",
 		Short: "Generate a genesis transaction to create a validator",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		Long: fmt.Sprintf(`Generate a genesis transaction that creates a validator,
 that is signed by the key in the Keyring referenced by a given name. A node ID and Bech32 consensus
 pubkey may optionally be provided. If they are omitted, they will be retrieved from the priv_validator.json
@@ -94,15 +94,15 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 
-			name := args[0]
-			key, err := clientCtx.Keyring.Key(name)
+			keyName := args[0]
+			key, err := clientCtx.Keyring.Key(keyName)
 			if err != nil {
-				return errors.Wrapf(err, "failed to fetch '%s' from the keyring", name)
+				return errors.Wrapf(err, "failed to fetch '%s' from the keyring", keyName)
 			}
 
 			moniker := config.Moniker
 			if m, _ := cmd.Flags().GetString(validatorcli.FlagName); m != "" {
-				name = m
+				moniker = m
 			}
 
 			// set flags for creating a gentx
@@ -155,7 +155,7 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 				return fmt.Errorf("error creating tx builder: %w", err)
 			}
 
-			err = authclient.SignTx(txFactory, clientCtx, name, txBuilder, true, true)
+			err = authclient.SignTx(txFactory, clientCtx, keyName, txBuilder, true, true)
 			if err != nil {
 				return errors.Wrap(err, "failed to sign std tx")
 			}

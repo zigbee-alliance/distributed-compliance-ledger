@@ -23,7 +23,7 @@ services:
       - "26656-26657:26656-26657"
       - "26650:26660"
     volumes:
-      - ./localnet/node0:/root/.dcld:Z
+      - ./.localnet/node0:/root/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.2
@@ -37,7 +37,7 @@ services:
       - "26658-26659:26656-26657"
       - "26651:26660"
     volumes:
-      - ./localnet/node1:/root/.dcld:Z
+      - ./.localnet/node1:/root/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.3
@@ -51,7 +51,7 @@ services:
       - "26660-26661:26656-26657"
       - "26652:26660"
     volumes:
-      - ./localnet/node2:/root/.dcld:Z
+      - ./.localnet/node2:/root/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.4
@@ -67,7 +67,7 @@ services:
       # uncomment following line if starting in debug mode
       # - "2345:2345"
     volumes:
-      - ./localnet/node3:/root/.dcld:Z
+      - ./.localnet/node3:/root/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.5
@@ -87,7 +87,7 @@ services:
       # uncomment following line if starting in debug mode
       # - "2345:2345"
     volumes:
-      - ./localnet/observer0:/root/.dcld:Z
+      - ./.localnet/observer0:/root/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.6

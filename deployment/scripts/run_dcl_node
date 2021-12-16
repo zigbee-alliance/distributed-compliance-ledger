@@ -1,0 +1,489 @@
+#!/bin/bash
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eu
+set -o pipefail
+
+export PATH="$PATH:/usr/bin"
+
+SCRIPT_PATH="$(readlink -f "$0")"
+BASEDIR="$(dirname "$SCRIPT_PATH")"
+
+# TODO errors to stderr
+#
+# TODO
+#   - check wherther ip6 and domain names in persistent-peers work
+#   - do not show private data
+#       - requries 'dclcli keys' adjustment, pipes configuration is not an option
+
+SERVICE_FILE="./dcld.service"
+PERSISTENT_PEERS_FILE='./persistent_peers.txt'
+GENESIS_IN_FILE="./genesis.json"
+CONFIG_FILE="$HOME/.dcld/config/config.toml"
+GENESIS_FILE="$HOME/.dcld/config/genesis.json"
+
+CLI_PORT=26657
+NT_GENESIS="genesis"
+NT_VALIDATOR="validator"
+NT_OBSERVER="observer"
+
+PERSISTENT_PEERS=
+PEER=
+PEER_ID=
+PEER_HOSTSPEC="localhost:$CLI_PORT"
+
+
+# ================ FUNCTIONS ============================
+DEF_NODE_TYPE="$NT_VALIDATOR"
+DEF_CHAIN_ID="testnet"
+DEF_NODE_USER="ubuntu"
+
+verbosity=0
+NODE_NAME=
+KEY_NAME=
+KEY_NAME_GEN_TRUSTEE=
+PEER=
+
+NODE_TYPE="$DEF_NODE_TYPE"
+CHAIN_ID="$DEF_CHAIN_ID"
+NODE_USER="${USER:-$DEF_NODE_USER}"
+
+
+function usage {
+  echo "\
+Usage: $0 [options] node-name
+
+Initializes DCL node of a given type.
+
+Options:
+  -c,  --chain-id               chain id, default: '$DEF_CHAIN_ID'
+  -h,  --help                   print this help and exit
+  -k,  --gen-key-name           node admin account key name, required for genesis account
+       --gen-key-name-trustee   genesis Trustee account key name, optional, expected for genesis account only
+  -t,  --type                   node type, one of '$NT_GENESIS', '$NT_VALIDATOR', '$NT_OBSERVER', default: '$DEF_NODE_TYPE'
+"
+#  -u,  --user                   node service user, default: '$DEF_NODE_USER'
+#-p,  --peer       peer hostspec as 'HOST:PORT', default: first entry of 'persistent_peers.txt'
+#  -v,  --verbose    be more verbose
+}
+
+
+function parse_args {
+    set -eu
+
+    #getopt --test > /dev/null
+    #if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
+    #    >&2 echo 'Error: getopt is not functional.'
+    #    exit 1
+    #fi
+
+    local _opts=hc:k:p:u:t:v
+    local _long_opts=help,chain-id:,gen-key-name:,gen-key-name-trustee:,peer:,user:type:,verbose
+
+    local _getopt_res
+    _getopt_res="$(getopt --name "$0" --options=$_opts --longoptions=$_long_opts -- "$@")" || exit 1
+    #if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    #    exit 2
+    #fi
+
+    eval set -- "$_getopt_res"
+
+    while true; do
+        case "$1" in
+            -h|--help)
+                usage
+                exit 0
+                ;;
+            -c|--chain-id)
+                CHAIN_ID="$2"
+                shift 2
+                ;;
+            -k|--gen-key-name)
+                KEY_NAME="$2"
+                shift 2
+                ;;
+            --gen-key-name-trustee)
+                KEY_NAME_GEN_TRUSTEE="$2"
+                shift 2
+                ;;
+            -p|--peer)
+                PEER="$2"
+                shift 2
+                ;;
+            -u|--user)
+                USER="$2"
+                shift 2
+                ;;
+            -t|--type)
+                NODE_TYPE="$2"
+                shift 2
+                ;;
+            -v|--verbose)
+                ((verbosity=verbosity+1))
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            ?)
+                >&2 echo "Runtime error"
+                exit 3
+                ;;
+            *)
+                >&2 echo "Parser error"
+                exit 3
+        esac
+    done
+
+    if [[ $# -ne 1 ]]; then
+        echo "Wrong number of positional arguments"
+        usage
+        exit 1
+    fi
+
+    NODE_NAME="$1"
+
+    if [[ "$NODE_TYPE" == "$NT_GENESIS" && -z "$KEY_NAME" ]]; then
+        echo "Error. key name is required for a genesis node run"
+        exit 1
+    fi
+
+    if [[ "$NODE_TYPE" == "$NT_GENESIS" ]]; then
+        PEER_ADDR="localhost"
+    else
+        if [[ ! -f "$PERSISTENT_PEERS_FILE" ]]; then
+            echo "Error. '$PERSISTENT_PEERS_FILE' file not found"
+            exit 1
+        fi
+
+        if [[ ! -f "$GENESIS_IN_FILE" ]]; then
+            echo "Error. '$GENESIS_IN_FILE' file not found"
+            exit 1
+        fi
+
+        PERSISTENT_PEERS="$(cat $PERSISTENT_PEERS_FILE | head -n1)"
+
+        if [[ -z "$PEER" ]]; then
+            PEER="$(echo "$PERSISTENT_PEERS" | awk -F',' '{print $1}')"
+        fi
+        PEER_ID="$(echo "$PEER" | awk -F'@' '{print $1}')"
+        PEER_HOSTSPEC="$(echo "$PEER" | awk -F'@' '{print $2}')"
+        PEER_ADDR="$(echo "$PEER_HOSTSPEC" | awk -F':' '{print $1}')"
+    fi
+}
+
+function config_cli {
+    set -eu
+    set -o pipefail
+
+    local _chain_id="$1"
+    local _peer_host="${2:-}"
+
+    dclcli config chain-id "$_chain_id"
+    dclcli config output json
+    dclcli config indent true
+    dclcli config trust-node false
+    if [[ -n "$_peer_host" ]]; then
+        dclcli config node tcp://"$_peer_host"
+    fi
+}
+
+
+function add_key {
+    set -eu
+    set -o pipefail
+
+    local _key_name="$1"
+    local _output="${2:-${_key_name}.dclkey.json}"
+
+    dclcli keys add "$_key_name" 2>&1 | tee "$_output"
+    echo -e "\tSaved key data in '$_output'"
+}
+
+
+function node_init {
+    set -eu
+    set -o pipefail
+
+    local _name="$1"
+    local _chain_id="$2"
+
+    rm -rf "$HOME/.dcld/config/gentx"
+    rm -f "$GENESIS_FILE"
+
+    dcld init "$_name" --chain-id "$_chain_id"
+}
+
+
+function build_genesis {
+    set -eu
+    set -o pipefail
+
+    local _key_name_admin="$1"
+    local _acc_address="$2"
+    local _acc_pubkey="$3"
+    local _acc_address_tr="${4:-}"
+    local _acc_pubkey_tr="${5:-}"
+
+    dcld add-genesis-account --address="$_acc_address" --pubkey="$_acc_pubkey" --roles="NodeAdmin"
+    if [[ -n "$_acc_address_tr" && -n "$_acc_pubkey_tr" ]]; then
+        dcld add-genesis-account --address="$_acc_address_tr" --pubkey="$_acc_pubkey_tr" --roles="Trustee"
+    fi
+    dcld gentx --from "$_key_name_admin"
+    dcld collect-gentxs
+    dcld validate-genesis
+}
+
+function config_node {
+    set -eu
+    set -o pipefail
+
+    local _node_user="$1"
+    local _dcld_service_p="${2:-./dcld.service}"
+    local _peers="${3:-}"
+
+    local _debug="${DEBUG:-}"
+
+    sed -i -r 's~^laddr = "tcp://127.0.0.1:~laddr = "tcp://0.0.0.0:~' "$CONFIG_FILE"
+
+    if [[ -n "$_peers" ]]; then
+        sed -i -r "s~^persistent_peers = .*~persistent_peers = \"$_peers\"~" "$CONFIG_FILE"
+    fi
+
+    if [[ -z "$_debug" ]]; then
+        # config the service
+        test -d "/etc/systemd/system" && {
+            if [[ ! -f "$_dcld_service_p" ]]; then
+                echo "Error. '$_dcld_service_p' file not found"
+                exit 1
+            fi
+
+            # TODO move ot a separate script
+            # Open '26656' (p2p) and '26657' (RPC) ports. 
+            # sudo ufw allow 26656/tcp
+            # sudo ufw allow 26657/tcp
+
+            # set systemd dcld.service
+            sed -i -r "s~^User=ubuntu$~User=${NODE_USER}~" "$_dcld_service_p"
+            sudo cp -f "$_dcld_service_p" /etc/systemd/system/dcld.service
+        } || { echo "WARNING: Not a systemd system. Skipping systemd service configuration";}
+    fi
+}
+
+    
+function run_node {
+    set -eu
+    set -o pipefail
+
+    local _debug="${DEBUG:-}"
+
+    if [[ -z "$_debug" ]]; then
+        test -d "/etc/systemd/system" && {
+            # Enable the service
+            sudo systemctl enable dcld
+            # Start node
+            sudo systemctl start dcld
+        } || { echo "WARNING: Not a systemd system. Skipping service start..."; return 0; }
+
+        echo "Node has been stared as a service."
+
+        echo -e "\tUse 'systemctl status dcld' to get the node service status."
+        echo "Use 'journalctl -u dcld.service -f' to see node logs."
+    else
+        dcld start &
+        echo "Node has been stared in the backgroud."
+    fi
+}
+
+
+function wait_node_up {
+    local _timeout="${1:-5}"
+    local _try=1
+
+    echo -e "Waiting the node becomes up"
+    until dclcli status >/dev/null 2>&1
+    do
+        if [[ "$_try" -gt "$_timeout" ]]; then
+            echo -e "\nERROR: dcld node seems not ready after $_timeout seconds."
+            return 1
+        fi
+        echo -n "."
+        _try=$(( $_try + 1 ))
+        sleep 1
+    done
+    echo -e "\n\tNode is responding"
+}
+
+
+function verify_node {
+    set -eu
+    set -o pipefail
+
+    local _node_ip="${1:-0.0.0.0:26657}"
+
+    echo "Checking a node's 'sync_info.latest_block_height' value is not increasing..."
+
+    echo "sync_info.latest_block_height Try 1"
+    check1="$(dclcli status --node "$_node_ip" | grep latest_block_height)"
+
+    echo "sync_info.latest_block_height Try 2"
+    # TODO it should depend on empty block creation setting value
+    sleep 6
+    check2="$(dclcli status --node "$_node_ip" | grep latest_block_height)"
+
+    if [[ "$check1" == "$check2" ]]; then
+        echo "Error: sync_info.latest_block_height value is not increasing..."
+        exit 1
+    fi
+
+    # TODO improve: makes sense only for initial genesis node
+    echo "Checking the node is participating in consensus..."
+    dclcli tendermint-validator-set | grep -q address
+
+    # TODO check: catching_up is false
+
+    echo "Passed"
+}
+
+
+function add_account {
+    set -eu
+    set -o pipefail
+
+    local _acc_address="$1"
+    local _acc_pubkey="$2"
+    local _acc_roles="$3"
+    local _from="$4"
+
+    dclcli tx auth propose-add-account --address="$_acc_address" --pubkey="$_acc_pubkey" \
+        --roles="$_acc_roles" --from="$_from"
+
+    echo "Account added"
+    echo "To approve run: dclcli tx auth approve-add-account --address=<string> --from=<account>"
+}
+
+
+function approve_account {
+    set -eu
+    set -o pipefail
+
+    local _acc_address="$1"
+    local _from="$2"
+
+    dclcli tx auth approve-add-account --address="$_acc_address" --from="$_from"
+
+    echo "Account approved by $_from"
+}
+
+# =======================================================
+
+parse_args "$@"
+
+if [[ "$verbosity" -ge 2 ]]; then
+    set -x
+fi
+
+if [[ "$verbosity" -ge 1 ]]; then
+    echo ""
+    #parsed_args=""
+    #parsed_args+="\t CHAIN_ID=$output_dir\n\toutput_type=$output_type"
+    #parsed_args+="\n\tin_docker=$in_docker\n\tinput_dir=$input_dir"
+    #parsed_args+="\n\tfpm_tool=$fpm_tool\n\tverbosity=$verbosity"
+    #parsed_args+="\n\trelease=$pkg_version"
+
+    #echo -e "Parsed arguments:\n$parsed_args"
+fi
+
+echo "Configuring CLI"
+
+# Note. we consider that cli would connect to local node (default setting)
+config_cli "$CHAIN_ID"
+
+ACC_ADDR="<acc-addr>"
+ACC_PUBKEY="<acc-pubkey>"
+if [[ -n "$KEY_NAME" ]]; then
+    ACC_ADDR="$(dclcli keys show "${KEY_NAME}" | grep address | awk -F'"' '{print $4}')"
+    ACC_PUBKEY="$(dclcli keys show "${KEY_NAME}" | grep pubkey | awk -F'"' '{print $4}')"
+fi
+
+if [[ -n "$KEY_NAME_GEN_TRUSTEE" ]]; then
+    ACC_ADDR_TR="$(dclcli keys show "${KEY_NAME_GEN_TRUSTEE}" | grep address | awk -F'"' '{print $4}')"
+    ACC_PUBKEY_TR="$(dclcli keys show "${KEY_NAME_GEN_TRUSTEE}" | grep pubkey | awk -F'"' '{print $4}')"
+fi
+
+echo "Initializing the node"
+node_init "$NODE_NAME" "$CHAIN_ID"
+
+
+if [[ "$NODE_TYPE" == "$NT_GENESIS" ]]; then
+    echo "Building genesis file"
+    build_genesis "$KEY_NAME" "$ACC_ADDR" "$ACC_PUBKEY" "$ACC_ADDR_TR" "$ACC_PUBKEY_TR"
+else
+    echo "Locating the genesis file at $GENESIS_FILE"
+    cp -f "$GENESIS_IN_FILE" "$GENESIS_FILE" 
+fi
+
+echo "Configuring node"
+config_node "$NODE_USER" "$SERVICE_FILE" "$PERSISTENT_PEERS"
+echo -e "\tDone."
+echo -e "\nOptionally, edit '$CONFIG_FILE' in order to set different setting (like listen address)"
+
+echo "Running the node"
+run_node
+
+VAL_ID="unknown"
+wait_node_up && VAL_ID="$(dclcli status | grep '"id"' | awk -F'"' '{print $4}')"
+
+VAL_ADDR="$(dcld tendermint show-address)"
+VAL_PUBKEY="$(dcld tendermint show-validator)"
+
+echo "Done"
+
+echo -e "\n====================================\n"
+
+echo "Generated data:"
+echo -e "\n\tValidator node data:"
+echo -e "\t\tname: '$NODE_NAME'"
+echo -e "\t\taddress: '$VAL_ADDR'"
+echo -e "\t\tpublic key: '$VAL_PUBKEY'"
+echo -e "\t\tID: '$VAL_ID'"
+
+if [[ "$NODE_TYPE" == "$NT_GENESIS" ]]; then
+    echo -e "\n\tGenesis file: '$GENESIS_FILE'"
+
+elif [[ "$NODE_TYPE" == "$NT_VALIDATOR" ]]; then
+    if [[ -z "$KEY_NAME" ]]; then
+        KEY_NAME="<acc-keyname>"
+    fi
+
+    echo -e "\nNext steps:"
+    echo -e "\n\t1. If you have an approved NodeAdmin account please run the following command to make the node a validator:"
+    echo -e "\t\t'dclcli tx validator add-node --validator-address=$VAL_ADDR --validator-pubkey=$VAL_PUBKEY --name=$NODE_NAME --from=$KEY_NAME'"
+    echo -e "\n\t2. Explore the node external IP and provide it along with validator ID '$VAL_ID'"
+    echo -e "\t\t to DCLedger '$CHAIN_ID' network validator administrators"
+
+fi
+
+# useful commands
+# - keys:
+#   dclcli keys show <name>: to get address and oubkey for a ketname
+# - node status:
+#   - systemctl status dcld: to get the node service status. 
+#   - journalctl -u dcld.service -f: to see node logs. 
+#   - dclcli status [--node <node ip>`]: to get the current status.
+#   - dclcli tendermint-validator-set [height]: list of nodes participating in consensus
+# - account status:
+#   - dclcli query auth account --address=<address>: to ensure that account is created and has assigned role

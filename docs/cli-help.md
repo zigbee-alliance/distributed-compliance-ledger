@@ -454,7 +454,7 @@ The set of commands that allows the Vendor to update contact information.
     
   Example: `dclcli query vendorinfo all-vendors`
 
-### Model Info
+### Device Model 
 
 The set of commands that allows you to manage model and model versions.
 
@@ -494,7 +494,7 @@ The set of commands that allows you to manage model and model versions.
   Role: `Vendor`
 
   Command: `dclcli tx model update-model --vid=<uint16> --pid=<uint16>  --from=<account>`
-  existing Model.
+  
     
   Flags:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -503,75 +503,63 @@ The set of commands that allows you to manage model and model versions.
   - productLabel: `string` -  model description (string or path to file containing data)
   - partNumber: `string` -  stock keeping unit
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
-  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
-  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
- 
-    
+
   Example: `dclcli tx model update-model --vid=1 --pid=1 --productLabel="New Description" --from=jack `
   
   Example: `dclcli tx model update-model --vid=1 --pid=1 --supportURL="https://product-support.url.test"  --from=jack `
 
 
-- Add a new model version. Only vendor role with associated vendor ID can add the model versions for given Vendor ID
+- Add a new model version. Only vendor role with associated vendor ID can add the model versions for given Vendor ID. Also the Model with a given pid should be present on the ledger before model versions can be added.
 
   Role: `Vendor`
   
-  Command: `dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid1 --softwareVersion=$software_version --softwareVersionString=1 --from=$user_address`
+  Command: `dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid1 --softwareVersion=$software_version --softwareVersionString=1 --from=jack `
 
   Flags:
   - vid: `uint16` -  model vendor ID (positive non-zero)
   - pid: `uint16` -  model product ID (positive non-zero)
-  - deviceTypeID: `uint16` -  DeviceTypeID is the device type identifier. For example, DeviceTypeID 10 (0x000a), is the device type identifier for a Door Lock.
-  - productName: `string` -  model name
-  - productLabel: `string` -  model description (string or path to file containing data)
-  - partNumber: `string` -  stock keeping unit
-   
-  - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
-  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
-  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
-  - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
-  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
-  - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
-  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
-  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
-  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
-  
-  
+  - softwareVersion: `uint32` - model software version
+  - softwareVersionSting: `string` - model software version string 
+  - cdVersionNumber `uint32` - CD Version Number of the certification
+  - firmwareDigests `string` - FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device
+  - softwareVersionValid `bool` - Flag to indicate whether the software version is valid or not (default true)
+  - otaURL `string` - URL where to obtain the OTA image
+  - otaFileSize `string`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `string` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
+  - otaChecksumType `string` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
+  - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
+  - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
+  - releaseNotesURL `string` - URL that contains product specific web page that contains release notes for the device model.
 
-  Example: `dclcli tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --partNumber="SKU12FS"  --from="jack"`
+  Example: `dclcli tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack"`
   
-- Update an existing model. Only the vendor role with associated vendorID can edit a Model.
+- Update an existing model version. Only the vendor role with associated vendorID can edit a Model.
 
   Role: `Vendor`
 
-  Command: `dclcli tx model update-model --vid=<uint16> --pid=<uint16>  --from=<account>`
-  existing Model.
-    
-  Flags:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - productName: `string` -  model name
-  - productLabel: `string` -  model description (string or path to file containing data)
-  - partNumber: `string` -  stock keeping unit
-  - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
-  - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
-  - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
-  - commissioningModeSecondaryStepsHint: `optional(uint32)` - commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can be used to put into commissioning mode a device that has already been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) indicates that a device that has already been commissioned will require the user to visit a current CHIP Administrator to put the device into commissioning mode.
-  - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
-  - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
-  - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
-  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  Command: `dclcli tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --from=<account>`
  
     
-  Example: `dclcli tx model update-model --vid=1 --pid=1 --productLabel="New Description" --from=jack `
+  Flags:
+  - vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - softwareVersionValid `bool` - Flag to indicate whether the software version is valid or not (default true)
+  - otaURL `string` - URL where to obtain the OTA image
   
-  Example: `dclcli tx model update-model --vid=1 --pid=1 --supportURL="https://product-support.url.test"  --from=jack `
+  - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
+  - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
+  - releaseNotesURL `string` - URL that contains product specific web page that contains release notes for the device model.
 
+ 
+    
+  Example: `dclcli tx model update-model-version --vid=1 --pid=1 --softwareVersion=1 --releaseNotesURL="https://release.notes.url.info" --from=jack `
+  
 ##### Queries
 - Query a single model.
 
@@ -591,6 +579,7 @@ The set of commands that allows you to manage model and model versions.
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
   - softwareVersion: `uint32` - model software version
+  
 
   Example: `dclcli query model get-model-version --vid=1 --pid=1 --softwareVersion=1`  
   
@@ -646,22 +635,23 @@ The set of commands that allows you to manage testing results associated with a 
 
   Role: `TestHouse`
 
-  Command: ` dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
+  Command: ` dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
   - softwareVersion: `uint32` - model software version
+  - softwareVersionSting: `string` - model software version string 
   - test-result: `string` -  test result (string or path to file containing data)
   - test-date: `string` -  date of test result (rfc3339 encoded)
   - from: `string` - Name or address of private key with which to sign
 
-  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --softwareVersion=1 --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --softwareVersion=1 --softwareVersionString="1.0"" --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --softwareVersion=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --softwareVersion=1 --softwareVersionString="1.0"" --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
 ##### Queries
-- Query testing results for model associated with the given VID/PID.
+- Query testing results for model associated with the given VID/PID/SoftwareVersion.
 
   Command: `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint16>"`
 
@@ -682,13 +672,14 @@ Only the owner can update an existing record.
 
   Role: `CertificationCenter`
 
-  Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint16> --certificationType=<zigbee|matter> --certificationDate=<rfc3339 encoded date> --from=<account>`
+  Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint16> --softwareVersionString=<string> --certificationType=<zigbee|matter> --certificationDate=<rfc3339 encoded date> --from=<account>`
   
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
   - softwareVersion: `uint32` - model software version
-  - certificationType: `string` -  certification type (zigbee & matter` are the only supported values for now)
+  - softwareVersionSting: `string` - model software version string 
+  - certificationType: `string` -  certification type (`zigbee` & `matter` are the only supported values for now)
   - certificationDate: `string` -  the date of model certification (rfc3339 encoded)
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of certification

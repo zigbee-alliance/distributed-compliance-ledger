@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -13,7 +14,7 @@ import (
 
 func CmdListValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-validator",
+		Use:   "all-nodes",
 		Short: "list all Validators",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -49,9 +50,9 @@ func CmdListValidator() *cobra.Command {
 
 func CmdShowValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-validator [owner]",
+		Use:   "node",
 		Short: "shows a Validator",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientQueryContext(cmd)
 			if err != nil {
@@ -59,7 +60,7 @@ func CmdShowValidator() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			addr, err := sdk.ValAddressFromBech32(args[0])
+			addr, err := sdk.ValAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
@@ -77,7 +78,10 @@ func CmdShowValidator() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded validator address")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

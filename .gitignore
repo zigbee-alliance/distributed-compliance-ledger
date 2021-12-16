@@ -5,6 +5,7 @@ release/
 settings.json
 .idea
 localnet
+.localnet
 rest-server.out
 .DS_Store
 .vscode

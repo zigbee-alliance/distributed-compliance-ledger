@@ -63,11 +63,11 @@ In order to connect the CLI to a DC Ledger Network (Chain), the following parame
 * `dclcli config indent true` - Add indent to JSON response.
 * `dclcli config trust-node false` - Verify proofs for node responses.
 * `dclcli config node <address>` - Address of a node to connect.
-    * Example: `tcp://18.157.114.34:26657`.
-    * The IP address there is the IP of one of the nodes from the Network you are going to connect to.
-    * One of the persistent peer's IP can be used here
-    * A list of persistent peer IPs for persistent networks (such as the Test Net)
-    can be found in the corresponding subfolders within [Persistent Chains](../deployment/persistent_chains). 
+    * Example: `tcp://18.157.114.34:26657` or `on1.testnet.dcl.dev.dsr-corporation.com:26657`.
+    * The address there is the address (IP or domain name) of one of the nodes (Validators or Observers) from the Network you are going to connect to.
+    * A list of Observer Node addresses for persistent networks (such as the Test Net)
+    can be found in the corresponding subfolders within [Persistent Chains](../deployment/persistent_chains).
+    * Please look at [Observer Nodes](../deployment/persistent_chains/testnet/nodes.md) for a list of Observer nodes for the current `testnet`.
 
 
 ## Getting Account
@@ -86,13 +86,13 @@ Here is steps for getting an account:
     * You can remember and securely save the mnemonic phrase shown after the key is created
         to be able to recover the key later.
 * Share generated `address` and `pubkey` with a number of `Trustee`s sufficient for account addition operation.
-* One of `Trustee`s proposes to add the account to the ledger: `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --from=<trustee name>`
+* One of `Trustee`s proposes to add the account to the ledger: `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --vid=<vendorID for vendor role> --from=<trustee name>` (p.s. A vendor role is tied to a Vendor ID, hence while proposing a Vendor Role vid is a required field.)
 * Sufficient number of other `Trustee`s approve the proposed account: `dclcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
 * Check that the active account exists: `dclcli query auth account --address=<account address>`
 
 Example:
 * `dclcli keys add steve`
-* `dclcli tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --roles=Vendor,NodeAdmin --from jack`
+* `dclcli tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --roles=Vendor,NodeAdmin --vid=4563 --from jack`
 * `dclcli tx auth approve-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --from alice`
 * `dclcli query auth account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
@@ -259,12 +259,30 @@ The certificate must be signed by a chain of certificates which must be already 
   
   Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
-##### 2. Add a new model info with the given VID/PID
 
 
-Command: `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --productName=<string> --productLabel=<string or path> --sku=<string> 
---softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> 
---from=<account>`
+##### 2. Add Vendor Info
+
+Add a new vendor contact info.
+
+  Role: `Vendor`
+  
+  Command: `dclcli tx vendorinfo add-vendor --companyLegalName=<string> --companyPreferredName=<string> --vendorName=<string> --vid=<uint16> ----vendorLandingPageURL=<url> --from=<account>`
+
+  Flags:
+  - companyLegalName `string (max64)` - Company Legal Name
+  - companyPreferredName `optional string (max64)` - Company Preferred Name  
+  - vendorLandingPageURL `optional string (max256)` - Landing Page URL for the Vendor
+  - vendorName `string (max32)` - Vendor Name
+  - vid `uint16` - Vendor ID      
+  
+
+  Example: `dclcli tx vendorinfo add-vendor --companyLegalName="XYZ Technology Solutions" --vid=123 --vendorName="XYZ Inc" --from="jack"`
+##### 3. Add a new model info with the given VID/PID
+
+  Role: `Vendor`
+
+  Command: `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --productName=<string> --productLabel=<string or path> --sku=<string> --softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -301,7 +319,27 @@ Command: `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --productName=
   
   Example: `dclcli tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack --cid=1 --custom="Some Custom information"`
 
+##### 4. Add a new model version for the given VID/PID and Software Version
 
+Command: `dclcli tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
+
+  Flags:
+- vid: `uint16` -  model vendor ID (positive non-zero)
+  - pid: `uint16` -  model product ID (positive non-zero)
+  - softwareVersion: `uint32` - model software version
+  - softwareVersionSting: `string` - model software version string 
+  - cdVersionNumber `uint32` - CD Version Number of the certification
+  - firmwareDigests `string` - FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device
+  - softwareVersionValid `bool` - Flag to indicate whether the software version is valid or not (default true)
+  - otaURL `string` - URL where to obtain the OTA image
+  - otaFileSize `string`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `string` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
+  - otaChecksumType `string` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
+  - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
+  - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
+  - releaseNotesURL `string` - URL that contains product specific web page that contains release notes for the device model.
+
+  Example: `dclcli tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack"`
 ## Test House Instructions
 ##### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
 This step is needed for off-ledger certification use case only, see [use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png).

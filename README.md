@@ -32,12 +32,13 @@ The ledger consists of
         - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)
         - [Rust Light Client implementation](https://docs.rs/tendermint/0.13.0/tendermint/lite/index.html)  
  - Public UI
-    - https://dcl.dev.dsr-corporation.com.
-    - based onf the REST API
+    - https://dcl.dev.dsr-corporation.com
+    - based on the REST API
     - can be used to browse the ledger
         - please note that it doesn't show all the accounts on the ledger
         - it shows only the default (demo) accounts created on the UI server
     - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
+    - source code and documentation are located in [dcl-ui](/dcl-ui) directory
 
 #### Public Permissioned Ledger
 DC Ledger is a public permissioned ledger in the following sense:
@@ -126,15 +127,14 @@ One can either deploy its own network of validator nodes or join one of the pers
 - If you want to deploy your own network for debug purposes,
 you can use the provided Ansible Playbook: [ansible/readme.md](deployment/ansible/README.md).
 - If you want to join an existing network (either a custom or persistent) as a validator node,
-please follow the [Running a Validator Node](docs/running-validator-node.md) instructions.
-- If you want to deploy your own persistent network,
-you will need to create a genesis node and a genesis file first as described in [Running a Genesis Validator Node](docs/running-genesis-node.md).
-After this more nodes can be added by following the [Running a Validator Node](docs/running-validator-node.md) instructions.
-Please note, that [Running a Genesis Validator Node](docs/running-genesis-node.md) describes 
-the case when the genesis block consist of a single node only. This is done just for simplicity, 
-and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
+please follow the [Running Node](docs/running-node.md) or a more detailed [Running a Validator Node](docs/running-validator-node.md) instructions.
 - If you want to join an existing network  as an observer node,
-please follow the [Running an Observer Node](docs/running-observer-node.md) instructions.
+please follow the [Running Node](docs/running-node.md) or a more detailed [Running an Observer Node](docs/running-observer-node.md) instructions.
+- If you want to deploy your own persistent network,
+you will need to create a genesis node and a genesis file first as described in
+[Running Node](docs/running-node.md) or a more detailed [Running a Genesis Validator Node](docs/running-genesis-node.md).
+Please note, that these instructions describe the case when the genesis block consists of a single node only. 
+This is done just for simplicity, and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
 
 A recommended way for deployment and client connection: [diagram](docs/deployment.png)
 
@@ -152,9 +152,10 @@ A recommended way for deployment and client connection: [diagram](docs/deploymen
 - [How To Guide](docs/how-to.md)
 - [CLI Help](docs/cli-help.md)
 - [Deployment](deployment/ansible/README.md)
-- [Running a Genesis Validator Node](docs/running-genesis-node.md)
-- [Running a Validator Node](docs/running-validator-node.md)
-- [Running an Observer Node](docs/running-observer-node.md)
+- [Running a Node](docs/running-node.md)
+  - [Running a Genesis Validator Node](docs/running-genesis-node.md)
+  - [Running a Validator Node](docs/running-validator-node.md)
+  - [Running an Observer Node](docs/running-observer-node.md)
 - [Deployment Pattern](docs/deployment.png)
 - [Tendermint](https://tendermint.com/)
 - [Cosmos SDK](https://cosmos.network/sdk)

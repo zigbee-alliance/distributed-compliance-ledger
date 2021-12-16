@@ -1,5 +1,5 @@
 {
-  "genesis_time": "2020-10-19T10:19:18.147430343Z",
+  "genesis_time": "2021-12-08T15:22:52.364873148Z",
   "chain_id": "testnet",
   "consensus_params": {
     "block": {
@@ -18,21 +18,6 @@
   },
   "app_hash": "",
   "app_state": {
-    "compliancetest": {
-      "testing_result_records": []
-    },
-    "pki": {
-      "proposed_certificates": [],
-      "approved_certificates_records": [],
-      "proposed_certificate_revocations": [],
-      "revoked_certificates_records": [],
-      "child_certificates_records": []
-    },
-    "auth": {
-      "accounts": [],
-      "pending_accounts": [],
-      "pending_account_revocations": []
-    },
     "validator": {
       "validators": [],
       "last_validators": [],
@@ -42,17 +27,30 @@
     "genutil": {
       "accounts": [
         {
-          "address": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6",
+          "address": "cosmos1m2nkh2essjref6dgtk9x6z2kewypzhjg27anat",
           "public_key": {
             "type": "tendermint/PubKeySecp256k1",
-            "value": "A6boWLQ19DQdSA2NXqHF1i7Jf1zU9PBdm25/oangrh1s"
+            "value": "AwUytI1ZAraSmwfYXoc/kG//SXmD8amwyKNqujEWbmnd"
           },
           "account_number": "0",
           "sequence": "0",
           "roles": [
-            "Trustee",
             "NodeAdmin"
-          ]
+          ],
+          "vendorID": 0
+        },
+        {
+          "address": "cosmos1smqf68pnsw6hz85eygsyykl43lfp0vx357925j",
+          "public_key": {
+            "type": "tendermint/PubKeySecp256k1",
+            "value": "A97HleiN10GD75bopvKi4fPpszop+vVAXSvNhtsM1tt2"
+          },
+          "account_number": "0",
+          "sequence": "0",
+          "roles": [
+            "Trustee"
+          ],
+          "vendorID": 0
         }
       ],
       "gentxs": [
@@ -63,12 +61,12 @@
               {
                 "type": "validator/CreateValidator",
                 "value": {
-                  "validator_address": "cosmosvalcons1sny4psk3zv5lyn4prhpdplud82zpy8s77rnzve",
-                  "validator_pubkey": "cosmosvalconspub1zcjduepq0akjmv6zsl4zh99p006w5e6w2nm68fsd40f8dkwy7w2lstmvew7qksk4ga",
+                  "validator_address": "cosmosvalcons1fgpmssql7q3utfwt9gtd8segk0rmrrr5dmyfhw",
+                  "validator_pubkey": "cosmosvalconspub1zcjduepq2w2ta3xwe2nahhsre5t9wsq28pxrpjnslk73ds6q4jmzauf25sqq9thpvu",
                   "description": {
-                    "name": "dsr1"
+                    "name": "dsr-genesis-node"
                   },
-                  "signer": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6"
+                  "signer": "cosmos1m2nkh2essjref6dgtk9x6z2kewypzhjg27anat"
                 }
               }
             ],
@@ -80,12 +78,12 @@
               {
                 "pub_key": {
                   "type": "tendermint/PubKeySecp256k1",
-                  "value": "A6boWLQ19DQdSA2NXqHF1i7Jf1zU9PBdm25/oangrh1s"
+                  "value": "AwUytI1ZAraSmwfYXoc/kG//SXmD8amwyKNqujEWbmnd"
                 },
-                "signature": "PTdtIZN5Qtv8TnxH+idgRYGbVUjC//jie/07DTpIAvJKfELobzkD0a+k1DIpGQihtGy96MgggvqAzjoIfx7s7Q=="
+                "signature": "4L91VRkxJm5CHtp1fssrfCbMrpLnRWpgdE7gpo35JV8D+do3KjFHuqFJiPvUMoLbqZKDp35S1eewiheyXer1ng=="
               }
             ],
-            "memo": "b0ee4bb4d45da84cd3b9d4f779c8590d30c3aaf5@172.26.4.110:26656"
+            "memo": "14224598de8fd01b118de3eb1c7761e110b57bfa@172.26.4.110:26656"
           }
         }
       ]
@@ -95,6 +93,24 @@
     },
     "compliance": {
       "compliance_model_records": []
+    },
+    "compliancetest": {
+      "testing_result_records": []
+    },
+    "pki": {
+      "proposed_certificates": [],
+      "approved_certificates_records": [],
+      "proposed_certificate_revocations": [],
+      "revoked_certificates_records": [],
+      "child_certificates_records": []
+    },
+    "vendorinfo": {
+      "vendor_info_records": []
+    },
+    "auth": {
+      "accounts": [],
+      "pending_accounts": [],
+      "pending_account_revocations": []
     }
   }
 }

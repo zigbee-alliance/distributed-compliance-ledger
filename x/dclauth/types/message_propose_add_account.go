@@ -101,7 +101,12 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "account address and pubkey address do not match")
 	}
 
-	roles := fromSlice(msg.Roles)
+	roles := FromSlice(msg.Roles)
+
+	if len(*roles) == 0 {
+		return ErrMissingRoles()
+	}
+
 	if err := roles.Validate(); err != nil {
 		return err
 	}
