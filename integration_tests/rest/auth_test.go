@@ -15,12 +15,15 @@
 package rest_test
 
 import (
+	//"net/http"
 	"net/http"
 	"testing"
 
+	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -35,112 +38,164 @@ import (
 
 //nolint:funlen
 func TestAuthDemo(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID)
+	kr := suite.GetKeyring()
+
+	jackName := testconstants.JackAccount
+	aliceName := testconstants.AliceAccount
+	bobName := testconstants.BobAccount
+
 	// Query all active accounts
-	inputAccounts, _ := utils.GetAccounts()
+	inputAccounts, err := suite.GetAccounts()
+	require.NoError(t, err)
+	require.Equal(t, 4, len(inputAccounts))
 
-	// Query all proposed accounts
-	inputProposedAccounts, _ := utils.GetProposedAccounts()
-
-	// Query all proposed accounts to revoke
-	inputProposedAccountsToRevoke, _ := utils.GetProposedAccountsToRevoke()
-
-	// Create keys for new account
-	name := utils.RandString()
-	testAccountKeyInfo, _ := utils.CreateKey(name)
+	// build map with an acc address as a key
+	accDataInitial := make(map[string]dclauthtypes.Account)
+	for _, acc := range inputAccounts {
+		accDataInitial[acc.GetAddress().String()] = acc
+	}
 
 	// Jack, Alice and Bob are predefined Trustees
-	jackKeyInfo, _ := utils.GetKeyInfo(testconstants.JackAccount)
-	aliceKeyInfo, _ := utils.GetKeyInfo(testconstants.AliceAccount)
-	bobKeyInfo, _ := utils.GetKeyInfo(testconstants.BobAccount)
+	jackKeyInfo, err := kr.Key(jackName)
+	require.NoError(t, err)
+	require.Contains(t, accDataInitial, jackKeyInfo.GetAddress().String())
+	jackSequence := accDataInitial[jackKeyInfo.GetAddress().String()].GetSequence()
+	jackAccNum := accDataInitial[jackKeyInfo.GetAddress().String()].GetAccountNumber()
+
+	aliceKeyInfo, err := kr.Key(aliceName)
+	require.NoError(t, err)
+	require.Contains(t, accDataInitial, aliceKeyInfo.GetAddress().String())
+	aliceSequence := accDataInitial[aliceKeyInfo.GetAddress().String()].GetSequence()
+	aliceAccNum := accDataInitial[aliceKeyInfo.GetAddress().String()].GetAccountNumber()
+
+	bobKeyInfo, err := kr.Key(bobName)
+	require.NoError(t, err)
+	require.Contains(t, accDataInitial, bobKeyInfo.GetAddress().String())
+	bobSequence := accDataInitial[bobKeyInfo.GetAddress().String()].GetSequence()
+	bobAccNum := accDataInitial[bobKeyInfo.GetAddress().String()].GetAccountNumber()
+
+	// Query all proposed accounts
+	inputProposedAccounts, err := suite.GetProposedAccounts()
+	require.NoError(t, err)
+	require.Equal(t, 0, len(inputProposedAccounts))
+
+	// Query all proposed accounts to revoke
+	inputProposedAccountsToRevoke, err := suite.GetProposedAccountsToRevoke()
+	require.NoError(t, err)
+	require.Equal(t, 0, len(inputProposedAccountsToRevoke))
+
+	_, testAccPubKey, testAccAddr := testdata.KeyTestPubAddr()
+
+	/*
+		// Create keys for new account
+		name := utils.RandString()
+		testAccountKeyInfo, _ := utils.CreateKey(name)
+
+	*/
 
 	// Jack proposes new account
-	utils.ProposeAddAccount(testAccountKeyInfo, jackKeyInfo, dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.VID)
+	_, err = suite.ProposeAddAccount(
+		jackName, testAccAddr, testAccPubKey,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.VID,
+		jackAccNum, jackSequence,
+	)
+	require.NoError(t, err)
+	jackSequence += 1
 
 	// Query all active accounts
-	receivedAccounts, _ := utils.GetAccounts()
-	require.Equal(t, len(inputAccounts.Items), len(receivedAccounts.Items))
+	receivedAccounts, _ := suite.GetAccounts()
+	require.Equal(t, len(inputAccounts), len(receivedAccounts))
 
 	// Query all proposed accounts
-	receivedProposedAccounts, _ := utils.GetProposedAccounts()
-	require.Equal(t, len(inputProposedAccounts.Items)+1, len(receivedProposedAccounts.Items))
+	receivedProposedAccounts, _ := suite.GetProposedAccounts()
+	require.Equal(t, len(inputProposedAccounts)+1, len(receivedProposedAccounts))
 
 	// Query all accounts proposed to be revoked
-	receivedProposedAccountsToRevoke, _ := utils.GetProposedAccountsToRevoke()
-	require.Equal(t, len(inputProposedAccountsToRevoke.Items), len(receivedProposedAccountsToRevoke.Items))
+	receivedProposedAccountsToRevoke, _ := suite.GetProposedAccountsToRevoke()
+	require.Equal(t, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
 	// Alice approves new account
-	utils.ApproveAddAccount(testAccountKeyInfo, aliceKeyInfo)
+	_, err = suite.ApproveAddAccount(aliceName, testAccAddr, aliceAccNum, aliceSequence)
+	require.NoError(t, err)
+	aliceSequence += 1
 
 	// Query all active accounts
-	receivedAccounts, _ = utils.GetAccounts()
-	require.Equal(t, len(inputAccounts.Items)+1, len(receivedAccounts.Items))
+	receivedAccounts, _ = suite.GetAccounts()
+	require.Equal(t, len(inputAccounts)+1, len(receivedAccounts))
 
 	// Query all proposed accounts
-	receivedProposedAccounts, _ = utils.GetProposedAccounts()
-	require.Equal(t, len(inputProposedAccounts.Items), len(receivedProposedAccounts.Items))
+	receivedProposedAccounts, _ = suite.GetProposedAccounts()
+	require.Equal(t, len(inputProposedAccounts), len(receivedProposedAccounts))
 
 	// Query all accounts proposed to be revoked
-	receivedProposedAccountsToRevoke, _ = utils.GetProposedAccountsToRevoke()
-	require.Equal(t, len(inputProposedAccountsToRevoke.Items), len(receivedProposedAccountsToRevoke.Items))
+	receivedProposedAccountsToRevoke, _ = suite.GetProposedAccountsToRevoke()
+	require.Equal(t, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
 	// Get info for new account
-	testAccount, _ := utils.GetAccount(testAccountKeyInfo.Address)
-	require.Equal(t, testAccountKeyInfo.Address, testAccount.Address)
-	require.Equal(t, dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testAccount.Roles)
+	testAccount, err := suite.GetAccount(testAccAddr)
+	require.NoError(t, err)
+	require.Equal(t, testAccAddr, testAccount.GetAddress())
+	require.Equal(t, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testAccount.GetRoles())
 
 	// FIXME issue 99: enable once implemented
 	/*
 		// Publish model info by test account
-		model := utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
-		_, _ = utils.AddModel(model, testAccountKeyInfo)
+		model := suite.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
+		_, _ = suite.AddModel(model, testAccountKeyInfo)
 
 		// Check model is created
-		receivedModel, _ := utils.GetModel(model.VID, model.PID)
+		receivedModel, _ := suite.GetModel(model.VID, model.PID)
 		require.Equal(t, receivedModel.VID, model.VID)
 		require.Equal(t, receivedModel.PID, model.PID)
 		require.Equal(t, receivedModel.ProductName, model.ProductName)
 	*/
 
 	// Alice proposes to revoke new account
-	utils.ProposeRevokeAccount(testAccountKeyInfo, aliceKeyInfo)
+	_, err = suite.ProposeRevokeAccount(aliceName, testAccAddr, aliceAccNum, aliceSequence)
+	require.NoError(t, err)
+	aliceSequence += 1
 
 	// Query all active accounts
-	receivedAccounts, _ = utils.GetAccounts()
-	require.Equal(t, len(inputAccounts.Items)+1, len(receivedAccounts.Items))
+	receivedAccounts, err = suite.GetAccounts()
+	require.Equal(t, len(inputAccounts)+1, len(receivedAccounts))
 
 	// Query all proposed accounts
-	receivedProposedAccounts, _ = utils.GetProposedAccounts()
-	require.Equal(t, len(inputProposedAccounts.Items), len(receivedProposedAccounts.Items))
+	receivedProposedAccounts, _ = suite.GetProposedAccounts()
+	require.Equal(t, len(inputProposedAccounts), len(receivedProposedAccounts))
 
 	// Query all accounts proposed to be revoked
-	receivedProposedAccountsToRevoke, _ = utils.GetProposedAccountsToRevoke()
-	require.Equal(t, len(inputProposedAccountsToRevoke.Items)+1, len(receivedProposedAccountsToRevoke.Items))
+	receivedProposedAccountsToRevoke, _ = suite.GetProposedAccountsToRevoke()
+	require.Equal(t, len(inputProposedAccountsToRevoke)+1, len(receivedProposedAccountsToRevoke))
 
 	// Bob approves to revoke new account
-	utils.ApproveRevokeAccount(testAccountKeyInfo, bobKeyInfo)
+	_, err = suite.ApproveRevokeAccount(bobName, testAccAddr, bobAccNum, bobSequence)
+	require.NoError(t, err)
+	bobSequence += 1
 
 	// Query all active accounts
-	receivedAccounts, _ = utils.GetAccounts()
-	require.Equal(t, len(inputAccounts.Items), len(receivedAccounts.Items))
+	receivedAccounts, err = suite.GetAccounts()
+	require.Equal(t, len(inputAccounts), len(receivedAccounts))
 
 	// Query all proposed accounts
-	receivedProposedAccounts, _ = utils.GetProposedAccounts()
-	require.Equal(t, len(inputProposedAccounts.Items), len(receivedProposedAccounts.Items))
+	receivedProposedAccounts, _ = suite.GetProposedAccounts()
+	require.Equal(t, len(inputProposedAccounts), len(receivedProposedAccounts))
 
 	// Query all accounts proposed to be revoked
-	receivedProposedAccountsToRevoke, _ = utils.GetProposedAccountsToRevoke()
-	require.Equal(t, len(inputProposedAccountsToRevoke.Items), len(receivedProposedAccountsToRevoke.Items))
+	receivedProposedAccountsToRevoke, _ = suite.GetProposedAccountsToRevoke()
+	require.Equal(t, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
 	// Ensure that new account is not available anymore
-	_, code := utils.GetAccount(testAccountKeyInfo.Address)
-	require.Equal(t, http.StatusNotFound, code)
+	res, err := suite.GetAccount(testAccAddr)
+	_ = res
+	require.Equal(t, http.StatusNotFound, err)
 
 	// FIXME issue 99: enable once implemented
 	/*
 		// Try to publish another model info by test account.
 		// Ensure that the request is responded with not OK status code.
-		model = utils.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
-		_, code = utils.AddModel(model, testAccountKeyInfo)
+		model = suite.NewMsgAddModel(testAccountKeyInfo.Address, testconstants.VID)
+		_, code = suite.AddModel(model, testAccountKeyInfo)
 		require.NotEqual(t, http.StatusOK, code)
 	*/
 }

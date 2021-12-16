@@ -168,6 +168,7 @@ for GO_REST_TEST in ${GO_REST_TESTS}; do
   log "Running $GO_REST_TEST"
   log "*****************************************************************************************"
 
+  dcld config keyring-backend test
   if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$GO_REST_TEST finished successfully"
   else

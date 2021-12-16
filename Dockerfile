@@ -41,6 +41,6 @@ COPY --from=builder /go/bin/dlv /usr/bin/dlv
 
 VOLUME /root/.dcl
 
-EXPOSE 26656 26657
+EXPOSE 26656 26657 1317 26660
 
 STOPSIGNAL SIGTERM

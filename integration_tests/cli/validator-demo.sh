@@ -52,7 +52,7 @@ docker exec $container /bin/sh -c "
   dcld config chain-id dclchain &&
   dcld config output json &&
   dcld config node $node0 &&
-  dcld config keyring-backend file &&
+  dcld config keyring-backend test &&
   dcld config broadcast-mode block"
 
 # TODO issue 99: check the replacement for the setting

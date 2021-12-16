@@ -22,6 +22,8 @@ services:
     ports:
       - "26656-26657:26656-26657"
       - "26650:26660"
+      - "26640:1317"
+      - "26630:9090"
     volumes:
       - ./.localnet/node0:/root/.dcl:Z
     networks:
