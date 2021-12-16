@@ -4,6 +4,7 @@
 This guide will help you configure DCL `dclcli` and interact with DCL TestNet.
 
 === Test Net Infrastructure
+Please refer to https://github.com/zigbee-alliance/distributed-compliance-ledger/tree/master/deployment/persistent_chains/testnet for upto date node info.
 TestNet consists of following nodes:<ID>@IP:port are to be used with `dclcli`.
 
 . tcp://54.73.187.91:26657
