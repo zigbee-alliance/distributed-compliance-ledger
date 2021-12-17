@@ -14,7 +14,7 @@ import (
 
 func CmdListValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-validator",
+		Use:   "all-nodes",
 		Short: "list all Validators",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -50,7 +50,7 @@ func CmdListValidator() *cobra.Command {
 
 func CmdShowValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-validator",
+		Use:   "node",
 		Short: "shows a Validator",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -37,20 +37,19 @@ if [[ -n "$DCL_OBSERVERS" ]]; then
     mkdir "$LOCALNET_DIR/observer0"
 fi
 
-# FIXME issue 99: why we need that (it starts to fail without that from some point)
-mkdir -p "$DCL_DIR/config"
-touch "$DCL_DIR"/config/client.toml
-
 # client
 
 dcld config chain-id "$CHAIN_ID"
 dcld config output json
+# TODO issue 99: empty value will override defaults by some reason
+#       (e.g. in dcld status)
+dcld config node "tcp://localhost:26657"
 # TODO issue 99: check the replacement for the setting
 # dcld config indent true
 # TODO issue 99: check the replacement for the setting
 # dcld config trust-node false
 dcld config keyring-backend file
-
+dcld config broadcast-mode block
 
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add jack
 (echo "$KEYPASSWD"; echo "$KEYPASSWD") | dcld keys add alice

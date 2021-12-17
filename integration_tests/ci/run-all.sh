@@ -45,7 +45,12 @@ wait_for_height() {
     sleep "${wait_interval}"
     waited=$((waited + wait_interval))
 
-    current_height=$(dclcli status | grep height | sed 's/.*"\(.*\)".*/\1/')
+    current_height="$(dcld status | jq | grep latest_block_height | awk -F'"' '{print $4}')"
+
+    if [[ -z "$current_height" ]]; then
+      echo "No height found in status" &>${DETAILED_OUTPUT_TARGET}
+      exit 1
+    fi
 
     if ((current_height >= target_height)); then
       echo "Height $target_height is reached in $waited seconds" &>${DETAILED_OUTPUT_TARGET}
@@ -94,8 +99,7 @@ cleanup_pool() {
   make localnet_stop &>${DETAILED_OUTPUT_TARGET}
 
   log "-> Removing configurations" >${DETAILED_OUTPUT_TARGET}
-  rm -rf ~/.dclcli
-  rm -rf ~/.dcld
+  rm -rf ~/.dcl
   if [ "$(uname)" == "Darwin" ]; then
     rm -rf "$LOCALNET_DIR"
   else
@@ -105,16 +109,21 @@ cleanup_pool() {
 
 run_rest_server() {
   log "Running cli in rest-server mode"
-  dclcli rest-server --chain-id dclchain & >> rest-server.out &
+  dcld rest-server --chain-id dclchain & >> rest-server.out &
 }
 
 stop_rest_server() {
   log "Stopping cli in rest-server mode"
-  killall dclcli
+  killall dcld
 }
+
+source integration_tests/cli/common.sh
 
 # Global init
 set -euo pipefail
+
+log "Verifying the environment"
+check_env
 
 log "Compiling local binaries"
 make install &>${DETAILED_OUTPUT_TARGET}
@@ -125,7 +134,7 @@ make image &>${DETAILED_OUTPUT_TARGET}
 cleanup_pool
 
 # Cli shell tests
-CLI_SHELL_TESTS=$(find integration_tests/cli -type f -not -name "common.sh")
+CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
 
 for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   init_pool
@@ -144,8 +153,11 @@ for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   cleanup_pool
 done
 
+# TODO issue 99: review and enable
+exit 0
+
 # Go rest tests
-GO_REST_TESTS=$(find integration_tests/rest -type f)
+GO_REST_TESTS="$(find integration_tests/rest -type f -name '*.go')"
 
 for GO_REST_TEST in ${GO_REST_TESTS}; do
   init_pool

@@ -13,7 +13,7 @@ import (
 
 func CmdListAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-account",
+		Use:   "all-accounts",
 		Short: "list all Account",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -46,7 +46,7 @@ func CmdListAccount() *cobra.Command {
 
 func CmdShowAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-account",
+		Use:   "account",
 		Short: "shows a Account",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

@@ -16,6 +16,9 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
+# FIXME issue 99: enable once implemented
+exit 0
+
 # Preparation of Actors
 vid1=$RANDOM
 pid1=$RANDOM
@@ -30,7 +33,7 @@ test_divider
 # Body
 
 echo "Jack adds Model with VID: $vid1 PID: $pid1. Using default Broadcast Mode: block"
-result=$(echo "test1234" | dclcli tx model add-model --vid=$vid1 --pid=$pid1 --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12  --from=$vendor_account --yes)
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid1 --pid=$pid1 --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12  --from=$vendor_account --yes)
 check_response "$result" "\"gas_used\""
 check_response "$result" "\"txhash\""
 check_response "$result" "\"raw_log\""
@@ -41,7 +44,7 @@ test_divider
 
 pid2=$RANDOM
 echo "Jack adds Model with VID: $vid1 PID: $pid2. Using async Broadcast Mode"
-result=$(echo "test1234" | dclcli tx model add-model --vid=$vid1 --pid=$pid2 --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12  --from=$vendor_account --yes --broadcast-mode "async")
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid1 --pid=$pid2 --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12  --from=$vendor_account --yes --broadcast-mode "async")
 check_response "$result" "\"txhash\""
 check_response "$result" "\"height\": \"0\""
 response_does_not_contain "$result" "\"gas_used\""
@@ -53,7 +56,7 @@ test_divider
 sleep 6
 pid3=$RANDOM
 echo "Jack adds Model with VID: $vid1 PID: $pid3. Using sync Broadcast Mode"
-result=$(echo "test1234" | dclcli tx model add-model --vid=$vid1 --pid=$pid3 --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12  --from=$vendor_account --yes --broadcast-mode "sync")
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid1 --pid=$pid3 --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12  --from=$vendor_account --yes --broadcast-mode "sync")
 check_response "$result" "\"txhash\""
 check_response "$result" "\"raw_log\""
 check_response "$result" "\"height\": \"0\""
@@ -64,19 +67,19 @@ test_divider
 
 sleep 6
 echo "Get Model with VID: $vid1 PID: $pid1"
-result=$(dclcli query model get-model --vid=$vid1 --pid=$pid1 )
+result=$(dcld query model get-model --vid=$vid1 --pid=$pid1 )
 check_response "$result" "\"vid\": $vid1"
 check_response "$result" "\"pid\": $pid1"
 
 
 echo "Get Model with VID: $vid1 PID: $pid2"
-result=$(dclcli query model get-model --vid=$vid1 --pid=$pid2 )
+result=$(dcld query model get-model --vid=$vid1 --pid=$pid2 )
 check_response "$result" "\"vid\": $vid1"
 check_response "$result" "\"pid\": $pid2"
 
 
 echo "Get Model with VID: $vid1 PID: $pid3"
-result=$(dclcli query model get-model --vid=$vid1 --pid=$pid3 )
+result=$(dcld query model get-model --vid=$vid1 --pid=$pid3 )
 check_response "$result" "\"vid\": $vid1"
 check_response "$result" "\"pid\": $pid3"
 
