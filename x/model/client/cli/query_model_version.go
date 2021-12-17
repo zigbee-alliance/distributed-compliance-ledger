@@ -5,71 +5,30 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-func CmdListModelVersion() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "list-model-version",
-		Short: "list all ModelVersion",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			params := &types.QueryAllModelVersionRequest{
-				Pagination: pageReq,
-			}
-
-			res, err := queryClient.ModelVersionAll(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddPaginationFlagsToCmd(cmd, cmd.Use)
-	flags.AddQueryFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdShowModelVersion() *cobra.Command {
+	var (
+		vid             int32
+		pid             int32
+		softwareVersion uint64
+	)
+
 	cmd := &cobra.Command{
-		Use:   "show-model-version [vid] [pid] [software-version]",
-		Short: "shows a ModelVersion",
-		Args:  cobra.ExactArgs(3),
+		Use:   "get-model-version",
+		Short: "Query Model Version by combination of Vendor ID, Product ID and Software Version",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-			argPid, err := cast.ToInt32E(args[1])
-			if err != nil {
-				return err
-			}
-			argSoftwareVersion, err := cast.ToUint64E(args[2])
-			if err != nil {
-				return err
-			}
-
 			params := &types.QueryGetModelVersionRequest{
-				Vid:             argVid,
-				Pid:             argPid,
-				SoftwareVersion: argSoftwareVersion,
+				Vid:             vid,
+				Pid:             pid,
+				SoftwareVersion: softwareVersion,
 			}
 
 			res, err := queryClient.ModelVersion(context.Background(), params)
@@ -80,6 +39,17 @@ func CmdShowModelVersion() *cobra.Command {
 			return clientCtx.PrintProto(res)
 		},
 	}
+
+	cmd.Flags().Int32Var(&vid, FlagVid, 0,
+		"Model vendor ID")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0,
+		"Model product ID")
+	cmd.Flags().Uint64Var(&softwareVersion, FlagSoftwareVersion, 0,
+		"Software Version of model (uint32)")
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
 
 	flags.AddQueryFlagsToCmd(cmd)
 

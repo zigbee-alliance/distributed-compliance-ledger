@@ -5,15 +5,15 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 func CmdListModel() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-model",
-		Short: "list all Model",
+		Use:   "all-models",
+		Short: "Query the list of all Models",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -44,27 +44,23 @@ func CmdListModel() *cobra.Command {
 }
 
 func CmdShowModel() *cobra.Command {
+	var (
+		vid int32
+		pid int32
+	)
+
 	cmd := &cobra.Command{
-		Use:   "show-model [vid] [pid]",
-		Short: "shows a Model",
-		Args:  cobra.ExactArgs(2),
+		Use:   "get-model",
+		Short: "Query Model by combination of Vendor ID and Product ID",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-			argPid, err := cast.ToInt32E(args[1])
-			if err != nil {
-				return err
-			}
-
 			params := &types.QueryGetModelRequest{
-				Vid: argVid,
-				Pid: argPid,
+				Vid: vid,
+				Pid: pid,
 			}
 
 			res, err := queryClient.Model(context.Background(), params)
@@ -75,6 +71,14 @@ func CmdShowModel() *cobra.Command {
 			return clientCtx.PrintProto(res)
 		},
 	}
+
+	cmd.Flags().Int32Var(&vid, FlagVid, 0,
+		"Model vendor ID")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0,
+		"Model product ID")
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
 
 	flags.AddQueryFlagsToCmd(cmd)
 
