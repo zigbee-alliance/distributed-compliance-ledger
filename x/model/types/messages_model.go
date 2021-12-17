@@ -79,12 +79,12 @@ func (msg *MsgCreateModel) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Vid < 0 || msg.Vid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	if msg.Vid < 1 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 1 to 65535")
 	}
 
-	if msg.Pid < 0 || msg.Pid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	if msg.Pid < 1 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 1 to 65535")
 	}
 
 	if msg.DeviceTypeId < 0 || msg.DeviceTypeId > 65535 {
@@ -166,12 +166,12 @@ func (msg *MsgUpdateModel) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Vid < 0 || msg.Vid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	if msg.Vid < 1 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 1 to 65535")
 	}
 
-	if msg.Pid < 0 || msg.Pid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	if msg.Pid < 1 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 1 to 65535")
 	}
 
 	return nil
@@ -218,12 +218,12 @@ func (msg *MsgDeleteModel) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Vid < 0 || msg.Vid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 0 to 65535")
+	if msg.Vid < 1 || msg.Vid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 1 to 65535")
 	}
 
-	if msg.Pid < 0 || msg.Pid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 0 to 65535")
+	if msg.Pid < 1 || msg.Pid > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 1 to 65535")
 	}
 
 	return nil
