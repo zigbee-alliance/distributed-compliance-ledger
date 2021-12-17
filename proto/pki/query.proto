@@ -8,6 +8,7 @@ import "pki/proposed_certificate.proto";
 import "pki/child_certificates.proto";
 import "pki/proposed_certificate_revocation.proto";
 import "pki/revoked_certificates.proto";
+import "pki/unique_certificate.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -67,6 +68,16 @@ service Query {
 	// Queries a list of RevokedCertificates items.
 	rpc RevokedCertificatesAll(QueryAllRevokedCertificatesRequest) returns (QueryAllRevokedCertificatesResponse) {
 		option (google.api.http).get = "/dcl/pki/revoked_certificates";
+	}
+
+// Queries a UniqueCertificate by index.
+	rpc UniqueCertificate(QueryGetUniqueCertificateRequest) returns (QueryGetUniqueCertificateResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/{issuer}/{serial_number}";
+	}
+
+	// Queries a list of UniqueCertificate items.
+	rpc UniqueCertificateAll(QueryAllUniqueCertificateRequest) returns (QueryAllUniqueCertificateResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -164,6 +175,25 @@ message QueryAllRevokedCertificatesRequest {
 
 message QueryAllRevokedCertificatesResponse {
 	repeated RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetUniqueCertificateRequest {
+	  string issuer = 1;
+  string serial_number = 2;
+
+}
+
+message QueryGetUniqueCertificateResponse {
+	UniqueCertificate uniqueCertificate = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllUniqueCertificateRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllUniqueCertificateResponse {
+	repeated UniqueCertificate uniqueCertificate = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

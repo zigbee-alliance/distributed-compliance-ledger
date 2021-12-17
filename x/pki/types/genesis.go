@@ -15,6 +15,7 @@ func DefaultGenesis() *GenesisState {
 		ChildCertificatesList:             []ChildCertificates{},
 		ProposedCertificateRevocationList: []ProposedCertificateRevocation{},
 		RevokedCertificatesList:           []RevokedCertificates{},
+		UniqueCertificateList:             []UniqueCertificate{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -71,6 +72,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for revokedCertificates")
 		}
 		revokedCertificatesIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in uniqueCertificate
+	uniqueCertificateIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.UniqueCertificateList {
+		index := string(UniqueCertificateKey(elem.Issuer, elem.SerialNumber))
+		if _, ok := uniqueCertificateIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for uniqueCertificate")
+		}
+		uniqueCertificateIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

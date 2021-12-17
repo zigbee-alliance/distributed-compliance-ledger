@@ -4,6 +4,7 @@ import { ProposedCertificate } from '../pki/proposed_certificate';
 import { ChildCertificates } from '../pki/child_certificates';
 import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revocation';
 import { RevokedCertificates } from '../pki/revoked_certificates';
+import { UniqueCertificate } from '../pki/unique_certificate';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
 const baseGenesisState = {};
@@ -24,6 +25,9 @@ export const GenesisState = {
         for (const v of message.revokedCertificatesList) {
             RevokedCertificates.encode(v, writer.uint32(42).fork()).ldelim();
         }
+        for (const v of message.uniqueCertificateList) {
+            UniqueCertificate.encode(v, writer.uint32(50).fork()).ldelim();
+        }
         return writer;
     },
     decode(input, length) {
@@ -35,6 +39,7 @@ export const GenesisState = {
         message.childCertificatesList = [];
         message.proposedCertificateRevocationList = [];
         message.revokedCertificatesList = [];
+        message.uniqueCertificateList = [];
         while (reader.pos < end) {
             const tag = reader.uint32();
             switch (tag >>> 3) {
@@ -53,6 +58,9 @@ export const GenesisState = {
                 case 5:
                     message.revokedCertificatesList.push(RevokedCertificates.decode(reader, reader.uint32()));
                     break;
+                case 6:
+                    message.uniqueCertificateList.push(UniqueCertificate.decode(reader, reader.uint32()));
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -67,6 +75,7 @@ export const GenesisState = {
         message.childCertificatesList = [];
         message.proposedCertificateRevocationList = [];
         message.revokedCertificatesList = [];
+        message.uniqueCertificateList = [];
         if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
             for (const e of object.approvedCertificatesList) {
                 message.approvedCertificatesList.push(ApprovedCertificates.fromJSON(e));
@@ -90,6 +99,11 @@ export const GenesisState = {
         if (object.revokedCertificatesList !== undefined && object.revokedCertificatesList !== null) {
             for (const e of object.revokedCertificatesList) {
                 message.revokedCertificatesList.push(RevokedCertificates.fromJSON(e));
+            }
+        }
+        if (object.uniqueCertificateList !== undefined && object.uniqueCertificateList !== null) {
+            for (const e of object.uniqueCertificateList) {
+                message.uniqueCertificateList.push(UniqueCertificate.fromJSON(e));
             }
         }
         return message;
@@ -126,6 +140,12 @@ export const GenesisState = {
         else {
             obj.revokedCertificatesList = [];
         }
+        if (message.uniqueCertificateList) {
+            obj.uniqueCertificateList = message.uniqueCertificateList.map((e) => (e ? UniqueCertificate.toJSON(e) : undefined));
+        }
+        else {
+            obj.uniqueCertificateList = [];
+        }
         return obj;
     },
     fromPartial(object) {
@@ -135,6 +155,7 @@ export const GenesisState = {
         message.childCertificatesList = [];
         message.proposedCertificateRevocationList = [];
         message.revokedCertificatesList = [];
+        message.uniqueCertificateList = [];
         if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
             for (const e of object.approvedCertificatesList) {
                 message.approvedCertificatesList.push(ApprovedCertificates.fromPartial(e));
@@ -158,6 +179,11 @@ export const GenesisState = {
         if (object.revokedCertificatesList !== undefined && object.revokedCertificatesList !== null) {
             for (const e of object.revokedCertificatesList) {
                 message.revokedCertificatesList.push(RevokedCertificates.fromPartial(e));
+            }
+        }
+        if (object.uniqueCertificateList !== undefined && object.uniqueCertificateList !== null) {
+            for (const e of object.uniqueCertificateList) {
+                message.uniqueCertificateList.push(UniqueCertificate.fromPartial(e));
             }
         }
         return message;

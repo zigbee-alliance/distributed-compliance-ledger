@@ -6,6 +6,7 @@ import { ProposedCertificate } from '../pki/proposed_certificate';
 import { ChildCertificates } from '../pki/child_certificates';
 import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revocation';
 import { RevokedCertificates } from '../pki/revoked_certificates';
+import { UniqueCertificate } from '../pki/unique_certificate';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
 const baseQueryGetApprovedCertificatesRequest = { subject: '', subjectKeyId: '' };
 export const QueryGetApprovedCertificatesRequest = {
@@ -1254,6 +1255,255 @@ export const QueryAllRevokedCertificatesResponse = {
         return message;
     }
 };
+const baseQueryGetUniqueCertificateRequest = { issuer: '', serialNumber: '' };
+export const QueryGetUniqueCertificateRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.issuer !== '') {
+            writer.uint32(10).string(message.issuer);
+        }
+        if (message.serialNumber !== '') {
+            writer.uint32(18).string(message.serialNumber);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetUniqueCertificateRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.issuer = reader.string();
+                    break;
+                case 2:
+                    message.serialNumber = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetUniqueCertificateRequest };
+        if (object.issuer !== undefined && object.issuer !== null) {
+            message.issuer = String(object.issuer);
+        }
+        else {
+            message.issuer = '';
+        }
+        if (object.serialNumber !== undefined && object.serialNumber !== null) {
+            message.serialNumber = String(object.serialNumber);
+        }
+        else {
+            message.serialNumber = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.issuer !== undefined && (obj.issuer = message.issuer);
+        message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetUniqueCertificateRequest };
+        if (object.issuer !== undefined && object.issuer !== null) {
+            message.issuer = object.issuer;
+        }
+        else {
+            message.issuer = '';
+        }
+        if (object.serialNumber !== undefined && object.serialNumber !== null) {
+            message.serialNumber = object.serialNumber;
+        }
+        else {
+            message.serialNumber = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetUniqueCertificateResponse = {};
+export const QueryGetUniqueCertificateResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.uniqueCertificate !== undefined) {
+            UniqueCertificate.encode(message.uniqueCertificate, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetUniqueCertificateResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.uniqueCertificate = UniqueCertificate.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetUniqueCertificateResponse };
+        if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
+            message.uniqueCertificate = UniqueCertificate.fromJSON(object.uniqueCertificate);
+        }
+        else {
+            message.uniqueCertificate = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.uniqueCertificate !== undefined &&
+            (obj.uniqueCertificate = message.uniqueCertificate ? UniqueCertificate.toJSON(message.uniqueCertificate) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetUniqueCertificateResponse };
+        if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
+            message.uniqueCertificate = UniqueCertificate.fromPartial(object.uniqueCertificate);
+        }
+        else {
+            message.uniqueCertificate = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllUniqueCertificateRequest = {};
+export const QueryAllUniqueCertificateRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllUniqueCertificateRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllUniqueCertificateRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllUniqueCertificateRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllUniqueCertificateResponse = {};
+export const QueryAllUniqueCertificateResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.uniqueCertificate) {
+            UniqueCertificate.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllUniqueCertificateResponse };
+        message.uniqueCertificate = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.uniqueCertificate.push(UniqueCertificate.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllUniqueCertificateResponse };
+        message.uniqueCertificate = [];
+        if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
+            for (const e of object.uniqueCertificate) {
+                message.uniqueCertificate.push(UniqueCertificate.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.uniqueCertificate) {
+            obj.uniqueCertificate = message.uniqueCertificate.map((e) => (e ? UniqueCertificate.toJSON(e) : undefined));
+        }
+        else {
+            obj.uniqueCertificate = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllUniqueCertificateResponse };
+        message.uniqueCertificate = [];
+        if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
+            for (const e of object.uniqueCertificate) {
+                message.uniqueCertificate.push(UniqueCertificate.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1307,5 +1557,15 @@ export class QueryClientImpl {
         const data = QueryAllRevokedCertificatesRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'RevokedCertificatesAll', data);
         return promise.then((data) => QueryAllRevokedCertificatesResponse.decode(new Reader(data)));
+    }
+    UniqueCertificate(request) {
+        const data = QueryGetUniqueCertificateRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'UniqueCertificate', data);
+        return promise.then((data) => QueryGetUniqueCertificateResponse.decode(new Reader(data)));
+    }
+    UniqueCertificateAll(request) {
+        const data = QueryAllUniqueCertificateRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'UniqueCertificateAll', data);
+        return promise.then((data) => QueryAllUniqueCertificateResponse.decode(new Reader(data)));
     }
 }

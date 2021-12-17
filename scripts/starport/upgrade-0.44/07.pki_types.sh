@@ -18,3 +18,4 @@ starport scaffold --module pki map ProposedCertificate pemCert serialNumber owne
 starport scaffold --module pki map ChildCertificates certIds:strings --index issuer,authorityKeyId --no-message
 starport scaffold --module pki map ProposedCertificateRevocation  approvals:strings --index subject,subjectKeyId --no-message
 starport scaffold --module pki map RevokedCertificates certs:strings --index subject,subjectKeyId --no-message
+starport scaffold --module pki map UniqueCertificate present:bool --index issuer,serialNumber --no-message

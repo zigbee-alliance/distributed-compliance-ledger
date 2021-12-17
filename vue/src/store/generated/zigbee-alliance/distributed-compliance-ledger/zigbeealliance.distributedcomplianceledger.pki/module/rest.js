@@ -281,5 +281,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryUniqueCertificateAll
+         * @summary Queries a list of UniqueCertificate items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate
+         */
+        this.queryUniqueCertificateAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryUniqueCertificate
+         * @summary Queries a UniqueCertificate by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/{issuer}/{serialNumber}
+         */
+        this.queryUniqueCertificate = (issuer, serialNumber, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/${issuer}/${serialNumber}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

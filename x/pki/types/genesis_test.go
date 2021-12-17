@@ -71,6 +71,16 @@ func TestGenesisState_Validate(t *testing.T) {
 						SubjectKeyId: "1",
 					},
 				},
+				UniqueCertificateList: []types.UniqueCertificate{
+					{
+						Issuer:       "0",
+						SerialNumber: "0",
+					},
+					{
+						Issuer:       "1",
+						SerialNumber: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -150,6 +160,22 @@ func TestGenesisState_Validate(t *testing.T) {
 					{
 						Subject:      "0",
 						SubjectKeyId: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated uniqueCertificate",
+			genState: &types.GenesisState{
+				UniqueCertificateList: []types.UniqueCertificate{
+					{
+						Issuer:       "0",
+						SerialNumber: "0",
+					},
+					{
+						Issuer:       "0",
+						SerialNumber: "0",
 					},
 				},
 			},

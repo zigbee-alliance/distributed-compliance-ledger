@@ -66,3 +66,18 @@ func (k Keeper) GetAllProposedCertificate(ctx sdk.Context) (list []types.Propose
 
 	return
 }
+
+// Check if the Proposed Certificate record associated with a
+// Subject/SubjectKeyID combination is present in the store
+func (k Keeper) IsProposedCertificatePresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyId string,
+
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
+	return store.Has(types.ProposedCertificateKey(
+		subject,
+		subjectKeyId,
+	))
+}

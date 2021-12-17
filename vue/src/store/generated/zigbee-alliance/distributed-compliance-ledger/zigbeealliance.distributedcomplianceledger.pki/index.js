@@ -8,7 +8,8 @@ import { ChildCertificates } from "./module/types/pki/child_certificates";
 import { ProposedCertificate } from "./module/types/pki/proposed_certificate";
 import { ProposedCertificateRevocation } from "./module/types/pki/proposed_certificate_revocation";
 import { RevokedCertificates } from "./module/types/pki/revoked_certificates";
-export { ApprovedCertificates, Certificate, CertificateIdentifier, ChildCertificates, ProposedCertificate, ProposedCertificateRevocation, RevokedCertificates };
+import { UniqueCertificate } from "./module/types/pki/unique_certificate";
+export { ApprovedCertificates, Certificate, CertificateIdentifier, ChildCertificates, ProposedCertificate, ProposedCertificateRevocation, RevokedCertificates, UniqueCertificate };
 async function initTxClient(vuexGetters) {
     return await txClient(vuexGetters['common/wallet/signer'], {
         addr: vuexGetters['common/env/apiTendermint']
@@ -52,6 +53,8 @@ const getDefaultState = () => {
         ProposedCertificateRevocationAll: {},
         RevokedCertificates: {},
         RevokedCertificatesAll: {},
+        UniqueCertificate: {},
+        UniqueCertificateAll: {},
         _Structure: {
             ApprovedCertificates: getStructure(ApprovedCertificates.fromPartial({})),
             Certificate: getStructure(Certificate.fromPartial({})),
@@ -60,6 +63,7 @@ const getDefaultState = () => {
             ProposedCertificate: getStructure(ProposedCertificate.fromPartial({})),
             ProposedCertificateRevocation: getStructure(ProposedCertificateRevocation.fromPartial({})),
             RevokedCertificates: getStructure(RevokedCertificates.fromPartial({})),
+            UniqueCertificate: getStructure(UniqueCertificate.fromPartial({})),
         },
         _Registry: registry,
         _Subscriptions: new Set(),
@@ -144,6 +148,18 @@ export default {
                 params.query = null;
             }
             return state.RevokedCertificatesAll[JSON.stringify(params)] ?? {};
+        },
+        getUniqueCertificate: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.UniqueCertificate[JSON.stringify(params)] ?? {};
+        },
+        getUniqueCertificateAll: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.UniqueCertificateAll[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
@@ -338,21 +354,36 @@ export default {
                 throw new SpVuexError('QueryClient:QueryRevokedCertificatesAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgRevokeX509Cert({ rootGetters }, { value, fee = [], memo = '' }) {
+        async QueryUniqueCertificate({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgRevokeX509Cert(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryUniqueCertificate(key.issuer, key.serial_number)).data;
+                commit('QUERY', { query: 'UniqueCertificate', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryUniqueCertificate', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getUniqueCertificate']({ params: { ...key }, query }) ?? {};
             }
             catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgRevokeX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
+                throw new SpVuexError('QueryClient:QueryUniqueCertificate', 'API Node Unavailable. Could not perform query: ' + e.message);
+            }
+        },
+        async QueryUniqueCertificateAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
+            try {
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryUniqueCertificateAll(query)).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryUniqueCertificateAll({ ...query, 'pagination.key': value.pagination.next_key })).data;
+                    value = mergeResults(value, next_values);
                 }
-                else {
-                    throw new SpVuexError('TxClient:MsgRevokeX509Cert:Send', 'Could not broadcast Tx: ' + e.message);
-                }
+                commit('QUERY', { query: 'UniqueCertificateAll', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryUniqueCertificateAll', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getUniqueCertificateAll']({ params: { ...key }, query }) ?? {};
+            }
+            catch (e) {
+                throw new SpVuexError('QueryClient:QueryUniqueCertificateAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
         async sendMsgApproveAddX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
@@ -369,6 +400,23 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
+        async sendMsgAddX509Cert({ rootGetters }, { value, fee = [], memo = '' }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgAddX509Cert(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgAddX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgAddX509Cert:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -406,23 +454,6 @@ export default {
                 }
             }
         },
-        async sendMsgAddX509Cert({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgAddX509Cert(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgAddX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgAddX509Cert:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
         async sendMsgApproveRevokeX509RootCert({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -440,18 +471,20 @@ export default {
                 }
             }
         },
-        async MsgRevokeX509Cert({ rootGetters }, { value }) {
+        async sendMsgRevokeX509Cert({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
                 const msg = await txClient.msgRevokeX509Cert(value);
-                return msg;
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
                     throw new SpVuexError('TxClient:MsgRevokeX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgRevokeX509Cert:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgRevokeX509Cert:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -467,6 +500,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgApproveAddX509RootCert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgAddX509Cert({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgAddX509Cert(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgAddX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgAddX509Cert:Create', 'Could not create message: ' + e.message);
                 }
             }
         },
@@ -500,21 +548,6 @@ export default {
                 }
             }
         },
-        async MsgAddX509Cert({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgAddX509Cert(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgAddX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgAddX509Cert:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
         async MsgApproveRevokeX509RootCert({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -527,6 +560,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgApproveRevokeX509RootCert:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgRevokeX509Cert({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgRevokeX509Cert(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgRevokeX509Cert:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgRevokeX509Cert:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

@@ -141,6 +141,21 @@ export interface PkiQueryAllRevokedCertificatesResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface PkiQueryAllUniqueCertificateResponse {
+  uniqueCertificate?: PkiUniqueCertificate[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface PkiQueryGetApprovedCertificatesResponse {
   approvedCertificates?: PkiApprovedCertificates;
 }
@@ -161,10 +176,20 @@ export interface PkiQueryGetRevokedCertificatesResponse {
   revokedCertificates?: PkiRevokedCertificates;
 }
 
+export interface PkiQueryGetUniqueCertificateResponse {
+  uniqueCertificate?: PkiUniqueCertificate;
+}
+
 export interface PkiRevokedCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+}
+
+export interface PkiUniqueCertificate {
+  issuer?: string;
+  serialNumber?: string;
+  present?: boolean;
 }
 
 export interface ProtobufAny {
@@ -642,6 +667,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRevokedCertificates = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetRevokedCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/revoked_certificates/${subject}/${subjectKeyId}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryUniqueCertificateAll
+   * @summary Queries a list of UniqueCertificate items.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate
+   */
+  queryUniqueCertificateAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PkiQueryAllUniqueCertificateResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryUniqueCertificate
+   * @summary Queries a UniqueCertificate by index.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/{issuer}/{serialNumber}
+   */
+  queryUniqueCertificate = (issuer: string, serialNumber: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetUniqueCertificateResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/${issuer}/${serialNumber}`,
       method: "GET",
       format: "json",
       ...params,
