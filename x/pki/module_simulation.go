@@ -89,7 +89,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgProposeAddX509RootCert,
-		pkisimulation.SimulateMsgProposeAddX509RootCert(am.accountKeeper, am.bankKeeper, am.keeper),
+		pkisimulation.SimulateMsgProposeAddX509RootCert(am.keeper),
 	))
 
 	var weightMsgApproveAddX509RootCert int
@@ -100,7 +100,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgApproveAddX509RootCert,
-		pkisimulation.SimulateMsgApproveAddX509RootCert(am.accountKeeper, am.bankKeeper, am.keeper),
+		pkisimulation.SimulateMsgApproveAddX509RootCert(am.keeper),
 	))
 
 	var weightMsgAddX509Cert int
@@ -111,7 +111,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgAddX509Cert,
-		pkisimulation.SimulateMsgAddX509Cert(am.accountKeeper, am.bankKeeper, am.keeper),
+		pkisimulation.SimulateMsgAddX509Cert(am.keeper),
 	))
 
 	var weightMsgProposeRevokeX509RootCert int
@@ -122,7 +122,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgProposeRevokeX509RootCert,
-		pkisimulation.SimulateMsgProposeRevokeX509RootCert(am.accountKeeper, am.bankKeeper, am.keeper),
+		pkisimulation.SimulateMsgProposeRevokeX509RootCert(am.keeper),
 	))
 
 	var weightMsgApproveRevokeX509RootCert int
@@ -133,7 +133,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgApproveRevokeX509RootCert,
-		pkisimulation.SimulateMsgApproveRevokeX509RootCert(am.accountKeeper, am.bankKeeper, am.keeper),
+		pkisimulation.SimulateMsgApproveRevokeX509RootCert(am.keeper),
 	))
 
 	var weightMsgRevokeX509Cert int
@@ -144,7 +144,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgRevokeX509Cert,
-		pkisimulation.SimulateMsgRevokeX509Cert(am.accountKeeper, am.bankKeeper, am.keeper),
+		pkisimulation.SimulateMsgRevokeX509Cert(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation
