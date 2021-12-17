@@ -11,6 +11,7 @@ import CosmosCosmosSdkCosmosStakingV1Beta1 from './cosmos/cosmos-sdk/cosmos.stak
 import CosmosCosmosSdkCosmosVestingV1Beta1 from './cosmos/cosmos-sdk/cosmos.vesting.v1beta1';
 import CosmosIbcGoIbcApplicationsTransferV1 from './cosmos/ibc-go/ibc.applications.transfer.v1';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.dclauth';
+import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.pki';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.validator';
 export default {
     CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
@@ -25,6 +26,7 @@ export default {
     CosmosCosmosSdkCosmosVestingV1Beta1: load(CosmosCosmosSdkCosmosVestingV1Beta1, 'cosmos.vesting.v1beta1'),
     CosmosIbcGoIbcApplicationsTransferV1: load(CosmosIbcGoIbcApplicationsTransferV1, 'ibc.applications.transfer.v1'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth, 'zigbeealliance.distributedcomplianceledger.dclauth'),
+    ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki, 'zigbeealliance.distributedcomplianceledger.pki'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator, 'zigbeealliance.distributedcomplianceledger.validator'),
 };
 function load(mod, fullns) {

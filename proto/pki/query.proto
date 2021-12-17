@@ -3,13 +3,164 @@ package zigbeealliance.distributedcomplianceledger.pki;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "pki/approved_certificates.proto";
+import "pki/proposed_certificate.proto";
+import "pki/child_certificates.proto";
+import "pki/proposed_certificate_revocation.proto";
+import "pki/revoked_certificates.proto";
 // this line is used by starport scaffolding # 1
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
 // Query defines the gRPC querier service.
 service Query {
-    // this line is used by starport scaffolding # 2
+    // Queries a ApprovedCertificates by index.
+	rpc ApprovedCertificates(QueryGetApprovedCertificatesRequest) returns (QueryGetApprovedCertificatesResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates/{subject}/{subject_key_id}";
+	}
+
+	// Queries a list of ApprovedCertificates items.
+	rpc ApprovedCertificatesAll(QueryAllApprovedCertificatesRequest) returns (QueryAllApprovedCertificatesResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates";
+	}
+
+// Queries a ProposedCertificate by index.
+	rpc ProposedCertificate(QueryGetProposedCertificateRequest) returns (QueryGetProposedCertificateResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate/{subject}/{subject_key_id}";
+	}
+
+	// Queries a list of ProposedCertificate items.
+	rpc ProposedCertificateAll(QueryAllProposedCertificateRequest) returns (QueryAllProposedCertificateResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate";
+	}
+
+// Queries a ChildCertificates by index.
+	rpc ChildCertificates(QueryGetChildCertificatesRequest) returns (QueryGetChildCertificatesResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/child_certificates/{issuer}/{authority_key_id}";
+	}
+
+	// Queries a list of ChildCertificates items.
+	rpc ChildCertificatesAll(QueryAllChildCertificatesRequest) returns (QueryAllChildCertificatesResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/child_certificates";
+	}
+
+// Queries a ProposedCertificateRevocation by index.
+	rpc ProposedCertificateRevocation(QueryGetProposedCertificateRevocationRequest) returns (QueryGetProposedCertificateRevocationResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation/{subject}/{subject_key_id}";
+	}
+
+	// Queries a list of ProposedCertificateRevocation items.
+	rpc ProposedCertificateRevocationAll(QueryAllProposedCertificateRevocationRequest) returns (QueryAllProposedCertificateRevocationResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation";
+	}
+
+// Queries a RevokedCertificates by index.
+	rpc RevokedCertificates(QueryGetRevokedCertificatesRequest) returns (QueryGetRevokedCertificatesResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates/{subject}/{subject_key_id}";
+	}
+
+	// Queries a list of RevokedCertificates items.
+	rpc RevokedCertificatesAll(QueryAllRevokedCertificatesRequest) returns (QueryAllRevokedCertificatesResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+message QueryGetApprovedCertificatesRequest {
+	  string subject = 1;
+  string subject_key_id = 2;
+
+}
+
+message QueryGetApprovedCertificatesResponse {
+	ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllApprovedCertificatesRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllApprovedCertificatesResponse {
+	repeated ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetProposedCertificateRequest {
+	  string subject = 1;
+  string subject_key_id = 2;
+
+}
+
+message QueryGetProposedCertificateResponse {
+	ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllProposedCertificateRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllProposedCertificateResponse {
+	repeated ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetChildCertificatesRequest {
+	  string issuer = 1;
+  string authority_key_id = 2;
+
+}
+
+message QueryGetChildCertificatesResponse {
+	ChildCertificates childCertificates = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllChildCertificatesRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllChildCertificatesResponse {
+	repeated ChildCertificates childCertificates = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetProposedCertificateRevocationRequest {
+	  string subject = 1;
+  string subject_key_id = 2;
+
+}
+
+message QueryGetProposedCertificateRevocationResponse {
+	ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllProposedCertificateRevocationRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllProposedCertificateRevocationResponse {
+	repeated ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRevokedCertificatesRequest {
+	  string subject = 1;
+  string subject_key_id = 2;
+
+}
+
+message QueryGetRevokedCertificatesResponse {
+	RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRevokedCertificatesRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRevokedCertificatesResponse {
+	repeated RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

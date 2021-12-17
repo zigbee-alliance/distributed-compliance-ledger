@@ -1,11 +1,22 @@
 syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.pki;
 
+import "pki/approved_certificates.proto";
+import "pki/proposed_certificate.proto";
+import "pki/child_certificates.proto";
+import "pki/proposed_certificate_revocation.proto";
+import "pki/revoked_certificates.proto";
 // this line is used by starport scaffolding # genesis/proto/import
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
 // GenesisState defines the pki module's genesis state.
 message GenesisState {
-    // this line is used by starport scaffolding # genesis/proto/state
+    repeated ApprovedCertificates approvedCertificatesList = 1 [(gogoproto.nullable) = false];
+  repeated ProposedCertificate proposedCertificateList = 2 [(gogoproto.nullable) = false];
+  repeated ChildCertificates childCertificatesList = 3 [(gogoproto.nullable) = false];
+  repeated ProposedCertificateRevocation proposedCertificateRevocationList = 4 [(gogoproto.nullable) = false];
+  repeated RevokedCertificates revokedCertificatesList = 5 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
 }

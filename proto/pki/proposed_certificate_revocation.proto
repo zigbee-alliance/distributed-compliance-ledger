@@ -1,0 +1,12 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.pki;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
+
+message ProposedCertificateRevocation {
+  string subject = 1; 
+  string subject_key_id = 2; 
+  repeated string approvals = 3; 
+  
+}
+

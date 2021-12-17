@@ -1,0 +1,18 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.pki;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
+
+message Certificate {
+  
+  string pem_cert = 1; 
+  string serial_number = 2; 
+  string issuer = 3; 
+  string authority_key_id = 4; 
+  string root_subject = 5; 
+  string root_subject_key_id = 6; 
+  bool is_root = 7; 
+  string owner = 8; 
+  string subject = 9; 
+  string subject_key_id = 10; 
+}

@@ -7,7 +7,65 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // Msg defines the Msg service.
 service Msg {
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc ProposeAddX509RootCert(MsgProposeAddX509RootCert) returns (MsgProposeAddX509RootCertResponse);
+  rpc ApproveAddX509RootCert(MsgApproveAddX509RootCert) returns (MsgApproveAddX509RootCertResponse);
+  rpc AddX509Cert(MsgAddX509Cert) returns (MsgAddX509CertResponse);
+  rpc ProposeRevokeX509RootCert(MsgProposeRevokeX509RootCert) returns (MsgProposeRevokeX509RootCertResponse);
+  rpc ApproveRevokeX509RootCert(MsgApproveRevokeX509RootCert) returns (MsgApproveRevokeX509RootCertResponse);
+  rpc RevokeX509Cert(MsgRevokeX509Cert) returns (MsgRevokeX509CertResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
+}
+
+message MsgProposeAddX509RootCert {
+  string signer = 1;
+  string cert = 2;
+}
+
+message MsgProposeAddX509RootCertResponse {
+}
+
+message MsgApproveAddX509RootCert {
+  string signer = 1;
+  string subject = 2;
+  string subject_key_id = 3;
+}
+
+message MsgApproveAddX509RootCertResponse {
+}
+
+message MsgAddX509Cert {
+  string signer = 1;
+  string cert = 2;
+}
+
+message MsgAddX509CertResponse {
+}
+
+message MsgProposeRevokeX509RootCert {
+  string signer = 1;
+  string subject = 2;
+  string subject_key_id = 3;
+}
+
+message MsgProposeRevokeX509RootCertResponse {
+}
+
+message MsgApproveRevokeX509RootCert {
+  string signer = 1;
+  string subject = 2;
+  string subject_key_id = 3;
+}
+
+message MsgApproveRevokeX509RootCertResponse {
+}
+
+message MsgRevokeX509Cert {
+  string signer = 1;
+  string subject = 2;
+  string subject_key_id = 3;
+}
+
+message MsgRevokeX509CertResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

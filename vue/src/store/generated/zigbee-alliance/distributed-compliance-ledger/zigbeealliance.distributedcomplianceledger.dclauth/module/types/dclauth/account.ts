@@ -7,6 +7,11 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclau
 
 export interface Account {
   baseAccount: BaseAccount | undefined
+  /**
+   * NOTE. we do not user AccountRoles casting here to preserve repeated form
+   *       so protobuf takes care about repeated items in generated code,
+   *       (but that might be not the final solution)
+   */
   roles: string[]
   vendorID: number
 }

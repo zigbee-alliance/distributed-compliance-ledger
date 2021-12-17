@@ -9,7 +9,11 @@ import (
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -23,20 +27,615 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type MsgProposeAddX509RootCert struct {
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Cert   string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty"`
+}
+
+func (m *MsgProposeAddX509RootCert) Reset()         { *m = MsgProposeAddX509RootCert{} }
+func (m *MsgProposeAddX509RootCert) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeAddX509RootCert) ProtoMessage()    {}
+func (*MsgProposeAddX509RootCert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{0}
+}
+func (m *MsgProposeAddX509RootCert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeAddX509RootCert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeAddX509RootCert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeAddX509RootCert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeAddX509RootCert.Merge(m, src)
+}
+func (m *MsgProposeAddX509RootCert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeAddX509RootCert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeAddX509RootCert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeAddX509RootCert proto.InternalMessageInfo
+
+func (m *MsgProposeAddX509RootCert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgProposeAddX509RootCert) GetCert() string {
+	if m != nil {
+		return m.Cert
+	}
+	return ""
+}
+
+type MsgProposeAddX509RootCertResponse struct {
+}
+
+func (m *MsgProposeAddX509RootCertResponse) Reset()         { *m = MsgProposeAddX509RootCertResponse{} }
+func (m *MsgProposeAddX509RootCertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeAddX509RootCertResponse) ProtoMessage()    {}
+func (*MsgProposeAddX509RootCertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{1}
+}
+func (m *MsgProposeAddX509RootCertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeAddX509RootCertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeAddX509RootCertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeAddX509RootCertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeAddX509RootCertResponse.Merge(m, src)
+}
+func (m *MsgProposeAddX509RootCertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeAddX509RootCertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeAddX509RootCertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeAddX509RootCertResponse proto.InternalMessageInfo
+
+type MsgApproveAddX509RootCert struct {
+	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty"`
+}
+
+func (m *MsgApproveAddX509RootCert) Reset()         { *m = MsgApproveAddX509RootCert{} }
+func (m *MsgApproveAddX509RootCert) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveAddX509RootCert) ProtoMessage()    {}
+func (*MsgApproveAddX509RootCert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{2}
+}
+func (m *MsgApproveAddX509RootCert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveAddX509RootCert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveAddX509RootCert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveAddX509RootCert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveAddX509RootCert.Merge(m, src)
+}
+func (m *MsgApproveAddX509RootCert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveAddX509RootCert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveAddX509RootCert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveAddX509RootCert proto.InternalMessageInfo
+
+func (m *MsgApproveAddX509RootCert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgApproveAddX509RootCert) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *MsgApproveAddX509RootCert) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type MsgApproveAddX509RootCertResponse struct {
+}
+
+func (m *MsgApproveAddX509RootCertResponse) Reset()         { *m = MsgApproveAddX509RootCertResponse{} }
+func (m *MsgApproveAddX509RootCertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveAddX509RootCertResponse) ProtoMessage()    {}
+func (*MsgApproveAddX509RootCertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{3}
+}
+func (m *MsgApproveAddX509RootCertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveAddX509RootCertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveAddX509RootCertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveAddX509RootCertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveAddX509RootCertResponse.Merge(m, src)
+}
+func (m *MsgApproveAddX509RootCertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveAddX509RootCertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveAddX509RootCertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveAddX509RootCertResponse proto.InternalMessageInfo
+
+type MsgAddX509Cert struct {
+	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Cert   string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty"`
+}
+
+func (m *MsgAddX509Cert) Reset()         { *m = MsgAddX509Cert{} }
+func (m *MsgAddX509Cert) String() string { return proto.CompactTextString(m) }
+func (*MsgAddX509Cert) ProtoMessage()    {}
+func (*MsgAddX509Cert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{4}
+}
+func (m *MsgAddX509Cert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddX509Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddX509Cert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddX509Cert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddX509Cert.Merge(m, src)
+}
+func (m *MsgAddX509Cert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddX509Cert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddX509Cert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddX509Cert proto.InternalMessageInfo
+
+func (m *MsgAddX509Cert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgAddX509Cert) GetCert() string {
+	if m != nil {
+		return m.Cert
+	}
+	return ""
+}
+
+type MsgAddX509CertResponse struct {
+}
+
+func (m *MsgAddX509CertResponse) Reset()         { *m = MsgAddX509CertResponse{} }
+func (m *MsgAddX509CertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgAddX509CertResponse) ProtoMessage()    {}
+func (*MsgAddX509CertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{5}
+}
+func (m *MsgAddX509CertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgAddX509CertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgAddX509CertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgAddX509CertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgAddX509CertResponse.Merge(m, src)
+}
+func (m *MsgAddX509CertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgAddX509CertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgAddX509CertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgAddX509CertResponse proto.InternalMessageInfo
+
+type MsgProposeRevokeX509RootCert struct {
+	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty"`
+}
+
+func (m *MsgProposeRevokeX509RootCert) Reset()         { *m = MsgProposeRevokeX509RootCert{} }
+func (m *MsgProposeRevokeX509RootCert) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeRevokeX509RootCert) ProtoMessage()    {}
+func (*MsgProposeRevokeX509RootCert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{6}
+}
+func (m *MsgProposeRevokeX509RootCert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeRevokeX509RootCert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeRevokeX509RootCert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeRevokeX509RootCert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeRevokeX509RootCert.Merge(m, src)
+}
+func (m *MsgProposeRevokeX509RootCert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeRevokeX509RootCert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeRevokeX509RootCert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeRevokeX509RootCert proto.InternalMessageInfo
+
+func (m *MsgProposeRevokeX509RootCert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgProposeRevokeX509RootCert) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *MsgProposeRevokeX509RootCert) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type MsgProposeRevokeX509RootCertResponse struct {
+}
+
+func (m *MsgProposeRevokeX509RootCertResponse) Reset()         { *m = MsgProposeRevokeX509RootCertResponse{} }
+func (m *MsgProposeRevokeX509RootCertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeRevokeX509RootCertResponse) ProtoMessage()    {}
+func (*MsgProposeRevokeX509RootCertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{7}
+}
+func (m *MsgProposeRevokeX509RootCertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeRevokeX509RootCertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeRevokeX509RootCertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeRevokeX509RootCertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeRevokeX509RootCertResponse.Merge(m, src)
+}
+func (m *MsgProposeRevokeX509RootCertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeRevokeX509RootCertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeRevokeX509RootCertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeRevokeX509RootCertResponse proto.InternalMessageInfo
+
+type MsgApproveRevokeX509RootCert struct {
+	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty"`
+}
+
+func (m *MsgApproveRevokeX509RootCert) Reset()         { *m = MsgApproveRevokeX509RootCert{} }
+func (m *MsgApproveRevokeX509RootCert) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveRevokeX509RootCert) ProtoMessage()    {}
+func (*MsgApproveRevokeX509RootCert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{8}
+}
+func (m *MsgApproveRevokeX509RootCert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveRevokeX509RootCert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveRevokeX509RootCert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveRevokeX509RootCert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveRevokeX509RootCert.Merge(m, src)
+}
+func (m *MsgApproveRevokeX509RootCert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveRevokeX509RootCert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveRevokeX509RootCert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveRevokeX509RootCert proto.InternalMessageInfo
+
+func (m *MsgApproveRevokeX509RootCert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgApproveRevokeX509RootCert) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *MsgApproveRevokeX509RootCert) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type MsgApproveRevokeX509RootCertResponse struct {
+}
+
+func (m *MsgApproveRevokeX509RootCertResponse) Reset()         { *m = MsgApproveRevokeX509RootCertResponse{} }
+func (m *MsgApproveRevokeX509RootCertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveRevokeX509RootCertResponse) ProtoMessage()    {}
+func (*MsgApproveRevokeX509RootCertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{9}
+}
+func (m *MsgApproveRevokeX509RootCertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveRevokeX509RootCertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveRevokeX509RootCertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveRevokeX509RootCertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveRevokeX509RootCertResponse.Merge(m, src)
+}
+func (m *MsgApproveRevokeX509RootCertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveRevokeX509RootCertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveRevokeX509RootCertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveRevokeX509RootCertResponse proto.InternalMessageInfo
+
+type MsgRevokeX509Cert struct {
+	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
+	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty"`
+	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty"`
+}
+
+func (m *MsgRevokeX509Cert) Reset()         { *m = MsgRevokeX509Cert{} }
+func (m *MsgRevokeX509Cert) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeX509Cert) ProtoMessage()    {}
+func (*MsgRevokeX509Cert) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{10}
+}
+func (m *MsgRevokeX509Cert) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeX509Cert) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeX509Cert.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeX509Cert) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeX509Cert.Merge(m, src)
+}
+func (m *MsgRevokeX509Cert) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeX509Cert) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeX509Cert.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeX509Cert proto.InternalMessageInfo
+
+func (m *MsgRevokeX509Cert) GetSigner() string {
+	if m != nil {
+		return m.Signer
+	}
+	return ""
+}
+
+func (m *MsgRevokeX509Cert) GetSubject() string {
+	if m != nil {
+		return m.Subject
+	}
+	return ""
+}
+
+func (m *MsgRevokeX509Cert) GetSubjectKeyId() string {
+	if m != nil {
+		return m.SubjectKeyId
+	}
+	return ""
+}
+
+type MsgRevokeX509CertResponse struct {
+}
+
+func (m *MsgRevokeX509CertResponse) Reset()         { *m = MsgRevokeX509CertResponse{} }
+func (m *MsgRevokeX509CertResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgRevokeX509CertResponse) ProtoMessage()    {}
+func (*MsgRevokeX509CertResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_badfdb2b39855d16, []int{11}
+}
+func (m *MsgRevokeX509CertResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgRevokeX509CertResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgRevokeX509CertResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgRevokeX509CertResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgRevokeX509CertResponse.Merge(m, src)
+}
+func (m *MsgRevokeX509CertResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgRevokeX509CertResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgRevokeX509CertResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgRevokeX509CertResponse proto.InternalMessageInfo
+
+func init() {
+	proto.RegisterType((*MsgProposeAddX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert")
+	proto.RegisterType((*MsgProposeAddX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCertResponse")
+	proto.RegisterType((*MsgApproveAddX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCert")
+	proto.RegisterType((*MsgApproveAddX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCertResponse")
+	proto.RegisterType((*MsgAddX509Cert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert")
+	proto.RegisterType((*MsgAddX509CertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgAddX509CertResponse")
+	proto.RegisterType((*MsgProposeRevokeX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCert")
+	proto.RegisterType((*MsgProposeRevokeX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCertResponse")
+	proto.RegisterType((*MsgApproveRevokeX509RootCert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert")
+	proto.RegisterType((*MsgApproveRevokeX509RootCertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCertResponse")
+	proto.RegisterType((*MsgRevokeX509Cert)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509Cert")
+	proto.RegisterType((*MsgRevokeX509CertResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509CertResponse")
+}
+
 func init() { proto.RegisterFile("pki/tx.proto", fileDescriptor_badfdb2b39855d16) }
 
 var fileDescriptor_badfdb2b39855d16 = []byte{
-	// 159 bytes of a gzipped FileDescriptorProto
+	// 470 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x29, 0xc8, 0xce, 0xd4,
 	0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xd2, 0xab, 0xca, 0x4c, 0x4f, 0x4a, 0x4d,
 	0x4d, 0xcc, 0xc9, 0xc9, 0x4c, 0xcc, 0x4b, 0x4e, 0xd5, 0x4b, 0xc9, 0x2c, 0x2e, 0x29, 0xca, 0x4c,
 	0x2a, 0x2d, 0x49, 0x4d, 0x49, 0xce, 0xcf, 0x2d, 0x80, 0x88, 0xe6, 0xa4, 0xa6, 0xa4, 0xa7, 0x16,
-	0xe9, 0x15, 0x64, 0x67, 0x1a, 0xb1, 0x72, 0x31, 0xfb, 0x16, 0xa7, 0x3b, 0xc5, 0x9d, 0x78, 0x24,
-	0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb, 0x31, 0x5c, 0x78,
-	0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x4b, 0x7a, 0x66, 0x49, 0x46, 0x69, 0x92, 0x5e,
-	0x72, 0x7e, 0xae, 0x3e, 0xc4, 0x6c, 0x5d, 0x98, 0xe1, 0xfa, 0x48, 0x86, 0xeb, 0x22, 0x4c, 0xd7,
-	0x85, 0x18, 0xaf, 0x5f, 0xa1, 0x0f, 0x76, 0x59, 0x65, 0x41, 0x6a, 0x71, 0x12, 0x1b, 0xd8, 0x75,
-	0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x98, 0x75, 0x23, 0xb7, 0xad, 0x00, 0x00, 0x00,
+	0xe9, 0x15, 0x64, 0x67, 0x2a, 0xb9, 0x73, 0x49, 0xfa, 0x16, 0xa7, 0x07, 0x14, 0xe5, 0x17, 0xe4,
+	0x17, 0xa7, 0x3a, 0xa6, 0xa4, 0x44, 0x98, 0x1a, 0x58, 0x06, 0xe5, 0xe7, 0x97, 0x38, 0xa7, 0x16,
+	0x95, 0x08, 0x89, 0x71, 0xb1, 0x15, 0x67, 0xa6, 0xe7, 0xa5, 0x16, 0x49, 0x30, 0x2a, 0x30, 0x6a,
+	0x70, 0x06, 0x41, 0x79, 0x42, 0x42, 0x5c, 0x2c, 0xc9, 0xa9, 0x45, 0x25, 0x12, 0x4c, 0x60, 0x51,
+	0x30, 0x5b, 0x49, 0x99, 0x4b, 0x11, 0xa7, 0x41, 0x41, 0xa9, 0xc5, 0x05, 0xf9, 0x79, 0xc5, 0xa9,
+	0x4a, 0xc5, 0x60, 0xdb, 0x1c, 0x0b, 0x0a, 0x8a, 0xf2, 0xcb, 0x88, 0xb6, 0x4d, 0x82, 0x8b, 0xbd,
+	0xb8, 0x34, 0x29, 0x2b, 0x35, 0x19, 0x66, 0x21, 0x8c, 0x2b, 0xa4, 0xc2, 0xc5, 0x07, 0x65, 0xc6,
+	0x67, 0xa7, 0x56, 0xc6, 0x67, 0xa6, 0x48, 0x30, 0x83, 0x15, 0xf0, 0x40, 0x45, 0xbd, 0x53, 0x2b,
+	0x3d, 0x53, 0xa0, 0x2e, 0xc3, 0x6e, 0x29, 0xdc, 0x65, 0x36, 0x5c, 0x7c, 0x20, 0x45, 0x10, 0x59,
+	0x92, 0x3d, 0x2f, 0xc1, 0x25, 0x86, 0xaa, 0x1b, 0x6e, 0x6e, 0x19, 0x97, 0x0c, 0x22, 0x58, 0x82,
+	0x52, 0xcb, 0xf2, 0xb3, 0x53, 0xe9, 0xe2, 0x69, 0x35, 0x2e, 0x15, 0x7c, 0xf6, 0xa2, 0xb9, 0x0f,
+	0x1a, 0x38, 0x74, 0x77, 0x1f, 0x4e, 0x7b, 0xe1, 0xee, 0xcb, 0xe6, 0x12, 0xf4, 0x2d, 0x4e, 0x47,
+	0x28, 0xa0, 0xa9, 0xa3, 0xa4, 0xc1, 0xc9, 0x13, 0xd5, 0x32, 0x98, 0x4b, 0x8c, 0xb6, 0x70, 0x70,
+	0x31, 0xfb, 0x16, 0xa7, 0x0b, 0x6d, 0x63, 0xe4, 0x12, 0xc3, 0x91, 0x5f, 0x3c, 0x49, 0xcc, 0x7d,
+	0x7a, 0x38, 0x73, 0x8c, 0x54, 0x20, 0xd5, 0x8c, 0x82, 0x79, 0x00, 0xec, 0x70, 0x1c, 0x59, 0x8f,
+	0x1c, 0x87, 0x63, 0x37, 0x8a, 0x2c, 0x87, 0xe3, 0xcf, 0x9b, 0x42, 0x53, 0x19, 0xb9, 0xb8, 0x91,
+	0x73, 0xa6, 0x1d, 0x39, 0x56, 0x20, 0xf4, 0x4b, 0xb9, 0x51, 0xa6, 0x1f, 0xee, 0xae, 0xfd, 0x8c,
+	0x5c, 0x92, 0xb8, 0x73, 0xb6, 0x0f, 0xf9, 0x31, 0x88, 0x69, 0x9a, 0x54, 0x08, 0x35, 0x4d, 0x43,
+	0xf1, 0x01, 0xee, 0xbc, 0xef, 0x43, 0x7e, 0x54, 0x52, 0xc9, 0x07, 0x04, 0xcb, 0x07, 0xa1, 0x79,
+	0x8c, 0x5c, 0x7c, 0x68, 0xa5, 0x83, 0x23, 0x19, 0x16, 0xa1, 0x1a, 0x21, 0xe5, 0x49, 0xb1, 0x11,
+	0x30, 0x07, 0x3a, 0xc5, 0x9d, 0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72,
+	0x8c, 0x13, 0x1e, 0xcb, 0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x4b,
+	0x7a, 0x66, 0x49, 0x46, 0x69, 0x92, 0x5e, 0x72, 0x7e, 0xae, 0x3e, 0xc4, 0x3a, 0x5d, 0x98, 0x7d,
+	0xfa, 0x48, 0xf6, 0xe9, 0x22, 0x2c, 0xd4, 0x85, 0xd8, 0xa8, 0x5f, 0xa1, 0x0f, 0xae, 0xf3, 0x2b,
+	0x0b, 0x52, 0x8b, 0x93, 0xd8, 0xc0, 0xf5, 0xbe, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x64, 0xee,
+	0x85, 0xe7, 0x07, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -51,6 +650,12 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	ProposeAddX509RootCert(ctx context.Context, in *MsgProposeAddX509RootCert, opts ...grpc.CallOption) (*MsgProposeAddX509RootCertResponse, error)
+	ApproveAddX509RootCert(ctx context.Context, in *MsgApproveAddX509RootCert, opts ...grpc.CallOption) (*MsgApproveAddX509RootCertResponse, error)
+	AddX509Cert(ctx context.Context, in *MsgAddX509Cert, opts ...grpc.CallOption) (*MsgAddX509CertResponse, error)
+	ProposeRevokeX509RootCert(ctx context.Context, in *MsgProposeRevokeX509RootCert, opts ...grpc.CallOption) (*MsgProposeRevokeX509RootCertResponse, error)
+	ApproveRevokeX509RootCert(ctx context.Context, in *MsgApproveRevokeX509RootCert, opts ...grpc.CallOption) (*MsgApproveRevokeX509RootCertResponse, error)
+	RevokeX509Cert(ctx context.Context, in *MsgRevokeX509Cert, opts ...grpc.CallOption) (*MsgRevokeX509CertResponse, error)
 }
 
 type msgClient struct {
@@ -61,22 +666,2008 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) ProposeAddX509RootCert(ctx context.Context, in *MsgProposeAddX509RootCert, opts ...grpc.CallOption) (*MsgProposeAddX509RootCertResponse, error) {
+	out := new(MsgProposeAddX509RootCertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/ProposeAddX509RootCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveAddX509RootCert(ctx context.Context, in *MsgApproveAddX509RootCert, opts ...grpc.CallOption) (*MsgApproveAddX509RootCertResponse, error) {
+	out := new(MsgApproveAddX509RootCertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/ApproveAddX509RootCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) AddX509Cert(ctx context.Context, in *MsgAddX509Cert, opts ...grpc.CallOption) (*MsgAddX509CertResponse, error) {
+	out := new(MsgAddX509CertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddX509Cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ProposeRevokeX509RootCert(ctx context.Context, in *MsgProposeRevokeX509RootCert, opts ...grpc.CallOption) (*MsgProposeRevokeX509RootCertResponse, error) {
+	out := new(MsgProposeRevokeX509RootCertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/ProposeRevokeX509RootCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveRevokeX509RootCert(ctx context.Context, in *MsgApproveRevokeX509RootCert, opts ...grpc.CallOption) (*MsgApproveRevokeX509RootCertResponse, error) {
+	out := new(MsgApproveRevokeX509RootCertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/ApproveRevokeX509RootCert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RevokeX509Cert(ctx context.Context, in *MsgRevokeX509Cert, opts ...grpc.CallOption) (*MsgRevokeX509CertResponse, error) {
+	out := new(MsgRevokeX509CertResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Msg/RevokeX509Cert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	ProposeAddX509RootCert(context.Context, *MsgProposeAddX509RootCert) (*MsgProposeAddX509RootCertResponse, error)
+	ApproveAddX509RootCert(context.Context, *MsgApproveAddX509RootCert) (*MsgApproveAddX509RootCertResponse, error)
+	AddX509Cert(context.Context, *MsgAddX509Cert) (*MsgAddX509CertResponse, error)
+	ProposeRevokeX509RootCert(context.Context, *MsgProposeRevokeX509RootCert) (*MsgProposeRevokeX509RootCertResponse, error)
+	ApproveRevokeX509RootCert(context.Context, *MsgApproveRevokeX509RootCert) (*MsgApproveRevokeX509RootCertResponse, error)
+	RevokeX509Cert(context.Context, *MsgRevokeX509Cert) (*MsgRevokeX509CertResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
+func (*UnimplementedMsgServer) ProposeAddX509RootCert(ctx context.Context, req *MsgProposeAddX509RootCert) (*MsgProposeAddX509RootCertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeAddX509RootCert not implemented")
+}
+func (*UnimplementedMsgServer) ApproveAddX509RootCert(ctx context.Context, req *MsgApproveAddX509RootCert) (*MsgApproveAddX509RootCertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveAddX509RootCert not implemented")
+}
+func (*UnimplementedMsgServer) AddX509Cert(ctx context.Context, req *MsgAddX509Cert) (*MsgAddX509CertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddX509Cert not implemented")
+}
+func (*UnimplementedMsgServer) ProposeRevokeX509RootCert(ctx context.Context, req *MsgProposeRevokeX509RootCert) (*MsgProposeRevokeX509RootCertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeRevokeX509RootCert not implemented")
+}
+func (*UnimplementedMsgServer) ApproveRevokeX509RootCert(ctx context.Context, req *MsgApproveRevokeX509RootCert) (*MsgApproveRevokeX509RootCertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveRevokeX509RootCert not implemented")
+}
+func (*UnimplementedMsgServer) RevokeX509Cert(ctx context.Context, req *MsgRevokeX509Cert) (*MsgRevokeX509CertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeX509Cert not implemented")
+}
+
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_ProposeAddX509RootCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeAddX509RootCert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeAddX509RootCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/ProposeAddX509RootCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeAddX509RootCert(ctx, req.(*MsgProposeAddX509RootCert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveAddX509RootCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveAddX509RootCert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveAddX509RootCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/ApproveAddX509RootCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveAddX509RootCert(ctx, req.(*MsgApproveAddX509RootCert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_AddX509Cert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAddX509Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AddX509Cert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/AddX509Cert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AddX509Cert(ctx, req.(*MsgAddX509Cert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ProposeRevokeX509RootCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeRevokeX509RootCert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeRevokeX509RootCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/ProposeRevokeX509RootCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeRevokeX509RootCert(ctx, req.(*MsgProposeRevokeX509RootCert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveRevokeX509RootCert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveRevokeX509RootCert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveRevokeX509RootCert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/ApproveRevokeX509RootCert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveRevokeX509RootCert(ctx, req.(*MsgApproveRevokeX509RootCert))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RevokeX509Cert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRevokeX509Cert)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RevokeX509Cert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Msg/RevokeX509Cert",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RevokeX509Cert(ctx, req.(*MsgRevokeX509Cert))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.pki.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "pki/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ProposeAddX509RootCert",
+			Handler:    _Msg_ProposeAddX509RootCert_Handler,
+		},
+		{
+			MethodName: "ApproveAddX509RootCert",
+			Handler:    _Msg_ApproveAddX509RootCert_Handler,
+		},
+		{
+			MethodName: "AddX509Cert",
+			Handler:    _Msg_AddX509Cert_Handler,
+		},
+		{
+			MethodName: "ProposeRevokeX509RootCert",
+			Handler:    _Msg_ProposeRevokeX509RootCert_Handler,
+		},
+		{
+			MethodName: "ApproveRevokeX509RootCert",
+			Handler:    _Msg_ApproveRevokeX509RootCert_Handler,
+		},
+		{
+			MethodName: "RevokeX509Cert",
+			Handler:    _Msg_RevokeX509Cert_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pki/tx.proto",
 }
+
+func (m *MsgProposeAddX509RootCert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeAddX509RootCert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeAddX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Cert) > 0 {
+		i -= len(m.Cert)
+		copy(dAtA[i:], m.Cert)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Cert)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeAddX509RootCertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeAddX509RootCertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeAddX509RootCertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveAddX509RootCert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveAddX509RootCert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveAddX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveAddX509RootCertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveAddX509RootCertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveAddX509RootCertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddX509Cert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddX509Cert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Cert) > 0 {
+		i -= len(m.Cert)
+		copy(dAtA[i:], m.Cert)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Cert)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgAddX509CertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgAddX509CertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgAddX509CertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeRevokeX509RootCert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeRevokeX509RootCert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeRevokeX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeRevokeX509RootCertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeRevokeX509RootCertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeRevokeX509RootCertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveRevokeX509RootCert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveRevokeX509RootCert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveRevokeX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveRevokeX509RootCertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveRevokeX509RootCertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveRevokeX509RootCertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeX509Cert) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeX509Cert) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SubjectKeyId) > 0 {
+		i -= len(m.SubjectKeyId)
+		copy(dAtA[i:], m.SubjectKeyId)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SubjectKeyId)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Subject) > 0 {
+		i -= len(m.Subject)
+		copy(dAtA[i:], m.Subject)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Subject)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Signer) > 0 {
+		i -= len(m.Signer)
+		copy(dAtA[i:], m.Signer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Signer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgRevokeX509CertResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgRevokeX509CertResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgRevokeX509CertResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTx(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *MsgProposeAddX509RootCert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Cert)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgProposeAddX509RootCertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgApproveAddX509RootCert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgApproveAddX509RootCertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgAddX509Cert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Cert)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgAddX509CertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgProposeRevokeX509RootCert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgProposeRevokeX509RootCertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgApproveRevokeX509RootCert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgApproveRevokeX509RootCertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgRevokeX509Cert) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Signer)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Subject)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SubjectKeyId)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgRevokeX509CertResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func sovTx(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTx(x uint64) (n int) {
+	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MsgProposeAddX509RootCert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeAddX509RootCert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeAddX509RootCert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cert", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cert = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeAddX509RootCertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeAddX509RootCertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeAddX509RootCertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveAddX509RootCert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveAddX509RootCert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveAddX509RootCert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveAddX509RootCertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveAddX509RootCertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveAddX509RootCertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddX509Cert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddX509Cert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddX509Cert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cert", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cert = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgAddX509CertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgAddX509CertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgAddX509CertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeRevokeX509RootCert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeRevokeX509RootCert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeRevokeX509RootCert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeRevokeX509RootCertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeRevokeX509RootCertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeRevokeX509RootCertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveRevokeX509RootCert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveRevokeX509RootCert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveRevokeX509RootCert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveRevokeX509RootCertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveRevokeX509RootCertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveRevokeX509RootCertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeX509Cert) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeX509Cert: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeX509Cert: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Signer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Signer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Subject", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Subject = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SubjectKeyId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgRevokeX509CertResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgRevokeX509CertResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgRevokeX509CertResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipTx(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthTx
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTx
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTx
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthTx        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTx          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTx = fmt.Errorf("proto: unexpected end of group")
+)
