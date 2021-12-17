@@ -12,13 +12,31 @@
 export interface PkiApprovedCertificates {
   subject?: string;
   subjectKeyId?: string;
-  certs?: string[];
+  certs?: PkiCertificate[];
+}
+
+export interface PkiCertificate {
+  pemCert?: string;
+  serialNumber?: string;
+  issuer?: string;
+  authorityKeyId?: string;
+  rootSubject?: string;
+  rootSubjectKeyId?: string;
+  isRoot?: boolean;
+  owner?: string;
+  subject?: string;
+  subjectKeyId?: string;
+}
+
+export interface PkiCertificateIdentifier {
+  subject?: string;
+  subjectKeyId?: string;
 }
 
 export interface PkiChildCertificates {
   issuer?: string;
   authorityKeyId?: string;
-  certIds?: string[];
+  certIds?: PkiCertificateIdentifier[];
 }
 
 export type PkiMsgAddX509CertResponse = object;
@@ -146,7 +164,7 @@ export interface PkiQueryGetRevokedCertificatesResponse {
 export interface PkiRevokedCertificates {
   subject?: string;
   subjectKeyId?: string;
-  certs?: string[];
+  certs?: PkiCertificate[];
 }
 
 export interface ProtobufAny {
@@ -425,7 +443,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryApprovedCertificatesAll
    * @summary Queries a list of ApprovedCertificates items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates
+   * @request GET:/dcl/pki/approved_certificates
    */
   queryApprovedCertificatesAll = (
     query?: {
@@ -438,7 +456,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<PkiQueryAllApprovedCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates`,
+      path: `/dcl/pki/approved_certificates`,
       method: "GET",
       query: query,
       format: "json",
@@ -451,11 +469,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryApprovedCertificates
    * @summary Queries a ApprovedCertificates by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates/{subject}/{subjectKeyId}
+   * @request GET:/dcl/pki/approved_certificates/{subject}/{subjectKeyId}
    */
   queryApprovedCertificates = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetApprovedCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates/${subject}/${subjectKeyId}`,
+      path: `/dcl/pki/approved_certificates/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,
@@ -467,7 +485,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryChildCertificatesAll
    * @summary Queries a list of ChildCertificates items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/child_certificates
+   * @request GET:/dcl/pki/child_certificates
    */
   queryChildCertificatesAll = (
     query?: {
@@ -480,7 +498,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<PkiQueryAllChildCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/child_certificates`,
+      path: `/dcl/pki/child_certificates`,
       method: "GET",
       query: query,
       format: "json",
@@ -493,11 +511,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryChildCertificates
    * @summary Queries a ChildCertificates by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/child_certificates/{issuer}/{authorityKeyId}
+   * @request GET:/dcl/pki/child_certificates/{issuer}/{authorityKeyId}
    */
   queryChildCertificates = (issuer: string, authorityKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetChildCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/child_certificates/${issuer}/${authorityKeyId}`,
+      path: `/dcl/pki/child_certificates/${issuer}/${authorityKeyId}`,
       method: "GET",
       format: "json",
       ...params,
@@ -509,7 +527,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedCertificateAll
    * @summary Queries a list of ProposedCertificate items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate
+   * @request GET:/dcl/pki/proposed_certificate
    */
   queryProposedCertificateAll = (
     query?: {
@@ -522,7 +540,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<PkiQueryAllProposedCertificateResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate`,
+      path: `/dcl/pki/proposed_certificate`,
       method: "GET",
       query: query,
       format: "json",
@@ -535,11 +553,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedCertificate
    * @summary Queries a ProposedCertificate by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate/{subject}/{subjectKeyId}
+   * @request GET:/dcl/pki/proposed_certificate/{subject}/{subjectKeyId}
    */
   queryProposedCertificate = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetProposedCertificateResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate/${subject}/${subjectKeyId}`,
+      path: `/dcl/pki/proposed_certificate/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,
@@ -551,7 +569,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedCertificateRevocationAll
    * @summary Queries a list of ProposedCertificateRevocation items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation
+   * @request GET:/dcl/pki/proposed_certificate_revocation
    */
   queryProposedCertificateRevocationAll = (
     query?: {
@@ -564,7 +582,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<PkiQueryAllProposedCertificateRevocationResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation`,
+      path: `/dcl/pki/proposed_certificate_revocation`,
       method: "GET",
       query: query,
       format: "json",
@@ -577,11 +595,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedCertificateRevocation
    * @summary Queries a ProposedCertificateRevocation by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation/{subject}/{subjectKeyId}
+   * @request GET:/dcl/pki/proposed_certificate_revocation/{subject}/{subjectKeyId}
    */
   queryProposedCertificateRevocation = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetProposedCertificateRevocationResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation/${subject}/${subjectKeyId}`,
+      path: `/dcl/pki/proposed_certificate_revocation/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,
@@ -593,7 +611,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRevokedCertificatesAll
    * @summary Queries a list of RevokedCertificates items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates
+   * @request GET:/dcl/pki/revoked_certificates
    */
   queryRevokedCertificatesAll = (
     query?: {
@@ -606,7 +624,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<PkiQueryAllRevokedCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates`,
+      path: `/dcl/pki/revoked_certificates`,
       method: "GET",
       query: query,
       format: "json",
@@ -619,11 +637,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRevokedCertificates
    * @summary Queries a RevokedCertificates by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates/{subject}/{subjectKeyId}
+   * @request GET:/dcl/pki/revoked_certificates/{subject}/{subjectKeyId}
    */
   queryRevokedCertificates = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetRevokedCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates/${subject}/${subjectKeyId}`,
+      path: `/dcl/pki/revoked_certificates/${subject}/${subjectKeyId}`,
       method: "GET",
       format: "json",
       ...params,

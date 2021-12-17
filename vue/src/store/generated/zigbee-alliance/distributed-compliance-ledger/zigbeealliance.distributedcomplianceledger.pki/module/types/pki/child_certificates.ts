@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { CertificateIdentifier } from '../pki/certificate_identifier'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
@@ -6,10 +7,10 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 export interface ChildCertificates {
   issuer: string
   authorityKeyId: string
-  certIds: string[]
+  certIds: CertificateIdentifier[]
 }
 
-const baseChildCertificates: object = { issuer: '', authorityKeyId: '', certIds: '' }
+const baseChildCertificates: object = { issuer: '', authorityKeyId: '' }
 
 export const ChildCertificates = {
   encode(message: ChildCertificates, writer: Writer = Writer.create()): Writer {
@@ -20,7 +21,7 @@ export const ChildCertificates = {
       writer.uint32(18).string(message.authorityKeyId)
     }
     for (const v of message.certIds) {
-      writer.uint32(26).string(v!)
+      CertificateIdentifier.encode(v!, writer.uint32(26).fork()).ldelim()
     }
     return writer
   },
@@ -40,7 +41,7 @@ export const ChildCertificates = {
           message.authorityKeyId = reader.string()
           break
         case 3:
-          message.certIds.push(reader.string())
+          message.certIds.push(CertificateIdentifier.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -65,7 +66,7 @@ export const ChildCertificates = {
     }
     if (object.certIds !== undefined && object.certIds !== null) {
       for (const e of object.certIds) {
-        message.certIds.push(String(e))
+        message.certIds.push(CertificateIdentifier.fromJSON(e))
       }
     }
     return message
@@ -76,7 +77,7 @@ export const ChildCertificates = {
     message.issuer !== undefined && (obj.issuer = message.issuer)
     message.authorityKeyId !== undefined && (obj.authorityKeyId = message.authorityKeyId)
     if (message.certIds) {
-      obj.certIds = message.certIds.map((e) => e)
+      obj.certIds = message.certIds.map((e) => (e ? CertificateIdentifier.toJSON(e) : undefined))
     } else {
       obj.certIds = []
     }
@@ -98,7 +99,7 @@ export const ChildCertificates = {
     }
     if (object.certIds !== undefined && object.certIds !== null) {
       for (const e of object.certIds) {
-        message.certIds.push(e)
+        message.certIds.push(CertificateIdentifier.fromPartial(e))
       }
     }
     return message

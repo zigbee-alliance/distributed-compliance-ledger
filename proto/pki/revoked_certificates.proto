@@ -3,10 +3,12 @@ package zigbeealliance.distributedcomplianceledger.pki;
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
+import "pki/certificate.proto";
+
 message RevokedCertificates {
   string subject = 1; 
   string subject_key_id = 2; 
-  repeated string certs = 3; 
+  repeated Certificate certs = 3; 
   
 }
 

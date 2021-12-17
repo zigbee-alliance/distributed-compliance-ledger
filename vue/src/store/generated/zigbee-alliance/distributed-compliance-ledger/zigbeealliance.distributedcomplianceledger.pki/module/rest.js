@@ -142,10 +142,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryApprovedCertificatesAll
          * @summary Queries a list of ApprovedCertificates items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates
+         * @request GET:/dcl/pki/approved_certificates
          */
         this.queryApprovedCertificatesAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates`,
+            path: `/dcl/pki/approved_certificates`,
             method: "GET",
             query: query,
             format: "json",
@@ -157,10 +157,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryApprovedCertificates
          * @summary Queries a ApprovedCertificates by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates/{subject}/{subjectKeyId}
+         * @request GET:/dcl/pki/approved_certificates/{subject}/{subjectKeyId}
          */
         this.queryApprovedCertificates = (subject, subjectKeyId, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates/${subject}/${subjectKeyId}`,
+            path: `/dcl/pki/approved_certificates/${subject}/${subjectKeyId}`,
             method: "GET",
             format: "json",
             ...params,
@@ -171,10 +171,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryChildCertificatesAll
          * @summary Queries a list of ChildCertificates items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/child_certificates
+         * @request GET:/dcl/pki/child_certificates
          */
         this.queryChildCertificatesAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/child_certificates`,
+            path: `/dcl/pki/child_certificates`,
             method: "GET",
             query: query,
             format: "json",
@@ -186,10 +186,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryChildCertificates
          * @summary Queries a ChildCertificates by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/child_certificates/{issuer}/{authorityKeyId}
+         * @request GET:/dcl/pki/child_certificates/{issuer}/{authorityKeyId}
          */
         this.queryChildCertificates = (issuer, authorityKeyId, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/child_certificates/${issuer}/${authorityKeyId}`,
+            path: `/dcl/pki/child_certificates/${issuer}/${authorityKeyId}`,
             method: "GET",
             format: "json",
             ...params,
@@ -200,10 +200,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryProposedCertificateAll
          * @summary Queries a list of ProposedCertificate items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate
+         * @request GET:/dcl/pki/proposed_certificate
          */
         this.queryProposedCertificateAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate`,
+            path: `/dcl/pki/proposed_certificate`,
             method: "GET",
             query: query,
             format: "json",
@@ -215,10 +215,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryProposedCertificate
          * @summary Queries a ProposedCertificate by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate/{subject}/{subjectKeyId}
+         * @request GET:/dcl/pki/proposed_certificate/{subject}/{subjectKeyId}
          */
         this.queryProposedCertificate = (subject, subjectKeyId, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate/${subject}/${subjectKeyId}`,
+            path: `/dcl/pki/proposed_certificate/${subject}/${subjectKeyId}`,
             method: "GET",
             format: "json",
             ...params,
@@ -229,10 +229,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryProposedCertificateRevocationAll
          * @summary Queries a list of ProposedCertificateRevocation items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation
+         * @request GET:/dcl/pki/proposed_certificate_revocation
          */
         this.queryProposedCertificateRevocationAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation`,
+            path: `/dcl/pki/proposed_certificate_revocation`,
             method: "GET",
             query: query,
             format: "json",
@@ -244,10 +244,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryProposedCertificateRevocation
          * @summary Queries a ProposedCertificateRevocation by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation/{subject}/{subjectKeyId}
+         * @request GET:/dcl/pki/proposed_certificate_revocation/{subject}/{subjectKeyId}
          */
         this.queryProposedCertificateRevocation = (subject, subjectKeyId, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/proposed_certificate_revocation/${subject}/${subjectKeyId}`,
+            path: `/dcl/pki/proposed_certificate_revocation/${subject}/${subjectKeyId}`,
             method: "GET",
             format: "json",
             ...params,
@@ -258,10 +258,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRevokedCertificatesAll
          * @summary Queries a list of RevokedCertificates items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates
+         * @request GET:/dcl/pki/revoked_certificates
          */
         this.queryRevokedCertificatesAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates`,
+            path: `/dcl/pki/revoked_certificates`,
             method: "GET",
             query: query,
             format: "json",
@@ -273,10 +273,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRevokedCertificates
          * @summary Queries a RevokedCertificates by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates/{subject}/{subjectKeyId}
+         * @request GET:/dcl/pki/revoked_certificates/{subject}/{subjectKeyId}
          */
         this.queryRevokedCertificates = (subject, subjectKeyId, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/pki/revoked_certificates/${subject}/${subjectKeyId}`,
+            path: `/dcl/pki/revoked_certificates/${subject}/${subjectKeyId}`,
             method: "GET",
             format: "json",
             ...params,

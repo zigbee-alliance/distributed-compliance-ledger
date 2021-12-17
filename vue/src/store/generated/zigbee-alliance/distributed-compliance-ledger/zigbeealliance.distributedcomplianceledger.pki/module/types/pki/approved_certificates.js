@@ -1,7 +1,8 @@
 /* eslint-disable */
+import { Certificate } from '../pki/certificate';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
-const baseApprovedCertificates = { subject: '', subjectKeyId: '', certs: '' };
+const baseApprovedCertificates = { subject: '', subjectKeyId: '' };
 export const ApprovedCertificates = {
     encode(message, writer = Writer.create()) {
         if (message.subject !== '') {
@@ -11,7 +12,7 @@ export const ApprovedCertificates = {
             writer.uint32(18).string(message.subjectKeyId);
         }
         for (const v of message.certs) {
-            writer.uint32(26).string(v);
+            Certificate.encode(v, writer.uint32(26).fork()).ldelim();
         }
         return writer;
     },
@@ -30,7 +31,7 @@ export const ApprovedCertificates = {
                     message.subjectKeyId = reader.string();
                     break;
                 case 3:
-                    message.certs.push(reader.string());
+                    message.certs.push(Certificate.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -56,7 +57,7 @@ export const ApprovedCertificates = {
         }
         if (object.certs !== undefined && object.certs !== null) {
             for (const e of object.certs) {
-                message.certs.push(String(e));
+                message.certs.push(Certificate.fromJSON(e));
             }
         }
         return message;
@@ -66,7 +67,7 @@ export const ApprovedCertificates = {
         message.subject !== undefined && (obj.subject = message.subject);
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
         if (message.certs) {
-            obj.certs = message.certs.map((e) => e);
+            obj.certs = message.certs.map((e) => (e ? Certificate.toJSON(e) : undefined));
         }
         else {
             obj.certs = [];
@@ -90,7 +91,7 @@ export const ApprovedCertificates = {
         }
         if (object.certs !== undefined && object.certs !== null) {
             for (const e of object.certs) {
-                message.certs.push(e);
+                message.certs.push(Certificate.fromPartial(e));
             }
         }
         return message;

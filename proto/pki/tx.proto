@@ -5,9 +5,11 @@ package zigbeealliance.distributedcomplianceledger.pki;
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
+import "cosmos_proto/cosmos.proto";
+
 // Msg defines the Msg service.
 service Msg {
-      rpc ProposeAddX509RootCert(MsgProposeAddX509RootCert) returns (MsgProposeAddX509RootCertResponse);
+  rpc ProposeAddX509RootCert(MsgProposeAddX509RootCert) returns (MsgProposeAddX509RootCertResponse);
   rpc ApproveAddX509RootCert(MsgApproveAddX509RootCert) returns (MsgApproveAddX509RootCertResponse);
   rpc AddX509Cert(MsgAddX509Cert) returns (MsgAddX509CertResponse);
   rpc ProposeRevokeX509RootCert(MsgProposeRevokeX509RootCert) returns (MsgProposeRevokeX509RootCertResponse);
@@ -17,7 +19,7 @@ service Msg {
 }
 
 message MsgProposeAddX509RootCert {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string cert = 2;
 }
 
@@ -25,7 +27,7 @@ message MsgProposeAddX509RootCertResponse {
 }
 
 message MsgApproveAddX509RootCert {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string subject = 2;
   string subject_key_id = 3;
 }
@@ -34,7 +36,7 @@ message MsgApproveAddX509RootCertResponse {
 }
 
 message MsgAddX509Cert {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string cert = 2;
 }
 
@@ -42,7 +44,7 @@ message MsgAddX509CertResponse {
 }
 
 message MsgProposeRevokeX509RootCert {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string subject = 2;
   string subject_key_id = 3;
 }
@@ -51,7 +53,7 @@ message MsgProposeRevokeX509RootCertResponse {
 }
 
 message MsgApproveRevokeX509RootCert {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string subject = 2;
   string subject_key_id = 3;
 }
@@ -60,7 +62,7 @@ message MsgApproveRevokeX509RootCertResponse {
 }
 
 message MsgRevokeX509Cert {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string subject = 2;
   string subject_key_id = 3;
 }

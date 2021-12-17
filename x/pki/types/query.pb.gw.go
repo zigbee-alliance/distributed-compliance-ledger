@@ -1074,25 +1074,25 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "approved_certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "approved_certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ApprovedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "approved_certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "approved_certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "proposed_certificate", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed_certificate", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "proposed_certificate"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed_certificate"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "child_certificates", "issuer", "authority_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "child_certificates", "issuer", "authority_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ChildCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "child_certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ChildCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "child_certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "proposed_certificate_revocation", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed_certificate_revocation", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedCertificateRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "proposed_certificate_revocation"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedCertificateRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed_certificate_revocation"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "revoked_certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked_certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "pki", "revoked_certificates"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked_certificates"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

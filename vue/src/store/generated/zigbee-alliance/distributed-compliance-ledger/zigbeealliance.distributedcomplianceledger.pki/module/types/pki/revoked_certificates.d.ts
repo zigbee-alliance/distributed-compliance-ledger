@@ -1,9 +1,10 @@
+import { Certificate } from '../pki/certificate';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 export interface RevokedCertificates {
     subject: string;
     subjectKeyId: string;
-    certs: string[];
+    certs: Certificate[];
 }
 export declare const RevokedCertificates: {
     encode(message: RevokedCertificates, writer?: Writer): Writer;
