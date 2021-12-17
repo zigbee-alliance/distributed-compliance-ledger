@@ -4,76 +4,55 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 func CmdCreateModel() *cobra.Command {
+	var (
+		vid                                        int32
+		pid                                        int32
+		deviceTypeId                               int32
+		productName                                string
+		productLabel                               string
+		partNumber                                 string
+		commissioningCustomFlow                    int32
+		commissioningCustomFlowUrl                 string
+		commissioningModeInitialStepsHint          uint64
+		commissioningModeInitialStepsInstruction   string
+		commissioningModeSecondaryStepsHint        uint64
+		commissioningModeSecondaryStepsInstruction string
+		userManualUrl                              string
+		supportUrl                                 string
+		productUrl                                 string
+	)
+
 	cmd := &cobra.Command{
-		Use:   "create-model [vid] [pid] [device-type-id] [product-name] [product-label] [part-number] [commissioning-custom-flow] [commissioning-custom-flow-url] [commissioning-mode-initial-steps-hint] [commissioning-mode-initial-steps-instruction] [commissioning-mode-secondary-steps-hint] [commissioning-mode-secondary-steps-instruction] [user-manual-url] [support-url] [product-url]",
-		Short: "Create a new Model",
-		Args:  cobra.ExactArgs(15),
+		Use:   "add-model",
+		Short: "Add new Model",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			// Get indexes
-			indexVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-			indexPid, err := cast.ToInt32E(args[1])
-			if err != nil {
-				return err
-			}
-
-			// Get value arguments
-			argDeviceTypeId, err := cast.ToInt32E(args[2])
-			if err != nil {
-				return err
-			}
-			argProductName := args[3]
-			argProductLabel := args[4]
-			argPartNumber := args[5]
-			argCommissioningCustomFlow, err := cast.ToInt32E(args[6])
-			if err != nil {
-				return err
-			}
-			argCommissioningCustomFlowUrl := args[7]
-			argCommissioningModeInitialStepsHint, err := cast.ToUint64E(args[8])
-			if err != nil {
-				return err
-			}
-			argCommissioningModeInitialStepsInstruction := args[9]
-			argCommissioningModeSecondaryStepsHint, err := cast.ToUint64E(args[10])
-			if err != nil {
-				return err
-			}
-			argCommissioningModeSecondaryStepsInstruction := args[11]
-			argUserManualUrl := args[12]
-			argSupportUrl := args[13]
-			argProductUrl := args[14]
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-
 			msg := types.NewMsgCreateModel(
 				clientCtx.GetFromAddress().String(),
-				indexVid,
-				indexPid,
-				argDeviceTypeId,
-				argProductName,
-				argProductLabel,
-				argPartNumber,
-				argCommissioningCustomFlow,
-				argCommissioningCustomFlowUrl,
-				argCommissioningModeInitialStepsHint,
-				argCommissioningModeInitialStepsInstruction,
-				argCommissioningModeSecondaryStepsHint,
-				argCommissioningModeSecondaryStepsInstruction,
-				argUserManualUrl,
-				argSupportUrl,
-				argProductUrl,
+				vid,
+				pid,
+				deviceTypeId,
+				productName,
+				productLabel, // FIXME: add optional reading from file
+				partNumber,
+				commissioningCustomFlow,
+				commissioningCustomFlowUrl,
+				commissioningModeInitialStepsHint,
+				commissioningModeInitialStepsInstruction,
+				commissioningModeSecondaryStepsHint,
+				commissioningModeSecondaryStepsInstruction,
+				userManualUrl,
+				supportUrl,
+				productUrl,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -81,6 +60,62 @@ func CmdCreateModel() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().Int32Var(&vid, FlagVid, 0,
+		"Model vendor ID")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0,
+		"Model product ID")
+	cmd.Flags().Int32Var(&deviceTypeId, FlagDeviceTypeId, 0,
+		"Model category ID")
+	cmd.Flags().StringVarP(&productName, FlagProductName, FlagProductNameShortcut, "",
+		"Model name")
+	cmd.Flags().StringVarP(&productLabel, FlagProductLabel, FlagProductLabelShortcut, "",
+		"Model description (string or path to file containing data)")
+	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
+		"Model Part Number (or sku)")
+	cmd.Flags().Int32Var(&commissioningCustomFlow, FlagCommissioningCustomFlow, 0,
+		`A value of 1 indicates that user interaction with the device (pressing a button, for example) is 
+required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 
+the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with 
+the necessary details for how to configure the product for initial commissioning.`)
+	cmd.Flags().StringVar(&commissioningCustomFlowUrl, FlagCommissioningCustomFlowUrl, "",
+		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
+device model when the commissioningCustomFlow field is set to '2'`)
+	cmd.Flags().Uint64Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 0,
+		`commissioningModeInitialStepsHint SHALL 
+identify a hint for the steps that can be used to put into commissioning mode a device that 
+has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. 
+For example, a value of 1 (bit 0 is set) indicates 
+that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.`)
+	cmd.Flags().StringVar(&commissioningModeInitialStepsInstruction, FlagCommissioningModeInitialStepsInstruction, "",
+		`commissioningModeInitialStepsInstruction SHALL contain text which relates to specific 
+values of commissioningModeSecondaryStepsHint. Certain values of CommissioningModeInitialStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
+values the commissioningModeInitialStepsInstruction SHALL be set`)
+	cmd.Flags().Uint64Var(&commissioningModeSecondaryStepsHint, FlagCommissioningModeSecondaryStepsHint, 0,
+		`commissioningModeSecondaryStepsHint SHALL identify a hint for steps that can 
+be used to put into commissioning mode a device that has already been commissioned. 
+This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 4 (bit 2 is set) 
+indicates that a device that has already been commissioned will require the user to visit a 
+current CHIP Administrator to put the device into commissioning mode.`)
+	cmd.Flags().StringVar(&commissioningModeSecondaryStepsInstruction, FlagCommissioningModeSecondaryStepsInstruction, "",
+		`commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values 
+of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
+and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().StringVar(&userManualUrl, FlagUserManualUrl, "",
+		"URL that contains product specific web page that contains user manual for the device model.")
+	cmd.Flags().StringVar(&supportUrl, FlagSupportUrl, "",
+		"URL that contains product specific web page that contains support details for the device model.")
+	cmd.Flags().StringVar(&productUrl, FlagProductUrl, "",
+		"URL that contains product specific web page that contains details for the device model.")
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
+	_ = cmd.MarkFlagRequired(FlagDeviceTypeId)
+	_ = cmd.MarkFlagRequired(FlagProductName)
+	_ = cmd.MarkFlagRequired(FlagProductLabel)
+	_ = cmd.MarkFlagRequired(FlagPartNumber)
 
 	flags.AddTxFlagsToCmd(cmd)
 
@@ -88,50 +123,42 @@ func CmdCreateModel() *cobra.Command {
 }
 
 func CmdUpdateModel() *cobra.Command {
+	var (
+		vid                                        int32
+		pid                                        int32
+		productName                                string
+		productLabel                               string
+		partNumber                                 string
+		commissioningCustomFlowUrl                 string
+		commissioningModeInitialStepsInstruction   string
+		commissioningModeSecondaryStepsInstruction string
+		userManualUrl                              string
+		supportUrl                                 string
+		productUrl                                 string
+	)
+
 	cmd := &cobra.Command{
-		Use:   "update-model [vid] [pid] [product-name] [product-label] [part-number] [commissioning-custom-flow-url] [commissioning-mode-initial-steps-instruction] [commissioning-mode-secondary-steps-instruction] [user-manual-url] [support-url] [product-url]",
-		Short: "Update a Model",
-		Args:  cobra.ExactArgs(15),
+		Use:   "update-model",
+		Short: "Update existing Model",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			// Get indexes
-			indexVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-			indexPid, err := cast.ToInt32E(args[1])
-			if err != nil {
-				return err
-			}
-
-			// Get value arguments
-			argProductName := args[2]
-			argProductLabel := args[3]
-			argPartNumber := args[4]
-			argCommissioningCustomFlowUrl := args[5]
-			argCommissioningModeInitialStepsInstruction := args[6]
-			argCommissioningModeSecondaryStepsInstruction := args[7]
-			argUserManualUrl := args[8]
-			argSupportUrl := args[9]
-			argProductUrl := args[10]
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-
 			msg := types.NewMsgUpdateModel(
 				clientCtx.GetFromAddress().String(),
-				indexVid,
-				indexPid,
-				argProductName,
-				argProductLabel,
-				argPartNumber,
-				argCommissioningCustomFlowUrl,
-				argCommissioningModeInitialStepsInstruction,
-				argCommissioningModeSecondaryStepsInstruction,
-				argUserManualUrl,
-				argSupportUrl,
-				argProductUrl,
+				vid,
+				pid,
+				productName,
+				productLabel, // FIXME: add optional reading from file
+				partNumber,
+				commissioningCustomFlowUrl,
+				commissioningModeInitialStepsInstruction,
+				commissioningModeSecondaryStepsInstruction,
+				userManualUrl,
+				supportUrl,
+				productUrl,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -139,6 +166,39 @@ func CmdUpdateModel() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().Int32Var(&vid, FlagVid, 0,
+		"Model vendor ID")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0,
+		"Model product ID")
+	cmd.Flags().StringVarP(&productName, FlagProductName, FlagProductNameShortcut, "",
+		"Model name")
+	cmd.Flags().StringVarP(&productLabel, FlagProductLabel, FlagProductLabelShortcut, "",
+		"Model description (string or path to file containing data)")
+	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
+		"Model Part Number (or sku)")
+	cmd.Flags().StringVar(&commissioningCustomFlowUrl, FlagCommissioningCustomFlowUrl, "",
+		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
+device model when the commissioningCustomFlow field is set to '2'`)
+	cmd.Flags().StringVar(&commissioningModeInitialStepsInstruction, FlagCommissioningModeInitialStepsInstruction, "",
+		`commissioningModeInitialStepsInstruction SHALL contain text which relates to specific 
+values of commissioningModeSecondaryStepsHint. Certain values of CommissioningModeInitialStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these 
+values the commissioningModeInitialStepsInstruction SHALL be set`)
+	cmd.Flags().StringVar(&commissioningModeSecondaryStepsInstruction, FlagCommissioningModeSecondaryStepsInstruction, "",
+		`commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values 
+of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
+as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
+and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
+	cmd.Flags().StringVar(&userManualUrl, FlagUserManualUrl, "",
+		"URL that contains product specific web page that contains user manual for the device model.")
+	cmd.Flags().StringVar(&supportUrl, FlagSupportUrl, "",
+		"URL that contains product specific web page that contains support details for the device model.")
+	cmd.Flags().StringVar(&productUrl, FlagProductUrl, "",
+		"URL that contains product specific web page that contains details for the device model.")
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
 
 	flags.AddTxFlagsToCmd(cmd)
 
@@ -146,29 +206,24 @@ func CmdUpdateModel() *cobra.Command {
 }
 
 func CmdDeleteModel() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-model [vid] [pid]",
-		Short: "Delete a Model",
-		Args:  cobra.ExactArgs(2),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			indexVid, err := cast.ToInt32E(args[0])
-			if err != nil {
-				return err
-			}
-			indexPid, err := cast.ToInt32E(args[1])
-			if err != nil {
-				return err
-			}
+	var (
+		vid int32
+		pid int32
+	)
 
+	cmd := &cobra.Command{
+		Use:   "delete-model",
+		Short: "Delete existing Model",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-
 			msg := types.NewMsgDeleteModel(
 				clientCtx.GetFromAddress().String(),
-				indexVid,
-				indexPid,
+				vid,
+				pid,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -176,6 +231,12 @@ func CmdDeleteModel() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Model vendor ID")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0, "Model product ID")
+
+	_ = cmd.MarkFlagRequired(FlagVid)
+	_ = cmd.MarkFlagRequired(FlagPid)
 
 	flags.AddTxFlagsToCmd(cmd)
 
