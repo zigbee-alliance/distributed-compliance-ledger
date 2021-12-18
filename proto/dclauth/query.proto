@@ -35,7 +35,7 @@ service Query {
 
 	// Queries a list of pendingAccount items.
 	rpc PendingAccountAll(QueryAllPendingAccountRequest) returns (QueryAllPendingAccountResponse) {
-		option (google.api.http).get = "/dcl/auth/proposedAccounts";
+		option (google.api.http).get = "/dcl/auth/accounts/proposed";
 	}
 
 // Queries a pendingAccountRevocation by index.
@@ -47,12 +47,12 @@ service Query {
 
 	// Queries a list of pendingAccountRevocation items.
 	rpc PendingAccountRevocationAll(QueryAllPendingAccountRevocationRequest) returns (QueryAllPendingAccountRevocationResponse) {
-		option (google.api.http).get = "/dcl/auth/proposedAccountsToRevoke";
+		option (google.api.http).get = "/dcl/auth/accounts/proposed/revoked";
 	}
 
 // Queries a accountStat by index.
 	rpc AccountStat(QueryGetAccountStatRequest) returns (QueryGetAccountStatResponse) {
-		option (google.api.http).get = "/dcl/auth/accountStat";
+		option (google.api.http).get = "/dcl/auth/accounts/stat";
 	}
 // this line is used by starport scaffolding # 2
 }
