@@ -25,7 +25,7 @@ services:
       - "26640:1317"
       - "26630:9090"
     volumes:
-      - ./.localnet/node0:/root/.dcl:Z
+      - ./.localnet/node0:/var/lib/dcl/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.2
@@ -38,8 +38,10 @@ services:
     ports:
       - "26658-26659:26656-26657"
       - "26651:26660"
+      - "26641:1317"
+      - "26631:9090"
     volumes:
-      - ./.localnet/node1:/root/.dcl:Z
+      - ./.localnet/node1:/var/lib/dcl/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.3
@@ -52,8 +54,10 @@ services:
     ports:
       - "26660-26661:26656-26657"
       - "26652:26660"
+      - "26642:1317"
+      - "26632:9090"
     volumes:
-      - ./.localnet/node2:/root/.dcl:Z
+      - ./.localnet/node2:/var/lib/dcl/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.4
@@ -66,10 +70,12 @@ services:
     ports:
       - "26662-26663:26656-26657"
       - "26653:26660"
+      - "26643:1317"
+      - "26633:9090"
       # uncomment following line if starting in debug mode
       # - "2345:2345"
     volumes:
-      - ./.localnet/node3:/root/.dcl:Z
+      - ./.localnet/node3:/var/lib/dcl/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.5
@@ -89,7 +95,7 @@ services:
       # uncomment following line if starting in debug mode
       # - "2345:2345"
     volumes:
-      - ./.localnet/observer0:/root/.dcl:Z
+      - ./.localnet/observer0:/var/lib/dcl/.dcl:Z
     networks:
       localnet:
         ipv4_address: 192.167.10.6

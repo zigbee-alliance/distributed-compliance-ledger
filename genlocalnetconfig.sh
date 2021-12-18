@@ -165,6 +165,7 @@ for node_name in node0 node1 node2 node3 observer0; do
     if [[ -d "$LOCALNET_DIR/${node_name}" ]]; then
         sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
         sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
-        # sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
+        # FIXME issue 99: not good code
+        sed -i $SED_EXT '0,/^enable = false/{s~enable = false~enable = true~}' "$LOCALNET_DIR/${node_name}/config/app.toml"
     fi
 done

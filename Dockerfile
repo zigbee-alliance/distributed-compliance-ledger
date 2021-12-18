@@ -39,8 +39,23 @@ FROM alpine:latest
 COPY --from=builder /go/bin/dcld /usr/bin/dcld
 COPY --from=builder /go/bin/dlv /usr/bin/dlv
 
-VOLUME /root/.dcl
+# test user
+ARG TEST_USER
+ENV TEST_USER=${TEST_USER:-dcl}
+
+#ARG TEST_USER_GROUP
+#ENV TEST_USER_GROUP=${TEST_USER_GROUP:-dcl}
+
+ARG TEST_UID
+ENV TEST_UID=${TEST_UID:-1000}
+#ARG gid=1000
+RUN adduser -D -u ${TEST_UID} -h /var/lib/${TEST_USER} -g 'DCLedger user' ${TEST_USER}
+
+VOLUME /var/lib/${TEST_USER}
 
 EXPOSE 26656 26657 1317 26660
 
 STOPSIGNAL SIGTERM
+
+USER ${TEST_USER}
+WORKDIR /var/lib/${TEST_USER}

@@ -2,6 +2,8 @@ PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
 
 VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
+UID := $(shell id -u)
+#GID := $(shell id -g)
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
@@ -48,7 +50,7 @@ clean:
 # Docker
 
 image:
-	docker build -t dcledger .
+	docker build -t dcledger --build-arg TEST_UID=${UID} .
 
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
@@ -85,4 +87,8 @@ localnet_reset: localnet_stop
 localnet_clean: localnet_stop
 	rm -rf $(LOCALNET_DIR)
 
-.PHONY: all build install test lint clean image localnet_init localnet_start localnet_stop localnet_clean localnet_export localnet_reset license license-check
+
+localnet_rebuild: localnet_clean localnet_init
+
+
+.PHONY: all build install test lint clean image localnet_init localnet_start localnet_stop localnet_clean localnet_export localnet_reset license license-check localnet_rebuild
