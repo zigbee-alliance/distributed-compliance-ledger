@@ -3,13 +3,43 @@ package zigbeealliance.distributedcomplianceledger.vendorinfo;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "vendorinfo/vendor_info_type.proto";
 // this line is used by starport scaffolding # 1
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types";
 
 // Query defines the gRPC querier service.
 service Query {
-    // this line is used by starport scaffolding # 2
+    // Queries a vendorInfoType by index.
+	rpc VendorInfoType(QueryGetVendorInfoTypeRequest) returns (QueryGetVendorInfoTypeResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfoType/{index}";
+	}
+
+	// Queries a list of vendorInfoType items.
+	rpc VendorInfoTypeAll(QueryAllVendorInfoTypeRequest) returns (QueryAllVendorInfoTypeResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfoType";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+message QueryGetVendorInfoTypeRequest {
+	  string index = 1;
+
+}
+
+message QueryGetVendorInfoTypeResponse {
+	VendorInfoType vendorInfoType = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllVendorInfoTypeRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllVendorInfoTypeResponse {
+	repeated VendorInfoType vendorInfoType = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3
