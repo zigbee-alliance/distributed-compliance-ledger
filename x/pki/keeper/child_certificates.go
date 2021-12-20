@@ -66,3 +66,32 @@ func (k Keeper) GetAllChildCertificates(ctx sdk.Context) (list []types.ChildCert
 
 	return
 }
+
+// Add a child certificate to the list of child certificate IDs for the issuer/authorityKeyId map
+func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKeyId string, certId types.CertificateIdentifier) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
+
+	childCertificatesBytes := store.Get(types.ChildCertificatesKey(
+		issuer,
+		authorityKeyId,
+	))
+
+	var childCertificates types.ChildCertificates
+	if childCertificatesBytes == nil {
+		childCertificates = types.ChildCertificates{
+			Issuer:         issuer,
+			AuthorityKeyId: authorityKeyId,
+			CertIds:        []*types.CertificateIdentifier{},
+		}
+	} else {
+		k.cdc.MustUnmarshal(childCertificatesBytes, &childCertificates)
+	}
+
+	childCertificates.CertIds = append(childCertificates.CertIds, &certId)
+
+	b := k.cdc.MustMarshal(&childCertificates)
+	store.Set(types.ChildCertificatesKey(
+		issuer,
+		authorityKeyId,
+	), b)
+}

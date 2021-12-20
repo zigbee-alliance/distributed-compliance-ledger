@@ -75,15 +75,12 @@ echo "$result"
 
 test_divider
 
-# echo "Approved certificate must be empty"
-# result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-# response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
-# echo "$result"
+echo "Approved certificate must be empty"
+result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" 2>&1) || true
+check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
+echo "$result"
 
 test_divider
-
 
 
 
@@ -162,9 +159,6 @@ echo "$result"
 
 test_divider
 
-# FIXME issue 99: enable once implemented
-exit 0
-
 echo "$user_account (Not Trustee) add Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
 result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
@@ -182,27 +176,29 @@ echo "$result"
 
 test_divider
 
-echo "Request certificate chain for Intermediate certificate"
-result=$(dcld query pki x509-cert-chain --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
-echo "$result"
+# echo "Request certificate chain for Intermediate certificate"
+# result=$(dcld query pki x509-cert-chain --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+# check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+# check_response "$result" "\"subject\": \"$root_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
+# echo "$result"
 
-test_divider
+# test_divider
 
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
-check_response "$result" "\"total\": \"0\""
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+
 
 test_divider
 
 echo "Request all approved certificates"
 result=$(dcld query pki all-x509-certs)
-check_response "$result" "\"total\": \"2\""
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -211,14 +207,14 @@ echo "$result"
 
 test_divider
 
-echo "Request all approved root certificates"
-result=$(dcld query pki all-x509-root-certs)
-check_response "$result" "\"total\": \"1\""
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-echo "$result"
+# echo "Request all approved root certificates"
+# result=$(dcld query pki all-x509-root-certs)
+# check_response "$result" "\"total\": \"1\""
+# check_response "$result" "\"subject\": \"$root_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+# echo "$result"
 
-test_divider
+# test_divider
 
 echo "$trustee_account (Trustee) add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
@@ -237,30 +233,32 @@ echo "$result"
 
 test_divider
 
-echo "Request certificate chain for Leaf certificate"
-result=$(dcld query pki x509-cert-chain --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
-check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
-check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
-echo "$result"
+# echo "Request certificate chain for Leaf certificate"
+# result=$(dcld query pki x509-cert-chain --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+# check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
+# check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+# check_response "$result" "\"subject\": \"$root_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
+# echo "$result"
 
-test_divider
+# test_divider
 
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
-check_response "$result" "\"total\": \"0\""
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+
 
 test_divider
 
 echo "Request all approved certificates"
 result=$(dcld query pki all-x509-certs)
-check_response "$result" "\"total\": \"3\""
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -271,23 +269,26 @@ echo "$result"
 
 test_divider
 
-echo "Request all approved root certificates"
-result=$(dcld query pki all-x509-root-certs)
-check_response "$result" "\"total\": \"1\""
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-echo "$result"
+# echo "Request all approved root certificates"
+# result=$(dcld query pki all-x509-root-certs)
+# check_response "$result" "\"total\": \"1\""
+# check_response "$result" "\"subject\": \"$root_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+# echo "$result"
 
-test_divider
+# test_divider
 
-echo "Request all subject certificates"
-result=$(dcld query pki all-subject-x509-certs --subject="$leaf_cert_subject")
-check_response "$result" "\"total\": \"1\""
-check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
-echo "$result"
+# echo "Request all subject certificates"
+# result=$(dcld query pki all-subject-x509-certs --subject="$leaf_cert_subject")
+# check_response "$result" "\"total\": \"1\""
+# check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+# echo "$result"
 
-test_divider
+# test_divider
+
+# FIXME issue 99: enable once implemented
+exit 0
 
 echo "Request all root certificates proposed to revoke"
 result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)

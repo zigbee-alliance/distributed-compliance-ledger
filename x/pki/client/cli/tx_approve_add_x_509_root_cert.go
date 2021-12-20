@@ -46,6 +46,7 @@ func CmdApproveAddX509RootCert() *cobra.Command {
 
 	_ = cmd.MarkFlagRequired(FlagSubject)
 	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }

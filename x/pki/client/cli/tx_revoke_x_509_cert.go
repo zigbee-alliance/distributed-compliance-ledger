@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -14,22 +15,23 @@ var _ = strconv.Itoa(0)
 
 func CmdRevokeX509Cert() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "revoke-x-509-cert [subject] [subject-key-id]",
-		Short: "Broadcast message RevokeX509Cert",
-		Args:  cobra.ExactArgs(2),
+		Use: "revoke-x509-cert",
+		Short: "Revokes the given intermediate or leaf certificate. " +
+			"All the certificates in the subtree signed by the revoked certificate will be revoked as well.",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argSubject := args[0]
-			argSubjectKeyId := args[1]
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
+
 			msg := types.NewMsgRevokeX509Cert(
 				clientCtx.GetFromAddress().String(),
-				argSubject,
-				argSubjectKeyId,
+				subject,
+				subjectKeyID,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -38,7 +40,13 @@ func CmdRevokeX509Cert() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }

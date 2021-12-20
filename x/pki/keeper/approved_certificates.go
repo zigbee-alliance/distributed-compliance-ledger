@@ -70,7 +70,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 	return
 }
 
-// SetApprovedCertificates set a specific approvedCertificates in the store from its index
+// Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map
 func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 

@@ -19,3 +19,5 @@ starport scaffold --module pki map ChildCertificates certIds:strings --index iss
 starport scaffold --module pki map ProposedCertificateRevocation  approvals:strings --index subject,subjectKeyId --no-message
 starport scaffold --module pki map RevokedCertificates certs:strings --index subject,subjectKeyId --no-message
 starport scaffold --module pki map UniqueCertificate present:bool --index issuer,serialNumber --no-message
+#starport scaffold --module pki map AllApprovedRootCertificates --index subject,subjectKeyId --no-message
+#starport scaffold --module pki map AllProposedCertificates --index subject,subjectKeyId --no-message
