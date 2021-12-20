@@ -6,13 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 func CmdListProposedCertificate() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-proposed-certificate",
-		Short: "list all ProposedCertificate",
+		Use:   "all-proposed-x509-root-certs",
+		Short: "Gets all proposed but not approved root certificates",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -44,20 +45,20 @@ func CmdListProposedCertificate() *cobra.Command {
 
 func CmdShowProposedCertificate() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-proposed-certificate [subject] [subject-key-id]",
-		Short: "shows a ProposedCertificate",
-		Args:  cobra.ExactArgs(2),
+		Use:   "proposed-x509-root-cert",
+		Short: "Gets a proposed but not approved root certificate with the given combination of subject and subject-key-id",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argSubject := args[0]
-			argSubjectKeyId := args[1]
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 
 			params := &types.QueryGetProposedCertificateRequest{
-				Subject:      argSubject,
-				SubjectKeyId: argSubjectKeyId,
+				Subject:      subject,
+				SubjectKeyId: subjectKeyID,
 			}
 
 			res, err := queryClient.ProposedCertificate(context.Background(), params)
@@ -69,7 +70,12 @@ func CmdShowProposedCertificate() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }

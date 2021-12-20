@@ -13,8 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# FIXME issue 99: enable once implemented
-exit 0
 
 set -euo pipefail
 source integration_tests/cli/common.sh
@@ -37,21 +35,20 @@ trustee_account="jack"
 second_trustee_account="alice"
 
 echo "Create regular account"
-create_new_account user_account ""
+create_new_account user_account "TestHouse"
 
 # Body
 
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
-result=$(echo "test1234" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
 echo "Request all proposed Root certificates"
 result=$(dcld query pki all-proposed-x509-root-certs)
-check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
@@ -69,10 +66,25 @@ test_divider
 
 echo "Request all approved certificates must be empty"
 result=$(dcld query pki all-x509-certs)
-check_response "$result" "\"total\": \"0\""
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
 
 test_divider
+
+# echo "Approved certificate must be empty"
+# result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+# response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+# response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+# response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+# echo "$result"
+
+test_divider
+
+# FIXME issue 99: enable once implemented
+exit 0
+
 
 echo "Request all approved root certificates must be empty"
 result=$(dcld query pki all-x509-root-certs)
@@ -82,8 +94,8 @@ echo "$result"
 test_divider
 
 echo "$trustee_account (Trustee) approve Root certificate"
-result=$(echo "test1234" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
@@ -106,8 +118,8 @@ echo "$result"
 test_divider
 
 echo "$second_trustee_account (Trustee) approve Root certificate"
-result=$(echo "test1234" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
@@ -148,8 +160,8 @@ test_divider
 
 echo "$user_account (Not Trustee) add Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"
-result=$(echo "test1234" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$intermediate_path" --from $user_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
@@ -203,8 +215,8 @@ test_divider
 
 echo "$trustee_account (Trustee) add Leaf certificate"
 leaf_path="integration_tests/constants/leaf_cert"
-result=$(echo "test1234" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $trustee_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "$passphrase" | dcld tx pki add-x509-cert --certificate="$leaf_path" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
@@ -285,8 +297,8 @@ echo "$result"
 test_divider
 
 echo "$user_account (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate."
-result=$(echo "test1234" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
@@ -344,8 +356,8 @@ echo "$result"
 test_divider
 
 echo "$trustee_account (Trustee) proposes to revoke Root certificate"
-result=$(echo "test1234" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
@@ -396,8 +408,8 @@ echo "$result"
 test_divider
 
 echo "$second_trustee_account (Trustee) approves to revoke Root certificate"
-result=$(echo "test1234" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider

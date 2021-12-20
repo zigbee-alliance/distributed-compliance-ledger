@@ -6,13 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 func CmdListApprovedCertificates() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-approved-certificates",
-		Short: "list all ApprovedCertificates",
+		Use:   "all-x509-certs",
+		Short: "Gets all certificates (root, intermediate and leaf)",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -44,20 +45,21 @@ func CmdListApprovedCertificates() *cobra.Command {
 
 func CmdShowApprovedCertificates() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-approved-certificates [subject] [subject-key-id]",
-		Short: "shows a ApprovedCertificates",
-		Args:  cobra.ExactArgs(2),
+		Use: "x509-cert",
+		Short: "Gets certificates (either root, intermediate or leaf) " +
+			"by the given combination of subject and subject-key-id",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argSubject := args[0]
-			argSubjectKeyId := args[1]
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 
 			params := &types.QueryGetApprovedCertificatesRequest{
-				Subject:      argSubject,
-				SubjectKeyId: argSubjectKeyId,
+				Subject:      subject,
+				SubjectKeyId: subjectKeyID,
 			}
 
 			res, err := queryClient.ApprovedCertificates(context.Background(), params)
@@ -69,7 +71,12 @@ func CmdShowApprovedCertificates() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }
