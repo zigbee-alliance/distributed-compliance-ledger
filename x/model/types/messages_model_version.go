@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const (
@@ -77,32 +78,9 @@ func (msg *MsgCreateModelVersion) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Vid < 1 || msg.Vid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 1 to 65535")
-	}
-
-	if msg.Pid < 1 || msg.Pid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 1 to 65535")
-	}
-
-	if msg.SoftwareVersion > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "SoftwareVersion must not be greater than 4294967295")
-	}
-
-	if msg.CdVersionNumber < 0 || msg.CdVersionNumber > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "CdVersionNumber must be in range from 0 to 65535")
-	}
-
-	if msg.OtaChecksumType < 0 || msg.OtaChecksumType > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "OtaChecksumType must be in range from 0 to 65535")
-	}
-
-	if msg.MinApplicableSoftwareVersion > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MinApplicableSoftwareVersion must not be greater than 4294967295")
-	}
-
-	if msg.MaxApplicableSoftwareVersion > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MaxApplicableSoftwareVersion must not be greater than 4294967295")
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -162,24 +140,9 @@ func (msg *MsgUpdateModelVersion) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.Vid < 1 || msg.Vid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Vid must be in range from 1 to 65535")
-	}
-
-	if msg.Pid < 1 || msg.Pid > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "Pid must be in range from 1 to 65535")
-	}
-
-	if msg.SoftwareVersion > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "SoftwareVersion must not be greater than 4294967295")
-	}
-
-	if msg.MinApplicableSoftwareVersion > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MinApplicableSoftwareVersion must not be greater than 4294967295")
-	}
-
-	if msg.MaxApplicableSoftwareVersion > 4294967295 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "MaxApplicableSoftwareVersion must not be greater than 4294967295")
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil
