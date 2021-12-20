@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -14,22 +15,23 @@ var _ = strconv.Itoa(0)
 
 func CmdApproveAddX509RootCert() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "approve-add-x-509-root-cert [subject] [subject-key-id]",
-		Short: "Broadcast message ApproveAddX509RootCert",
-		Args:  cobra.ExactArgs(2),
+		Use:   "approve-add-x509-root-cert",
+		Short: "Approves the proposed root certificate correspondent to combination of subject and subject-key-id",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argSubject := args[0]
-			argSubjectKeyId := args[1]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
+			subject := viper.GetString(FlagSubject)
+			subjectKeyId := viper.GetString(FlagSubjectKeyID)
+
 			msg := types.NewMsgApproveAddX509RootCert(
 				clientCtx.GetFromAddress().String(),
-				argSubject,
-				argSubjectKeyId,
+				subject,
+				subjectKeyId,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -38,7 +40,12 @@ func CmdApproveAddX509RootCert() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }

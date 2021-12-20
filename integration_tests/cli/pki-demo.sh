@@ -37,6 +37,8 @@ second_trustee_account="alice"
 echo "Create regular account"
 create_new_account user_account "TestHouse"
 
+test_divider
+
 # Body
 
 echo "$user_account (Not Trustee) propose Root certificate"
@@ -82,16 +84,15 @@ test_divider
 
 test_divider
 
-# FIXME issue 99: enable once implemented
-exit 0
 
 
-echo "Request all approved root certificates must be empty"
-result=$(dcld query pki all-x509-root-certs)
-check_response "$result" "\"total\": \"0\""
-echo "$result"
 
-test_divider
+# echo "Request all approved root certificates must be empty"
+# result=$(dcld query pki all-x509-root-certs)
+# check_response "$result" "\"total\": \"0\""
+# echo "$result"
+
+# test_divider
 
 echo "$trustee_account (Trustee) approve Root certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
@@ -112,7 +113,9 @@ test_divider
 
 echo "Request all approved certificates must be empty"
 result=$(dcld query pki all-x509-certs)
-check_response "$result" "\"total\": \"0\""
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
 
 test_divider
@@ -133,30 +136,34 @@ echo "$result"
 
 test_divider
 
-echo "Request certificate chain for Root certificate"
-result=$(dcld query pki x509-cert-chain --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
-echo "$result"
+# echo "Request certificate chain for Root certificate"
+# result=$(dcld query pki x509-cert-chain --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+# check_response "$result" "\"subject\": \"$root_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
+# echo "$result"
 
-test_divider
+# test_divider
 
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
-check_response "$result" "\"total\": \"0\""
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
 
 test_divider
 
 echo "Request all approved certificates"
 result=$(dcld query pki all-x509-certs)
-check_response "$result" "\"total\": \"1\""
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
 test_divider
+
+# FIXME issue 99: enable once implemented
+exit 0
 
 echo "$user_account (Not Trustee) add Intermediate certificate"
 intermediate_path="integration_tests/constants/intermediate_cert"

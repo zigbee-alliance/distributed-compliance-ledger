@@ -74,8 +74,12 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 	}
 
 	// if signer has `RootCertificateApprovalRole` append approval
-	if k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(msg.Signer), types.RootCertificateApprovalRole) {
-		proposedCertificate.Approvals = append(proposedCertificate.Approvals, msg.Signer)
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+	if k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
+		proposedCertificate.Approvals = append(proposedCertificate.Approvals, signerAddr.String())
 	}
 
 	// store proposed certificate

@@ -70,6 +70,35 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 	return
 }
 
+// SetApprovedCertificates set a specific approvedCertificates in the store from its index
+func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+
+	approvedCertificatesBytes := store.Get(types.ApprovedCertificatesKey(
+		approvedCertificate.Subject,
+		approvedCertificate.SubjectKeyId,
+	))
+	var approvedCertificates types.ApprovedCertificates
+
+	if approvedCertificatesBytes == nil {
+		approvedCertificates = types.ApprovedCertificates{
+			Subject:      approvedCertificate.Subject,
+			SubjectKeyId: approvedCertificate.SubjectKeyId,
+			Certs:        []*types.Certificate{},
+		}
+	} else {
+		k.cdc.MustUnmarshal(approvedCertificatesBytes, &approvedCertificates)
+	}
+
+	approvedCertificates.Certs = append(approvedCertificates.Certs, &approvedCertificate)
+
+	b := k.cdc.MustMarshal(&approvedCertificates)
+	store.Set(types.ApprovedCertificatesKey(
+		approvedCertificates.Subject,
+		approvedCertificates.SubjectKeyId,
+	), b)
+}
+
 // Tries to build a valid certificate chain for the given certificate.
 // Returns the RootSubject/RootSubjectKeyID combination or an error in case no valid certificate chain can be built.
 func (k Keeper) verifyCertificate(ctx sdk.Context,
