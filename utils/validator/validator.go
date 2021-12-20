@@ -19,6 +19,7 @@ import (
 	"reflect"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -31,7 +32,7 @@ var (
 )
 
 //nolint:wrapcheck,errcheck
-func validate(s interface{}, performAddValidation bool) sdk.Error {
+func validate(s interface{}, performAddValidation bool) error {
 	en := en.New()
 	uni = ut.New(en, en)
 
@@ -104,20 +105,21 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 	if errs != nil {
 		for _, e := range errs.(validator.ValidationErrors) {
 			if e.Tag() == "max" {
-				return sdk.NewError(Codespace, CodeFieldMaxLengthExceeded, e.Translate(trans))
+				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
 			}
 
 			// currently required_with is only applicable for Additions
 			// (Create custom validator if need for both update and add)
 			if (e.Tag() == "requiredForAdd" || e.Tag() == "required_with") && performAddValidation {
-				return sdk.NewError(Codespace, CodeRequiredFieldMissing, e.Translate(trans))
+				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
 			}
 
 			if e.Tag() == "required" {
-				return sdk.NewError(Codespace, CodeRequiredFieldMissing, e.Translate(trans))
+				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
 			}
+
 			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "address" {
-				return sdk.NewError(Codespace, CodeFieldNotValid, e.Translate(trans))
+				return sdkerrors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 
 		}
@@ -126,11 +128,11 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 	return nil
 }
 
-func ValidateUpdate(s interface{}) sdk.Error {
+func ValidateUpdate(s interface{}) error {
 	return validate(s, false)
 }
 
-func ValidateAdd(s interface{}) sdk.Error {
+func ValidateAdd(s interface{}) error {
 	return validate(s, true)
 }
 
