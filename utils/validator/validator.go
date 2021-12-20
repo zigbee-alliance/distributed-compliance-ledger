@@ -16,7 +16,6 @@ package validator
 
 import (
 	"fmt"
-	"reflect"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -32,7 +31,7 @@ var (
 )
 
 //nolint:wrapcheck,errcheck
-func validate(s interface{}, performAddValidation bool) error {
+func Validate(s interface{}) error {
 	en := en.New()
 	uni = ut.New(en, en)
 
@@ -41,9 +40,6 @@ func validate(s interface{}, performAddValidation bool) error {
 	vl = validator.New()
 
 	_ = vl.RegisterValidation("address", validateAddress)
-	_ = en_translations.RegisterDefaultTranslations(vl, trans)
-
-	_ = vl.RegisterValidation("requiredForAdd", validateRequiredForAdd)
 	_ = en_translations.RegisterDefaultTranslations(vl, trans)
 
 	_ = vl.RegisterTranslation("required", trans, func(ut ut.Translator) error {
@@ -65,14 +61,6 @@ func validate(s interface{}, performAddValidation bool) error {
 		return ut.Add("address", "Field {0} : {1} is not a valid address", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("address", fe.Field(), fmt.Sprintf("%v", fe.Value()))
-
-		return t
-	})
-
-	_ = vl.RegisterTranslation("requiredForAdd", trans, func(ut ut.Translator) error {
-		return ut.Add("requiredForAdd", "{0} is a required field", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("requiredForAdd", fe.Field())
 
 		return t
 	})
@@ -108,13 +96,7 @@ func validate(s interface{}, performAddValidation bool) error {
 				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
 			}
 
-			// currently required_with is only applicable for Additions
-			// (Create custom validator if need for both update and add)
-			if (e.Tag() == "requiredForAdd" || e.Tag() == "required_with") && performAddValidation {
-				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
-			}
-
-			if e.Tag() == "required" {
+			if e.Tag() == "required" || e.Tag() == "required_with" {
 				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
 			}
 
@@ -126,29 +108,6 @@ func validate(s interface{}, performAddValidation bool) error {
 	}
 
 	return nil
-}
-
-func ValidateUpdate(s interface{}) error {
-	return validate(s, false)
-}
-
-func ValidateAdd(s interface{}) error {
-	return validate(s, true)
-}
-
-func validateRequiredForAdd(fl validator.FieldLevel) bool {
-	field := fl.Field()
-	//nolint:exhaustive
-	switch field.Kind() {
-	case reflect.String:
-		return field.Len() > 0
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return field.Int() != 0
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return field.Uint() != 0
-	default:
-		return field.IsValid() && field.Interface() != reflect.Zero(field.Type()).Interface()
-	}
 }
 
 func validateAddress(fl validator.FieldLevel) bool {
