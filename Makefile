@@ -86,6 +86,7 @@ localnet_reset: localnet_stop
 
 localnet_clean: localnet_stop
 	rm -rf $(LOCALNET_DIR)
+	rm -rf $(HOME)/.dcl
 
 
 localnet_rebuild: localnet_clean localnet_init

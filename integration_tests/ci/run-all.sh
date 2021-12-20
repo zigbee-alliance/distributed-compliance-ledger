@@ -30,6 +30,12 @@ else
   DETAILED_OUTPUT_TARGET=/dev/null
 fi
 
+cleanup() {
+    make localnet_clean
+}
+trap cleanup EXIT
+
+
 log() {
   echo "${LOG_PREFIX}$1"
 }
@@ -94,22 +100,8 @@ init_pool() {
 
 cleanup_pool() {
   log "Cleaning up pool"
-
-  log "-> Stopping pool" >${DETAILED_OUTPUT_TARGET}
-  make localnet_stop &>${DETAILED_OUTPUT_TARGET}
-
-  log "-> Removing configurations" >${DETAILED_OUTPUT_TARGET}
-  rm -rf ~/.dcl
-  if [ "$(uname)" == "Darwin" ]; then
-    rm -rf "$LOCALNET_DIR"
-  else
-    sudo rm -rf "$LOCALNET_DIR"
-  fi
-}
-
-run_rest_server() {
-  log "Running cli in rest-server mode"
-  dcld rest-server --chain-id dclchain & >> rest-server.out &
+  log "-> Stopping pool & Removing configurations" >${DETAILED_OUTPUT_TARGET}
+  make localnet_clean
 }
 
 stop_rest_server() {
@@ -134,7 +126,8 @@ make image &>${DETAILED_OUTPUT_TARGET}
 cleanup_pool
 
 # Cli shell tests
-CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
+#CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
+CLI_SHELL_TESTS=""
 
 for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   init_pool
@@ -143,7 +136,7 @@ for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   log "Running $CLI_SHELL_TEST"
   log "*****************************************************************************************"
   
-  if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+  if bash -x "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
     log "$CLI_SHELL_TEST finished successfully"
   else
     log "$CLI_SHELL_TEST failed"
@@ -153,20 +146,18 @@ for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   cleanup_pool
 done
 
-# TODO issue 99: review and enable
-exit 0
-
 # Go rest tests
-GO_REST_TESTS="$(find integration_tests/rest -type f -name '*.go')"
+GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
 
 for GO_REST_TEST in ${GO_REST_TESTS}; do
   init_pool
-  log "Starting the rest server"
-  run_rest_server
 
   log "*****************************************************************************************"
   log "Running $GO_REST_TEST"
   log "*****************************************************************************************"
+
+  # TODO issue 99: improve, that await helps with the cases of not ready connections to Cosmos endpoints
+  sleep 5
 
   dcld config keyring-backend test
   if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
@@ -176,6 +167,5 @@ for GO_REST_TEST in ${GO_REST_TESTS}; do
     exit 1
   fi
 
-  stop_rest_server
   cleanup_pool
 done

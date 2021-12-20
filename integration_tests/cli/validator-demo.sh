@@ -17,7 +17,7 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 LOCALNET_DIR=".localnet"
-DCL_DIR="/root/.dcl"
+DCL_DIR="/var/lib/dcl/.dcl"
 
 random_string account
 container="validator-demo"
