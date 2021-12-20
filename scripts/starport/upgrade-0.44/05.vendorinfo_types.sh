@@ -1,0 +1,1 @@
+starport scaffold --module vendorinfo type VendorInfoType vendorID:uint vendorName:string companyLegalName:string companyPrefferedName:string vendorLandingPageURL:string
