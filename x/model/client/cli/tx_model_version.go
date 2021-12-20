@@ -98,6 +98,8 @@ SoftwareVersion for which this image can be applied`)
 		`URL that contains product specific web page that contains 
 release notes for the device model.`)
 
+	flags.AddTxFlagsToCmd(cmd)
+
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
@@ -105,8 +107,7 @@ release notes for the device model.`)
 	_ = cmd.MarkFlagRequired(FlagCdVersionNumber)
 	_ = cmd.MarkFlagRequired(FlagMinApplicableSoftwareVersion)
 	_ = cmd.MarkFlagRequired(FlagMaxApplicableSoftwareVersion)
-
-	flags.AddTxFlagsToCmd(cmd)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }
@@ -169,11 +170,12 @@ func CmdUpdateModelVersion() *cobra.Command {
 	cmd.Flags().StringVar(&releaseNotesUrl, FlagReleaseNotesUrl, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)
 
+	flags.AddTxFlagsToCmd(cmd)
+
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
-
-	flags.AddTxFlagsToCmd(cmd)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }

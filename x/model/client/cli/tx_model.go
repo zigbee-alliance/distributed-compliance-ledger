@@ -110,14 +110,15 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&productUrl, FlagProductUrl, "",
 		"URL that contains product specific web page that contains details for the device model.")
 
+	flags.AddTxFlagsToCmd(cmd)
+
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
 	_ = cmd.MarkFlagRequired(FlagDeviceTypeId)
 	_ = cmd.MarkFlagRequired(FlagProductName)
 	_ = cmd.MarkFlagRequired(FlagProductLabel)
 	_ = cmd.MarkFlagRequired(FlagPartNumber)
-
-	flags.AddTxFlagsToCmd(cmd)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }
@@ -197,10 +198,11 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&productUrl, FlagProductUrl, "",
 		"URL that contains product specific web page that contains details for the device model.")
 
+	flags.AddTxFlagsToCmd(cmd)
+
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
-
-	flags.AddTxFlagsToCmd(cmd)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }
@@ -235,10 +237,11 @@ func CmdDeleteModel() *cobra.Command {
 	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Model vendor ID")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0, "Model product ID")
 
+	flags.AddTxFlagsToCmd(cmd)
+
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
-
-	flags.AddTxFlagsToCmd(cmd)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }
