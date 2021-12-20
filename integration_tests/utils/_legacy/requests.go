@@ -18,7 +18,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
+
+	// "time"
 
 	keyUtil "github.com/cosmos/cosmos-sdk/client/keys"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -26,21 +27,22 @@ import (
 	restTypes "github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/cosmos/go-bip39"
-	"github.com/tendermint/tendermint/libs/common"
+
+	// "github.com/tendermint/tendermint/libs/common"
 	app "github.com/zigbee-alliance/distributed-compliance-ledger"
 	constants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	extRest "github.com/zigbee-alliance/distributed-compliance-ledger/restext/tx/rest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/rest"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	authRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/auth/client/rest"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
-	complianceRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/client/rest"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
-	compliancetestRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/rest"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
-	modelRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/rest"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
-	pkiRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/rest"
+	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
+	// complianceRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/client/rest"
+	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
+	// compliancetestRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/client/rest"
+	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
+	// modelRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/rest"
+	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
+	// pkiRest "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/rest"
 )
 
 func CreateKey(accountName string) (KeyInfo, int) {
@@ -269,6 +271,8 @@ func BroadcastMessage(message interface{}) (TxnResponse, int) {
 	return parseWriteTxnResponse(response, code)
 }
 
+// FIXME issue 99: enable once implemented
+/*
 func AddModel(model model.MsgAddModel, sender KeyInfo) (TxnResponse, int) {
 	println("Add Model Info")
 
@@ -1083,6 +1087,7 @@ func NewMsgAddTestingResult(vid uint16, pid uint16,
 		owner,
 	)
 }
+*/
 
 func removeResponseWrapper(response []byte) json.RawMessage {
 	var responseWrapper ResponseWrapper
@@ -1119,30 +1124,32 @@ func parseGetReqResponse(response []byte, entity interface{}, code int) {
 	}
 }
 
-func InitStartData() (KeyInfo, KeyInfo, model.MsgAddModel, model.MsgAddModelVersion,
-	ComplianceInfosHeadersResult, ComplianceInfosHeadersResult) {
+// FIXME issue 99: enable once implemented
+func InitStartData() (KeyInfo, KeyInfo, /* model.MsgAddModel, model.MsgAddModelVersion,
+ComplianceInfosHeadersResult, ComplianceInfosHeadersResult*/) {
 	// Register new Vendor account
 	vendor := CreateNewAccount(auth.AccountRoles{auth.Vendor}, constants.VID)
 
 	// Register new CertificationCenter account
 	zigbee := CreateNewAccount(auth.AccountRoles{auth.CertificationCenter}, 0)
 
-	// Publish model info
-	model := NewMsgAddModel(vendor.Address, constants.VID)
-	txnResponse, errCode := AddModel(model, vendor)
-	fmt.Printf("%v, %v", txnResponse, errCode)
+	/*
+		// Publish model info
+		model := NewMsgAddModel(vendor.Address, constants.VID)
+		txnResponse, errCode := AddModel(model, vendor)
+		fmt.Printf("%v, %v", txnResponse, errCode)
 
-	// Publish model version
-	modelVersion := NewMsgAddModelVersion(model.VID, model.PID,
-		constants.SoftwareVersion, constants.SoftwareVersionString, vendor.Address)
-	txnResponse, errCode = AddModelVersion(modelVersion, vendor)
-	fmt.Printf("%v, %v", txnResponse, errCode)
+		// Publish model version
+		modelVersion := NewMsgAddModelVersion(model.VID, model.PID,
+			constants.SoftwareVersion, constants.SoftwareVersionString, vendor.Address)
+		txnResponse, errCode = AddModelVersion(modelVersion, vendor)
+		fmt.Printf("%v, %v", txnResponse, errCode)
 
-	// Get all certified models
-	inputCertifiedModels, _ := GetAllCertifiedModels()
+		// Get all certified models
+		inputCertifiedModels, _ := GetAllCertifiedModels()
 
-	// Get all revoked models
-	inputRevokedModels, _ := GetAllRevokedModels()
-
-	return vendor, zigbee, model, modelVersion, inputCertifiedModels, inputRevokedModels
+		// Get all revoked models
+		inputRevokedModels, _ := GetAllRevokedModels()
+	*/
+	return vendor, zigbee //, model, modelVersion, inputCertifiedModels, inputRevokedModels
 }

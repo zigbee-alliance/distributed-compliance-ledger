@@ -19,37 +19,49 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 const (
-	BaseURL = "http://127.0.0.1:1317"
+	BaseURL = "http://127.0.0.1:26640"
 )
 
-func BuildURL(uri string) string {
-	return BaseURL + "/" + uri
+type RESTError struct {
+	resp http.Response
+	body []byte
 }
 
-func SendGetRequest(uri string) ([]byte, int) {
+func (e *RESTError) Error() string {
+	return fmt.Sprintf(
+		"Response error %d, %s, response: %+v", e.resp.StatusCode, e.body, e.resp,
+	)
+}
+
+func BuildURL(uri string) string {
+	return BaseURL + "/" + strings.Trim(uri, "/")
+}
+
+func SendGetRequest(uri string) ([]byte, error) {
 	return sendRequest(uri, "GET", []byte{}, "", "")
 }
 
-func SendPostRequest(uri string, body []byte, account string, passphrase string) ([]byte, int) {
+func SendPostRequest(uri string, body []byte, account string, passphrase string) ([]byte, error) {
 	return sendRequest(uri, "POST", body, account, passphrase)
 }
 
-func SendPutRequest(uri string, body []byte, account string, passphrase string) ([]byte, int) {
+func SendPutRequest(uri string, body []byte, account string, passphrase string) ([]byte, error) {
 	return sendRequest(uri, "PUT", body, account, passphrase)
 }
 
-func SendPatchRequest(uri string, body []byte, account string, passphrase string) ([]byte, int) {
+func SendPatchRequest(uri string, body []byte, account string, passphrase string) ([]byte, error) {
 	return sendRequest(uri, "PATCH", body, account, passphrase)
 }
 
-func SendDeleteRequest(uri string, body []byte, account string, passphrase string) ([]byte, int) {
+func SendDeleteRequest(uri string, body []byte, account string, passphrase string) ([]byte, error) {
 	return sendRequest(uri, "DELETE", body, account, passphrase)
 }
 
-func sendRequest(uri string, method string, body []byte, account string, passphrase string) ([]byte, int) {
+func sendRequest(uri string, method string, body []byte, account string, passphrase string) ([]byte, error) {
 	if len(account) == 0 {
 		passphrase = ""
 	}
@@ -58,7 +70,7 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 	//nolint:noctx
 	req, err := http.NewRequest(method, BuildURL(uri), bytes.NewBuffer(body))
 	if err != nil {
-		return nil, http.StatusInternalServerError
+		return nil, err
 	}
 
 	if len(account) != 0 && len(passphrase) != 0 {
@@ -68,23 +80,26 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Printf("Error received from server: %v", err)
-
-		return nil, http.StatusInternalServerError
+		return nil, err
 	}
 
-	response := ReadResponseBody(resp)
-	println(string(response))
+	response, err := ReadResponseBody(resp)
+	if err != nil {
+		return nil, err
+	}
+	// println(string(response))
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, resp.StatusCode
+		return nil, &RESTError{
+			resp: *resp,
+			body: response,
+		}
 	}
 
-	return response, http.StatusOK
+	return response, nil
 }
 
-func ReadResponseBody(resp *http.Response) []byte {
+func ReadResponseBody(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	return body
+	return ioutil.ReadAll(resp.Body)
 }

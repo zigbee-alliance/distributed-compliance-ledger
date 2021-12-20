@@ -436,13 +436,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Validator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "validator", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Validator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "node", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ValidatorAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 2}, []string{"zigbee-alliance", "distributedcomplianceledger", "validator"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ValidatorAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "nodes"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_LastValidatorPower_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"zigbee-alliance", "distributedcomplianceledger", "validator", "lastValidatorPower", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_LastValidatorPower_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "lastPower", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_LastValidatorPowerAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "validator", "lastValidatorPower"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_LastValidatorPowerAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "lastPowers"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
