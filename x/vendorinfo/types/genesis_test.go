@@ -21,33 +21,11 @@ func TestGenesisState_Validate(t *testing.T) {
 		{
 			desc:     "valid genesis state",
 			genState: &types.GenesisState{
-				VendorInfoTypeList: []types.VendorInfoType{
-	{
-		Index: "0",
-},
-	{
-		Index: "1",
-},
-},
-// this line is used by starport scaffolding # types/genesis/validField
+				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
 		},
-		{
-	desc:     "duplicated vendorInfoType",
-	genState: &types.GenesisState{
-		VendorInfoTypeList: []types.VendorInfoType{
-			{
-				Index: "0",
-},
-			{
-				Index: "0",
-},
-		},
-	},
-	valid:    false,
-},
-// this line is used by starport scaffolding # types/genesis/testcase
+		// this line is used by starport scaffolding # types/genesis/testcase
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
 			err := tc.genState.Validate()
