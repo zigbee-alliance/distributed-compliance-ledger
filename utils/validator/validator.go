@@ -17,7 +17,6 @@ package validator
 import (
 	"fmt"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
@@ -39,7 +38,6 @@ func Validate(s interface{}) error {
 
 	vl = validator.New()
 
-	_ = vl.RegisterValidation("address", validateAddress)
 	_ = en_translations.RegisterDefaultTranslations(vl, trans)
 
 	_ = vl.RegisterTranslation("required", trans, func(ut ut.Translator) error {
@@ -62,14 +60,6 @@ func Validate(s interface{}) error {
 		return ut.Add("required_if", "{0} is required if {1}", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("required_if", fe.Field())
-
-		return t
-	})
-
-	_ = vl.RegisterTranslation("address", trans, func(ut ut.Translator) error {
-		return ut.Add("address", "Field {0} : {1} is not a valid address", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("address", fe.Field(), fmt.Sprintf("%v", fe.Value()))
 
 		return t
 	})
@@ -126,7 +116,7 @@ func Validate(s interface{}) error {
 				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
 			}
 
-			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "address" {
+			if e.Tag() == "url" || e.Tag() == "startsnotwith" {
 				return sdkerrors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 
@@ -141,12 +131,4 @@ func Validate(s interface{}) error {
 	}
 
 	return nil
-}
-
-func validateAddress(fl validator.FieldLevel) bool {
-	if sdk.VerifyAddressFormat(fl.Field().Bytes()) != nil {
-		return false
-	} else {
-		return true
-	}
 }
