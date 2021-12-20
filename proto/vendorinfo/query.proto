@@ -13,12 +13,12 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 service Query {
     // Queries a vendorInfoType by index.
 	rpc VendorInfoType(QueryGetVendorInfoTypeRequest) returns (QueryGetVendorInfoTypeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfoType/{index}";
+		option (google.api.http).get = "/dcl/vendorinfo/vendorInfoType/{index}";
 	}
 
 	// Queries a list of vendorInfoType items.
 	rpc VendorInfoTypeAll(QueryAllVendorInfoTypeRequest) returns (QueryAllVendorInfoTypeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfoType";
+		option (google.api.http).get = "/dcl/vendorinfo/vendorInfoType";
 	}
 
 // this line is used by starport scaffolding # 2
