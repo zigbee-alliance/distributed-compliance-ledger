@@ -16,22 +16,22 @@ import "cosmos_proto/cosmos.proto";
 service Query {
     // Queries a validator by index.
 	rpc Validator(QueryGetValidatorRequest) returns (QueryGetValidatorResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}";
+		option (google.api.http).get = "/dcl/validator/node/{owner}";
 	}
 
 	// Queries a list of validator items.
 	rpc ValidatorAll(QueryAllValidatorRequest) returns (QueryAllValidatorResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/validator";
+		option (google.api.http).get = "/dcl/validator/nodes";
 	}
 
 // Queries a lastValidatorPower by index.
 	rpc LastValidatorPower(QueryGetLastValidatorPowerRequest) returns (QueryGetLastValidatorPowerResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}";
+		option (google.api.http).get = "/dcl/validator/lastPower/{owner}";
 	}
 
 	// Queries a list of lastValidatorPower items.
 	rpc LastValidatorPowerAll(QueryAllLastValidatorPowerRequest) returns (QueryAllLastValidatorPowerResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower";
+		option (google.api.http).get = "/dcl/validator/lastPowers";
 	}
 
 // this line is used by starport scaffolding # 2
