@@ -23,7 +23,9 @@ const (
 )
 
 var (
-	ErrRequiredFieldMissing   = sdkerrors.Register(Codespace, 900, "required field missing")
-	ErrFieldMaxLengthExceeded = sdkerrors.Register(Codespace, 901, "field max length exceeded")
-	ErrFieldNotValid          = sdkerrors.Register(Codespace, 902, "field not valid")
+	ErrRequiredFieldMissing    = sdkerrors.Register(Codespace, 900, "required field missing")
+	ErrFieldMaxLengthExceeded  = sdkerrors.Register(Codespace, 901, "field max length exceeded")
+	ErrFieldNotValid           = sdkerrors.Register(Codespace, 902, "field not valid")
+	ErrFieldLowerBoundViolated = sdkerrors.Register(Codespace, 903, "field lower bound violated")
+	ErrFieldUpperBoundViolated = sdkerrors.Register(Codespace, 904, "field upper bound violated")
 )

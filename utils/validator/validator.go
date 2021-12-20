@@ -51,12 +51,21 @@ func Validate(s interface{}) error {
 	})
 
 	_ = vl.RegisterTranslation("required_with", trans, func(ut ut.Translator) error {
-		return ut.Add("required_with", "{0} is a required field", true) // see universal-translator for details
+		return ut.Add("required_with", "{0} is required if {1} is set", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("required_with", fe.Field())
 
 		return t
 	})
+
+	_ = vl.RegisterTranslation("required_if", trans, func(ut ut.Translator) error {
+		return ut.Add("required_if", "{0} is required if {1}", true) // see universal-translator for details
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("required_if", fe.Field())
+
+		return t
+	})
+
 	_ = vl.RegisterTranslation("address", trans, func(ut ut.Translator) error {
 		return ut.Add("address", "Field {0} : {1} is not a valid address", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -65,6 +74,23 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	vl.RegisterTranslation("gte", trans, func(ut ut.Translator) error {
+		return ut.Add("gte", "{0} must not be less than {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("gte", fe.Field(), fe.Param())
+
+		return t
+	})
+
+	vl.RegisterTranslation("lte", trans, func(ut ut.Translator) error {
+		return ut.Add("lte", "{0} must not be greater than {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("lte", fe.Field(), fe.Param())
+
+		return t
+	})
+
+	// Please note that we use `max` tag for fields of `string` type only
 	vl.RegisterTranslation("max", trans, func(ut ut.Translator) error {
 		return ut.Add("max", "maximum length for {0} allowed is {1}", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -92,18 +118,25 @@ func Validate(s interface{}) error {
 
 	if errs != nil {
 		for _, e := range errs.(validator.ValidationErrors) {
-			if e.Tag() == "max" {
-				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
+			if e.Tag() == "required" || e.Tag() == "required_with" || e.Tag() == "required_if" {
+				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
 			}
 
-			if e.Tag() == "required" || e.Tag() == "required_with" {
-				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
+			if e.Tag() == "max" {
+				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
 			}
 
 			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "address" {
 				return sdkerrors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 
+			if e.Tag() == "gte" {
+				return sdkerrors.Wrap(ErrFieldLowerBoundViolated, e.Translate(trans))
+			}
+
+			if e.Tag() == "lte" {
+				return sdkerrors.Wrap(ErrFieldUpperBoundViolated, e.Translate(trans))
+			}
 		}
 	}
 
