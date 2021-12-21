@@ -11769,60 +11769,225 @@ paths:
           type: boolean
       tags:
         - Query
-  /ibc/apps/transfer/v1/denom_traces:
+  '/dcl/auth/account/{address}':
     get:
-      summary: DenomTraces queries all denomination traces.
-      operationId: IbcApplicationsTransferV1DenomTraces
+      summary: Queries a account by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccount
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              denomTraces:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    path:
-                      type: string
-                      description: >-
-                        path defines the chain of port/channel identifiers used
-                        for tracing the
-
-                        source of the fungible token.
-                    baseDenom:
-                      type: string
-                      description: base denomination of the relayed fungible token.
-                  description: >-
-                    DenomTrace contains the base denomination for ICS20 fungible
-                    tokens and the
-
-                    source tracing information path.
-                description: denom_traces returns all denominations trace information.
-              pagination:
-                description: pagination defines the pagination in the response.
+              account:
                 type: object
                 properties:
-                  nextKey:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
+                  baseAccount:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      pubKey:
+                        type: object
+                        properties:
+                          '@type':
+                            type: string
+                            description: >-
+                              A URL/resource name that uniquely identifies the
+                              type of the serialized
+
+                              protocol buffer message. This string must contain
+                              at least
+
+                              one "/" character. The last segment of the URL's
+                              path must represent
+
+                              the fully qualified name of the type (as in
+
+                              `path/google.protobuf.Duration`). The name should
+                              be in a canonical form
+
+                              (e.g., leading "." is not accepted).
+
+
+                              In practice, teams usually precompile into the
+                              binary all types that they
+
+                              expect it to use in the context of Any. However,
+                              for URLs which use the
+
+                              scheme `http`, `https`, or no scheme, one can
+                              optionally set up a type
+
+                              server that maps type URLs to message definitions
+                              as follows:
+
+
+                              * If no scheme is provided, `https` is assumed.
+
+                              * An HTTP GET on the URL must yield a
+                              [google.protobuf.Type][]
+                                value in binary format, or produce an error.
+                              * Applications are allowed to cache lookup results
+                              based on the
+                                URL, or have them precompiled into a binary to avoid any
+                                lookup. Therefore, binary compatibility needs to be preserved
+                                on changes to types. (Use versioned type names to manage
+                                breaking changes.)
+
+                              Note: this functionality is not currently
+                              available in the official
+
+                              protobuf release, and it is not used for type URLs
+                              beginning with
+
+                              type.googleapis.com.
+
+
+                              Schemes other than `http`, `https` (or the empty
+                              scheme) might be
+
+                              used with implementation specific semantics.
+                        additionalProperties: {}
+                        description: >-
+                          `Any` contains an arbitrary serialized protocol buffer
+                          message along with a
+
+                          URL that describes the type of the serialized message.
+
+
+                          Protobuf library provides support to pack/unpack Any
+                          values in the form
+
+                          of utility functions or additional generated methods
+                          of the Any type.
+
+
+                          Example 1: Pack and unpack a message in C++.
+
+                              Foo foo = ...;
+                              Any any;
+                              any.PackFrom(foo);
+                              ...
+                              if (any.UnpackTo(&foo)) {
+                                ...
+                              }
+
+                          Example 2: Pack and unpack a message in Java.
+
+                              Foo foo = ...;
+                              Any any = Any.pack(foo);
+                              ...
+                              if (any.is(Foo.class)) {
+                                foo = any.unpack(Foo.class);
+                              }
+
+                           Example 3: Pack and unpack a message in Python.
+
+                              foo = Foo(...)
+                              any = Any()
+                              any.Pack(foo)
+                              ...
+                              if any.Is(Foo.DESCRIPTOR):
+                                any.Unpack(foo)
+                                ...
+
+                           Example 4: Pack and unpack a message in Go
+
+                               foo := &pb.Foo{...}
+                               any, err := anypb.New(foo)
+                               if err != nil {
+                                 ...
+                               }
+                               ...
+                               foo := &pb.Foo{}
+                               if err := any.UnmarshalTo(foo); err != nil {
+                                 ...
+                               }
+
+                          The pack methods provided by protobuf library will by
+                          default use
+
+                          'type.googleapis.com/full.type.name' as the type URL
+                          and the unpack
+
+                          methods only use the fully qualified type name after
+                          the last '/'
+
+                          in the type URL, for example "foo.bar.com/x/y.z" will
+                          yield type
+
+                          name "y.z".
+
+
+
+                          JSON
+
+                          ====
+
+                          The JSON representation of an `Any` value uses the
+                          regular
+
+                          representation of the deserialized, embedded message,
+                          with an
+
+                          additional field `@type` which contains the type URL.
+                          Example:
+
+                              package google.profile;
+                              message Person {
+                                string first_name = 1;
+                                string last_name = 2;
+                              }
+
+                              {
+                                "@type": "type.googleapis.com/google.profile.Person",
+                                "firstName": <string>,
+                                "lastName": <string>
+                              }
+
+                          If the embedded message type is well-known and has a
+                          custom JSON
+
+                          representation, that representation will be embedded
+                          adding a field
+
+                          `value` which holds the custom JSON in addition to the
+                          `@type`
+
+                          field. Example (for message
+                          [google.protobuf.Duration][]):
+
+                              {
+                                "@type": "type.googleapis.com/google.protobuf.Duration",
+                                "value": "1.212s"
+                              }
+                      accountNumber:
+                        type: string
+                        format: uint64
+                      sequence:
+                        type: string
+                        format: uint64
+                    description: >-
+                      BaseAccount defines a base account type. It contains all
+                      the necessary fields
+
+                      for basic account functionality. Any custom account type
+                      should extend this
+
+                      type for additional functionality (e.g. vesting).
+                  roles:
+                    type: array
+                    items:
+                      type: string
+                    title: >-
+                      NOTE. we do not user AccountRoles casting here to preserve
+                      repeated form
+                            so protobuf takes care about repeated items in generated code,
+                            (but that might be not the final solution)
+                  vendorID:
                     type: string
                     format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-            description: >-
-              QueryConnectionsResponse is the response type for the
-              Query/DenomTraces RPC
-
-              method.
         default:
           description: An unexpected error response.
           schema:
@@ -12009,499 +12174,13 @@ paths:
                           "value": "1.212s"
                         }
       parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.countTotal
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  '/ibc/apps/transfer/v1/denom_traces/{hash}':
-    get:
-      summary: DenomTrace queries a denomination trace information.
-      operationId: IbcApplicationsTransferV1DenomTrace
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              denomTrace:
-                type: object
-                properties:
-                  path:
-                    type: string
-                    description: >-
-                      path defines the chain of port/channel identifiers used
-                      for tracing the
-
-                      source of the fungible token.
-                  baseDenom:
-                    type: string
-                    description: base denomination of the relayed fungible token.
-                description: >-
-                  DenomTrace contains the base denomination for ICS20 fungible
-                  tokens and the
-
-                  source tracing information path.
-            description: >-
-              QueryDenomTraceResponse is the response type for the
-              Query/DenomTrace RPC
-
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      parameters:
-        - name: hash
-          description: hash (in hex format) of the denomination trace information.
+        - name: address
           in: path
           required: true
           type: string
       tags:
         - Query
-  /ibc/apps/transfer/v1/params:
-    get:
-      summary: Params queries all parameters of the ibc-transfer module.
-      operationId: IbcApplicationsTransferV1Params
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              params:
-                description: params defines the parameters of the module.
-                type: object
-                properties:
-                  sendEnabled:
-                    type: boolean
-                    description: >-
-                      send_enabled enables or disables all cross-chain token
-                      transfers from this
-
-                      chain.
-                  receiveEnabled:
-                    type: boolean
-                    description: >-
-                      receive_enabled enables or disables all cross-chain token
-                      transfers to this
-
-                      chain.
-            description: >-
-              QueryParamsResponse is the response type for the Query/Params RPC
-              method.
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      tags:
-        - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/account:
+  /dcl/auth/accounts:
     get:
       summary: Queries a list of account items.
       operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccountAll
@@ -12715,6 +12394,11 @@ paths:
                       type: array
                       items:
                         type: string
+                      title: >-
+                        NOTE. we do not user AccountRoles casting here to
+                        preserve repeated form
+                              so protobuf takes care about repeated items in generated code,
+                              (but that might be not the final solution)
                     vendorID:
                       type: string
                       format: uint64
@@ -12989,616 +12673,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/dclauth/account/{address}':
-    get:
-      summary: Queries a account by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccount
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              account:
-                type: object
-                properties:
-                  baseAccount:
-                    type: object
-                    properties:
-                      address:
-                        type: string
-                      pubKey:
-                        type: object
-                        properties:
-                          '@type':
-                            type: string
-                            description: >-
-                              A URL/resource name that uniquely identifies the
-                              type of the serialized
-
-                              protocol buffer message. This string must contain
-                              at least
-
-                              one "/" character. The last segment of the URL's
-                              path must represent
-
-                              the fully qualified name of the type (as in
-
-                              `path/google.protobuf.Duration`). The name should
-                              be in a canonical form
-
-                              (e.g., leading "." is not accepted).
-
-
-                              In practice, teams usually precompile into the
-                              binary all types that they
-
-                              expect it to use in the context of Any. However,
-                              for URLs which use the
-
-                              scheme `http`, `https`, or no scheme, one can
-                              optionally set up a type
-
-                              server that maps type URLs to message definitions
-                              as follows:
-
-
-                              * If no scheme is provided, `https` is assumed.
-
-                              * An HTTP GET on the URL must yield a
-                              [google.protobuf.Type][]
-                                value in binary format, or produce an error.
-                              * Applications are allowed to cache lookup results
-                              based on the
-                                URL, or have them precompiled into a binary to avoid any
-                                lookup. Therefore, binary compatibility needs to be preserved
-                                on changes to types. (Use versioned type names to manage
-                                breaking changes.)
-
-                              Note: this functionality is not currently
-                              available in the official
-
-                              protobuf release, and it is not used for type URLs
-                              beginning with
-
-                              type.googleapis.com.
-
-
-                              Schemes other than `http`, `https` (or the empty
-                              scheme) might be
-
-                              used with implementation specific semantics.
-                        additionalProperties: {}
-                        description: >-
-                          `Any` contains an arbitrary serialized protocol buffer
-                          message along with a
-
-                          URL that describes the type of the serialized message.
-
-
-                          Protobuf library provides support to pack/unpack Any
-                          values in the form
-
-                          of utility functions or additional generated methods
-                          of the Any type.
-
-
-                          Example 1: Pack and unpack a message in C++.
-
-                              Foo foo = ...;
-                              Any any;
-                              any.PackFrom(foo);
-                              ...
-                              if (any.UnpackTo(&foo)) {
-                                ...
-                              }
-
-                          Example 2: Pack and unpack a message in Java.
-
-                              Foo foo = ...;
-                              Any any = Any.pack(foo);
-                              ...
-                              if (any.is(Foo.class)) {
-                                foo = any.unpack(Foo.class);
-                              }
-
-                           Example 3: Pack and unpack a message in Python.
-
-                              foo = Foo(...)
-                              any = Any()
-                              any.Pack(foo)
-                              ...
-                              if any.Is(Foo.DESCRIPTOR):
-                                any.Unpack(foo)
-                                ...
-
-                           Example 4: Pack and unpack a message in Go
-
-                               foo := &pb.Foo{...}
-                               any, err := anypb.New(foo)
-                               if err != nil {
-                                 ...
-                               }
-                               ...
-                               foo := &pb.Foo{}
-                               if err := any.UnmarshalTo(foo); err != nil {
-                                 ...
-                               }
-
-                          The pack methods provided by protobuf library will by
-                          default use
-
-                          'type.googleapis.com/full.type.name' as the type URL
-                          and the unpack
-
-                          methods only use the fully qualified type name after
-                          the last '/'
-
-                          in the type URL, for example "foo.bar.com/x/y.z" will
-                          yield type
-
-                          name "y.z".
-
-
-
-                          JSON
-
-                          ====
-
-                          The JSON representation of an `Any` value uses the
-                          regular
-
-                          representation of the deserialized, embedded message,
-                          with an
-
-                          additional field `@type` which contains the type URL.
-                          Example:
-
-                              package google.profile;
-                              message Person {
-                                string first_name = 1;
-                                string last_name = 2;
-                              }
-
-                              {
-                                "@type": "type.googleapis.com/google.profile.Person",
-                                "firstName": <string>,
-                                "lastName": <string>
-                              }
-
-                          If the embedded message type is well-known and has a
-                          custom JSON
-
-                          representation, that representation will be embedded
-                          adding a field
-
-                          `value` which holds the custom JSON in addition to the
-                          `@type`
-
-                          field. Example (for message
-                          [google.protobuf.Duration][]):
-
-                              {
-                                "@type": "type.googleapis.com/google.protobuf.Duration",
-                                "value": "1.212s"
-                              }
-                      accountNumber:
-                        type: string
-                        format: uint64
-                      sequence:
-                        type: string
-                        format: uint64
-                    description: >-
-                      BaseAccount defines a base account type. It contains all
-                      the necessary fields
-
-                      for basic account functionality. Any custom account type
-                      should extend this
-
-                      type for additional functionality (e.g. vesting).
-                  roles:
-                    type: array
-                    items:
-                      type: string
-                  vendorID:
-                    type: string
-                    format: uint64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      parameters:
-        - name: address
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/accountStat:
-    get:
-      summary: Queries a accountStat by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccountStat
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              AccountStat:
-                type: object
-                properties:
-                  number:
-                    type: string
-                    format: uint64
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      tags:
-        - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount:
+  /dcl/auth/accounts/proposed:
     get:
       summary: Queries a list of pendingAccount items.
       operationId: ZigbeeallianceDistributedcomplianceledgerDclauthPendingAccountAll
@@ -13816,6 +12891,11 @@ paths:
                           type: array
                           items:
                             type: string
+                          title: >-
+                            NOTE. we do not user AccountRoles casting here to
+                            preserve repeated form
+                                  so protobuf takes care about repeated items in generated code,
+                                  (but that might be not the final solution)
                         vendorID:
                           type: string
                           format: uint64
@@ -14094,422 +13174,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/{address}':
-    get:
-      summary: Queries a pendingAccount by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthPendingAccount
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              pendingAccount:
-                type: object
-                properties:
-                  address:
-                    type: object
-                    properties:
-                      baseAccount:
-                        type: object
-                        properties:
-                          address:
-                            type: string
-                          pubKey:
-                            type: object
-                            properties:
-                              '@type':
-                                type: string
-                                description: >-
-                                  A URL/resource name that uniquely identifies
-                                  the type of the serialized
-
-                                  protocol buffer message. This string must
-                                  contain at least
-
-                                  one "/" character. The last segment of the
-                                  URL's path must represent
-
-                                  the fully qualified name of the type (as in
-
-                                  `path/google.protobuf.Duration`). The name
-                                  should be in a canonical form
-
-                                  (e.g., leading "." is not accepted).
-
-
-                                  In practice, teams usually precompile into the
-                                  binary all types that they
-
-                                  expect it to use in the context of Any.
-                                  However, for URLs which use the
-
-                                  scheme `http`, `https`, or no scheme, one can
-                                  optionally set up a type
-
-                                  server that maps type URLs to message
-                                  definitions as follows:
-
-
-                                  * If no scheme is provided, `https` is
-                                  assumed.
-
-                                  * An HTTP GET on the URL must yield a
-                                  [google.protobuf.Type][]
-                                    value in binary format, or produce an error.
-                                  * Applications are allowed to cache lookup
-                                  results based on the
-                                    URL, or have them precompiled into a binary to avoid any
-                                    lookup. Therefore, binary compatibility needs to be preserved
-                                    on changes to types. (Use versioned type names to manage
-                                    breaking changes.)
-
-                                  Note: this functionality is not currently
-                                  available in the official
-
-                                  protobuf release, and it is not used for type
-                                  URLs beginning with
-
-                                  type.googleapis.com.
-
-
-                                  Schemes other than `http`, `https` (or the
-                                  empty scheme) might be
-
-                                  used with implementation specific semantics.
-                            additionalProperties: {}
-                            description: >-
-                              `Any` contains an arbitrary serialized protocol
-                              buffer message along with a
-
-                              URL that describes the type of the serialized
-                              message.
-
-
-                              Protobuf library provides support to pack/unpack
-                              Any values in the form
-
-                              of utility functions or additional generated
-                              methods of the Any type.
-
-
-                              Example 1: Pack and unpack a message in C++.
-
-                                  Foo foo = ...;
-                                  Any any;
-                                  any.PackFrom(foo);
-                                  ...
-                                  if (any.UnpackTo(&foo)) {
-                                    ...
-                                  }
-
-                              Example 2: Pack and unpack a message in Java.
-
-                                  Foo foo = ...;
-                                  Any any = Any.pack(foo);
-                                  ...
-                                  if (any.is(Foo.class)) {
-                                    foo = any.unpack(Foo.class);
-                                  }
-
-                               Example 3: Pack and unpack a message in Python.
-
-                                  foo = Foo(...)
-                                  any = Any()
-                                  any.Pack(foo)
-                                  ...
-                                  if any.Is(Foo.DESCRIPTOR):
-                                    any.Unpack(foo)
-                                    ...
-
-                               Example 4: Pack and unpack a message in Go
-
-                                   foo := &pb.Foo{...}
-                                   any, err := anypb.New(foo)
-                                   if err != nil {
-                                     ...
-                                   }
-                                   ...
-                                   foo := &pb.Foo{}
-                                   if err := any.UnmarshalTo(foo); err != nil {
-                                     ...
-                                   }
-
-                              The pack methods provided by protobuf library will
-                              by default use
-
-                              'type.googleapis.com/full.type.name' as the type
-                              URL and the unpack
-
-                              methods only use the fully qualified type name
-                              after the last '/'
-
-                              in the type URL, for example "foo.bar.com/x/y.z"
-                              will yield type
-
-                              name "y.z".
-
-
-
-                              JSON
-
-                              ====
-
-                              The JSON representation of an `Any` value uses the
-                              regular
-
-                              representation of the deserialized, embedded
-                              message, with an
-
-                              additional field `@type` which contains the type
-                              URL. Example:
-
-                                  package google.profile;
-                                  message Person {
-                                    string first_name = 1;
-                                    string last_name = 2;
-                                  }
-
-                                  {
-                                    "@type": "type.googleapis.com/google.profile.Person",
-                                    "firstName": <string>,
-                                    "lastName": <string>
-                                  }
-
-                              If the embedded message type is well-known and has
-                              a custom JSON
-
-                              representation, that representation will be
-                              embedded adding a field
-
-                              `value` which holds the custom JSON in addition to
-                              the `@type`
-
-                              field. Example (for message
-                              [google.protobuf.Duration][]):
-
-                                  {
-                                    "@type": "type.googleapis.com/google.protobuf.Duration",
-                                    "value": "1.212s"
-                                  }
-                          accountNumber:
-                            type: string
-                            format: uint64
-                          sequence:
-                            type: string
-                            format: uint64
-                        description: >-
-                          BaseAccount defines a base account type. It contains
-                          all the necessary fields
-
-                          for basic account functionality. Any custom account
-                          type should extend this
-
-                          type for additional functionality (e.g. vesting).
-                      roles:
-                        type: array
-                        items:
-                          type: string
-                      vendorID:
-                        type: string
-                        format: uint64
-                  approvals:
-                    type: array
-                    items:
-                      type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      parameters:
-        - name: address
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation:
+  /dcl/auth/accounts/proposed/revoked:
     get:
       summary: Queries a list of pendingAccountRevocation items.
       operationId: >-
@@ -14802,25 +13467,227 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/{address}':
+  /dcl/auth/accounts/stat:
     get:
-      summary: Queries a pendingAccountRevocation by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthPendingAccountRevocation
+      summary: Queries a accountStat by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccountStat
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              pendingAccountRevocation:
+              AccountStat:
                 type: object
                 properties:
-                  address:
+                  number:
                     type: string
-                  approvals:
-                    type: array
-                    items:
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
                       type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      tags:
+        - Query
+  '/dcl/validator/lastPower/{owner}':
+    get:
+      summary: Queries a lastValidatorPower by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorLastValidatorPower
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              lastValidatorPower:
+                type: object
+                properties:
+                  owner:
+                    type: string
+                  power:
+                    type: integer
+                    format: int32
         default:
           description: An unexpected error response.
           schema:
@@ -15007,13 +13874,13 @@ paths:
                           "value": "1.212s"
                         }
       parameters:
-        - name: address
+        - name: owner
           in: path
           required: true
           type: string
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower:
+  /dcl/validator/lastPowers:
     get:
       summary: Queries a list of lastValidatorPower items.
       operationId: ZigbeeallianceDistributedcomplianceledgerValidatorLastValidatorPowerAll
@@ -15304,24 +14171,222 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}':
+  '/dcl/validator/node/{owner}':
     get:
-      summary: Queries a lastValidatorPower by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorLastValidatorPower
+      summary: Queries a validator by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorValidator
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              lastValidatorPower:
+              validator:
                 type: object
                 properties:
                   owner:
                     type: string
+                    title: the account address of validator owner
+                  description:
+                    title: description of the validator
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: name.
+                      identity:
+                        type: string
+                        description: optional identity signature.
+                      website:
+                        type: string
+                        description: optional website link.
+                      details:
+                        type: string
+                        description: optional details.
+                  pubKey:
+                    type: object
+                    properties:
+                      '@type':
+                        type: string
+                        description: >-
+                          A URL/resource name that uniquely identifies the type
+                          of the serialized
+
+                          protocol buffer message. This string must contain at
+                          least
+
+                          one "/" character. The last segment of the URL's path
+                          must represent
+
+                          the fully qualified name of the type (as in
+
+                          `path/google.protobuf.Duration`). The name should be
+                          in a canonical form
+
+                          (e.g., leading "." is not accepted).
+
+
+                          In practice, teams usually precompile into the binary
+                          all types that they
+
+                          expect it to use in the context of Any. However, for
+                          URLs which use the
+
+                          scheme `http`, `https`, or no scheme, one can
+                          optionally set up a type
+
+                          server that maps type URLs to message definitions as
+                          follows:
+
+
+                          * If no scheme is provided, `https` is assumed.
+
+                          * An HTTP GET on the URL must yield a
+                          [google.protobuf.Type][]
+                            value in binary format, or produce an error.
+                          * Applications are allowed to cache lookup results
+                          based on the
+                            URL, or have them precompiled into a binary to avoid any
+                            lookup. Therefore, binary compatibility needs to be preserved
+                            on changes to types. (Use versioned type names to manage
+                            breaking changes.)
+
+                          Note: this functionality is not currently available in
+                          the official
+
+                          protobuf release, and it is not used for type URLs
+                          beginning with
+
+                          type.googleapis.com.
+
+
+                          Schemes other than `http`, `https` (or the empty
+                          scheme) might be
+
+                          used with implementation specific semantics.
+                    additionalProperties: {}
+                    description: >-
+                      `Any` contains an arbitrary serialized protocol buffer
+                      message along with a
+
+                      URL that describes the type of the serialized message.
+
+
+                      Protobuf library provides support to pack/unpack Any
+                      values in the form
+
+                      of utility functions or additional generated methods of
+                      the Any type.
+
+
+                      Example 1: Pack and unpack a message in C++.
+
+                          Foo foo = ...;
+                          Any any;
+                          any.PackFrom(foo);
+                          ...
+                          if (any.UnpackTo(&foo)) {
+                            ...
+                          }
+
+                      Example 2: Pack and unpack a message in Java.
+
+                          Foo foo = ...;
+                          Any any = Any.pack(foo);
+                          ...
+                          if (any.is(Foo.class)) {
+                            foo = any.unpack(Foo.class);
+                          }
+
+                       Example 3: Pack and unpack a message in Python.
+
+                          foo = Foo(...)
+                          any = Any()
+                          any.Pack(foo)
+                          ...
+                          if any.Is(Foo.DESCRIPTOR):
+                            any.Unpack(foo)
+                            ...
+
+                       Example 4: Pack and unpack a message in Go
+
+                           foo := &pb.Foo{...}
+                           any, err := anypb.New(foo)
+                           if err != nil {
+                             ...
+                           }
+                           ...
+                           foo := &pb.Foo{}
+                           if err := any.UnmarshalTo(foo); err != nil {
+                             ...
+                           }
+
+                      The pack methods provided by protobuf library will by
+                      default use
+
+                      'type.googleapis.com/full.type.name' as the type URL and
+                      the unpack
+
+                      methods only use the fully qualified type name after the
+                      last '/'
+
+                      in the type URL, for example "foo.bar.com/x/y.z" will
+                      yield type
+
+                      name "y.z".
+
+
+
+                      JSON
+
+                      ====
+
+                      The JSON representation of an `Any` value uses the regular
+
+                      representation of the deserialized, embedded message, with
+                      an
+
+                      additional field `@type` which contains the type URL.
+                      Example:
+
+                          package google.profile;
+                          message Person {
+                            string first_name = 1;
+                            string last_name = 2;
+                          }
+
+                          {
+                            "@type": "type.googleapis.com/google.profile.Person",
+                            "firstName": <string>,
+                            "lastName": <string>
+                          }
+
+                      If the embedded message type is well-known and has a
+                      custom JSON
+
+                      representation, that representation will be embedded
+                      adding a field
+
+                      `value` which holds the custom JSON in addition to the
+                      `@type`
+
+                      field. Example (for message [google.protobuf.Duration][]):
+
+                          {
+                            "@type": "type.googleapis.com/google.protobuf.Duration",
+                            "value": "1.212s"
+                          }
+                    title: the consensus public key of the tendermint validator
                   power:
                     type: integer
                     format: int32
+                    title: validator consensus power
+                  jailed:
+                    type: boolean
+                    title: has the validator been removed from validator set
+                  jailedReason:
+                    type: string
+                    title: the reason of validator jailing
         default:
           description: An unexpected error response.
           schema:
@@ -15514,7 +14579,7 @@ paths:
           type: string
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/validator/validator:
+  /dcl/validator/nodes:
     get:
       summary: Queries a list of validator items.
       operationId: ZigbeeallianceDistributedcomplianceledgerValidatorValidatorAll
@@ -16005,222 +15070,61 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}':
+  /zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfoType:
     get:
-      summary: Queries a validator by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorValidator
+      summary: Queries a list of vendorInfoType items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfoTypeAll
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              validator:
+              vendorInfoType:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vendorID:
+                      type: string
+                      format: uint64
+                    vendorName:
+                      type: string
+                    companyLegalName:
+                      type: string
+                    companyPrefferedName:
+                      type: string
+                    vendorLandingPageURL:
+                      type: string
+                    creator:
+                      type: string
+              pagination:
                 type: object
                 properties:
-                  owner:
+                  nextKey:
                     type: string
-                    title: the account address of validator owner
-                  description:
-                    title: description of the validator
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        description: name.
-                      identity:
-                        type: string
-                        description: optional identity signature.
-                      website:
-                        type: string
-                        description: optional website link.
-                      details:
-                        type: string
-                        description: optional details.
-                  pubKey:
-                    type: object
-                    properties:
-                      '@type':
-                        type: string
-                        description: >-
-                          A URL/resource name that uniquely identifies the type
-                          of the serialized
-
-                          protocol buffer message. This string must contain at
-                          least
-
-                          one "/" character. The last segment of the URL's path
-                          must represent
-
-                          the fully qualified name of the type (as in
-
-                          `path/google.protobuf.Duration`). The name should be
-                          in a canonical form
-
-                          (e.g., leading "." is not accepted).
-
-
-                          In practice, teams usually precompile into the binary
-                          all types that they
-
-                          expect it to use in the context of Any. However, for
-                          URLs which use the
-
-                          scheme `http`, `https`, or no scheme, one can
-                          optionally set up a type
-
-                          server that maps type URLs to message definitions as
-                          follows:
-
-
-                          * If no scheme is provided, `https` is assumed.
-
-                          * An HTTP GET on the URL must yield a
-                          [google.protobuf.Type][]
-                            value in binary format, or produce an error.
-                          * Applications are allowed to cache lookup results
-                          based on the
-                            URL, or have them precompiled into a binary to avoid any
-                            lookup. Therefore, binary compatibility needs to be preserved
-                            on changes to types. (Use versioned type names to manage
-                            breaking changes.)
-
-                          Note: this functionality is not currently available in
-                          the official
-
-                          protobuf release, and it is not used for type URLs
-                          beginning with
-
-                          type.googleapis.com.
-
-
-                          Schemes other than `http`, `https` (or the empty
-                          scheme) might be
-
-                          used with implementation specific semantics.
-                    additionalProperties: {}
-                    description: >-
-                      `Any` contains an arbitrary serialized protocol buffer
-                      message along with a
-
-                      URL that describes the type of the serialized message.
-
-
-                      Protobuf library provides support to pack/unpack Any
-                      values in the form
-
-                      of utility functions or additional generated methods of
-                      the Any type.
-
-
-                      Example 1: Pack and unpack a message in C++.
-
-                          Foo foo = ...;
-                          Any any;
-                          any.PackFrom(foo);
-                          ...
-                          if (any.UnpackTo(&foo)) {
-                            ...
-                          }
-
-                      Example 2: Pack and unpack a message in Java.
-
-                          Foo foo = ...;
-                          Any any = Any.pack(foo);
-                          ...
-                          if (any.is(Foo.class)) {
-                            foo = any.unpack(Foo.class);
-                          }
-
-                       Example 3: Pack and unpack a message in Python.
-
-                          foo = Foo(...)
-                          any = Any()
-                          any.Pack(foo)
-                          ...
-                          if any.Is(Foo.DESCRIPTOR):
-                            any.Unpack(foo)
-                            ...
-
-                       Example 4: Pack and unpack a message in Go
-
-                           foo := &pb.Foo{...}
-                           any, err := anypb.New(foo)
-                           if err != nil {
-                             ...
-                           }
-                           ...
-                           foo := &pb.Foo{}
-                           if err := any.UnmarshalTo(foo); err != nil {
-                             ...
-                           }
-
-                      The pack methods provided by protobuf library will by
-                      default use
-
-                      'type.googleapis.com/full.type.name' as the type URL and
-                      the unpack
-
-                      methods only use the fully qualified type name after the
-                      last '/'
-
-                      in the type URL, for example "foo.bar.com/x/y.z" will
-                      yield type
-
-                      name "y.z".
-
-
-
-                      JSON
-
-                      ====
-
-                      The JSON representation of an `Any` value uses the regular
-
-                      representation of the deserialized, embedded message, with
-                      an
-
-                      additional field `@type` which contains the type URL.
-                      Example:
-
-                          package google.profile;
-                          message Person {
-                            string first_name = 1;
-                            string last_name = 2;
-                          }
-
-                          {
-                            "@type": "type.googleapis.com/google.profile.Person",
-                            "firstName": <string>,
-                            "lastName": <string>
-                          }
-
-                      If the embedded message type is well-known and has a
-                      custom JSON
-
-                      representation, that representation will be embedded
-                      adding a field
-
-                      `value` which holds the custom JSON in addition to the
-                      `@type`
-
-                      field. Example (for message [google.protobuf.Duration][]):
-
-                          {
-                            "@type": "type.googleapis.com/google.protobuf.Duration",
-                            "value": "1.212s"
-                          }
-                    title: the consensus public key of the tendermint validator
-                  power:
-                    type: integer
-                    format: int32
-                    title: validator consensus power
-                  jailed:
-                    type: boolean
-                    title: has the validator been removed from validator set
-                  jailedReason:
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
                     type: string
-                    title: the reason of validator jailing
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
         default:
           description: An unexpected error response.
           schema:
@@ -16238,179 +15142,116 @@ paths:
                   properties:
                     '@type':
                       type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
                   additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
       parameters:
-        - name: owner
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfoType/{vendorID}':
+    get:
+      summary: Queries a vendorInfoType by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfoType
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorInfoType:
+                type: object
+                properties:
+                  vendorID:
+                    type: string
+                    format: uint64
+                  vendorName:
+                    type: string
+                  companyLegalName:
+                    type: string
+                  companyPrefferedName:
+                    type: string
+                  vendorLandingPageURL:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vendorID
           in: path
           required: true
           type: string
+          format: uint64
       tags:
         - Query
 definitions:
@@ -23562,171 +22403,6 @@ definitions:
     description: >-
       MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount
       response type.
-  ibc.applications.transfer.v1.DenomTrace:
-    type: object
-    properties:
-      path:
-        type: string
-        description: >-
-          path defines the chain of port/channel identifiers used for tracing
-          the
-
-          source of the fungible token.
-      baseDenom:
-        type: string
-        description: base denomination of the relayed fungible token.
-    description: >-
-      DenomTrace contains the base denomination for ICS20 fungible tokens and
-      the
-
-      source tracing information path.
-  ibc.applications.transfer.v1.MsgTransferResponse:
-    type: object
-    description: MsgTransferResponse defines the Msg/Transfer response type.
-  ibc.applications.transfer.v1.Params:
-    type: object
-    properties:
-      sendEnabled:
-        type: boolean
-        description: >-
-          send_enabled enables or disables all cross-chain token transfers from
-          this
-
-          chain.
-      receiveEnabled:
-        type: boolean
-        description: >-
-          receive_enabled enables or disables all cross-chain token transfers to
-          this
-
-          chain.
-    description: >-
-      Params defines the set of IBC transfer parameters.
-
-      NOTE: To prevent a single token from being transferred, set the
-
-      TransfersEnabled parameter to true and then set the bank module's
-      SendEnabled
-
-      parameter for the denomination to false.
-  ibc.applications.transfer.v1.QueryDenomTraceResponse:
-    type: object
-    properties:
-      denomTrace:
-        type: object
-        properties:
-          path:
-            type: string
-            description: >-
-              path defines the chain of port/channel identifiers used for
-              tracing the
-
-              source of the fungible token.
-          baseDenom:
-            type: string
-            description: base denomination of the relayed fungible token.
-        description: >-
-          DenomTrace contains the base denomination for ICS20 fungible tokens
-          and the
-
-          source tracing information path.
-    description: |-
-      QueryDenomTraceResponse is the response type for the Query/DenomTrace RPC
-      method.
-  ibc.applications.transfer.v1.QueryDenomTracesResponse:
-    type: object
-    properties:
-      denomTraces:
-        type: array
-        items:
-          type: object
-          properties:
-            path:
-              type: string
-              description: >-
-                path defines the chain of port/channel identifiers used for
-                tracing the
-
-                source of the fungible token.
-            baseDenom:
-              type: string
-              description: base denomination of the relayed fungible token.
-          description: >-
-            DenomTrace contains the base denomination for ICS20 fungible tokens
-            and the
-
-            source tracing information path.
-        description: denom_traces returns all denominations trace information.
-      pagination:
-        description: pagination defines the pagination in the response.
-        type: object
-        properties:
-          nextKey:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-    description: >-
-      QueryConnectionsResponse is the response type for the Query/DenomTraces
-      RPC
-
-      method.
-  ibc.applications.transfer.v1.QueryParamsResponse:
-    type: object
-    properties:
-      params:
-        description: params defines the parameters of the module.
-        type: object
-        properties:
-          sendEnabled:
-            type: boolean
-            description: >-
-              send_enabled enables or disables all cross-chain token transfers
-              from this
-
-              chain.
-          receiveEnabled:
-            type: boolean
-            description: >-
-              receive_enabled enables or disables all cross-chain token
-              transfers to this
-
-              chain.
-    description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  ibc.core.client.v1.Height:
-    type: object
-    properties:
-      revisionNumber:
-        type: string
-        format: uint64
-        title: the revision that the client is currently on
-      revisionHeight:
-        type: string
-        format: uint64
-        title: the height within the given revision
-    description: |-
-      Normally the RevisionHeight is incremented at each height while keeping
-      RevisionNumber the same. However some consensus algorithms may choose to
-      reset the height in certain conditions e.g. hard forks, state-machine
-      breaking changes In these cases, the RevisionNumber is incremented so that
-      height continues to be monitonically increasing even as the RevisionHeight
-      gets reset
-    title: >-
-      Height is a monotonically increasing data type
-
-      that can be compared against another Height for the purposes of updating
-      and
-
-      freezing clients
   cosmos.auth.v1beta1.BaseAccount:
     type: object
     properties:
@@ -24092,6 +22768,11 @@ definitions:
         type: array
         items:
           type: string
+        title: >-
+          NOTE. we do not user AccountRoles casting here to preserve repeated
+          form
+                so protobuf takes care about repeated items in generated code,
+                (but that might be not the final solution)
       vendorID:
         type: string
         format: uint64
@@ -24307,6 +22988,11 @@ definitions:
             type: array
             items:
               type: string
+            title: >-
+              NOTE. we do not user AccountRoles casting here to preserve
+              repeated form
+                    so protobuf takes care about repeated items in generated code,
+                    (but that might be not the final solution)
           vendorID:
             type: string
             format: uint64
@@ -24527,6 +23213,11 @@ definitions:
               type: array
               items:
                 type: string
+              title: >-
+                NOTE. we do not user AccountRoles casting here to preserve
+                repeated form
+                      so protobuf takes care about repeated items in generated code,
+                      (but that might be not the final solution)
             vendorID:
               type: string
               format: uint64
@@ -24764,6 +23455,11 @@ definitions:
                   type: array
                   items:
                     type: string
+                  title: >-
+                    NOTE. we do not user AccountRoles casting here to preserve
+                    repeated form
+                          so protobuf takes care about repeated items in generated code,
+                          (but that might be not the final solution)
                 vendorID:
                   type: string
                   format: uint64
@@ -25033,6 +23729,11 @@ definitions:
             type: array
             items:
               type: string
+            title: >-
+              NOTE. we do not user AccountRoles casting here to preserve
+              repeated form
+                    so protobuf takes care about repeated items in generated code,
+                    (but that might be not the final solution)
           vendorID:
             type: string
             format: uint64
@@ -25045,230 +23746,6 @@ definitions:
           number:
             type: string
             format: uint64
-  zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountResponse:
-    type: object
-    properties:
-      pendingAccount:
-        type: object
-        properties:
-          address:
-            type: object
-            properties:
-              baseAccount:
-                type: object
-                properties:
-                  address:
-                    type: string
-                  pubKey:
-                    type: object
-                    properties:
-                      '@type':
-                        type: string
-                        description: >-
-                          A URL/resource name that uniquely identifies the type
-                          of the serialized
-
-                          protocol buffer message. This string must contain at
-                          least
-
-                          one "/" character. The last segment of the URL's path
-                          must represent
-
-                          the fully qualified name of the type (as in
-
-                          `path/google.protobuf.Duration`). The name should be
-                          in a canonical form
-
-                          (e.g., leading "." is not accepted).
-
-
-                          In practice, teams usually precompile into the binary
-                          all types that they
-
-                          expect it to use in the context of Any. However, for
-                          URLs which use the
-
-                          scheme `http`, `https`, or no scheme, one can
-                          optionally set up a type
-
-                          server that maps type URLs to message definitions as
-                          follows:
-
-
-                          * If no scheme is provided, `https` is assumed.
-
-                          * An HTTP GET on the URL must yield a
-                          [google.protobuf.Type][]
-                            value in binary format, or produce an error.
-                          * Applications are allowed to cache lookup results
-                          based on the
-                            URL, or have them precompiled into a binary to avoid any
-                            lookup. Therefore, binary compatibility needs to be preserved
-                            on changes to types. (Use versioned type names to manage
-                            breaking changes.)
-
-                          Note: this functionality is not currently available in
-                          the official
-
-                          protobuf release, and it is not used for type URLs
-                          beginning with
-
-                          type.googleapis.com.
-
-
-                          Schemes other than `http`, `https` (or the empty
-                          scheme) might be
-
-                          used with implementation specific semantics.
-                    additionalProperties: {}
-                    description: >-
-                      `Any` contains an arbitrary serialized protocol buffer
-                      message along with a
-
-                      URL that describes the type of the serialized message.
-
-
-                      Protobuf library provides support to pack/unpack Any
-                      values in the form
-
-                      of utility functions or additional generated methods of
-                      the Any type.
-
-
-                      Example 1: Pack and unpack a message in C++.
-
-                          Foo foo = ...;
-                          Any any;
-                          any.PackFrom(foo);
-                          ...
-                          if (any.UnpackTo(&foo)) {
-                            ...
-                          }
-
-                      Example 2: Pack and unpack a message in Java.
-
-                          Foo foo = ...;
-                          Any any = Any.pack(foo);
-                          ...
-                          if (any.is(Foo.class)) {
-                            foo = any.unpack(Foo.class);
-                          }
-
-                       Example 3: Pack and unpack a message in Python.
-
-                          foo = Foo(...)
-                          any = Any()
-                          any.Pack(foo)
-                          ...
-                          if any.Is(Foo.DESCRIPTOR):
-                            any.Unpack(foo)
-                            ...
-
-                       Example 4: Pack and unpack a message in Go
-
-                           foo := &pb.Foo{...}
-                           any, err := anypb.New(foo)
-                           if err != nil {
-                             ...
-                           }
-                           ...
-                           foo := &pb.Foo{}
-                           if err := any.UnmarshalTo(foo); err != nil {
-                             ...
-                           }
-
-                      The pack methods provided by protobuf library will by
-                      default use
-
-                      'type.googleapis.com/full.type.name' as the type URL and
-                      the unpack
-
-                      methods only use the fully qualified type name after the
-                      last '/'
-
-                      in the type URL, for example "foo.bar.com/x/y.z" will
-                      yield type
-
-                      name "y.z".
-
-
-
-                      JSON
-
-                      ====
-
-                      The JSON representation of an `Any` value uses the regular
-
-                      representation of the deserialized, embedded message, with
-                      an
-
-                      additional field `@type` which contains the type URL.
-                      Example:
-
-                          package google.profile;
-                          message Person {
-                            string first_name = 1;
-                            string last_name = 2;
-                          }
-
-                          {
-                            "@type": "type.googleapis.com/google.profile.Person",
-                            "firstName": <string>,
-                            "lastName": <string>
-                          }
-
-                      If the embedded message type is well-known and has a
-                      custom JSON
-
-                      representation, that representation will be embedded
-                      adding a field
-
-                      `value` which holds the custom JSON in addition to the
-                      `@type`
-
-                      field. Example (for message [google.protobuf.Duration][]):
-
-                          {
-                            "@type": "type.googleapis.com/google.protobuf.Duration",
-                            "value": "1.212s"
-                          }
-                  accountNumber:
-                    type: string
-                    format: uint64
-                  sequence:
-                    type: string
-                    format: uint64
-                description: >-
-                  BaseAccount defines a base account type. It contains all the
-                  necessary fields
-
-                  for basic account functionality. Any custom account type
-                  should extend this
-
-                  type for additional functionality (e.g. vesting).
-              roles:
-                type: array
-                items:
-                  type: string
-              vendorID:
-                type: string
-                format: uint64
-          approvals:
-            type: array
-            items:
-              type: string
-  zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationResponse:
-    type: object
-    properties:
-      pendingAccountRevocation:
-        type: object
-        properties:
-          address:
-            type: string
-          approvals:
-            type: array
-            items:
-              type: string
   zigbeealliance.distributedcomplianceledger.validator.Description:
     type: object
     properties:
@@ -25962,3 +24439,90 @@ definitions:
       jailedReason:
         type: string
         title: the reason of validator jailing
+  zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfoTypeResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfoTypeResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfoTypeResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.vendorinfo.QueryAllVendorInfoTypeResponse:
+    type: object
+    properties:
+      vendorInfoType:
+        type: array
+        items:
+          type: object
+          properties:
+            vendorID:
+              type: string
+              format: uint64
+            vendorName:
+              type: string
+            companyLegalName:
+              type: string
+            companyPrefferedName:
+              type: string
+            vendorLandingPageURL:
+              type: string
+            creator:
+              type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.vendorinfo.QueryGetVendorInfoTypeResponse:
+    type: object
+    properties:
+      vendorInfoType:
+        type: object
+        properties:
+          vendorID:
+            type: string
+            format: uint64
+          vendorName:
+            type: string
+          companyLegalName:
+            type: string
+          companyPrefferedName:
+            type: string
+          vendorLandingPageURL:
+            type: string
+          creator:
+            type: string
+  zigbeealliance.distributedcomplianceledger.vendorinfo.VendorInfoType:
+    type: object
+    properties:
+      vendorID:
+        type: string
+        format: uint64
+      vendorName:
+        type: string
+      companyLegalName:
+        type: string
+      companyPrefferedName:
+        type: string
+      vendorLandingPageURL:
+        type: string
+      creator:
+        type: string
