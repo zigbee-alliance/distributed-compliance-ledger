@@ -84,6 +84,17 @@ func TestGenesisState_Validate(t *testing.T) {
 				ApprovedRootCertificates: &types.ApprovedRootCertificates{
 					Certs: []*types.CertificateIdentifier{},
 				},
+				RevokedRootCertificates: &types.RevokedRootCertificates{
+					Certs: []*types.CertificateIdentifier{},
+				},
+				ApprovedCertificatesBySubjectList: []types.ApprovedCertificatesBySubject{
+					{
+						Subject: "0",
+					},
+					{
+						Subject: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -179,6 +190,20 @@ func TestGenesisState_Validate(t *testing.T) {
 					{
 						Issuer:       "0",
 						SerialNumber: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated approvedCertificatesBySubject",
+			genState: &types.GenesisState{
+				ApprovedCertificatesBySubjectList: []types.ApprovedCertificatesBySubject{
+					{
+						Subject: "0",
+					},
+					{
+						Subject: "0",
 					},
 				},
 			},

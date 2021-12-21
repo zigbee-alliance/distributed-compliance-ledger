@@ -285,12 +285,55 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryApprovedCertificatesBySubjectAll
+         * @summary Queries a list of ApprovedCertificatesBySubject items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject
+         */
+        this.queryApprovedCertificatesBySubjectAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryApprovedCertificatesBySubject
+         * @summary Queries a ApprovedCertificatesBySubject by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject/{subject}
+         */
+        this.queryApprovedCertificatesBySubject = (subject, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject/${subject}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryApprovedRootCertificates
          * @summary Queries a ApprovedRootCertificates by index.
          * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates
          */
         this.queryApprovedRootCertificates = (params = {}) => this.request({
             path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRevokedRootCertificates
+         * @summary Queries a RevokedRootCertificates by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/revoked_root_certificates
+         */
+        this.queryRevokedRootCertificates = (params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/revoked_root_certificates`,
             method: "GET",
             format: "json",
             ...params,

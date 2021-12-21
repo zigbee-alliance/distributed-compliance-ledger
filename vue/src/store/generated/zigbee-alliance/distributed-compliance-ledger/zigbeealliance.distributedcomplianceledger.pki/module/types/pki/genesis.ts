@@ -6,6 +6,8 @@ import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revoc
 import { RevokedCertificates } from '../pki/revoked_certificates'
 import { UniqueCertificate } from '../pki/unique_certificate'
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates'
+import { RevokedRootCertificates } from '../pki/revoked_root_certificates'
+import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
@@ -18,8 +20,10 @@ export interface GenesisState {
   proposedCertificateRevocationList: ProposedCertificateRevocation[]
   revokedCertificatesList: RevokedCertificates[]
   uniqueCertificateList: UniqueCertificate[]
-  /** this line is used by starport scaffolding # genesis/proto/state */
   approvedRootCertificates: ApprovedRootCertificates | undefined
+  revokedRootCertificates: RevokedRootCertificates | undefined
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  approvedCertificatesBySubjectList: ApprovedCertificatesBySubject[]
 }
 
 const baseGenesisState: object = {}
@@ -47,6 +51,12 @@ export const GenesisState = {
     if (message.approvedRootCertificates !== undefined) {
       ApprovedRootCertificates.encode(message.approvedRootCertificates, writer.uint32(58).fork()).ldelim()
     }
+    if (message.revokedRootCertificates !== undefined) {
+      RevokedRootCertificates.encode(message.revokedRootCertificates, writer.uint32(66).fork()).ldelim()
+    }
+    for (const v of message.approvedCertificatesBySubjectList) {
+      ApprovedCertificatesBySubject.encode(v!, writer.uint32(74).fork()).ldelim()
+    }
     return writer
   },
 
@@ -60,6 +70,7 @@ export const GenesisState = {
     message.proposedCertificateRevocationList = []
     message.revokedCertificatesList = []
     message.uniqueCertificateList = []
+    message.approvedCertificatesBySubjectList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -84,6 +95,12 @@ export const GenesisState = {
         case 7:
           message.approvedRootCertificates = ApprovedRootCertificates.decode(reader, reader.uint32())
           break
+        case 8:
+          message.revokedRootCertificates = RevokedRootCertificates.decode(reader, reader.uint32())
+          break
+        case 9:
+          message.approvedCertificatesBySubjectList.push(ApprovedCertificatesBySubject.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -100,6 +117,7 @@ export const GenesisState = {
     message.proposedCertificateRevocationList = []
     message.revokedCertificatesList = []
     message.uniqueCertificateList = []
+    message.approvedCertificatesBySubjectList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
         message.approvedCertificatesList.push(ApprovedCertificates.fromJSON(e))
@@ -134,6 +152,16 @@ export const GenesisState = {
       message.approvedRootCertificates = ApprovedRootCertificates.fromJSON(object.approvedRootCertificates)
     } else {
       message.approvedRootCertificates = undefined
+    }
+    if (object.revokedRootCertificates !== undefined && object.revokedRootCertificates !== null) {
+      message.revokedRootCertificates = RevokedRootCertificates.fromJSON(object.revokedRootCertificates)
+    } else {
+      message.revokedRootCertificates = undefined
+    }
+    if (object.approvedCertificatesBySubjectList !== undefined && object.approvedCertificatesBySubjectList !== null) {
+      for (const e of object.approvedCertificatesBySubjectList) {
+        message.approvedCertificatesBySubjectList.push(ApprovedCertificatesBySubject.fromJSON(e))
+      }
     }
     return message
   },
@@ -172,6 +200,13 @@ export const GenesisState = {
     }
     message.approvedRootCertificates !== undefined &&
       (obj.approvedRootCertificates = message.approvedRootCertificates ? ApprovedRootCertificates.toJSON(message.approvedRootCertificates) : undefined)
+    message.revokedRootCertificates !== undefined &&
+      (obj.revokedRootCertificates = message.revokedRootCertificates ? RevokedRootCertificates.toJSON(message.revokedRootCertificates) : undefined)
+    if (message.approvedCertificatesBySubjectList) {
+      obj.approvedCertificatesBySubjectList = message.approvedCertificatesBySubjectList.map((e) => (e ? ApprovedCertificatesBySubject.toJSON(e) : undefined))
+    } else {
+      obj.approvedCertificatesBySubjectList = []
+    }
     return obj
   },
 
@@ -183,6 +218,7 @@ export const GenesisState = {
     message.proposedCertificateRevocationList = []
     message.revokedCertificatesList = []
     message.uniqueCertificateList = []
+    message.approvedCertificatesBySubjectList = []
     if (object.approvedCertificatesList !== undefined && object.approvedCertificatesList !== null) {
       for (const e of object.approvedCertificatesList) {
         message.approvedCertificatesList.push(ApprovedCertificates.fromPartial(e))
@@ -217,6 +253,16 @@ export const GenesisState = {
       message.approvedRootCertificates = ApprovedRootCertificates.fromPartial(object.approvedRootCertificates)
     } else {
       message.approvedRootCertificates = undefined
+    }
+    if (object.revokedRootCertificates !== undefined && object.revokedRootCertificates !== null) {
+      message.revokedRootCertificates = RevokedRootCertificates.fromPartial(object.revokedRootCertificates)
+    } else {
+      message.revokedRootCertificates = undefined
+    }
+    if (object.approvedCertificatesBySubjectList !== undefined && object.approvedCertificatesBySubjectList !== null) {
+      for (const e of object.approvedCertificatesBySubjectList) {
+        message.approvedCertificatesBySubjectList.push(ApprovedCertificatesBySubject.fromPartial(e))
+      }
     }
     return message
   }

@@ -8,6 +8,8 @@ import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revoc
 import { RevokedCertificates } from '../pki/revoked_certificates'
 import { UniqueCertificate } from '../pki/unique_certificate'
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates'
+import { RevokedRootCertificates } from '../pki/revoked_root_certificates'
+import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 
@@ -123,6 +125,29 @@ export interface QueryGetApprovedRootCertificatesRequest {}
 
 export interface QueryGetApprovedRootCertificatesResponse {
   ApprovedRootCertificates: ApprovedRootCertificates | undefined
+}
+
+export interface QueryGetRevokedRootCertificatesRequest {}
+
+export interface QueryGetRevokedRootCertificatesResponse {
+  RevokedRootCertificates: RevokedRootCertificates | undefined
+}
+
+export interface QueryGetApprovedCertificatesBySubjectRequest {
+  subject: string
+}
+
+export interface QueryGetApprovedCertificatesBySubjectResponse {
+  approvedCertificatesBySubject: ApprovedCertificatesBySubject | undefined
+}
+
+export interface QueryAllApprovedCertificatesBySubjectRequest {
+  pagination: PageRequest | undefined
+}
+
+export interface QueryAllApprovedCertificatesBySubjectResponse {
+  approvedCertificatesBySubject: ApprovedCertificatesBySubject[]
+  pagination: PageResponse | undefined
 }
 
 const baseQueryGetApprovedCertificatesRequest: object = { subject: '', subjectKeyId: '' }
@@ -1793,6 +1818,347 @@ export const QueryGetApprovedRootCertificatesResponse = {
   }
 }
 
+const baseQueryGetRevokedRootCertificatesRequest: object = {}
+
+export const QueryGetRevokedRootCertificatesRequest = {
+  encode(_: QueryGetRevokedRootCertificatesRequest, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRevokedRootCertificatesRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetRevokedRootCertificatesRequest } as QueryGetRevokedRootCertificatesRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): QueryGetRevokedRootCertificatesRequest {
+    const message = { ...baseQueryGetRevokedRootCertificatesRequest } as QueryGetRevokedRootCertificatesRequest
+    return message
+  },
+
+  toJSON(_: QueryGetRevokedRootCertificatesRequest): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<QueryGetRevokedRootCertificatesRequest>): QueryGetRevokedRootCertificatesRequest {
+    const message = { ...baseQueryGetRevokedRootCertificatesRequest } as QueryGetRevokedRootCertificatesRequest
+    return message
+  }
+}
+
+const baseQueryGetRevokedRootCertificatesResponse: object = {}
+
+export const QueryGetRevokedRootCertificatesResponse = {
+  encode(message: QueryGetRevokedRootCertificatesResponse, writer: Writer = Writer.create()): Writer {
+    if (message.RevokedRootCertificates !== undefined) {
+      RevokedRootCertificates.encode(message.RevokedRootCertificates, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRevokedRootCertificatesResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetRevokedRootCertificatesResponse } as QueryGetRevokedRootCertificatesResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.RevokedRootCertificates = RevokedRootCertificates.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetRevokedRootCertificatesResponse {
+    const message = { ...baseQueryGetRevokedRootCertificatesResponse } as QueryGetRevokedRootCertificatesResponse
+    if (object.RevokedRootCertificates !== undefined && object.RevokedRootCertificates !== null) {
+      message.RevokedRootCertificates = RevokedRootCertificates.fromJSON(object.RevokedRootCertificates)
+    } else {
+      message.RevokedRootCertificates = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetRevokedRootCertificatesResponse): unknown {
+    const obj: any = {}
+    message.RevokedRootCertificates !== undefined &&
+      (obj.RevokedRootCertificates = message.RevokedRootCertificates ? RevokedRootCertificates.toJSON(message.RevokedRootCertificates) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetRevokedRootCertificatesResponse>): QueryGetRevokedRootCertificatesResponse {
+    const message = { ...baseQueryGetRevokedRootCertificatesResponse } as QueryGetRevokedRootCertificatesResponse
+    if (object.RevokedRootCertificates !== undefined && object.RevokedRootCertificates !== null) {
+      message.RevokedRootCertificates = RevokedRootCertificates.fromPartial(object.RevokedRootCertificates)
+    } else {
+      message.RevokedRootCertificates = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryGetApprovedCertificatesBySubjectRequest: object = { subject: '' }
+
+export const QueryGetApprovedCertificatesBySubjectRequest = {
+  encode(message: QueryGetApprovedCertificatesBySubjectRequest, writer: Writer = Writer.create()): Writer {
+    if (message.subject !== '') {
+      writer.uint32(10).string(message.subject)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedCertificatesBySubjectRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetApprovedCertificatesBySubjectRequest } as QueryGetApprovedCertificatesBySubjectRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.subject = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetApprovedCertificatesBySubjectRequest {
+    const message = { ...baseQueryGetApprovedCertificatesBySubjectRequest } as QueryGetApprovedCertificatesBySubjectRequest
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = String(object.subject)
+    } else {
+      message.subject = ''
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetApprovedCertificatesBySubjectRequest): unknown {
+    const obj: any = {}
+    message.subject !== undefined && (obj.subject = message.subject)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetApprovedCertificatesBySubjectRequest>): QueryGetApprovedCertificatesBySubjectRequest {
+    const message = { ...baseQueryGetApprovedCertificatesBySubjectRequest } as QueryGetApprovedCertificatesBySubjectRequest
+    if (object.subject !== undefined && object.subject !== null) {
+      message.subject = object.subject
+    } else {
+      message.subject = ''
+    }
+    return message
+  }
+}
+
+const baseQueryGetApprovedCertificatesBySubjectResponse: object = {}
+
+export const QueryGetApprovedCertificatesBySubjectResponse = {
+  encode(message: QueryGetApprovedCertificatesBySubjectResponse, writer: Writer = Writer.create()): Writer {
+    if (message.approvedCertificatesBySubject !== undefined) {
+      ApprovedCertificatesBySubject.encode(message.approvedCertificatesBySubject, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedCertificatesBySubjectResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetApprovedCertificatesBySubjectResponse } as QueryGetApprovedCertificatesBySubjectResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.approvedCertificatesBySubject = ApprovedCertificatesBySubject.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetApprovedCertificatesBySubjectResponse {
+    const message = { ...baseQueryGetApprovedCertificatesBySubjectResponse } as QueryGetApprovedCertificatesBySubjectResponse
+    if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+      message.approvedCertificatesBySubject = ApprovedCertificatesBySubject.fromJSON(object.approvedCertificatesBySubject)
+    } else {
+      message.approvedCertificatesBySubject = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetApprovedCertificatesBySubjectResponse): unknown {
+    const obj: any = {}
+    message.approvedCertificatesBySubject !== undefined &&
+      (obj.approvedCertificatesBySubject = message.approvedCertificatesBySubject
+        ? ApprovedCertificatesBySubject.toJSON(message.approvedCertificatesBySubject)
+        : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetApprovedCertificatesBySubjectResponse>): QueryGetApprovedCertificatesBySubjectResponse {
+    const message = { ...baseQueryGetApprovedCertificatesBySubjectResponse } as QueryGetApprovedCertificatesBySubjectResponse
+    if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+      message.approvedCertificatesBySubject = ApprovedCertificatesBySubject.fromPartial(object.approvedCertificatesBySubject)
+    } else {
+      message.approvedCertificatesBySubject = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllApprovedCertificatesBySubjectRequest: object = {}
+
+export const QueryAllApprovedCertificatesBySubjectRequest = {
+  encode(message: QueryAllApprovedCertificatesBySubjectRequest, writer: Writer = Writer.create()): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedCertificatesBySubjectRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest } as QueryAllApprovedCertificatesBySubjectRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllApprovedCertificatesBySubjectRequest {
+    const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest } as QueryAllApprovedCertificatesBySubjectRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllApprovedCertificatesBySubjectRequest): unknown {
+    const obj: any = {}
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllApprovedCertificatesBySubjectRequest>): QueryAllApprovedCertificatesBySubjectRequest {
+    const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest } as QueryAllApprovedCertificatesBySubjectRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllApprovedCertificatesBySubjectResponse: object = {}
+
+export const QueryAllApprovedCertificatesBySubjectResponse = {
+  encode(message: QueryAllApprovedCertificatesBySubjectResponse, writer: Writer = Writer.create()): Writer {
+    for (const v of message.approvedCertificatesBySubject) {
+      ApprovedCertificatesBySubject.encode(v!, writer.uint32(10).fork()).ldelim()
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedCertificatesBySubjectResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse } as QueryAllApprovedCertificatesBySubjectResponse
+    message.approvedCertificatesBySubject = []
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.decode(reader, reader.uint32()))
+          break
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllApprovedCertificatesBySubjectResponse {
+    const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse } as QueryAllApprovedCertificatesBySubjectResponse
+    message.approvedCertificatesBySubject = []
+    if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+      for (const e of object.approvedCertificatesBySubject) {
+        message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.fromJSON(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllApprovedCertificatesBySubjectResponse): unknown {
+    const obj: any = {}
+    if (message.approvedCertificatesBySubject) {
+      obj.approvedCertificatesBySubject = message.approvedCertificatesBySubject.map((e) => (e ? ApprovedCertificatesBySubject.toJSON(e) : undefined))
+    } else {
+      obj.approvedCertificatesBySubject = []
+    }
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllApprovedCertificatesBySubjectResponse>): QueryAllApprovedCertificatesBySubjectResponse {
+    const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse } as QueryAllApprovedCertificatesBySubjectResponse
+    message.approvedCertificatesBySubject = []
+    if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+      for (const e of object.approvedCertificatesBySubject) {
+        message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.fromPartial(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ApprovedCertificates by index. */
@@ -1821,6 +2187,12 @@ export interface Query {
   UniqueCertificateAll(request: QueryAllUniqueCertificateRequest): Promise<QueryAllUniqueCertificateResponse>
   /** Queries a ApprovedRootCertificates by index. */
   ApprovedRootCertificates(request: QueryGetApprovedRootCertificatesRequest): Promise<QueryGetApprovedRootCertificatesResponse>
+  /** Queries a RevokedRootCertificates by index. */
+  RevokedRootCertificates(request: QueryGetRevokedRootCertificatesRequest): Promise<QueryGetRevokedRootCertificatesResponse>
+  /** Queries a ApprovedCertificatesBySubject by index. */
+  ApprovedCertificatesBySubject(request: QueryGetApprovedCertificatesBySubjectRequest): Promise<QueryGetApprovedCertificatesBySubjectResponse>
+  /** Queries a list of ApprovedCertificatesBySubject items. */
+  ApprovedCertificatesBySubjectAll(request: QueryAllApprovedCertificatesBySubjectRequest): Promise<QueryAllApprovedCertificatesBySubjectResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -1904,6 +2276,24 @@ export class QueryClientImpl implements Query {
     const data = QueryGetApprovedRootCertificatesRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedRootCertificates', data)
     return promise.then((data) => QueryGetApprovedRootCertificatesResponse.decode(new Reader(data)))
+  }
+
+  RevokedRootCertificates(request: QueryGetRevokedRootCertificatesRequest): Promise<QueryGetRevokedRootCertificatesResponse> {
+    const data = QueryGetRevokedRootCertificatesRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'RevokedRootCertificates', data)
+    return promise.then((data) => QueryGetRevokedRootCertificatesResponse.decode(new Reader(data)))
+  }
+
+  ApprovedCertificatesBySubject(request: QueryGetApprovedCertificatesBySubjectRequest): Promise<QueryGetApprovedCertificatesBySubjectResponse> {
+    const data = QueryGetApprovedCertificatesBySubjectRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubject', data)
+    return promise.then((data) => QueryGetApprovedCertificatesBySubjectResponse.decode(new Reader(data)))
+  }
+
+  ApprovedCertificatesBySubjectAll(request: QueryAllApprovedCertificatesBySubjectRequest): Promise<QueryAllApprovedCertificatesBySubjectResponse> {
+    const data = QueryAllApprovedCertificatesBySubjectRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubjectAll', data)
+    return promise.then((data) => QueryAllApprovedCertificatesBySubjectResponse.decode(new Reader(data)))
   }
 }
 

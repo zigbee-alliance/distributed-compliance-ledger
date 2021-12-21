@@ -8,6 +8,8 @@ import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revoc
 import { RevokedCertificates } from '../pki/revoked_certificates';
 import { UniqueCertificate } from '../pki/unique_certificate';
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
+import { RevokedRootCertificates } from '../pki/revoked_root_certificates';
+import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
 const baseQueryGetApprovedCertificatesRequest = { subject: '', subjectKeyId: '' };
 export const QueryGetApprovedCertificatesRequest = {
@@ -1589,6 +1591,322 @@ export const QueryGetApprovedRootCertificatesResponse = {
         return message;
     }
 };
+const baseQueryGetRevokedRootCertificatesRequest = {};
+export const QueryGetRevokedRootCertificatesRequest = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRevokedRootCertificatesRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = { ...baseQueryGetRevokedRootCertificatesRequest };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = { ...baseQueryGetRevokedRootCertificatesRequest };
+        return message;
+    }
+};
+const baseQueryGetRevokedRootCertificatesResponse = {};
+export const QueryGetRevokedRootCertificatesResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.RevokedRootCertificates !== undefined) {
+            RevokedRootCertificates.encode(message.RevokedRootCertificates, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRevokedRootCertificatesResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.RevokedRootCertificates = RevokedRootCertificates.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRevokedRootCertificatesResponse };
+        if (object.RevokedRootCertificates !== undefined && object.RevokedRootCertificates !== null) {
+            message.RevokedRootCertificates = RevokedRootCertificates.fromJSON(object.RevokedRootCertificates);
+        }
+        else {
+            message.RevokedRootCertificates = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.RevokedRootCertificates !== undefined &&
+            (obj.RevokedRootCertificates = message.RevokedRootCertificates ? RevokedRootCertificates.toJSON(message.RevokedRootCertificates) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRevokedRootCertificatesResponse };
+        if (object.RevokedRootCertificates !== undefined && object.RevokedRootCertificates !== null) {
+            message.RevokedRootCertificates = RevokedRootCertificates.fromPartial(object.RevokedRootCertificates);
+        }
+        else {
+            message.RevokedRootCertificates = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryGetApprovedCertificatesBySubjectRequest = { subject: '' };
+export const QueryGetApprovedCertificatesBySubjectRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.subject !== '') {
+            writer.uint32(10).string(message.subject);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetApprovedCertificatesBySubjectRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.subject = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetApprovedCertificatesBySubjectRequest };
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = String(object.subject);
+        }
+        else {
+            message.subject = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.subject !== undefined && (obj.subject = message.subject);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetApprovedCertificatesBySubjectRequest };
+        if (object.subject !== undefined && object.subject !== null) {
+            message.subject = object.subject;
+        }
+        else {
+            message.subject = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetApprovedCertificatesBySubjectResponse = {};
+export const QueryGetApprovedCertificatesBySubjectResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.approvedCertificatesBySubject !== undefined) {
+            ApprovedCertificatesBySubject.encode(message.approvedCertificatesBySubject, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetApprovedCertificatesBySubjectResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.approvedCertificatesBySubject = ApprovedCertificatesBySubject.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetApprovedCertificatesBySubjectResponse };
+        if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+            message.approvedCertificatesBySubject = ApprovedCertificatesBySubject.fromJSON(object.approvedCertificatesBySubject);
+        }
+        else {
+            message.approvedCertificatesBySubject = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.approvedCertificatesBySubject !== undefined &&
+            (obj.approvedCertificatesBySubject = message.approvedCertificatesBySubject
+                ? ApprovedCertificatesBySubject.toJSON(message.approvedCertificatesBySubject)
+                : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetApprovedCertificatesBySubjectResponse };
+        if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+            message.approvedCertificatesBySubject = ApprovedCertificatesBySubject.fromPartial(object.approvedCertificatesBySubject);
+        }
+        else {
+            message.approvedCertificatesBySubject = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllApprovedCertificatesBySubjectRequest = {};
+export const QueryAllApprovedCertificatesBySubjectRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllApprovedCertificatesBySubjectResponse = {};
+export const QueryAllApprovedCertificatesBySubjectResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.approvedCertificatesBySubject) {
+            ApprovedCertificatesBySubject.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse };
+        message.approvedCertificatesBySubject = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse };
+        message.approvedCertificatesBySubject = [];
+        if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+            for (const e of object.approvedCertificatesBySubject) {
+                message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.approvedCertificatesBySubject) {
+            obj.approvedCertificatesBySubject = message.approvedCertificatesBySubject.map((e) => (e ? ApprovedCertificatesBySubject.toJSON(e) : undefined));
+        }
+        else {
+            obj.approvedCertificatesBySubject = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse };
+        message.approvedCertificatesBySubject = [];
+        if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
+            for (const e of object.approvedCertificatesBySubject) {
+                message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1657,5 +1975,20 @@ export class QueryClientImpl {
         const data = QueryGetApprovedRootCertificatesRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedRootCertificates', data);
         return promise.then((data) => QueryGetApprovedRootCertificatesResponse.decode(new Reader(data)));
+    }
+    RevokedRootCertificates(request) {
+        const data = QueryGetRevokedRootCertificatesRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'RevokedRootCertificates', data);
+        return promise.then((data) => QueryGetRevokedRootCertificatesResponse.decode(new Reader(data)));
+    }
+    ApprovedCertificatesBySubject(request) {
+        const data = QueryGetApprovedCertificatesBySubjectRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubject', data);
+        return promise.then((data) => QueryGetApprovedCertificatesBySubjectResponse.decode(new Reader(data)));
+    }
+    ApprovedCertificatesBySubjectAll(request) {
+        const data = QueryAllApprovedCertificatesBySubjectRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubjectAll', data);
+        return promise.then((data) => QueryAllApprovedCertificatesBySubjectResponse.decode(new Reader(data)));
     }
 }

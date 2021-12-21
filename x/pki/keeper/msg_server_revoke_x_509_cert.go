@@ -42,7 +42,11 @@ func (k msgServer) RevokeX509Cert(goCtx context.Context, msg *types.MsgRevokeX50
 	}
 	k.RemoveChildCertificate(ctx, certificates.Certs[0].Issuer, certificates.Certs[0].AuthorityKeyId, certIdentifier)
 
+	// revoke all child certificates
 	k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId)
+
+	// remove from subject -> subject key ID map
+	k.RemoveApprovedCertificateBySubject(ctx, msg.Subject, msg.SubjectKeyId)
 
 	return &types.MsgRevokeX509CertResponse{}, nil
 }

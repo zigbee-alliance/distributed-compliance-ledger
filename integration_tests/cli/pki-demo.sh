@@ -99,6 +99,22 @@ echo "$result"
 
 test_divider
 
+echo "Request all revoked root certificates must be empty"
+result=$(dcld query pki all-revoked-x509-root-certs)
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all certificates by subject must be empty"
+result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
 echo "$trustee_account (Trustee) approve Root certificate"
 result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $trustee_account --yes)
 check_response "$result" "\"code\": 0"
@@ -312,14 +328,41 @@ echo "$result"
 
 test_divider
 
-# echo "Request all subject certificates"
-# result=$(dcld query pki all-subject-x509-certs --subject="$leaf_cert_subject")
-# check_response "$result" "\"total\": \"1\""
-# check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-# check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
-# echo "$result"
+echo "Request all subject certificates"
+result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
+check_response "$result" "\"$root_cert_subject\""
+check_response "$result" "\"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
+echo "$result"
 
-# test_divider
+test_divider
+
+echo "Request all subject certificates"
+result=$(dcld query pki all-subject-x509-certs --subject="$leaf_cert_subject")
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"$leaf_cert_subject\""
+check_response "$result" "\"$leaf_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all subject certificates"
+result=$(dcld query pki all-subject-x509-certs --subject="$intermediate_cert_subject")
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+check_response "$result" "\"$intermediate_cert_subject\""
+check_response "$result" "\"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
+echo "$result"
+
+test_divider
 
 echo "Request all root certificates proposed to revoke"
 result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
@@ -385,20 +428,17 @@ echo "$result"
 
 test_divider
 
-# echo "Request all revoked root certificates"
-# result=$(dcld query pki all-revoked-x509-root-certs)
-# response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
-# response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
-# response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
-# echo "$result"
+echo "Request all revoked root certificates"
+result=$(dcld query pki all-revoked-x509-root-certs)
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
 
-# test_divider
+test_divider
 
 echo "Request revoked Intermediate certificate"
 result=$(dcld query pki revoked-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
@@ -438,6 +478,30 @@ response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\"
 response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all subject certificates"
+result=$(dcld query pki all-subject-x509-certs --subject="$leaf_cert_subject")
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all subject certificates"
+result=$(dcld query pki all-subject-x509-certs --subject="$intermediate_cert_subject")
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
 echo "$result"
 
 test_divider
@@ -487,17 +551,17 @@ echo "$result"
 
 test_divider
 
-# echo "Request all revoked root certificates"
-# result=$(dcld query pki all-revoked-x509-root-certs)
-# response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
-# echo "$result"
+echo "Request all revoked root certificates"
+result=$(dcld query pki all-revoked-x509-root-certs)
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
 
-# test_divider
+test_divider
 
 echo "Request Root certificate proposed to revoke"
 result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
@@ -528,6 +592,18 @@ response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\"
 response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all subject certificates"
+result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
+check_response "$result" "\"$root_cert_subject\""
+check_response "$result" "\"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
 echo "$result"
 
 test_divider
@@ -563,17 +639,17 @@ echo "$result"
 
 test_divider
 
-# echo "Request all revoked root certificates"
-# result=$(dcld query pki all-revoked-x509-root-certs)
-# check_response "$result" "\"subject\": \"$root_cert_subject\""
-# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
-# response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
-# response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
-# echo "$result"
+echo "Request all revoked root certificates"
+result=$(dcld query pki all-revoked-x509-root-certs)
+check_response "$result" "\"subject\": \"$root_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
 
-# test_divider
+test_divider
 
 echo "Request revoked Root certificate"
 result=$(dcld query pki revoked-x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
@@ -630,3 +706,13 @@ check_response_and_report "$result" "rpc error: code = InvalidArgument desc = no
 # echo "$result"
 
 test_divider
+
+echo "Request all subject certificates must be empty"
+result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
+echo "$result"

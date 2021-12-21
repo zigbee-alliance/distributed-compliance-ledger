@@ -10,6 +10,8 @@ import "pki/proposed_certificate_revocation.proto";
 import "pki/revoked_certificates.proto";
 import "pki/unique_certificate.proto";
 import "pki/approved_root_certificates.proto";
+import "pki/revoked_root_certificates.proto";
+import "pki/approved_certificates_by_subject.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -85,6 +87,20 @@ service Query {
 	rpc ApprovedRootCertificates(QueryGetApprovedRootCertificatesRequest) returns (QueryGetApprovedRootCertificatesResponse) {
 		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates";
 	}
+// Queries a RevokedRootCertificates by index.
+	rpc RevokedRootCertificates(QueryGetRevokedRootCertificatesRequest) returns (QueryGetRevokedRootCertificatesResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/revoked_root_certificates";
+	}
+// Queries a ApprovedCertificatesBySubject by index.
+	rpc ApprovedCertificatesBySubject(QueryGetApprovedCertificatesBySubjectRequest) returns (QueryGetApprovedCertificatesBySubjectResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject/{subject}";
+	}
+
+	// Queries a list of ApprovedCertificatesBySubject items.
+	rpc ApprovedCertificatesBySubjectAll(QueryAllApprovedCertificatesBySubjectRequest) returns (QueryAllApprovedCertificatesBySubjectResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -207,4 +223,27 @@ message QueryGetApprovedRootCertificatesRequest {}
 message QueryGetApprovedRootCertificatesResponse {
 	ApprovedRootCertificates ApprovedRootCertificates = 1 [(gogoproto.nullable) = false];
 }
+message QueryGetRevokedRootCertificatesRequest {}
+
+message QueryGetRevokedRootCertificatesResponse {
+	RevokedRootCertificates RevokedRootCertificates = 1 [(gogoproto.nullable) = false];
+}
+message QueryGetApprovedCertificatesBySubjectRequest {
+	  string subject = 1;
+
+}
+
+message QueryGetApprovedCertificatesBySubjectResponse {
+	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllApprovedCertificatesBySubjectRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllApprovedCertificatesBySubjectResponse {
+	repeated ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
 // this line is used by starport scaffolding # 3

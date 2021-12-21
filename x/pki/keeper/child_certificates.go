@@ -113,6 +113,9 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 		k.AddRevokedCertificates(ctx, certificates)
 		k.RemoveApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 
+		// remove from subject -> subject key ID map
+		k.RemoveApprovedCertificateBySubject(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
 		// Process child certificates recursively
 		k.RevokeChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
 	}
