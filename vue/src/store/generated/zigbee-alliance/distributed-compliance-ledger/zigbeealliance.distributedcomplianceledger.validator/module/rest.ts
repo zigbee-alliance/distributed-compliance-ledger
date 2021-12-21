@@ -553,9 +553,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryLastValidatorPower
+   * @summary Queries a lastValidatorPower by index.
+   * @request GET:/dcl/validator/lastPower/{owner}
+   */
+  queryLastValidatorPower = (owner: string, params: RequestParams = {}) =>
+    this.request<ValidatorQueryGetLastValidatorPowerResponse, RpcStatus>({
+      path: `/dcl/validator/lastPower/${owner}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryLastValidatorPowerAll
    * @summary Queries a list of lastValidatorPower items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower
+   * @request GET:/dcl/validator/lastPowers
    */
   queryLastValidatorPowerAll = (
     query?: {
@@ -568,49 +584,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<ValidatorQueryAllLastValidatorPowerResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryLastValidatorPower
-   * @summary Queries a lastValidatorPower by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}
-   */
-  queryLastValidatorPower = (owner: string, params: RequestParams = {}) =>
-    this.request<ValidatorQueryGetLastValidatorPowerResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/${owner}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryValidatorAll
-   * @summary Queries a list of validator items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator
-   */
-  queryValidatorAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<ValidatorQueryAllValidatorResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validator`,
+      path: `/dcl/validator/lastPowers`,
       method: "GET",
       query: query,
       format: "json",
@@ -623,12 +597,38 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryValidator
    * @summary Queries a validator by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}
+   * @request GET:/dcl/validator/node/{owner}
    */
   queryValidator = (owner: string, params: RequestParams = {}) =>
     this.request<ValidatorQueryGetValidatorResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/validator/validator/${owner}`,
+      path: `/dcl/validator/node/${owner}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryValidatorAll
+   * @summary Queries a list of validator items.
+   * @request GET:/dcl/validator/nodes
+   */
+  queryValidatorAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<ValidatorQueryAllValidatorResponse, RpcStatus>({
+      path: `/dcl/validator/nodes`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });
