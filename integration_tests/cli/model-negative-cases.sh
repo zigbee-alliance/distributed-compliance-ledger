@@ -59,67 +59,67 @@ test_divider
 echo "Add Model with VID: $vid PID: $pid: Unknown account"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from "Unknown"  2>&1) || true
-check_response_and_report "$result" "key not found" plain
+check_response_and_report "$result" "key not found" raw
 
 test_divider
 
 echo "Add model with invalid VID/PID"
 i="0" 
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Vid is a required field" plain
+check_response_and_report "$result" "Vid is a required field" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Pid is a required field" plain
+check_response_and_report "$result" "Pid is a required field" raw
 
 i="65536" 
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Vid must not be greater than 65535" plain
+check_response_and_report "$result" "Vid must not be greater than 65535" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Pid must not be greater than 65535" plain
+check_response_and_report "$result" "Pid must not be greater than 65535" raw
 
 i="string" 
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "invalid syntax" plain
+check_response_and_report "$result" "invalid syntax" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "invalid syntax" plain
+check_response_and_report "$result" "invalid syntax" raw
 
 test_divider
 
 echo "Add model with empty name"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName="" --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "ProductName is a required field" plain
+check_response_and_report "$result" "ProductName is a required field" raw
 
 test_divider
 
 echo "Add model with empty description"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="" --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "ProductLabel is a required field" plain
+check_response_and_report "$result" "ProductLabel is a required field" raw
 
 test_divider
 
 echo "Add model with empty partNumber"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Label" --partNumber="" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "PartNumber is a required field" plain
+check_response_and_report "$result" "PartNumber is a required field" raw
 
 test_divider
 
 echo "Add model with empty --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from "" --yes 2>&1) || true
-check_response_and_report "$result" "invalid creator address (empty address string is not allowed)" plain
+check_response_and_report "$result" "invalid creator address (empty address string is not allowed)" raw
 
 test_divider
 
 echo "Add model without --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --yes 2>&1) || true
-check_response_and_report "$result" "required flag(s) \"from\" not set" plain
+check_response_and_report "$result" "required flag(s) \"from\" not set" raw
 
 test_divider
 
 echo "Add model without enough parameters"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct  --partNumber="1" --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "required flag(s) \"productLabel\" not set" plain
+check_response_and_report "$result" "required flag(s) \"productLabel\" not set" raw
 
 test_divider
 
