@@ -66,3 +66,18 @@ func (k Keeper) GetAllProposedCertificateRevocation(ctx sdk.Context) (list []typ
 
 	return
 }
+
+// Check if the Proposed Certificate Revocation record associated with a
+// Subject/SubjectKeyID combination is present in the store
+func (k Keeper) IsProposedCertificateRevocationPresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyId string,
+
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
+	return store.Has(types.ProposedCertificateRevocationKey(
+		subject,
+		subjectKeyId,
+	))
+}

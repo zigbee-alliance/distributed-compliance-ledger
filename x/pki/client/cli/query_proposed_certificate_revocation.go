@@ -6,13 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
 func CmdListProposedCertificateRevocation() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-proposed-certificate-revocation",
-		Short: "list all ProposedCertificateRevocation",
+		Use:   "all-proposed-x509-root-certs-to-revoke",
+		Short: "Gets all proposed but not approved root certificates to be revoked",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -44,20 +45,21 @@ func CmdListProposedCertificateRevocation() *cobra.Command {
 
 func CmdShowProposedCertificateRevocation() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-proposed-certificate-revocation [subject] [subject-key-id]",
-		Short: "shows a ProposedCertificateRevocation",
-		Args:  cobra.ExactArgs(2),
+		Use: "proposed-x509-root-cert-to-revoke",
+		Short: "Gets a proposed but not approved root certificate to be revoked " +
+			"with the given combination of subject and subject-key-id",
+		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argSubject := args[0]
-			argSubjectKeyId := args[1]
+			subject := viper.GetString(FlagSubject)
+			subjectKeyID := viper.GetString(FlagSubjectKeyID)
 
 			params := &types.QueryGetProposedCertificateRevocationRequest{
-				Subject:      argSubject,
-				SubjectKeyId: argSubjectKeyId,
+				Subject:      subject,
+				SubjectKeyId: subjectKeyID,
 			}
 
 			res, err := queryClient.ProposedCertificateRevocation(context.Background(), params)
@@ -69,7 +71,12 @@ func CmdShowProposedCertificateRevocation() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagSubject)
+	_ = cmd.MarkFlagRequired(FlagSubjectKeyID)
 
 	return cmd
 }

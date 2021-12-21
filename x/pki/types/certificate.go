@@ -40,6 +40,15 @@ func (cert ProposedCertificate) HasApprovalFrom(address sdk.AccAddress) bool {
 			return true
 		}
 	}
+	return false
+}
 
+func (d ProposedCertificateRevocation) HasApprovalFrom(address sdk.Address) bool {
+	addrStr := address.String()
+	for _, approval := range d.Approvals {
+		if approval == addrStr {
+			return true
+		}
+	}
 	return false
 }

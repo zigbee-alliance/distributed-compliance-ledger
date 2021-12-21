@@ -87,6 +87,12 @@ func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKey
 		k.cdc.MustUnmarshal(childCertificatesBytes, &childCertificates)
 	}
 
+	for _, existingСertId := range childCertificates.CertIds {
+		if *existingСertId == certId {
+			return
+		}
+	}
+
 	childCertificates.CertIds = append(childCertificates.CertIds, &certId)
 
 	b := k.cdc.MustMarshal(&childCertificates)
@@ -94,4 +100,50 @@ func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKey
 		issuer,
 		authorityKeyId,
 	), b)
+}
+
+func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, authorityKeyId string) {
+	// Get issuer's ChildCertificates record
+	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyId)
+
+	// For each child certificate subject/subjectKeyID combination
+	for _, certIdentifier := range childCertificates.CertIds {
+		// Revoke certificates with this subject/subjectKeyID combination
+		certificates, _ := k.GetApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+		k.AddRevokedCertificates(ctx, certificates)
+		k.RemoveApprovedCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+
+		// Process child certificates recursively
+		k.RevokeChildCertificates(ctx, certIdentifier.Subject, certIdentifier.SubjectKeyId)
+	}
+
+	// Delete entire ChildCertificates record of issuer
+	k.RemoveChildCertificates(ctx, issuer, authorityKeyId)
+}
+
+func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, authorityKeyId string,
+	certIdentifier types.CertificateIdentifier) {
+
+	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyId)
+
+	certIDIndex := -1
+	for i, existingIdentifier := range childCertificates.CertIds {
+		if *existingIdentifier == certIdentifier {
+			certIDIndex = i
+			break
+		}
+	}
+
+	if certIDIndex == -1 {
+		return
+	}
+
+	childCertificates.CertIds =
+		append(childCertificates.CertIds[:certIDIndex], childCertificates.CertIds[certIDIndex+1:]...)
+
+	if len(childCertificates.CertIds) > 0 {
+		k.SetChildCertificates(ctx, childCertificates)
+	} else {
+		k.RemoveChildCertificates(ctx, issuer, authorityKeyId)
+	}
 }

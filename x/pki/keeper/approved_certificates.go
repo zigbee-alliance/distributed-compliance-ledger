@@ -99,6 +99,21 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 	), b)
 }
 
+// Check if the Approved Certificate record associated with a
+// Subject/SubjectKeyID combination is present in the store
+func (k Keeper) IsApprovedCertificatePresent(
+	ctx sdk.Context,
+	subject string,
+	subjectKeyId string,
+
+) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+	return store.Has(types.ApprovedCertificatesKey(
+		subject,
+		subjectKeyId,
+	))
+}
+
 // Tries to build a valid certificate chain for the given certificate.
 // Returns the RootSubject/RootSubjectKeyID combination or an error in case no valid certificate chain can be built.
 func (k Keeper) verifyCertificate(ctx sdk.Context,
