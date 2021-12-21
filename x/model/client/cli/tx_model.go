@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -36,13 +37,19 @@ func CmdCreateModel() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			productLabel, err := utils.ReadFromFile(productLabel)
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgCreateModel(
 				clientCtx.GetFromAddress().String(),
 				vid,
 				pid,
 				deviceTypeId,
 				productName,
-				productLabel, // FIXME: add optional reading from file
+				productLabel,
 				partNumber,
 				commissioningCustomFlow,
 				commissioningCustomFlowUrl,
@@ -147,12 +154,18 @@ func CmdUpdateModel() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			productLabel, err := utils.ReadFromFile(productLabel)
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgUpdateModel(
 				clientCtx.GetFromAddress().String(),
 				vid,
 				pid,
 				productName,
-				productLabel, // FIXME: add optional reading from file
+				productLabel,
 				partNumber,
 				commissioningCustomFlowUrl,
 				commissioningModeInitialStepsInstruction,
