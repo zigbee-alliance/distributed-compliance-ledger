@@ -178,8 +178,6 @@ check_response_and_report "$result" "rpc error: code = InvalidArgument desc = no
 test_divider
 
 
-# FIXME issue 99: enable once implemented
-exit 0
 pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
