@@ -140,12 +140,27 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryLastValidatorPowerAll
+         * @summary Queries a list of lastValidatorPower items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower
+         */
+        this.queryLastValidatorPowerAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryLastValidatorPower
          * @summary Queries a lastValidatorPower by index.
-         * @request GET:/dcl/validator/lastPower/{owner}
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}
          */
         this.queryLastValidatorPower = (owner, params = {}) => this.request({
-            path: `/dcl/validator/lastPower/${owner}`,
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/${owner}`,
             method: "GET",
             format: "json",
             ...params,
@@ -154,12 +169,12 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryLastValidatorPowerAll
-         * @summary Queries a list of lastValidatorPower items.
-         * @request GET:/dcl/validator/lastPowers
+         * @name QueryValidatorAll
+         * @summary Queries a list of validator items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator
          */
-        this.queryLastValidatorPowerAll = (query, params = {}) => this.request({
-            path: `/dcl/validator/lastPowers`,
+        this.queryValidatorAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/validator`,
             method: "GET",
             query: query,
             format: "json",
@@ -171,26 +186,11 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryValidator
          * @summary Queries a validator by index.
-         * @request GET:/dcl/validator/node/{owner}
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}
          */
         this.queryValidator = (owner, params = {}) => this.request({
-            path: `/dcl/validator/node/${owner}`,
+            path: `/zigbee-alliance/distributedcomplianceledger/validator/validator/${owner}`,
             method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryValidatorAll
-         * @summary Queries a list of validator items.
-         * @request GET:/dcl/validator/nodes
-         */
-        this.queryValidatorAll = (query, params = {}) => this.request({
-            path: `/dcl/validator/nodes`,
-            method: "GET",
-            query: query,
             format: "json",
             ...params,
         });

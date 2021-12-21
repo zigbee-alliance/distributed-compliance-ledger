@@ -379,18 +379,9 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryLastValidatorPower
-     * @summary Queries a lastValidatorPower by index.
-     * @request GET:/dcl/validator/lastPower/{owner}
-     */
-    queryLastValidatorPower: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetLastValidatorPowerResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
      * @name QueryLastValidatorPowerAll
      * @summary Queries a list of lastValidatorPower items.
-     * @request GET:/dcl/validator/lastPowers
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower
      */
     queryLastValidatorPowerAll: (query?: {
         "pagination.key"?: string;
@@ -403,18 +394,18 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryValidator
-     * @summary Queries a validator by index.
-     * @request GET:/dcl/validator/node/{owner}
+     * @name QueryLastValidatorPower
+     * @summary Queries a lastValidatorPower by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/lastValidatorPower/{owner}
      */
-    queryValidator: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetValidatorResponse, RpcStatus>>;
+    queryLastValidatorPower: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetLastValidatorPowerResponse, RpcStatus>>;
     /**
      * No description
      *
      * @tags Query
      * @name QueryValidatorAll
      * @summary Queries a list of validator items.
-     * @request GET:/dcl/validator/nodes
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator
      */
     queryValidatorAll: (query?: {
         "pagination.key"?: string;
@@ -423,5 +414,14 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.countTotal"?: boolean;
         "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryAllValidatorResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryValidator
+     * @summary Queries a validator by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/validator/validator/{owner}
+     */
+    queryValidator: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetValidatorResponse, RpcStatus>>;
 }
 export {};

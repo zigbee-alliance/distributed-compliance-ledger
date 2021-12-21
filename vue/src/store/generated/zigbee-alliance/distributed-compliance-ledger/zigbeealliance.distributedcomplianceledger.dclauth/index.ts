@@ -1,4 +1,4 @@
-import { txClient, queryClient, MissingWalletError } from './module'
+import { txClient, queryClient, MissingWalletError , registry} from './module'
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex'
 
@@ -6,13 +6,9 @@ import { Account } from "./module/types/dclauth/account"
 import { AccountStat } from "./module/types/dclauth/account_stat"
 import { PendingAccount } from "./module/types/dclauth/pending_account"
 import { PendingAccountRevocation } from "./module/types/dclauth/pending_account_revocation"
-import { QueryGetPendingAccountRequest } from "./module/types/dclauth/query"
-import { QueryGetPendingAccountResponse } from "./module/types/dclauth/query"
-import { QueryGetPendingAccountRevocationRequest } from "./module/types/dclauth/query"
-import { QueryGetPendingAccountRevocationResponse } from "./module/types/dclauth/query"
 
 
-export { Account, AccountStat, PendingAccount, PendingAccountRevocation, QueryGetPendingAccountRequest, QueryGetPendingAccountResponse, QueryGetPendingAccountRevocationRequest, QueryGetPendingAccountRevocationResponse };
+export { Account, AccountStat, PendingAccount, PendingAccountRevocation };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -52,7 +48,9 @@ const getDefaultState = () => {
 	return {
 				Account: {},
 				AccountAll: {},
+				PendingAccount: {},
 				PendingAccountAll: {},
+				PendingAccountRevocation: {},
 				PendingAccountRevocationAll: {},
 				AccountStat: {},
 				
@@ -61,12 +59,9 @@ const getDefaultState = () => {
 						AccountStat: getStructure(AccountStat.fromPartial({})),
 						PendingAccount: getStructure(PendingAccount.fromPartial({})),
 						PendingAccountRevocation: getStructure(PendingAccountRevocation.fromPartial({})),
-						QueryGetPendingAccountRequest: getStructure(QueryGetPendingAccountRequest.fromPartial({})),
-						QueryGetPendingAccountResponse: getStructure(QueryGetPendingAccountResponse.fromPartial({})),
-						QueryGetPendingAccountRevocationRequest: getStructure(QueryGetPendingAccountRevocationRequest.fromPartial({})),
-						QueryGetPendingAccountRevocationResponse: getStructure(QueryGetPendingAccountRevocationResponse.fromPartial({})),
 						
 		},
+		_Registry: registry,
 		_Subscriptions: new Set(),
 	}
 }
@@ -85,10 +80,10 @@ export default {
 			state[query][JSON.stringify(key)] = value
 		},
 		SUBSCRIBE(state, subscription) {
-			state._Subscriptions.add(subscription)
+			state._Subscriptions.add(JSON.stringify(subscription))
 		},
 		UNSUBSCRIBE(state, subscription) {
-			state._Subscriptions.delete(subscription)
+			state._Subscriptions.delete(JSON.stringify(subscription))
 		}
 	},
 	getters: {
@@ -104,11 +99,23 @@ export default {
 					}
 			return state.AccountAll[JSON.stringify(params)] ?? {}
 		},
+				getPendingAccount: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PendingAccount[JSON.stringify(params)] ?? {}
+		},
 				getPendingAccountAll: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
 						(<any> params).query=null
 					}
 			return state.PendingAccountAll[JSON.stringify(params)] ?? {}
+		},
+				getPendingAccountRevocation: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.PendingAccountRevocation[JSON.stringify(params)] ?? {}
 		},
 				getPendingAccountRevocationAll: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -125,6 +132,9 @@ export default {
 				
 		getTypeStructure: (state) => (type) => {
 			return state._Structure[type].fields
+		},
+		getRegistry: (state) => {
+			return state._Registry
 		}
 	},
 	actions: {
@@ -145,7 +155,8 @@ export default {
 		async StoreUpdate({ state, dispatch }) {
 			state._Subscriptions.forEach(async (subscription) => {
 				try {
-					await dispatch(subscription.action, subscription.payload)
+					const sub=JSON.parse(subscription)
+					await dispatch(sub.action, sub.payload)
 				}catch(e) {
 					throw new SpVuexError('Subscriptions: ' + e.message)
 				}
@@ -157,8 +168,9 @@ export default {
 		 		
 		
 		
-		async QueryAccount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params: {...key}, query=null }) {
+		async QueryAccount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
+				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
 				let value= (await queryClient.queryAccount( key.address)).data
 				
@@ -178,14 +190,15 @@ export default {
 		 		
 		
 		
-		async QueryAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params: {...key}, query=null }) {
+		async QueryAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
+				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
 				let value= (await queryClient.queryAccountAll(query)).data
 				
 					
-				while (all && (<any> value).pagination && (<any> value).pagination.nextKey!=null) {
-					let next_values=(await queryClient.queryAccountAll({...query, 'pagination.key':(<any> value).pagination.nextKey})).data
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryAccountAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
 					value = mergeResults(value, next_values);
 				}
 				commit('QUERY', { query: 'AccountAll', key: { params: {...key}, query}, value })
@@ -203,14 +216,37 @@ export default {
 		 		
 		
 		
-		async QueryPendingAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params: {...key}, query=null }) {
+		async QueryPendingAccount({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryPendingAccount( key.address)).data
+				
+					
+				commit('QUERY', { query: 'PendingAccount', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPendingAccount', payload: { options: { all }, params: {...key},query }})
+				return getters['getPendingAccount']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryPendingAccount', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPendingAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
 				let value= (await queryClient.queryPendingAccountAll(query)).data
 				
 					
-				while (all && (<any> value).pagination && (<any> value).pagination.nextKey!=null) {
-					let next_values=(await queryClient.queryPendingAccountAll({...query, 'pagination.key':(<any> value).pagination.nextKey})).data
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryPendingAccountAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
 					value = mergeResults(value, next_values);
 				}
 				commit('QUERY', { query: 'PendingAccountAll', key: { params: {...key}, query}, value })
@@ -228,14 +264,37 @@ export default {
 		 		
 		
 		
-		async QueryPendingAccountRevocationAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params: {...key}, query=null }) {
+		async QueryPendingAccountRevocation({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryPendingAccountRevocation( key.address)).data
+				
+					
+				commit('QUERY', { query: 'PendingAccountRevocation', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryPendingAccountRevocation', payload: { options: { all }, params: {...key},query }})
+				return getters['getPendingAccountRevocation']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryPendingAccountRevocation', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryPendingAccountRevocationAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
 				let value= (await queryClient.queryPendingAccountRevocationAll(query)).data
 				
 					
-				while (all && (<any> value).pagination && (<any> value).pagination.nextKey!=null) {
-					let next_values=(await queryClient.queryPendingAccountRevocationAll({...query, 'pagination.key':(<any> value).pagination.nextKey})).data
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryPendingAccountRevocationAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
 					value = mergeResults(value, next_values);
 				}
 				commit('QUERY', { query: 'PendingAccountRevocationAll', key: { params: {...key}, query}, value })
@@ -253,8 +312,9 @@ export default {
 		 		
 		
 		
-		async QueryAccountStat({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params: {...key}, query=null }) {
+		async QueryAccountStat({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
+				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
 				let value= (await queryClient.queryAccountStat()).data
 				
@@ -269,18 +329,18 @@ export default {
 		},
 		
 		
-		async sendMsgProposeAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgApproveAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgProposeAddAccount(value)
+				const msg = await txClient.msgApproveAddAccount(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgProposeAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgApproveAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgProposeAddAccount:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgApproveAddAccount:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -314,32 +374,32 @@ export default {
 				}
 			}
 		},
-		async sendMsgApproveAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgProposeAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveAddAccount(value)
+				const msg = await txClient.msgProposeAddAccount(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgApproveAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgProposeAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgApproveAddAccount:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgProposeAddAccount:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgProposeAddAccount({ rootGetters }, { value }) {
+		async MsgApproveAddAccount({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgProposeAddAccount(value)
+				const msg = await txClient.msgApproveAddAccount(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgProposeAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgApproveAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgProposeAddAccount:Create', 'Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgApproveAddAccount:Create', 'Could not create message: ' + e.message)
 					
 				}
 			}
@@ -372,16 +432,16 @@ export default {
 				}
 			}
 		},
-		async MsgApproveAddAccount({ rootGetters }, { value }) {
+		async MsgProposeAddAccount({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgApproveAddAccount(value)
+				const msg = await txClient.msgProposeAddAccount(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgApproveAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgProposeAddAccount:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgApproveAddAccount:Create', 'Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgProposeAddAccount:Create', 'Could not create message: ' + e.message)
 					
 				}
 			}

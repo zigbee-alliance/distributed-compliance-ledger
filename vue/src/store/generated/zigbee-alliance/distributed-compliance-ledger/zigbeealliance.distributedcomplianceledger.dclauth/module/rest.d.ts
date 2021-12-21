@@ -70,6 +70,12 @@ export interface DclauthQueryGetAccountResponse {
 export interface DclauthQueryGetAccountStatResponse {
     AccountStat?: DclauthAccountStat;
 }
+export interface DclauthQueryGetPendingAccountResponse {
+    pendingAccount?: DclauthPendingAccount;
+}
+export interface DclauthQueryGetPendingAccountRevocationResponse {
+    pendingAccountRevocation?: DclauthPendingAccountRevocation;
+}
 /**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
 URL that describes the type of the serialized message.
@@ -407,18 +413,9 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryAccount
-     * @summary Queries a account by index.
-     * @request GET:/dcl/auth/account/{address}
-     */
-    queryAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
      * @name QueryAccountAll
      * @summary Queries a list of account items.
-     * @request GET:/dcl/auth/accounts
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/account
      */
     queryAccountAll: (query?: {
         "pagination.key"?: string;
@@ -431,9 +428,27 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryAccount
+     * @summary Queries a account by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/account/{address}
+     */
+    queryAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryAccountStat
+     * @summary Queries a accountStat by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/accountStat
+     */
+    queryAccountStat: (params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountStatResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryPendingAccountAll
      * @summary Queries a list of pendingAccount items.
-     * @request GET:/dcl/auth/accounts/proposed
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount
      */
     queryPendingAccountAll: (query?: {
         "pagination.key"?: string;
@@ -446,9 +461,18 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryPendingAccount
+     * @summary Queries a pendingAccount by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/{address}
+     */
+    queryPendingAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetPendingAccountResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryPendingAccountRevocationAll
      * @summary Queries a list of pendingAccountRevocation items.
-     * @request GET:/dcl/auth/accounts/proposed/revoked
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation
      */
     queryPendingAccountRevocationAll: (query?: {
         "pagination.key"?: string;
@@ -461,10 +485,10 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryAccountStat
-     * @summary Queries a accountStat by index.
-     * @request GET:/dcl/auth/accounts/stat
+     * @name QueryPendingAccountRevocation
+     * @summary Queries a pendingAccountRevocation by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/{address}
      */
-    queryAccountStat: (params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountStatResponse, RpcStatus>>;
+    queryPendingAccountRevocation: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetPendingAccountRevocationResponse, RpcStatus>>;
 }
 export {};

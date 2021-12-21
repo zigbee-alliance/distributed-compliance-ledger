@@ -12,7 +12,6 @@ import CosmosCosmosSdkCosmosVestingV1Beta1 from './cosmos/cosmos-sdk/cosmos.vest
 import CosmosIbcGoIbcApplicationsTransferV1 from './cosmos/ibc-go/ibc.applications.transfer.v1';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.dclauth';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.validator';
-import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.vendorinfo';
 export default {
     CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
     CosmosCosmosSdkCosmosBankV1Beta1: load(CosmosCosmosSdkCosmosBankV1Beta1, 'cosmos.bank.v1beta1'),
@@ -27,7 +26,6 @@ export default {
     CosmosIbcGoIbcApplicationsTransferV1: load(CosmosIbcGoIbcApplicationsTransferV1, 'ibc.applications.transfer.v1'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth, 'zigbeealliance.distributedcomplianceledger.dclauth'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator, 'zigbeealliance.distributedcomplianceledger.validator'),
-    ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo, 'zigbeealliance.distributedcomplianceledger.vendorinfo'),
 };
 function load(mod, fullns) {
     return function init(store) {
