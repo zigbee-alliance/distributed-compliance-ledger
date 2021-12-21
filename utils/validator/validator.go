@@ -16,6 +16,7 @@ package validator
 
 import (
 	"fmt"
+	"strings"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/go-playground/locales/en"
@@ -51,7 +52,7 @@ func Validate(s interface{}) error {
 	_ = vl.RegisterTranslation("required_with", trans, func(ut ut.Translator) error {
 		return ut.Add("required_with", "{0} is required if {1} is set", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("required_with", fe.Field())
+		t, _ := ut.T("required_with", fe.Field(), fe.Param())
 
 		return t
 	})
@@ -59,7 +60,7 @@ func Validate(s interface{}) error {
 	_ = vl.RegisterTranslation("required_if", trans, func(ut ut.Translator) error {
 		return ut.Add("required_if", "{0} is required if {1}", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("required_if", fe.Field())
+		t, _ := ut.T("required_if", fe.Field(), strings.Replace(fe.Param(), " ", "=", 1))
 
 		return t
 	})
@@ -104,6 +105,13 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	vl.RegisterTranslation("gtecsfield", trans, func(ut ut.Translator) error {
+		return ut.Add("gtecsfield", "{0} must not be less than {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("gtecsfield", fe.Field(), fe.Param())
+		return t
+	})
+
 	errs := vl.Struct(s)
 
 	if errs != nil {
@@ -116,7 +124,7 @@ func Validate(s interface{}) error {
 				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
 			}
 
-			if e.Tag() == "url" || e.Tag() == "startsnotwith" {
+			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "gtecsfield" {
 				return sdkerrors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 
