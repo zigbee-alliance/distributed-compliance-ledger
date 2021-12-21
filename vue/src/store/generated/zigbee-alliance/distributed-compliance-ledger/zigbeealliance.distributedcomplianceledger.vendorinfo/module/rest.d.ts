@@ -155,7 +155,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryVendorInfoAll
      * @summary Queries a list of vendorInfo items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo
+     * @request GET:/dcl/vendorinfo/vendorInfo
      */
     queryVendorInfoAll: (query?: {
         "pagination.key"?: string;
@@ -170,7 +170,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryVendorInfo
      * @summary Queries a vendorInfo by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo/{vendorID}
+     * @request GET:/dcl/vendorinfo/vendorInfo/{vendorID}
      */
     queryVendorInfo: (vendorID: string, params?: RequestParams) => Promise<HttpResponse<VendorinfoQueryGetVendorInfoResponse, RpcStatus>>;
 }

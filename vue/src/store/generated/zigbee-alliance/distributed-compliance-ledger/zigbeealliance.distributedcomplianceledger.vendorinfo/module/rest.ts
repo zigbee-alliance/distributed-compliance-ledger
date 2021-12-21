@@ -320,7 +320,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryVendorInfoAll
    * @summary Queries a list of vendorInfo items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo
+   * @request GET:/dcl/vendorinfo/vendorInfo
    */
   queryVendorInfoAll = (
     query?: {
@@ -333,7 +333,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<VendorinfoQueryAllVendorInfoResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo`,
+      path: `/dcl/vendorinfo/vendorInfo`,
       method: "GET",
       query: query,
       format: "json",
@@ -346,11 +346,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryVendorInfo
    * @summary Queries a vendorInfo by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo/{vendorID}
+   * @request GET:/dcl/vendorinfo/vendorInfo/{vendorID}
    */
   queryVendorInfo = (vendorID: string, params: RequestParams = {}) =>
     this.request<VendorinfoQueryGetVendorInfoResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo/${vendorID}`,
+      path: `/dcl/vendorinfo/vendorInfo/${vendorID}`,
       method: "GET",
       format: "json",
       ...params,

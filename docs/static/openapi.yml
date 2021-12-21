@@ -15070,7 +15070,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo:
+  /dcl/vendorinfo/vendorInfo:
     get:
       summary: Queries a list of vendorInfo items.
       operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfoAll
@@ -15202,7 +15202,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo/{vendorID}':
+  '/dcl/vendorinfo/vendorInfo/{vendorID}':
     get:
       summary: Queries a vendorInfo by index.
       operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo

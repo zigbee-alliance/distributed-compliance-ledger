@@ -142,10 +142,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryVendorInfoAll
          * @summary Queries a list of vendorInfo items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo
+         * @request GET:/dcl/vendorinfo/vendorInfo
          */
         this.queryVendorInfoAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo`,
+            path: `/dcl/vendorinfo/vendorInfo`,
             method: "GET",
             query: query,
             format: "json",
@@ -157,10 +157,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryVendorInfo
          * @summary Queries a vendorInfo by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo/{vendorID}
+         * @request GET:/dcl/vendorinfo/vendorInfo/{vendorID}
          */
         this.queryVendorInfo = (vendorID, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/vendorinfo/vendorInfo/${vendorID}`,
+            path: `/dcl/vendorinfo/vendorInfo/${vendorID}`,
             method: "GET",
             format: "json",
             ...params,
