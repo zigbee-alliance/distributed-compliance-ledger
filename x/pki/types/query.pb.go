@@ -1007,198 +1007,6 @@ func (m *QueryAllRevokedCertificatesResponse) GetPagination() *query.PageRespons
 	return nil
 }
 
-type QueryGetUniqueCertificateRequest struct {
-	Issuer       string `protobuf:"bytes,1,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	SerialNumber string `protobuf:"bytes,2,opt,name=serial_number,json=serialNumber,proto3" json:"serial_number,omitempty"`
-}
-
-func (m *QueryGetUniqueCertificateRequest) Reset()         { *m = QueryGetUniqueCertificateRequest{} }
-func (m *QueryGetUniqueCertificateRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryGetUniqueCertificateRequest) ProtoMessage()    {}
-func (*QueryGetUniqueCertificateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{20}
-}
-func (m *QueryGetUniqueCertificateRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryGetUniqueCertificateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryGetUniqueCertificateRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryGetUniqueCertificateRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetUniqueCertificateRequest.Merge(m, src)
-}
-func (m *QueryGetUniqueCertificateRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryGetUniqueCertificateRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetUniqueCertificateRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryGetUniqueCertificateRequest proto.InternalMessageInfo
-
-func (m *QueryGetUniqueCertificateRequest) GetIssuer() string {
-	if m != nil {
-		return m.Issuer
-	}
-	return ""
-}
-
-func (m *QueryGetUniqueCertificateRequest) GetSerialNumber() string {
-	if m != nil {
-		return m.SerialNumber
-	}
-	return ""
-}
-
-type QueryGetUniqueCertificateResponse struct {
-	UniqueCertificate UniqueCertificate `protobuf:"bytes,1,opt,name=uniqueCertificate,proto3" json:"uniqueCertificate"`
-}
-
-func (m *QueryGetUniqueCertificateResponse) Reset()         { *m = QueryGetUniqueCertificateResponse{} }
-func (m *QueryGetUniqueCertificateResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryGetUniqueCertificateResponse) ProtoMessage()    {}
-func (*QueryGetUniqueCertificateResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{21}
-}
-func (m *QueryGetUniqueCertificateResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryGetUniqueCertificateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryGetUniqueCertificateResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryGetUniqueCertificateResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryGetUniqueCertificateResponse.Merge(m, src)
-}
-func (m *QueryGetUniqueCertificateResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryGetUniqueCertificateResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryGetUniqueCertificateResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryGetUniqueCertificateResponse proto.InternalMessageInfo
-
-func (m *QueryGetUniqueCertificateResponse) GetUniqueCertificate() UniqueCertificate {
-	if m != nil {
-		return m.UniqueCertificate
-	}
-	return UniqueCertificate{}
-}
-
-type QueryAllUniqueCertificateRequest struct {
-	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllUniqueCertificateRequest) Reset()         { *m = QueryAllUniqueCertificateRequest{} }
-func (m *QueryAllUniqueCertificateRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryAllUniqueCertificateRequest) ProtoMessage()    {}
-func (*QueryAllUniqueCertificateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{22}
-}
-func (m *QueryAllUniqueCertificateRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllUniqueCertificateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllUniqueCertificateRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllUniqueCertificateRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllUniqueCertificateRequest.Merge(m, src)
-}
-func (m *QueryAllUniqueCertificateRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllUniqueCertificateRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllUniqueCertificateRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllUniqueCertificateRequest proto.InternalMessageInfo
-
-func (m *QueryAllUniqueCertificateRequest) GetPagination() *query.PageRequest {
-	if m != nil {
-		return m.Pagination
-	}
-	return nil
-}
-
-type QueryAllUniqueCertificateResponse struct {
-	UniqueCertificate []UniqueCertificate `protobuf:"bytes,1,rep,name=uniqueCertificate,proto3" json:"uniqueCertificate"`
-	Pagination        *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllUniqueCertificateResponse) Reset()         { *m = QueryAllUniqueCertificateResponse{} }
-func (m *QueryAllUniqueCertificateResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryAllUniqueCertificateResponse) ProtoMessage()    {}
-func (*QueryAllUniqueCertificateResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{23}
-}
-func (m *QueryAllUniqueCertificateResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllUniqueCertificateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllUniqueCertificateResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllUniqueCertificateResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllUniqueCertificateResponse.Merge(m, src)
-}
-func (m *QueryAllUniqueCertificateResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllUniqueCertificateResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllUniqueCertificateResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllUniqueCertificateResponse proto.InternalMessageInfo
-
-func (m *QueryAllUniqueCertificateResponse) GetUniqueCertificate() []UniqueCertificate {
-	if m != nil {
-		return m.UniqueCertificate
-	}
-	return nil
-}
-
-func (m *QueryAllUniqueCertificateResponse) GetPagination() *query.PageResponse {
-	if m != nil {
-		return m.Pagination
-	}
-	return nil
-}
-
 type QueryGetApprovedRootCertificatesRequest struct {
 }
 
@@ -1208,7 +1016,7 @@ func (m *QueryGetApprovedRootCertificatesRequest) Reset() {
 func (m *QueryGetApprovedRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetApprovedRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{24}
+	return fileDescriptor_62972e0134af9ed2, []int{20}
 }
 func (m *QueryGetApprovedRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1247,7 +1055,7 @@ func (m *QueryGetApprovedRootCertificatesResponse) Reset() {
 func (m *QueryGetApprovedRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetApprovedRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{25}
+	return fileDescriptor_62972e0134af9ed2, []int{21}
 }
 func (m *QueryGetApprovedRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1292,7 +1100,7 @@ func (m *QueryGetRevokedRootCertificatesRequest) Reset() {
 func (m *QueryGetRevokedRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetRevokedRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{26}
+	return fileDescriptor_62972e0134af9ed2, []int{22}
 }
 func (m *QueryGetRevokedRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1331,7 +1139,7 @@ func (m *QueryGetRevokedRootCertificatesResponse) Reset() {
 func (m *QueryGetRevokedRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetRevokedRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{27}
+	return fileDescriptor_62972e0134af9ed2, []int{23}
 }
 func (m *QueryGetRevokedRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1379,7 +1187,7 @@ func (m *QueryGetApprovedCertificatesBySubjectRequest) String() string {
 }
 func (*QueryGetApprovedCertificatesBySubjectRequest) ProtoMessage() {}
 func (*QueryGetApprovedCertificatesBySubjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{28}
+	return fileDescriptor_62972e0134af9ed2, []int{24}
 }
 func (m *QueryGetApprovedCertificatesBySubjectRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1427,7 +1235,7 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) String() string {
 }
 func (*QueryGetApprovedCertificatesBySubjectResponse) ProtoMessage() {}
 func (*QueryGetApprovedCertificatesBySubjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{29}
+	return fileDescriptor_62972e0134af9ed2, []int{25}
 }
 func (m *QueryGetApprovedCertificatesBySubjectResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1463,110 +1271,6 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) GetApprovedCertificatesB
 	return ApprovedCertificatesBySubject{}
 }
 
-type QueryAllApprovedCertificatesBySubjectRequest struct {
-	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectRequest) Reset() {
-	*m = QueryAllApprovedCertificatesBySubjectRequest{}
-}
-func (m *QueryAllApprovedCertificatesBySubjectRequest) String() string {
-	return proto.CompactTextString(m)
-}
-func (*QueryAllApprovedCertificatesBySubjectRequest) ProtoMessage() {}
-func (*QueryAllApprovedCertificatesBySubjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{30}
-}
-func (m *QueryAllApprovedCertificatesBySubjectRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllApprovedCertificatesBySubjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllApprovedCertificatesBySubjectRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllApprovedCertificatesBySubjectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllApprovedCertificatesBySubjectRequest.Merge(m, src)
-}
-func (m *QueryAllApprovedCertificatesBySubjectRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllApprovedCertificatesBySubjectRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllApprovedCertificatesBySubjectRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllApprovedCertificatesBySubjectRequest proto.InternalMessageInfo
-
-func (m *QueryAllApprovedCertificatesBySubjectRequest) GetPagination() *query.PageRequest {
-	if m != nil {
-		return m.Pagination
-	}
-	return nil
-}
-
-type QueryAllApprovedCertificatesBySubjectResponse struct {
-	ApprovedCertificatesBySubject []ApprovedCertificatesBySubject `protobuf:"bytes,1,rep,name=approvedCertificatesBySubject,proto3" json:"approvedCertificatesBySubject"`
-	Pagination                    *query.PageResponse             `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectResponse) Reset() {
-	*m = QueryAllApprovedCertificatesBySubjectResponse{}
-}
-func (m *QueryAllApprovedCertificatesBySubjectResponse) String() string {
-	return proto.CompactTextString(m)
-}
-func (*QueryAllApprovedCertificatesBySubjectResponse) ProtoMessage() {}
-func (*QueryAllApprovedCertificatesBySubjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{31}
-}
-func (m *QueryAllApprovedCertificatesBySubjectResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllApprovedCertificatesBySubjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllApprovedCertificatesBySubjectResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllApprovedCertificatesBySubjectResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllApprovedCertificatesBySubjectResponse.Merge(m, src)
-}
-func (m *QueryAllApprovedCertificatesBySubjectResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllApprovedCertificatesBySubjectResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllApprovedCertificatesBySubjectResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllApprovedCertificatesBySubjectResponse proto.InternalMessageInfo
-
-func (m *QueryAllApprovedCertificatesBySubjectResponse) GetApprovedCertificatesBySubject() []ApprovedCertificatesBySubject {
-	if m != nil {
-		return m.ApprovedCertificatesBySubject
-	}
-	return nil
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectResponse) GetPagination() *query.PageResponse {
-	if m != nil {
-		return m.Pagination
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterType((*QueryGetApprovedCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesRequest")
 	proto.RegisterType((*QueryGetApprovedCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse")
@@ -1588,116 +1292,99 @@ func init() {
 	proto.RegisterType((*QueryGetRevokedCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedCertificatesResponse")
 	proto.RegisterType((*QueryAllRevokedCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedCertificatesRequest")
 	proto.RegisterType((*QueryAllRevokedCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedCertificatesResponse")
-	proto.RegisterType((*QueryGetUniqueCertificateRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetUniqueCertificateRequest")
-	proto.RegisterType((*QueryGetUniqueCertificateResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetUniqueCertificateResponse")
-	proto.RegisterType((*QueryAllUniqueCertificateRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllUniqueCertificateRequest")
-	proto.RegisterType((*QueryAllUniqueCertificateResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllUniqueCertificateResponse")
 	proto.RegisterType((*QueryGetApprovedRootCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesRequest")
 	proto.RegisterType((*QueryGetApprovedRootCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse")
 	proto.RegisterType((*QueryGetRevokedRootCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesRequest")
 	proto.RegisterType((*QueryGetRevokedRootCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse")
 	proto.RegisterType((*QueryGetApprovedCertificatesBySubjectRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesBySubjectRequest")
 	proto.RegisterType((*QueryGetApprovedCertificatesBySubjectResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesBySubjectResponse")
-	proto.RegisterType((*QueryAllApprovedCertificatesBySubjectRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesBySubjectRequest")
-	proto.RegisterType((*QueryAllApprovedCertificatesBySubjectResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesBySubjectResponse")
 }
 
 func init() { proto.RegisterFile("pki/query.proto", fileDescriptor_62972e0134af9ed2) }
 
 var fileDescriptor_62972e0134af9ed2 = []byte{
-	// 1467 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x9a, 0x4d, 0x6c, 0x1b, 0x45,
-	0x14, 0xc7, 0xb3, 0x6b, 0x28, 0x62, 0x80, 0x42, 0xa6, 0x51, 0x1b, 0x4c, 0xe3, 0xa4, 0x9b, 0x90,
-	0xa6, 0x11, 0xf1, 0xd2, 0x72, 0x80, 0xc2, 0x01, 0xdc, 0x14, 0x52, 0x08, 0x45, 0x89, 0x03, 0x94,
-	0x8f, 0xb4, 0xd6, 0x7a, 0x3d, 0x38, 0xdb, 0x6c, 0x3c, 0x9b, 0xfd, 0x88, 0x30, 0x51, 0x10, 0x42,
-	0x48, 0x20, 0x4e, 0x20, 0xb8, 0xc0, 0x81, 0x43, 0x0f, 0x48, 0x9c, 0x39, 0x20, 0x71, 0xe3, 0x56,
-	0x89, 0x4b, 0x25, 0x2e, 0x9c, 0x50, 0x95, 0x70, 0x40, 0x2a, 0x12, 0x67, 0x6e, 0x68, 0x67, 0xc7,
-	0xf1, 0xda, 0x3b, 0x33, 0xb6, 0xd7, 0xb3, 0xf4, 0x66, 0xef, 0x8c, 0xe7, 0x3f, 0xef, 0x37, 0x6f,
-	0xe6, 0xbd, 0x79, 0x5e, 0xf0, 0xb0, 0xb3, 0x69, 0xe9, 0xdb, 0x01, 0x72, 0x9b, 0x45, 0xc7, 0xc5,
-	0x3e, 0x86, 0xc5, 0x0f, 0xac, 0x7a, 0x15, 0x21, 0xc3, 0xb6, 0x2d, 0xa3, 0x61, 0xa2, 0x62, 0xcd,
-	0xf2, 0x7c, 0xd7, 0xaa, 0x06, 0x3e, 0xaa, 0x99, 0x78, 0xcb, 0x89, 0x9e, 0xda, 0xa8, 0x56, 0x47,
-	0x6e, 0xd1, 0xd9, 0xb4, 0xf2, 0x27, 0xeb, 0x18, 0xd7, 0x6d, 0xa4, 0x1b, 0x8e, 0xa5, 0x1b, 0x8d,
-	0x06, 0xf6, 0x0d, 0xdf, 0xc2, 0x0d, 0x2f, 0x1a, 0x2d, 0x3f, 0x6f, 0x62, 0x6f, 0x0b, 0x7b, 0x7a,
-	0xd5, 0xf0, 0x50, 0x24, 0xa3, 0xef, 0x9c, 0xad, 0x22, 0xdf, 0x38, 0xab, 0x3b, 0x46, 0xdd, 0x6a,
-	0x90, 0xce, 0xb4, 0xef, 0x64, 0x38, 0x15, 0xc3, 0x71, 0x5c, 0xbc, 0x83, 0x6a, 0x15, 0x13, 0xb9,
-	0xbe, 0xf5, 0x9e, 0x65, 0x1a, 0x3e, 0x6a, 0x0d, 0x56, 0x08, 0x3b, 0x38, 0x2e, 0x76, 0xb0, 0xd7,
-	0xd9, 0x81, 0xb6, 0x9f, 0x0c, 0xdb, 0xcd, 0x0d, 0xcb, 0x66, 0xfe, 0xfa, 0x0c, 0xef, 0xd7, 0x15,
-	0x17, 0xed, 0x60, 0x33, 0x3e, 0x13, 0x22, 0x14, 0x3e, 0xdd, 0x64, 0x4f, 0x84, 0x08, 0x05, 0x0d,
-	0x6b, 0x3b, 0x40, 0x8c, 0x69, 0xcc, 0x74, 0xd8, 0xe1, 0x62, 0xec, 0xb3, 0xc6, 0x98, 0x8e, 0x6b,
-	0xf0, 0x3a, 0xcd, 0x73, 0x91, 0x54, 0xaa, 0xcd, 0x8a, 0x17, 0x54, 0xaf, 0x23, 0xd3, 0xa7, 0x7d,
-	0xc7, 0xea, 0xb8, 0x8e, 0xc9, 0x47, 0x3d, 0xfc, 0x44, 0x9f, 0x3e, 0x1a, 0x2d, 0x40, 0x25, 0x6a,
-	0x88, 0xbe, 0x44, 0x4d, 0x1a, 0x02, 0xd3, 0xab, 0xe1, 0x8a, 0x2c, 0x21, 0xbf, 0x44, 0x25, 0x16,
-	0x63, 0x0a, 0x65, 0xb4, 0x1d, 0x20, 0xcf, 0x87, 0xe3, 0xe0, 0x3e, 0x2a, 0x34, 0xae, 0x4c, 0x29,
-	0x73, 0xf7, 0x97, 0x5b, 0x5f, 0xe1, 0x0c, 0x38, 0x4a, 0x3f, 0x56, 0x36, 0x51, 0xb3, 0x62, 0xd5,
-	0xc6, 0x55, 0xd2, 0xe1, 0x41, 0xfa, 0x74, 0x19, 0x35, 0x5f, 0xae, 0x69, 0xdf, 0x2b, 0x60, 0x46,
-	0xac, 0xe3, 0x39, 0xb8, 0xe1, 0x21, 0xf8, 0x21, 0x18, 0x33, 0x18, 0xed, 0x44, 0xf5, 0x81, 0x73,
-	0x17, 0x07, 0x74, 0xcc, 0x22, 0x4b, 0xeb, 0xc2, 0x3d, 0x37, 0xff, 0x98, 0x1c, 0x29, 0x33, 0x75,
-	0xb4, 0x2d, 0xca, 0xa3, 0x64, 0xdb, 0x22, 0x1e, 0x2f, 0x01, 0xd0, 0x76, 0x5d, 0x3a, 0xb9, 0xd9,
-	0x22, 0x25, 0x1b, 0xfa, 0x79, 0x31, 0xda, 0x4e, 0xd4, 0xcf, 0x8b, 0x2b, 0x46, 0x1d, 0xd1, 0xdf,
-	0x96, 0x63, 0xbf, 0xd4, 0xfe, 0x69, 0x71, 0xe1, 0xea, 0xf5, 0xe4, 0x92, 0xfb, 0x3f, 0xb8, 0xc0,
-	0xa5, 0x0e, 0x83, 0x55, 0x62, 0xf0, 0xe9, 0x9e, 0x06, 0x47, 0x93, 0xef, 0xb0, 0xb8, 0x06, 0xb4,
-	0x96, 0x23, 0xac, 0xd0, 0x7d, 0x18, 0x13, 0x92, 0xe5, 0x6f, 0x37, 0x94, 0xb6, 0x5f, 0x33, 0x65,
-	0x28, 0xd6, 0x5d, 0x70, 0xcc, 0x49, 0x36, 0xd3, 0x05, 0x5d, 0x1c, 0x94, 0x2a, 0x43, 0x89, 0x42,
-	0x65, 0xa9, 0x68, 0x36, 0x45, 0x51, 0xb2, 0x6d, 0x01, 0x0a, 0x59, 0xae, 0x76, 0x47, 0x69, 0xbb,
-	0x76, 0x2a, 0x24, 0xb9, 0xec, 0x91, 0xc8, 0x74, 0xb3, 0xa9, 0xd6, 0xfa, 0x2f, 0x86, 0xc1, 0x80,
-	0xb5, 0x89, 0x8f, 0x83, 0x23, 0x96, 0xe7, 0x05, 0xc8, 0xa5, 0x3e, 0x46, 0xbf, 0xc1, 0x39, 0xf0,
-	0x88, 0x11, 0xf8, 0x1b, 0xd8, 0xb5, 0xfc, 0x66, 0xa7, 0x93, 0x1d, 0x3d, 0x7c, 0x1e, 0xb9, 0xd9,
-	0xb7, 0x0a, 0x38, 0x25, 0x90, 0xa1, 0x44, 0x03, 0x30, 0x6a, 0x76, 0x37, 0xd2, 0x85, 0x2c, 0x0d,
-	0xca, 0x33, 0xa1, 0x42, 0x69, 0x26, 0x15, 0xb4, 0xeb, 0x14, 0x41, 0xc9, 0xb6, 0xb9, 0x08, 0x64,
-	0x39, 0xd7, 0x41, 0x0b, 0x04, 0x5b, 0x4c, 0x0c, 0x22, 0x97, 0x2d, 0x08, 0x79, 0x4e, 0xd5, 0x00,
-	0x4f, 0x08, 0x0f, 0x95, 0x56, 0x06, 0x21, 0xeb, 0x14, 0xfb, 0x55, 0x01, 0x0b, 0x7d, 0x0a, 0x52,
-	0xc2, 0xdf, 0x28, 0x60, 0xc2, 0x11, 0xf5, 0xa4, 0x6b, 0x7c, 0x59, 0xc2, 0x3e, 0x6e, 0x0f, 0x4a,
-	0xd1, 0x8b, 0x95, 0xb5, 0x1d, 0x4a, 0x8f, 0x77, 0xfe, 0x74, 0xd3, 0x93, 0xe5, 0x9b, 0x5f, 0xab,
-	0x94, 0x62, 0x6f, 0xe1, 0x01, 0x28, 0xe6, 0xee, 0x0e, 0xc5, 0x4c, 0x02, 0x71, 0x39, 0xca, 0x40,
-	0xb3, 0x48, 0xfc, 0xe2, 0x81, 0x98, 0x29, 0xd3, 0x8e, 0x3a, 0x6e, 0xb2, 0x39, 0x6d, 0x20, 0x66,
-	0x28, 0xb5, 0xa2, 0x0e, 0x43, 0x25, 0x1e, 0x88, 0x05, 0x28, 0xb2, 0x08, 0xc4, 0xa9, 0x90, 0xe4,
-	0xb2, 0x47, 0x22, 0xcf, 0xcd, 0x2a, 0xed, 0x40, 0xfc, 0x06, 0xb9, 0x2c, 0x31, 0x52, 0x1c, 0x5e,
-	0x20, 0x9e, 0x06, 0x0f, 0x79, 0xc8, 0xb5, 0x0c, 0xbb, 0xd2, 0x08, 0xb6, 0xaa, 0xc8, 0x3d, 0xf4,
-	0x30, 0xf2, 0xf0, 0x35, 0xf2, 0xac, 0x23, 0x06, 0x33, 0x14, 0xda, 0xa1, 0x27, 0xe8, 0x6e, 0x4c,
-	0x1b, 0x83, 0x13, 0x2a, 0xad, 0xd0, 0x93, 0x50, 0x88, 0xc7, 0x60, 0xae, 0xf5, 0x59, 0xc4, 0xe0,
-	0x81, 0x41, 0xe4, 0xb2, 0x05, 0x21, 0xcf, 0x9f, 0xce, 0x80, 0xd3, 0xdd, 0x17, 0xc9, 0x32, 0xc6,
-	0x3e, 0x63, 0xc3, 0x6a, 0x3f, 0x29, 0x60, 0xae, 0x77, 0x5f, 0xca, 0xe5, 0x73, 0x05, 0x8c, 0xf3,
-	0x3a, 0xd1, 0x45, 0xb9, 0x94, 0xf6, 0x96, 0xd5, 0x3d, 0x1e, 0xc5, 0xc4, 0xd5, 0xd3, 0xe6, 0xc0,
-	0x6c, 0xd7, 0xa1, 0xc9, 0xb3, 0xf1, 0x47, 0xa5, 0xcd, 0x83, 0xdb, 0x95, 0x9a, 0xf8, 0xa9, 0x02,
-	0x4e, 0x70, 0xfa, 0x50, 0x0b, 0x97, 0x52, 0x9e, 0x2a, 0x1c, 0x03, 0x79, 0x6a, 0xda, 0xa5, 0x76,
-	0x22, 0xc5, 0xbc, 0x89, 0x36, 0xd7, 0xa2, 0x18, 0xd2, 0x33, 0x0a, 0x75, 0xa4, 0x48, 0x3d, 0x86,
-	0x8a, 0x05, 0x77, 0x43, 0xd4, 0x33, 0x6d, 0x8a, 0x24, 0x94, 0x6f, 0x05, 0x77, 0xa1, 0x72, 0x3c,
-	0x45, 0xea, 0x8b, 0x4b, 0x16, 0x29, 0x92, 0x3c, 0x8a, 0xb9, 0xbb, 0x43, 0x51, 0xda, 0x59, 0x73,
-	0xee, 0xce, 0x29, 0x70, 0x2f, 0xc1, 0x02, 0x3f, 0x51, 0xc1, 0x18, 0x6b, 0x66, 0x70, 0x6d, 0x50,
-	0xfb, 0xfa, 0xa8, 0xb6, 0xe5, 0x5f, 0x97, 0x3b, 0x68, 0x64, 0x99, 0x56, 0xfa, 0xf8, 0xb7, 0x3f,
-	0xbf, 0x52, 0x9f, 0x83, 0xe7, 0xf5, 0x9a, 0x69, 0xeb, 0xdc, 0xa2, 0xa2, 0xbe, 0x4b, 0xf7, 0xd6,
-	0xde, 0xe1, 0x27, 0x9a, 0xe0, 0xed, 0xc1, 0xbf, 0x15, 0x70, 0x82, 0xa5, 0x51, 0xb2, 0xed, 0x94,
-	0x24, 0xc4, 0x75, 0xb6, 0x94, 0x24, 0x7a, 0x14, 0xd3, 0xb4, 0x59, 0x42, 0x62, 0x0a, 0x16, 0xc4,
-	0x24, 0xe0, 0x47, 0x2a, 0x38, 0xc6, 0x48, 0xd9, 0x61, 0x39, 0xed, 0xfa, 0xf0, 0xcb, 0x3c, 0xf9,
-	0x35, 0xa9, 0x63, 0x52, 0x43, 0x5f, 0x20, 0x86, 0x3e, 0x0b, 0x9f, 0x39, 0x34, 0x94, 0x55, 0xfb,
-	0x16, 0xad, 0xf8, 0x5f, 0x0a, 0x38, 0xce, 0x50, 0x08, 0x17, 0xbc, 0x9c, 0x76, 0x6d, 0xa4, 0x53,
-	0x10, 0x57, 0xb4, 0xb4, 0xc7, 0x09, 0x85, 0x49, 0x38, 0x21, 0xa4, 0x00, 0xff, 0x55, 0xc0, 0x68,
-	0xa2, 0xaa, 0x00, 0x57, 0xd2, 0xae, 0x0b, 0xaf, 0xe6, 0x92, 0x5f, 0x95, 0x38, 0x22, 0xb5, 0xf0,
-	0x79, 0x62, 0xe1, 0x79, 0xf8, 0xf4, 0xa1, 0x85, 0xc9, 0x7f, 0x40, 0xf4, 0xdd, 0x28, 0xab, 0xde,
-	0xd3, 0x77, 0xbb, 0xab, 0x5b, 0x7b, 0xf0, 0xb6, 0x02, 0xc6, 0x12, 0xc3, 0x87, 0x8b, 0xbc, 0x92,
-	0x76, 0x41, 0x24, 0x9b, 0x2f, 0xaa, 0x2b, 0x69, 0xd3, 0xc4, 0xfc, 0x09, 0xf8, 0x98, 0xc0, 0x7c,
-	0xf8, 0x83, 0x0a, 0x26, 0x84, 0xf7, 0x6f, 0xb8, 0x2e, 0x75, 0x0b, 0x76, 0x95, 0x33, 0xf2, 0x57,
-	0x33, 0x1a, 0x9d, 0x32, 0x58, 0x26, 0x0c, 0x5e, 0x84, 0x8b, 0x42, 0x27, 0x8f, 0xfd, 0xcd, 0x25,
-	0xda, 0xf5, 0x5f, 0xaa, 0x60, 0x4a, 0x28, 0x1b, 0xba, 0xc6, 0xba, 0xd4, 0xbd, 0x2a, 0x07, 0x57,
-	0xbf, 0x25, 0x1e, 0xed, 0x49, 0x82, 0x6b, 0x1e, 0xce, 0xf5, 0x8b, 0x8b, 0x04, 0x03, 0xc6, 0x25,
-	0x3a, 0x7d, 0x30, 0xe0, 0x97, 0x1a, 0xd2, 0x07, 0x03, 0x41, 0x3d, 0x81, 0x11, 0x0c, 0x58, 0xff,
-	0x6e, 0xf6, 0x0a, 0x06, 0x0c, 0x85, 0xa1, 0x82, 0x81, 0x74, 0x0a, 0xe2, 0xaa, 0x0a, 0x23, 0x18,
-	0xb0, 0x28, 0xc0, 0xef, 0x54, 0x30, 0x9a, 0xb8, 0xde, 0xa6, 0x0f, 0x06, 0xbc, 0xcb, 0x7f, 0xfa,
-	0x60, 0xc0, 0xbd, 0xe1, 0x6b, 0x35, 0x62, 0xe1, 0x35, 0xb8, 0xae, 0x47, 0x43, 0x2f, 0xb4, 0xc6,
-	0xd6, 0x05, 0x63, 0xeb, 0xec, 0x7f, 0xb3, 0x63, 0x41, 0xa3, 0xa3, 0x12, 0xb3, 0x07, 0x3f, 0x53,
-	0xc1, 0x58, 0x62, 0x0e, 0x43, 0x45, 0x0c, 0xc9, 0x8c, 0x44, 0x55, 0x90, 0xd8, 0x69, 0x39, 0x3c,
-	0x23, 0x78, 0x43, 0xe5, 0x97, 0x0e, 0xe0, 0x95, 0x61, 0x73, 0x79, 0xce, 0xcd, 0x3f, 0xff, 0x96,
-	0xfc, 0x81, 0x29, 0x9c, 0x35, 0x02, 0xe7, 0x32, 0x5c, 0x1e, 0x18, 0x0e, 0xff, 0x85, 0x87, 0x70,
-	0x43, 0xf1, 0xca, 0x01, 0xf0, 0xcd, 0x21, 0x8f, 0x3b, 0x1e, 0xa2, 0x2b, 0xd2, 0xc7, 0xa5, 0x84,
-	0xca, 0x84, 0xd0, 0xab, 0xf0, 0x95, 0x81, 0x09, 0x71, 0x5f, 0xf6, 0x80, 0xbf, 0xa8, 0x60, 0x42,
-	0x78, 0xf9, 0x4d, 0x9f, 0x9f, 0xf4, 0x53, 0x4b, 0x48, 0x9f, 0x9f, 0xf4, 0x55, 0x30, 0xd0, 0x4c,
-	0x82, 0xec, 0x2a, 0x7c, 0x37, 0xbd, 0x53, 0x71, 0x5e, 0x7d, 0x69, 0x47, 0x2c, 0xf8, 0xb3, 0x0a,
-	0xa6, 0x84, 0xd3, 0x19, 0x2a, 0x6f, 0xc9, 0x10, 0x63, 0xbf, 0x75, 0x17, 0xed, 0x6d, 0x82, 0x71,
-	0x0d, 0xae, 0x4a, 0xc7, 0x78, 0xe1, 0xda, 0xcd, 0xfd, 0x82, 0x72, 0x6b, 0xbf, 0xa0, 0xdc, 0xde,
-	0x2f, 0x28, 0x5f, 0x1c, 0x14, 0x46, 0x6e, 0x1d, 0x14, 0x46, 0x7e, 0x3f, 0x28, 0x8c, 0xbc, 0x73,
-	0xb1, 0x6e, 0xf9, 0x1b, 0x41, 0xb5, 0x68, 0xe2, 0x2d, 0x91, 0xec, 0x42, 0x5b, 0x77, 0x81, 0x0a,
-	0xbf, 0x4f, 0xa4, 0xfd, 0xa6, 0x83, 0xbc, 0xea, 0x11, 0xf2, 0xc6, 0xd1, 0x53, 0xff, 0x05, 0x00,
-	0x00, 0xff, 0xff, 0xb0, 0x42, 0x69, 0x75, 0x6e, 0x26, 0x00, 0x00,
+	// 1292 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x59, 0xcf, 0x6f, 0xdc, 0x44,
+	0x14, 0x8e, 0x37, 0x50, 0xc4, 0x80, 0x0a, 0x9d, 0x46, 0x6d, 0x58, 0x9a, 0x4d, 0x70, 0xd2, 0x34,
+	0x0d, 0x64, 0x4d, 0x5b, 0x21, 0x28, 0x3d, 0xc0, 0x36, 0x85, 0x14, 0x55, 0x48, 0xe9, 0x06, 0x51,
+	0x84, 0x0a, 0x2b, 0xaf, 0x77, 0xd8, 0xb8, 0x71, 0x76, 0x1c, 0xff, 0x88, 0x58, 0xa2, 0x20, 0x84,
+	0x90, 0x90, 0x7a, 0x02, 0xc1, 0xa5, 0x1c, 0x39, 0x20, 0x71, 0xe6, 0xc0, 0xbf, 0x50, 0x89, 0x4b,
+	0x25, 0x2e, 0x9c, 0x50, 0x95, 0x70, 0x40, 0x02, 0x89, 0x1b, 0x12, 0x9c, 0x90, 0xc7, 0xcf, 0x59,
+	0xef, 0x7a, 0x66, 0x76, 0xd7, 0x99, 0xa5, 0x37, 0xdb, 0xf3, 0xfc, 0xbe, 0xf9, 0xbe, 0xf7, 0x66,
+	0xde, 0x3c, 0x1b, 0x3d, 0xe1, 0x6e, 0xd8, 0xc6, 0x56, 0x48, 0xbc, 0x76, 0xd9, 0xf5, 0x68, 0x40,
+	0x71, 0xf9, 0x23, 0xbb, 0x59, 0x27, 0xc4, 0x74, 0x1c, 0xdb, 0x6c, 0x59, 0xa4, 0xdc, 0xb0, 0xfd,
+	0xc0, 0xb3, 0xeb, 0x61, 0x40, 0x1a, 0x16, 0xdd, 0x74, 0xe3, 0xa7, 0x0e, 0x69, 0x34, 0x89, 0x57,
+	0x76, 0x37, 0xec, 0xe2, 0xa9, 0x26, 0xa5, 0x4d, 0x87, 0x18, 0xa6, 0x6b, 0x1b, 0x66, 0xab, 0x45,
+	0x03, 0x33, 0xb0, 0x69, 0xcb, 0x8f, 0xbd, 0x15, 0x17, 0x2d, 0xea, 0x6f, 0x52, 0xdf, 0xa8, 0x9b,
+	0x3e, 0x89, 0x61, 0x8c, 0xed, 0x73, 0x75, 0x12, 0x98, 0xe7, 0x0c, 0xd7, 0x6c, 0xda, 0x2d, 0x66,
+	0x0c, 0xb6, 0xd3, 0xd1, 0x54, 0x4c, 0xd7, 0xf5, 0xe8, 0x36, 0x69, 0xd4, 0x2c, 0xe2, 0x05, 0xf6,
+	0x07, 0xb6, 0x65, 0x06, 0x24, 0x71, 0x56, 0x8a, 0x0c, 0x5c, 0x8f, 0xba, 0xd4, 0xef, 0x36, 0x80,
+	0xf1, 0x53, 0xd1, 0xb8, 0xb5, 0x6e, 0x3b, 0xdc, 0xb7, 0xcf, 0x8a, 0xde, 0xae, 0x79, 0x64, 0x9b,
+	0x5a, 0xe9, 0x99, 0x30, 0xa0, 0xe8, 0xe9, 0x06, 0x7f, 0x22, 0x0c, 0x28, 0x6c, 0xd9, 0x5b, 0x21,
+	0xe1, 0x4c, 0x63, 0xae, 0x8b, 0x87, 0x47, 0x69, 0xc0, 0xf3, 0x31, 0x9b, 0xc6, 0x10, 0x19, 0x2d,
+	0x0a, 0x25, 0xa9, 0xd5, 0xdb, 0x35, 0x3f, 0xac, 0xdf, 0x22, 0x56, 0x00, 0xb6, 0x13, 0x4d, 0xda,
+	0xa4, 0xec, 0xd2, 0x88, 0xae, 0xe0, 0xe9, 0x53, 0x71, 0x00, 0x6a, 0xf1, 0x40, 0x7c, 0x13, 0x0f,
+	0xe9, 0x04, 0xcd, 0x5e, 0x8f, 0x22, 0xb2, 0x42, 0x82, 0x0a, 0x40, 0x2c, 0xa7, 0x10, 0xaa, 0x64,
+	0x2b, 0x24, 0x7e, 0x80, 0x27, 0xd1, 0x23, 0x00, 0x34, 0xa9, 0xcd, 0x68, 0x0b, 0x8f, 0x56, 0x93,
+	0x5b, 0x3c, 0x87, 0x8e, 0xc2, 0x65, 0x6d, 0x83, 0xb4, 0x6b, 0x76, 0x63, 0xb2, 0xc0, 0x0c, 0x1e,
+	0x87, 0xa7, 0xd7, 0x48, 0xfb, 0x8d, 0x86, 0xfe, 0x9d, 0x86, 0xe6, 0xe4, 0x38, 0xbe, 0x4b, 0x5b,
+	0x3e, 0xc1, 0x1f, 0xa3, 0x09, 0x93, 0x33, 0xce, 0x50, 0x1f, 0x3b, 0x7f, 0x65, 0xc8, 0xc4, 0x2c,
+	0xf3, 0xb0, 0x2e, 0x3f, 0x74, 0xf7, 0xd7, 0xe9, 0xb1, 0x2a, 0x17, 0x47, 0xdf, 0x04, 0x3d, 0x2a,
+	0x8e, 0x23, 0xd3, 0xe3, 0x75, 0x84, 0x3a, 0xa9, 0x0b, 0x93, 0x9b, 0x2f, 0x83, 0xb2, 0x51, 0x9e,
+	0x97, 0xe3, 0xe5, 0x04, 0x79, 0x5e, 0x5e, 0x35, 0x9b, 0x04, 0xde, 0xad, 0xa6, 0xde, 0xd4, 0xff,
+	0x4a, 0x74, 0x11, 0xe2, 0xf5, 0xd5, 0x65, 0xfc, 0xff, 0xd0, 0x05, 0xaf, 0x74, 0x11, 0x2e, 0x30,
+	0xc2, 0x67, 0xfa, 0x12, 0x8e, 0x27, 0xdf, 0xc5, 0xb8, 0x81, 0xf4, 0x24, 0x11, 0x56, 0x61, 0x1d,
+	0xa6, 0x80, 0x54, 0xe5, 0xdb, 0xb7, 0x5a, 0x27, 0xaf, 0xb9, 0x30, 0x20, 0xeb, 0x0e, 0x3a, 0xee,
+	0x66, 0x87, 0x21, 0xa0, 0xcb, 0xc3, 0xaa, 0xca, 0x41, 0x02, 0x51, 0x79, 0x28, 0xba, 0x03, 0x52,
+	0x54, 0x1c, 0x47, 0x22, 0x85, 0xaa, 0x54, 0xfb, 0x43, 0xeb, 0xa4, 0x76, 0x2e, 0x49, 0xc6, 0x47,
+	0x2f, 0x89, 0xca, 0x34, 0x9b, 0x49, 0xe2, 0xbf, 0x1c, 0x15, 0x03, 0xde, 0x22, 0x3e, 0x81, 0x8e,
+	0xd8, 0xbe, 0x1f, 0x12, 0x0f, 0x72, 0x0c, 0xee, 0xf0, 0x02, 0x7a, 0xd2, 0x0c, 0x83, 0x75, 0xea,
+	0xd9, 0x41, 0xbb, 0x3b, 0xc9, 0x8e, 0x1e, 0x3c, 0x8f, 0xd3, 0xec, 0x1b, 0x0d, 0x3d, 0x23, 0x81,
+	0x01, 0x45, 0x43, 0x74, 0xcc, 0xea, 0x1d, 0x84, 0x40, 0x56, 0x86, 0xd5, 0x33, 0x83, 0x02, 0x6a,
+	0x66, 0x11, 0xf4, 0x5b, 0x20, 0x41, 0xc5, 0x71, 0x84, 0x12, 0xa8, 0x4a, 0xae, 0xfd, 0x44, 0x08,
+	0x3e, 0x98, 0x5c, 0x88, 0xf1, 0xd1, 0x0a, 0xa1, 0x2e, 0xa9, 0x5a, 0xe8, 0x39, 0xe9, 0xa6, 0x92,
+	0x9c, 0x20, 0x54, 0xed, 0x62, 0x3f, 0x69, 0x68, 0x69, 0x40, 0x40, 0x50, 0xf8, 0x8e, 0x86, 0xa6,
+	0x5c, 0x99, 0x25, 0xc4, 0xf8, 0x4d, 0x05, 0xeb, 0xb8, 0xe3, 0x14, 0xa4, 0x97, 0x23, 0xeb, 0xdb,
+	0xa0, 0x9e, 0x68, 0xff, 0xe9, 0x55, 0x4f, 0x55, 0x6e, 0x7e, 0x5d, 0x00, 0x15, 0xfb, 0x03, 0x0f,
+	0xa1, 0xe2, 0xf8, 0x83, 0x51, 0x71, 0x24, 0x85, 0xb8, 0x1a, 0x9f, 0x40, 0x47, 0x71, 0xf0, 0x4b,
+	0x17, 0x62, 0x2e, 0x4c, 0xa7, 0xea, 0x78, 0xd9, 0xe1, 0xbc, 0x85, 0x98, 0x83, 0x94, 0x54, 0x1d,
+	0x0e, 0x4a, 0xba, 0x10, 0x4b, 0xa4, 0x18, 0x45, 0x21, 0xce, 0x25, 0xc9, 0xf8, 0xe8, 0x25, 0x51,
+	0x97, 0x66, 0x67, 0xd1, 0x99, 0xde, 0x83, 0x7f, 0x95, 0xd2, 0x80, 0x23, 0xb0, 0xfe, 0xa3, 0x86,
+	0x16, 0xfa, 0xdb, 0x82, 0x3a, 0xb7, 0x35, 0x34, 0x29, 0x32, 0x82, 0xe0, 0x5c, 0xcd, 0x7b, 0x2a,
+	0xee, 0xf5, 0x07, 0x42, 0x09, 0xf1, 0xf4, 0x05, 0x34, 0xdf, 0x93, 0xe4, 0x22, 0x8e, 0x3f, 0x68,
+	0x1d, 0x3d, 0x84, 0xa6, 0x40, 0xf1, 0x73, 0x0d, 0x9d, 0x14, 0xd8, 0x00, 0xc3, 0x95, 0x9c, 0x59,
+	0x20, 0x20, 0x28, 0x42, 0xd3, 0xaf, 0x76, 0x0a, 0x1f, 0xb7, 0x73, 0x68, 0xaf, 0xc5, 0x6b, 0xbe,
+	0xef, 0xae, 0xd1, 0x55, 0xd2, 0xfa, 0xb8, 0x4a, 0x6d, 0xc6, 0xa6, 0xcc, 0x32, 0x6f, 0x49, 0x93,
+	0xc2, 0x27, 0x9b, 0xb1, 0x14, 0xf9, 0xfc, 0xed, 0x22, 0x7a, 0x98, 0xb1, 0xc1, 0x9f, 0x15, 0xd0,
+	0x04, 0xcf, 0x21, 0x5e, 0x1b, 0x76, 0x5a, 0x03, 0xb4, 0xe3, 0xc5, 0xb7, 0xd4, 0x3a, 0x8d, 0x95,
+	0xd6, 0x2b, 0x9f, 0xfe, 0xfc, 0xdb, 0x57, 0x85, 0x4b, 0xf8, 0xa2, 0xd1, 0xb0, 0x1c, 0x43, 0xf8,
+	0xd5, 0xc1, 0xd8, 0x81, 0x60, 0xee, 0x1e, 0x5c, 0x41, 0x05, 0xd8, 0xc5, 0x7f, 0x6a, 0xe8, 0x24,
+	0x0f, 0xa3, 0xe2, 0x38, 0x39, 0x95, 0x90, 0x37, 0xe2, 0x39, 0x95, 0xe8, 0xd3, 0x6d, 0xeb, 0xf3,
+	0x4c, 0x89, 0x19, 0x5c, 0x92, 0x2b, 0x81, 0x3f, 0x29, 0xa0, 0xe3, 0x9c, 0x9a, 0x8e, 0xab, 0x79,
+	0xe3, 0x23, 0xee, 0x03, 0x8b, 0x6b, 0x4a, 0x7d, 0x02, 0xd1, 0x57, 0x19, 0xd1, 0x97, 0xf1, 0x4b,
+	0x07, 0x44, 0x79, 0x1f, 0xc7, 0x64, 0x11, 0xff, 0x5d, 0x43, 0x27, 0x38, 0x08, 0x51, 0xc0, 0xab,
+	0x79, 0x63, 0xa3, 0x5c, 0x05, 0x79, 0xcb, 0xab, 0x9f, 0x66, 0x2a, 0x4c, 0xe3, 0x29, 0xa9, 0x0a,
+	0xf8, 0x1f, 0x0d, 0x1d, 0xcb, 0xb4, 0x1d, 0x78, 0x35, 0x6f, 0x5c, 0x44, 0x4d, 0x59, 0xf1, 0xba,
+	0x42, 0x8f, 0xc0, 0xf0, 0x15, 0xc6, 0xf0, 0x22, 0x7e, 0xf1, 0x80, 0x61, 0xf6, 0x13, 0xa9, 0xb1,
+	0x13, 0xf7, 0xbf, 0xbb, 0xc6, 0x4e, 0x6f, 0xfb, 0xbb, 0x8b, 0xef, 0x6b, 0x68, 0x22, 0xe3, 0x3e,
+	0x0a, 0xf2, 0x6a, 0xde, 0x80, 0x28, 0xa6, 0x2f, 0x6b, 0x3c, 0xf5, 0x59, 0x46, 0x7f, 0x0a, 0x3f,
+	0x2d, 0xa1, 0x8f, 0xbf, 0x2f, 0xa0, 0x29, 0xe9, 0x01, 0x1d, 0xdf, 0x54, 0xba, 0x04, 0x7b, 0xfa,
+	0x9d, 0xe2, 0x7b, 0x23, 0xf2, 0x0e, 0x1a, 0x5c, 0x63, 0x1a, 0xbc, 0x86, 0x97, 0xa5, 0x49, 0x9e,
+	0xfa, 0x0e, 0x2e, 0x5b, 0xf5, 0x5f, 0x16, 0xd0, 0x8c, 0x14, 0x36, 0x4a, 0x8d, 0x9b, 0x4a, 0xd7,
+	0xaa, 0x1a, 0xb9, 0x06, 0xed, 0x01, 0xf5, 0xe7, 0x99, 0x5c, 0x8b, 0x78, 0x61, 0x50, 0xb9, 0x58,
+	0x31, 0xe0, 0x9c, 0xb2, 0xf3, 0x17, 0x03, 0x71, 0x2f, 0x92, 0xbf, 0x18, 0x48, 0x1a, 0x0e, 0x4e,
+	0x31, 0xe0, 0xfd, 0xfe, 0xe8, 0x57, 0x0c, 0x38, 0x08, 0x87, 0x2a, 0x06, 0xca, 0x55, 0x90, 0xb7,
+	0x5d, 0x9c, 0x62, 0xc0, 0x53, 0x01, 0xff, 0x2b, 0xe9, 0x3f, 0xf0, 0x8d, 0xc3, 0x9e, 0xcf, 0x04,
+	0xed, 0x43, 0xf1, 0x1d, 0xf5, 0x8e, 0x81, 0xf6, 0xb3, 0x8c, 0xf6, 0x69, 0x3c, 0x9b, 0x3d, 0xf2,
+	0x64, 0x7e, 0x4c, 0xe1, 0xbf, 0xc5, 0x9d, 0x09, 0x7e, 0xfb, 0x90, 0xa9, 0x29, 0xa2, 0x7e, 0x43,
+	0xb9, 0x5f, 0x60, 0xbe, 0xc8, 0x98, 0xcf, 0x61, 0x3d, 0x13, 0xf0, 0x2c, 0xf1, 0x3b, 0x05, 0x34,
+	0x25, 0xed, 0x1b, 0xf2, 0xd7, 0x88, 0x41, 0x1a, 0xab, 0xfc, 0x35, 0x62, 0xa0, 0x5e, 0x4b, 0xbf,
+	0xc4, 0xa4, 0x78, 0x01, 0x5f, 0x90, 0x9f, 0x7b, 0x53, 0xff, 0x1d, 0x3b, 0xbb, 0xc1, 0xe5, 0xf7,
+	0xef, 0xee, 0x95, 0xb4, 0x7b, 0x7b, 0x25, 0xed, 0xfe, 0x5e, 0x49, 0xfb, 0x62, 0xbf, 0x34, 0x76,
+	0x6f, 0xbf, 0x34, 0xf6, 0xcb, 0x7e, 0x69, 0xec, 0xdd, 0x2b, 0x4d, 0x3b, 0x58, 0x0f, 0xeb, 0x65,
+	0x8b, 0x6e, 0x1a, 0xf1, 0xfc, 0x97, 0x12, 0x02, 0x46, 0x8a, 0xc0, 0x52, 0x87, 0xc1, 0x52, 0x4c,
+	0xc1, 0xf8, 0x90, 0x4d, 0x22, 0x68, 0xbb, 0xc4, 0xaf, 0x1f, 0x61, 0x7f, 0x2c, 0x2f, 0xfc, 0x17,
+	0x00, 0x00, 0xff, 0xff, 0x6d, 0x64, 0x6f, 0xa8, 0xae, 0x1e, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1732,18 +1419,12 @@ type QueryClient interface {
 	RevokedCertificates(ctx context.Context, in *QueryGetRevokedCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRevokedCertificatesResponse, error)
 	// Queries a list of RevokedCertificates items.
 	RevokedCertificatesAll(ctx context.Context, in *QueryAllRevokedCertificatesRequest, opts ...grpc.CallOption) (*QueryAllRevokedCertificatesResponse, error)
-	// Queries a UniqueCertificate by index.
-	UniqueCertificate(ctx context.Context, in *QueryGetUniqueCertificateRequest, opts ...grpc.CallOption) (*QueryGetUniqueCertificateResponse, error)
-	// Queries a list of UniqueCertificate items.
-	UniqueCertificateAll(ctx context.Context, in *QueryAllUniqueCertificateRequest, opts ...grpc.CallOption) (*QueryAllUniqueCertificateResponse, error)
 	// Queries a ApprovedRootCertificates by index.
 	ApprovedRootCertificates(ctx context.Context, in *QueryGetApprovedRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetApprovedRootCertificatesResponse, error)
 	// Queries a RevokedRootCertificates by index.
 	RevokedRootCertificates(ctx context.Context, in *QueryGetRevokedRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetRevokedRootCertificatesResponse, error)
 	// Queries a ApprovedCertificatesBySubject by index.
 	ApprovedCertificatesBySubject(ctx context.Context, in *QueryGetApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesBySubjectResponse, error)
-	// Queries a list of ApprovedCertificatesBySubject items.
-	ApprovedCertificatesBySubjectAll(ctx context.Context, in *QueryAllApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryAllApprovedCertificatesBySubjectResponse, error)
 }
 
 type queryClient struct {
@@ -1844,24 +1525,6 @@ func (c *queryClient) RevokedCertificatesAll(ctx context.Context, in *QueryAllRe
 	return out, nil
 }
 
-func (c *queryClient) UniqueCertificate(ctx context.Context, in *QueryGetUniqueCertificateRequest, opts ...grpc.CallOption) (*QueryGetUniqueCertificateResponse, error) {
-	out := new(QueryGetUniqueCertificateResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/UniqueCertificate", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) UniqueCertificateAll(ctx context.Context, in *QueryAllUniqueCertificateRequest, opts ...grpc.CallOption) (*QueryAllUniqueCertificateResponse, error) {
-	out := new(QueryAllUniqueCertificateResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/UniqueCertificateAll", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *queryClient) ApprovedRootCertificates(ctx context.Context, in *QueryGetApprovedRootCertificatesRequest, opts ...grpc.CallOption) (*QueryGetApprovedRootCertificatesResponse, error) {
 	out := new(QueryGetApprovedRootCertificatesResponse)
 	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedRootCertificates", in, out, opts...)
@@ -1883,15 +1546,6 @@ func (c *queryClient) RevokedRootCertificates(ctx context.Context, in *QueryGetR
 func (c *queryClient) ApprovedCertificatesBySubject(ctx context.Context, in *QueryGetApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryGetApprovedCertificatesBySubjectResponse, error) {
 	out := new(QueryGetApprovedCertificatesBySubjectResponse)
 	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesBySubject", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) ApprovedCertificatesBySubjectAll(ctx context.Context, in *QueryAllApprovedCertificatesBySubjectRequest, opts ...grpc.CallOption) (*QueryAllApprovedCertificatesBySubjectResponse, error) {
-	out := new(QueryAllApprovedCertificatesBySubjectResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesBySubjectAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1920,18 +1574,12 @@ type QueryServer interface {
 	RevokedCertificates(context.Context, *QueryGetRevokedCertificatesRequest) (*QueryGetRevokedCertificatesResponse, error)
 	// Queries a list of RevokedCertificates items.
 	RevokedCertificatesAll(context.Context, *QueryAllRevokedCertificatesRequest) (*QueryAllRevokedCertificatesResponse, error)
-	// Queries a UniqueCertificate by index.
-	UniqueCertificate(context.Context, *QueryGetUniqueCertificateRequest) (*QueryGetUniqueCertificateResponse, error)
-	// Queries a list of UniqueCertificate items.
-	UniqueCertificateAll(context.Context, *QueryAllUniqueCertificateRequest) (*QueryAllUniqueCertificateResponse, error)
 	// Queries a ApprovedRootCertificates by index.
 	ApprovedRootCertificates(context.Context, *QueryGetApprovedRootCertificatesRequest) (*QueryGetApprovedRootCertificatesResponse, error)
 	// Queries a RevokedRootCertificates by index.
 	RevokedRootCertificates(context.Context, *QueryGetRevokedRootCertificatesRequest) (*QueryGetRevokedRootCertificatesResponse, error)
 	// Queries a ApprovedCertificatesBySubject by index.
 	ApprovedCertificatesBySubject(context.Context, *QueryGetApprovedCertificatesBySubjectRequest) (*QueryGetApprovedCertificatesBySubjectResponse, error)
-	// Queries a list of ApprovedCertificatesBySubject items.
-	ApprovedCertificatesBySubjectAll(context.Context, *QueryAllApprovedCertificatesBySubjectRequest) (*QueryAllApprovedCertificatesBySubjectResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -1968,12 +1616,6 @@ func (*UnimplementedQueryServer) RevokedCertificates(ctx context.Context, req *Q
 func (*UnimplementedQueryServer) RevokedCertificatesAll(ctx context.Context, req *QueryAllRevokedCertificatesRequest) (*QueryAllRevokedCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RevokedCertificatesAll not implemented")
 }
-func (*UnimplementedQueryServer) UniqueCertificate(ctx context.Context, req *QueryGetUniqueCertificateRequest) (*QueryGetUniqueCertificateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UniqueCertificate not implemented")
-}
-func (*UnimplementedQueryServer) UniqueCertificateAll(ctx context.Context, req *QueryAllUniqueCertificateRequest) (*QueryAllUniqueCertificateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UniqueCertificateAll not implemented")
-}
 func (*UnimplementedQueryServer) ApprovedRootCertificates(ctx context.Context, req *QueryGetApprovedRootCertificatesRequest) (*QueryGetApprovedRootCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApprovedRootCertificates not implemented")
 }
@@ -1982,9 +1624,6 @@ func (*UnimplementedQueryServer) RevokedRootCertificates(ctx context.Context, re
 }
 func (*UnimplementedQueryServer) ApprovedCertificatesBySubject(ctx context.Context, req *QueryGetApprovedCertificatesBySubjectRequest) (*QueryGetApprovedCertificatesBySubjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApprovedCertificatesBySubject not implemented")
-}
-func (*UnimplementedQueryServer) ApprovedCertificatesBySubjectAll(ctx context.Context, req *QueryAllApprovedCertificatesBySubjectRequest) (*QueryAllApprovedCertificatesBySubjectResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ApprovedCertificatesBySubjectAll not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -2171,42 +1810,6 @@ func _Query_RevokedCertificatesAll_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_UniqueCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryGetUniqueCertificateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).UniqueCertificate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/UniqueCertificate",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).UniqueCertificate(ctx, req.(*QueryGetUniqueCertificateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_UniqueCertificateAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllUniqueCertificateRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).UniqueCertificateAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/UniqueCertificateAll",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).UniqueCertificateAll(ctx, req.(*QueryAllUniqueCertificateRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Query_ApprovedRootCertificates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryGetApprovedRootCertificatesRequest)
 	if err := dec(in); err != nil {
@@ -2261,24 +1864,6 @@ func _Query_ApprovedCertificatesBySubject_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_ApprovedCertificatesBySubjectAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllApprovedCertificatesBySubjectRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).ApprovedCertificatesBySubjectAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/ApprovedCertificatesBySubjectAll",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ApprovedCertificatesBySubjectAll(ctx, req.(*QueryAllApprovedCertificatesBySubjectRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.pki.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -2324,14 +1909,6 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_RevokedCertificatesAll_Handler,
 		},
 		{
-			MethodName: "UniqueCertificate",
-			Handler:    _Query_UniqueCertificate_Handler,
-		},
-		{
-			MethodName: "UniqueCertificateAll",
-			Handler:    _Query_UniqueCertificateAll_Handler,
-		},
-		{
 			MethodName: "ApprovedRootCertificates",
 			Handler:    _Query_ApprovedRootCertificates_Handler,
 		},
@@ -2342,10 +1919,6 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ApprovedCertificatesBySubject",
 			Handler:    _Query_ApprovedCertificatesBySubject_Handler,
-		},
-		{
-			MethodName: "ApprovedCertificatesBySubjectAll",
-			Handler:    _Query_ApprovedCertificatesBySubjectAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -3122,160 +2695,6 @@ func (m *QueryAllRevokedCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryGetUniqueCertificateRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryGetUniqueCertificateRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryGetUniqueCertificateRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.SerialNumber) > 0 {
-		i -= len(m.SerialNumber)
-		copy(dAtA[i:], m.SerialNumber)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.SerialNumber)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Issuer) > 0 {
-		i -= len(m.Issuer)
-		copy(dAtA[i:], m.Issuer)
-		i = encodeVarintQuery(dAtA, i, uint64(len(m.Issuer)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryGetUniqueCertificateResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryGetUniqueCertificateResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryGetUniqueCertificateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size, err := m.UniqueCertificate.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllUniqueCertificateRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllUniqueCertificateRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllUniqueCertificateRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllUniqueCertificateResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllUniqueCertificateResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllUniqueCertificateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.UniqueCertificate) > 0 {
-		for iNdEx := len(m.UniqueCertificate) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.UniqueCertificate[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *QueryGetApprovedRootCertificatesRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -3448,90 +2867,6 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) MarshalToSizedBuffer(dAt
 	}
 	i--
 	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.ApprovedCertificatesBySubject) > 0 {
-		for iNdEx := len(m.ApprovedCertificatesBySubject) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.ApprovedCertificatesBySubject[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
-	}
 	return len(dAtA) - i, nil
 }
 
@@ -3846,66 +3181,6 @@ func (m *QueryAllRevokedCertificatesResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryGetUniqueCertificateRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Issuer)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	l = len(m.SerialNumber)
-	if l > 0 {
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryGetUniqueCertificateResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.UniqueCertificate.Size()
-	n += 1 + l + sovQuery(uint64(l))
-	return n
-}
-
-func (m *QueryAllUniqueCertificateRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryAllUniqueCertificateResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.UniqueCertificate) > 0 {
-		for _, e := range m.UniqueCertificate {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
 func (m *QueryGetApprovedRootCertificatesRequest) Size() (n int) {
 	if m == nil {
 		return 0
@@ -3967,38 +3242,6 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) Size() (n int) {
 	_ = l
 	l = m.ApprovedCertificatesBySubject.Size()
 	n += 1 + l + sovQuery(uint64(l))
-	return n
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryAllApprovedCertificatesBySubjectResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.ApprovedCertificatesBySubject) > 0 {
-		for _, e := range m.ApprovedCertificatesBySubject {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
 	return n
 }
 
@@ -6023,409 +5266,6 @@ func (m *QueryAllRevokedCertificatesResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryGetUniqueCertificateRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetUniqueCertificateRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetUniqueCertificateRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Issuer", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Issuer = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SerialNumber", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.SerialNumber = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryGetUniqueCertificateResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryGetUniqueCertificateResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryGetUniqueCertificateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UniqueCertificate", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.UniqueCertificate.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllUniqueCertificateRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllUniqueCertificateRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllUniqueCertificateRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageRequest{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllUniqueCertificateResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllUniqueCertificateResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllUniqueCertificateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field UniqueCertificate", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.UniqueCertificate = append(m.UniqueCertificate, UniqueCertificate{})
-			if err := m.UniqueCertificate[len(m.UniqueCertificate)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageResponse{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *QueryGetApprovedRootCertificatesRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -6833,212 +5673,6 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) Unmarshal(dAtA []byte) e
 				return io.ErrUnexpectedEOF
 			}
 			if err := m.ApprovedCertificatesBySubject.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllApprovedCertificatesBySubjectRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllApprovedCertificatesBySubjectRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllApprovedCertificatesBySubjectRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageRequest{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllApprovedCertificatesBySubjectResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllApprovedCertificatesBySubjectResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllApprovedCertificatesBySubjectResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ApprovedCertificatesBySubject", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ApprovedCertificatesBySubject = append(m.ApprovedCertificatesBySubject, ApprovedCertificatesBySubject{})
-			if err := m.ApprovedCertificatesBySubject[len(m.ApprovedCertificatesBySubject)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageResponse{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

@@ -73,33 +73,19 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/revoked_certificates";
 	}
 
-// Queries a UniqueCertificate by index.
-	rpc UniqueCertificate(QueryGetUniqueCertificateRequest) returns (QueryGetUniqueCertificateResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/{issuer}/{serial_number}";
-	}
-
-	// Queries a list of UniqueCertificate items.
-	rpc UniqueCertificateAll(QueryAllUniqueCertificateRequest) returns (QueryAllUniqueCertificateResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate";
-	}
-
 // Queries a ApprovedRootCertificates by index.
 	rpc ApprovedRootCertificates(QueryGetApprovedRootCertificatesRequest) returns (QueryGetApprovedRootCertificatesResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates";
+		option (google.api.http).get = "/dcl/pki/approved_root_certificates";
 	}
 // Queries a RevokedRootCertificates by index.
 	rpc RevokedRootCertificates(QueryGetRevokedRootCertificatesRequest) returns (QueryGetRevokedRootCertificatesResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/revoked_root_certificates";
+		option (google.api.http).get = "/dcl/pki/revoked_root_certificates";
 	}
 // Queries a ApprovedCertificatesBySubject by index.
 	rpc ApprovedCertificatesBySubject(QueryGetApprovedCertificatesBySubjectRequest) returns (QueryGetApprovedCertificatesBySubjectResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject/{subject}";
+		option (google.api.http).get = "/dcl/pki/approved_certificates_by_subject/{subject}";
 	}
 
-	// Queries a list of ApprovedCertificatesBySubject items.
-	rpc ApprovedCertificatesBySubjectAll(QueryAllApprovedCertificatesBySubjectRequest) returns (QueryAllApprovedCertificatesBySubjectResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject";
-	}
 
 // this line is used by starport scaffolding # 2
 }
@@ -199,25 +185,6 @@ message QueryAllRevokedCertificatesResponse {
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryGetUniqueCertificateRequest {
-	  string issuer = 1;
-  string serial_number = 2;
-
-}
-
-message QueryGetUniqueCertificateResponse {
-	UniqueCertificate uniqueCertificate = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllUniqueCertificateRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllUniqueCertificateResponse {
-	repeated UniqueCertificate uniqueCertificate = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
-}
-
 message QueryGetApprovedRootCertificatesRequest {}
 
 message QueryGetApprovedRootCertificatesResponse {
@@ -235,15 +202,6 @@ message QueryGetApprovedCertificatesBySubjectRequest {
 
 message QueryGetApprovedCertificatesBySubjectResponse {
 	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllApprovedCertificatesBySubjectRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllApprovedCertificatesBySubjectResponse {
-	repeated ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

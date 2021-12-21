@@ -6,7 +6,6 @@ import { ProposedCertificate } from '../pki/proposed_certificate'
 import { ChildCertificates } from '../pki/child_certificates'
 import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revocation'
 import { RevokedCertificates } from '../pki/revoked_certificates'
-import { UniqueCertificate } from '../pki/unique_certificate'
 import { ApprovedRootCertificates } from '../pki/approved_root_certificates'
 import { RevokedRootCertificates } from '../pki/revoked_root_certificates'
 import { ApprovedCertificatesBySubject } from '../pki/approved_certificates_by_subject'
@@ -103,24 +102,6 @@ export interface QueryAllRevokedCertificatesResponse {
   pagination: PageResponse | undefined
 }
 
-export interface QueryGetUniqueCertificateRequest {
-  issuer: string
-  serialNumber: string
-}
-
-export interface QueryGetUniqueCertificateResponse {
-  uniqueCertificate: UniqueCertificate | undefined
-}
-
-export interface QueryAllUniqueCertificateRequest {
-  pagination: PageRequest | undefined
-}
-
-export interface QueryAllUniqueCertificateResponse {
-  uniqueCertificate: UniqueCertificate[]
-  pagination: PageResponse | undefined
-}
-
 export interface QueryGetApprovedRootCertificatesRequest {}
 
 export interface QueryGetApprovedRootCertificatesResponse {
@@ -139,15 +120,6 @@ export interface QueryGetApprovedCertificatesBySubjectRequest {
 
 export interface QueryGetApprovedCertificatesBySubjectResponse {
   approvedCertificatesBySubject: ApprovedCertificatesBySubject | undefined
-}
-
-export interface QueryAllApprovedCertificatesBySubjectRequest {
-  pagination: PageRequest | undefined
-}
-
-export interface QueryAllApprovedCertificatesBySubjectResponse {
-  approvedCertificatesBySubject: ApprovedCertificatesBySubject[]
-  pagination: PageResponse | undefined
 }
 
 const baseQueryGetApprovedCertificatesRequest: object = { subject: '', subjectKeyId: '' }
@@ -1462,268 +1434,6 @@ export const QueryAllRevokedCertificatesResponse = {
   }
 }
 
-const baseQueryGetUniqueCertificateRequest: object = { issuer: '', serialNumber: '' }
-
-export const QueryGetUniqueCertificateRequest = {
-  encode(message: QueryGetUniqueCertificateRequest, writer: Writer = Writer.create()): Writer {
-    if (message.issuer !== '') {
-      writer.uint32(10).string(message.issuer)
-    }
-    if (message.serialNumber !== '') {
-      writer.uint32(18).string(message.serialNumber)
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryGetUniqueCertificateRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryGetUniqueCertificateRequest } as QueryGetUniqueCertificateRequest
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.issuer = reader.string()
-          break
-        case 2:
-          message.serialNumber = reader.string()
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryGetUniqueCertificateRequest {
-    const message = { ...baseQueryGetUniqueCertificateRequest } as QueryGetUniqueCertificateRequest
-    if (object.issuer !== undefined && object.issuer !== null) {
-      message.issuer = String(object.issuer)
-    } else {
-      message.issuer = ''
-    }
-    if (object.serialNumber !== undefined && object.serialNumber !== null) {
-      message.serialNumber = String(object.serialNumber)
-    } else {
-      message.serialNumber = ''
-    }
-    return message
-  },
-
-  toJSON(message: QueryGetUniqueCertificateRequest): unknown {
-    const obj: any = {}
-    message.issuer !== undefined && (obj.issuer = message.issuer)
-    message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryGetUniqueCertificateRequest>): QueryGetUniqueCertificateRequest {
-    const message = { ...baseQueryGetUniqueCertificateRequest } as QueryGetUniqueCertificateRequest
-    if (object.issuer !== undefined && object.issuer !== null) {
-      message.issuer = object.issuer
-    } else {
-      message.issuer = ''
-    }
-    if (object.serialNumber !== undefined && object.serialNumber !== null) {
-      message.serialNumber = object.serialNumber
-    } else {
-      message.serialNumber = ''
-    }
-    return message
-  }
-}
-
-const baseQueryGetUniqueCertificateResponse: object = {}
-
-export const QueryGetUniqueCertificateResponse = {
-  encode(message: QueryGetUniqueCertificateResponse, writer: Writer = Writer.create()): Writer {
-    if (message.uniqueCertificate !== undefined) {
-      UniqueCertificate.encode(message.uniqueCertificate, writer.uint32(10).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryGetUniqueCertificateResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryGetUniqueCertificateResponse } as QueryGetUniqueCertificateResponse
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.uniqueCertificate = UniqueCertificate.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryGetUniqueCertificateResponse {
-    const message = { ...baseQueryGetUniqueCertificateResponse } as QueryGetUniqueCertificateResponse
-    if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
-      message.uniqueCertificate = UniqueCertificate.fromJSON(object.uniqueCertificate)
-    } else {
-      message.uniqueCertificate = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryGetUniqueCertificateResponse): unknown {
-    const obj: any = {}
-    message.uniqueCertificate !== undefined &&
-      (obj.uniqueCertificate = message.uniqueCertificate ? UniqueCertificate.toJSON(message.uniqueCertificate) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryGetUniqueCertificateResponse>): QueryGetUniqueCertificateResponse {
-    const message = { ...baseQueryGetUniqueCertificateResponse } as QueryGetUniqueCertificateResponse
-    if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
-      message.uniqueCertificate = UniqueCertificate.fromPartial(object.uniqueCertificate)
-    } else {
-      message.uniqueCertificate = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllUniqueCertificateRequest: object = {}
-
-export const QueryAllUniqueCertificateRequest = {
-  encode(message: QueryAllUniqueCertificateRequest, writer: Writer = Writer.create()): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllUniqueCertificateRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllUniqueCertificateRequest } as QueryAllUniqueCertificateRequest
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllUniqueCertificateRequest {
-    const message = { ...baseQueryAllUniqueCertificateRequest } as QueryAllUniqueCertificateRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllUniqueCertificateRequest): unknown {
-    const obj: any = {}
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllUniqueCertificateRequest>): QueryAllUniqueCertificateRequest {
-    const message = { ...baseQueryAllUniqueCertificateRequest } as QueryAllUniqueCertificateRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllUniqueCertificateResponse: object = {}
-
-export const QueryAllUniqueCertificateResponse = {
-  encode(message: QueryAllUniqueCertificateResponse, writer: Writer = Writer.create()): Writer {
-    for (const v of message.uniqueCertificate) {
-      UniqueCertificate.encode(v!, writer.uint32(10).fork()).ldelim()
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllUniqueCertificateResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllUniqueCertificateResponse } as QueryAllUniqueCertificateResponse
-    message.uniqueCertificate = []
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.uniqueCertificate.push(UniqueCertificate.decode(reader, reader.uint32()))
-          break
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllUniqueCertificateResponse {
-    const message = { ...baseQueryAllUniqueCertificateResponse } as QueryAllUniqueCertificateResponse
-    message.uniqueCertificate = []
-    if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
-      for (const e of object.uniqueCertificate) {
-        message.uniqueCertificate.push(UniqueCertificate.fromJSON(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllUniqueCertificateResponse): unknown {
-    const obj: any = {}
-    if (message.uniqueCertificate) {
-      obj.uniqueCertificate = message.uniqueCertificate.map((e) => (e ? UniqueCertificate.toJSON(e) : undefined))
-    } else {
-      obj.uniqueCertificate = []
-    }
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllUniqueCertificateResponse>): QueryAllUniqueCertificateResponse {
-    const message = { ...baseQueryAllUniqueCertificateResponse } as QueryAllUniqueCertificateResponse
-    message.uniqueCertificate = []
-    if (object.uniqueCertificate !== undefined && object.uniqueCertificate !== null) {
-      for (const e of object.uniqueCertificate) {
-        message.uniqueCertificate.push(UniqueCertificate.fromPartial(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
 const baseQueryGetApprovedRootCertificatesRequest: object = {}
 
 export const QueryGetApprovedRootCertificatesRequest = {
@@ -2025,140 +1735,6 @@ export const QueryGetApprovedCertificatesBySubjectResponse = {
   }
 }
 
-const baseQueryAllApprovedCertificatesBySubjectRequest: object = {}
-
-export const QueryAllApprovedCertificatesBySubjectRequest = {
-  encode(message: QueryAllApprovedCertificatesBySubjectRequest, writer: Writer = Writer.create()): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedCertificatesBySubjectRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest } as QueryAllApprovedCertificatesBySubjectRequest
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllApprovedCertificatesBySubjectRequest {
-    const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest } as QueryAllApprovedCertificatesBySubjectRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllApprovedCertificatesBySubjectRequest): unknown {
-    const obj: any = {}
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllApprovedCertificatesBySubjectRequest>): QueryAllApprovedCertificatesBySubjectRequest {
-    const message = { ...baseQueryAllApprovedCertificatesBySubjectRequest } as QueryAllApprovedCertificatesBySubjectRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllApprovedCertificatesBySubjectResponse: object = {}
-
-export const QueryAllApprovedCertificatesBySubjectResponse = {
-  encode(message: QueryAllApprovedCertificatesBySubjectResponse, writer: Writer = Writer.create()): Writer {
-    for (const v of message.approvedCertificatesBySubject) {
-      ApprovedCertificatesBySubject.encode(v!, writer.uint32(10).fork()).ldelim()
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedCertificatesBySubjectResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse } as QueryAllApprovedCertificatesBySubjectResponse
-    message.approvedCertificatesBySubject = []
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.decode(reader, reader.uint32()))
-          break
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllApprovedCertificatesBySubjectResponse {
-    const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse } as QueryAllApprovedCertificatesBySubjectResponse
-    message.approvedCertificatesBySubject = []
-    if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
-      for (const e of object.approvedCertificatesBySubject) {
-        message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.fromJSON(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllApprovedCertificatesBySubjectResponse): unknown {
-    const obj: any = {}
-    if (message.approvedCertificatesBySubject) {
-      obj.approvedCertificatesBySubject = message.approvedCertificatesBySubject.map((e) => (e ? ApprovedCertificatesBySubject.toJSON(e) : undefined))
-    } else {
-      obj.approvedCertificatesBySubject = []
-    }
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllApprovedCertificatesBySubjectResponse>): QueryAllApprovedCertificatesBySubjectResponse {
-    const message = { ...baseQueryAllApprovedCertificatesBySubjectResponse } as QueryAllApprovedCertificatesBySubjectResponse
-    message.approvedCertificatesBySubject = []
-    if (object.approvedCertificatesBySubject !== undefined && object.approvedCertificatesBySubject !== null) {
-      for (const e of object.approvedCertificatesBySubject) {
-        message.approvedCertificatesBySubject.push(ApprovedCertificatesBySubject.fromPartial(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ApprovedCertificates by index. */
@@ -2181,18 +1757,12 @@ export interface Query {
   RevokedCertificates(request: QueryGetRevokedCertificatesRequest): Promise<QueryGetRevokedCertificatesResponse>
   /** Queries a list of RevokedCertificates items. */
   RevokedCertificatesAll(request: QueryAllRevokedCertificatesRequest): Promise<QueryAllRevokedCertificatesResponse>
-  /** Queries a UniqueCertificate by index. */
-  UniqueCertificate(request: QueryGetUniqueCertificateRequest): Promise<QueryGetUniqueCertificateResponse>
-  /** Queries a list of UniqueCertificate items. */
-  UniqueCertificateAll(request: QueryAllUniqueCertificateRequest): Promise<QueryAllUniqueCertificateResponse>
   /** Queries a ApprovedRootCertificates by index. */
   ApprovedRootCertificates(request: QueryGetApprovedRootCertificatesRequest): Promise<QueryGetApprovedRootCertificatesResponse>
   /** Queries a RevokedRootCertificates by index. */
   RevokedRootCertificates(request: QueryGetRevokedRootCertificatesRequest): Promise<QueryGetRevokedRootCertificatesResponse>
   /** Queries a ApprovedCertificatesBySubject by index. */
   ApprovedCertificatesBySubject(request: QueryGetApprovedCertificatesBySubjectRequest): Promise<QueryGetApprovedCertificatesBySubjectResponse>
-  /** Queries a list of ApprovedCertificatesBySubject items. */
-  ApprovedCertificatesBySubjectAll(request: QueryAllApprovedCertificatesBySubjectRequest): Promise<QueryAllApprovedCertificatesBySubjectResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -2260,18 +1830,6 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryAllRevokedCertificatesResponse.decode(new Reader(data)))
   }
 
-  UniqueCertificate(request: QueryGetUniqueCertificateRequest): Promise<QueryGetUniqueCertificateResponse> {
-    const data = QueryGetUniqueCertificateRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'UniqueCertificate', data)
-    return promise.then((data) => QueryGetUniqueCertificateResponse.decode(new Reader(data)))
-  }
-
-  UniqueCertificateAll(request: QueryAllUniqueCertificateRequest): Promise<QueryAllUniqueCertificateResponse> {
-    const data = QueryAllUniqueCertificateRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'UniqueCertificateAll', data)
-    return promise.then((data) => QueryAllUniqueCertificateResponse.decode(new Reader(data)))
-  }
-
   ApprovedRootCertificates(request: QueryGetApprovedRootCertificatesRequest): Promise<QueryGetApprovedRootCertificatesResponse> {
     const data = QueryGetApprovedRootCertificatesRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedRootCertificates', data)
@@ -2288,12 +1846,6 @@ export class QueryClientImpl implements Query {
     const data = QueryGetApprovedCertificatesBySubjectRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubject', data)
     return promise.then((data) => QueryGetApprovedCertificatesBySubjectResponse.decode(new Reader(data)))
-  }
-
-  ApprovedCertificatesBySubjectAll(request: QueryAllApprovedCertificatesBySubjectRequest): Promise<QueryAllApprovedCertificatesBySubjectResponse> {
-    const data = QueryAllApprovedCertificatesBySubjectRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedCertificatesBySubjectAll', data)
-    return promise.then((data) => QueryAllApprovedCertificatesBySubjectResponse.decode(new Reader(data)))
   }
 }
 

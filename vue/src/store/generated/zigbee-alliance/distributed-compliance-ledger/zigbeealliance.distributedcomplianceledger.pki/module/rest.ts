@@ -75,21 +75,6 @@ export interface PkiProposedCertificateRevocation {
   approvals?: string[];
 }
 
-export interface PkiQueryAllApprovedCertificatesBySubjectResponse {
-  approvedCertificatesBySubject?: PkiApprovedCertificatesBySubject[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
 export interface PkiQueryAllApprovedCertificatesResponse {
   approvedCertificates?: PkiApprovedCertificates[];
 
@@ -165,21 +150,6 @@ export interface PkiQueryAllRevokedCertificatesResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface PkiQueryAllUniqueCertificateResponse {
-  uniqueCertificate?: PkiUniqueCertificate[];
-
-  /**
-   * PageResponse is to be embedded in gRPC response messages where the
-   * corresponding request message has used PageRequest.
-   *
-   *  message SomeResponse {
-   *          repeated Bar results = 1;
-   *          PageResponse page = 2;
-   *  }
-   */
-  pagination?: V1Beta1PageResponse;
-}
-
 export interface PkiQueryGetApprovedCertificatesBySubjectResponse {
   approvedCertificatesBySubject?: PkiApprovedCertificatesBySubject;
 }
@@ -212,10 +182,6 @@ export interface PkiQueryGetRevokedRootCertificatesResponse {
   RevokedRootCertificates?: PkiRevokedRootCertificates;
 }
 
-export interface PkiQueryGetUniqueCertificateResponse {
-  uniqueCertificate?: PkiUniqueCertificate;
-}
-
 export interface PkiRevokedCertificates {
   subject?: string;
   subjectKeyId?: string;
@@ -224,12 +190,6 @@ export interface PkiRevokedCertificates {
 
 export interface PkiRevokedRootCertificates {
   certs?: PkiCertificateIdentifier[];
-}
-
-export interface PkiUniqueCertificate {
-  issuer?: string;
-  serialNumber?: string;
-  present?: boolean;
 }
 
 export interface ProtobufAny {
@@ -548,6 +508,38 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryApprovedCertificatesBySubject
+   * @summary Queries a ApprovedCertificatesBySubject by index.
+   * @request GET:/dcl/pki/approved_certificates_by_subject/{subject}
+   */
+  queryApprovedCertificatesBySubject = (subject: string, params: RequestParams = {}) =>
+    this.request<PkiQueryGetApprovedCertificatesBySubjectResponse, RpcStatus>({
+      path: `/dcl/pki/approved_certificates_by_subject/${subject}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryApprovedRootCertificates
+   * @summary Queries a ApprovedRootCertificates by index.
+   * @request GET:/dcl/pki/approved_root_certificates
+   */
+  queryApprovedRootCertificates = (params: RequestParams = {}) =>
+    this.request<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>({
+      path: `/dcl/pki/approved_root_certificates`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryChildCertificatesAll
    * @summary Queries a list of ChildCertificates items.
    * @request GET:/dcl/pki/child_certificates
@@ -716,113 +708,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryApprovedCertificatesBySubjectAll
-   * @summary Queries a list of ApprovedCertificatesBySubject items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject
-   */
-  queryApprovedCertificatesBySubjectAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<PkiQueryAllApprovedCertificatesBySubjectResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryApprovedCertificatesBySubject
-   * @summary Queries a ApprovedCertificatesBySubject by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject/{subject}
-   */
-  queryApprovedCertificatesBySubject = (subject: string, params: RequestParams = {}) =>
-    this.request<PkiQueryGetApprovedCertificatesBySubjectResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_certificates_by_subject/${subject}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryApprovedRootCertificates
-   * @summary Queries a ApprovedRootCertificates by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates
-   */
-  queryApprovedRootCertificates = (params: RequestParams = {}) =>
-    this.request<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryRevokedRootCertificates
    * @summary Queries a RevokedRootCertificates by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/revoked_root_certificates
+   * @request GET:/dcl/pki/revoked_root_certificates
    */
   queryRevokedRootCertificates = (params: RequestParams = {}) =>
     this.request<PkiQueryGetRevokedRootCertificatesResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/revoked_root_certificates`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryUniqueCertificateAll
-   * @summary Queries a list of UniqueCertificate items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate
-   */
-  queryUniqueCertificateAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<PkiQueryAllUniqueCertificateResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryUniqueCertificate
-   * @summary Queries a UniqueCertificate by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/{issuer}/{serialNumber}
-   */
-  queryUniqueCertificate = (issuer: string, serialNumber: string, params: RequestParams = {}) =>
-    this.request<PkiQueryGetUniqueCertificateResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate/${issuer}/${serialNumber}`,
+      path: `/dcl/pki/revoked_root_certificates`,
       method: "GET",
       format: "json",
       ...params,

@@ -1,3 +1,4 @@
+# TODO: create a proper config file
 accounts:
   - name: alice
     coins: ["20000token", "200000000stake"]

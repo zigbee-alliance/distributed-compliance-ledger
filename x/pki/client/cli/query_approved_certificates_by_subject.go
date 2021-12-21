@@ -10,39 +10,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func CmdListApprovedCertificatesBySubject() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "list-approved-certificates-by-subject",
-		Short: "list all ApprovedCertificatesBySubject",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			params := &types.QueryAllApprovedCertificatesBySubjectRequest{
-				Pagination: pageReq,
-			}
-
-			res, err := queryClient.ApprovedCertificatesBySubjectAll(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
-		},
-	}
-
-	flags.AddPaginationFlagsToCmd(cmd, cmd.Use)
-	flags.AddQueryFlagsToCmd(cmd)
-
-	return cmd
-}
-
 func CmdShowApprovedCertificatesBySubject() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "all-subject-x509-certs",
