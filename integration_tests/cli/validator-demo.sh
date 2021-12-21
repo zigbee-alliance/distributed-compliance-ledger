@@ -17,7 +17,7 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 LOCALNET_DIR=".localnet"
-DCL_DIR="/root/.dcl"
+DCL_DIR="/var/lib/dcl/.dcl"
 
 random_string account
 container="validator-demo"
@@ -52,7 +52,7 @@ docker exec $container /bin/sh -c "
   dcld config chain-id dclchain &&
   dcld config output json &&
   dcld config node $node0 &&
-  dcld config keyring-backend file &&
+  dcld config keyring-backend test &&
   dcld config broadcast-mode block"
 
 # TODO issue 99: check the replacement for the setting
