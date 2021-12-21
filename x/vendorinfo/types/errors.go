@@ -3,8 +3,6 @@ package types
 // DONTCOVER
 
 import (
-	"fmt"
-
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
@@ -12,22 +10,7 @@ import (
 var (
 	DefaultCodespace string = ModuleName
 
-	CodeVendorDoesNotExist              uint32 = 701
-	CodeMissingVendorIDForVendorAccount uint32 = 702
-	CodeVendorInfoAlreadyExists         uint32 = 703
+	CodeVendorDoesNotExist              = sdkerrors.Register(ModuleName, 701, "Code vendor does not exist")
+	CodeMissingVendorIDForVendorAccount = sdkerrors.Register(ModuleName, 702, "Code missing vendor id for vendor account")
+	CodeVendorInfoAlreadyExists         = sdkerrors.Register(ModuleName, 703, "Code vendorinfo already exists")
 )
-
-func ErrVendorInfoDoesNotExist(vendorID uint16) *sdkerrors.Error {
-	return sdkerrors.Register(DefaultCodespace, CodeVendorDoesNotExist,
-		fmt.Sprintf("Vendor Account with VendorID %v does not exist on the ledger", vendorID))
-}
-
-func ErrMissingVendorIDForVendorAccount() *sdkerrors.Error {
-	return sdkerrors.Register(DefaultCodespace, CodeMissingVendorIDForVendorAccount,
-		"No Vendor ID is provided in the Vendor Role for the new account")
-}
-
-func ErrVendorInfoAlreadyExists(vendorID interface{}) *sdkerrors.Error {
-	return sdkerrors.Register(DefaultCodespace, CodeVendorInfoAlreadyExists,
-		fmt.Sprintf("Vendor info associated with VendorID=%v already exists on the ledger", vendorID))
-}
