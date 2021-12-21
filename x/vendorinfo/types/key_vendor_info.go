@@ -4,9 +4,9 @@ import "encoding/binary"
 
 var _ binary.ByteOrder
 
-const (
+var (
 	// VendorInfoKeyPrefix is the prefix to retrieve all VendorInfo
-	VendorInfoKeyPrefix = "VendorInfo/value/"
+	VendorInfoKeyPrefix = []byte{0x01} // prefix for each key to a pending account
 )
 
 // VendorInfoKey returns the store key to retrieve a VendorInfo from the index fields
