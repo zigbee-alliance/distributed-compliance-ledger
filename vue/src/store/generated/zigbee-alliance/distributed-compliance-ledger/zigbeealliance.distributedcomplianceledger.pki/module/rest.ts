@@ -15,6 +15,10 @@ export interface PkiApprovedCertificates {
   certs?: PkiCertificate[];
 }
 
+export interface PkiApprovedRootCertificates {
+  certs?: PkiCertificateIdentifier[];
+}
+
 export interface PkiCertificate {
   pemCert?: string;
   serialNumber?: string;
@@ -158,6 +162,10 @@ export interface PkiQueryAllUniqueCertificateResponse {
 
 export interface PkiQueryGetApprovedCertificatesResponse {
   approvedCertificates?: PkiApprovedCertificates;
+}
+
+export interface PkiQueryGetApprovedRootCertificatesResponse {
+  ApprovedRootCertificates?: PkiApprovedRootCertificates;
 }
 
 export interface PkiQueryGetChildCertificatesResponse {
@@ -667,6 +675,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryRevokedCertificates = (subject: string, subjectKeyId: string, params: RequestParams = {}) =>
     this.request<PkiQueryGetRevokedCertificatesResponse, RpcStatus>({
       path: `/dcl/pki/revoked_certificates/${subject}/${subjectKeyId}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryApprovedRootCertificates
+   * @summary Queries a ApprovedRootCertificates by index.
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates
+   */
+  queryApprovedRootCertificates = (params: RequestParams = {}) =>
+    this.request<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>({
+      path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates`,
       method: "GET",
       format: "json",
       ...params,

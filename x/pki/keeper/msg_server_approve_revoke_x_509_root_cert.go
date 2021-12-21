@@ -53,6 +53,12 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 		k.RemoveApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 		k.RevokeChildCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 		k.RemoveProposedCertificateRevocation(ctx, msg.Subject, msg.SubjectKeyId)
+
+		certId := types.CertificateIdentifier{
+			Subject:      msg.Subject,
+			SubjectKeyId: msg.SubjectKeyId,
+		}
+		k.RemoveApprovedRootCertificate(ctx, certId)
 	} else {
 		k.SetProposedCertificateRevocation(ctx, revocation)
 	}

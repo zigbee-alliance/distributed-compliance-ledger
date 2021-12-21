@@ -58,6 +58,13 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 
 		// delete proposed certificate
 		k.RemoveProposedCertificate(ctx, msg.Subject, msg.SubjectKeyId)
+
+		// add to root certificates index
+		certId := types.CertificateIdentifier{
+			Subject:      rootCertificate.Subject,
+			SubjectKeyId: rootCertificate.SubjectKeyId,
+		}
+		k.AddApprovedRootCertificate(ctx, certId)
 	} else {
 		// update proposed certificate
 		k.SetProposedCertificate(ctx, proposedCertificate)

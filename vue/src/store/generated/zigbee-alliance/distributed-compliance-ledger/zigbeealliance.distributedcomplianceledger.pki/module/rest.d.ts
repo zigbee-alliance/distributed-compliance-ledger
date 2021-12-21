@@ -3,6 +3,9 @@ export interface PkiApprovedCertificates {
     subjectKeyId?: string;
     certs?: PkiCertificate[];
 }
+export interface PkiApprovedRootCertificates {
+    certs?: PkiCertificateIdentifier[];
+}
 export interface PkiCertificate {
     pemCert?: string;
     serialNumber?: string;
@@ -123,6 +126,9 @@ export interface PkiQueryAllUniqueCertificateResponse {
 }
 export interface PkiQueryGetApprovedCertificatesResponse {
     approvedCertificates?: PkiApprovedCertificates;
+}
+export interface PkiQueryGetApprovedRootCertificatesResponse {
+    ApprovedRootCertificates?: PkiApprovedRootCertificates;
 }
 export interface PkiQueryGetChildCertificatesResponse {
     childCertificates?: PkiChildCertificates;
@@ -392,6 +398,15 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/pki/revoked_certificates/{subject}/{subjectKeyId}
      */
     queryRevokedCertificates: (subject: string, subjectKeyId: string, params?: RequestParams) => Promise<HttpResponse<PkiQueryGetRevokedCertificatesResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryApprovedRootCertificates
+     * @summary Queries a ApprovedRootCertificates by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates
+     */
+    queryApprovedRootCertificates: (params?: RequestParams) => Promise<HttpResponse<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>>;
     /**
      * No description
      *

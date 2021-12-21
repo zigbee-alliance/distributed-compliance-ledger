@@ -285,6 +285,20 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryApprovedRootCertificates
+         * @summary Queries a ApprovedRootCertificates by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates
+         */
+        this.queryApprovedRootCertificates = (params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/pki/approved_root_certificates`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryUniqueCertificateAll
          * @summary Queries a list of UniqueCertificate items.
          * @request GET:/zigbee-alliance/distributedcomplianceledger/pki/unique_certificate

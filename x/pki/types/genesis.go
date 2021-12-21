@@ -16,6 +16,7 @@ func DefaultGenesis() *GenesisState {
 		ProposedCertificateRevocationList: []ProposedCertificateRevocation{},
 		RevokedCertificatesList:           []RevokedCertificates{},
 		UniqueCertificateList:             []UniqueCertificate{},
+		ApprovedRootCertificates:          nil,
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }

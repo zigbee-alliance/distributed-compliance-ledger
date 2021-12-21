@@ -33,6 +33,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.UniqueCertificateList {
 		k.SetUniqueCertificate(ctx, elem)
 	}
+	// Set if defined
+	if genState.ApprovedRootCertificates != nil {
+		k.SetApprovedRootCertificates(ctx, *genState.ApprovedRootCertificates)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
 
@@ -46,6 +50,11 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.ProposedCertificateRevocationList = k.GetAllProposedCertificateRevocation(ctx)
 	genesis.RevokedCertificatesList = k.GetAllRevokedCertificates(ctx)
 	genesis.UniqueCertificateList = k.GetAllUniqueCertificate(ctx)
+	// Get all approvedRootCertificates
+	approvedRootCertificates, found := k.GetApprovedRootCertificates(ctx)
+	if found {
+		genesis.ApprovedRootCertificates = &approvedRootCertificates
+	}
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

@@ -7,6 +7,7 @@ import { ChildCertificates } from '../pki/child_certificates'
 import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revocation'
 import { RevokedCertificates } from '../pki/revoked_certificates'
 import { UniqueCertificate } from '../pki/unique_certificate'
+import { ApprovedRootCertificates } from '../pki/approved_root_certificates'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 
@@ -116,6 +117,12 @@ export interface QueryAllUniqueCertificateRequest {
 export interface QueryAllUniqueCertificateResponse {
   uniqueCertificate: UniqueCertificate[]
   pagination: PageResponse | undefined
+}
+
+export interface QueryGetApprovedRootCertificatesRequest {}
+
+export interface QueryGetApprovedRootCertificatesResponse {
+  ApprovedRootCertificates: ApprovedRootCertificates | undefined
 }
 
 const baseQueryGetApprovedCertificatesRequest: object = { subject: '', subjectKeyId: '' }
@@ -1692,6 +1699,100 @@ export const QueryAllUniqueCertificateResponse = {
   }
 }
 
+const baseQueryGetApprovedRootCertificatesRequest: object = {}
+
+export const QueryGetApprovedRootCertificatesRequest = {
+  encode(_: QueryGetApprovedRootCertificatesRequest, writer: Writer = Writer.create()): Writer {
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedRootCertificatesRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetApprovedRootCertificatesRequest } as QueryGetApprovedRootCertificatesRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(_: any): QueryGetApprovedRootCertificatesRequest {
+    const message = { ...baseQueryGetApprovedRootCertificatesRequest } as QueryGetApprovedRootCertificatesRequest
+    return message
+  },
+
+  toJSON(_: QueryGetApprovedRootCertificatesRequest): unknown {
+    const obj: any = {}
+    return obj
+  },
+
+  fromPartial(_: DeepPartial<QueryGetApprovedRootCertificatesRequest>): QueryGetApprovedRootCertificatesRequest {
+    const message = { ...baseQueryGetApprovedRootCertificatesRequest } as QueryGetApprovedRootCertificatesRequest
+    return message
+  }
+}
+
+const baseQueryGetApprovedRootCertificatesResponse: object = {}
+
+export const QueryGetApprovedRootCertificatesResponse = {
+  encode(message: QueryGetApprovedRootCertificatesResponse, writer: Writer = Writer.create()): Writer {
+    if (message.ApprovedRootCertificates !== undefined) {
+      ApprovedRootCertificates.encode(message.ApprovedRootCertificates, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedRootCertificatesResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetApprovedRootCertificatesResponse } as QueryGetApprovedRootCertificatesResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.ApprovedRootCertificates = ApprovedRootCertificates.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetApprovedRootCertificatesResponse {
+    const message = { ...baseQueryGetApprovedRootCertificatesResponse } as QueryGetApprovedRootCertificatesResponse
+    if (object.ApprovedRootCertificates !== undefined && object.ApprovedRootCertificates !== null) {
+      message.ApprovedRootCertificates = ApprovedRootCertificates.fromJSON(object.ApprovedRootCertificates)
+    } else {
+      message.ApprovedRootCertificates = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetApprovedRootCertificatesResponse): unknown {
+    const obj: any = {}
+    message.ApprovedRootCertificates !== undefined &&
+      (obj.ApprovedRootCertificates = message.ApprovedRootCertificates ? ApprovedRootCertificates.toJSON(message.ApprovedRootCertificates) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetApprovedRootCertificatesResponse>): QueryGetApprovedRootCertificatesResponse {
+    const message = { ...baseQueryGetApprovedRootCertificatesResponse } as QueryGetApprovedRootCertificatesResponse
+    if (object.ApprovedRootCertificates !== undefined && object.ApprovedRootCertificates !== null) {
+      message.ApprovedRootCertificates = ApprovedRootCertificates.fromPartial(object.ApprovedRootCertificates)
+    } else {
+      message.ApprovedRootCertificates = undefined
+    }
+    return message
+  }
+}
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ApprovedCertificates by index. */
@@ -1718,6 +1819,8 @@ export interface Query {
   UniqueCertificate(request: QueryGetUniqueCertificateRequest): Promise<QueryGetUniqueCertificateResponse>
   /** Queries a list of UniqueCertificate items. */
   UniqueCertificateAll(request: QueryAllUniqueCertificateRequest): Promise<QueryAllUniqueCertificateResponse>
+  /** Queries a ApprovedRootCertificates by index. */
+  ApprovedRootCertificates(request: QueryGetApprovedRootCertificatesRequest): Promise<QueryGetApprovedRootCertificatesResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -1795,6 +1898,12 @@ export class QueryClientImpl implements Query {
     const data = QueryAllUniqueCertificateRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'UniqueCertificateAll', data)
     return promise.then((data) => QueryAllUniqueCertificateResponse.decode(new Reader(data)))
+  }
+
+  ApprovedRootCertificates(request: QueryGetApprovedRootCertificatesRequest): Promise<QueryGetApprovedRootCertificatesResponse> {
+    const data = QueryGetApprovedRootCertificatesRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedRootCertificates', data)
+    return promise.then((data) => QueryGetApprovedRootCertificatesResponse.decode(new Reader(data)))
   }
 }
 

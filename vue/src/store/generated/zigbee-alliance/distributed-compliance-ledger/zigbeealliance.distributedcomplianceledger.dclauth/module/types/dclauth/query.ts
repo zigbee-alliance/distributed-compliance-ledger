@@ -897,12 +897,8 @@ export interface Query {
   Account(request: QueryGetAccountRequest): Promise<QueryGetAccountResponse>
   /** Queries a list of account items. */
   AccountAll(request: QueryAllAccountRequest): Promise<QueryAllAccountResponse>
-  /** Queries a pendingAccount by index. */
-  PendingAccount(request: QueryGetPendingAccountRequest): Promise<QueryGetPendingAccountResponse>
   /** Queries a list of pendingAccount items. */
   PendingAccountAll(request: QueryAllPendingAccountRequest): Promise<QueryAllPendingAccountResponse>
-  /** Queries a pendingAccountRevocation by index. */
-  PendingAccountRevocation(request: QueryGetPendingAccountRevocationRequest): Promise<QueryGetPendingAccountRevocationResponse>
   /** Queries a list of pendingAccountRevocation items. */
   PendingAccountRevocationAll(request: QueryAllPendingAccountRevocationRequest): Promise<QueryAllPendingAccountRevocationResponse>
   /** Queries a accountStat by index. */
@@ -926,22 +922,10 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryAllAccountResponse.decode(new Reader(data)))
   }
 
-  PendingAccount(request: QueryGetPendingAccountRequest): Promise<QueryGetPendingAccountResponse> {
-    const data = QueryGetPendingAccountRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'PendingAccount', data)
-    return promise.then((data) => QueryGetPendingAccountResponse.decode(new Reader(data)))
-  }
-
   PendingAccountAll(request: QueryAllPendingAccountRequest): Promise<QueryAllPendingAccountResponse> {
     const data = QueryAllPendingAccountRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'PendingAccountAll', data)
     return promise.then((data) => QueryAllPendingAccountResponse.decode(new Reader(data)))
-  }
-
-  PendingAccountRevocation(request: QueryGetPendingAccountRevocationRequest): Promise<QueryGetPendingAccountRevocationResponse> {
-    const data = QueryGetPendingAccountRevocationRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'PendingAccountRevocation', data)
-    return promise.then((data) => QueryGetPendingAccountRevocationResponse.decode(new Reader(data)))
   }
 
   PendingAccountRevocationAll(request: QueryAllPendingAccountRevocationRequest): Promise<QueryAllPendingAccountRevocationResponse> {

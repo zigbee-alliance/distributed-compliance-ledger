@@ -3,6 +3,7 @@
 #    plain ones
 starport scaffold --module pki type CertificateIdentifier subject subjectKeyId 
 starport scaffold --module pki type Certificate pemCert serialNumber issuer authorityKeyId rootSubject rootSubjectKeyId isRoot:bool owner subject subjectKeyId
+#starport scaffold --module pki type CertificateInfo subject subjectKeyId serialNumber issuer authorityKeyId rootSubject rootSubjectKeyId isRoot:bool owner 
 
 #    messages
 starport scaffold --module pki message ProposeAddX509RootCert cert --signer signer
@@ -19,5 +20,5 @@ starport scaffold --module pki map ChildCertificates certIds:strings --index iss
 starport scaffold --module pki map ProposedCertificateRevocation  approvals:strings --index subject,subjectKeyId --no-message
 starport scaffold --module pki map RevokedCertificates certs:strings --index subject,subjectKeyId --no-message
 starport scaffold --module pki map UniqueCertificate present:bool --index issuer,serialNumber --no-message
-#starport scaffold --module pki map AllApprovedRootCertificates --index subject,subjectKeyId --no-message
+starport scaffold --module pki single ApprovedRootCertificates certs:strings --no-message
 #starport scaffold --module pki map AllProposedCertificates --index subject,subjectKeyId --no-message

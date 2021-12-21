@@ -4,6 +4,7 @@ import { ChildCertificates } from '../pki/child_certificates';
 import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revocation';
 import { RevokedCertificates } from '../pki/revoked_certificates';
 import { UniqueCertificate } from '../pki/unique_certificate';
+import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.pki";
 /** GenesisState defines the pki module's genesis state. */
@@ -13,8 +14,9 @@ export interface GenesisState {
     childCertificatesList: ChildCertificates[];
     proposedCertificateRevocationList: ProposedCertificateRevocation[];
     revokedCertificatesList: RevokedCertificates[];
-    /** this line is used by starport scaffolding # genesis/proto/state */
     uniqueCertificateList: UniqueCertificate[];
+    /** this line is used by starport scaffolding # genesis/proto/state */
+    approvedRootCertificates: ApprovedRootCertificates | undefined;
 }
 export declare const GenesisState: {
     encode(message: GenesisState, writer?: Writer): Writer;

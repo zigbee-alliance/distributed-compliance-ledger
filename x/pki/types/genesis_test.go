@@ -81,6 +81,9 @@ func TestGenesisState_Validate(t *testing.T) {
 						SerialNumber: "1",
 					},
 				},
+				ApprovedRootCertificates: &types.ApprovedRootCertificates{
+					Certs: []*types.CertificateIdentifier{},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,

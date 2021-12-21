@@ -7,6 +7,7 @@ import { ChildCertificates } from '../pki/child_certificates';
 import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revocation';
 import { RevokedCertificates } from '../pki/revoked_certificates';
 import { UniqueCertificate } from '../pki/unique_certificate';
+import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
 const baseQueryGetApprovedCertificatesRequest = { subject: '', subjectKeyId: '' };
 export const QueryGetApprovedCertificatesRequest = {
@@ -1504,6 +1505,90 @@ export const QueryAllUniqueCertificateResponse = {
         return message;
     }
 };
+const baseQueryGetApprovedRootCertificatesRequest = {};
+export const QueryGetApprovedRootCertificatesRequest = {
+    encode(_, writer = Writer.create()) {
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetApprovedRootCertificatesRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(_) {
+        const message = { ...baseQueryGetApprovedRootCertificatesRequest };
+        return message;
+    },
+    toJSON(_) {
+        const obj = {};
+        return obj;
+    },
+    fromPartial(_) {
+        const message = { ...baseQueryGetApprovedRootCertificatesRequest };
+        return message;
+    }
+};
+const baseQueryGetApprovedRootCertificatesResponse = {};
+export const QueryGetApprovedRootCertificatesResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.ApprovedRootCertificates !== undefined) {
+            ApprovedRootCertificates.encode(message.ApprovedRootCertificates, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetApprovedRootCertificatesResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.ApprovedRootCertificates = ApprovedRootCertificates.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetApprovedRootCertificatesResponse };
+        if (object.ApprovedRootCertificates !== undefined && object.ApprovedRootCertificates !== null) {
+            message.ApprovedRootCertificates = ApprovedRootCertificates.fromJSON(object.ApprovedRootCertificates);
+        }
+        else {
+            message.ApprovedRootCertificates = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.ApprovedRootCertificates !== undefined &&
+            (obj.ApprovedRootCertificates = message.ApprovedRootCertificates ? ApprovedRootCertificates.toJSON(message.ApprovedRootCertificates) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetApprovedRootCertificatesResponse };
+        if (object.ApprovedRootCertificates !== undefined && object.ApprovedRootCertificates !== null) {
+            message.ApprovedRootCertificates = ApprovedRootCertificates.fromPartial(object.ApprovedRootCertificates);
+        }
+        else {
+            message.ApprovedRootCertificates = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1567,5 +1652,10 @@ export class QueryClientImpl {
         const data = QueryAllUniqueCertificateRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'UniqueCertificateAll', data);
         return promise.then((data) => QueryAllUniqueCertificateResponse.decode(new Reader(data)));
+    }
+    ApprovedRootCertificates(request) {
+        const data = QueryGetApprovedRootCertificatesRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ApprovedRootCertificates', data);
+        return promise.then((data) => QueryGetApprovedRootCertificatesResponse.decode(new Reader(data)));
     }
 }

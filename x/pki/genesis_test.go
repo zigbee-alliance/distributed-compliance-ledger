@@ -71,6 +71,9 @@ func TestGenesis(t *testing.T) {
 				SerialNumber: "1",
 			},
 		},
+		ApprovedRootCertificates: &types.ApprovedRootCertificates{
+			Certs: []*types.CertificateIdentifier{},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -85,5 +88,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.ProposedCertificateRevocationList, got.ProposedCertificateRevocationList)
 	require.ElementsMatch(t, genesisState.RevokedCertificatesList, got.RevokedCertificatesList)
 	require.ElementsMatch(t, genesisState.UniqueCertificateList, got.UniqueCertificateList)
+	require.Equal(t, genesisState.ApprovedRootCertificates, got.ApprovedRootCertificates)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

@@ -5,6 +5,7 @@ import { ChildCertificates } from '../pki/child_certificates';
 import { ProposedCertificateRevocation } from '../pki/proposed_certificate_revocation';
 import { RevokedCertificates } from '../pki/revoked_certificates';
 import { UniqueCertificate } from '../pki/unique_certificate';
+import { ApprovedRootCertificates } from '../pki/approved_root_certificates';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
 const baseGenesisState = {};
@@ -27,6 +28,9 @@ export const GenesisState = {
         }
         for (const v of message.uniqueCertificateList) {
             UniqueCertificate.encode(v, writer.uint32(50).fork()).ldelim();
+        }
+        if (message.approvedRootCertificates !== undefined) {
+            ApprovedRootCertificates.encode(message.approvedRootCertificates, writer.uint32(58).fork()).ldelim();
         }
         return writer;
     },
@@ -60,6 +64,9 @@ export const GenesisState = {
                     break;
                 case 6:
                     message.uniqueCertificateList.push(UniqueCertificate.decode(reader, reader.uint32()));
+                    break;
+                case 7:
+                    message.approvedRootCertificates = ApprovedRootCertificates.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -106,6 +113,12 @@ export const GenesisState = {
                 message.uniqueCertificateList.push(UniqueCertificate.fromJSON(e));
             }
         }
+        if (object.approvedRootCertificates !== undefined && object.approvedRootCertificates !== null) {
+            message.approvedRootCertificates = ApprovedRootCertificates.fromJSON(object.approvedRootCertificates);
+        }
+        else {
+            message.approvedRootCertificates = undefined;
+        }
         return message;
     },
     toJSON(message) {
@@ -146,6 +159,8 @@ export const GenesisState = {
         else {
             obj.uniqueCertificateList = [];
         }
+        message.approvedRootCertificates !== undefined &&
+            (obj.approvedRootCertificates = message.approvedRootCertificates ? ApprovedRootCertificates.toJSON(message.approvedRootCertificates) : undefined);
         return obj;
     },
     fromPartial(object) {
@@ -185,6 +200,12 @@ export const GenesisState = {
             for (const e of object.uniqueCertificateList) {
                 message.uniqueCertificateList.push(UniqueCertificate.fromPartial(e));
             }
+        }
+        if (object.approvedRootCertificates !== undefined && object.approvedRootCertificates !== null) {
+            message.approvedRootCertificates = ApprovedRootCertificates.fromPartial(object.approvedRootCertificates);
+        }
+        else {
+            message.approvedRootCertificates = undefined;
         }
         return message;
     }
