@@ -214,18 +214,6 @@ echo "$result"
 
 test_divider
 
-# echo "Request certificate chain for Intermediate certificate"
-# result=$(dcld query pki x509-cert-chain --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
-# check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-# check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
-# check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
-# check_response "$result" "\"subject\": \"$root_cert_subject\""
-# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-# check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
-# echo "$result"
-
-# test_divider
-
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
@@ -274,6 +262,21 @@ check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
 echo "$result"
 
 test_divider
+
+# TODO: there is no use case for x509-cert-chain, and it can be tricky, see Slack discussion
+
+# echo "Request certificate chain for Intermediate certificate"
+# result=$(dcld query pki x509-cert-chain --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+# check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+# check_response "$result" "\"subject\": \"$root_cert_subject\""
+# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+# check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
+# echo "$result"
+
+# test_divider
+
 
 # echo "Request certificate chain for Leaf certificate"
 # result=$(dcld query pki x509-cert-chain --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
