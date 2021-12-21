@@ -273,7 +273,7 @@ func request_Query_ModelVersion_0(ctx context.Context, marshaler runtime.Marshal
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
 	}
 
-	protoReq.SoftwareVersion, err = runtime.Uint64(val)
+	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
@@ -322,7 +322,7 @@ func local_request_Query_ModelVersion_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
 	}
 
-	protoReq.SoftwareVersion, err = runtime.Uint64(val)
+	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)

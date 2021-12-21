@@ -32,7 +32,7 @@ func SimulateMsgCreateModelVersion(
 			Creator:         simAccount.Address.String(),
 			Vid:             int32(i),
 			Pid:             int32(i),
-			SoftwareVersion: uint64(i),
+			SoftwareVersion: uint32(i),
 		}
 
 		_, found := k.GetModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)

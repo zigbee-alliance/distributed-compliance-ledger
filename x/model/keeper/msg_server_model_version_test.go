@@ -25,7 +25,7 @@ func TestModelVersionMsgServerCreate(t *testing.T) {
 		expected := &types.MsgCreateModelVersion{Creator: creator,
 			Vid:             int32(i),
 			Pid:             int32(i),
-			SoftwareVersion: uint64(i),
+			SoftwareVersion: uint32(i),
 		}
 		_, err := srv.CreateModelVersion(wctx, expected)
 		require.NoError(t, err)

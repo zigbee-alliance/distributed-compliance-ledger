@@ -68,7 +68,7 @@ func (k Keeper) GetAllModelVersions(ctx sdk.Context) (list []types.ModelVersions
 }
 
 // AddModelVersion adds a softwareVersion to existing or new ModelVersions
-func (k Keeper) AddModelVersion(ctx sdk.Context, vid int32, pid int32, softwareVersion uint64) {
+func (k Keeper) AddModelVersion(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) {
 	modelVersions, found := k.GetModelVersions(ctx, vid, pid)
 
 	if found {
@@ -83,7 +83,7 @@ func (k Keeper) AddModelVersion(ctx sdk.Context, vid int32, pid int32, softwareV
 	} else {
 		modelVersions.Vid = vid
 		modelVersions.Pid = pid
-		modelVersions.SoftwareVersions = []uint64{softwareVersion}
+		modelVersions.SoftwareVersions = []uint32{softwareVersion}
 	}
 
 	k.SetModelVersions(ctx, modelVersions)

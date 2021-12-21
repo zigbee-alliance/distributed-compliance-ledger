@@ -13,7 +13,7 @@ const (
 func ModelVersionKey(
 	vid int32,
 	pid int32,
-	softwareVersion uint64,
+	softwareVersion uint32,
 ) []byte {
 	var key []byte
 
@@ -27,8 +27,8 @@ func ModelVersionKey(
 	key = append(key, pidBytes...)
 	key = append(key, []byte("/")...)
 
-	softwareVersionBytes := make([]byte, 8)
-	binary.BigEndian.PutUint64(softwareVersionBytes, softwareVersion)
+	softwareVersionBytes := make([]byte, 4)
+	binary.BigEndian.PutUint32(softwareVersionBytes, softwareVersion)
 	key = append(key, softwareVersionBytes...)
 	key = append(key, []byte("/")...)
 

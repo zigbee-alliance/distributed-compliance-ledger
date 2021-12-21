@@ -11,11 +11,11 @@ export interface ModelModel {
     /** @format int32 */
     commissioningCustomFlow?: number;
     commissioningCustomFlowUrl?: string;
-    /** @format uint64 */
-    commissioningModeInitialStepsHint?: string;
+    /** @format int64 */
+    commissioningModeInitialStepsHint?: number;
     commissioningModeInitialStepsInstruction?: string;
-    /** @format uint64 */
-    commissioningModeSecondaryStepsHint?: string;
+    /** @format int64 */
+    commissioningModeSecondaryStepsHint?: number;
     commissioningModeSecondaryStepsInstruction?: string;
     userManualUrl?: string;
     supportUrl?: string;
@@ -27,8 +27,8 @@ export interface ModelModelVersion {
     vid?: number;
     /** @format int32 */
     pid?: number;
-    /** @format uint64 */
-    softwareVersion?: string;
+    /** @format int64 */
+    softwareVersion?: number;
     softwareVersionString?: string;
     /** @format int32 */
     cdVersionNumber?: number;
@@ -40,10 +40,10 @@ export interface ModelModelVersion {
     otaChecksum?: string;
     /** @format int32 */
     otaChecksumType?: number;
-    /** @format uint64 */
-    minApplicableSoftwareVersion?: string;
-    /** @format uint64 */
-    maxApplicableSoftwareVersion?: string;
+    /** @format int64 */
+    minApplicableSoftwareVersion?: number;
+    /** @format int64 */
+    maxApplicableSoftwareVersion?: number;
     releaseNotesUrl?: string;
     creator?: string;
 }
@@ -52,7 +52,7 @@ export interface ModelModelVersions {
     vid?: number;
     /** @format int32 */
     pid?: number;
-    softwareVersions?: string[];
+    softwareVersions?: number[];
 }
 export declare type ModelMsgCreateModelResponse = object;
 export declare type ModelMsgCreateModelVersionResponse = object;
@@ -304,7 +304,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @summary Queries a ModelVersion by index.
      * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{softwareVersion}
      */
-    queryModelVersion: (vid: number, pid: number, softwareVersion: string, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetModelVersionResponse, RpcStatus>>;
+    queryModelVersion: (vid: number, pid: number, softwareVersion: number, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetModelVersionResponse, RpcStatus>>;
     /**
      * No description
      *

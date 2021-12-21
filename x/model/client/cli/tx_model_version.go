@@ -12,7 +12,7 @@ func CmdCreateModelVersion() *cobra.Command {
 	var (
 		vid                          int32
 		pid                          int32
-		softwareVersion              uint64
+		softwareVersion              uint32
 		softwareVersionString        string
 		cdVersionNumber              int32
 		firmwareDigests              string
@@ -21,8 +21,8 @@ func CmdCreateModelVersion() *cobra.Command {
 		otaFileSize                  uint64
 		otaChecksum                  string
 		otaChecksumType              int32
-		minApplicableSoftwareVersion uint64
-		maxApplicableSoftwareVersion uint64
+		minApplicableSoftwareVersion uint32
+		maxApplicableSoftwareVersion uint32
 		releaseNotesUrl              string
 	)
 
@@ -62,7 +62,7 @@ func CmdCreateModelVersion() *cobra.Command {
 		"Model vendor ID")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
 		"Model product ID")
-	cmd.Flags().Uint64VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
 		"Software Version of model (uint32)")
 	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "",
 		"Software Version String of model")
@@ -88,10 +88,10 @@ func CmdCreateModelVersion() *cobra.Command {
 IANA Named Information Hash Algorithm Registry for the type of otaChecksum.
 For example, a value of 1 would match the sha-256 identifier, 
 which maps to the SHA-256 digest algorithm`)
-	cmd.Flags().Uint64Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
+	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest 
 SoftwareVersion for which this image can be applied`)
-	cmd.Flags().Uint64Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
+	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
 		`MaxApplicableSoftwareVersion should specify the highest 
 SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesUrl, FlagReleaseNotesUrl, "",
@@ -116,11 +116,11 @@ func CmdUpdateModelVersion() *cobra.Command {
 	var (
 		vid                          int32
 		pid                          int32
-		softwareVersion              uint64
+		softwareVersion              uint32
 		softwareVersionValid         bool
 		otaUrl                       string
-		minApplicableSoftwareVersion uint64
-		maxApplicableSoftwareVersion uint64
+		minApplicableSoftwareVersion uint32
+		maxApplicableSoftwareVersion uint32
 		releaseNotesUrl              string
 	)
 
@@ -155,7 +155,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 		"Model vendor ID")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
 		"Model product ID")
-	cmd.Flags().Uint64VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
+	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
 		"Software Version of model (uint32)")
 	// by default the Software Version is valid, unless --softwareVersionValid is passed by user explicitly
 	// FIXME: This behavior looks erroneous because the user can implicitly change invalid model version to valid
@@ -163,9 +163,9 @@ func CmdUpdateModelVersion() *cobra.Command {
 		"boolean flag to revoke the software version model")
 	cmd.Flags().StringVar(&otaUrl, FlagOtaUrl, "",
 		"URL where to obtain the OTA image")
-	cmd.Flags().Uint64Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
+	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)
-	cmd.Flags().Uint64Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
+	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
 		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().StringVar(&releaseNotesUrl, FlagReleaseNotesUrl, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)

@@ -1,6 +1,5 @@
 /* eslint-disable */
-import * as Long from 'long';
-import { util, configure, Writer, Reader } from 'protobufjs/minimal';
+import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.model';
 const baseModel = {
     vid: 0,
@@ -47,13 +46,13 @@ export const Model = {
             writer.uint32(66).string(message.commissioningCustomFlowUrl);
         }
         if (message.commissioningModeInitialStepsHint !== 0) {
-            writer.uint32(72).uint64(message.commissioningModeInitialStepsHint);
+            writer.uint32(72).uint32(message.commissioningModeInitialStepsHint);
         }
         if (message.commissioningModeInitialStepsInstruction !== '') {
             writer.uint32(82).string(message.commissioningModeInitialStepsInstruction);
         }
         if (message.commissioningModeSecondaryStepsHint !== 0) {
-            writer.uint32(88).uint64(message.commissioningModeSecondaryStepsHint);
+            writer.uint32(88).uint32(message.commissioningModeSecondaryStepsHint);
         }
         if (message.commissioningModeSecondaryStepsInstruction !== '') {
             writer.uint32(98).string(message.commissioningModeSecondaryStepsInstruction);
@@ -104,13 +103,13 @@ export const Model = {
                     message.commissioningCustomFlowUrl = reader.string();
                     break;
                 case 9:
-                    message.commissioningModeInitialStepsHint = longToNumber(reader.uint64());
+                    message.commissioningModeInitialStepsHint = reader.uint32();
                     break;
                 case 10:
                     message.commissioningModeInitialStepsInstruction = reader.string();
                     break;
                 case 11:
-                    message.commissioningModeSecondaryStepsHint = longToNumber(reader.uint64());
+                    message.commissioningModeSecondaryStepsHint = reader.uint32();
                     break;
                 case 12:
                     message.commissioningModeSecondaryStepsInstruction = reader.string();
@@ -357,24 +356,3 @@ export const Model = {
         return message;
     }
 };
-var globalThis = (() => {
-    if (typeof globalThis !== 'undefined')
-        return globalThis;
-    if (typeof self !== 'undefined')
-        return self;
-    if (typeof window !== 'undefined')
-        return window;
-    if (typeof global !== 'undefined')
-        return global;
-    throw 'Unable to locate global object';
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
-}

@@ -26,12 +26,12 @@ export interface ModelModel {
   commissioningCustomFlow?: number;
   commissioningCustomFlowUrl?: string;
 
-  /** @format uint64 */
-  commissioningModeInitialStepsHint?: string;
+  /** @format int64 */
+  commissioningModeInitialStepsHint?: number;
   commissioningModeInitialStepsInstruction?: string;
 
-  /** @format uint64 */
-  commissioningModeSecondaryStepsHint?: string;
+  /** @format int64 */
+  commissioningModeSecondaryStepsHint?: number;
   commissioningModeSecondaryStepsInstruction?: string;
   userManualUrl?: string;
   supportUrl?: string;
@@ -46,8 +46,8 @@ export interface ModelModelVersion {
   /** @format int32 */
   pid?: number;
 
-  /** @format uint64 */
-  softwareVersion?: string;
+  /** @format int64 */
+  softwareVersion?: number;
   softwareVersionString?: string;
 
   /** @format int32 */
@@ -63,11 +63,11 @@ export interface ModelModelVersion {
   /** @format int32 */
   otaChecksumType?: number;
 
-  /** @format uint64 */
-  minApplicableSoftwareVersion?: string;
+  /** @format int64 */
+  minApplicableSoftwareVersion?: number;
 
-  /** @format uint64 */
-  maxApplicableSoftwareVersion?: string;
+  /** @format int64 */
+  maxApplicableSoftwareVersion?: number;
   releaseNotesUrl?: string;
   creator?: string;
 }
@@ -78,7 +78,7 @@ export interface ModelModelVersions {
 
   /** @format int32 */
   pid?: number;
-  softwareVersions?: string[];
+  softwareVersions?: number[];
 }
 
 export type ModelMsgCreateModelResponse = object;
@@ -526,7 +526,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Queries a ModelVersion by index.
    * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{softwareVersion}
    */
-  queryModelVersion = (vid: number, pid: number, softwareVersion: string, params: RequestParams = {}) =>
+  queryModelVersion = (vid: number, pid: number, softwareVersion: number, params: RequestParams = {}) =>
     this.request<ModelQueryGetModelVersionResponse, RpcStatus>({
       path: `/zigbee-alliance/distributedcomplianceledger/model/model_version/${vid}/${pid}/${softwareVersion}`,
       method: "GET",

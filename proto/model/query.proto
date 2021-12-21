@@ -97,7 +97,7 @@ message QueryAllModelResponse {
 message QueryGetModelVersionRequest {
 	  int32 vid = 1;
   int32 pid = 2;
-  uint64 software_version = 3;
+  uint32 software_version = 3;
 
 }
 

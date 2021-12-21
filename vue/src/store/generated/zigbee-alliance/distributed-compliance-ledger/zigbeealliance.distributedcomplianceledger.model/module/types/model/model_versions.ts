@@ -1,6 +1,5 @@
 /* eslint-disable */
-import * as Long from 'long'
-import { util, configure, Writer, Reader } from 'protobufjs/minimal'
+import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.model'
 
@@ -22,7 +21,7 @@ export const ModelVersions = {
     }
     writer.uint32(26).fork()
     for (const v of message.softwareVersions) {
-      writer.uint64(v)
+      writer.uint32(v)
     }
     writer.ldelim()
     return writer
@@ -46,10 +45,10 @@ export const ModelVersions = {
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos
             while (reader.pos < end2) {
-              message.softwareVersions.push(longToNumber(reader.uint64() as Long))
+              message.softwareVersions.push(reader.uint32())
             }
           } else {
-            message.softwareVersions.push(longToNumber(reader.uint64() as Long))
+            message.softwareVersions.push(reader.uint32())
           }
           break
         default:
@@ -115,16 +114,6 @@ export const ModelVersions = {
   }
 }
 
-declare var self: any | undefined
-declare var window: any | undefined
-var globalThis: any = (() => {
-  if (typeof globalThis !== 'undefined') return globalThis
-  if (typeof self !== 'undefined') return self
-  if (typeof window !== 'undefined') return window
-  if (typeof global !== 'undefined') return global
-  throw 'Unable to locate global object'
-})()
-
 type Builtin = Date | Function | Uint8Array | string | number | undefined
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -135,15 +124,3 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>
-
-function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER')
-  }
-  return long.toNumber()
-}
-
-if (util.Long !== Long) {
-  util.Long = Long as any
-  configure()
-}

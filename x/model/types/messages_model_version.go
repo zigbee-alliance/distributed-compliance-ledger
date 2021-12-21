@@ -18,7 +18,7 @@ func NewMsgCreateModelVersion(
 	creator string,
 	vid int32,
 	pid int32,
-	softwareVersion uint64,
+	softwareVersion uint32,
 	softwareVersionString string,
 	cdVersionNumber int32,
 	firmwareDigests string,
@@ -27,8 +27,8 @@ func NewMsgCreateModelVersion(
 	otaFileSize uint64,
 	otaChecksum string,
 	otaChecksumType int32,
-	minApplicableSoftwareVersion uint64,
-	maxApplicableSoftwareVersion uint64,
+	minApplicableSoftwareVersion uint32,
+	maxApplicableSoftwareVersion uint32,
 	releaseNotesUrl string,
 
 ) *MsgCreateModelVersion {
@@ -92,11 +92,11 @@ func NewMsgUpdateModelVersion(
 	creator string,
 	vid int32,
 	pid int32,
-	softwareVersion uint64,
+	softwareVersion uint32,
 	softwareVersionValid bool,
 	otaUrl string,
-	minApplicableSoftwareVersion uint64,
-	maxApplicableSoftwareVersion uint64,
+	minApplicableSoftwareVersion uint32,
+	maxApplicableSoftwareVersion uint32,
 	releaseNotesUrl string,
 
 ) *MsgUpdateModelVersion {

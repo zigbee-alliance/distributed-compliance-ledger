@@ -133,13 +133,13 @@ export const MsgCreateModel = {
       writer.uint32(74).string(message.commissioningCustomFlowUrl)
     }
     if (message.commissioningModeInitialStepsHint !== 0) {
-      writer.uint32(80).uint64(message.commissioningModeInitialStepsHint)
+      writer.uint32(80).uint32(message.commissioningModeInitialStepsHint)
     }
     if (message.commissioningModeInitialStepsInstruction !== '') {
       writer.uint32(90).string(message.commissioningModeInitialStepsInstruction)
     }
     if (message.commissioningModeSecondaryStepsHint !== 0) {
-      writer.uint32(96).uint64(message.commissioningModeSecondaryStepsHint)
+      writer.uint32(96).uint32(message.commissioningModeSecondaryStepsHint)
     }
     if (message.commissioningModeSecondaryStepsInstruction !== '') {
       writer.uint32(106).string(message.commissioningModeSecondaryStepsInstruction)
@@ -191,13 +191,13 @@ export const MsgCreateModel = {
           message.commissioningCustomFlowUrl = reader.string()
           break
         case 10:
-          message.commissioningModeInitialStepsHint = longToNumber(reader.uint64() as Long)
+          message.commissioningModeInitialStepsHint = reader.uint32()
           break
         case 11:
           message.commissioningModeInitialStepsInstruction = reader.string()
           break
         case 12:
-          message.commissioningModeSecondaryStepsHint = longToNumber(reader.uint64() as Long)
+          message.commissioningModeSecondaryStepsHint = reader.uint32()
           break
         case 13:
           message.commissioningModeSecondaryStepsInstruction = reader.string()
@@ -903,7 +903,7 @@ export const MsgCreateModelVersion = {
       writer.uint32(24).int32(message.pid)
     }
     if (message.softwareVersion !== 0) {
-      writer.uint32(32).uint64(message.softwareVersion)
+      writer.uint32(32).uint32(message.softwareVersion)
     }
     if (message.softwareVersionString !== '') {
       writer.uint32(42).string(message.softwareVersionString)
@@ -930,10 +930,10 @@ export const MsgCreateModelVersion = {
       writer.uint32(96).int32(message.otaChecksumType)
     }
     if (message.minApplicableSoftwareVersion !== 0) {
-      writer.uint32(104).uint64(message.minApplicableSoftwareVersion)
+      writer.uint32(104).uint32(message.minApplicableSoftwareVersion)
     }
     if (message.maxApplicableSoftwareVersion !== 0) {
-      writer.uint32(112).uint64(message.maxApplicableSoftwareVersion)
+      writer.uint32(112).uint32(message.maxApplicableSoftwareVersion)
     }
     if (message.releaseNotesUrl !== '') {
       writer.uint32(122).string(message.releaseNotesUrl)
@@ -958,7 +958,7 @@ export const MsgCreateModelVersion = {
           message.pid = reader.int32()
           break
         case 4:
-          message.softwareVersion = longToNumber(reader.uint64() as Long)
+          message.softwareVersion = reader.uint32()
           break
         case 5:
           message.softwareVersionString = reader.string()
@@ -985,10 +985,10 @@ export const MsgCreateModelVersion = {
           message.otaChecksumType = reader.int32()
           break
         case 13:
-          message.minApplicableSoftwareVersion = longToNumber(reader.uint64() as Long)
+          message.minApplicableSoftwareVersion = reader.uint32()
           break
         case 14:
-          message.maxApplicableSoftwareVersion = longToNumber(reader.uint64() as Long)
+          message.maxApplicableSoftwareVersion = reader.uint32()
           break
         case 15:
           message.releaseNotesUrl = reader.string()
@@ -1244,7 +1244,7 @@ export const MsgUpdateModelVersion = {
       writer.uint32(24).int32(message.pid)
     }
     if (message.softwareVersion !== 0) {
-      writer.uint32(32).uint64(message.softwareVersion)
+      writer.uint32(32).uint32(message.softwareVersion)
     }
     if (message.softwareVersionValid === true) {
       writer.uint32(40).bool(message.softwareVersionValid)
@@ -1253,10 +1253,10 @@ export const MsgUpdateModelVersion = {
       writer.uint32(50).string(message.otaUrl)
     }
     if (message.minApplicableSoftwareVersion !== 0) {
-      writer.uint32(56).uint64(message.minApplicableSoftwareVersion)
+      writer.uint32(56).uint32(message.minApplicableSoftwareVersion)
     }
     if (message.maxApplicableSoftwareVersion !== 0) {
-      writer.uint32(64).uint64(message.maxApplicableSoftwareVersion)
+      writer.uint32(64).uint32(message.maxApplicableSoftwareVersion)
     }
     if (message.releaseNotesUrl !== '') {
       writer.uint32(74).string(message.releaseNotesUrl)
@@ -1281,7 +1281,7 @@ export const MsgUpdateModelVersion = {
           message.pid = reader.int32()
           break
         case 4:
-          message.softwareVersion = longToNumber(reader.uint64() as Long)
+          message.softwareVersion = reader.uint32()
           break
         case 5:
           message.softwareVersionValid = reader.bool()
@@ -1290,10 +1290,10 @@ export const MsgUpdateModelVersion = {
           message.otaUrl = reader.string()
           break
         case 7:
-          message.minApplicableSoftwareVersion = longToNumber(reader.uint64() as Long)
+          message.minApplicableSoftwareVersion = reader.uint32()
           break
         case 8:
-          message.maxApplicableSoftwareVersion = longToNumber(reader.uint64() as Long)
+          message.maxApplicableSoftwareVersion = reader.uint32()
           break
         case 9:
           message.releaseNotesUrl = reader.string()

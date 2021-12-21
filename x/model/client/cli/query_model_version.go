@@ -13,7 +13,7 @@ func CmdShowModelVersion() *cobra.Command {
 	var (
 		vid             int32
 		pid             int32
-		softwareVersion uint64
+		softwareVersion uint32
 	)
 
 	cmd := &cobra.Command{
@@ -44,7 +44,7 @@ func CmdShowModelVersion() *cobra.Command {
 		"Model vendor ID")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
 		"Model product ID")
-	cmd.Flags().Uint64Var(&softwareVersion, FlagSoftwareVersion, 0,
+	cmd.Flags().Uint32Var(&softwareVersion, FlagSoftwareVersion, 0,
 		"Software Version of model (uint32)")
 
 	_ = cmd.MarkFlagRequired(FlagVid)

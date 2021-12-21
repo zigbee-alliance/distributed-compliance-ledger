@@ -14337,13 +14337,13 @@ paths:
                     commissioningCustomFlowUrl:
                       type: string
                     commissioningModeInitialStepsHint:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     commissioningModeInitialStepsInstruction:
                       type: string
                     commissioningModeSecondaryStepsHint:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     commissioningModeSecondaryStepsInstruction:
                       type: string
                     userManualUrl:
@@ -14492,13 +14492,13 @@ paths:
                   commissioningCustomFlowUrl:
                     type: string
                   commissioningModeInitialStepsHint:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   commissioningModeInitialStepsInstruction:
                     type: string
                   commissioningModeSecondaryStepsHint:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   commissioningModeSecondaryStepsInstruction:
                     type: string
                   userManualUrl:
@@ -14562,8 +14562,8 @@ paths:
                       type: integer
                       format: int32
                     softwareVersion:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     softwareVersionString:
                       type: string
                     cdVersionNumber:
@@ -14584,11 +14584,11 @@ paths:
                       type: integer
                       format: int32
                     minApplicableSoftwareVersion:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     maxApplicableSoftwareVersion:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     releaseNotesUrl:
                       type: string
                     creator:
@@ -14717,8 +14717,8 @@ paths:
                     type: integer
                     format: int32
                   softwareVersion:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   softwareVersionString:
                     type: string
                   cdVersionNumber:
@@ -14739,11 +14739,11 @@ paths:
                     type: integer
                     format: int32
                   minApplicableSoftwareVersion:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   maxApplicableSoftwareVersion:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   releaseNotesUrl:
                     type: string
                   creator:
@@ -14780,8 +14780,8 @@ paths:
         - name: softwareVersion
           in: path
           required: true
-          type: string
-          format: uint64
+          type: integer
+          format: int64
       tags:
         - Query
   /zigbee-alliance/distributedcomplianceledger/model/model_versions:
@@ -14808,8 +14808,8 @@ paths:
                     softwareVersions:
                       type: array
                       items:
-                        type: string
-                        format: uint64
+                        type: integer
+                        format: int64
               pagination:
                 type: object
                 properties:
@@ -14936,8 +14936,8 @@ paths:
                   softwareVersions:
                     type: array
                     items:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
         default:
           description: An unexpected error response.
           schema:
@@ -25302,13 +25302,13 @@ definitions:
       commissioningCustomFlowUrl:
         type: string
       commissioningModeInitialStepsHint:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       commissioningModeInitialStepsInstruction:
         type: string
       commissioningModeSecondaryStepsHint:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       commissioningModeSecondaryStepsInstruction:
         type: string
       userManualUrl:
@@ -25329,8 +25329,8 @@ definitions:
         type: integer
         format: int32
       softwareVersion:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       softwareVersionString:
         type: string
       cdVersionNumber:
@@ -25351,11 +25351,11 @@ definitions:
         type: integer
         format: int32
       minApplicableSoftwareVersion:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       maxApplicableSoftwareVersion:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       releaseNotesUrl:
         type: string
       creator:
@@ -25372,8 +25372,8 @@ definitions:
       softwareVersions:
         type: array
         items:
-          type: string
-          format: uint64
+          type: integer
+          format: int64
   zigbeealliance.distributedcomplianceledger.model.MsgCreateModelResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionResponse:
@@ -25423,13 +25423,13 @@ definitions:
             commissioningCustomFlowUrl:
               type: string
             commissioningModeInitialStepsHint:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             commissioningModeInitialStepsInstruction:
               type: string
             commissioningModeSecondaryStepsHint:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             commissioningModeSecondaryStepsInstruction:
               type: string
             userManualUrl:
@@ -25480,8 +25480,8 @@ definitions:
               type: integer
               format: int32
             softwareVersion:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             softwareVersionString:
               type: string
             cdVersionNumber:
@@ -25502,11 +25502,11 @@ definitions:
               type: integer
               format: int32
             minApplicableSoftwareVersion:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             maxApplicableSoftwareVersion:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             releaseNotesUrl:
               type: string
             creator:
@@ -25553,8 +25553,8 @@ definitions:
             softwareVersions:
               type: array
               items:
-                type: string
-                format: uint64
+                type: integer
+                format: int64
       pagination:
         type: object
         properties:
@@ -25655,13 +25655,13 @@ definitions:
           commissioningCustomFlowUrl:
             type: string
           commissioningModeInitialStepsHint:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           commissioningModeInitialStepsInstruction:
             type: string
           commissioningModeSecondaryStepsHint:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           commissioningModeSecondaryStepsInstruction:
             type: string
           userManualUrl:
@@ -25685,8 +25685,8 @@ definitions:
             type: integer
             format: int32
           softwareVersion:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           softwareVersionString:
             type: string
           cdVersionNumber:
@@ -25707,11 +25707,11 @@ definitions:
             type: integer
             format: int32
           minApplicableSoftwareVersion:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           maxApplicableSoftwareVersion:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           releaseNotesUrl:
             type: string
           creator:
@@ -25731,8 +25731,8 @@ definitions:
           softwareVersions:
             type: array
             items:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
   zigbeealliance.distributedcomplianceledger.model.QueryGetVendorProductsResponse:
     type: object
     properties:

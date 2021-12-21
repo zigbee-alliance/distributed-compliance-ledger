@@ -22,7 +22,7 @@ func (k Keeper) GetModelVersion(
 	ctx sdk.Context,
 	vid int32,
 	pid int32,
-	softwareVersion uint64,
+	softwareVersion uint32,
 
 ) (val types.ModelVersion, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelVersionKeyPrefix))
@@ -45,7 +45,7 @@ func (k Keeper) RemoveModelVersion(
 	ctx sdk.Context,
 	vid int32,
 	pid int32,
-	softwareVersion uint64,
+	softwareVersion uint32,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelVersionKeyPrefix))

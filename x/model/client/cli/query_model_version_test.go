@@ -30,7 +30,7 @@ func networkWithModelVersionObjects(t *testing.T, n int) (*network.Network, []ty
 		modelVersion := types.ModelVersion{
 			Vid:             int32(i),
 			Pid:             int32(i),
-			SoftwareVersion: uint64(i),
+			SoftwareVersion: uint32(i),
 		}
 		nullify.Fill(&modelVersion)
 		state.ModelVersionList = append(state.ModelVersionList, modelVersion)
@@ -52,7 +52,7 @@ func TestShowModelVersion(t *testing.T) {
 		desc              string
 		idVid             int32
 		idPid             int32
-		idSoftwareVersion uint64
+		idSoftwareVersion uint32
 
 		args []string
 		err  error

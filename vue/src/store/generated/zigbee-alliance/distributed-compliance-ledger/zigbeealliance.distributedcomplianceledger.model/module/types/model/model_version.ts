@@ -49,7 +49,7 @@ export const ModelVersion = {
       writer.uint32(16).int32(message.pid)
     }
     if (message.softwareVersion !== 0) {
-      writer.uint32(24).uint64(message.softwareVersion)
+      writer.uint32(24).uint32(message.softwareVersion)
     }
     if (message.softwareVersionString !== '') {
       writer.uint32(34).string(message.softwareVersionString)
@@ -76,10 +76,10 @@ export const ModelVersion = {
       writer.uint32(88).int32(message.otaChecksumType)
     }
     if (message.minApplicableSoftwareVersion !== 0) {
-      writer.uint32(96).uint64(message.minApplicableSoftwareVersion)
+      writer.uint32(96).uint32(message.minApplicableSoftwareVersion)
     }
     if (message.maxApplicableSoftwareVersion !== 0) {
-      writer.uint32(104).uint64(message.maxApplicableSoftwareVersion)
+      writer.uint32(104).uint32(message.maxApplicableSoftwareVersion)
     }
     if (message.releaseNotesUrl !== '') {
       writer.uint32(114).string(message.releaseNotesUrl)
@@ -104,7 +104,7 @@ export const ModelVersion = {
           message.pid = reader.int32()
           break
         case 3:
-          message.softwareVersion = longToNumber(reader.uint64() as Long)
+          message.softwareVersion = reader.uint32()
           break
         case 4:
           message.softwareVersionString = reader.string()
@@ -131,10 +131,10 @@ export const ModelVersion = {
           message.otaChecksumType = reader.int32()
           break
         case 12:
-          message.minApplicableSoftwareVersion = longToNumber(reader.uint64() as Long)
+          message.minApplicableSoftwareVersion = reader.uint32()
           break
         case 13:
-          message.maxApplicableSoftwareVersion = longToNumber(reader.uint64() as Long)
+          message.maxApplicableSoftwareVersion = reader.uint32()
           break
         case 14:
           message.releaseNotesUrl = reader.string()

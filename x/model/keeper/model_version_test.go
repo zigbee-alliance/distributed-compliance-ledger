@@ -20,7 +20,7 @@ func createNModelVersion(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.
 	for i := range items {
 		items[i].Vid = int32(i)
 		items[i].Pid = int32(i)
-		items[i].SoftwareVersion = uint64(i)
+		items[i].SoftwareVersion = uint32(i)
 
 		keeper.SetModelVersion(ctx, items[i])
 	}
