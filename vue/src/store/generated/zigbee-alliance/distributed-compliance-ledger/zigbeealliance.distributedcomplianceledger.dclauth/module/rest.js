@@ -140,27 +140,12 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryAccountAll
-         * @summary Queries a list of account items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/account
-         */
-        this.queryAccountAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/account`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryAccount
          * @summary Queries a account by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/account/{address}
+         * @request GET:/dcl/auth/account/{address}
          */
         this.queryAccount = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/account/${address}`,
+            path: `/dcl/auth/account/${address}`,
             method: "GET",
             format: "json",
             ...params,
@@ -169,13 +154,14 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryAccountStat
-         * @summary Queries a accountStat by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/accountStat
+         * @name QueryAccountAll
+         * @summary Queries a list of account items.
+         * @request GET:/dcl/auth/accounts
          */
-        this.queryAccountStat = (params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/accountStat`,
+        this.queryAccountAll = (query, params = {}) => this.request({
+            path: `/dcl/auth/accounts`,
             method: "GET",
+            query: query,
             format: "json",
             ...params,
         });
@@ -185,26 +171,12 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryPendingAccountAll
          * @summary Queries a list of pendingAccount items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount
+         * @request GET:/dcl/auth/accounts/proposed
          */
         this.queryPendingAccountAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount`,
+            path: `/dcl/auth/accounts/proposed`,
             method: "GET",
             query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryPendingAccount
-         * @summary Queries a pendingAccount by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/{address}
-         */
-        this.queryPendingAccount = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/${address}`,
-            method: "GET",
             format: "json",
             ...params,
         });
@@ -214,10 +186,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryPendingAccountRevocationAll
          * @summary Queries a list of pendingAccountRevocation items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation
+         * @request GET:/dcl/auth/accounts/proposed/revoked
          */
         this.queryPendingAccountRevocationAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation`,
+            path: `/dcl/auth/accounts/proposed/revoked`,
             method: "GET",
             query: query,
             format: "json",
@@ -227,12 +199,12 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryPendingAccountRevocation
-         * @summary Queries a pendingAccountRevocation by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/{address}
+         * @name QueryAccountStat
+         * @summary Queries a accountStat by index.
+         * @request GET:/dcl/auth/accounts/stat
          */
-        this.queryPendingAccountRevocation = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/${address}`,
+        this.queryAccountStat = (params = {}) => this.request({
+            path: `/dcl/auth/accounts/stat`,
             method: "GET",
             format: "json",
             ...params,

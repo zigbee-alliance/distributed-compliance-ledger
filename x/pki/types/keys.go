@@ -20,3 +20,11 @@ const (
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
+
+const (
+	ApprovedRootCertificatesKey = "ApprovedRootCertificates-value-"
+)
+
+const (
+	RevokedRootCertificatesKey = "RevokedRootCertificates-value-"
+)

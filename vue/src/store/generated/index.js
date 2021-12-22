@@ -12,6 +12,7 @@ import CosmosCosmosSdkCosmosVestingV1Beta1 from './cosmos/cosmos-sdk/cosmos.vest
 import CosmosIbcGoIbcApplicationsTransferV1 from './cosmos/ibc-go/ibc.applications.transfer.v1';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.dclauth';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.model';
+import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.pki';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.validator';
 export default {
     CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
@@ -27,6 +28,7 @@ export default {
     CosmosIbcGoIbcApplicationsTransferV1: load(CosmosIbcGoIbcApplicationsTransferV1, 'ibc.applications.transfer.v1'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth, 'zigbeealliance.distributedcomplianceledger.dclauth'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel, 'zigbeealliance.distributedcomplianceledger.model'),
+    ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki, 'zigbeealliance.distributedcomplianceledger.pki'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator, 'zigbeealliance.distributedcomplianceledger.validator'),
 };
 function load(mod, fullns) {

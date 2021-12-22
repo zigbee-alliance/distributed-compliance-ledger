@@ -18,7 +18,7 @@ source integration_tests/cli/common.sh
 
 random_string user
 echo "$user generates keys"
-cmd="(echo 'test1234'; echo 'test1234') | dcld keys add $user"
+cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user"
 result="$(bash -c "$cmd")"
 
 test_divider

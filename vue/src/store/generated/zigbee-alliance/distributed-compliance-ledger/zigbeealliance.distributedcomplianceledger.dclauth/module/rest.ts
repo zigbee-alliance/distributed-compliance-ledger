@@ -98,14 +98,6 @@ export interface DclauthQueryGetAccountStatResponse {
   AccountStat?: DclauthAccountStat;
 }
 
-export interface DclauthQueryGetPendingAccountResponse {
-  pendingAccount?: DclauthPendingAccount;
-}
-
-export interface DclauthQueryGetPendingAccountRevocationResponse {
-  pendingAccountRevocation?: DclauthPendingAccountRevocation;
-}
-
 /**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
 URL that describes the type of the serialized message.
@@ -594,9 +586,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryAccount
+   * @summary Queries a account by index.
+   * @request GET:/dcl/auth/account/{address}
+   */
+  queryAccount = (address: string, params: RequestParams = {}) =>
+    this.request<DclauthQueryGetAccountResponse, RpcStatus>({
+      path: `/dcl/auth/account/${address}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryAccountAll
    * @summary Queries a list of account items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/account
+   * @request GET:/dcl/auth/accounts
    */
   queryAccountAll = (
     query?: {
@@ -609,7 +617,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclauthQueryAllAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/account`,
+      path: `/dcl/auth/accounts`,
       method: "GET",
       query: query,
       format: "json",
@@ -620,41 +628,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryAccount
-   * @summary Queries a account by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/account/{address}
-   */
-  queryAccount = (address: string, params: RequestParams = {}) =>
-    this.request<DclauthQueryGetAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/account/${address}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryAccountStat
-   * @summary Queries a accountStat by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/accountStat
-   */
-  queryAccountStat = (params: RequestParams = {}) =>
-    this.request<DclauthQueryGetAccountStatResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/accountStat`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryPendingAccountAll
    * @summary Queries a list of pendingAccount items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount
+   * @request GET:/dcl/auth/accounts/proposed
    */
   queryPendingAccountAll = (
     query?: {
@@ -667,7 +643,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclauthQueryAllPendingAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount`,
+      path: `/dcl/auth/accounts/proposed`,
       method: "GET",
       query: query,
       format: "json",
@@ -678,25 +654,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryPendingAccount
-   * @summary Queries a pendingAccount by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/{address}
-   */
-  queryPendingAccount = (address: string, params: RequestParams = {}) =>
-    this.request<DclauthQueryGetPendingAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccount/${address}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryPendingAccountRevocationAll
    * @summary Queries a list of pendingAccountRevocation items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation
+   * @request GET:/dcl/auth/accounts/proposed/revoked
    */
   queryPendingAccountRevocationAll = (
     query?: {
@@ -709,7 +669,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclauthQueryAllPendingAccountRevocationResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation`,
+      path: `/dcl/auth/accounts/proposed/revoked`,
       method: "GET",
       query: query,
       format: "json",
@@ -720,13 +680,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryPendingAccountRevocation
-   * @summary Queries a pendingAccountRevocation by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/{address}
+   * @name QueryAccountStat
+   * @summary Queries a accountStat by index.
+   * @request GET:/dcl/auth/accounts/stat
    */
-  queryPendingAccountRevocation = (address: string, params: RequestParams = {}) =>
-    this.request<DclauthQueryGetPendingAccountRevocationResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/pendingAccountRevocation/${address}`,
+  queryAccountStat = (params: RequestParams = {}) =>
+    this.request<DclauthQueryGetAccountStatResponse, RpcStatus>({
+      path: `/dcl/auth/accounts/stat`,
       method: "GET",
       format: "json",
       ...params,

@@ -15,9 +15,8 @@ func (k msgServer) ApproveAddAccount(
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
-	// TODO issue 99: good error
 	if err != nil {
-		return nil, err
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	// check if sender has enough rights to create a validator node
@@ -29,9 +28,8 @@ func (k msgServer) ApproveAddAccount(
 	}
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
-	// TODO issue 99: good error
 	if err != nil {
-		return nil, err
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if pending account exists

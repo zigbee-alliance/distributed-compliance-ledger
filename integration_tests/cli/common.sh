@@ -108,7 +108,7 @@ create_new_account(){
   echo "Account name: $name"
 
   echo "Generate key for $name"
-  echo $passphrase | dcld keys add "$name"
+  (echo $passphrase; echo $passphrase) | dcld keys add "$name"
 
   address=$(echo $passphrase | dcld keys show $name -a)
   pubkey=$(echo $passphrase | dcld keys show $name -p)

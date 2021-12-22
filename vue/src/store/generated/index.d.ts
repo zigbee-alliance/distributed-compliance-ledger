@@ -12,6 +12,7 @@ declare const _default: {
     CosmosIbcGoIbcApplicationsTransferV1: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel: (store: any) => void;
+    ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: (store: any) => void;
 };
 export default _default;
