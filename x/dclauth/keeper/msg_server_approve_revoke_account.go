@@ -12,9 +12,8 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	signerAddr, err := sdk.AccAddressFromBech32(msg.Signer)
-	// TODO issue 99: good error
 	if err != nil {
-		return nil, err
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
 	// check that sender has enough rights to approve account revocation
@@ -26,9 +25,8 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 	}
 
 	accAddr, err := sdk.AccAddressFromBech32(msg.Address)
-	// TODO issue 99: good error
 	if err != nil {
-		return nil, err
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check that pending account revocation exists
