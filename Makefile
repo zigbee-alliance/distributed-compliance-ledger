@@ -1,14 +1,20 @@
 PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
 
-VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
-COMMIT := $(shell git log -1 --format='%H')
+ifndef DCL_VERSION
+DCL_VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+endif
+
+ifndef DCL_COMMIT
+DCL_COMMIT := $(shell git log -1 --format='%H')
+endif
+
 UID := $(shell id -u)
 #GID := $(shell id -g)
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
-	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
-	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)
+	-X github.com/cosmos/cosmos-sdk/version.Version=$(DCL_VERSION) \
+	-X github.com/cosmos/cosmos-sdk/version.Commit=$(DCL_COMMIT)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 OUTPUT_DIR ?= build
@@ -50,7 +56,8 @@ clean:
 # Docker
 
 image:
-	docker build -t dcledger --build-arg TEST_UID=${UID} .
+	docker build -t dcledger --build-arg TEST_UID=${UID} \
+		--build-arg DCL_VERSION=${DCL_VERSION} --build-arg DCL_COMMIT=${DCL_COMMIT} .
 
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
