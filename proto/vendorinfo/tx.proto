@@ -18,10 +18,10 @@ message MsgCreateVendorInfo {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   uint64 vendorID = 2 [(gogoproto.moretags) = "validate:\"required,gte=0,lte=65535\""];
 
-  string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32""];
-  string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64""];
-  string companyPrefferedName = 5 [(gogoproto.moretags) = "validate:\"max=64""];
-  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:"omitempty,max=256,url""];
+  string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32\""];
+  string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64\""];
+  string companyPrefferedName = 5 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:"omitempty,max=256,url\""];
 }
 message MsgCreateVendorInfoResponse {}
 
@@ -29,10 +29,10 @@ message MsgUpdateVendorInfo {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   uint64 vendorID = 2 [(gogoproto.moretags) = "validate:\"required,gte=0,lte=65535\""];
 
-  string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32""];
-  string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64""];
-  string companyPrefferedName = 5 [(gogoproto.moretags) = "validate:\"max=64""];
-  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:"omitempty,max=256,url""];
+  string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32\""];
+  string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64\""];
+  string companyPrefferedName = 5 [(gogoproto.moretags) = "validate:\"max=64\""];
+  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:"omitempty,max=256,url\""];
 }
 message MsgUpdateVendorInfoResponse {}
 
