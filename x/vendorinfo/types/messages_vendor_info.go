@@ -107,6 +107,11 @@ func (msg *MsgUpdateVendorInfo) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.VendorID > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "VendorID must be in range from 0 to 65535")
+	}
+
 	return nil
 }
 
@@ -148,5 +153,10 @@ func (msg *MsgDeleteVendorInfo) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	if msg.VendorID > 65535 {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "VendorID must be in range from 0 to 65535")
+	}
+
 	return nil
 }
