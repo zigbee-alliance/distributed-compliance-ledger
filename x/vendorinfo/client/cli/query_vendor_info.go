@@ -46,15 +46,15 @@ func CmdListVendorInfo() *cobra.Command {
 
 func CmdShowVendorInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "vendor [vendor-id]",
+		Use:   "vendor",
 		Short: "Get vendor details for the given vendorID",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argVendorID, err := cast.ToUint64E(args[0])
+			argVendorID, err := cast.ToUint64E(FlagVID)
 			if err != nil {
 				return err
 			}
@@ -72,7 +72,11 @@ func CmdShowVendorInfo() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagVID, "", "Unique ID assigned to the vendor")
+
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagVID)
 
 	return cmd
 }
