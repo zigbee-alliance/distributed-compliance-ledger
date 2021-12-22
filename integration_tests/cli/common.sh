@@ -108,10 +108,10 @@ create_new_account(){
   echo "Account name: $name"
 
   echo "Generate key for $name"
-  echo $passphrase | dcld keys add "$name"
+  (echo $passphrase; echo $passphrase) | dcld keys add "$name"
 
-  address=$(dcld keys show $name -a)
-  pubkey=$(dcld keys show $name -p)
+  address=$(echo $passphrase | dcld keys show $name -a)
+  pubkey=$(echo $passphrase | dcld keys show $name -p)
 
   echo "Jack proposes account for \"$name\" with roles: \"$roles\""
   result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
