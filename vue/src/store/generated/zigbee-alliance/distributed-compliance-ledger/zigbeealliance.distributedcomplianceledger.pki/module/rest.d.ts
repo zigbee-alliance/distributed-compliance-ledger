@@ -63,19 +63,6 @@ export interface PkiQueryAllApprovedCertificatesResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
-export interface PkiQueryAllChildCertificatesResponse {
-    childCertificates?: PkiChildCertificates[];
-    /**
-     * PageResponse is to be embedded in gRPC response messages where the
-     * corresponding request message has used PageRequest.
-     *
-     *  message SomeResponse {
-     *          repeated Bar results = 1;
-     *          PageResponse page = 2;
-     *  }
-     */
-    pagination?: V1Beta1PageResponse;
-}
 export interface PkiQueryAllProposedCertificateResponse {
     proposedCertificate?: PkiProposedCertificate[];
     /**
@@ -312,21 +299,6 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/pki/approved_root_certificates
      */
     queryApprovedRootCertificates: (params?: RequestParams) => Promise<HttpResponse<PkiQueryGetApprovedRootCertificatesResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryChildCertificatesAll
-     * @summary Queries a list of ChildCertificates items.
-     * @request GET:/dcl/pki/child_certificates
-     */
-    queryChildCertificatesAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<PkiQueryAllChildCertificatesResponse, RpcStatus>>;
     /**
      * No description
      *

@@ -51,8 +51,8 @@ func (k Keeper) ProposedCertificate(c context.Context, req *types.QueryGetPropos
 		req.SubjectKeyId,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return &types.QueryGetProposedCertificateResponse{ProposedCertificate: nil}, nil
 	}
 
-	return &types.QueryGetProposedCertificateResponse{ProposedCertificate: val}, nil
+	return &types.QueryGetProposedCertificateResponse{ProposedCertificate: &val}, nil
 }

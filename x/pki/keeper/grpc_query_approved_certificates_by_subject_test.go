@@ -32,14 +32,14 @@ func TestApprovedCertificatesBySubjectQuerySingle(t *testing.T) {
 			request: &types.QueryGetApprovedCertificatesBySubjectRequest{
 				Subject: msgs[0].Subject,
 			},
-			response: &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: msgs[0]},
+			response: &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: &msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetApprovedCertificatesBySubjectRequest{
 				Subject: msgs[1].Subject,
 			},
-			response: &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: msgs[1]},
+			response: &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: &msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",

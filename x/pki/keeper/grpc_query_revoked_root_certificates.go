@@ -16,9 +16,7 @@ func (k Keeper) RevokedRootCertificates(c context.Context, req *types.QueryGetRe
 	ctx := sdk.UnwrapSDKContext(c)
 
 	val, _ := k.GetRevokedRootCertificates(ctx)
-	// if !found {
-	// 	return nil, status.Error(codes.InvalidArgument, "not found")
-	// }
 
+	// Return empty list if not found
 	return &types.QueryGetRevokedRootCertificatesResponse{RevokedRootCertificates: val}, nil
 }

@@ -84,7 +84,7 @@ func (m *QueryGetApprovedCertificatesRequest) GetSubjectKeyId() string {
 }
 
 type QueryGetApprovedCertificatesResponse struct {
-	ApprovedCertificates ApprovedCertificates `protobuf:"bytes,1,opt,name=approvedCertificates,proto3" json:"approvedCertificates"`
+	ApprovedCertificates *ApprovedCertificates `protobuf:"bytes,1,opt,name=approvedCertificates,proto3" json:"approvedCertificates,omitempty"`
 }
 
 func (m *QueryGetApprovedCertificatesResponse) Reset()         { *m = QueryGetApprovedCertificatesResponse{} }
@@ -120,11 +120,11 @@ func (m *QueryGetApprovedCertificatesResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetApprovedCertificatesResponse proto.InternalMessageInfo
 
-func (m *QueryGetApprovedCertificatesResponse) GetApprovedCertificates() ApprovedCertificates {
+func (m *QueryGetApprovedCertificatesResponse) GetApprovedCertificates() *ApprovedCertificates {
 	if m != nil {
 		return m.ApprovedCertificates
 	}
-	return ApprovedCertificates{}
+	return nil
 }
 
 type QueryAllApprovedCertificatesRequest struct {
@@ -276,7 +276,7 @@ func (m *QueryGetProposedCertificateRequest) GetSubjectKeyId() string {
 }
 
 type QueryGetProposedCertificateResponse struct {
-	ProposedCertificate ProposedCertificate `protobuf:"bytes,1,opt,name=proposedCertificate,proto3" json:"proposedCertificate"`
+	ProposedCertificate *ProposedCertificate `protobuf:"bytes,1,opt,name=proposedCertificate,proto3" json:"proposedCertificate,omitempty"`
 }
 
 func (m *QueryGetProposedCertificateResponse) Reset()         { *m = QueryGetProposedCertificateResponse{} }
@@ -312,11 +312,11 @@ func (m *QueryGetProposedCertificateResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetProposedCertificateResponse proto.InternalMessageInfo
 
-func (m *QueryGetProposedCertificateResponse) GetProposedCertificate() ProposedCertificate {
+func (m *QueryGetProposedCertificateResponse) GetProposedCertificate() *ProposedCertificate {
 	if m != nil {
 		return m.ProposedCertificate
 	}
-	return ProposedCertificate{}
+	return nil
 }
 
 type QueryAllProposedCertificateRequest struct {
@@ -468,7 +468,7 @@ func (m *QueryGetChildCertificatesRequest) GetAuthorityKeyId() string {
 }
 
 type QueryGetChildCertificatesResponse struct {
-	ChildCertificates ChildCertificates `protobuf:"bytes,1,opt,name=childCertificates,proto3" json:"childCertificates"`
+	ChildCertificates *ChildCertificates `protobuf:"bytes,1,opt,name=childCertificates,proto3" json:"childCertificates,omitempty"`
 }
 
 func (m *QueryGetChildCertificatesResponse) Reset()         { *m = QueryGetChildCertificatesResponse{} }
@@ -504,105 +504,9 @@ func (m *QueryGetChildCertificatesResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetChildCertificatesResponse proto.InternalMessageInfo
 
-func (m *QueryGetChildCertificatesResponse) GetChildCertificates() ChildCertificates {
+func (m *QueryGetChildCertificatesResponse) GetChildCertificates() *ChildCertificates {
 	if m != nil {
 		return m.ChildCertificates
-	}
-	return ChildCertificates{}
-}
-
-type QueryAllChildCertificatesRequest struct {
-	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllChildCertificatesRequest) Reset()         { *m = QueryAllChildCertificatesRequest{} }
-func (m *QueryAllChildCertificatesRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryAllChildCertificatesRequest) ProtoMessage()    {}
-func (*QueryAllChildCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{10}
-}
-func (m *QueryAllChildCertificatesRequest) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllChildCertificatesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllChildCertificatesRequest.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllChildCertificatesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllChildCertificatesRequest.Merge(m, src)
-}
-func (m *QueryAllChildCertificatesRequest) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllChildCertificatesRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllChildCertificatesRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllChildCertificatesRequest proto.InternalMessageInfo
-
-func (m *QueryAllChildCertificatesRequest) GetPagination() *query.PageRequest {
-	if m != nil {
-		return m.Pagination
-	}
-	return nil
-}
-
-type QueryAllChildCertificatesResponse struct {
-	ChildCertificates []ChildCertificates `protobuf:"bytes,1,rep,name=childCertificates,proto3" json:"childCertificates"`
-	Pagination        *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
-}
-
-func (m *QueryAllChildCertificatesResponse) Reset()         { *m = QueryAllChildCertificatesResponse{} }
-func (m *QueryAllChildCertificatesResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryAllChildCertificatesResponse) ProtoMessage()    {}
-func (*QueryAllChildCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{11}
-}
-func (m *QueryAllChildCertificatesResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *QueryAllChildCertificatesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_QueryAllChildCertificatesResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *QueryAllChildCertificatesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryAllChildCertificatesResponse.Merge(m, src)
-}
-func (m *QueryAllChildCertificatesResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *QueryAllChildCertificatesResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryAllChildCertificatesResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_QueryAllChildCertificatesResponse proto.InternalMessageInfo
-
-func (m *QueryAllChildCertificatesResponse) GetChildCertificates() []ChildCertificates {
-	if m != nil {
-		return m.ChildCertificates
-	}
-	return nil
-}
-
-func (m *QueryAllChildCertificatesResponse) GetPagination() *query.PageResponse {
-	if m != nil {
-		return m.Pagination
 	}
 	return nil
 }
@@ -620,7 +524,7 @@ func (m *QueryGetProposedCertificateRevocationRequest) String() string {
 }
 func (*QueryGetProposedCertificateRevocationRequest) ProtoMessage() {}
 func (*QueryGetProposedCertificateRevocationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{12}
+	return fileDescriptor_62972e0134af9ed2, []int{10}
 }
 func (m *QueryGetProposedCertificateRevocationRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -664,7 +568,7 @@ func (m *QueryGetProposedCertificateRevocationRequest) GetSubjectKeyId() string 
 }
 
 type QueryGetProposedCertificateRevocationResponse struct {
-	ProposedCertificateRevocation ProposedCertificateRevocation `protobuf:"bytes,1,opt,name=proposedCertificateRevocation,proto3" json:"proposedCertificateRevocation"`
+	ProposedCertificateRevocation *ProposedCertificateRevocation `protobuf:"bytes,1,opt,name=proposedCertificateRevocation,proto3" json:"proposedCertificateRevocation,omitempty"`
 }
 
 func (m *QueryGetProposedCertificateRevocationResponse) Reset() {
@@ -675,7 +579,7 @@ func (m *QueryGetProposedCertificateRevocationResponse) String() string {
 }
 func (*QueryGetProposedCertificateRevocationResponse) ProtoMessage() {}
 func (*QueryGetProposedCertificateRevocationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{13}
+	return fileDescriptor_62972e0134af9ed2, []int{11}
 }
 func (m *QueryGetProposedCertificateRevocationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -704,11 +608,11 @@ func (m *QueryGetProposedCertificateRevocationResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetProposedCertificateRevocationResponse proto.InternalMessageInfo
 
-func (m *QueryGetProposedCertificateRevocationResponse) GetProposedCertificateRevocation() ProposedCertificateRevocation {
+func (m *QueryGetProposedCertificateRevocationResponse) GetProposedCertificateRevocation() *ProposedCertificateRevocation {
 	if m != nil {
 		return m.ProposedCertificateRevocation
 	}
-	return ProposedCertificateRevocation{}
+	return nil
 }
 
 type QueryAllProposedCertificateRevocationRequest struct {
@@ -723,7 +627,7 @@ func (m *QueryAllProposedCertificateRevocationRequest) String() string {
 }
 func (*QueryAllProposedCertificateRevocationRequest) ProtoMessage() {}
 func (*QueryAllProposedCertificateRevocationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{14}
+	return fileDescriptor_62972e0134af9ed2, []int{12}
 }
 func (m *QueryAllProposedCertificateRevocationRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -772,7 +676,7 @@ func (m *QueryAllProposedCertificateRevocationResponse) String() string {
 }
 func (*QueryAllProposedCertificateRevocationResponse) ProtoMessage() {}
 func (*QueryAllProposedCertificateRevocationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{15}
+	return fileDescriptor_62972e0134af9ed2, []int{13}
 }
 func (m *QueryAllProposedCertificateRevocationResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -824,7 +728,7 @@ func (m *QueryGetRevokedCertificatesRequest) Reset()         { *m = QueryGetRevo
 func (m *QueryGetRevokedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetRevokedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{16}
+	return fileDescriptor_62972e0134af9ed2, []int{14}
 }
 func (m *QueryGetRevokedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -868,14 +772,14 @@ func (m *QueryGetRevokedCertificatesRequest) GetSubjectKeyId() string {
 }
 
 type QueryGetRevokedCertificatesResponse struct {
-	RevokedCertificates RevokedCertificates `protobuf:"bytes,1,opt,name=revokedCertificates,proto3" json:"revokedCertificates"`
+	RevokedCertificates *RevokedCertificates `protobuf:"bytes,1,opt,name=revokedCertificates,proto3" json:"revokedCertificates,omitempty"`
 }
 
 func (m *QueryGetRevokedCertificatesResponse) Reset()         { *m = QueryGetRevokedCertificatesResponse{} }
 func (m *QueryGetRevokedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetRevokedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{17}
+	return fileDescriptor_62972e0134af9ed2, []int{15}
 }
 func (m *QueryGetRevokedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -904,11 +808,11 @@ func (m *QueryGetRevokedCertificatesResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetRevokedCertificatesResponse proto.InternalMessageInfo
 
-func (m *QueryGetRevokedCertificatesResponse) GetRevokedCertificates() RevokedCertificates {
+func (m *QueryGetRevokedCertificatesResponse) GetRevokedCertificates() *RevokedCertificates {
 	if m != nil {
 		return m.RevokedCertificates
 	}
-	return RevokedCertificates{}
+	return nil
 }
 
 type QueryAllRevokedCertificatesRequest struct {
@@ -919,7 +823,7 @@ func (m *QueryAllRevokedCertificatesRequest) Reset()         { *m = QueryAllRevo
 func (m *QueryAllRevokedCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRevokedCertificatesRequest) ProtoMessage()    {}
 func (*QueryAllRevokedCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{18}
+	return fileDescriptor_62972e0134af9ed2, []int{16}
 }
 func (m *QueryAllRevokedCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -964,7 +868,7 @@ func (m *QueryAllRevokedCertificatesResponse) Reset()         { *m = QueryAllRev
 func (m *QueryAllRevokedCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryAllRevokedCertificatesResponse) ProtoMessage()    {}
 func (*QueryAllRevokedCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{19}
+	return fileDescriptor_62972e0134af9ed2, []int{17}
 }
 func (m *QueryAllRevokedCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1016,7 +920,7 @@ func (m *QueryGetApprovedRootCertificatesRequest) Reset() {
 func (m *QueryGetApprovedRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetApprovedRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{20}
+	return fileDescriptor_62972e0134af9ed2, []int{18}
 }
 func (m *QueryGetApprovedRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1055,7 +959,7 @@ func (m *QueryGetApprovedRootCertificatesResponse) Reset() {
 func (m *QueryGetApprovedRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetApprovedRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetApprovedRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{21}
+	return fileDescriptor_62972e0134af9ed2, []int{19}
 }
 func (m *QueryGetApprovedRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1100,7 +1004,7 @@ func (m *QueryGetRevokedRootCertificatesRequest) Reset() {
 func (m *QueryGetRevokedRootCertificatesRequest) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedRootCertificatesRequest) ProtoMessage()    {}
 func (*QueryGetRevokedRootCertificatesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{22}
+	return fileDescriptor_62972e0134af9ed2, []int{20}
 }
 func (m *QueryGetRevokedRootCertificatesRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1139,7 +1043,7 @@ func (m *QueryGetRevokedRootCertificatesResponse) Reset() {
 func (m *QueryGetRevokedRootCertificatesResponse) String() string { return proto.CompactTextString(m) }
 func (*QueryGetRevokedRootCertificatesResponse) ProtoMessage()    {}
 func (*QueryGetRevokedRootCertificatesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{23}
+	return fileDescriptor_62972e0134af9ed2, []int{21}
 }
 func (m *QueryGetRevokedRootCertificatesResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1187,7 +1091,7 @@ func (m *QueryGetApprovedCertificatesBySubjectRequest) String() string {
 }
 func (*QueryGetApprovedCertificatesBySubjectRequest) ProtoMessage() {}
 func (*QueryGetApprovedCertificatesBySubjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{24}
+	return fileDescriptor_62972e0134af9ed2, []int{22}
 }
 func (m *QueryGetApprovedCertificatesBySubjectRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1224,7 +1128,7 @@ func (m *QueryGetApprovedCertificatesBySubjectRequest) GetSubject() string {
 }
 
 type QueryGetApprovedCertificatesBySubjectResponse struct {
-	ApprovedCertificatesBySubject ApprovedCertificatesBySubject `protobuf:"bytes,1,opt,name=approvedCertificatesBySubject,proto3" json:"approvedCertificatesBySubject"`
+	ApprovedCertificatesBySubject *ApprovedCertificatesBySubject `protobuf:"bytes,1,opt,name=approvedCertificatesBySubject,proto3" json:"approvedCertificatesBySubject,omitempty"`
 }
 
 func (m *QueryGetApprovedCertificatesBySubjectResponse) Reset() {
@@ -1235,7 +1139,7 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) String() string {
 }
 func (*QueryGetApprovedCertificatesBySubjectResponse) ProtoMessage() {}
 func (*QueryGetApprovedCertificatesBySubjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_62972e0134af9ed2, []int{25}
+	return fileDescriptor_62972e0134af9ed2, []int{23}
 }
 func (m *QueryGetApprovedCertificatesBySubjectResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1264,11 +1168,11 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_QueryGetApprovedCertificatesBySubjectResponse proto.InternalMessageInfo
 
-func (m *QueryGetApprovedCertificatesBySubjectResponse) GetApprovedCertificatesBySubject() ApprovedCertificatesBySubject {
+func (m *QueryGetApprovedCertificatesBySubjectResponse) GetApprovedCertificatesBySubject() *ApprovedCertificatesBySubject {
 	if m != nil {
 		return m.ApprovedCertificatesBySubject
 	}
-	return ApprovedCertificatesBySubject{}
+	return nil
 }
 
 func init() {
@@ -1282,8 +1186,6 @@ func init() {
 	proto.RegisterType((*QueryAllProposedCertificateResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateResponse")
 	proto.RegisterType((*QueryGetChildCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesRequest")
 	proto.RegisterType((*QueryGetChildCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesResponse")
-	proto.RegisterType((*QueryAllChildCertificatesRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllChildCertificatesRequest")
-	proto.RegisterType((*QueryAllChildCertificatesResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllChildCertificatesResponse")
 	proto.RegisterType((*QueryGetProposedCertificateRevocationRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationRequest")
 	proto.RegisterType((*QueryGetProposedCertificateRevocationResponse)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse")
 	proto.RegisterType((*QueryAllProposedCertificateRevocationRequest)(nil), "zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateRevocationRequest")
@@ -1303,88 +1205,86 @@ func init() {
 func init() { proto.RegisterFile("pki/query.proto", fileDescriptor_62972e0134af9ed2) }
 
 var fileDescriptor_62972e0134af9ed2 = []byte{
-	// 1292 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x59, 0xcf, 0x6f, 0xdc, 0x44,
-	0x14, 0x8e, 0x37, 0x50, 0xc4, 0x80, 0x0a, 0x9d, 0x46, 0x6d, 0x58, 0x9a, 0x4d, 0x70, 0xd2, 0x34,
-	0x0d, 0x64, 0x4d, 0x5b, 0x21, 0x28, 0x3d, 0xc0, 0x36, 0x85, 0x14, 0x55, 0x48, 0xe9, 0x06, 0x51,
-	0x84, 0x0a, 0x2b, 0xaf, 0x77, 0xd8, 0xb8, 0x71, 0x76, 0x1c, 0xff, 0x88, 0x58, 0xa2, 0x20, 0x84,
-	0x90, 0x90, 0x7a, 0x02, 0xc1, 0xa5, 0x1c, 0x39, 0x20, 0x71, 0xe6, 0xc0, 0xbf, 0x50, 0x89, 0x4b,
-	0x25, 0x2e, 0x9c, 0x50, 0x95, 0x70, 0x40, 0x02, 0x89, 0x1b, 0x12, 0x9c, 0x90, 0xc7, 0xcf, 0x59,
-	0xef, 0x7a, 0x66, 0x76, 0xd7, 0x99, 0xa5, 0x37, 0xdb, 0xf3, 0xfc, 0xbe, 0xf9, 0xbe, 0xf7, 0x66,
-	0xde, 0x3c, 0x1b, 0x3d, 0xe1, 0x6e, 0xd8, 0xc6, 0x56, 0x48, 0xbc, 0x76, 0xd9, 0xf5, 0x68, 0x40,
-	0x71, 0xf9, 0x23, 0xbb, 0x59, 0x27, 0xc4, 0x74, 0x1c, 0xdb, 0x6c, 0x59, 0xa4, 0xdc, 0xb0, 0xfd,
-	0xc0, 0xb3, 0xeb, 0x61, 0x40, 0x1a, 0x16, 0xdd, 0x74, 0xe3, 0xa7, 0x0e, 0x69, 0x34, 0x89, 0x57,
-	0x76, 0x37, 0xec, 0xe2, 0xa9, 0x26, 0xa5, 0x4d, 0x87, 0x18, 0xa6, 0x6b, 0x1b, 0x66, 0xab, 0x45,
-	0x03, 0x33, 0xb0, 0x69, 0xcb, 0x8f, 0xbd, 0x15, 0x17, 0x2d, 0xea, 0x6f, 0x52, 0xdf, 0xa8, 0x9b,
-	0x3e, 0x89, 0x61, 0x8c, 0xed, 0x73, 0x75, 0x12, 0x98, 0xe7, 0x0c, 0xd7, 0x6c, 0xda, 0x2d, 0x66,
-	0x0c, 0xb6, 0xd3, 0xd1, 0x54, 0x4c, 0xd7, 0xf5, 0xe8, 0x36, 0x69, 0xd4, 0x2c, 0xe2, 0x05, 0xf6,
-	0x07, 0xb6, 0x65, 0x06, 0x24, 0x71, 0x56, 0x8a, 0x0c, 0x5c, 0x8f, 0xba, 0xd4, 0xef, 0x36, 0x80,
-	0xf1, 0x53, 0xd1, 0xb8, 0xb5, 0x6e, 0x3b, 0xdc, 0xb7, 0xcf, 0x8a, 0xde, 0xae, 0x79, 0x64, 0x9b,
-	0x5a, 0xe9, 0x99, 0x30, 0xa0, 0xe8, 0xe9, 0x06, 0x7f, 0x22, 0x0c, 0x28, 0x6c, 0xd9, 0x5b, 0x21,
-	0xe1, 0x4c, 0x63, 0xae, 0x8b, 0x87, 0x47, 0x69, 0xc0, 0xf3, 0x31, 0x9b, 0xc6, 0x10, 0x19, 0x2d,
-	0x0a, 0x25, 0xa9, 0xd5, 0xdb, 0x35, 0x3f, 0xac, 0xdf, 0x22, 0x56, 0x00, 0xb6, 0x13, 0x4d, 0xda,
-	0xa4, 0xec, 0xd2, 0x88, 0xae, 0xe0, 0xe9, 0x53, 0x71, 0x00, 0x6a, 0xf1, 0x40, 0x7c, 0x13, 0x0f,
-	0xe9, 0x04, 0xcd, 0x5e, 0x8f, 0x22, 0xb2, 0x42, 0x82, 0x0a, 0x40, 0x2c, 0xa7, 0x10, 0xaa, 0x64,
-	0x2b, 0x24, 0x7e, 0x80, 0x27, 0xd1, 0x23, 0x00, 0x34, 0xa9, 0xcd, 0x68, 0x0b, 0x8f, 0x56, 0x93,
-	0x5b, 0x3c, 0x87, 0x8e, 0xc2, 0x65, 0x6d, 0x83, 0xb4, 0x6b, 0x76, 0x63, 0xb2, 0xc0, 0x0c, 0x1e,
-	0x87, 0xa7, 0xd7, 0x48, 0xfb, 0x8d, 0x86, 0xfe, 0x9d, 0x86, 0xe6, 0xe4, 0x38, 0xbe, 0x4b, 0x5b,
-	0x3e, 0xc1, 0x1f, 0xa3, 0x09, 0x93, 0x33, 0xce, 0x50, 0x1f, 0x3b, 0x7f, 0x65, 0xc8, 0xc4, 0x2c,
-	0xf3, 0xb0, 0x2e, 0x3f, 0x74, 0xf7, 0xd7, 0xe9, 0xb1, 0x2a, 0x17, 0x47, 0xdf, 0x04, 0x3d, 0x2a,
-	0x8e, 0x23, 0xd3, 0xe3, 0x75, 0x84, 0x3a, 0xa9, 0x0b, 0x93, 0x9b, 0x2f, 0x83, 0xb2, 0x51, 0x9e,
-	0x97, 0xe3, 0xe5, 0x04, 0x79, 0x5e, 0x5e, 0x35, 0x9b, 0x04, 0xde, 0xad, 0xa6, 0xde, 0xd4, 0xff,
-	0x4a, 0x74, 0x11, 0xe2, 0xf5, 0xd5, 0x65, 0xfc, 0xff, 0xd0, 0x05, 0xaf, 0x74, 0x11, 0x2e, 0x30,
-	0xc2, 0x67, 0xfa, 0x12, 0x8e, 0x27, 0xdf, 0xc5, 0xb8, 0x81, 0xf4, 0x24, 0x11, 0x56, 0x61, 0x1d,
-	0xa6, 0x80, 0x54, 0xe5, 0xdb, 0xb7, 0x5a, 0x27, 0xaf, 0xb9, 0x30, 0x20, 0xeb, 0x0e, 0x3a, 0xee,
-	0x66, 0x87, 0x21, 0xa0, 0xcb, 0xc3, 0xaa, 0xca, 0x41, 0x02, 0x51, 0x79, 0x28, 0xba, 0x03, 0x52,
-	0x54, 0x1c, 0x47, 0x22, 0x85, 0xaa, 0x54, 0xfb, 0x43, 0xeb, 0xa4, 0x76, 0x2e, 0x49, 0xc6, 0x47,
-	0x2f, 0x89, 0xca, 0x34, 0x9b, 0x49, 0xe2, 0xbf, 0x1c, 0x15, 0x03, 0xde, 0x22, 0x3e, 0x81, 0x8e,
-	0xd8, 0xbe, 0x1f, 0x12, 0x0f, 0x72, 0x0c, 0xee, 0xf0, 0x02, 0x7a, 0xd2, 0x0c, 0x83, 0x75, 0xea,
-	0xd9, 0x41, 0xbb, 0x3b, 0xc9, 0x8e, 0x1e, 0x3c, 0x8f, 0xd3, 0xec, 0x1b, 0x0d, 0x3d, 0x23, 0x81,
-	0x01, 0x45, 0x43, 0x74, 0xcc, 0xea, 0x1d, 0x84, 0x40, 0x56, 0x86, 0xd5, 0x33, 0x83, 0x02, 0x6a,
-	0x66, 0x11, 0xf4, 0x5b, 0x20, 0x41, 0xc5, 0x71, 0x84, 0x12, 0xa8, 0x4a, 0xae, 0xfd, 0x44, 0x08,
-	0x3e, 0x98, 0x5c, 0x88, 0xf1, 0xd1, 0x0a, 0xa1, 0x2e, 0xa9, 0x5a, 0xe8, 0x39, 0xe9, 0xa6, 0x92,
-	0x9c, 0x20, 0x54, 0xed, 0x62, 0x3f, 0x69, 0x68, 0x69, 0x40, 0x40, 0x50, 0xf8, 0x8e, 0x86, 0xa6,
-	0x5c, 0x99, 0x25, 0xc4, 0xf8, 0x4d, 0x05, 0xeb, 0xb8, 0xe3, 0x14, 0xa4, 0x97, 0x23, 0xeb, 0xdb,
-	0xa0, 0x9e, 0x68, 0xff, 0xe9, 0x55, 0x4f, 0x55, 0x6e, 0x7e, 0x5d, 0x00, 0x15, 0xfb, 0x03, 0x0f,
-	0xa1, 0xe2, 0xf8, 0x83, 0x51, 0x71, 0x24, 0x85, 0xb8, 0x1a, 0x9f, 0x40, 0x47, 0x71, 0xf0, 0x4b,
-	0x17, 0x62, 0x2e, 0x4c, 0xa7, 0xea, 0x78, 0xd9, 0xe1, 0xbc, 0x85, 0x98, 0x83, 0x94, 0x54, 0x1d,
-	0x0e, 0x4a, 0xba, 0x10, 0x4b, 0xa4, 0x18, 0x45, 0x21, 0xce, 0x25, 0xc9, 0xf8, 0xe8, 0x25, 0x51,
-	0x97, 0x66, 0x67, 0xd1, 0x99, 0xde, 0x83, 0x7f, 0x95, 0xd2, 0x80, 0x23, 0xb0, 0xfe, 0xa3, 0x86,
-	0x16, 0xfa, 0xdb, 0x82, 0x3a, 0xb7, 0x35, 0x34, 0x29, 0x32, 0x82, 0xe0, 0x5c, 0xcd, 0x7b, 0x2a,
-	0xee, 0xf5, 0x07, 0x42, 0x09, 0xf1, 0xf4, 0x05, 0x34, 0xdf, 0x93, 0xe4, 0x22, 0x8e, 0x3f, 0x68,
-	0x1d, 0x3d, 0x84, 0xa6, 0x40, 0xf1, 0x73, 0x0d, 0x9d, 0x14, 0xd8, 0x00, 0xc3, 0x95, 0x9c, 0x59,
-	0x20, 0x20, 0x28, 0x42, 0xd3, 0xaf, 0x76, 0x0a, 0x1f, 0xb7, 0x73, 0x68, 0xaf, 0xc5, 0x6b, 0xbe,
-	0xef, 0xae, 0xd1, 0x55, 0xd2, 0xfa, 0xb8, 0x4a, 0x6d, 0xc6, 0xa6, 0xcc, 0x32, 0x6f, 0x49, 0x93,
-	0xc2, 0x27, 0x9b, 0xb1, 0x14, 0xf9, 0xfc, 0xed, 0x22, 0x7a, 0x98, 0xb1, 0xc1, 0x9f, 0x15, 0xd0,
-	0x04, 0xcf, 0x21, 0x5e, 0x1b, 0x76, 0x5a, 0x03, 0xb4, 0xe3, 0xc5, 0xb7, 0xd4, 0x3a, 0x8d, 0x95,
-	0xd6, 0x2b, 0x9f, 0xfe, 0xfc, 0xdb, 0x57, 0x85, 0x4b, 0xf8, 0xa2, 0xd1, 0xb0, 0x1c, 0x43, 0xf8,
-	0xd5, 0xc1, 0xd8, 0x81, 0x60, 0xee, 0x1e, 0x5c, 0x41, 0x05, 0xd8, 0xc5, 0x7f, 0x6a, 0xe8, 0x24,
-	0x0f, 0xa3, 0xe2, 0x38, 0x39, 0x95, 0x90, 0x37, 0xe2, 0x39, 0x95, 0xe8, 0xd3, 0x6d, 0xeb, 0xf3,
-	0x4c, 0x89, 0x19, 0x5c, 0x92, 0x2b, 0x81, 0x3f, 0x29, 0xa0, 0xe3, 0x9c, 0x9a, 0x8e, 0xab, 0x79,
-	0xe3, 0x23, 0xee, 0x03, 0x8b, 0x6b, 0x4a, 0x7d, 0x02, 0xd1, 0x57, 0x19, 0xd1, 0x97, 0xf1, 0x4b,
-	0x07, 0x44, 0x79, 0x1f, 0xc7, 0x64, 0x11, 0xff, 0x5d, 0x43, 0x27, 0x38, 0x08, 0x51, 0xc0, 0xab,
-	0x79, 0x63, 0xa3, 0x5c, 0x05, 0x79, 0xcb, 0xab, 0x9f, 0x66, 0x2a, 0x4c, 0xe3, 0x29, 0xa9, 0x0a,
-	0xf8, 0x1f, 0x0d, 0x1d, 0xcb, 0xb4, 0x1d, 0x78, 0x35, 0x6f, 0x5c, 0x44, 0x4d, 0x59, 0xf1, 0xba,
-	0x42, 0x8f, 0xc0, 0xf0, 0x15, 0xc6, 0xf0, 0x22, 0x7e, 0xf1, 0x80, 0x61, 0xf6, 0x13, 0xa9, 0xb1,
-	0x13, 0xf7, 0xbf, 0xbb, 0xc6, 0x4e, 0x6f, 0xfb, 0xbb, 0x8b, 0xef, 0x6b, 0x68, 0x22, 0xe3, 0x3e,
-	0x0a, 0xf2, 0x6a, 0xde, 0x80, 0x28, 0xa6, 0x2f, 0x6b, 0x3c, 0xf5, 0x59, 0x46, 0x7f, 0x0a, 0x3f,
-	0x2d, 0xa1, 0x8f, 0xbf, 0x2f, 0xa0, 0x29, 0xe9, 0x01, 0x1d, 0xdf, 0x54, 0xba, 0x04, 0x7b, 0xfa,
-	0x9d, 0xe2, 0x7b, 0x23, 0xf2, 0x0e, 0x1a, 0x5c, 0x63, 0x1a, 0xbc, 0x86, 0x97, 0xa5, 0x49, 0x9e,
-	0xfa, 0x0e, 0x2e, 0x5b, 0xf5, 0x5f, 0x16, 0xd0, 0x8c, 0x14, 0x36, 0x4a, 0x8d, 0x9b, 0x4a, 0xd7,
-	0xaa, 0x1a, 0xb9, 0x06, 0xed, 0x01, 0xf5, 0xe7, 0x99, 0x5c, 0x8b, 0x78, 0x61, 0x50, 0xb9, 0x58,
-	0x31, 0xe0, 0x9c, 0xb2, 0xf3, 0x17, 0x03, 0x71, 0x2f, 0x92, 0xbf, 0x18, 0x48, 0x1a, 0x0e, 0x4e,
-	0x31, 0xe0, 0xfd, 0xfe, 0xe8, 0x57, 0x0c, 0x38, 0x08, 0x87, 0x2a, 0x06, 0xca, 0x55, 0x90, 0xb7,
-	0x5d, 0x9c, 0x62, 0xc0, 0x53, 0x01, 0xff, 0x2b, 0xe9, 0x3f, 0xf0, 0x8d, 0xc3, 0x9e, 0xcf, 0x04,
-	0xed, 0x43, 0xf1, 0x1d, 0xf5, 0x8e, 0x81, 0xf6, 0xb3, 0x8c, 0xf6, 0x69, 0x3c, 0x9b, 0x3d, 0xf2,
-	0x64, 0x7e, 0x4c, 0xe1, 0xbf, 0xc5, 0x9d, 0x09, 0x7e, 0xfb, 0x90, 0xa9, 0x29, 0xa2, 0x7e, 0x43,
-	0xb9, 0x5f, 0x60, 0xbe, 0xc8, 0x98, 0xcf, 0x61, 0x3d, 0x13, 0xf0, 0x2c, 0xf1, 0x3b, 0x05, 0x34,
-	0x25, 0xed, 0x1b, 0xf2, 0xd7, 0x88, 0x41, 0x1a, 0xab, 0xfc, 0x35, 0x62, 0xa0, 0x5e, 0x4b, 0xbf,
-	0xc4, 0xa4, 0x78, 0x01, 0x5f, 0x90, 0x9f, 0x7b, 0x53, 0xff, 0x1d, 0x3b, 0xbb, 0xc1, 0xe5, 0xf7,
-	0xef, 0xee, 0x95, 0xb4, 0x7b, 0x7b, 0x25, 0xed, 0xfe, 0x5e, 0x49, 0xfb, 0x62, 0xbf, 0x34, 0x76,
-	0x6f, 0xbf, 0x34, 0xf6, 0xcb, 0x7e, 0x69, 0xec, 0xdd, 0x2b, 0x4d, 0x3b, 0x58, 0x0f, 0xeb, 0x65,
-	0x8b, 0x6e, 0x1a, 0xf1, 0xfc, 0x97, 0x12, 0x02, 0x46, 0x8a, 0xc0, 0x52, 0x87, 0xc1, 0x52, 0x4c,
-	0xc1, 0xf8, 0x90, 0x4d, 0x22, 0x68, 0xbb, 0xc4, 0xaf, 0x1f, 0x61, 0x7f, 0x2c, 0x2f, 0xfc, 0x17,
-	0x00, 0x00, 0xff, 0xff, 0x6d, 0x64, 0x6f, 0xa8, 0xae, 0x1e, 0x00, 0x00,
+	// 1254 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x59, 0xcf, 0x6f, 0x1b, 0x45,
+	0x14, 0xf6, 0x3a, 0x50, 0xc4, 0x80, 0x0a, 0x9d, 0x46, 0xad, 0xb1, 0x1a, 0x27, 0x6c, 0xd2, 0xd4,
+	0x0d, 0xc4, 0x4b, 0x5b, 0x21, 0x28, 0x3d, 0x80, 0x9b, 0x42, 0x8a, 0x2a, 0xa4, 0xd4, 0x41, 0x14,
+	0xa1, 0x82, 0xb5, 0x5e, 0x0f, 0xce, 0x92, 0x8d, 0x67, 0xb3, 0x3f, 0x22, 0x4c, 0x14, 0x84, 0x10,
+	0x12, 0x12, 0x27, 0x10, 0x5c, 0xca, 0x91, 0x03, 0x88, 0x33, 0x07, 0xfe, 0x85, 0x4a, 0x5c, 0x22,
+	0x71, 0xe1, 0x84, 0x50, 0xc2, 0x01, 0x09, 0x24, 0x6e, 0x48, 0x70, 0x42, 0x3b, 0xfb, 0x1c, 0xaf,
+	0xbd, 0x33, 0x63, 0x7b, 0x33, 0xbe, 0xed, 0xee, 0xcc, 0xbe, 0x6f, 0xbe, 0xef, 0xbd, 0x99, 0xf7,
+	0xde, 0x2e, 0x7a, 0xcc, 0xdd, 0xb4, 0x8d, 0xed, 0x90, 0x78, 0x9d, 0x8a, 0xeb, 0xd1, 0x80, 0xe2,
+	0xca, 0x07, 0x76, 0xab, 0x41, 0x88, 0xe9, 0x38, 0xb6, 0xd9, 0xb6, 0x48, 0xa5, 0x69, 0xfb, 0x81,
+	0x67, 0x37, 0xc2, 0x80, 0x34, 0x2d, 0xba, 0xe5, 0xc6, 0x4f, 0x1d, 0xd2, 0x6c, 0x11, 0xaf, 0xe2,
+	0x6e, 0xda, 0xc5, 0x73, 0x2d, 0x4a, 0x5b, 0x0e, 0x31, 0x4c, 0xd7, 0x36, 0xcc, 0x76, 0x9b, 0x06,
+	0x66, 0x60, 0xd3, 0xb6, 0x1f, 0x5b, 0x2b, 0x2e, 0x59, 0xd4, 0xdf, 0xa2, 0xbe, 0xd1, 0x30, 0x7d,
+	0x12, 0xc3, 0x18, 0x3b, 0x97, 0x1a, 0x24, 0x30, 0x2f, 0x19, 0xae, 0xd9, 0xb2, 0xdb, 0x6c, 0x32,
+	0xcc, 0x9d, 0x8d, 0x96, 0x62, 0xba, 0xae, 0x47, 0x77, 0x48, 0xb3, 0x6e, 0x11, 0x2f, 0xb0, 0xdf,
+	0xb5, 0x2d, 0x33, 0x20, 0x5d, 0x63, 0xa5, 0x68, 0x82, 0xeb, 0x51, 0x97, 0xfa, 0xfd, 0x13, 0x60,
+	0xfc, 0x5c, 0x34, 0x6e, 0x6d, 0xd8, 0x0e, 0xf7, 0xed, 0x8b, 0xa2, 0xb7, 0xeb, 0x1e, 0xd9, 0xa1,
+	0x56, 0x72, 0x25, 0x0c, 0x28, 0x7a, 0xba, 0xc9, 0x5f, 0x08, 0x03, 0x0a, 0xdb, 0xf6, 0x76, 0x48,
+	0x38, 0xcb, 0x58, 0xe8, 0xe3, 0xe1, 0x51, 0x1a, 0xf0, 0x6c, 0xcc, 0x27, 0x31, 0x44, 0x93, 0x96,
+	0x84, 0x92, 0xd4, 0x1b, 0x9d, 0xba, 0x1f, 0x36, 0xde, 0x23, 0x56, 0x00, 0x73, 0xa7, 0x5b, 0xb4,
+	0x45, 0xd9, 0xa5, 0x11, 0x5d, 0xc1, 0xd3, 0x27, 0x62, 0x07, 0xd4, 0xe3, 0x81, 0xf8, 0x26, 0x1e,
+	0xd2, 0x09, 0x9a, 0xbf, 0x1d, 0x79, 0x64, 0x95, 0x04, 0x55, 0x80, 0x58, 0x49, 0x20, 0xd4, 0xc8,
+	0x76, 0x48, 0xfc, 0x00, 0x17, 0xd0, 0x43, 0x00, 0x54, 0xd0, 0xe6, 0xb4, 0xf2, 0xc3, 0xb5, 0xee,
+	0x2d, 0x5e, 0x40, 0x27, 0xe1, 0xb2, 0xbe, 0x49, 0x3a, 0x75, 0xbb, 0x59, 0xc8, 0xb3, 0x09, 0x8f,
+	0xc2, 0xd3, 0x5b, 0xa4, 0xf3, 0x6a, 0x53, 0xff, 0x56, 0x43, 0x0b, 0x72, 0x1c, 0xdf, 0xa5, 0x6d,
+	0x9f, 0xe0, 0x0f, 0xd1, 0xb4, 0xc9, 0x19, 0x67, 0xa8, 0x8f, 0x5c, 0xbe, 0x31, 0x66, 0x60, 0x56,
+	0x78, 0x58, 0xd7, 0x1f, 0xb8, 0xff, 0xeb, 0xac, 0x56, 0xe3, 0xe2, 0xe8, 0x5b, 0xa0, 0x47, 0xd5,
+	0x71, 0x64, 0x7a, 0xbc, 0x82, 0x50, 0x2f, 0x74, 0x61, 0x71, 0x8b, 0x15, 0x50, 0x36, 0x8a, 0xf3,
+	0x4a, 0xbc, 0x9d, 0x20, 0xce, 0x2b, 0x6b, 0x66, 0x8b, 0xc0, 0xbb, 0xb5, 0xc4, 0x9b, 0xfa, 0xdf,
+	0x5d, 0x5d, 0x84, 0x78, 0x43, 0x75, 0x99, 0x52, 0xaa, 0x4b, 0x8e, 0xaf, 0x0b, 0x5e, 0xed, 0x23,
+	0x9c, 0x67, 0x84, 0x2f, 0x0c, 0x25, 0x1c, 0x2f, 0xbe, 0x8f, 0x71, 0x13, 0xe9, 0xdd, 0x40, 0x58,
+	0x83, 0x7d, 0x98, 0x00, 0x52, 0x15, 0x6f, 0xdf, 0x68, 0xbd, 0xb8, 0xe6, 0xc2, 0x80, 0xac, 0xbb,
+	0xe8, 0xb4, 0x9b, 0x1e, 0x06, 0x87, 0xae, 0x8c, 0xab, 0x2a, 0x07, 0x09, 0x82, 0x8d, 0x87, 0xa2,
+	0x3b, 0x20, 0x45, 0xd5, 0x71, 0x24, 0x52, 0xa8, 0x0a, 0xb5, 0x3f, 0xb5, 0x5e, 0x68, 0x67, 0x92,
+	0x64, 0x4a, 0xa5, 0x24, 0x39, 0xae, 0x24, 0x2a, 0xc3, 0x6c, 0xae, 0xeb, 0xff, 0x95, 0x28, 0x19,
+	0xf0, 0x36, 0xf1, 0x19, 0x74, 0xc2, 0xf6, 0xfd, 0x90, 0x78, 0x10, 0x63, 0x70, 0x87, 0xcb, 0xe8,
+	0x71, 0x33, 0x0c, 0x36, 0xa8, 0x67, 0x07, 0x9d, 0xfe, 0x20, 0x3b, 0x79, 0xf4, 0x3c, 0x0e, 0xb3,
+	0xaf, 0x35, 0xf4, 0xa4, 0x04, 0x06, 0x14, 0x0d, 0xd1, 0x29, 0x6b, 0x70, 0x10, 0x1c, 0x59, 0x1d,
+	0x57, 0xcf, 0x14, 0x0a, 0x04, 0x58, 0x1a, 0x41, 0x6f, 0xa3, 0xa7, 0xa5, 0x5b, 0xa0, 0x9b, 0xef,
+	0x54, 0xed, 0xb9, 0x9f, 0x34, 0xb4, 0x3c, 0x22, 0x20, 0x08, 0x73, 0x4f, 0x43, 0x33, 0xae, 0x6c,
+	0x26, 0xa8, 0xf4, 0x9a, 0x82, 0xa8, 0xeb, 0x19, 0x05, 0xc5, 0xe4, 0xc8, 0xfa, 0x0e, 0xa8, 0x27,
+	0xda, 0x2d, 0x83, 0xea, 0xa9, 0xda, 0xa6, 0x5f, 0xe5, 0x41, 0xc5, 0xe1, 0xc0, 0x63, 0xa8, 0x38,
+	0x35, 0x19, 0x15, 0x73, 0x43, 0x54, 0x9c, 0x48, 0xda, 0xa8, 0xc5, 0xf5, 0xd2, 0x24, 0xca, 0x94,
+	0x64, 0xda, 0xe0, 0xc2, 0xf4, 0xce, 0x48, 0x2f, 0x3d, 0x9c, 0x35, 0x6d, 0x70, 0x90, 0xba, 0x69,
+	0x83, 0x83, 0x92, 0x4c, 0x1b, 0x12, 0x29, 0x26, 0x91, 0x36, 0x32, 0x49, 0x32, 0xa5, 0x52, 0x92,
+	0x1c, 0x57, 0x12, 0x75, 0x61, 0x76, 0x11, 0x5d, 0x18, 0x2c, 0x53, 0x6b, 0x94, 0x06, 0x1c, 0x81,
+	0xf5, 0x1f, 0x35, 0x54, 0x1e, 0x3e, 0x17, 0xd4, 0xf9, 0x4c, 0x43, 0x05, 0xd1, 0x24, 0x70, 0xce,
+	0xcd, 0xac, 0x35, 0xdc, 0xa0, 0x3d, 0x10, 0x4a, 0x88, 0xa7, 0x97, 0xd1, 0xe2, 0x40, 0x90, 0x8b,
+	0x38, 0xfe, 0xa0, 0xf5, 0xf4, 0x10, 0x4e, 0x05, 0x8a, 0x9f, 0x6a, 0xe8, 0xac, 0x60, 0x0e, 0x30,
+	0x5c, 0xcd, 0x18, 0x05, 0x02, 0x82, 0x22, 0x34, 0xfd, 0x66, 0x2f, 0xf1, 0x71, 0xeb, 0xdc, 0xce,
+	0x7a, 0xbc, 0xe7, 0x87, 0x9e, 0x1a, 0x7d, 0x29, 0x6d, 0x88, 0xa9, 0xc4, 0x61, 0x6c, 0xca, 0x66,
+	0x66, 0x4d, 0x69, 0x52, 0xf8, 0x6e, 0x4a, 0x93, 0x22, 0x5f, 0xfe, 0xae, 0x80, 0x1e, 0x64, 0x6c,
+	0xf0, 0x27, 0x79, 0x34, 0xcd, 0x33, 0x88, 0xd7, 0xc7, 0x5d, 0xd6, 0x08, 0xcd, 0x63, 0xf1, 0x75,
+	0xb5, 0x46, 0x63, 0xa5, 0xf5, 0xea, 0xc7, 0x3f, 0xff, 0xfe, 0x65, 0xfe, 0x1a, 0xbe, 0x6a, 0x34,
+	0x2d, 0xc7, 0x10, 0xf6, 0xc8, 0xc6, 0x2e, 0x38, 0x73, 0xef, 0xe8, 0x0a, 0x32, 0xc0, 0x1e, 0xfe,
+	0x4b, 0x43, 0x67, 0x79, 0x18, 0x55, 0xc7, 0xc9, 0xa8, 0x84, 0xbc, 0x6d, 0xcc, 0xa8, 0xc4, 0x90,
+	0xde, 0x50, 0x5f, 0x64, 0x4a, 0xcc, 0xe1, 0x92, 0x5c, 0x09, 0xfc, 0x51, 0x1e, 0x9d, 0xe6, 0xe4,
+	0x74, 0x5c, 0xcb, 0xea, 0x1f, 0x71, 0xd7, 0x52, 0x5c, 0x57, 0x6a, 0x13, 0x88, 0xbe, 0xc4, 0x88,
+	0xbe, 0x80, 0x9f, 0x3f, 0x22, 0xca, 0xfb, 0x94, 0x23, 0xf3, 0xf8, 0x1f, 0x1a, 0x3a, 0xc3, 0x41,
+	0x88, 0x1c, 0x5e, 0xcb, 0xea, 0x1b, 0xe5, 0x2a, 0xc8, 0x1b, 0x34, 0xfd, 0x3c, 0x53, 0x61, 0x16,
+	0xcf, 0x48, 0x55, 0xc0, 0xff, 0x6a, 0xe8, 0x54, 0xaa, 0x5b, 0xc0, 0x6b, 0x59, 0xfd, 0x22, 0xea,
+	0xa2, 0x8a, 0xb7, 0x15, 0x5a, 0x04, 0x86, 0x2f, 0x32, 0x86, 0x57, 0xf1, 0x73, 0x47, 0x0c, 0xd3,
+	0x1f, 0xf4, 0x8c, 0xdd, 0xb8, 0x5b, 0xdb, 0x33, 0x76, 0x07, 0x9b, 0xb5, 0x3d, 0xfc, 0x7d, 0x1e,
+	0xcd, 0x48, 0xab, 0x57, 0x7c, 0x57, 0x69, 0x7c, 0x0e, 0x34, 0x03, 0xc5, 0xb7, 0x27, 0x64, 0x1d,
+	0xf4, 0xb9, 0xc5, 0xf4, 0x79, 0x19, 0xaf, 0x48, 0x23, 0x20, 0xf1, 0x49, 0x53, 0xb6, 0x25, 0xbe,
+	0xc8, 0xa3, 0x39, 0x29, 0x6c, 0xb4, 0x39, 0xee, 0x2a, 0x0d, 0x64, 0x35, 0x72, 0x8d, 0xda, 0x20,
+	0xe9, 0xcf, 0x30, 0xb9, 0x96, 0x70, 0x79, 0x54, 0xb9, 0xd8, 0x49, 0xc9, 0x29, 0x41, 0xb3, 0x9f,
+	0x94, 0xe2, 0x42, 0x3d, 0xfb, 0x49, 0x29, 0xa9, 0xc6, 0x39, 0x27, 0x25, 0xef, 0x4b, 0xf6, 0xb0,
+	0x93, 0x92, 0x83, 0x70, 0xac, 0x93, 0x52, 0xb9, 0x0a, 0xf2, 0x9e, 0x84, 0x73, 0x52, 0xf2, 0x54,
+	0xc0, 0xff, 0x49, 0x8a, 0x73, 0x7c, 0xe7, 0xb8, 0xc5, 0x8b, 0xa0, 0xb6, 0x2e, 0xbe, 0xa9, 0xde,
+	0x30, 0xd0, 0x7e, 0x8a, 0xd1, 0x3e, 0x8f, 0xe7, 0xd3, 0xf5, 0x40, 0xea, 0x1f, 0x03, 0xfe, 0x47,
+	0x5c, 0xb6, 0xe3, 0x37, 0x8e, 0x19, 0x9a, 0x22, 0xea, 0x77, 0x94, 0xdb, 0x05, 0xe6, 0x4b, 0x8c,
+	0xf9, 0x02, 0xd6, 0x53, 0x0e, 0x4f, 0x13, 0xbf, 0x97, 0x47, 0x33, 0xd2, 0xa2, 0x3a, 0x7b, 0x8e,
+	0x18, 0xa5, 0xeb, 0xc8, 0x9e, 0x23, 0x46, 0x6a, 0x44, 0xf4, 0x6b, 0x4c, 0x8a, 0x67, 0xf1, 0x15,
+	0x79, 0x51, 0x98, 0xf8, 0x85, 0xd4, 0x3b, 0x0d, 0xae, 0xbf, 0x73, 0xff, 0xa0, 0xa4, 0xed, 0x1f,
+	0x94, 0xb4, 0xdf, 0x0e, 0x4a, 0xda, 0xe7, 0x87, 0xa5, 0xdc, 0xfe, 0x61, 0x29, 0xf7, 0xcb, 0x61,
+	0x29, 0xf7, 0xd6, 0x8d, 0x96, 0x1d, 0x6c, 0x84, 0x8d, 0x8a, 0x45, 0xb7, 0x8c, 0x78, 0xfd, 0xcb,
+	0x5d, 0x02, 0x46, 0x82, 0xc0, 0x72, 0x8f, 0xc1, 0x72, 0x4c, 0xc1, 0x78, 0x9f, 0x2d, 0x22, 0xe8,
+	0xb8, 0xc4, 0x6f, 0x9c, 0x60, 0x3f, 0x9f, 0xae, 0xfc, 0x1f, 0x00, 0x00, 0xff, 0xff, 0x75, 0x81,
+	0x90, 0x1d, 0x79, 0x1c, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1409,8 +1309,6 @@ type QueryClient interface {
 	ProposedCertificateAll(ctx context.Context, in *QueryAllProposedCertificateRequest, opts ...grpc.CallOption) (*QueryAllProposedCertificateResponse, error)
 	// Queries a ChildCertificates by index.
 	ChildCertificates(ctx context.Context, in *QueryGetChildCertificatesRequest, opts ...grpc.CallOption) (*QueryGetChildCertificatesResponse, error)
-	// Queries a list of ChildCertificates items.
-	ChildCertificatesAll(ctx context.Context, in *QueryAllChildCertificatesRequest, opts ...grpc.CallOption) (*QueryAllChildCertificatesResponse, error)
 	// Queries a ProposedCertificateRevocation by index.
 	ProposedCertificateRevocation(ctx context.Context, in *QueryGetProposedCertificateRevocationRequest, opts ...grpc.CallOption) (*QueryGetProposedCertificateRevocationResponse, error)
 	// Queries a list of ProposedCertificateRevocation items.
@@ -1474,15 +1372,6 @@ func (c *queryClient) ProposedCertificateAll(ctx context.Context, in *QueryAllPr
 func (c *queryClient) ChildCertificates(ctx context.Context, in *QueryGetChildCertificatesRequest, opts ...grpc.CallOption) (*QueryGetChildCertificatesResponse, error) {
 	out := new(QueryGetChildCertificatesResponse)
 	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ChildCertificates", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *queryClient) ChildCertificatesAll(ctx context.Context, in *QueryAllChildCertificatesRequest, opts ...grpc.CallOption) (*QueryAllChildCertificatesResponse, error) {
-	out := new(QueryAllChildCertificatesResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.pki.Query/ChildCertificatesAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1564,8 +1453,6 @@ type QueryServer interface {
 	ProposedCertificateAll(context.Context, *QueryAllProposedCertificateRequest) (*QueryAllProposedCertificateResponse, error)
 	// Queries a ChildCertificates by index.
 	ChildCertificates(context.Context, *QueryGetChildCertificatesRequest) (*QueryGetChildCertificatesResponse, error)
-	// Queries a list of ChildCertificates items.
-	ChildCertificatesAll(context.Context, *QueryAllChildCertificatesRequest) (*QueryAllChildCertificatesResponse, error)
 	// Queries a ProposedCertificateRevocation by index.
 	ProposedCertificateRevocation(context.Context, *QueryGetProposedCertificateRevocationRequest) (*QueryGetProposedCertificateRevocationResponse, error)
 	// Queries a list of ProposedCertificateRevocation items.
@@ -1600,9 +1487,6 @@ func (*UnimplementedQueryServer) ProposedCertificateAll(ctx context.Context, req
 }
 func (*UnimplementedQueryServer) ChildCertificates(ctx context.Context, req *QueryGetChildCertificatesRequest) (*QueryGetChildCertificatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChildCertificates not implemented")
-}
-func (*UnimplementedQueryServer) ChildCertificatesAll(ctx context.Context, req *QueryAllChildCertificatesRequest) (*QueryAllChildCertificatesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChildCertificatesAll not implemented")
 }
 func (*UnimplementedQueryServer) ProposedCertificateRevocation(ctx context.Context, req *QueryGetProposedCertificateRevocationRequest) (*QueryGetProposedCertificateRevocationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProposedCertificateRevocation not implemented")
@@ -1716,24 +1600,6 @@ func _Query_ChildCertificates_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).ChildCertificates(ctx, req.(*QueryGetChildCertificatesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Query_ChildCertificatesAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryAllChildCertificatesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QueryServer).ChildCertificatesAll(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.pki.Query/ChildCertificatesAll",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).ChildCertificatesAll(ctx, req.(*QueryAllChildCertificatesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1889,10 +1755,6 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_ChildCertificates_Handler,
 		},
 		{
-			MethodName: "ChildCertificatesAll",
-			Handler:    _Query_ChildCertificatesAll_Handler,
-		},
-		{
 			MethodName: "ProposedCertificateRevocation",
 			Handler:    _Query_ProposedCertificateRevocation_Handler,
 		},
@@ -1982,16 +1844,18 @@ func (m *QueryGetApprovedCertificatesResponse) MarshalToSizedBuffer(dAtA []byte)
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.ApprovedCertificates.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.ApprovedCertificates != nil {
+		{
+			size, err := m.ApprovedCertificates.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0xa
 	}
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -2136,16 +2000,18 @@ func (m *QueryGetProposedCertificateResponse) MarshalToSizedBuffer(dAtA []byte) 
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.ProposedCertificate.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.ProposedCertificate != nil {
+		{
+			size, err := m.ProposedCertificate.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0xa
 	}
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -2290,42 +2156,9 @@ func (m *QueryGetChildCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (i
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.ChildCertificates.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllChildCertificatesRequest) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllChildCertificatesRequest) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllChildCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
+	if m.ChildCertificates != nil {
 		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.ChildCertificates.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -2334,55 +2167,6 @@ func (m *QueryAllChildCertificatesRequest) MarshalToSizedBuffer(dAtA []byte) (in
 		}
 		i--
 		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *QueryAllChildCertificatesResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *QueryAllChildCertificatesResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *QueryAllChildCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		{
-			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintQuery(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.ChildCertificates) > 0 {
-		for iNdEx := len(m.ChildCertificates) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.ChildCertificates[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintQuery(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0xa
-		}
 	}
 	return len(dAtA) - i, nil
 }
@@ -2444,16 +2228,18 @@ func (m *QueryGetProposedCertificateRevocationResponse) MarshalToSizedBuffer(dAt
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.ProposedCertificateRevocation.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.ProposedCertificateRevocation != nil {
+		{
+			size, err := m.ProposedCertificateRevocation.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0xa
 	}
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -2598,16 +2384,18 @@ func (m *QueryGetRevokedCertificatesResponse) MarshalToSizedBuffer(dAtA []byte) 
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.RevokedCertificates.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.RevokedCertificates != nil {
+		{
+			size, err := m.RevokedCertificates.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0xa
 	}
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -2857,16 +2645,18 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) MarshalToSizedBuffer(dAt
 	_ = i
 	var l int
 	_ = l
-	{
-		size, err := m.ApprovedCertificatesBySubject.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.ApprovedCertificatesBySubject != nil {
+		{
+			size, err := m.ApprovedCertificatesBySubject.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintQuery(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0xa
 	}
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -2904,8 +2694,10 @@ func (m *QueryGetApprovedCertificatesResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.ApprovedCertificates.Size()
-	n += 1 + l + sovQuery(uint64(l))
+	if m.ApprovedCertificates != nil {
+		l = m.ApprovedCertificates.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -2964,8 +2756,10 @@ func (m *QueryGetProposedCertificateResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.ProposedCertificate.Size()
-	n += 1 + l + sovQuery(uint64(l))
+	if m.ProposedCertificate != nil {
+		l = m.ProposedCertificate.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -3024,38 +2818,8 @@ func (m *QueryGetChildCertificatesResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.ChildCertificates.Size()
-	n += 1 + l + sovQuery(uint64(l))
-	return n
-}
-
-func (m *QueryAllChildCertificatesRequest) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
-		n += 1 + l + sovQuery(uint64(l))
-	}
-	return n
-}
-
-func (m *QueryAllChildCertificatesResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if len(m.ChildCertificates) > 0 {
-		for _, e := range m.ChildCertificates {
-			l = e.Size()
-			n += 1 + l + sovQuery(uint64(l))
-		}
-	}
-	if m.Pagination != nil {
-		l = m.Pagination.Size()
+	if m.ChildCertificates != nil {
+		l = m.ChildCertificates.Size()
 		n += 1 + l + sovQuery(uint64(l))
 	}
 	return n
@@ -3084,8 +2848,10 @@ func (m *QueryGetProposedCertificateRevocationResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.ProposedCertificateRevocation.Size()
-	n += 1 + l + sovQuery(uint64(l))
+	if m.ProposedCertificateRevocation != nil {
+		l = m.ProposedCertificateRevocation.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -3144,8 +2910,10 @@ func (m *QueryGetRevokedCertificatesResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.RevokedCertificates.Size()
-	n += 1 + l + sovQuery(uint64(l))
+	if m.RevokedCertificates != nil {
+		l = m.RevokedCertificates.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -3240,8 +3008,10 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.ApprovedCertificatesBySubject.Size()
-	n += 1 + l + sovQuery(uint64(l))
+	if m.ApprovedCertificatesBySubject != nil {
+		l = m.ApprovedCertificatesBySubject.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
@@ -3422,6 +3192,9 @@ func (m *QueryGetApprovedCertificatesResponse) Unmarshal(dAtA []byte) error {
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
+			}
+			if m.ApprovedCertificates == nil {
+				m.ApprovedCertificates = &ApprovedCertificates{}
 			}
 			if err := m.ApprovedCertificates.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3826,6 +3599,9 @@ func (m *QueryGetProposedCertificateResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			if m.ProposedCertificate == nil {
+				m.ProposedCertificate = &ProposedCertificate{}
+			}
 			if err := m.ProposedCertificate.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -4229,213 +4005,10 @@ func (m *QueryGetChildCertificatesResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			if m.ChildCertificates == nil {
+				m.ChildCertificates = &ChildCertificates{}
+			}
 			if err := m.ChildCertificates.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllChildCertificatesRequest) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllChildCertificatesRequest: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllChildCertificatesRequest: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageRequest{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryAllChildCertificatesResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryAllChildCertificatesResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryAllChildCertificatesResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChildCertificates", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ChildCertificates = append(m.ChildCertificates, ChildCertificates{})
-			if err := m.ChildCertificates[len(m.ChildCertificates)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowQuery
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthQuery
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Pagination == nil {
-				m.Pagination = &query.PageResponse{}
-			}
-			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -4631,6 +4204,9 @@ func (m *QueryGetProposedCertificateRevocationResponse) Unmarshal(dAtA []byte) e
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
+			}
+			if m.ProposedCertificateRevocation == nil {
+				m.ProposedCertificateRevocation = &ProposedCertificateRevocation{}
 			}
 			if err := m.ProposedCertificateRevocation.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -5034,6 +4610,9 @@ func (m *QueryGetRevokedCertificatesResponse) Unmarshal(dAtA []byte) error {
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
+			}
+			if m.RevokedCertificates == nil {
+				m.RevokedCertificates = &RevokedCertificates{}
 			}
 			if err := m.RevokedCertificates.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -5671,6 +5250,9 @@ func (m *QueryGetApprovedCertificatesBySubjectResponse) Unmarshal(dAtA []byte) e
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
+			}
+			if m.ApprovedCertificatesBySubject == nil {
+				m.ApprovedCertificatesBySubject = &ApprovedCertificatesBySubject{}
 			}
 			if err := m.ApprovedCertificatesBySubject.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

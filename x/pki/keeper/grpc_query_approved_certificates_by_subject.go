@@ -15,13 +15,13 @@ func (k Keeper) ApprovedCertificatesBySubject(c context.Context, req *types.Quer
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	val, _ := k.GetApprovedCertificatesBySubject(
+	val, found := k.GetApprovedCertificatesBySubject(
 		ctx,
 		req.Subject,
 	)
-	// if !found {
-	// 	return nil, status.Error(codes.InvalidArgument, "not found")
-	// }
+	if !found {
+		return &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: nil}, nil
+	}
 
-	return &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: val}, nil
+	return &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: &val}, nil
 }
