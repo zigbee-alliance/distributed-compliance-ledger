@@ -50,7 +50,7 @@ func (k Keeper) VendorInfo(c context.Context, req *types.QueryGetVendorInfoReque
 		req.VendorID,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetVendorInfoResponse{VendorInfo: val}, nil
