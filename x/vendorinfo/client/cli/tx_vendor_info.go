@@ -12,21 +12,21 @@ import (
 
 func CmdCreateVendorInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-vendor-info [vendor-id] [vendor-name] [company-legal-name] [company-preffered-name] [vendor-landing-page-url]",
-		Short: "Create a new VendorInfo",
-		Args:  cobra.ExactArgs(5),
+		Use:   "add-vendor",
+		Short: "Add a new VendorInfo",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// Get indexes
-			indexVendorID, err := cast.ToUint64E(args[0])
+			indexVendorID, err := cast.ToUint64E(FlagVID)
 			if err != nil {
 				return err
 			}
 
 			// Get value arguments
-			argVendorName := args[1]
-			argCompanyLegalName := args[2]
-			argCompanyPrefferedName := args[3]
-			argVendorLandingPageURL := args[4]
+			argVendorName := FlagVendorName
+			argCompanyLegalName := FlagCompanyLegalName
+			argCompanyPrefferedName := FlagCompanyPreferredName
+			argVendorLandingPageURL := FlagVendorLandingPageURL
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -48,28 +48,42 @@ func CmdCreateVendorInfo() *cobra.Command {
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
+	cmd.Flags().String(FlagVID,
+		"", "Vendor ID")
+	cmd.Flags().StringP(FlagVendorName, FlagVendorNameShortcut,
+		"", "Vendor Name")
+	cmd.Flags().StringP(FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
+		"", "Company Legal Name")
+	cmd.Flags().StringP(FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
+		"", "Company Preferred Name")
+	cmd.Flags().StringP(FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
+		"", "Landing Page URL for the Vendor")
+	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagVendorName)
+	_ = cmd.MarkFlagRequired(FlagCompanyLegalName)
 
 	return cmd
 }
 
 func CmdUpdateVendorInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update-vendor-info [vendor-id] [vendor-name] [company-legal-name] [company-preffered-name] [vendor-landing-page-url]",
+		Use:   "update-vendor [vendor-id] [vendor-name] [company-legal-name] [company-preffered-name] [vendor-landing-page-url]",
 		Short: "Update a VendorInfo",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// Get indexes
-			indexVendorID, err := cast.ToUint64E(args[0])
+			indexVendorID, err := cast.ToUint64E(FlagVID)
 			if err != nil {
 				return err
 			}
 
 			// Get value arguments
-			argVendorName := args[1]
-			argCompanyLegalName := args[2]
-			argCompanyPrefferedName := args[3]
-			argVendorLandingPageURL := args[4]
+			argVendorName := FlagVendorName
+			argCompanyLegalName := FlagCompanyLegalName
+			argCompanyPrefferedName := FlagCompanyPreferredName
+			argVendorLandingPageURL := FlagVendorLandingPageURL
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -91,39 +105,19 @@ func CmdUpdateVendorInfo() *cobra.Command {
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
+	cmd.Flags().String(FlagVID,
+		"", "Vendor ID")
+	cmd.Flags().StringP(FlagVendorName, FlagVendorNameShortcut,
+		"", "Vendor Name")
+	cmd.Flags().StringP(FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
+		"", "Company Legal Name")
+	cmd.Flags().StringP(FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
+		"", "Company Preferred Name")
+	cmd.Flags().StringP(FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
+		"", "Landing Page URL for the Vendor")
+	flags.AddQueryFlagsToCmd(cmd)
 
-	return cmd
-}
-
-func CmdDeleteVendorInfo() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "delete-vendor-info [vendor-id]",
-		Short: "Delete a VendorInfo",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			indexVendorID, err := cast.ToUint64E(args[0])
-			if err != nil {
-				return err
-			}
-
-			clientCtx, err := client.GetClientTxContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			msg := types.NewMsgDeleteVendorInfo(
-				clientCtx.GetFromAddress().String(),
-				indexVendorID,
-			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
-			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-		},
-	}
-
-	flags.AddTxFlagsToCmd(cmd)
+	_ = cmd.MarkFlagRequired(FlagVID)
 
 	return cmd
 }
