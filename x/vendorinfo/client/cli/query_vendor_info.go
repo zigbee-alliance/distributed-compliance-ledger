@@ -13,8 +13,8 @@ import (
 
 func CmdListVendorInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-vendor-info",
-		Short: "list all VendorInfo",
+		Use:   "all-vendors",
+		Short: "Get information about all vendors",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -46,8 +46,8 @@ func CmdListVendorInfo() *cobra.Command {
 
 func CmdShowVendorInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-vendor-info [vendor-id]",
-		Short: "shows a VendorInfo",
+		Use:   "vendor [vendor-id]",
+		Short: "Get vendor details for the given vendorID",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
