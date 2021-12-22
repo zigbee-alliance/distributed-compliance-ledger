@@ -20,6 +20,11 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 OUTPUT_DIR ?= build
 
 LOCALNET_DIR ?= .localnet
+LOCALNET_DOCKER_NETWORK = "distributed-compliance-ledger_localnet"
+
+remove_containers = $(if $(1),docker rm -f $(1),true)
+localnet_containers = $(shell docker ps --format '{{.ID}}' --filter network=$(LOCALNET_DOCKER_NETWORK))
+clean_network = $(call remove_containers,$(call localnet_containers))
 
 LICENSE_TYPE = "apache"
 COPYRIGHT_YEAR = "2020"
@@ -70,7 +75,7 @@ localnet_start:
 	fi
 
 localnet_stop:
-	docker-compose down
+	docker-compose down || ($(call clean_network) && docker-compose down)
 
 localnet_export: localnet_stop
 	docker-compose run node0 dcld export --for-zero-height  >genesis.export.node0.json
