@@ -2,13 +2,15 @@ syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.vendorinfo;
 
 import "vendorinfo/vendor_info.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc CreateVendorInfo(MsgCreateVendorInfo) returns (MsgCreateVendorInfoResponse);
+  rpc CreateVendorInfo(MsgCreateVendorInfo) returns (MsgCreateVendorInfoResponse);
   rpc UpdateVendorInfo(MsgUpdateVendorInfo) returns (MsgUpdateVendorInfoResponse);
   rpc DeleteVendorInfo(MsgDeleteVendorInfo) returns (MsgDeleteVendorInfoResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
@@ -21,7 +23,7 @@ message MsgCreateVendorInfo {
   string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32\""];
   string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64\""];
   string companyPrefferedName = 5 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:"omitempty,max=256,url\""];
+  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=256,url\""];
 }
 message MsgCreateVendorInfoResponse {}
 
@@ -32,7 +34,7 @@ message MsgUpdateVendorInfo {
   string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32\""];
   string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64\""];
   string companyPrefferedName = 5 [(gogoproto.moretags) = "validate:\"max=64\""];
-  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:"omitempty,max=256,url\""];
+  string vendorLandingPageURL = 6 [(gogoproto.moretags) = "validate:\"omitempty,max=256,url\""];
 }
 message MsgUpdateVendorInfoResponse {}
 

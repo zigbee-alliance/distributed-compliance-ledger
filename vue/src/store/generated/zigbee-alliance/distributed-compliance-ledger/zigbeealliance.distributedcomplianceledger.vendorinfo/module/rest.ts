@@ -318,9 +318,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryVendorInfo
+   * @summary Queries a vendorInfo by index.
+   * @request GET:/dcl/vendorinfo/vendor/{vendorID}
+   */
+  queryVendorInfo = (vendorID: string, params: RequestParams = {}) =>
+    this.request<VendorinfoQueryGetVendorInfoResponse, RpcStatus>({
+      path: `/dcl/vendorinfo/vendor/${vendorID}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryVendorInfoAll
    * @summary Queries a list of vendorInfo items.
-   * @request GET:/dcl/vendorinfo/vendorInfo
+   * @request GET:/dcl/vendorinfo/vendors
    */
   queryVendorInfoAll = (
     query?: {
@@ -333,25 +349,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<VendorinfoQueryAllVendorInfoResponse, RpcStatus>({
-      path: `/dcl/vendorinfo/vendorInfo`,
+      path: `/dcl/vendorinfo/vendors`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryVendorInfo
-   * @summary Queries a vendorInfo by index.
-   * @request GET:/dcl/vendorinfo/vendorInfo/{vendorID}
-   */
-  queryVendorInfo = (vendorID: string, params: RequestParams = {}) =>
-    this.request<VendorinfoQueryGetVendorInfoResponse, RpcStatus>({
-      path: `/dcl/vendorinfo/vendorInfo/${vendorID}`,
-      method: "GET",
       format: "json",
       ...params,
     });

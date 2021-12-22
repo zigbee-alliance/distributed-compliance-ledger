@@ -15070,7 +15070,59 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/vendorinfo/vendorInfo:
+  '/dcl/vendorinfo/vendor/{vendorID}':
+    get:
+      summary: Queries a vendorInfo by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorInfo:
+                type: object
+                properties:
+                  vendorID:
+                    type: string
+                    format: uint64
+                  vendorName:
+                    type: string
+                  companyLegalName:
+                    type: string
+                  companyPrefferedName:
+                    type: string
+                  vendorLandingPageURL:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vendorID
+          in: path
+          required: true
+          type: string
+          format: uint64
+      tags:
+        - Query
+  /dcl/vendorinfo/vendors:
     get:
       summary: Queries a list of vendorInfo items.
       operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfoAll
@@ -15200,58 +15252,6 @@ paths:
           in: query
           required: false
           type: boolean
-      tags:
-        - Query
-  '/dcl/vendorinfo/vendorInfo/{vendorID}':
-    get:
-      summary: Queries a vendorInfo by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              vendorInfo:
-                type: object
-                properties:
-                  vendorID:
-                    type: string
-                    format: uint64
-                  vendorName:
-                    type: string
-                  companyLegalName:
-                    type: string
-                  companyPrefferedName:
-                    type: string
-                  vendorLandingPageURL:
-                    type: string
-                  creator:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: vendorID
-          in: path
-          required: true
-          type: string
-          format: uint64
       tags:
         - Query
 definitions:

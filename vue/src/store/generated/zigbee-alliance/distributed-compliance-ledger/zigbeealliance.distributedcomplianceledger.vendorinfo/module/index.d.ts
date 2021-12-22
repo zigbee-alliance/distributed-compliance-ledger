@@ -1,9 +1,9 @@
 import { StdFee } from "@cosmjs/launchpad";
 import { OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgCreateVendorInfo } from "./types/vendorinfo/tx";
-import { MsgUpdateVendorInfo } from "./types/vendorinfo/tx";
 import { MsgDeleteVendorInfo } from "./types/vendorinfo/tx";
+import { MsgUpdateVendorInfo } from "./types/vendorinfo/tx";
+import { MsgCreateVendorInfo } from "./types/vendorinfo/tx";
 export declare const MissingWalletError: Error;
 interface TxClientOptions {
     addr: string;
@@ -14,9 +14,9 @@ interface SignAndBroadcastOptions {
 }
 declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions) => Promise<{
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => Promise<import("@cosmjs/stargate").BroadcastTxResponse>;
-    msgCreateVendorInfo: (data: MsgCreateVendorInfo) => EncodeObject;
-    msgUpdateVendorInfo: (data: MsgUpdateVendorInfo) => EncodeObject;
     msgDeleteVendorInfo: (data: MsgDeleteVendorInfo) => EncodeObject;
+    msgUpdateVendorInfo: (data: MsgUpdateVendorInfo) => EncodeObject;
+    msgCreateVendorInfo: (data: MsgCreateVendorInfo) => EncodeObject;
 }>;
 interface QueryClientOptions {
     addr: string;
