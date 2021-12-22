@@ -21,7 +21,7 @@ func (k Keeper) ChildCertificates(c context.Context, req *types.QueryGetChildCer
 		req.AuthorityKeyId,
 	)
 	if !found {
-		return &types.QueryGetChildCertificatesResponse{ChildCertificates: nil}, nil
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetChildCertificatesResponse{ChildCertificates: &val}, nil

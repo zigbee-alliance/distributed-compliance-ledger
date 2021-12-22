@@ -62,8 +62,12 @@ func CmdShowProposedCertificate() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedCertificate(context.Background(), params)
-			if err != nil {
+			if HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetProposedCertificateResponse{ProposedCertificate: nil}
 			}
 
 			return clientCtx.PrintProto(res)

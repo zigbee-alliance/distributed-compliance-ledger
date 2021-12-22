@@ -29,8 +29,12 @@ func CmdShowChildCertificates() *cobra.Command {
 			}
 
 			res, err := queryClient.ChildCertificates(context.Background(), params)
-			if err != nil {
+			if HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetChildCertificatesResponse{ChildCertificates: nil}
 			}
 
 			return clientCtx.PrintProto(res)

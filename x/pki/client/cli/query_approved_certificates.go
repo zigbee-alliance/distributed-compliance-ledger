@@ -63,8 +63,12 @@ func CmdShowApprovedCertificates() *cobra.Command {
 			}
 
 			res, err := queryClient.ApprovedCertificates(context.Background(), params)
-			if err != nil {
+			if HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetApprovedCertificatesResponse{ApprovedCertificates: nil}
 			}
 
 			return clientCtx.PrintProto(res)

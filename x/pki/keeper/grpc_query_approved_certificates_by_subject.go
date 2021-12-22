@@ -20,7 +20,7 @@ func (k Keeper) ApprovedCertificatesBySubject(c context.Context, req *types.Quer
 		req.Subject,
 	)
 	if !found {
-		return &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: nil}, nil
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetApprovedCertificatesBySubjectResponse{ApprovedCertificatesBySubject: &val}, nil

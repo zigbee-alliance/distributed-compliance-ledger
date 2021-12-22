@@ -51,7 +51,7 @@ func (k Keeper) RevokedCertificates(c context.Context, req *types.QueryGetRevoke
 		req.SubjectKeyId,
 	)
 	if !found {
-		return &types.QueryGetRevokedCertificatesResponse{RevokedCertificates: nil}, nil
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetRevokedCertificatesResponse{RevokedCertificates: &val}, nil

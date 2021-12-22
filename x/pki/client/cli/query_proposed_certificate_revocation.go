@@ -63,8 +63,12 @@ func CmdShowProposedCertificateRevocation() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedCertificateRevocation(context.Background(), params)
-			if err != nil {
+			if HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetProposedCertificateRevocationResponse{ProposedCertificateRevocation: nil}
 			}
 
 			return clientCtx.PrintProto(res)

@@ -63,8 +63,12 @@ func CmdShowRevokedCertificates() *cobra.Command {
 			}
 
 			res, err := queryClient.RevokedCertificates(context.Background(), params)
-			if err != nil {
+			if HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetRevokedCertificatesResponse{RevokedCertificates: nil}
 			}
 
 			return clientCtx.PrintProto(res)
