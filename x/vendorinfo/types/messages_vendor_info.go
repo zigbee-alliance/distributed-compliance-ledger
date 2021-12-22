@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 var _ sdk.Msg = &MsgCreateVendorInfo{}
@@ -53,8 +54,9 @@ func (msg *MsgCreateVendorInfo) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.VendorID > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "VendorID must be in range from 0 to 65535")
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -108,8 +110,9 @@ func (msg *MsgUpdateVendorInfo) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.VendorID > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "VendorID must be in range from 0 to 65535")
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -154,8 +157,9 @@ func (msg *MsgDeleteVendorInfo) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if msg.VendorID > 65535 {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "VendorID must be in range from 0 to 65535")
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil
