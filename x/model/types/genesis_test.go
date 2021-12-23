@@ -19,11 +19,115 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
+				VendorProductsList: []types.VendorProducts{
+					{
+						Vid: 0,
+					},
+					{
+						Vid: 1,
+					},
+				},
+				ModelList: []types.Model{
+					{
+						Vid: 0,
+						Pid: 0,
+					},
+					{
+						Vid: 1,
+						Pid: 1,
+					},
+				},
+				ModelVersionList: []types.ModelVersion{
+					{
+						Vid:             0,
+						Pid:             0,
+						SoftwareVersion: 0,
+					},
+					{
+						Vid:             1,
+						Pid:             1,
+						SoftwareVersion: 1,
+					},
+				},
+				ModelVersionsList: []types.ModelVersions{
+					{
+						Vid: 0,
+						Pid: 0,
+					},
+					{
+						Vid: 1,
+						Pid: 1,
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated vendorProducts",
+			genState: &types.GenesisState{
+				VendorProductsList: []types.VendorProducts{
+					{
+						Vid: 0,
+					},
+					{
+						Vid: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated model",
+			genState: &types.GenesisState{
+				ModelList: []types.Model{
+					{
+						Vid: 0,
+						Pid: 0,
+					},
+					{
+						Vid: 0,
+						Pid: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated modelVersion",
+			genState: &types.GenesisState{
+				ModelVersionList: []types.ModelVersion{
+					{
+						Vid:             0,
+						Pid:             0,
+						SoftwareVersion: 0,
+					},
+					{
+						Vid:             0,
+						Pid:             0,
+						SoftwareVersion: 0,
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated modelVersions",
+			genState: &types.GenesisState{
+				ModelVersionsList: []types.ModelVersions{
+					{
+						Vid: 0,
+						Pid: 0,
+					},
+					{
+						Vid: 0,
+						Pid: 0,
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {

@@ -16,9 +16,9 @@ package validator
 
 import (
 	"fmt"
-	"reflect"
+	"strings"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -31,7 +31,7 @@ var (
 )
 
 //nolint:wrapcheck,errcheck
-func validate(s interface{}, performAddValidation bool) sdk.Error {
+func Validate(s interface{}) error {
 	en := en.New()
 	uni = ut.New(en, en)
 
@@ -39,10 +39,6 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 
 	vl = validator.New()
 
-	_ = vl.RegisterValidation("address", validateAddress)
-	_ = en_translations.RegisterDefaultTranslations(vl, trans)
-
-	_ = vl.RegisterValidation("requiredForAdd", validateRequiredForAdd)
 	_ = en_translations.RegisterDefaultTranslations(vl, trans)
 
 	_ = vl.RegisterTranslation("required", trans, func(ut ut.Translator) error {
@@ -54,28 +50,38 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 	})
 
 	_ = vl.RegisterTranslation("required_with", trans, func(ut ut.Translator) error {
-		return ut.Add("required_with", "{0} is a required field", true) // see universal-translator for details
+		return ut.Add("required_with", "{0} is required if {1} is set", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("required_with", fe.Field())
-
-		return t
-	})
-	_ = vl.RegisterTranslation("address", trans, func(ut ut.Translator) error {
-		return ut.Add("address", "Field {0} : {1} is not a valid address", true)
-	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("address", fe.Field(), fmt.Sprintf("%v", fe.Value()))
+		t, _ := ut.T("required_with", fe.Field(), fe.Param())
 
 		return t
 	})
 
-	_ = vl.RegisterTranslation("requiredForAdd", trans, func(ut ut.Translator) error {
-		return ut.Add("requiredForAdd", "{0} is a required field", true)
+	_ = vl.RegisterTranslation("required_if", trans, func(ut ut.Translator) error {
+		return ut.Add("required_if", "{0} is required if {1}", true) // see universal-translator for details
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("requiredForAdd", fe.Field())
+		t, _ := ut.T("required_if", fe.Field(), strings.Replace(fe.Param(), " ", "=", 1))
 
 		return t
 	})
 
+	vl.RegisterTranslation("gte", trans, func(ut ut.Translator) error {
+		return ut.Add("gte", "{0} must not be less than {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("gte", fe.Field(), fe.Param())
+
+		return t
+	})
+
+	vl.RegisterTranslation("lte", trans, func(ut ut.Translator) error {
+		return ut.Add("lte", "{0} must not be greater than {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("lte", fe.Field(), fe.Param())
+
+		return t
+	})
+
+	// Please note that we use `max` tag for fields of `string` type only
 	vl.RegisterTranslation("max", trans, func(ut ut.Translator) error {
 		return ut.Add("max", "maximum length for {0} allowed is {1}", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -99,60 +105,38 @@ func validate(s interface{}, performAddValidation bool) sdk.Error {
 		return t
 	})
 
+	vl.RegisterTranslation("gtecsfield", trans, func(ut ut.Translator) error {
+		return ut.Add("gtecsfield", "{0} must not be less than {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("gtecsfield", fe.Field(), fe.Param())
+		return t
+	})
+
 	errs := vl.Struct(s)
 
 	if errs != nil {
 		for _, e := range errs.(validator.ValidationErrors) {
+			if e.Tag() == "required" || e.Tag() == "required_with" || e.Tag() == "required_if" {
+				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
+			}
+
 			if e.Tag() == "max" {
-				return sdk.NewError(Codespace, CodeFieldMaxLengthExceeded, e.Translate(trans))
+				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
 			}
 
-			// currently required_with is only applicable for Additions
-			// (Create custom validator if need for both update and add)
-			if (e.Tag() == "requiredForAdd" || e.Tag() == "required_with") && performAddValidation {
-				return sdk.NewError(Codespace, CodeRequiredFieldMissing, e.Translate(trans))
+			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "gtecsfield" {
+				return sdkerrors.Wrap(ErrFieldNotValid, e.Translate(trans))
 			}
 
-			if e.Tag() == "required" {
-				return sdk.NewError(Codespace, CodeRequiredFieldMissing, e.Translate(trans))
-			}
-			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "address" {
-				return sdk.NewError(Codespace, CodeFieldNotValid, e.Translate(trans))
+			if e.Tag() == "gte" {
+				return sdkerrors.Wrap(ErrFieldLowerBoundViolated, e.Translate(trans))
 			}
 
+			if e.Tag() == "lte" {
+				return sdkerrors.Wrap(ErrFieldUpperBoundViolated, e.Translate(trans))
+			}
 		}
 	}
 
 	return nil
-}
-
-func ValidateUpdate(s interface{}) sdk.Error {
-	return validate(s, false)
-}
-
-func ValidateAdd(s interface{}) sdk.Error {
-	return validate(s, true)
-}
-
-func validateRequiredForAdd(fl validator.FieldLevel) bool {
-	field := fl.Field()
-	//nolint:exhaustive
-	switch field.Kind() {
-	case reflect.String:
-		return field.Len() > 0
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		return field.Int() != 0
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		return field.Uint() != 0
-	default:
-		return field.IsValid() && field.Interface() != reflect.Zero(field.Type()).Interface()
-	}
-}
-
-func validateAddress(fl validator.FieldLevel) bool {
-	if sdk.VerifyAddressFormat(fl.Field().Bytes()) != nil {
-		return false
-	} else {
-		return true
-	}
 }

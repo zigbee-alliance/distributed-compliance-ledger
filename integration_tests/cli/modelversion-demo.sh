@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# FIXME issue 99: enable once implemented
-exit 0
-
 set -euo pipefail
 source integration_tests/cli/common.sh
 
@@ -33,7 +30,7 @@ create_new_vendor_account $vendor_account $vid
 
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Product" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
-check_response "$result" "\"success\": true"
+check_response "$result" "\"code\": 0"
 
 test_divider
 
@@ -41,7 +38,7 @@ sv=$RANDOM
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$vendor_account --yes)
 echo "$result"
-check_response "$result" "\"success\": true"
+check_response "$result" "\"code\": 0"
 
 test_divider
 
@@ -52,26 +49,26 @@ echo "$result"
 
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"softwareVersion\": $sv"
-check_response "$result" "\"softwareVersionString\": \"1\""
-check_response "$result" "\"CDVersionNumber\": 1"
-check_response "$result" "\"softwareVersionValid\": true"
-check_response "$result" "\"minApplicableSoftwareVersion\": 1"
-check_response "$result" "\"maxApplicableSoftwareVersion\": 10"
+check_response "$result" "\"software_version\": $sv"
+check_response "$result" "\"software_version_string\": \"1\""
+check_response "$result" "\"cd_version_number\": 1"
+check_response "$result" "\"software_version_valid\": true"
+check_response "$result" "\"min_applicable_software_version\": 1"
+check_response "$result" "\"max_applicable_software_version\": 10"
 
 test_divider
 
 # Query non existant model version 
 echo "Query Device Model Version with VID: $vid PID: $pid SV: 123456"
 result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=123456 2>&1) || true
-check_response_and_report "$result" "No model version associated with vid=$vid, pid=$pid and softwareVersion=123456 exist on the ledger"
+check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
 
 test_divider
 
 # Update the existing model version
 echo "Update Device Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --minApplicableSoftwareVersion=2 --softwareVersion=$sv --softwareVersionValid=false --from=$vendor_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --minApplicableSoftwareVersion=2 --maxApplicableSoftwareVersion=10 --softwareVersion=$sv --softwareVersionValid=false --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
 
 test_divider
 
@@ -81,12 +78,12 @@ result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVers
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"softwareVersion\": $sv"
-check_response "$result" "\"softwareVersionString\": \"1\""
-check_response "$result" "\"CDVersionNumber\": 1"
-check_response "$result" "\"softwareVersionValid\": false"
-check_response "$result" "\"minApplicableSoftwareVersion\": 2"
-check_response "$result" "\"maxApplicableSoftwareVersion\": 10"
+check_response "$result" "\"software_version\": $sv"
+check_response "$result" "\"software_version_string\": \"1\""
+check_response "$result" "\"cd_version_number\": 1"
+check_response "$result" "\"software_version_valid\": false"
+check_response "$result" "\"min_applicable_software_version\": 2"
+check_response "$result" "\"max_applicable_software_version\": 10"
 
 test_divider
 
@@ -96,14 +93,12 @@ newvid=$RANDOM
 different_vendor_account=vendor_account_$newvid
 create_new_vendor_account $different_vendor_account $newvid
 result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=1 --from=$different_vendor_account --yes)
-check_response "$result" "\"success\": false"
-check_response_and_report "$result" "ModelVersion Add/Update transaction should be signed by an vendor account containing the vendorID $vid"
+check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 
 test_divider
 
 # Update model version with vid belonging to another vendor
 echo "Update a Device Model Version with VID: $vid PID: $pid SV: $sv from a different vendor account"
-result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --minApplicableSoftwareVersion=2 --softwareVersion=$sv --softwareVersionValid=false --from=$different_vendor_account --yes)
-check_response "$result" "\"success\": false"
-check_response_and_report "$result" "ModelVersion Add/Update transaction should be signed by an vendor account containing the vendorID $vid"
+result=$(echo 'test1234' | dcld tx model update-model-version --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionValid=false --from=$different_vendor_account --yes)
+check_response_and_report "$result" "transaction should be signed by a vendor account containing the vendorID $vid"
 

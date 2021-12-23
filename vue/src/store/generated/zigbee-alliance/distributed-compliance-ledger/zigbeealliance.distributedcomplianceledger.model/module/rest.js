@@ -1,0 +1,256 @@
+/* eslint-disable */
+/* tslint:disable */
+/*
+ * ---------------------------------------------------------------
+ * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
+ * ##                                                           ##
+ * ## AUTHOR: acacode                                           ##
+ * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
+ * ---------------------------------------------------------------
+ */
+export var ContentType;
+(function (ContentType) {
+    ContentType["Json"] = "application/json";
+    ContentType["FormData"] = "multipart/form-data";
+    ContentType["UrlEncoded"] = "application/x-www-form-urlencoded";
+})(ContentType || (ContentType = {}));
+export class HttpClient {
+    constructor(apiConfig = {}) {
+        this.baseUrl = "";
+        this.securityData = null;
+        this.securityWorker = null;
+        this.abortControllers = new Map();
+        this.baseApiParams = {
+            credentials: "same-origin",
+            headers: {},
+            redirect: "follow",
+            referrerPolicy: "no-referrer",
+        };
+        this.setSecurityData = (data) => {
+            this.securityData = data;
+        };
+        this.contentFormatters = {
+            [ContentType.Json]: (input) => input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
+            [ContentType.FormData]: (input) => Object.keys(input || {}).reduce((data, key) => {
+                data.append(key, input[key]);
+                return data;
+            }, new FormData()),
+            [ContentType.UrlEncoded]: (input) => this.toQueryString(input),
+        };
+        this.createAbortSignal = (cancelToken) => {
+            if (this.abortControllers.has(cancelToken)) {
+                const abortController = this.abortControllers.get(cancelToken);
+                if (abortController) {
+                    return abortController.signal;
+                }
+                return void 0;
+            }
+            const abortController = new AbortController();
+            this.abortControllers.set(cancelToken, abortController);
+            return abortController.signal;
+        };
+        this.abortRequest = (cancelToken) => {
+            const abortController = this.abortControllers.get(cancelToken);
+            if (abortController) {
+                abortController.abort();
+                this.abortControllers.delete(cancelToken);
+            }
+        };
+        this.request = ({ body, secure, path, type, query, format = "json", baseUrl, cancelToken, ...params }) => {
+            const secureParams = (secure && this.securityWorker && this.securityWorker(this.securityData)) || {};
+            const requestParams = this.mergeRequestParams(params, secureParams);
+            const queryString = query && this.toQueryString(query);
+            const payloadFormatter = this.contentFormatters[type || ContentType.Json];
+            return fetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
+                ...requestParams,
+                headers: {
+                    ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+                    ...(requestParams.headers || {}),
+                },
+                signal: cancelToken ? this.createAbortSignal(cancelToken) : void 0,
+                body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
+            }).then(async (response) => {
+                const r = response;
+                r.data = null;
+                r.error = null;
+                const data = await response[format]()
+                    .then((data) => {
+                    if (r.ok) {
+                        r.data = data;
+                    }
+                    else {
+                        r.error = data;
+                    }
+                    return r;
+                })
+                    .catch((e) => {
+                    r.error = e;
+                    return r;
+                });
+                if (cancelToken) {
+                    this.abortControllers.delete(cancelToken);
+                }
+                if (!response.ok)
+                    throw data;
+                return data;
+            });
+        };
+        Object.assign(this, apiConfig);
+    }
+    addQueryParam(query, key) {
+        const value = query[key];
+        return (encodeURIComponent(key) +
+            "=" +
+            encodeURIComponent(Array.isArray(value) ? value.join(",") : typeof value === "number" ? value : `${value}`));
+    }
+    toQueryString(rawQuery) {
+        const query = rawQuery || {};
+        const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
+        return keys
+            .map((key) => typeof query[key] === "object" && !Array.isArray(query[key])
+            ? this.toQueryString(query[key])
+            : this.addQueryParam(query, key))
+            .join("&");
+    }
+    addQueryParams(rawQuery) {
+        const queryString = this.toQueryString(rawQuery);
+        return queryString ? `?${queryString}` : "";
+    }
+    mergeRequestParams(params1, params2) {
+        return {
+            ...this.baseApiParams,
+            ...params1,
+            ...(params2 || {}),
+            headers: {
+                ...(this.baseApiParams.headers || {}),
+                ...(params1.headers || {}),
+                ...((params2 && params2.headers) || {}),
+            },
+        };
+    }
+}
+/**
+ * @title model/genesis.proto
+ * @version version not set
+ */
+export class Api extends HttpClient {
+    constructor() {
+        super(...arguments);
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModelAll
+         * @summary Queries a list of Model items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model
+         */
+        this.queryModelAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/model`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModel
+         * @summary Queries a Model by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model/{vid}/{pid}
+         */
+        this.queryModel = (vid, pid, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/model/${vid}/${pid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModelVersionAll
+         * @summary Queries a list of ModelVersion items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version
+         */
+        this.queryModelVersionAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/model_version`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModelVersion
+         * @summary Queries a ModelVersion by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{softwareVersion}
+         */
+        this.queryModelVersion = (vid, pid, softwareVersion, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/model_version/${vid}/${pid}/${softwareVersion}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModelVersionsAll
+         * @summary Queries a list of ModelVersions items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_versions
+         */
+        this.queryModelVersionsAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/model_versions`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModelVersions
+         * @summary Queries a ModelVersions by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_versions/{vid}/{pid}
+         */
+        this.queryModelVersions = (vid, pid, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/model_versions/${vid}/${pid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryVendorProductsAll
+         * @summary Queries a list of VendorProducts items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/vendor_products
+         */
+        this.queryVendorProductsAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/vendor_products`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryVendorProducts
+         * @summary Queries a VendorProducts by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/vendor_products/{vid}
+         */
+        this.queryVendorProducts = (vid, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/model/vendor_products/${vid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+    }
+}

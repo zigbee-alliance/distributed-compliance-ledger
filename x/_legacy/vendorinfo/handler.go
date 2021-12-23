@@ -113,7 +113,7 @@ func checkAddVendorRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.Ac
 
 	if !authKeeper.HasVendorID(ctx, signer, vid) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddVendorInfo transaction should be "+
-			"signed by an vendor account associated with the vendorID %v ", vid))
+			"signed by a vendor account associated with the vendorID %v ", vid))
 	}
 
 	return nil
@@ -123,7 +123,7 @@ func checkUpdateVendorRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk
 	// sender must be equal to owner to edit vendor info
 	if !authKeeper.HasVendorID(ctx, signer, vid) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("MsgAddVendorInfo transaction should be "+
-			"signed by an vendor account associated with the vendorID %v ", vid))
+			"signed by a vendor account associated with the vendorID %v ", vid))
 	}
 
 	return nil

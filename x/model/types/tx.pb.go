@@ -6,10 +6,16 @@ package types
 import (
 	context "context"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
+	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -23,20 +29,909 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type MsgCreateModel struct {
+	Creator                                    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Vid                                        int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"required,gte=0,lte=65535"`
+	Pid                                        int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"required,gte=0,lte=65535"`
+	DeviceTypeId                               int32  `protobuf:"varint,4,opt,name=device_type_id,json=deviceTypeId,proto3" json:"device_type_id,omitempty" validate:"required,gte=0,lte=65535"`
+	ProductName                                string `protobuf:"bytes,5,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty" validate:"required,max=128"`
+	ProductLabel                               string `protobuf:"bytes,6,opt,name=product_label,json=productLabel,proto3" json:"product_label,omitempty" validate:"required,max=256"`
+	PartNumber                                 string `protobuf:"bytes,7,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty" validate:"required,max=32"`
+	CommissioningCustomFlow                    int32  `protobuf:"varint,8,opt,name=commissioning_custom_flow,json=commissioningCustomFlow,proto3" json:"commissioning_custom_flow,omitempty" validate:"gte=0,lte=2"`
+	CommissioningCustomFlowUrl                 string `protobuf:"bytes,9,opt,name=commissioning_custom_flow_url,json=commissioningCustomFlowUrl,proto3" json:"commissioning_custom_flow_url,omitempty" validate:"required_if=CommissioningCustomFlow 2,omitempty,url,startsnotwith=http:,max=256"`
+	CommissioningModeInitialStepsHint          uint32 `protobuf:"varint,10,opt,name=commissioning_mode_initial_steps_hint,json=commissioningModeInitialStepsHint,proto3" json:"commissioning_mode_initial_steps_hint,omitempty"`
+	CommissioningModeInitialStepsInstruction   string `protobuf:"bytes,11,opt,name=commissioning_mode_initial_steps_instruction,json=commissioningModeInitialStepsInstruction,proto3" json:"commissioning_mode_initial_steps_instruction,omitempty" validate:"max=1024"`
+	CommissioningModeSecondaryStepsHint        uint32 `protobuf:"varint,12,opt,name=commissioning_mode_secondary_steps_hint,json=commissioningModeSecondaryStepsHint,proto3" json:"commissioning_mode_secondary_steps_hint,omitempty"`
+	CommissioningModeSecondaryStepsInstruction string `protobuf:"bytes,13,opt,name=commissioning_mode_secondary_steps_instruction,json=commissioningModeSecondaryStepsInstruction,proto3" json:"commissioning_mode_secondary_steps_instruction,omitempty" validate:"max=1024"`
+	UserManualUrl                              string `protobuf:"bytes,14,opt,name=user_manual_url,json=userManualUrl,proto3" json:"user_manual_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	SupportUrl                                 string `protobuf:"bytes,15,opt,name=support_url,json=supportUrl,proto3" json:"support_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	ProductUrl                                 string `protobuf:"bytes,16,opt,name=product_url,json=productUrl,proto3" json:"product_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+}
+
+func (m *MsgCreateModel) Reset()         { *m = MsgCreateModel{} }
+func (m *MsgCreateModel) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateModel) ProtoMessage()    {}
+func (*MsgCreateModel) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{0}
+}
+func (m *MsgCreateModel) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateModel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateModel.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateModel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateModel.Merge(m, src)
+}
+func (m *MsgCreateModel) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateModel) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateModel.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateModel proto.InternalMessageInfo
+
+func (m *MsgCreateModel) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgCreateModel) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *MsgCreateModel) GetDeviceTypeId() int32 {
+	if m != nil {
+		return m.DeviceTypeId
+	}
+	return 0
+}
+
+func (m *MsgCreateModel) GetProductName() string {
+	if m != nil {
+		return m.ProductName
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetProductLabel() string {
+	if m != nil {
+		return m.ProductLabel
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetPartNumber() string {
+	if m != nil {
+		return m.PartNumber
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetCommissioningCustomFlow() int32 {
+	if m != nil {
+		return m.CommissioningCustomFlow
+	}
+	return 0
+}
+
+func (m *MsgCreateModel) GetCommissioningCustomFlowUrl() string {
+	if m != nil {
+		return m.CommissioningCustomFlowUrl
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetCommissioningModeInitialStepsHint() uint32 {
+	if m != nil {
+		return m.CommissioningModeInitialStepsHint
+	}
+	return 0
+}
+
+func (m *MsgCreateModel) GetCommissioningModeInitialStepsInstruction() string {
+	if m != nil {
+		return m.CommissioningModeInitialStepsInstruction
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetCommissioningModeSecondaryStepsHint() uint32 {
+	if m != nil {
+		return m.CommissioningModeSecondaryStepsHint
+	}
+	return 0
+}
+
+func (m *MsgCreateModel) GetCommissioningModeSecondaryStepsInstruction() string {
+	if m != nil {
+		return m.CommissioningModeSecondaryStepsInstruction
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetUserManualUrl() string {
+	if m != nil {
+		return m.UserManualUrl
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetSupportUrl() string {
+	if m != nil {
+		return m.SupportUrl
+	}
+	return ""
+}
+
+func (m *MsgCreateModel) GetProductUrl() string {
+	if m != nil {
+		return m.ProductUrl
+	}
+	return ""
+}
+
+type MsgCreateModelResponse struct {
+}
+
+func (m *MsgCreateModelResponse) Reset()         { *m = MsgCreateModelResponse{} }
+func (m *MsgCreateModelResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateModelResponse) ProtoMessage()    {}
+func (*MsgCreateModelResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{1}
+}
+func (m *MsgCreateModelResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateModelResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateModelResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateModelResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateModelResponse.Merge(m, src)
+}
+func (m *MsgCreateModelResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateModelResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateModelResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateModelResponse proto.InternalMessageInfo
+
+type MsgUpdateModel struct {
+	Creator                                    string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Vid                                        int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"required,gte=0,lte=65535"`
+	Pid                                        int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"required,gte=0,lte=65535"`
+	ProductName                                string `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty" validate:"max=128"`
+	ProductLabel                               string `protobuf:"bytes,5,opt,name=product_label,json=productLabel,proto3" json:"product_label,omitempty" validate:"max=256"`
+	PartNumber                                 string `protobuf:"bytes,6,opt,name=part_number,json=partNumber,proto3" json:"part_number,omitempty" validate:"max=32"`
+	CommissioningCustomFlowUrl                 string `protobuf:"bytes,7,opt,name=commissioning_custom_flow_url,json=commissioningCustomFlowUrl,proto3" json:"commissioning_custom_flow_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	CommissioningModeInitialStepsInstruction   string `protobuf:"bytes,8,opt,name=commissioning_mode_initial_steps_instruction,json=commissioningModeInitialStepsInstruction,proto3" json:"commissioning_mode_initial_steps_instruction,omitempty" validate:"max=1024"`
+	CommissioningModeSecondaryStepsInstruction string `protobuf:"bytes,9,opt,name=commissioning_mode_secondary_steps_instruction,json=commissioningModeSecondaryStepsInstruction,proto3" json:"commissioning_mode_secondary_steps_instruction,omitempty" validate:"max=1024"`
+	UserManualUrl                              string `protobuf:"bytes,10,opt,name=user_manual_url,json=userManualUrl,proto3" json:"user_manual_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	SupportUrl                                 string `protobuf:"bytes,11,opt,name=support_url,json=supportUrl,proto3" json:"support_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	ProductUrl                                 string `protobuf:"bytes,12,opt,name=product_url,json=productUrl,proto3" json:"product_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+}
+
+func (m *MsgUpdateModel) Reset()         { *m = MsgUpdateModel{} }
+func (m *MsgUpdateModel) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateModel) ProtoMessage()    {}
+func (*MsgUpdateModel) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{2}
+}
+func (m *MsgUpdateModel) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateModel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateModel.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateModel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateModel.Merge(m, src)
+}
+func (m *MsgUpdateModel) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateModel) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateModel.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateModel proto.InternalMessageInfo
+
+func (m *MsgUpdateModel) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgUpdateModel) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *MsgUpdateModel) GetProductName() string {
+	if m != nil {
+		return m.ProductName
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetProductLabel() string {
+	if m != nil {
+		return m.ProductLabel
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetPartNumber() string {
+	if m != nil {
+		return m.PartNumber
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetCommissioningCustomFlowUrl() string {
+	if m != nil {
+		return m.CommissioningCustomFlowUrl
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetCommissioningModeInitialStepsInstruction() string {
+	if m != nil {
+		return m.CommissioningModeInitialStepsInstruction
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetCommissioningModeSecondaryStepsInstruction() string {
+	if m != nil {
+		return m.CommissioningModeSecondaryStepsInstruction
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetUserManualUrl() string {
+	if m != nil {
+		return m.UserManualUrl
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetSupportUrl() string {
+	if m != nil {
+		return m.SupportUrl
+	}
+	return ""
+}
+
+func (m *MsgUpdateModel) GetProductUrl() string {
+	if m != nil {
+		return m.ProductUrl
+	}
+	return ""
+}
+
+type MsgUpdateModelResponse struct {
+}
+
+func (m *MsgUpdateModelResponse) Reset()         { *m = MsgUpdateModelResponse{} }
+func (m *MsgUpdateModelResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateModelResponse) ProtoMessage()    {}
+func (*MsgUpdateModelResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{3}
+}
+func (m *MsgUpdateModelResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateModelResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateModelResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateModelResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateModelResponse.Merge(m, src)
+}
+func (m *MsgUpdateModelResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateModelResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateModelResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateModelResponse proto.InternalMessageInfo
+
+type MsgDeleteModel struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Vid     int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"required,gte=0,lte=65535"`
+	Pid     int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"required,gte=0,lte=65535"`
+}
+
+func (m *MsgDeleteModel) Reset()         { *m = MsgDeleteModel{} }
+func (m *MsgDeleteModel) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteModel) ProtoMessage()    {}
+func (*MsgDeleteModel) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{4}
+}
+func (m *MsgDeleteModel) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteModel) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteModel.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteModel) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteModel.Merge(m, src)
+}
+func (m *MsgDeleteModel) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteModel) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteModel.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteModel proto.InternalMessageInfo
+
+func (m *MsgDeleteModel) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgDeleteModel) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgDeleteModel) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+type MsgDeleteModelResponse struct {
+}
+
+func (m *MsgDeleteModelResponse) Reset()         { *m = MsgDeleteModelResponse{} }
+func (m *MsgDeleteModelResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDeleteModelResponse) ProtoMessage()    {}
+func (*MsgDeleteModelResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{5}
+}
+func (m *MsgDeleteModelResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDeleteModelResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDeleteModelResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDeleteModelResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDeleteModelResponse.Merge(m, src)
+}
+func (m *MsgDeleteModelResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDeleteModelResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDeleteModelResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDeleteModelResponse proto.InternalMessageInfo
+
+type MsgCreateModelVersion struct {
+	Creator                      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Vid                          int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"required,gte=0,lte=65535"`
+	Pid                          int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"required,gte=0,lte=65535"`
+	SoftwareVersion              uint32 `protobuf:"varint,4,opt,name=software_version,json=softwareVersion,proto3" json:"software_version,omitempty" validate:"required"`
+	SoftwareVersionString        string `protobuf:"bytes,5,opt,name=software_version_string,json=softwareVersionString,proto3" json:"software_version_string,omitempty" validate:"required,max=64"`
+	CdVersionNumber              int32  `protobuf:"varint,6,opt,name=cd_version_number,json=cdVersionNumber,proto3" json:"cd_version_number,omitempty" validate:"required,gte=0,lte=65535"`
+	FirmwareDigests              string `protobuf:"bytes,7,opt,name=firmware_digests,json=firmwareDigests,proto3" json:"firmware_digests,omitempty" validate:"max=512"`
+	SoftwareVersionValid         bool   `protobuf:"varint,8,opt,name=software_version_valid,json=softwareVersionValid,proto3" json:"software_version_valid,omitempty"`
+	OtaUrl                       string `protobuf:"bytes,9,opt,name=ota_url,json=otaUrl,proto3" json:"ota_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	OtaFileSize                  uint64 `protobuf:"varint,10,opt,name=ota_file_size,json=otaFileSize,proto3" json:"ota_file_size,omitempty" validate:"required_with=OtaUrl"`
+	OtaChecksum                  string `protobuf:"bytes,11,opt,name=ota_checksum,json=otaChecksum,proto3" json:"ota_checksum,omitempty" validate:"required_with=OtaUrl,max=64"`
+	OtaChecksumType              int32  `protobuf:"varint,12,opt,name=ota_checksum_type,json=otaChecksumType,proto3" json:"ota_checksum_type,omitempty" validate:"required_with=OtaUrl,gte=0,lte=65535"`
+	MinApplicableSoftwareVersion uint32 `protobuf:"varint,13,opt,name=min_applicable_software_version,json=minApplicableSoftwareVersion,proto3" json:"min_applicable_software_version,omitempty" validate:"required"`
+	MaxApplicableSoftwareVersion uint32 `protobuf:"varint,14,opt,name=max_applicable_software_version,json=maxApplicableSoftwareVersion,proto3" json:"max_applicable_software_version,omitempty" validate:"required,gtecsfield=MinApplicableSoftwareVersion"`
+	ReleaseNotesUrl              string `protobuf:"bytes,15,opt,name=release_notes_url,json=releaseNotesUrl,proto3" json:"release_notes_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+}
+
+func (m *MsgCreateModelVersion) Reset()         { *m = MsgCreateModelVersion{} }
+func (m *MsgCreateModelVersion) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateModelVersion) ProtoMessage()    {}
+func (*MsgCreateModelVersion) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{6}
+}
+func (m *MsgCreateModelVersion) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateModelVersion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateModelVersion.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateModelVersion) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateModelVersion.Merge(m, src)
+}
+func (m *MsgCreateModelVersion) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateModelVersion) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateModelVersion.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateModelVersion proto.InternalMessageInfo
+
+func (m *MsgCreateModelVersion) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgCreateModelVersion) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetSoftwareVersion() uint32 {
+	if m != nil {
+		return m.SoftwareVersion
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetSoftwareVersionString() string {
+	if m != nil {
+		return m.SoftwareVersionString
+	}
+	return ""
+}
+
+func (m *MsgCreateModelVersion) GetCdVersionNumber() int32 {
+	if m != nil {
+		return m.CdVersionNumber
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetFirmwareDigests() string {
+	if m != nil {
+		return m.FirmwareDigests
+	}
+	return ""
+}
+
+func (m *MsgCreateModelVersion) GetSoftwareVersionValid() bool {
+	if m != nil {
+		return m.SoftwareVersionValid
+	}
+	return false
+}
+
+func (m *MsgCreateModelVersion) GetOtaUrl() string {
+	if m != nil {
+		return m.OtaUrl
+	}
+	return ""
+}
+
+func (m *MsgCreateModelVersion) GetOtaFileSize() uint64 {
+	if m != nil {
+		return m.OtaFileSize
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetOtaChecksum() string {
+	if m != nil {
+		return m.OtaChecksum
+	}
+	return ""
+}
+
+func (m *MsgCreateModelVersion) GetOtaChecksumType() int32 {
+	if m != nil {
+		return m.OtaChecksumType
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetMinApplicableSoftwareVersion() uint32 {
+	if m != nil {
+		return m.MinApplicableSoftwareVersion
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetMaxApplicableSoftwareVersion() uint32 {
+	if m != nil {
+		return m.MaxApplicableSoftwareVersion
+	}
+	return 0
+}
+
+func (m *MsgCreateModelVersion) GetReleaseNotesUrl() string {
+	if m != nil {
+		return m.ReleaseNotesUrl
+	}
+	return ""
+}
+
+type MsgCreateModelVersionResponse struct {
+}
+
+func (m *MsgCreateModelVersionResponse) Reset()         { *m = MsgCreateModelVersionResponse{} }
+func (m *MsgCreateModelVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateModelVersionResponse) ProtoMessage()    {}
+func (*MsgCreateModelVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{7}
+}
+func (m *MsgCreateModelVersionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgCreateModelVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgCreateModelVersionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgCreateModelVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateModelVersionResponse.Merge(m, src)
+}
+func (m *MsgCreateModelVersionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgCreateModelVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateModelVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgCreateModelVersionResponse proto.InternalMessageInfo
+
+type MsgUpdateModelVersion struct {
+	Creator                      string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Vid                          int32  `protobuf:"varint,2,opt,name=vid,proto3" json:"vid,omitempty" validate:"required,gte=0,lte=65535"`
+	Pid                          int32  `protobuf:"varint,3,opt,name=pid,proto3" json:"pid,omitempty" validate:"required,gte=0,lte=65535"`
+	SoftwareVersion              uint32 `protobuf:"varint,4,opt,name=software_version,json=softwareVersion,proto3" json:"software_version,omitempty" validate:"required"`
+	SoftwareVersionValid         bool   `protobuf:"varint,5,opt,name=software_version_valid,json=softwareVersionValid,proto3" json:"software_version_valid,omitempty"`
+	OtaUrl                       string `protobuf:"bytes,6,opt,name=ota_url,json=otaUrl,proto3" json:"ota_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+	MinApplicableSoftwareVersion uint32 `protobuf:"varint,7,opt,name=min_applicable_software_version,json=minApplicableSoftwareVersion,proto3" json:"min_applicable_software_version,omitempty" validate:"required_with=MaxApplicableSoftwareVersion"`
+	MaxApplicableSoftwareVersion uint32 `protobuf:"varint,8,opt,name=max_applicable_software_version,json=maxApplicableSoftwareVersion,proto3" json:"max_applicable_software_version,omitempty" validate:"required_with=MinApplicableSoftwareVersion,omitempty,gtecsfield=MinApplicableSoftwareVersion"`
+	ReleaseNotesUrl              string `protobuf:"bytes,9,opt,name=release_notes_url,json=releaseNotesUrl,proto3" json:"release_notes_url,omitempty" validate:"omitempty,url,startsnotwith=http:,max=256"`
+}
+
+func (m *MsgUpdateModelVersion) Reset()         { *m = MsgUpdateModelVersion{} }
+func (m *MsgUpdateModelVersion) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateModelVersion) ProtoMessage()    {}
+func (*MsgUpdateModelVersion) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{8}
+}
+func (m *MsgUpdateModelVersion) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateModelVersion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateModelVersion.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateModelVersion) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateModelVersion.Merge(m, src)
+}
+func (m *MsgUpdateModelVersion) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateModelVersion) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateModelVersion.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateModelVersion proto.InternalMessageInfo
+
+func (m *MsgUpdateModelVersion) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgUpdateModelVersion) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *MsgUpdateModelVersion) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *MsgUpdateModelVersion) GetSoftwareVersion() uint32 {
+	if m != nil {
+		return m.SoftwareVersion
+	}
+	return 0
+}
+
+func (m *MsgUpdateModelVersion) GetSoftwareVersionValid() bool {
+	if m != nil {
+		return m.SoftwareVersionValid
+	}
+	return false
+}
+
+func (m *MsgUpdateModelVersion) GetOtaUrl() string {
+	if m != nil {
+		return m.OtaUrl
+	}
+	return ""
+}
+
+func (m *MsgUpdateModelVersion) GetMinApplicableSoftwareVersion() uint32 {
+	if m != nil {
+		return m.MinApplicableSoftwareVersion
+	}
+	return 0
+}
+
+func (m *MsgUpdateModelVersion) GetMaxApplicableSoftwareVersion() uint32 {
+	if m != nil {
+		return m.MaxApplicableSoftwareVersion
+	}
+	return 0
+}
+
+func (m *MsgUpdateModelVersion) GetReleaseNotesUrl() string {
+	if m != nil {
+		return m.ReleaseNotesUrl
+	}
+	return ""
+}
+
+type MsgUpdateModelVersionResponse struct {
+}
+
+func (m *MsgUpdateModelVersionResponse) Reset()         { *m = MsgUpdateModelVersionResponse{} }
+func (m *MsgUpdateModelVersionResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateModelVersionResponse) ProtoMessage()    {}
+func (*MsgUpdateModelVersionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8898c625fa4755dc, []int{9}
+}
+func (m *MsgUpdateModelVersionResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateModelVersionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateModelVersionResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateModelVersionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateModelVersionResponse.Merge(m, src)
+}
+func (m *MsgUpdateModelVersionResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateModelVersionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateModelVersionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateModelVersionResponse proto.InternalMessageInfo
+
+func init() {
+	proto.RegisterType((*MsgCreateModel)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgCreateModel")
+	proto.RegisterType((*MsgCreateModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgCreateModelResponse")
+	proto.RegisterType((*MsgUpdateModel)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel")
+	proto.RegisterType((*MsgUpdateModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelResponse")
+	proto.RegisterType((*MsgDeleteModel)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel")
+	proto.RegisterType((*MsgDeleteModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelResponse")
+	proto.RegisterType((*MsgCreateModelVersion)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion")
+	proto.RegisterType((*MsgCreateModelVersionResponse)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionResponse")
+	proto.RegisterType((*MsgUpdateModelVersion)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion")
+	proto.RegisterType((*MsgUpdateModelVersionResponse)(nil), "zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersionResponse")
+}
+
 func init() { proto.RegisterFile("model/tx.proto", fileDescriptor_8898c625fa4755dc) }
 
 var fileDescriptor_8898c625fa4755dc = []byte{
-	// 160 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcb, 0xcd, 0x4f, 0x49,
-	0xcd, 0xd1, 0x2f, 0xa9, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x32, 0xa8, 0xca, 0x4c, 0x4f,
-	0x4a, 0x4d, 0x4d, 0xcc, 0xc9, 0xc9, 0x4c, 0xcc, 0x4b, 0x4e, 0xd5, 0x4b, 0xc9, 0x2c, 0x2e, 0x29,
-	0xca, 0x4c, 0x2a, 0x2d, 0x49, 0x4d, 0x49, 0xce, 0xcf, 0x2d, 0x80, 0x88, 0xe6, 0xa4, 0xa6, 0xa4,
-	0xa7, 0x16, 0xe9, 0x81, 0xb5, 0x1a, 0xb1, 0x72, 0x31, 0xfb, 0x16, 0xa7, 0x3b, 0x25, 0x9c, 0x78,
-	0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb, 0x31, 0x5c,
-	0x78, 0x2c, 0xc7, 0x70, 0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x5b, 0x7a, 0x66, 0x49, 0x46, 0x69, 0x92,
-	0x5e, 0x72, 0x7e, 0xae, 0x3e, 0xc4, 0x74, 0x5d, 0x98, 0xf1, 0xfa, 0x48, 0xc6, 0xeb, 0x22, 0xcc,
-	0xd7, 0x85, 0x58, 0xa0, 0x5f, 0xa1, 0x0f, 0x75, 0x5d, 0x65, 0x41, 0x6a, 0x71, 0x12, 0x1b, 0xd8,
-	0x85, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0xca, 0x97, 0x41, 0x08, 0xb3, 0x00, 0x00, 0x00,
+	// 1373 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x98, 0xcb, 0x6f, 0xdb, 0xc6,
+	0x13, 0xc7, 0xc3, 0x5f, 0xe2, 0xd7, 0xca, 0xb2, 0x63, 0xfe, 0x12, 0x87, 0x51, 0x1b, 0xd1, 0x65,
+	0xd0, 0xc6, 0x08, 0x6c, 0x2b, 0x91, 0x1f, 0xc8, 0x03, 0x46, 0x1a, 0x39, 0xc8, 0x03, 0xa8, 0x92,
+	0x96, 0x4e, 0x0c, 0x34, 0x87, 0x30, 0x14, 0xb9, 0x96, 0x17, 0x21, 0xb9, 0xec, 0xee, 0xd2, 0x8f,
+	0xe4, 0xd2, 0x53, 0xce, 0xbd, 0xf6, 0xd8, 0x7b, 0xd1, 0x43, 0xd1, 0x53, 0x7b, 0x2f, 0x7a, 0x0c,
+	0x7a, 0xea, 0x89, 0x28, 0x92, 0xff, 0x80, 0x40, 0xef, 0xc5, 0x2e, 0x49, 0x8b, 0x92, 0xf5, 0x88,
+	0x2c, 0xfb, 0x10, 0xf4, 0x22, 0x48, 0xe2, 0xce, 0x67, 0x66, 0x76, 0x67, 0xbe, 0x98, 0x25, 0x98,
+	0x70, 0xb1, 0x0d, 0x9d, 0x12, 0xdb, 0x5d, 0xf0, 0x09, 0x66, 0x58, 0xbe, 0xf2, 0x12, 0xd5, 0x6b,
+	0x10, 0x9a, 0x8e, 0x83, 0x4c, 0xcf, 0x82, 0x0b, 0x36, 0xa2, 0x8c, 0xa0, 0x5a, 0xc0, 0xa0, 0x6d,
+	0x61, 0xd7, 0x8f, 0xff, 0x75, 0xa0, 0x5d, 0x87, 0x64, 0x41, 0x98, 0x16, 0xa6, 0x62, 0x82, 0xf8,
+	0x8c, 0x21, 0x85, 0xf3, 0x99, 0xbf, 0x8c, 0x6d, 0x48, 0x28, 0xc2, 0x5e, 0xf2, 0xe8, 0x4c, 0x1d,
+	0xd7, 0xb1, 0xf8, 0x5a, 0xe2, 0xdf, 0x52, 0x03, 0x0b, 0x53, 0x17, 0x53, 0x23, 0x7e, 0x10, 0xff,
+	0x88, 0x1f, 0x69, 0xaf, 0x73, 0x60, 0xa2, 0x4a, 0xeb, 0x6b, 0x04, 0x9a, 0x0c, 0x56, 0x39, 0x51,
+	0x2e, 0x83, 0x11, 0x8b, 0xff, 0xc4, 0x44, 0x91, 0x66, 0xa4, 0xd9, 0xb1, 0x8a, 0xf2, 0xe7, 0x2f,
+	0xf3, 0x67, 0x12, 0xab, 0xdb, 0xb6, 0x4d, 0x20, 0xa5, 0xeb, 0x8c, 0x20, 0xaf, 0xae, 0xa7, 0x0b,
+	0xe5, 0xeb, 0xe0, 0xe4, 0x36, 0xb2, 0x95, 0xff, 0xcd, 0x48, 0xb3, 0x43, 0x95, 0x4b, 0x51, 0xa8,
+	0x5e, 0xdc, 0x36, 0x1d, 0x64, 0x9b, 0x0c, 0xde, 0xd0, 0x08, 0xfc, 0x26, 0x40, 0x04, 0xda, 0x73,
+	0x75, 0x06, 0x57, 0xaf, 0xcc, 0x39, 0x0c, 0xae, 0xae, 0x2c, 0x2f, 0x2f, 0x2e, 0x6b, 0x3a, 0xb7,
+	0xe1, 0xa6, 0x3e, 0xb2, 0x95, 0x93, 0x7d, 0x9a, 0xfa, 0xc8, 0x96, 0xab, 0x60, 0xc2, 0x86, 0xdb,
+	0xc8, 0x82, 0x06, 0xdb, 0xf3, 0xa1, 0x81, 0x6c, 0xe5, 0x54, 0x7f, 0x94, 0xf1, 0xd8, 0xfc, 0xf1,
+	0x9e, 0x0f, 0x1f, 0xd8, 0x72, 0x05, 0x8c, 0xfb, 0x04, 0xdb, 0x81, 0xc5, 0x0c, 0xcf, 0x74, 0xa1,
+	0x32, 0x24, 0xb2, 0x57, 0xa3, 0x50, 0xfd, 0xa8, 0x0d, 0xcc, 0x35, 0x77, 0x57, 0xaf, 0x96, 0xaf,
+	0x69, 0x7a, 0x2e, 0x31, 0x7a, 0x68, 0xba, 0x50, 0xbe, 0x03, 0xf2, 0x29, 0xc3, 0x31, 0x6b, 0xd0,
+	0x51, 0x86, 0x7b, 0x42, 0xca, 0xcb, 0x2b, 0x9a, 0x9e, 0x7a, 0xfe, 0x82, 0x1b, 0xc9, 0xb7, 0x40,
+	0xce, 0x37, 0x09, 0x33, 0xbc, 0xc0, 0xad, 0x41, 0xa2, 0x8c, 0x08, 0x46, 0x31, 0x0a, 0xd5, 0x42,
+	0x07, 0xc6, 0x62, 0x59, 0xd3, 0x01, 0x37, 0x79, 0x28, 0x2c, 0xe4, 0x0d, 0x70, 0xde, 0xc2, 0xae,
+	0x8b, 0x28, 0xaf, 0x0d, 0xe4, 0xd5, 0x0d, 0x2b, 0xa0, 0x0c, 0xbb, 0xc6, 0xa6, 0x83, 0x77, 0x94,
+	0x51, 0xb1, 0x49, 0x85, 0x28, 0x54, 0xa7, 0x1b, 0xb8, 0xc6, 0xde, 0x94, 0x35, 0xfd, 0x5c, 0x93,
+	0xf1, 0x9a, 0xb0, 0xbd, 0xeb, 0xe0, 0x1d, 0xf9, 0x07, 0x09, 0x5c, 0xe8, 0x08, 0x36, 0x02, 0xe2,
+	0x28, 0x63, 0x22, 0xd6, 0x67, 0x51, 0xa8, 0x3e, 0x3d, 0x18, 0xab, 0x81, 0x36, 0x57, 0xd7, 0xda,
+	0xa3, 0x67, 0xca, 0x73, 0xd8, 0x45, 0x0c, 0xba, 0x3e, 0xdb, 0x9b, 0x0b, 0x88, 0x33, 0x47, 0x99,
+	0x49, 0x18, 0xf5, 0x30, 0xdb, 0x41, 0x6c, 0x6b, 0x75, 0x8b, 0x31, 0xff, 0x46, 0x63, 0xbb, 0x0a,
+	0x1d, 0x02, 0x7c, 0x42, 0x1c, 0xf9, 0x4b, 0xf0, 0x69, 0x73, 0x88, 0xbc, 0x51, 0x0c, 0xe4, 0x21,
+	0x86, 0x4c, 0xc7, 0xa0, 0x0c, 0xfa, 0xd4, 0xd8, 0x42, 0x1e, 0x53, 0xc0, 0x8c, 0x34, 0x9b, 0xd7,
+	0x3f, 0x69, 0x5a, 0xcc, 0x5b, 0xe0, 0x41, 0xbc, 0x74, 0x9d, 0xaf, 0xbc, 0x8f, 0x3c, 0x26, 0xef,
+	0x80, 0xb9, 0x9e, 0x44, 0xe4, 0x51, 0x46, 0x02, 0x8b, 0x21, 0xec, 0x29, 0x39, 0xb1, 0x07, 0xe7,
+	0xa2, 0x50, 0xfd, 0x7f, 0x63, 0x0f, 0x44, 0xbd, 0x5c, 0x29, 0x2f, 0x69, 0xfa, 0x6c, 0x57, 0x8f,
+	0x0f, 0x1a, 0x20, 0xf9, 0x31, 0xb8, 0xd4, 0xc6, 0x31, 0x85, 0x16, 0xf6, 0x6c, 0x93, 0xec, 0x65,
+	0x93, 0x19, 0x17, 0xc9, 0x5c, 0x3c, 0x80, 0x5e, 0x4f, 0x17, 0x37, 0xd2, 0x79, 0x05, 0x16, 0xde,
+	0x83, 0x9a, 0x4d, 0x28, 0xdf, 0x3d, 0xa1, 0xcb, 0x3d, 0xbc, 0x66, 0x53, 0x7a, 0x0e, 0x26, 0x03,
+	0x0a, 0x89, 0xe1, 0x9a, 0x5e, 0x60, 0x3a, 0xa2, 0x64, 0x26, 0x04, 0xfd, 0x5a, 0x14, 0xaa, 0x4b,
+	0x0d, 0x7a, 0x1f, 0xc5, 0x90, 0xe7, 0xc0, 0xaa, 0xe0, 0xf1, 0xf3, 0xff, 0x1a, 0xe4, 0x68, 0xe0,
+	0xfb, 0x98, 0x30, 0x41, 0x9f, 0x1c, 0x90, 0x0e, 0x12, 0x58, 0x82, 0x4e, 0xbb, 0x9b, 0xa3, 0x4f,
+	0x0f, 0x8a, 0x4e, 0x60, 0x4f, 0x88, 0xa3, 0x29, 0x60, 0xba, 0x59, 0x87, 0x75, 0x48, 0x7d, 0xec,
+	0x51, 0xa8, 0xfd, 0x33, 0x22, 0x24, 0xfa, 0x89, 0x6f, 0x7f, 0x80, 0x12, 0x7d, 0xbd, 0x45, 0x53,
+	0x4f, 0x89, 0x70, 0xa7, 0xa3, 0x50, 0x95, 0x5b, 0x2a, 0xe9, 0x80, 0x94, 0xde, 0x6c, 0x95, 0xd2,
+	0xa1, 0x4e, 0xb6, 0x6d, 0x14, 0x74, 0xa5, 0x59, 0x41, 0x63, 0x15, 0x3e, 0x1b, 0x85, 0xea, 0x54,
+	0xb3, 0x69, 0xab, 0x70, 0xbe, 0xea, 0xa5, 0x6f, 0x23, 0x03, 0x9e, 0x79, 0x37, 0xe5, 0xea, 0x57,
+	0x67, 0x46, 0x8f, 0x4a, 0x67, 0xfa, 0x57, 0x84, 0xb1, 0x63, 0x55, 0x04, 0x70, 0xac, 0x8a, 0x90,
+	0x3b, 0x3e, 0x45, 0x18, 0x3f, 0x72, 0x45, 0xc8, 0xb4, 0xfd, 0xbe, 0x22, 0xfc, 0x2a, 0x09, 0x45,
+	0xb8, 0x03, 0x1d, 0xf8, 0xc1, 0x29, 0x42, 0x92, 0x56, 0x26, 0xf6, 0xfd, 0xb4, 0x7e, 0x1f, 0x03,
+	0x67, 0x9b, 0x35, 0x70, 0x23, 0x1e, 0x6e, 0x3f, 0x20, 0xbd, 0xab, 0x80, 0xd3, 0x14, 0x6f, 0xb2,
+	0x1d, 0x93, 0xc0, 0x74, 0x34, 0x17, 0x9a, 0x97, 0x6f, 0xed, 0x95, 0x94, 0xa3, 0xe9, 0x93, 0xa9,
+	0x41, 0x9a, 0xed, 0x06, 0x38, 0xd7, 0xca, 0x30, 0xa8, 0xc8, 0x2e, 0x91, 0xc0, 0x6e, 0x93, 0xe0,
+	0xca, 0x92, 0xa6, 0x9f, 0x6d, 0x21, 0xc6, 0x5b, 0x23, 0xaf, 0x83, 0x29, 0xcb, 0xde, 0x27, 0x66,
+	0x94, 0xb1, 0x8f, 0x24, 0x27, 0x2d, 0x3b, 0x81, 0x26, 0x82, 0x79, 0x1b, 0x9c, 0xde, 0x44, 0xc4,
+	0x15, 0xc1, 0xda, 0xa8, 0x0e, 0x29, 0xa3, 0x89, 0x46, 0xb6, 0x11, 0xea, 0xe5, 0xab, 0x65, 0x4d,
+	0x9f, 0x4c, 0xd7, 0xdf, 0x89, 0x97, 0xcb, 0x4b, 0x60, 0xfa, 0x40, 0xbe, 0xc2, 0x4e, 0x08, 0xdc,
+	0xa8, 0x7e, 0xa6, 0x25, 0x9d, 0x0d, 0xfe, 0x4c, 0xfe, 0x0a, 0x8c, 0x60, 0x66, 0x66, 0x66, 0xce,
+	0xc3, 0x77, 0xdd, 0x30, 0x66, 0x26, 0x6f, 0xe6, 0x7b, 0x20, 0xcf, 0x91, 0x9b, 0xc8, 0x81, 0x06,
+	0x45, 0x2f, 0xa1, 0xd0, 0xa1, 0x53, 0x95, 0x8b, 0x51, 0xa8, 0xaa, 0x6d, 0x86, 0x59, 0x81, 0x7a,
+	0x24, 0x4c, 0x35, 0x3d, 0x87, 0x99, 0x79, 0x17, 0x39, 0x70, 0x1d, 0xbd, 0x84, 0x72, 0x15, 0x8c,
+	0x73, 0x90, 0xb5, 0x05, 0xad, 0x17, 0x34, 0x70, 0x13, 0xc5, 0xb9, 0x1c, 0x85, 0xea, 0x67, 0xdd,
+	0x39, 0xfb, 0x47, 0xc8, 0x71, 0x6b, 0x89, 0xb9, 0x6c, 0x80, 0xa9, 0x2c, 0x4e, 0xdc, 0x76, 0x84,
+	0xd4, 0x0c, 0x55, 0x16, 0xa3, 0x50, 0x2d, 0xf5, 0x60, 0x1e, 0x3c, 0xc4, 0x0c, 0x9c, 0xdf, 0x7d,
+	0xe4, 0x67, 0x40, 0x75, 0x91, 0x67, 0x98, 0xbe, 0xef, 0x20, 0xcb, 0xac, 0xf1, 0xf4, 0x5b, 0x8b,
+	0x38, 0xdf, 0xbd, 0x88, 0x3f, 0x76, 0x91, 0x77, 0x7b, 0xdf, 0x7c, 0xbd, 0xa5, 0xa2, 0x5f, 0x4b,
+	0x40, 0x75, 0xcd, 0xdd, 0xae, 0x0e, 0x26, 0x84, 0x83, 0x5b, 0x51, 0xa8, 0xde, 0x6c, 0x5f, 0x88,
+	0x16, 0xdd, 0x44, 0xd0, 0xb1, 0x57, 0xab, 0x5d, 0x3c, 0xf1, 0x40, 0xcc, 0xdd, 0xce, 0x81, 0xd8,
+	0x60, 0x8a, 0x40, 0x07, 0x9a, 0x14, 0x1a, 0x1e, 0x66, 0x90, 0x1e, 0xc9, 0x84, 0x38, 0x99, 0x20,
+	0x1f, 0x72, 0x22, 0x2f, 0x06, 0x15, 0x5c, 0x68, 0xab, 0x63, 0xfb, 0x4a, 0xf7, 0xe3, 0xb0, 0x50,
+	0xba, 0x8c, 0xb6, 0xff, 0x37, 0x95, 0xae, 0x73, 0xe7, 0x0f, 0xbd, 0x5f, 0xe7, 0x0f, 0x1f, 0x51,
+	0xe7, 0x7f, 0x2b, 0xf5, 0xee, 0x80, 0x11, 0x91, 0xdc, 0xf5, 0x28, 0x54, 0x97, 0x3b, 0x35, 0x5c,
+	0xb5, 0x4b, 0xed, 0xf5, 0xea, 0x91, 0x9f, 0xdf, 0xa3, 0x47, 0x46, 0x45, 0x08, 0x2f, 0xa2, 0x50,
+	0xad, 0x77, 0x0c, 0xa1, 0x8b, 0x8f, 0xcc, 0x0d, 0xfb, 0x38, 0xfb, 0x69, 0xec, 0x78, 0xfa, 0xe9,
+	0x60, 0xb7, 0xa4, 0xfd, 0x54, 0xfe, 0x6d, 0x18, 0x9c, 0xac, 0xd2, 0xba, 0xfc, 0xbd, 0x04, 0x72,
+	0xd9, 0x57, 0x59, 0x9f, 0x2f, 0xf4, 0xfb, 0xbe, 0x6d, 0xa1, 0xb9, 0x71, 0x0b, 0xf7, 0x07, 0x25,
+	0xa4, 0x31, 0x8a, 0xd8, 0xb2, 0x77, 0xb8, 0xc3, 0xc5, 0x96, 0x21, 0x1c, 0x32, 0xb6, 0x36, 0x03,
+	0xa5, 0x88, 0x2d, 0x3b, 0x4d, 0x1e, 0x2e, 0xb6, 0x0c, 0xe1, 0x90, 0xb1, 0xb5, 0x99, 0x0a, 0xe5,
+	0x9f, 0x24, 0x20, 0xb7, 0x19, 0x09, 0xef, 0x0d, 0x7a, 0x30, 0x09, 0xa8, 0xf0, 0xe8, 0x88, 0x40,
+	0x4d, 0x01, 0xb7, 0x51, 0xf6, 0x7b, 0x83, 0x9e, 0xd6, 0x60, 0x01, 0x77, 0xee, 0x9e, 0xca, 0xf3,
+	0x3f, 0xde, 0x16, 0xa5, 0x37, 0x6f, 0x8b, 0xd2, 0xdf, 0x6f, 0x8b, 0xd2, 0x77, 0xef, 0x8a, 0x27,
+	0xde, 0xbc, 0x2b, 0x9e, 0xf8, 0xeb, 0x5d, 0xf1, 0xc4, 0xd3, 0xbb, 0x75, 0xc4, 0xb6, 0x82, 0x1a,
+	0xbf, 0x1c, 0x96, 0x62, 0xa7, 0xf3, 0xa9, 0xd7, 0x52, 0xc6, 0xeb, 0x7c, 0xc3, 0xed, 0x7c, 0xec,
+	0xb7, 0xb4, 0x5b, 0x4a, 0xde, 0x7c, 0xef, 0xf9, 0x90, 0xd6, 0x86, 0xc5, 0xcb, 0xe6, 0xc5, 0x7f,
+	0x03, 0x00, 0x00, 0xff, 0xff, 0x4b, 0x8e, 0x83, 0x68, 0x0f, 0x17, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -51,6 +946,11 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
+	CreateModel(ctx context.Context, in *MsgCreateModel, opts ...grpc.CallOption) (*MsgCreateModelResponse, error)
+	UpdateModel(ctx context.Context, in *MsgUpdateModel, opts ...grpc.CallOption) (*MsgUpdateModelResponse, error)
+	DeleteModel(ctx context.Context, in *MsgDeleteModel, opts ...grpc.CallOption) (*MsgDeleteModelResponse, error)
+	CreateModelVersion(ctx context.Context, in *MsgCreateModelVersion, opts ...grpc.CallOption) (*MsgCreateModelVersionResponse, error)
+	UpdateModelVersion(ctx context.Context, in *MsgUpdateModelVersion, opts ...grpc.CallOption) (*MsgUpdateModelVersionResponse, error)
 }
 
 type msgClient struct {
@@ -61,22 +961,3100 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
+func (c *msgClient) CreateModel(ctx context.Context, in *MsgCreateModel, opts ...grpc.CallOption) (*MsgCreateModelResponse, error) {
+	out := new(MsgCreateModelResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.model.Msg/CreateModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UpdateModel(ctx context.Context, in *MsgUpdateModel, opts ...grpc.CallOption) (*MsgUpdateModelResponse, error) {
+	out := new(MsgUpdateModelResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.model.Msg/UpdateModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DeleteModel(ctx context.Context, in *MsgDeleteModel, opts ...grpc.CallOption) (*MsgDeleteModelResponse, error) {
+	out := new(MsgDeleteModelResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.model.Msg/DeleteModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) CreateModelVersion(ctx context.Context, in *MsgCreateModelVersion, opts ...grpc.CallOption) (*MsgCreateModelVersionResponse, error) {
+	out := new(MsgCreateModelVersionResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.model.Msg/CreateModelVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) UpdateModelVersion(ctx context.Context, in *MsgUpdateModelVersion, opts ...grpc.CallOption) (*MsgUpdateModelVersionResponse, error) {
+	out := new(MsgUpdateModelVersionResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.model.Msg/UpdateModelVersion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
+	CreateModel(context.Context, *MsgCreateModel) (*MsgCreateModelResponse, error)
+	UpdateModel(context.Context, *MsgUpdateModel) (*MsgUpdateModelResponse, error)
+	DeleteModel(context.Context, *MsgDeleteModel) (*MsgDeleteModelResponse, error)
+	CreateModelVersion(context.Context, *MsgCreateModelVersion) (*MsgCreateModelVersionResponse, error)
+	UpdateModelVersion(context.Context, *MsgUpdateModelVersion) (*MsgUpdateModelVersionResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
 type UnimplementedMsgServer struct {
 }
 
+func (*UnimplementedMsgServer) CreateModel(ctx context.Context, req *MsgCreateModel) (*MsgCreateModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateModel not implemented")
+}
+func (*UnimplementedMsgServer) UpdateModel(ctx context.Context, req *MsgUpdateModel) (*MsgUpdateModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateModel not implemented")
+}
+func (*UnimplementedMsgServer) DeleteModel(ctx context.Context, req *MsgDeleteModel) (*MsgDeleteModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteModel not implemented")
+}
+func (*UnimplementedMsgServer) CreateModelVersion(ctx context.Context, req *MsgCreateModelVersion) (*MsgCreateModelVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateModelVersion not implemented")
+}
+func (*UnimplementedMsgServer) UpdateModelVersion(ctx context.Context, req *MsgUpdateModelVersion) (*MsgUpdateModelVersionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateModelVersion not implemented")
+}
+
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
+}
+
+func _Msg_CreateModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateModel)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.model.Msg/CreateModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateModel(ctx, req.(*MsgCreateModel))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UpdateModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateModel)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdateModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.model.Msg/UpdateModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdateModel(ctx, req.(*MsgUpdateModel))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DeleteModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeleteModel)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeleteModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.model.Msg/DeleteModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeleteModel(ctx, req.(*MsgDeleteModel))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_CreateModelVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateModelVersion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateModelVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.model.Msg/CreateModelVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateModelVersion(ctx, req.(*MsgCreateModelVersion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_UpdateModelVersion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateModelVersion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdateModelVersion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.model.Msg/UpdateModelVersion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdateModelVersion(ctx, req.(*MsgUpdateModelVersion))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.model.Msg",
 	HandlerType: (*MsgServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "model/tx.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateModel",
+			Handler:    _Msg_CreateModel_Handler,
+		},
+		{
+			MethodName: "UpdateModel",
+			Handler:    _Msg_UpdateModel_Handler,
+		},
+		{
+			MethodName: "DeleteModel",
+			Handler:    _Msg_DeleteModel_Handler,
+		},
+		{
+			MethodName: "CreateModelVersion",
+			Handler:    _Msg_CreateModelVersion_Handler,
+		},
+		{
+			MethodName: "UpdateModelVersion",
+			Handler:    _Msg_UpdateModelVersion_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "model/tx.proto",
 }
+
+func (m *MsgCreateModel) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateModel) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateModel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ProductUrl) > 0 {
+		i -= len(m.ProductUrl)
+		copy(dAtA[i:], m.ProductUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProductUrl)))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
+	}
+	if len(m.SupportUrl) > 0 {
+		i -= len(m.SupportUrl)
+		copy(dAtA[i:], m.SupportUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SupportUrl)))
+		i--
+		dAtA[i] = 0x7a
+	}
+	if len(m.UserManualUrl) > 0 {
+		i -= len(m.UserManualUrl)
+		copy(dAtA[i:], m.UserManualUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.UserManualUrl)))
+		i--
+		dAtA[i] = 0x72
+	}
+	if len(m.CommissioningModeSecondaryStepsInstruction) > 0 {
+		i -= len(m.CommissioningModeSecondaryStepsInstruction)
+		copy(dAtA[i:], m.CommissioningModeSecondaryStepsInstruction)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CommissioningModeSecondaryStepsInstruction)))
+		i--
+		dAtA[i] = 0x6a
+	}
+	if m.CommissioningModeSecondaryStepsHint != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CommissioningModeSecondaryStepsHint))
+		i--
+		dAtA[i] = 0x60
+	}
+	if len(m.CommissioningModeInitialStepsInstruction) > 0 {
+		i -= len(m.CommissioningModeInitialStepsInstruction)
+		copy(dAtA[i:], m.CommissioningModeInitialStepsInstruction)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CommissioningModeInitialStepsInstruction)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if m.CommissioningModeInitialStepsHint != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CommissioningModeInitialStepsHint))
+		i--
+		dAtA[i] = 0x50
+	}
+	if len(m.CommissioningCustomFlowUrl) > 0 {
+		i -= len(m.CommissioningCustomFlowUrl)
+		copy(dAtA[i:], m.CommissioningCustomFlowUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CommissioningCustomFlowUrl)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.CommissioningCustomFlow != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CommissioningCustomFlow))
+		i--
+		dAtA[i] = 0x40
+	}
+	if len(m.PartNumber) > 0 {
+		i -= len(m.PartNumber)
+		copy(dAtA[i:], m.PartNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.PartNumber)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.ProductLabel) > 0 {
+		i -= len(m.ProductLabel)
+		copy(dAtA[i:], m.ProductLabel)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProductLabel)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.ProductName) > 0 {
+		i -= len(m.ProductName)
+		copy(dAtA[i:], m.ProductName)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProductName)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.DeviceTypeId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.DeviceTypeId))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Pid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateModelResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateModelResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateModel) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateModel) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateModel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ProductUrl) > 0 {
+		i -= len(m.ProductUrl)
+		copy(dAtA[i:], m.ProductUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProductUrl)))
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.SupportUrl) > 0 {
+		i -= len(m.SupportUrl)
+		copy(dAtA[i:], m.SupportUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SupportUrl)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if len(m.UserManualUrl) > 0 {
+		i -= len(m.UserManualUrl)
+		copy(dAtA[i:], m.UserManualUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.UserManualUrl)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if len(m.CommissioningModeSecondaryStepsInstruction) > 0 {
+		i -= len(m.CommissioningModeSecondaryStepsInstruction)
+		copy(dAtA[i:], m.CommissioningModeSecondaryStepsInstruction)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CommissioningModeSecondaryStepsInstruction)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if len(m.CommissioningModeInitialStepsInstruction) > 0 {
+		i -= len(m.CommissioningModeInitialStepsInstruction)
+		copy(dAtA[i:], m.CommissioningModeInitialStepsInstruction)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CommissioningModeInitialStepsInstruction)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.CommissioningCustomFlowUrl) > 0 {
+		i -= len(m.CommissioningCustomFlowUrl)
+		copy(dAtA[i:], m.CommissioningCustomFlowUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.CommissioningCustomFlowUrl)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.PartNumber) > 0 {
+		i -= len(m.PartNumber)
+		copy(dAtA[i:], m.PartNumber)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.PartNumber)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.ProductLabel) > 0 {
+		i -= len(m.ProductLabel)
+		copy(dAtA[i:], m.ProductLabel)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProductLabel)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.ProductName) > 0 {
+		i -= len(m.ProductName)
+		copy(dAtA[i:], m.ProductName)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ProductName)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Pid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateModelResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateModelResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeleteModel) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteModel) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteModel) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDeleteModelResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDeleteModelResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDeleteModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateModelVersion) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateModelVersion) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateModelVersion) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ReleaseNotesUrl) > 0 {
+		i -= len(m.ReleaseNotesUrl)
+		copy(dAtA[i:], m.ReleaseNotesUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ReleaseNotesUrl)))
+		i--
+		dAtA[i] = 0x7a
+	}
+	if m.MaxApplicableSoftwareVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.MaxApplicableSoftwareVersion))
+		i--
+		dAtA[i] = 0x70
+	}
+	if m.MinApplicableSoftwareVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.MinApplicableSoftwareVersion))
+		i--
+		dAtA[i] = 0x68
+	}
+	if m.OtaChecksumType != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.OtaChecksumType))
+		i--
+		dAtA[i] = 0x60
+	}
+	if len(m.OtaChecksum) > 0 {
+		i -= len(m.OtaChecksum)
+		copy(dAtA[i:], m.OtaChecksum)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.OtaChecksum)))
+		i--
+		dAtA[i] = 0x5a
+	}
+	if m.OtaFileSize != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.OtaFileSize))
+		i--
+		dAtA[i] = 0x50
+	}
+	if len(m.OtaUrl) > 0 {
+		i -= len(m.OtaUrl)
+		copy(dAtA[i:], m.OtaUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.OtaUrl)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.SoftwareVersionValid {
+		i--
+		if m.SoftwareVersionValid {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x40
+	}
+	if len(m.FirmwareDigests) > 0 {
+		i -= len(m.FirmwareDigests)
+		copy(dAtA[i:], m.FirmwareDigests)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.FirmwareDigests)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if m.CdVersionNumber != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CdVersionNumber))
+		i--
+		dAtA[i] = 0x30
+	}
+	if len(m.SoftwareVersionString) > 0 {
+		i -= len(m.SoftwareVersionString)
+		copy(dAtA[i:], m.SoftwareVersionString)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.SoftwareVersionString)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.SoftwareVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SoftwareVersion))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Pid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgCreateModelVersionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgCreateModelVersionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgCreateModelVersionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateModelVersion) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateModelVersion) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateModelVersion) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ReleaseNotesUrl) > 0 {
+		i -= len(m.ReleaseNotesUrl)
+		copy(dAtA[i:], m.ReleaseNotesUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.ReleaseNotesUrl)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.MaxApplicableSoftwareVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.MaxApplicableSoftwareVersion))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.MinApplicableSoftwareVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.MinApplicableSoftwareVersion))
+		i--
+		dAtA[i] = 0x38
+	}
+	if len(m.OtaUrl) > 0 {
+		i -= len(m.OtaUrl)
+		copy(dAtA[i:], m.OtaUrl)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.OtaUrl)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if m.SoftwareVersionValid {
+		i--
+		if m.SoftwareVersionValid {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.SoftwareVersion != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.SoftwareVersion))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Pid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Vid != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateModelVersionResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateModelVersionResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateModelVersionResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTx(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
+func (m *MsgCreateModel) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovTx(uint64(m.Pid))
+	}
+	if m.DeviceTypeId != 0 {
+		n += 1 + sovTx(uint64(m.DeviceTypeId))
+	}
+	l = len(m.ProductName)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ProductLabel)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.PartNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CommissioningCustomFlow != 0 {
+		n += 1 + sovTx(uint64(m.CommissioningCustomFlow))
+	}
+	l = len(m.CommissioningCustomFlowUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CommissioningModeInitialStepsHint != 0 {
+		n += 1 + sovTx(uint64(m.CommissioningModeInitialStepsHint))
+	}
+	l = len(m.CommissioningModeInitialStepsInstruction)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CommissioningModeSecondaryStepsHint != 0 {
+		n += 1 + sovTx(uint64(m.CommissioningModeSecondaryStepsHint))
+	}
+	l = len(m.CommissioningModeSecondaryStepsInstruction)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.UserManualUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SupportUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ProductUrl)
+	if l > 0 {
+		n += 2 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCreateModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUpdateModel) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovTx(uint64(m.Pid))
+	}
+	l = len(m.ProductName)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ProductLabel)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.PartNumber)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CommissioningCustomFlowUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CommissioningModeInitialStepsInstruction)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.CommissioningModeSecondaryStepsInstruction)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.UserManualUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.SupportUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.ProductUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgUpdateModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgDeleteModel) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovTx(uint64(m.Pid))
+	}
+	return n
+}
+
+func (m *MsgDeleteModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgCreateModelVersion) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovTx(uint64(m.Pid))
+	}
+	if m.SoftwareVersion != 0 {
+		n += 1 + sovTx(uint64(m.SoftwareVersion))
+	}
+	l = len(m.SoftwareVersionString)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CdVersionNumber != 0 {
+		n += 1 + sovTx(uint64(m.CdVersionNumber))
+	}
+	l = len(m.FirmwareDigests)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.SoftwareVersionValid {
+		n += 2
+	}
+	l = len(m.OtaUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.OtaFileSize != 0 {
+		n += 1 + sovTx(uint64(m.OtaFileSize))
+	}
+	l = len(m.OtaChecksum)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.OtaChecksumType != 0 {
+		n += 1 + sovTx(uint64(m.OtaChecksumType))
+	}
+	if m.MinApplicableSoftwareVersion != 0 {
+		n += 1 + sovTx(uint64(m.MinApplicableSoftwareVersion))
+	}
+	if m.MaxApplicableSoftwareVersion != 0 {
+		n += 1 + sovTx(uint64(m.MaxApplicableSoftwareVersion))
+	}
+	l = len(m.ReleaseNotesUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgCreateModelVersionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgUpdateModelVersion) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Vid != 0 {
+		n += 1 + sovTx(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovTx(uint64(m.Pid))
+	}
+	if m.SoftwareVersion != 0 {
+		n += 1 + sovTx(uint64(m.SoftwareVersion))
+	}
+	if m.SoftwareVersionValid {
+		n += 2
+	}
+	l = len(m.OtaUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.MinApplicableSoftwareVersion != 0 {
+		n += 1 + sovTx(uint64(m.MinApplicableSoftwareVersion))
+	}
+	if m.MaxApplicableSoftwareVersion != 0 {
+		n += 1 + sovTx(uint64(m.MaxApplicableSoftwareVersion))
+	}
+	l = len(m.ReleaseNotesUrl)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgUpdateModelVersionResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func sovTx(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTx(x uint64) (n int) {
+	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
+func (m *MsgCreateModel) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateModel: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateModel: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DeviceTypeId", wireType)
+			}
+			m.DeviceTypeId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.DeviceTypeId |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProductName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProductName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProductLabel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProductLabel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PartNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PartNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningCustomFlow", wireType)
+			}
+			m.CommissioningCustomFlow = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CommissioningCustomFlow |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningCustomFlowUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CommissioningCustomFlowUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningModeInitialStepsHint", wireType)
+			}
+			m.CommissioningModeInitialStepsHint = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CommissioningModeInitialStepsHint |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningModeInitialStepsInstruction", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CommissioningModeInitialStepsInstruction = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningModeSecondaryStepsHint", wireType)
+			}
+			m.CommissioningModeSecondaryStepsHint = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CommissioningModeSecondaryStepsHint |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 13:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningModeSecondaryStepsInstruction", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CommissioningModeSecondaryStepsInstruction = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserManualUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.UserManualUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SupportUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SupportUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 16:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProductUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProductUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateModelResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateModelResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateModel) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateModel: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateModel: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProductName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProductName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProductLabel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProductLabel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PartNumber", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PartNumber = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningCustomFlowUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CommissioningCustomFlowUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningModeInitialStepsInstruction", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CommissioningModeInitialStepsInstruction = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CommissioningModeSecondaryStepsInstruction", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CommissioningModeSecondaryStepsInstruction = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserManualUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.UserManualUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SupportUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SupportUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ProductUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ProductUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateModelResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateModelResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeleteModel) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteModel: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteModel: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDeleteModelResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDeleteModelResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDeleteModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateModelVersion) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateModelVersion: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateModelVersion: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersion", wireType)
+			}
+			m.SoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersionString", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.SoftwareVersionString = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CdVersionNumber", wireType)
+			}
+			m.CdVersionNumber = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CdVersionNumber |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FirmwareDigests", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FirmwareDigests = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersionValid", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.SoftwareVersionValid = bool(v != 0)
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtaUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OtaUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtaFileSize", wireType)
+			}
+			m.OtaFileSize = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.OtaFileSize |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtaChecksum", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OtaChecksum = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 12:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtaChecksumType", wireType)
+			}
+			m.OtaChecksumType = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.OtaChecksumType |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinApplicableSoftwareVersion", wireType)
+			}
+			m.MinApplicableSoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MinApplicableSoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 14:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxApplicableSoftwareVersion", wireType)
+			}
+			m.MaxApplicableSoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MaxApplicableSoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 15:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReleaseNotesUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReleaseNotesUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgCreateModelVersionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgCreateModelVersionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgCreateModelVersionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateModelVersion) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateModelVersion: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateModelVersion: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersion", wireType)
+			}
+			m.SoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersionValid", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.SoftwareVersionValid = bool(v != 0)
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OtaUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.OtaUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinApplicableSoftwareVersion", wireType)
+			}
+			m.MinApplicableSoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MinApplicableSoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxApplicableSoftwareVersion", wireType)
+			}
+			m.MaxApplicableSoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MaxApplicableSoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ReleaseNotesUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ReleaseNotesUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateModelVersionResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateModelVersionResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateModelVersionResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func skipTx(dAtA []byte) (n int, err error) {
+	l := len(dAtA)
+	iNdEx := 0
+	depth := 0
+	for iNdEx < l {
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return 0, ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return 0, io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		wireType := int(wire & 0x7)
+		switch wireType {
+		case 0:
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				iNdEx++
+				if dAtA[iNdEx-1] < 0x80 {
+					break
+				}
+			}
+		case 1:
+			iNdEx += 8
+		case 2:
+			var length int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return 0, ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return 0, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				length |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if length < 0 {
+				return 0, ErrInvalidLengthTx
+			}
+			iNdEx += length
+		case 3:
+			depth++
+		case 4:
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTx
+			}
+			depth--
+		case 5:
+			iNdEx += 4
+		default:
+			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTx
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
+	}
+	return 0, io.ErrUnexpectedEOF
+}
+
+var (
+	ErrInvalidLengthTx        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTx          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTx = fmt.Errorf("proto: unexpected end of group")
+)

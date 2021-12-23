@@ -1,0 +1,11 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.model;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types";
+
+message Product {
+  
+  int32 pid = 1; 
+  string name = 2; 
+  string part_number = 3; 
+}

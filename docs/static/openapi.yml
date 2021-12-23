@@ -15002,6 +15002,862 @@ paths:
           type: string
       tags:
         - Query
+  /zigbee-alliance/distributedcomplianceledger/model/model:
+    get:
+      summary: Queries a list of Model items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              model:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    deviceTypeId:
+                      type: integer
+                      format: int32
+                    productName:
+                      type: string
+                    productLabel:
+                      type: string
+                    partNumber:
+                      type: string
+                    commissioningCustomFlow:
+                      type: integer
+                      format: int32
+                    commissioningCustomFlowUrl:
+                      type: string
+                    commissioningModeInitialStepsHint:
+                      type: integer
+                      format: int64
+                    commissioningModeInitialStepsInstruction:
+                      type: string
+                    commissioningModeSecondaryStepsHint:
+                      type: integer
+                      format: int64
+                    commissioningModeSecondaryStepsInstruction:
+                      type: string
+                    userManualUrl:
+                      type: string
+                    supportUrl:
+                      type: string
+                    productUrl:
+                      type: string
+                    creator:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/model/{vid}/{pid}':
+    get:
+      summary: Queries a Model by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModel
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              model:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  deviceTypeId:
+                    type: integer
+                    format: int32
+                  productName:
+                    type: string
+                  productLabel:
+                    type: string
+                  partNumber:
+                    type: string
+                  commissioningCustomFlow:
+                    type: integer
+                    format: int32
+                  commissioningCustomFlowUrl:
+                    type: string
+                  commissioningModeInitialStepsHint:
+                    type: integer
+                    format: int64
+                  commissioningModeInitialStepsInstruction:
+                    type: string
+                  commissioningModeSecondaryStepsHint:
+                    type: integer
+                    format: int64
+                  commissioningModeSecondaryStepsInstruction:
+                    type: string
+                  userManualUrl:
+                    type: string
+                  supportUrl:
+                    type: string
+                  productUrl:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
+  /zigbee-alliance/distributedcomplianceledger/model/model_version:
+    get:
+      summary: Queries a list of ModelVersion items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersionAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersion:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersion:
+                      type: integer
+                      format: int64
+                    softwareVersionString:
+                      type: string
+                    cdVersionNumber:
+                      type: integer
+                      format: int32
+                    firmwareDigests:
+                      type: string
+                    softwareVersionValid:
+                      type: boolean
+                    otaUrl:
+                      type: string
+                    otaFileSize:
+                      type: string
+                      format: uint64
+                    otaChecksum:
+                      type: string
+                    otaChecksumType:
+                      type: integer
+                      format: int32
+                    minApplicableSoftwareVersion:
+                      type: integer
+                      format: int64
+                    maxApplicableSoftwareVersion:
+                      type: integer
+                      format: int64
+                    releaseNotesUrl:
+                      type: string
+                    creator:
+                      type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{softwareVersion}':
+    get:
+      summary: Queries a ModelVersion by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersion
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersion:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersion:
+                    type: integer
+                    format: int64
+                  softwareVersionString:
+                    type: string
+                  cdVersionNumber:
+                    type: integer
+                    format: int32
+                  firmwareDigests:
+                    type: string
+                  softwareVersionValid:
+                    type: boolean
+                  otaUrl:
+                    type: string
+                  otaFileSize:
+                    type: string
+                    format: uint64
+                  otaChecksum:
+                    type: string
+                  otaChecksumType:
+                    type: integer
+                    format: int32
+                  minApplicableSoftwareVersion:
+                    type: integer
+                    format: int64
+                  maxApplicableSoftwareVersion:
+                    type: integer
+                    format: int64
+                  releaseNotesUrl:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: softwareVersion
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - Query
+  /zigbee-alliance/distributedcomplianceledger/model/model_versions:
+    get:
+      summary: Queries a list of ModelVersions items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersionsAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    pid:
+                      type: integer
+                      format: int32
+                    softwareVersions:
+                      type: array
+                      items:
+                        type: integer
+                        format: int64
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/model_versions/{vid}/{pid}':
+    get:
+      summary: Queries a ModelVersions by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersions
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              modelVersions:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  pid:
+                    type: integer
+                    format: int32
+                  softwareVersions:
+                    type: array
+                    items:
+                      type: integer
+                      format: int64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+        - name: pid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
+  /zigbee-alliance/distributedcomplianceledger/model/vendor_products:
+    get:
+      summary: Queries a list of VendorProducts items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelVendorProductsAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorProducts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    vid:
+                      type: integer
+                      format: int32
+                    products:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pid:
+                            type: integer
+                            format: int32
+                          name:
+                            type: string
+                          partNumber:
+                            type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/zigbee-alliance/distributedcomplianceledger/model/vendor_products/{vid}':
+    get:
+      summary: Queries a VendorProducts by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerModelVendorProducts
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorProducts:
+                type: object
+                properties:
+                  vid:
+                    type: integer
+                    format: int32
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pid:
+                          type: integer
+                          format: int32
+                        name:
+                          type: string
+                        partNumber:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vid
+          in: path
+          required: true
+          type: integer
+          format: int32
+      tags:
+        - Query
   /dcl/validator/lastPowers:
     get:
       summary: Queries a list of lastValidatorPower items.
@@ -25181,6 +26037,500 @@ definitions:
           approvals:
             type: array
             items:
+              type: string
+  zigbeealliance.distributedcomplianceledger.model.Model:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      deviceTypeId:
+        type: integer
+        format: int32
+      productName:
+        type: string
+      productLabel:
+        type: string
+      partNumber:
+        type: string
+      commissioningCustomFlow:
+        type: integer
+        format: int32
+      commissioningCustomFlowUrl:
+        type: string
+      commissioningModeInitialStepsHint:
+        type: integer
+        format: int64
+      commissioningModeInitialStepsInstruction:
+        type: string
+      commissioningModeSecondaryStepsHint:
+        type: integer
+        format: int64
+      commissioningModeSecondaryStepsInstruction:
+        type: string
+      userManualUrl:
+        type: string
+      supportUrl:
+        type: string
+      productUrl:
+        type: string
+      creator:
+        type: string
+  zigbeealliance.distributedcomplianceledger.model.ModelVersion:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersion:
+        type: integer
+        format: int64
+      softwareVersionString:
+        type: string
+      cdVersionNumber:
+        type: integer
+        format: int32
+      firmwareDigests:
+        type: string
+      softwareVersionValid:
+        type: boolean
+      otaUrl:
+        type: string
+      otaFileSize:
+        type: string
+        format: uint64
+      otaChecksum:
+        type: string
+      otaChecksumType:
+        type: integer
+        format: int32
+      minApplicableSoftwareVersion:
+        type: integer
+        format: int64
+      maxApplicableSoftwareVersion:
+        type: integer
+        format: int64
+      releaseNotesUrl:
+        type: string
+      creator:
+        type: string
+  zigbeealliance.distributedcomplianceledger.model.ModelVersions:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      pid:
+        type: integer
+        format: int32
+      softwareVersions:
+        type: array
+        items:
+          type: integer
+          format: int64
+  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersionResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.model.Product:
+    type: object
+    properties:
+      pid:
+        type: integer
+        format: int32
+      name:
+        type: string
+      partNumber:
+        type: string
+  zigbeealliance.distributedcomplianceledger.model.QueryAllModelResponse:
+    type: object
+    properties:
+      model:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            deviceTypeId:
+              type: integer
+              format: int32
+            productName:
+              type: string
+            productLabel:
+              type: string
+            partNumber:
+              type: string
+            commissioningCustomFlow:
+              type: integer
+              format: int32
+            commissioningCustomFlowUrl:
+              type: string
+            commissioningModeInitialStepsHint:
+              type: integer
+              format: int64
+            commissioningModeInitialStepsInstruction:
+              type: string
+            commissioningModeSecondaryStepsHint:
+              type: integer
+              format: int64
+            commissioningModeSecondaryStepsInstruction:
+              type: string
+            userManualUrl:
+              type: string
+            supportUrl:
+              type: string
+            productUrl:
+              type: string
+            creator:
+              type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryAllModelVersionResponse:
+    type: object
+    properties:
+      modelVersion:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersion:
+              type: integer
+              format: int64
+            softwareVersionString:
+              type: string
+            cdVersionNumber:
+              type: integer
+              format: int32
+            firmwareDigests:
+              type: string
+            softwareVersionValid:
+              type: boolean
+            otaUrl:
+              type: string
+            otaFileSize:
+              type: string
+              format: uint64
+            otaChecksum:
+              type: string
+            otaChecksumType:
+              type: integer
+              format: int32
+            minApplicableSoftwareVersion:
+              type: integer
+              format: int64
+            maxApplicableSoftwareVersion:
+              type: integer
+              format: int64
+            releaseNotesUrl:
+              type: string
+            creator:
+              type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryAllModelVersionsResponse:
+    type: object
+    properties:
+      modelVersions:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            pid:
+              type: integer
+              format: int32
+            softwareVersions:
+              type: array
+              items:
+                type: integer
+                format: int64
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryAllVendorProductsResponse:
+    type: object
+    properties:
+      vendorProducts:
+        type: array
+        items:
+          type: object
+          properties:
+            vid:
+              type: integer
+              format: int32
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  pid:
+                    type: integer
+                    format: int32
+                  name:
+                    type: string
+                  partNumber:
+                    type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.model.QueryGetModelResponse:
+    type: object
+    properties:
+      model:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          deviceTypeId:
+            type: integer
+            format: int32
+          productName:
+            type: string
+          productLabel:
+            type: string
+          partNumber:
+            type: string
+          commissioningCustomFlow:
+            type: integer
+            format: int32
+          commissioningCustomFlowUrl:
+            type: string
+          commissioningModeInitialStepsHint:
+            type: integer
+            format: int64
+          commissioningModeInitialStepsInstruction:
+            type: string
+          commissioningModeSecondaryStepsHint:
+            type: integer
+            format: int64
+          commissioningModeSecondaryStepsInstruction:
+            type: string
+          userManualUrl:
+            type: string
+          supportUrl:
+            type: string
+          productUrl:
+            type: string
+          creator:
+            type: string
+  zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
+    type: object
+    properties:
+      modelVersion:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersion:
+            type: integer
+            format: int64
+          softwareVersionString:
+            type: string
+          cdVersionNumber:
+            type: integer
+            format: int32
+          firmwareDigests:
+            type: string
+          softwareVersionValid:
+            type: boolean
+          otaUrl:
+            type: string
+          otaFileSize:
+            type: string
+            format: uint64
+          otaChecksum:
+            type: string
+          otaChecksumType:
+            type: integer
+            format: int32
+          minApplicableSoftwareVersion:
+            type: integer
+            format: int64
+          maxApplicableSoftwareVersion:
+            type: integer
+            format: int64
+          releaseNotesUrl:
+            type: string
+          creator:
+            type: string
+  zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:
+    type: object
+    properties:
+      modelVersions:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          pid:
+            type: integer
+            format: int32
+          softwareVersions:
+            type: array
+            items:
+              type: integer
+              format: int64
+  zigbeealliance.distributedcomplianceledger.model.QueryGetVendorProductsResponse:
+    type: object
+    properties:
+      vendorProducts:
+        type: object
+        properties:
+          vid:
+            type: integer
+            format: int32
+          products:
+            type: array
+            items:
+              type: object
+              properties:
+                pid:
+                  type: integer
+                  format: int32
+                name:
+                  type: string
+                partNumber:
+                  type: string
+  zigbeealliance.distributedcomplianceledger.model.VendorProducts:
+    type: object
+    properties:
+      vid:
+        type: integer
+        format: int32
+      products:
+        type: array
+        items:
+          type: object
+          properties:
+            pid:
+              type: integer
+              format: int32
+            name:
+              type: string
+            partNumber:
               type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse:
     type: object
