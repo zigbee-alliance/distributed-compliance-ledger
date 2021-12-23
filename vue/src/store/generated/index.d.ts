@@ -14,5 +14,6 @@ declare const _default: {
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: (store: any) => void;
+    ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo: (store: any) => void;
 };
 export default _default;

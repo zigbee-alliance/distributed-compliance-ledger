@@ -14,6 +14,7 @@ import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplia
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.model';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.pki';
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.validator';
+import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.vendorinfo';
 export default {
     CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
     CosmosCosmosSdkCosmosBankV1Beta1: load(CosmosCosmosSdkCosmosBankV1Beta1, 'cosmos.bank.v1beta1'),
@@ -30,6 +31,7 @@ export default {
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel, 'zigbeealliance.distributedcomplianceledger.model'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki, 'zigbeealliance.distributedcomplianceledger.pki'),
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator, 'zigbeealliance.distributedcomplianceledger.validator'),
+    ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo, 'zigbeealliance.distributedcomplianceledger.vendorinfo'),
 };
 function load(mod, fullns) {
     return function init(store) {

@@ -1,0 +1,16 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.vendorinfo;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types";
+
+import "cosmos_proto/cosmos.proto";
+
+message VendorInfo {
+  int32 vendorID = 1; 
+  string vendorName = 2; 
+  string companyLegalName = 3; 
+  string companyPrefferedName = 4; 
+  string vendorLandingPageURL = 5; 
+  string creator = 6 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
