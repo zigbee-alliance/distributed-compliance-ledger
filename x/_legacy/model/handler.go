@@ -172,7 +172,7 @@ func checkModelRights(ctx sdk.Context, authKeeper auth.Keeper, signer sdk.AccAdd
 
 	if !authKeeper.HasVendorID(ctx, signer, vid) {
 		return sdk.ErrUnauthorized(fmt.Sprintf("%s transaction should be "+
-			"signed by an vendor account containing the vendorID %v ", message, vid))
+			"signed by a vendor account containing the vendorID %v ", message, vid))
 	}
 
 	return nil

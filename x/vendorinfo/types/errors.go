@@ -8,5 +8,9 @@ import (
 
 // x/vendorinfo module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	DefaultCodespace string = ModuleName
+
+	CodeVendorDoesNotExist              = sdkerrors.Register(ModuleName, 701, "Code vendor does not exist")
+	CodeMissingVendorIDForVendorAccount = sdkerrors.Register(ModuleName, 702, "Code missing vendor id for vendor account")
+	CodeVendorInfoAlreadyExists         = sdkerrors.Register(ModuleName, 703, "Code vendorinfo already exists")
 )

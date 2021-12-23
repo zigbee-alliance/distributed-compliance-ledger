@@ -19,3 +19,4 @@ vendor
 
 # python
 __pycache__
+config.yml
