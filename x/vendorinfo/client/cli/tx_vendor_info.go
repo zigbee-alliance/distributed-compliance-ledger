@@ -17,7 +17,7 @@ func CmdCreateVendorInfo() *cobra.Command {
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// Get indexes
-			indexVendorID, err := cast.ToUint64E(FlagVID)
+			indexVendorID, err := cast.ToInt32E(FlagVID)
 			if err != nil {
 				return err
 			}
@@ -74,7 +74,7 @@ func CmdUpdateVendorInfo() *cobra.Command {
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			// Get indexes
-			indexVendorID, err := cast.ToUint64E(FlagVID)
+			indexVendorID, err := cast.ToInt32E(FlagVID)
 			if err != nil {
 				return err
 			}

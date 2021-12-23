@@ -18,7 +18,7 @@ func (k Keeper) SetVendorInfo(ctx sdk.Context, vendorInfo types.VendorInfo) {
 // GetVendorInfo returns a vendorInfo from its index
 func (k Keeper) GetVendorInfo(
 	ctx sdk.Context,
-	vendorID uint64,
+	vendorID int32,
 
 ) (val types.VendorInfo, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorInfoKeyPrefix))
@@ -37,7 +37,7 @@ func (k Keeper) GetVendorInfo(
 // RemoveVendorInfo removes a vendorInfo from the store
 func (k Keeper) RemoveVendorInfo(
 	ctx sdk.Context,
-	vendorID uint64,
+	vendorID int32,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorInfoKeyPrefix))

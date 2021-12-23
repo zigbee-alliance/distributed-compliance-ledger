@@ -28,7 +28,7 @@ func networkWithVendorInfoObjects(t *testing.T, n int) (*network.Network, []type
 
 	for i := 0; i < n; i++ {
 		state.VendorInfoList = append(state.VendorInfoList, types.VendorInfo{
-			VendorID: uint64(i),
+			VendorID: int32(i),
 		})
 	}
 	buf, err := cfg.Codec.MarshalJSON(&state)
@@ -46,7 +46,7 @@ func TestShowVendorInfo(t *testing.T) {
 	}
 	for _, tc := range []struct {
 		desc       string
-		idVendorID uint64
+		idVendorID int32
 
 		args []string
 		err  error

@@ -17,7 +17,7 @@ var _ = strconv.IntSize
 func createNVendorInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.VendorInfo {
 	items := make([]types.VendorInfo, n)
 	for i := range items {
-		items[i].VendorID = uint64(i)
+		items[i].VendorID = int32(i)
 
 		keeper.SetVendorInfo(ctx, items[i])
 	}

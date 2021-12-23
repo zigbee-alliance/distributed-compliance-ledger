@@ -54,7 +54,7 @@ func CmdShowVendorInfo() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argVendorID, err := cast.ToUint64E(FlagVID)
+			argVendorID, err := cast.ToInt32E(FlagVID)
 			if err != nil {
 				return err
 			}

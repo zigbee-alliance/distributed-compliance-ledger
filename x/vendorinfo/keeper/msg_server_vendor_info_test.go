@@ -23,7 +23,7 @@ func TestVendorInfoMsgServerCreate(t *testing.T) {
 	creator := "A"
 	for i := 0; i < 5; i++ {
 		expected := &types.MsgCreateVendorInfo{Creator: creator,
-			VendorID: uint64(i),
+			VendorID: int32(i),
 		}
 		_, err := srv.CreateVendorInfo(wctx, expected)
 		require.NoError(t, err)
