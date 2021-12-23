@@ -1,5 +1,10 @@
-.idea
-.vscode
-build
-localnet
-.localnet
+*
+!app
+!cmd
+!testutil
+!x
+!go.mod
+!go.sum
+!Makefile
+!docs/docs.go
+!docs/static

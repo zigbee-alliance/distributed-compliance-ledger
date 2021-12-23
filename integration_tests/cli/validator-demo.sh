@@ -127,9 +127,6 @@ create_new_vendor_account $vendor_account $vid
 
 test_divider
 
-# FIXME issue 99: enable once implemented
-exit 0
-
 echo "Publish Model"
 pid=$RANDOM
 productName="TestingProductLabel"
@@ -137,6 +134,9 @@ echo "Add Model with VID: $vid PID: $pid"
 result=$(echo 'test1234' | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
+
+# FIXME issue 99: enable once implemented
+exit 0
 
 test_divider
 
@@ -155,7 +155,7 @@ echo "Get Model with VID: $vid PID: $pid"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"productLabel\": \"$productName\""
+check_response "$result" "\"product_label\": \"$productName\""
 echo "$result"
 
 cleanup
