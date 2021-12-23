@@ -109,8 +109,8 @@ export interface VendorinfoQueryGetVendorInfoResponse {
 }
 
 export interface VendorinfoVendorInfo {
-  /** @format uint64 */
-  vendorID?: string;
+  /** @format int32 */
+  vendorID?: number;
   vendorName?: string;
   companyLegalName?: string;
   companyPrefferedName?: string;
@@ -322,7 +322,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @summary Queries a vendorInfo by index.
    * @request GET:/dcl/vendorinfo/vendor/{vendorID}
    */
-  queryVendorInfo = (vendorID: string, params: RequestParams = {}) =>
+  queryVendorInfo = (vendorID: number, params: RequestParams = {}) =>
     this.request<VendorinfoQueryGetVendorInfoResponse, RpcStatus>({
       path: `/dcl/vendorinfo/vendor/${vendorID}`,
       method: "GET",

@@ -5,21 +5,21 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgApproveAddAccount } from "./types/dclauth/tx";
-import { MsgProposeRevokeAccount } from "./types/dclauth/tx";
-import { MsgApproveRevokeAccount } from "./types/dclauth/tx";
 import { MsgProposeAddAccount } from "./types/dclauth/tx";
+import { MsgApproveRevokeAccount } from "./types/dclauth/tx";
+import { MsgProposeRevokeAccount } from "./types/dclauth/tx";
 
 
 const types = [
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", MsgApproveAddAccount],
-  ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", MsgProposeRevokeAccount],
-  ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", MsgApproveRevokeAccount],
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", MsgProposeAddAccount],
+  ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", MsgApproveRevokeAccount],
+  ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", MsgProposeRevokeAccount],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
 
-export const registry = new Registry(<any>types);
+const registry = new Registry(<any>types);
 
 const defaultFee = {
   amount: [],
@@ -37,20 +37,16 @@ interface SignAndBroadcastOptions {
 
 const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions = { addr: "http://localhost:26657" }) => {
   if (!wallet) throw MissingWalletError;
-  let client;
-  if (addr) {
-    client = await SigningStargateClient.connectWithSigner(addr, wallet, { registry });
-  }else{
-    client = await SigningStargateClient.offline( wallet, { registry });
-  }
+
+  const client = await SigningStargateClient.connectWithSigner(addr, wallet, { registry });
   const { address } = (await wallet.getAccounts())[0];
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
-    msgApproveAddAccount: (data: MsgApproveAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", value: MsgApproveAddAccount.fromPartial( data ) }),
-    msgProposeRevokeAccount: (data: MsgProposeRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", value: MsgProposeRevokeAccount.fromPartial( data ) }),
-    msgApproveRevokeAccount: (data: MsgApproveRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", value: MsgApproveRevokeAccount.fromPartial( data ) }),
-    msgProposeAddAccount: (data: MsgProposeAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", value: MsgProposeAddAccount.fromPartial( data ) }),
+    msgApproveAddAccount: (data: MsgApproveAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", value: data }),
+    msgProposeAddAccount: (data: MsgProposeAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", value: data }),
+    msgApproveRevokeAccount: (data: MsgApproveRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", value: data }),
+    msgProposeRevokeAccount: (data: MsgProposeRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", value: data }),
     
   };
 };

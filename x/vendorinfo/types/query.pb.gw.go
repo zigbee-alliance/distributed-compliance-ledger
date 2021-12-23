@@ -49,7 +49,7 @@ func request_Query_VendorInfo_0(ctx context.Context, marshaler runtime.Marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vendorID")
 	}
 
-	protoReq.VendorID, err = runtime.Uint64(val)
+	protoReq.VendorID, err = runtime.Int32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vendorID", err)
@@ -76,7 +76,7 @@ func local_request_Query_VendorInfo_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vendorID")
 	}
 
-	protoReq.VendorID, err = runtime.Uint64(val)
+	protoReq.VendorID, err = runtime.Int32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vendorID", err)

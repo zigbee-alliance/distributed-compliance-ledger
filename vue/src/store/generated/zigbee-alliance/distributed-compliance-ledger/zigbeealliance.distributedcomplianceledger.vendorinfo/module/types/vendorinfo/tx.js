@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from 'protobufjs/minimal';
-import * as Long from 'long';
+import { Reader, Writer } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.vendorinfo';
 const baseMsgCreateVendorInfo = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferedName: '', vendorLandingPageURL: '' };
 export const MsgCreateVendorInfo = {
@@ -9,7 +8,7 @@ export const MsgCreateVendorInfo = {
             writer.uint32(10).string(message.creator);
         }
         if (message.vendorID !== 0) {
-            writer.uint32(16).uint64(message.vendorID);
+            writer.uint32(16).int32(message.vendorID);
         }
         if (message.vendorName !== '') {
             writer.uint32(26).string(message.vendorName);
@@ -36,7 +35,7 @@ export const MsgCreateVendorInfo = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.vendorID = longToNumber(reader.uint64());
+                    message.vendorID = reader.int32();
                     break;
                 case 3:
                     message.vendorName = reader.string();
@@ -187,7 +186,7 @@ export const MsgUpdateVendorInfo = {
             writer.uint32(10).string(message.creator);
         }
         if (message.vendorID !== 0) {
-            writer.uint32(16).uint64(message.vendorID);
+            writer.uint32(16).int32(message.vendorID);
         }
         if (message.vendorName !== '') {
             writer.uint32(26).string(message.vendorName);
@@ -214,7 +213,7 @@ export const MsgUpdateVendorInfo = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.vendorID = longToNumber(reader.uint64());
+                    message.vendorID = reader.int32();
                     break;
                 case 3:
                     message.vendorName = reader.string();
@@ -365,7 +364,7 @@ export const MsgDeleteVendorInfo = {
             writer.uint32(10).string(message.creator);
         }
         if (message.vendorID !== 0) {
-            writer.uint32(16).uint64(message.vendorID);
+            writer.uint32(16).int32(message.vendorID);
         }
         return writer;
     },
@@ -380,7 +379,7 @@ export const MsgDeleteVendorInfo = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.vendorID = longToNumber(reader.uint64());
+                    message.vendorID = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -479,25 +478,4 @@ export class MsgClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.vendorinfo.Msg', 'DeleteVendorInfo', data);
         return promise.then((data) => MsgDeleteVendorInfoResponse.decode(new Reader(data)));
     }
-}
-var globalThis = (() => {
-    if (typeof globalThis !== 'undefined')
-        return globalThis;
-    if (typeof self !== 'undefined')
-        return self;
-    if (typeof window !== 'undefined')
-        return window;
-    if (typeof global !== 'undefined')
-        return global;
-    throw 'Unable to locate global object';
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
 }

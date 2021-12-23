@@ -10,7 +10,7 @@ var _ sdk.Msg = &MsgCreateVendorInfo{}
 
 func NewMsgCreateVendorInfo(
 	creator string,
-	vendorID uint64,
+	vendorID int32,
 	vendorName string,
 	companyLegalName string,
 	companyPrefferedName string,
@@ -66,7 +66,7 @@ var _ sdk.Msg = &MsgUpdateVendorInfo{}
 
 func NewMsgUpdateVendorInfo(
 	creator string,
-	vendorID uint64,
+	vendorID int32,
 	vendorName string,
 	companyLegalName string,
 	companyPrefferedName string,
@@ -122,7 +122,7 @@ var _ sdk.Msg = &MsgDeleteVendorInfo{}
 
 func NewMsgDeleteVendorInfo(
 	creator string,
-	vendorID uint64,
+	vendorID int32,
 
 ) *MsgDeleteVendorInfo {
 	return &MsgDeleteVendorInfo{

@@ -83,8 +83,8 @@ export interface VendorinfoQueryGetVendorInfoResponse {
     vendorInfo?: VendorinfoVendorInfo;
 }
 export interface VendorinfoVendorInfo {
-    /** @format uint64 */
-    vendorID?: string;
+    /** @format int32 */
+    vendorID?: number;
     vendorName?: string;
     companyLegalName?: string;
     companyPrefferedName?: string;
@@ -157,7 +157,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @summary Queries a vendorInfo by index.
      * @request GET:/dcl/vendorinfo/vendor/{vendorID}
      */
-    queryVendorInfo: (vendorID: string, params?: RequestParams) => Promise<HttpResponse<VendorinfoQueryGetVendorInfoResponse, RpcStatus>>;
+    queryVendorInfo: (vendorID: number, params?: RequestParams) => Promise<HttpResponse<VendorinfoQueryGetVendorInfoResponse, RpcStatus>>;
     /**
      * No description
      *

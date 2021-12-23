@@ -5,14 +5,14 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgDeleteVendorInfo } from "./types/vendorinfo/tx";
-import { MsgUpdateVendorInfo } from "./types/vendorinfo/tx";
 import { MsgCreateVendorInfo } from "./types/vendorinfo/tx";
+import { MsgUpdateVendorInfo } from "./types/vendorinfo/tx";
 
 
 const types = [
   ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo", MsgDeleteVendorInfo],
-  ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", MsgUpdateVendorInfo],
   ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo", MsgCreateVendorInfo],
+  ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", MsgUpdateVendorInfo],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -42,8 +42,8 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgDeleteVendorInfo: (data: MsgDeleteVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo", value: data }),
-    msgUpdateVendorInfo: (data: MsgUpdateVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", value: data }),
     msgCreateVendorInfo: (data: MsgCreateVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo", value: data }),
+    msgUpdateVendorInfo: (data: MsgUpdateVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", value: data }),
     
   };
 };

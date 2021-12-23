@@ -25,7 +25,7 @@ service Query {
 }
 
 message QueryGetVendorInfoRequest {
-	  uint64 vendorID = 1;
+	int32 vendorID = 1;
 
 }
 

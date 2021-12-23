@@ -1,12 +1,11 @@
 /* eslint-disable */
-import * as Long from 'long';
-import { util, configure, Writer, Reader } from 'protobufjs/minimal';
+import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.vendorinfo';
 const baseVendorInfo = { vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferedName: '', vendorLandingPageURL: '', creator: '' };
 export const VendorInfo = {
     encode(message, writer = Writer.create()) {
         if (message.vendorID !== 0) {
-            writer.uint32(8).uint64(message.vendorID);
+            writer.uint32(8).int32(message.vendorID);
         }
         if (message.vendorName !== '') {
             writer.uint32(18).string(message.vendorName);
@@ -33,7 +32,7 @@ export const VendorInfo = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.vendorID = longToNumber(reader.uint64());
+                    message.vendorID = reader.int32();
                     break;
                 case 2:
                     message.vendorName = reader.string();
@@ -148,24 +147,3 @@ export const VendorInfo = {
         return message;
     }
 };
-var globalThis = (() => {
-    if (typeof globalThis !== 'undefined')
-        return globalThis;
-    if (typeof self !== 'undefined')
-        return self;
-    if (typeof window !== 'undefined')
-        return window;
-    if (typeof global !== 'undefined')
-        return global;
-    throw 'Unable to locate global object';
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
-}

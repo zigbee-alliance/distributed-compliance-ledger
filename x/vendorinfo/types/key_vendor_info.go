@@ -11,12 +11,12 @@ var (
 
 // VendorInfoKey returns the store key to retrieve a VendorInfo from the index fields
 func VendorInfoKey(
-	vendorID uint64,
+	vendorID int32,
 ) []byte {
 	var key []byte
 
 	vendorIDBytes := make([]byte, 8)
-	binary.BigEndian.PutUint64(vendorIDBytes, vendorID)
+	binary.BigEndian.PutUint32(vendorIDBytes, uint32(vendorID))
 	key = append(key, vendorIDBytes...)
 	key = append(key, []byte("/")...)
 
