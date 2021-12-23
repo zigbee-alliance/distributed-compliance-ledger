@@ -1,19 +1,30 @@
 PACKAGES = $(shell go list ./... | grep -v '/integration_tests')
 
-VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
-COMMIT := $(shell git log -1 --format='%H')
+ifndef DCL_VERSION
+DCL_VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
+endif
+
+ifndef DCL_COMMIT
+DCL_COMMIT := $(shell git log -1 --format='%H')
+endif
+
 UID := $(shell id -u)
 #GID := $(shell id -g)
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
 	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
-	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
-	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT)
+	-X github.com/cosmos/cosmos-sdk/version.Version=$(DCL_VERSION) \
+	-X github.com/cosmos/cosmos-sdk/version.Commit=$(DCL_COMMIT)
 
 BUILD_FLAGS := -ldflags '$(ldflags)'
 OUTPUT_DIR ?= build
 
 LOCALNET_DIR ?= .localnet
+LOCALNET_DOCKER_NETWORK = "distributed-compliance-ledger_localnet"
+
+remove_containers = $(if $(1),docker rm -f $(1),true)
+localnet_containers = $(shell docker ps --format '{{.ID}}' --filter network=$(LOCALNET_DOCKER_NETWORK))
+clean_network = $(call remove_containers,$(call localnet_containers))
 
 LICENSE_TYPE = "apache"
 COPYRIGHT_YEAR = "2020"
@@ -50,7 +61,8 @@ clean:
 # Docker
 
 image:
-	docker build -t dcledger --build-arg TEST_UID=${UID} .
+	docker build -t dcledger --build-arg TEST_UID=${UID} \
+		--build-arg DCL_VERSION=${DCL_VERSION} --build-arg DCL_COMMIT=${DCL_COMMIT} .
 
 localnet_init:
 	/bin/bash ./genlocalnetconfig.sh
@@ -63,7 +75,7 @@ localnet_start:
 	fi
 
 localnet_stop:
-	docker-compose down
+	docker-compose down || ($(call clean_network) && docker-compose down)
 
 localnet_export: localnet_stop
 	docker-compose run node0 dcld export --for-zero-height  >genesis.export.node0.json
