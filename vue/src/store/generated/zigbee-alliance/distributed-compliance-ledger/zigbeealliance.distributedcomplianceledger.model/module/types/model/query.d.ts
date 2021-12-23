@@ -1,7 +1,7 @@
 import { Reader, Writer } from 'protobufjs/minimal';
 import { VendorProducts } from '../model/vendor_products';
-import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 import { Model } from '../model/model';
+import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 import { ModelVersion } from '../model/model_version';
 import { ModelVersions } from '../model/model_versions';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.model";
@@ -10,13 +10,6 @@ export interface QueryGetVendorProductsRequest {
 }
 export interface QueryGetVendorProductsResponse {
     vendorProducts: VendorProducts | undefined;
-}
-export interface QueryAllVendorProductsRequest {
-    pagination: PageRequest | undefined;
-}
-export interface QueryAllVendorProductsResponse {
-    vendorProducts: VendorProducts[];
-    pagination: PageResponse | undefined;
 }
 export interface QueryGetModelRequest {
     vid: number;
@@ -40,26 +33,12 @@ export interface QueryGetModelVersionRequest {
 export interface QueryGetModelVersionResponse {
     modelVersion: ModelVersion | undefined;
 }
-export interface QueryAllModelVersionRequest {
-    pagination: PageRequest | undefined;
-}
-export interface QueryAllModelVersionResponse {
-    modelVersion: ModelVersion[];
-    pagination: PageResponse | undefined;
-}
 export interface QueryGetModelVersionsRequest {
     vid: number;
     pid: number;
 }
 export interface QueryGetModelVersionsResponse {
     modelVersions: ModelVersions | undefined;
-}
-export interface QueryAllModelVersionsRequest {
-    pagination: PageRequest | undefined;
-}
-export interface QueryAllModelVersionsResponse {
-    modelVersions: ModelVersions[];
-    pagination: PageResponse | undefined;
 }
 export declare const QueryGetVendorProductsRequest: {
     encode(message: QueryGetVendorProductsRequest, writer?: Writer): Writer;
@@ -74,20 +53,6 @@ export declare const QueryGetVendorProductsResponse: {
     fromJSON(object: any): QueryGetVendorProductsResponse;
     toJSON(message: QueryGetVendorProductsResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetVendorProductsResponse>): QueryGetVendorProductsResponse;
-};
-export declare const QueryAllVendorProductsRequest: {
-    encode(message: QueryAllVendorProductsRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllVendorProductsRequest;
-    fromJSON(object: any): QueryAllVendorProductsRequest;
-    toJSON(message: QueryAllVendorProductsRequest): unknown;
-    fromPartial(object: DeepPartial<QueryAllVendorProductsRequest>): QueryAllVendorProductsRequest;
-};
-export declare const QueryAllVendorProductsResponse: {
-    encode(message: QueryAllVendorProductsResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllVendorProductsResponse;
-    fromJSON(object: any): QueryAllVendorProductsResponse;
-    toJSON(message: QueryAllVendorProductsResponse): unknown;
-    fromPartial(object: DeepPartial<QueryAllVendorProductsResponse>): QueryAllVendorProductsResponse;
 };
 export declare const QueryGetModelRequest: {
     encode(message: QueryGetModelRequest, writer?: Writer): Writer;
@@ -131,20 +96,6 @@ export declare const QueryGetModelVersionResponse: {
     toJSON(message: QueryGetModelVersionResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetModelVersionResponse>): QueryGetModelVersionResponse;
 };
-export declare const QueryAllModelVersionRequest: {
-    encode(message: QueryAllModelVersionRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionRequest;
-    fromJSON(object: any): QueryAllModelVersionRequest;
-    toJSON(message: QueryAllModelVersionRequest): unknown;
-    fromPartial(object: DeepPartial<QueryAllModelVersionRequest>): QueryAllModelVersionRequest;
-};
-export declare const QueryAllModelVersionResponse: {
-    encode(message: QueryAllModelVersionResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionResponse;
-    fromJSON(object: any): QueryAllModelVersionResponse;
-    toJSON(message: QueryAllModelVersionResponse): unknown;
-    fromPartial(object: DeepPartial<QueryAllModelVersionResponse>): QueryAllModelVersionResponse;
-};
 export declare const QueryGetModelVersionsRequest: {
     encode(message: QueryGetModelVersionsRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetModelVersionsRequest;
@@ -159,50 +110,27 @@ export declare const QueryGetModelVersionsResponse: {
     toJSON(message: QueryGetModelVersionsResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetModelVersionsResponse>): QueryGetModelVersionsResponse;
 };
-export declare const QueryAllModelVersionsRequest: {
-    encode(message: QueryAllModelVersionsRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionsRequest;
-    fromJSON(object: any): QueryAllModelVersionsRequest;
-    toJSON(message: QueryAllModelVersionsRequest): unknown;
-    fromPartial(object: DeepPartial<QueryAllModelVersionsRequest>): QueryAllModelVersionsRequest;
-};
-export declare const QueryAllModelVersionsResponse: {
-    encode(message: QueryAllModelVersionsResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionsResponse;
-    fromJSON(object: any): QueryAllModelVersionsResponse;
-    toJSON(message: QueryAllModelVersionsResponse): unknown;
-    fromPartial(object: DeepPartial<QueryAllModelVersionsResponse>): QueryAllModelVersionsResponse;
-};
 /** Query defines the gRPC querier service. */
 export interface Query {
-    /** Queries a VendorProducts by index. */
+    /** Queries VendorProducts by index. */
     VendorProducts(request: QueryGetVendorProductsRequest): Promise<QueryGetVendorProductsResponse>;
-    /** Queries a list of VendorProducts items. */
-    VendorProductsAll(request: QueryAllVendorProductsRequest): Promise<QueryAllVendorProductsResponse>;
     /** Queries a Model by index. */
     Model(request: QueryGetModelRequest): Promise<QueryGetModelResponse>;
-    /** Queries a list of Model items. */
+    /** Queries a list of all Model items. */
     ModelAll(request: QueryAllModelRequest): Promise<QueryAllModelResponse>;
     /** Queries a ModelVersion by index. */
     ModelVersion(request: QueryGetModelVersionRequest): Promise<QueryGetModelVersionResponse>;
-    /** Queries a list of ModelVersion items. */
-    ModelVersionAll(request: QueryAllModelVersionRequest): Promise<QueryAllModelVersionResponse>;
-    /** Queries a ModelVersions by index. */
+    /** Queries ModelVersions by index. */
     ModelVersions(request: QueryGetModelVersionsRequest): Promise<QueryGetModelVersionsResponse>;
-    /** Queries a list of ModelVersions items. */
-    ModelVersionsAll(request: QueryAllModelVersionsRequest): Promise<QueryAllModelVersionsResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
     VendorProducts(request: QueryGetVendorProductsRequest): Promise<QueryGetVendorProductsResponse>;
-    VendorProductsAll(request: QueryAllVendorProductsRequest): Promise<QueryAllVendorProductsResponse>;
     Model(request: QueryGetModelRequest): Promise<QueryGetModelResponse>;
     ModelAll(request: QueryAllModelRequest): Promise<QueryAllModelResponse>;
     ModelVersion(request: QueryGetModelVersionRequest): Promise<QueryGetModelVersionResponse>;
-    ModelVersionAll(request: QueryAllModelVersionRequest): Promise<QueryAllModelVersionResponse>;
     ModelVersions(request: QueryGetModelVersionsRequest): Promise<QueryGetModelVersionsResponse>;
-    ModelVersionsAll(request: QueryAllModelVersionsRequest): Promise<QueryAllModelVersionsResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

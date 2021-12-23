@@ -61,7 +61,7 @@ test_divider
 # Query non existant model version 
 echo "Query Device Model Version with VID: $vid PID: $pid SV: 123456"
 result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=123456 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
+check_response_and_report "$result" "rpc error: code = NotFound desc = not found" raw
 
 test_divider
 

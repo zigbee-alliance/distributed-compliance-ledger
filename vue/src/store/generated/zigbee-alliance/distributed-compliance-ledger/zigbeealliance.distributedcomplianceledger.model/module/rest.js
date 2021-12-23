@@ -141,98 +141,11 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryModelAll
-         * @summary Queries a list of Model items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model
+         * @summary Queries a list of all Model items.
+         * @request GET:/dcl/model/models
          */
         this.queryModelAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/model`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryModel
-         * @summary Queries a Model by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model/{vid}/{pid}
-         */
-        this.queryModel = (vid, pid, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/model/${vid}/${pid}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryModelVersionAll
-         * @summary Queries a list of ModelVersion items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version
-         */
-        this.queryModelVersionAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/model_version`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryModelVersion
-         * @summary Queries a ModelVersion by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{softwareVersion}
-         */
-        this.queryModelVersion = (vid, pid, softwareVersion, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/model_version/${vid}/${pid}/${softwareVersion}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryModelVersionsAll
-         * @summary Queries a list of ModelVersions items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_versions
-         */
-        this.queryModelVersionsAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/model_versions`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryModelVersions
-         * @summary Queries a ModelVersions by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_versions/{vid}/{pid}
-         */
-        this.queryModelVersions = (vid, pid, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/model_versions/${vid}/${pid}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryVendorProductsAll
-         * @summary Queries a list of VendorProducts items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/vendor_products
-         */
-        this.queryVendorProductsAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/vendor_products`,
+            path: `/dcl/model/models`,
             method: "GET",
             query: query,
             format: "json",
@@ -243,11 +156,53 @@ export class Api extends HttpClient {
          *
          * @tags Query
          * @name QueryVendorProducts
-         * @summary Queries a VendorProducts by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/model/vendor_products/{vid}
+         * @summary Queries VendorProducts by index.
+         * @request GET:/dcl/model/models/{vid}
          */
         this.queryVendorProducts = (vid, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/model/vendor_products/${vid}`,
+            path: `/dcl/model/models/${vid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModel
+         * @summary Queries a Model by index.
+         * @request GET:/dcl/model/models/{vid}/{pid}
+         */
+        this.queryModel = (vid, pid, params = {}) => this.request({
+            path: `/dcl/model/models/${vid}/${pid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModelVersions
+         * @summary Queries ModelVersions by index.
+         * @request GET:/dcl/model/versions/{vid}/{pid}
+         */
+        this.queryModelVersions = (vid, pid, params = {}) => this.request({
+            path: `/dcl/model/versions/${vid}/${pid}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryModelVersion
+         * @summary Queries a ModelVersion by index.
+         * @request GET:/dcl/model/versions/{vid}/{pid}/{softwareVersion}
+         */
+        this.queryModelVersion = (vid, pid, softwareVersion, params = {}) => this.request({
+            path: `/dcl/model/versions/${vid}/${pid}/${softwareVersion}`,
             method: "GET",
             format: "json",
             ...params,

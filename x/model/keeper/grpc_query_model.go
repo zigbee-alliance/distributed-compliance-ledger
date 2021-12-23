@@ -51,7 +51,7 @@ func (k Keeper) Model(c context.Context, req *types.QueryGetModelRequest) (*type
 		req.Pid,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetModelResponse{Model: val}, nil
