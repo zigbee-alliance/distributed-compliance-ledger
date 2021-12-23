@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package dclauth_test
+package pki_test
 
 import (
-	//"net/http"
-
 	"testing"
 
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
@@ -33,7 +31,7 @@ import (
 */
 
 //nolint:funlen
-func TestAuthDemoREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	dclauth.AuthDemo(&suite)
+func TestAuthDemoGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	pki.PKIDemo(&suite)
 }
