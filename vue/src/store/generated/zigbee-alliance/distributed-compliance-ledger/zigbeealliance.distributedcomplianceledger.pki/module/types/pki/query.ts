@@ -57,15 +57,6 @@ export interface QueryGetChildCertificatesResponse {
   childCertificates: ChildCertificates | undefined
 }
 
-export interface QueryAllChildCertificatesRequest {
-  pagination: PageRequest | undefined
-}
-
-export interface QueryAllChildCertificatesResponse {
-  childCertificates: ChildCertificates[]
-  pagination: PageResponse | undefined
-}
-
 export interface QueryGetProposedCertificateRevocationRequest {
   subject: string
   subjectKeyId: string
@@ -769,140 +760,6 @@ export const QueryGetChildCertificatesResponse = {
       message.childCertificates = ChildCertificates.fromPartial(object.childCertificates)
     } else {
       message.childCertificates = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllChildCertificatesRequest: object = {}
-
-export const QueryAllChildCertificatesRequest = {
-  encode(message: QueryAllChildCertificatesRequest, writer: Writer = Writer.create()): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllChildCertificatesRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllChildCertificatesRequest } as QueryAllChildCertificatesRequest
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllChildCertificatesRequest {
-    const message = { ...baseQueryAllChildCertificatesRequest } as QueryAllChildCertificatesRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllChildCertificatesRequest): unknown {
-    const obj: any = {}
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllChildCertificatesRequest>): QueryAllChildCertificatesRequest {
-    const message = { ...baseQueryAllChildCertificatesRequest } as QueryAllChildCertificatesRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllChildCertificatesResponse: object = {}
-
-export const QueryAllChildCertificatesResponse = {
-  encode(message: QueryAllChildCertificatesResponse, writer: Writer = Writer.create()): Writer {
-    for (const v of message.childCertificates) {
-      ChildCertificates.encode(v!, writer.uint32(10).fork()).ldelim()
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllChildCertificatesResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllChildCertificatesResponse } as QueryAllChildCertificatesResponse
-    message.childCertificates = []
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.childCertificates.push(ChildCertificates.decode(reader, reader.uint32()))
-          break
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllChildCertificatesResponse {
-    const message = { ...baseQueryAllChildCertificatesResponse } as QueryAllChildCertificatesResponse
-    message.childCertificates = []
-    if (object.childCertificates !== undefined && object.childCertificates !== null) {
-      for (const e of object.childCertificates) {
-        message.childCertificates.push(ChildCertificates.fromJSON(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllChildCertificatesResponse): unknown {
-    const obj: any = {}
-    if (message.childCertificates) {
-      obj.childCertificates = message.childCertificates.map((e) => (e ? ChildCertificates.toJSON(e) : undefined))
-    } else {
-      obj.childCertificates = []
-    }
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllChildCertificatesResponse>): QueryAllChildCertificatesResponse {
-    const message = { ...baseQueryAllChildCertificatesResponse } as QueryAllChildCertificatesResponse
-    message.childCertificates = []
-    if (object.childCertificates !== undefined && object.childCertificates !== null) {
-      for (const e of object.childCertificates) {
-        message.childCertificates.push(ChildCertificates.fromPartial(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
     }
     return message
   }
@@ -1747,8 +1604,6 @@ export interface Query {
   ProposedCertificateAll(request: QueryAllProposedCertificateRequest): Promise<QueryAllProposedCertificateResponse>
   /** Queries a ChildCertificates by index. */
   ChildCertificates(request: QueryGetChildCertificatesRequest): Promise<QueryGetChildCertificatesResponse>
-  /** Queries a list of ChildCertificates items. */
-  ChildCertificatesAll(request: QueryAllChildCertificatesRequest): Promise<QueryAllChildCertificatesResponse>
   /** Queries a ProposedCertificateRevocation by index. */
   ProposedCertificateRevocation(request: QueryGetProposedCertificateRevocationRequest): Promise<QueryGetProposedCertificateRevocationResponse>
   /** Queries a list of ProposedCertificateRevocation items. */
@@ -1798,12 +1653,6 @@ export class QueryClientImpl implements Query {
     const data = QueryGetChildCertificatesRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ChildCertificates', data)
     return promise.then((data) => QueryGetChildCertificatesResponse.decode(new Reader(data)))
-  }
-
-  ChildCertificatesAll(request: QueryAllChildCertificatesRequest): Promise<QueryAllChildCertificatesResponse> {
-    const data = QueryAllChildCertificatesRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Query', 'ChildCertificatesAll', data)
-    return promise.then((data) => QueryAllChildCertificatesResponse.decode(new Reader(data)))
   }
 
   ProposedCertificateRevocation(request: QueryGetProposedCertificateRevocationRequest): Promise<QueryGetProposedCertificateRevocationResponse> {

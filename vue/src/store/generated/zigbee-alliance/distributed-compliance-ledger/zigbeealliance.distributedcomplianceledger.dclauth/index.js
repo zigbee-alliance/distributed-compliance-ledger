@@ -1,4 +1,4 @@
-import { txClient, queryClient, MissingWalletError } from './module';
+import { txClient, queryClient, MissingWalletError, registry } from './module';
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex';
 import { Account } from "./module/types/dclauth/account";
@@ -58,6 +58,7 @@ const getDefaultState = () => {
             QueryGetPendingAccountRevocationRequest: getStructure(QueryGetPendingAccountRevocationRequest.fromPartial({})),
             QueryGetPendingAccountRevocationResponse: getStructure(QueryGetPendingAccountRevocationResponse.fromPartial({})),
         },
+        _Registry: registry,
         _Subscriptions: new Set(),
     };
 };
@@ -74,10 +75,10 @@ export default {
             state[query][JSON.stringify(key)] = value;
         },
         SUBSCRIBE(state, subscription) {
-            state._Subscriptions.add(subscription);
+            state._Subscriptions.add(JSON.stringify(subscription));
         },
         UNSUBSCRIBE(state, subscription) {
-            state._Subscriptions.delete(subscription);
+            state._Subscriptions.delete(JSON.stringify(subscription));
         }
     },
     getters: {
@@ -113,6 +114,9 @@ export default {
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
+        },
+        getRegistry: (state) => {
+            return state._Registry;
         }
     },
     actions: {
@@ -133,15 +137,17 @@ export default {
         async StoreUpdate({ state, dispatch }) {
             state._Subscriptions.forEach(async (subscription) => {
                 try {
-                    await dispatch(subscription.action, subscription.payload);
+                    const sub = JSON.parse(subscription);
+                    await dispatch(sub.action, sub.payload);
                 }
                 catch (e) {
                     throw new SpVuexError('Subscriptions: ' + e.message);
                 }
             });
         },
-        async QueryAccount({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params: { ...key }, query = null }) {
+        async QueryAccount({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
+                const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
                 let value = (await queryClient.queryAccount(key.address)).data;
                 commit('QUERY', { query: 'Account', key: { params: { ...key }, query }, value });
@@ -153,12 +159,13 @@ export default {
                 throw new SpVuexError('QueryClient:QueryAccount', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async QueryAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params: { ...key }, query = null }) {
+        async QueryAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
+                const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
                 let value = (await queryClient.queryAccountAll(query)).data;
-                while (all && value.pagination && value.pagination.nextKey != null) {
-                    let next_values = (await queryClient.queryAccountAll({ ...query, 'pagination.key': value.pagination.nextKey })).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryAccountAll({ ...query, 'pagination.key': value.pagination.next_key })).data;
                     value = mergeResults(value, next_values);
                 }
                 commit('QUERY', { query: 'AccountAll', key: { params: { ...key }, query }, value });
@@ -170,12 +177,13 @@ export default {
                 throw new SpVuexError('QueryClient:QueryAccountAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async QueryPendingAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params: { ...key }, query = null }) {
+        async QueryPendingAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
+                const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
                 let value = (await queryClient.queryPendingAccountAll(query)).data;
-                while (all && value.pagination && value.pagination.nextKey != null) {
-                    let next_values = (await queryClient.queryPendingAccountAll({ ...query, 'pagination.key': value.pagination.nextKey })).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryPendingAccountAll({ ...query, 'pagination.key': value.pagination.next_key })).data;
                     value = mergeResults(value, next_values);
                 }
                 commit('QUERY', { query: 'PendingAccountAll', key: { params: { ...key }, query }, value });
@@ -187,12 +195,13 @@ export default {
                 throw new SpVuexError('QueryClient:QueryPendingAccountAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async QueryPendingAccountRevocationAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params: { ...key }, query = null }) {
+        async QueryPendingAccountRevocationAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
+                const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
                 let value = (await queryClient.queryPendingAccountRevocationAll(query)).data;
-                while (all && value.pagination && value.pagination.nextKey != null) {
-                    let next_values = (await queryClient.queryPendingAccountRevocationAll({ ...query, 'pagination.key': value.pagination.nextKey })).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryPendingAccountRevocationAll({ ...query, 'pagination.key': value.pagination.next_key })).data;
                     value = mergeResults(value, next_values);
                 }
                 commit('QUERY', { query: 'PendingAccountRevocationAll', key: { params: { ...key }, query }, value });
@@ -204,8 +213,9 @@ export default {
                 throw new SpVuexError('QueryClient:QueryPendingAccountRevocationAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async QueryAccountStat({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params: { ...key }, query = null }) {
+        async QueryAccountStat({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
+                const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
                 let value = (await queryClient.queryAccountStat()).data;
                 commit('QUERY', { query: 'AccountStat', key: { params: { ...key }, query }, value });
@@ -217,20 +227,20 @@ export default {
                 throw new SpVuexError('QueryClient:QueryAccountStat', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgApproveAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
+        async sendMsgApproveRevokeAccount({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveAddAccount(value);
+                const msg = await txClient.msgApproveRevokeAccount(value);
                 const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
                         gas: "200000" }, memo });
                 return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveAddAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgApproveAddAccount:Send', 'Could not broadcast Tx: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -251,23 +261,6 @@ export default {
                 }
             }
         },
-        async sendMsgApproveRevokeAccount({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgApproveRevokeAccount(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgApproveRevokeAccount:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
         async sendMsgProposeRevokeAccount({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -285,33 +278,20 @@ export default {
                 }
             }
         },
-        async MsgApproveAddAccount({ rootGetters }, { value }) {
+        async sendMsgApproveAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
                 const msg = await txClient.msgApproveAddAccount(value);
-                return msg;
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
                     throw new SpVuexError('TxClient:MsgApproveAddAccount:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgApproveAddAccount:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
-        async MsgProposeAddAccount({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgProposeAddAccount(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgProposeAddAccount:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgProposeAddAccount:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgApproveAddAccount:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -330,6 +310,21 @@ export default {
                 }
             }
         },
+        async MsgProposeAddAccount({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgProposeAddAccount(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgProposeAddAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgProposeAddAccount:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
         async MsgProposeRevokeAccount({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -342,6 +337,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgProposeRevokeAccount:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgApproveAddAccount({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgApproveAddAccount(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgApproveAddAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgApproveAddAccount:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

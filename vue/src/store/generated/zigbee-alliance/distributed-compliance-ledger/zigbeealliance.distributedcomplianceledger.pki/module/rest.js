@@ -197,21 +197,6 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryChildCertificatesAll
-         * @summary Queries a list of ChildCertificates items.
-         * @request GET:/dcl/pki/child_certificates
-         */
-        this.queryChildCertificatesAll = (query, params = {}) => this.request({
-            path: `/dcl/pki/child_certificates`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryChildCertificates
          * @summary Queries a ChildCertificates by index.
          * @request GET:/dcl/pki/child_certificates/{issuer}/{authorityKeyId}

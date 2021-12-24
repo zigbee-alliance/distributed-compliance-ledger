@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -62,8 +63,12 @@ func CmdShowProposedCertificate() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedCertificate(context.Background(), params)
-			if err != nil {
+			if cli.HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetProposedCertificateResponse{ProposedCertificate: nil}
 			}
 
 			return clientCtx.PrintProto(res)

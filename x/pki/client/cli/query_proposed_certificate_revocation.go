@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -63,8 +64,12 @@ func CmdShowProposedCertificateRevocation() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedCertificateRevocation(context.Background(), params)
-			if err != nil {
+			if cli.HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetProposedCertificateRevocationResponse{ProposedCertificateRevocation: nil}
 			}
 
 			return clientCtx.PrintProto(res)

@@ -28,17 +28,13 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 	cmd.AddCommand(CmdShowApprovedCertificates())
 	cmd.AddCommand(CmdListProposedCertificate()) // TODO: use store-based index of cert Ids
 	cmd.AddCommand(CmdShowProposedCertificate())
-	//cmd.AddCommand(CmdListChildCertificates())
-	//cmd.AddCommand(CmdShowChildCertificates())
+	cmd.AddCommand(CmdShowChildCertificates())
 	cmd.AddCommand(CmdListProposedCertificateRevocation()) // TODO: use store-based index of cert Ids
 	cmd.AddCommand(CmdShowProposedCertificateRevocation())
 	cmd.AddCommand(CmdListRevokedCertificates()) // TODO: use store-based index of cert Ids
 	cmd.AddCommand(CmdShowRevokedCertificates())
-	//cmd.AddCommand(CmdListUniqueCertificate())
-	//md.AddCommand(CmdShowUniqueCertificate())
 	cmd.AddCommand(CmdShowApprovedRootCertificates())
 	cmd.AddCommand(CmdShowRevokedRootCertificates())
-	//cmd.AddCommand(CmdListApprovedCertificatesBySubject())
 	cmd.AddCommand(CmdShowApprovedCertificatesBySubject())
 	// this line is used by starport scaffolding # 1
 
