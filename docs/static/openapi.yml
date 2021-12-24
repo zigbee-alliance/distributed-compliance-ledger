@@ -13670,1206 +13670,6 @@ paths:
                         }
       tags:
         - Query
-  /dcl/pki/approved_certificates:
-    get:
-      summary: Queries a list of ApprovedCertificates items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificatesAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              approvedCertificates:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    subject:
-                      type: string
-                    subjectKeyId:
-                      type: string
-                    certs:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          pemCert:
-                            type: string
-                          serialNumber:
-                            type: string
-                          issuer:
-                            type: string
-                          authorityKeyId:
-                            type: string
-                          rootSubject:
-                            type: string
-                          rootSubjectKeyId:
-                            type: string
-                          isRoot:
-                            type: boolean
-                          owner:
-                            type: string
-                          subject:
-                            type: string
-                          subjectKeyId:
-                            type: string
-              pagination:
-                type: object
-                properties:
-                  nextKey:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.countTotal
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  '/dcl/pki/approved_certificates/{subject}/{subjectKeyId}':
-    get:
-      summary: Queries a ApprovedCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificates
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              approvedCertificates:
-                type: object
-                properties:
-                  subject:
-                    type: string
-                  subjectKeyId:
-                    type: string
-                  certs:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pemCert:
-                          type: string
-                        serialNumber:
-                          type: string
-                        issuer:
-                          type: string
-                        authorityKeyId:
-                          type: string
-                        rootSubject:
-                          type: string
-                        rootSubjectKeyId:
-                          type: string
-                        isRoot:
-                          type: boolean
-                        owner:
-                          type: string
-                        subject:
-                          type: string
-                        subjectKeyId:
-                          type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: subject
-          in: path
-          required: true
-          type: string
-        - name: subjectKeyId
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  '/dcl/pki/approved_certificates_by_subject/{subject}':
-    get:
-      summary: Queries a ApprovedCertificatesBySubject by index.
-      operationId: >-
-        ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificatesBySubject
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              approvedCertificatesBySubject:
-                type: object
-                properties:
-                  subject:
-                    type: string
-                  subjectKeyIds:
-                    type: array
-                    items:
-                      type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: subject
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /dcl/pki/approved_root_certificates:
-    get:
-      summary: Queries a ApprovedRootCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedRootCertificates
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              ApprovedRootCertificates:
-                type: object
-                properties:
-                  certs:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        subject:
-                          type: string
-                        subjectKeyId:
-                          type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  '/dcl/pki/child_certificates/{issuer}/{authorityKeyId}':
-    get:
-      summary: Queries a ChildCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiChildCertificates
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              childCertificates:
-                type: object
-                properties:
-                  issuer:
-                    type: string
-                  authorityKeyId:
-                    type: string
-                  certIds:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        subject:
-                          type: string
-                        subjectKeyId:
-                          type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: issuer
-          in: path
-          required: true
-          type: string
-        - name: authorityKeyId
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /dcl/pki/proposed_certificate:
-    get:
-      summary: Queries a list of ProposedCertificate items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              proposedCertificate:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    subject:
-                      type: string
-                    subjectKeyId:
-                      type: string
-                    pemCert:
-                      type: string
-                    serialNumber:
-                      type: string
-                    owner:
-                      type: string
-                    approvals:
-                      type: array
-                      items:
-                        type: string
-              pagination:
-                type: object
-                properties:
-                  nextKey:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.countTotal
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  '/dcl/pki/proposed_certificate/{subject}/{subjectKeyId}':
-    get:
-      summary: Queries a ProposedCertificate by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificate
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              proposedCertificate:
-                type: object
-                properties:
-                  subject:
-                    type: string
-                  subjectKeyId:
-                    type: string
-                  pemCert:
-                    type: string
-                  serialNumber:
-                    type: string
-                  owner:
-                    type: string
-                  approvals:
-                    type: array
-                    items:
-                      type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: subject
-          in: path
-          required: true
-          type: string
-        - name: subjectKeyId
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /dcl/pki/proposed_certificate_revocation:
-    get:
-      summary: Queries a list of ProposedCertificateRevocation items.
-      operationId: >-
-        ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateRevocationAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              proposedCertificateRevocation:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    subject:
-                      type: string
-                    subjectKeyId:
-                      type: string
-                    approvals:
-                      type: array
-                      items:
-                        type: string
-              pagination:
-                type: object
-                properties:
-                  nextKey:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.countTotal
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  '/dcl/pki/proposed_certificate_revocation/{subject}/{subjectKeyId}':
-    get:
-      summary: Queries a ProposedCertificateRevocation by index.
-      operationId: >-
-        ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateRevocation
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              proposedCertificateRevocation:
-                type: object
-                properties:
-                  subject:
-                    type: string
-                  subjectKeyId:
-                    type: string
-                  approvals:
-                    type: array
-                    items:
-                      type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: subject
-          in: path
-          required: true
-          type: string
-        - name: subjectKeyId
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /dcl/pki/revoked_certificates:
-    get:
-      summary: Queries a list of RevokedCertificates items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedCertificatesAll
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              revokedCertificates:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    subject:
-                      type: string
-                    subjectKeyId:
-                      type: string
-                    certs:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          pemCert:
-                            type: string
-                          serialNumber:
-                            type: string
-                          issuer:
-                            type: string
-                          authorityKeyId:
-                            type: string
-                          rootSubject:
-                            type: string
-                          rootSubjectKeyId:
-                            type: string
-                          isRoot:
-                            type: boolean
-                          owner:
-                            type: string
-                          subject:
-                            type: string
-                          subjectKeyId:
-                            type: string
-              pagination:
-                type: object
-                properties:
-                  nextKey:
-                    type: string
-                    format: byte
-                    title: |-
-                      next_key is the key to be passed to PageRequest.key to
-                      query the next page most efficiently
-                  total:
-                    type: string
-                    format: uint64
-                    title: >-
-                      total is total number of results available if
-                      PageRequest.count_total
-
-                      was set, its value is undefined otherwise
-                description: >-
-                  PageResponse is to be embedded in gRPC response messages where
-                  the
-
-                  corresponding request message has used PageRequest.
-
-                   message SomeResponse {
-                           repeated Bar results = 1;
-                           PageResponse page = 2;
-                   }
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: pagination.key
-          description: |-
-            key is a value returned in PageResponse.next_key to begin
-            querying the next page most efficiently. Only one of offset or key
-            should be set.
-          in: query
-          required: false
-          type: string
-          format: byte
-        - name: pagination.offset
-          description: >-
-            offset is a numeric offset that can be used when key is unavailable.
-
-            It is less efficient than using key. Only one of offset or key
-            should
-
-            be set.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.limit
-          description: >-
-            limit is the total number of results to be returned in the result
-            page.
-
-            If left empty it will default to a value to be set by each app.
-          in: query
-          required: false
-          type: string
-          format: uint64
-        - name: pagination.countTotal
-          description: >-
-            count_total is set to true  to indicate that the result set should
-            include
-
-            a count of the total number of items available for pagination in
-            UIs.
-
-            count_total is only respected when offset is used. It is ignored
-            when key
-
-            is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
-      tags:
-        - Query
-  '/dcl/pki/revoked_certificates/{subject}/{subjectKeyId}':
-    get:
-      summary: Queries a RevokedCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedCertificates
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              revokedCertificates:
-                type: object
-                properties:
-                  subject:
-                    type: string
-                  subjectKeyId:
-                    type: string
-                  certs:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        pemCert:
-                          type: string
-                        serialNumber:
-                          type: string
-                        issuer:
-                          type: string
-                        authorityKeyId:
-                          type: string
-                        rootSubject:
-                          type: string
-                        rootSubjectKeyId:
-                          type: string
-                        isRoot:
-                          type: boolean
-                        owner:
-                          type: string
-                        subject:
-                          type: string
-                        subjectKeyId:
-                          type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: subject
-          in: path
-          required: true
-          type: string
-        - name: subjectKeyId
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
-  /dcl/pki/revoked_root_certificates:
-    get:
-      summary: Queries a RevokedRootCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedRootCertificates
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              RevokedRootCertificates:
-                type: object
-                properties:
-                  certs:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        subject:
-                          type: string
-                        subjectKeyId:
-                          type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      tags:
-        - Query
-  '/dcl/validator/lastPower/{owner}':
-    get:
-      summary: Queries a lastValidatorPower by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorLastValidatorPower
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              lastValidatorPower:
-                type: object
-                properties:
-                  owner:
-                    type: string
-                  power:
-                    type: integer
-                    format: int32
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                      description: >-
-                        A URL/resource name that uniquely identifies the type of
-                        the serialized
-
-                        protocol buffer message. This string must contain at
-                        least
-
-                        one "/" character. The last segment of the URL's path
-                        must represent
-
-                        the fully qualified name of the type (as in
-
-                        `path/google.protobuf.Duration`). The name should be in
-                        a canonical form
-
-                        (e.g., leading "." is not accepted).
-
-
-                        In practice, teams usually precompile into the binary
-                        all types that they
-
-                        expect it to use in the context of Any. However, for
-                        URLs which use the
-
-                        scheme `http`, `https`, or no scheme, one can optionally
-                        set up a type
-
-                        server that maps type URLs to message definitions as
-                        follows:
-
-
-                        * If no scheme is provided, `https` is assumed.
-
-                        * An HTTP GET on the URL must yield a
-                        [google.protobuf.Type][]
-                          value in binary format, or produce an error.
-                        * Applications are allowed to cache lookup results based
-                        on the
-                          URL, or have them precompiled into a binary to avoid any
-                          lookup. Therefore, binary compatibility needs to be preserved
-                          on changes to types. (Use versioned type names to manage
-                          breaking changes.)
-
-                        Note: this functionality is not currently available in
-                        the official
-
-                        protobuf release, and it is not used for type URLs
-                        beginning with
-
-                        type.googleapis.com.
-
-
-                        Schemes other than `http`, `https` (or the empty scheme)
-                        might be
-
-                        used with implementation specific semantics.
-                  additionalProperties: {}
-                  description: >-
-                    `Any` contains an arbitrary serialized protocol buffer
-                    message along with a
-
-                    URL that describes the type of the serialized message.
-
-
-                    Protobuf library provides support to pack/unpack Any values
-                    in the form
-
-                    of utility functions or additional generated methods of the
-                    Any type.
-
-
-                    Example 1: Pack and unpack a message in C++.
-
-                        Foo foo = ...;
-                        Any any;
-                        any.PackFrom(foo);
-                        ...
-                        if (any.UnpackTo(&foo)) {
-                          ...
-                        }
-
-                    Example 2: Pack and unpack a message in Java.
-
-                        Foo foo = ...;
-                        Any any = Any.pack(foo);
-                        ...
-                        if (any.is(Foo.class)) {
-                          foo = any.unpack(Foo.class);
-                        }
-
-                     Example 3: Pack and unpack a message in Python.
-
-                        foo = Foo(...)
-                        any = Any()
-                        any.Pack(foo)
-                        ...
-                        if any.Is(Foo.DESCRIPTOR):
-                          any.Unpack(foo)
-                          ...
-
-                     Example 4: Pack and unpack a message in Go
-
-                         foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
-                         ...
-                         foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
-                           ...
-                         }
-
-                    The pack methods provided by protobuf library will by
-                    default use
-
-                    'type.googleapis.com/full.type.name' as the type URL and the
-                    unpack
-
-                    methods only use the fully qualified type name after the
-                    last '/'
-
-                    in the type URL, for example "foo.bar.com/x/y.z" will yield
-                    type
-
-                    name "y.z".
-
-
-
-                    JSON
-
-                    ====
-
-                    The JSON representation of an `Any` value uses the regular
-
-                    representation of the deserialized, embedded message, with
-                    an
-
-                    additional field `@type` which contains the type URL.
-                    Example:
-
-                        package google.profile;
-                        message Person {
-                          string first_name = 1;
-                          string last_name = 2;
-                        }
-
-                        {
-                          "@type": "type.googleapis.com/google.profile.Person",
-                          "firstName": <string>,
-                          "lastName": <string>
-                        }
-
-                    If the embedded message type is well-known and has a custom
-                    JSON
-
-                    representation, that representation will be embedded adding
-                    a field
-
-                    `value` which holds the custom JSON in addition to the
-                    `@type`
-
-                    field. Example (for message [google.protobuf.Duration][]):
-
-                        {
-                          "@type": "type.googleapis.com/google.protobuf.Duration",
-                          "value": "1.212s"
-                        }
-      parameters:
-        - name: owner
-          in: path
-          required: true
-          type: string
-      tags:
-        - Query
   /zigbee-alliance/distributedcomplianceledger/model/model:
     get:
       summary: Queries a list of Model items.
@@ -15724,6 +14524,1206 @@ paths:
           required: true
           type: integer
           format: int32
+      tags:
+        - Query
+  /dcl/pki/certificates:
+    get:
+      summary: Queries a list of ApprovedCertificates items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              approvedCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/dcl/pki/certificates/{subject}':
+    get:
+      summary: Queries a ApprovedCertificatesBySubject by index.
+      operationId: >-
+        ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificatesBySubject
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              approvedCertificatesBySubject:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyIds:
+                    type: array
+                    items:
+                      type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/dcl/pki/certificates/{subject}/{subjectKeyId}':
+    get:
+      summary: Queries a ApprovedCertificates by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              approvedCertificates:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  '/dcl/pki/child-certificates/{issuer}/{authorityKeyId}':
+    get:
+      summary: Queries a ChildCertificates by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiChildCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              childCertificates:
+                type: object
+                properties:
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  certIds:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: issuer
+          in: path
+          required: true
+          type: string
+        - name: authorityKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/proposed-certificates:
+    get:
+      summary: Queries a list of ProposedCertificate items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificate:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    pemCert:
+                      type: string
+                    serialNumber:
+                      type: string
+                    owner:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/dcl/pki/proposed-certificates/{subject}/{subjectKeyId}':
+    get:
+      summary: Queries a ProposedCertificate by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificate
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificate:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  owner:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/proposed-revocation-certificates:
+    get:
+      summary: Queries a list of ProposedCertificateRevocation items.
+      operationId: >-
+        ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateRevocationAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificateRevocation:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    approvals:
+                      type: array
+                      items:
+                        type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}':
+    get:
+      summary: Queries a ProposedCertificateRevocation by index.
+      operationId: >-
+        ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateRevocation
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              proposedCertificateRevocation:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/revoked-certificates:
+    get:
+      summary: Queries a list of RevokedCertificates items.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedCertificatesAll
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedCertificates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    subject:
+                      type: string
+                    subjectKeyId:
+                      type: string
+                    certs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          pemCert:
+                            type: string
+                          serialNumber:
+                            type: string
+                          issuer:
+                            type: string
+                          authorityKeyId:
+                            type: string
+                          rootSubject:
+                            type: string
+                          rootSubjectKeyId:
+                            type: string
+                          isRoot:
+                            type: boolean
+                          owner:
+                            type: string
+                          subject:
+                            type: string
+                          subjectKeyId:
+                            type: string
+              pagination:
+                type: object
+                properties:
+                  nextKey:
+                    type: string
+                    format: byte
+                    title: |-
+                      next_key is the key to be passed to PageRequest.key to
+                      query the next page most efficiently
+                  total:
+                    type: string
+                    format: uint64
+                    title: >-
+                      total is total number of results available if
+                      PageRequest.count_total
+
+                      was set, its value is undefined otherwise
+                description: >-
+                  PageResponse is to be embedded in gRPC response messages where
+                  the
+
+                  corresponding request message has used PageRequest.
+
+                   message SomeResponse {
+                           repeated Bar results = 1;
+                           PageResponse page = 2;
+                   }
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: pagination.key
+          description: |-
+            key is a value returned in PageResponse.next_key to begin
+            querying the next page most efficiently. Only one of offset or key
+            should be set.
+          in: query
+          required: false
+          type: string
+          format: byte
+        - name: pagination.offset
+          description: >-
+            offset is a numeric offset that can be used when key is unavailable.
+
+            It is less efficient than using key. Only one of offset or key
+            should
+
+            be set.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.limit
+          description: >-
+            limit is the total number of results to be returned in the result
+            page.
+
+            If left empty it will default to a value to be set by each app.
+          in: query
+          required: false
+          type: string
+          format: uint64
+        - name: pagination.countTotal
+          description: >-
+            count_total is set to true  to indicate that the result set should
+            include
+
+            a count of the total number of items available for pagination in
+            UIs.
+
+            count_total is only respected when offset is used. It is ignored
+            when key
+
+            is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
+      tags:
+        - Query
+  '/dcl/pki/revoked-certificates/{subject}/{subjectKeyId}':
+    get:
+      summary: Queries a RevokedCertificates by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              revokedCertificates:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        pemCert:
+                          type: string
+                        serialNumber:
+                          type: string
+                        issuer:
+                          type: string
+                        authorityKeyId:
+                          type: string
+                        rootSubject:
+                          type: string
+                        rootSubjectKeyId:
+                          type: string
+                        isRoot:
+                          type: boolean
+                        owner:
+                          type: string
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: subject
+          in: path
+          required: true
+          type: string
+        - name: subjectKeyId
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
+  /dcl/pki/revoked-root-certificates:
+    get:
+      summary: Queries a RevokedRootCertificates by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedRootCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              RevokedRootCertificates:
+                type: object
+                properties:
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  /dcl/pki/root-certificates:
+    get:
+      summary: Queries a ApprovedRootCertificates by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedRootCertificates
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              ApprovedRootCertificates:
+                type: object
+                properties:
+                  certs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        subject:
+                          type: string
+                        subjectKeyId:
+                          type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
+  '/dcl/validator/lastPower/{owner}':
+    get:
+      summary: Queries a lastValidatorPower by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorLastValidatorPower
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              lastValidatorPower:
+                type: object
+                properties:
+                  owner:
+                    type: string
+                  power:
+                    type: integer
+                    format: int32
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                      description: >-
+                        A URL/resource name that uniquely identifies the type of
+                        the serialized
+
+                        protocol buffer message. This string must contain at
+                        least
+
+                        one "/" character. The last segment of the URL's path
+                        must represent
+
+                        the fully qualified name of the type (as in
+
+                        `path/google.protobuf.Duration`). The name should be in
+                        a canonical form
+
+                        (e.g., leading "." is not accepted).
+
+
+                        In practice, teams usually precompile into the binary
+                        all types that they
+
+                        expect it to use in the context of Any. However, for
+                        URLs which use the
+
+                        scheme `http`, `https`, or no scheme, one can optionally
+                        set up a type
+
+                        server that maps type URLs to message definitions as
+                        follows:
+
+
+                        * If no scheme is provided, `https` is assumed.
+
+                        * An HTTP GET on the URL must yield a
+                        [google.protobuf.Type][]
+                          value in binary format, or produce an error.
+                        * Applications are allowed to cache lookup results based
+                        on the
+                          URL, or have them precompiled into a binary to avoid any
+                          lookup. Therefore, binary compatibility needs to be preserved
+                          on changes to types. (Use versioned type names to manage
+                          breaking changes.)
+
+                        Note: this functionality is not currently available in
+                        the official
+
+                        protobuf release, and it is not used for type URLs
+                        beginning with
+
+                        type.googleapis.com.
+
+
+                        Schemes other than `http`, `https` (or the empty scheme)
+                        might be
+
+                        used with implementation specific semantics.
+                  additionalProperties: {}
+                  description: >-
+                    `Any` contains an arbitrary serialized protocol buffer
+                    message along with a
+
+                    URL that describes the type of the serialized message.
+
+
+                    Protobuf library provides support to pack/unpack Any values
+                    in the form
+
+                    of utility functions or additional generated methods of the
+                    Any type.
+
+
+                    Example 1: Pack and unpack a message in C++.
+
+                        Foo foo = ...;
+                        Any any;
+                        any.PackFrom(foo);
+                        ...
+                        if (any.UnpackTo(&foo)) {
+                          ...
+                        }
+
+                    Example 2: Pack and unpack a message in Java.
+
+                        Foo foo = ...;
+                        Any any = Any.pack(foo);
+                        ...
+                        if (any.is(Foo.class)) {
+                          foo = any.unpack(Foo.class);
+                        }
+
+                     Example 3: Pack and unpack a message in Python.
+
+                        foo = Foo(...)
+                        any = Any()
+                        any.Pack(foo)
+                        ...
+                        if any.Is(Foo.DESCRIPTOR):
+                          any.Unpack(foo)
+                          ...
+
+                     Example 4: Pack and unpack a message in Go
+
+                         foo := &pb.Foo{...}
+                         any, err := anypb.New(foo)
+                         if err != nil {
+                           ...
+                         }
+                         ...
+                         foo := &pb.Foo{}
+                         if err := any.UnmarshalTo(foo); err != nil {
+                           ...
+                         }
+
+                    The pack methods provided by protobuf library will by
+                    default use
+
+                    'type.googleapis.com/full.type.name' as the type URL and the
+                    unpack
+
+                    methods only use the fully qualified type name after the
+                    last '/'
+
+                    in the type URL, for example "foo.bar.com/x/y.z" will yield
+                    type
+
+                    name "y.z".
+
+
+
+                    JSON
+
+                    ====
+
+                    The JSON representation of an `Any` value uses the regular
+
+                    representation of the deserialized, embedded message, with
+                    an
+
+                    additional field `@type` which contains the type URL.
+                    Example:
+
+                        package google.profile;
+                        message Person {
+                          string first_name = 1;
+                          string last_name = 2;
+                        }
+
+                        {
+                          "@type": "type.googleapis.com/google.profile.Person",
+                          "firstName": <string>,
+                          "lastName": <string>
+                        }
+
+                    If the embedded message type is well-known and has a custom
+                    JSON
+
+                    representation, that representation will be embedded adding
+                    a field
+
+                    `value` which holds the custom JSON in addition to the
+                    `@type`
+
+                    field. Example (for message [google.protobuf.Duration][]):
+
+                        {
+                          "@type": "type.googleapis.com/google.protobuf.Duration",
+                          "value": "1.212s"
+                        }
+      parameters:
+        - name: owner
+          in: path
+          required: true
+          type: string
       tags:
         - Query
   /dcl/validator/lastPowers:
@@ -25592,458 +25592,6 @@ definitions:
           number:
             type: string
             format: uint64
-  zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificates:
-    type: object
-    properties:
-      subject:
-        type: string
-      subjectKeyId:
-        type: string
-      certs:
-        type: array
-        items:
-          type: object
-          properties:
-            pemCert:
-              type: string
-            serialNumber:
-              type: string
-            issuer:
-              type: string
-            authorityKeyId:
-              type: string
-            rootSubject:
-              type: string
-            rootSubjectKeyId:
-              type: string
-            isRoot:
-              type: boolean
-            owner:
-              type: string
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-  zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificatesBySubject:
-    type: object
-    properties:
-      subject:
-        type: string
-      subjectKeyIds:
-        type: array
-        items:
-          type: string
-  zigbeealliance.distributedcomplianceledger.pki.ApprovedRootCertificates:
-    type: object
-    properties:
-      certs:
-        type: array
-        items:
-          type: object
-          properties:
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-  zigbeealliance.distributedcomplianceledger.pki.Certificate:
-    type: object
-    properties:
-      pemCert:
-        type: string
-      serialNumber:
-        type: string
-      issuer:
-        type: string
-      authorityKeyId:
-        type: string
-      rootSubject:
-        type: string
-      rootSubjectKeyId:
-        type: string
-      isRoot:
-        type: boolean
-      owner:
-        type: string
-      subject:
-        type: string
-      subjectKeyId:
-        type: string
-  zigbeealliance.distributedcomplianceledger.pki.CertificateIdentifier:
-    type: object
-    properties:
-      subject:
-        type: string
-      subjectKeyId:
-        type: string
-  zigbeealliance.distributedcomplianceledger.pki.ChildCertificates:
-    type: object
-    properties:
-      issuer:
-        type: string
-      authorityKeyId:
-        type: string
-      certIds:
-        type: array
-        items:
-          type: object
-          properties:
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-  zigbeealliance.distributedcomplianceledger.pki.MsgAddX509CertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509CertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.ProposedCertificate:
-    type: object
-    properties:
-      subject:
-        type: string
-      subjectKeyId:
-        type: string
-      pemCert:
-        type: string
-      serialNumber:
-        type: string
-      owner:
-        type: string
-      approvals:
-        type: array
-        items:
-          type: string
-  zigbeealliance.distributedcomplianceledger.pki.ProposedCertificateRevocation:
-    type: object
-    properties:
-      subject:
-        type: string
-      subjectKeyId:
-        type: string
-      approvals:
-        type: array
-        items:
-          type: string
-  zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
-    type: object
-    properties:
-      approvedCertificates:
-        type: array
-        items:
-          type: object
-          properties:
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-            certs:
-              type: array
-              items:
-                type: object
-                properties:
-                  pemCert:
-                    type: string
-                  serialNumber:
-                    type: string
-                  issuer:
-                    type: string
-                  authorityKeyId:
-                    type: string
-                  rootSubject:
-                    type: string
-                  rootSubjectKeyId:
-                    type: string
-                  isRoot:
-                    type: boolean
-                  owner:
-                    type: string
-                  subject:
-                    type: string
-                  subjectKeyId:
-                    type: string
-      pagination:
-        type: object
-        properties:
-          nextKey:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
-  zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateResponse:
-    type: object
-    properties:
-      proposedCertificate:
-        type: array
-        items:
-          type: object
-          properties:
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-            pemCert:
-              type: string
-            serialNumber:
-              type: string
-            owner:
-              type: string
-            approvals:
-              type: array
-              items:
-                type: string
-      pagination:
-        type: object
-        properties:
-          nextKey:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
-  zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateRevocationResponse:
-    type: object
-    properties:
-      proposedCertificateRevocation:
-        type: array
-        items:
-          type: object
-          properties:
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-            approvals:
-              type: array
-              items:
-                type: string
-      pagination:
-        type: object
-        properties:
-          nextKey:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
-  zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedCertificatesResponse:
-    type: object
-    properties:
-      revokedCertificates:
-        type: array
-        items:
-          type: object
-          properties:
-            subject:
-              type: string
-            subjectKeyId:
-              type: string
-            certs:
-              type: array
-              items:
-                type: object
-                properties:
-                  pemCert:
-                    type: string
-                  serialNumber:
-                    type: string
-                  issuer:
-                    type: string
-                  authorityKeyId:
-                    type: string
-                  rootSubject:
-                    type: string
-                  rootSubjectKeyId:
-                    type: string
-                  isRoot:
-                    type: boolean
-                  owner:
-                    type: string
-                  subject:
-                    type: string
-                  subjectKeyId:
-                    type: string
-      pagination:
-        type: object
-        properties:
-          nextKey:
-            type: string
-            format: byte
-            title: |-
-              next_key is the key to be passed to PageRequest.key to
-              query the next page most efficiently
-          total:
-            type: string
-            format: uint64
-            title: >-
-              total is total number of results available if
-              PageRequest.count_total
-
-              was set, its value is undefined otherwise
-        description: |-
-          PageResponse is to be embedded in gRPC response messages where the
-          corresponding request message has used PageRequest.
-
-           message SomeResponse {
-                   repeated Bar results = 1;
-                   PageResponse page = 2;
-           }
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesBySubjectResponse:
-    type: object
-    properties:
-      approvedCertificatesBySubject:
-        type: object
-        properties:
-          subject:
-            type: string
-          subjectKeyIds:
-            type: array
-            items:
-              type: string
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse:
-    type: object
-    properties:
-      approvedCertificates:
-        type: object
-        properties:
-          subject:
-            type: string
-          subjectKeyId:
-            type: string
-          certs:
-            type: array
-            items:
-              type: object
-              properties:
-                pemCert:
-                  type: string
-                serialNumber:
-                  type: string
-                issuer:
-                  type: string
-                authorityKeyId:
-                  type: string
-                rootSubject:
-                  type: string
-                rootSubjectKeyId:
-                  type: string
-                isRoot:
-                  type: boolean
-                owner:
-                  type: string
-                subject:
-                  type: string
-                subjectKeyId:
-                  type: string
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
-    type: object
-    properties:
-      ApprovedRootCertificates:
-        type: object
-        properties:
-          certs:
-            type: array
-            items:
-              type: object
-              properties:
-                subject:
-                  type: string
-                subjectKeyId:
-                  type: string
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesResponse:
-    type: object
-    properties:
-      childCertificates:
-        type: object
-        properties:
-          issuer:
-            type: string
-          authorityKeyId:
-            type: string
-          certIds:
-            type: array
-            items:
-              type: object
-              properties:
-                subject:
-                  type: string
-                subjectKeyId:
-                  type: string
-  zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
-    type: object
-    properties:
-      proposedCertificate:
-        type: object
-        properties:
-          subject:
-            type: string
-          subjectKeyId:
-            type: string
-          pemCert:
-            type: string
-          serialNumber:
-            type: string
-          owner:
-            type: string
-          approvals:
-            type: array
-            items:
-              type: string
   zigbeealliance.distributedcomplianceledger.model.Model:
     type: object
     properties:
@@ -26537,6 +26085,458 @@ definitions:
             name:
               type: string
             partNumber:
+              type: string
+  zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificates:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            issuer:
+              type: string
+            authorityKeyId:
+              type: string
+            rootSubject:
+              type: string
+            rootSubjectKeyId:
+              type: string
+            isRoot:
+              type: boolean
+            owner:
+              type: string
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+  zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificatesBySubject:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyIds:
+        type: array
+        items:
+          type: string
+  zigbeealliance.distributedcomplianceledger.pki.ApprovedRootCertificates:
+    type: object
+    properties:
+      certs:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+  zigbeealliance.distributedcomplianceledger.pki.Certificate:
+    type: object
+    properties:
+      pemCert:
+        type: string
+      serialNumber:
+        type: string
+      issuer:
+        type: string
+      authorityKeyId:
+        type: string
+      rootSubject:
+        type: string
+      rootSubjectKeyId:
+        type: string
+      isRoot:
+        type: boolean
+      owner:
+        type: string
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+  zigbeealliance.distributedcomplianceledger.pki.CertificateIdentifier:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+  zigbeealliance.distributedcomplianceledger.pki.ChildCertificates:
+    type: object
+    properties:
+      issuer:
+        type: string
+      authorityKeyId:
+        type: string
+      certIds:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+  zigbeealliance.distributedcomplianceledger.pki.MsgAddX509CertResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCertResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCertResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCertResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCertResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509CertResponse:
+    type: object
+  zigbeealliance.distributedcomplianceledger.pki.ProposedCertificate:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      pemCert:
+        type: string
+      serialNumber:
+        type: string
+      owner:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: string
+  zigbeealliance.distributedcomplianceledger.pki.ProposedCertificateRevocation:
+    type: object
+    properties:
+      subject:
+        type: string
+      subjectKeyId:
+        type: string
+      approvals:
+        type: array
+        items:
+          type: string
+  zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
+    type: object
+    properties:
+      approvedCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateResponse:
+    type: object
+    properties:
+      proposedCertificate:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            pemCert:
+              type: string
+            serialNumber:
+              type: string
+            owner:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateRevocationResponse:
+    type: object
+    properties:
+      proposedCertificateRevocation:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            approvals:
+              type: array
+              items:
+                type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedCertificatesResponse:
+    type: object
+    properties:
+      revokedCertificates:
+        type: array
+        items:
+          type: object
+          properties:
+            subject:
+              type: string
+            subjectKeyId:
+              type: string
+            certs:
+              type: array
+              items:
+                type: object
+                properties:
+                  pemCert:
+                    type: string
+                  serialNumber:
+                    type: string
+                  issuer:
+                    type: string
+                  authorityKeyId:
+                    type: string
+                  rootSubject:
+                    type: string
+                  rootSubjectKeyId:
+                    type: string
+                  isRoot:
+                    type: boolean
+                  owner:
+                    type: string
+                  subject:
+                    type: string
+                  subjectKeyId:
+                    type: string
+      pagination:
+        type: object
+        properties:
+          nextKey:
+            type: string
+            format: byte
+            title: |-
+              next_key is the key to be passed to PageRequest.key to
+              query the next page most efficiently
+          total:
+            type: string
+            format: uint64
+            title: >-
+              total is total number of results available if
+              PageRequest.count_total
+
+              was set, its value is undefined otherwise
+        description: |-
+          PageResponse is to be embedded in gRPC response messages where the
+          corresponding request message has used PageRequest.
+
+           message SomeResponse {
+                   repeated Bar results = 1;
+                   PageResponse page = 2;
+           }
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesBySubjectResponse:
+    type: object
+    properties:
+      approvedCertificatesBySubject:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyIds:
+            type: array
+            items:
+              type: string
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse:
+    type: object
+    properties:
+      approvedCertificates:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                pemCert:
+                  type: string
+                serialNumber:
+                  type: string
+                issuer:
+                  type: string
+                authorityKeyId:
+                  type: string
+                rootSubject:
+                  type: string
+                rootSubjectKeyId:
+                  type: string
+                isRoot:
+                  type: boolean
+                owner:
+                  type: string
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
+    type: object
+    properties:
+      ApprovedRootCertificates:
+        type: object
+        properties:
+          certs:
+            type: array
+            items:
+              type: object
+              properties:
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesResponse:
+    type: object
+    properties:
+      childCertificates:
+        type: object
+        properties:
+          issuer:
+            type: string
+          authorityKeyId:
+            type: string
+          certIds:
+            type: array
+            items:
+              type: object
+              properties:
+                subject:
+                  type: string
+                subjectKeyId:
+                  type: string
+  zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
+    type: object
+    properties:
+      proposedCertificate:
+        type: object
+        properties:
+          subject:
+            type: string
+          subjectKeyId:
+            type: string
+          pemCert:
+            type: string
+          serialNumber:
+            type: string
+          owner:
+            type: string
+          approvals:
+            type: array
+            items:
               type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse:
     type: object

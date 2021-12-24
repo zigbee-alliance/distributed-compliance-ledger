@@ -18,7 +18,7 @@ import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplia
 import ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo from './zigbee-alliance/distributed-compliance-ledger/zigbeealliance.distributedcomplianceledger.vendorinfo'
 
 
-export default {
+export default { 
   CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
   CosmosCosmosSdkCosmosBankV1Beta1: load(CosmosCosmosSdkCosmosBankV1Beta1, 'cosmos.bank.v1beta1'),
   CosmosCosmosSdkCosmosCrisisV1Beta1: load(CosmosCosmosSdkCosmosCrisisV1Beta1, 'cosmos.crisis.v1beta1'),
@@ -35,12 +35,12 @@ export default {
   ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki, 'zigbeealliance.distributedcomplianceledger.pki'),
   ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator, 'zigbeealliance.distributedcomplianceledger.validator'),
   ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo: load(ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerVendorinfo, 'zigbeealliance.distributedcomplianceledger.vendorinfo'),
-
+  
 }
 
 
 function load(mod, fullns) {
-    return function init(store) {
+    return function init(store) {        
         if (store.hasModule([fullns])) {
             throw new Error('Duplicate module name detected: '+ fullns)
         }else{
