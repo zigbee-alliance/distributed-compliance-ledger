@@ -29,6 +29,7 @@ WORKDIR /go/src/dc-ledger
 COPY app ./app/
 COPY cmd ./cmd/
 COPY testutil ./testutil/
+COPY utils ./utils/
 COPY x ./x/
 COPY go.mod go.sum Makefile ./
 COPY docs/docs.go ./docs/

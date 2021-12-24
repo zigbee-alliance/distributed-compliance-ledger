@@ -2,6 +2,7 @@
 !app
 !cmd
 !testutil
+!utils
 !x
 !go.mod
 !go.sum
