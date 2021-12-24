@@ -7,6 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -63,7 +64,7 @@ func CmdShowApprovedCertificates() *cobra.Command {
 			}
 
 			res, err := queryClient.ApprovedCertificates(context.Background(), params)
-			if HandleError(err) != nil {
+			if cli.HandleError(err) != nil {
 				return err
 			}
 			if err != nil {

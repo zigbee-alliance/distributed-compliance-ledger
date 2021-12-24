@@ -17,6 +17,6 @@ const (
 	MemStoreKey = "mem_vendorinfo"
 )
 
-func KeyPrefix(p string) []byte {
+func KeyPrefix(p []byte) []byte {
 	return []byte(p)
 }

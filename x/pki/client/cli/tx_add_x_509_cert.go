@@ -8,6 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -25,7 +26,7 @@ func CmdAddX509Cert() *cobra.Command {
 				return err
 			}
 
-			cert, err := ReadFromFile(viper.GetString(FlagCertificate))
+			cert, err := cli.ReadFromFile(viper.GetString(FlagCertificate))
 			if err != nil {
 				return err
 			}

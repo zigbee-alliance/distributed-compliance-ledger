@@ -76,13 +76,13 @@ test_divider
 vid1=$RANDOM
 result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid1 --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes 2>&1) || true
 echo "$result"
-check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorID $vid1"
+check_response_and_report "$result" "transaction should be signed by a vendor account associated with the vendorID $vid1"
 
 test_divider
 
 # Update a vendor info record from a vendor account belonging to another vendor_account
 result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$second_vendor_account --yes 2>&1) || true
 echo "$result"
-check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorID $vid"
+check_response_and_report "$result" "transaction should be signed by a vendor account associated with the vendorID $vid"
 
 test_divider
