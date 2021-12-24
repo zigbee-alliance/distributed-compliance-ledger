@@ -1,4 +1,4 @@
-import { txClient, queryClient, MissingWalletError } from './module';
+import { txClient, queryClient, MissingWalletError, registry } from './module';
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex';
 import { VendorInfo } from "./module/types/vendorinfo/vendor_info";
@@ -41,6 +41,7 @@ const getDefaultState = () => {
         _Structure: {
             VendorInfo: getStructure(VendorInfo.fromPartial({})),
         },
+        _Registry: registry,
         _Subscriptions: new Set(),
     };
 };
@@ -57,10 +58,10 @@ export default {
             state[query][JSON.stringify(key)] = value;
         },
         SUBSCRIBE(state, subscription) {
-            state._Subscriptions.add(subscription);
+            state._Subscriptions.add(JSON.stringify(subscription));
         },
         UNSUBSCRIBE(state, subscription) {
-            state._Subscriptions.delete(subscription);
+            state._Subscriptions.delete(JSON.stringify(subscription));
         }
     },
     getters: {
@@ -78,6 +79,9 @@ export default {
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
+        },
+        getRegistry: (state) => {
+            return state._Registry;
         }
     },
     actions: {
@@ -98,15 +102,17 @@ export default {
         async StoreUpdate({ state, dispatch }) {
             state._Subscriptions.forEach(async (subscription) => {
                 try {
-                    await dispatch(subscription.action, subscription.payload);
+                    const sub = JSON.parse(subscription);
+                    await dispatch(sub.action, sub.payload);
                 }
                 catch (e) {
                     throw new SpVuexError('Subscriptions: ' + e.message);
                 }
             });
         },
-        async QueryVendorInfo({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params: { ...key }, query = null }) {
+        async QueryVendorInfo({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
+                const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
                 let value = (await queryClient.queryVendorInfo(key.vendorID)).data;
                 commit('QUERY', { query: 'VendorInfo', key: { params: { ...key }, query }, value });
@@ -118,12 +124,13 @@ export default {
                 throw new SpVuexError('QueryClient:QueryVendorInfo', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async QueryVendorInfoAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params: { ...key }, query = null }) {
+        async QueryVendorInfoAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
             try {
+                const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
                 let value = (await queryClient.queryVendorInfoAll(query)).data;
-                while (all && value.pagination && value.pagination.nextKey != null) {
-                    let next_values = (await queryClient.queryVendorInfoAll({ ...query, 'pagination.key': value.pagination.nextKey })).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryVendorInfoAll({ ...query, 'pagination.key': value.pagination.next_key })).data;
                     value = mergeResults(value, next_values);
                 }
                 commit('QUERY', { query: 'VendorInfoAll', key: { params: { ...key }, query }, value });
@@ -133,23 +140,6 @@ export default {
             }
             catch (e) {
                 throw new SpVuexError('QueryClient:QueryVendorInfoAll', 'API Node Unavailable. Could not perform query: ' + e.message);
-            }
-        },
-        async sendMsgDeleteVendorInfo({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgDeleteVendorInfo(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Send', 'Could not broadcast Tx: ' + e.message);
-                }
             }
         },
         async sendMsgCreateVendorInfo({ rootGetters }, { value, fee = [], memo = '' }) {
@@ -166,6 +156,23 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgCreateVendorInfo:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
+        async sendMsgDeleteVendorInfo({ rootGetters }, { value, fee = [], memo = '' }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgDeleteVendorInfo(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -186,21 +193,6 @@ export default {
                 }
             }
         },
-        async MsgDeleteVendorInfo({ rootGetters }, { value }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgDeleteVendorInfo(value);
-                return msg;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Create', 'Could not create message: ' + e.message);
-                }
-            }
-        },
         async MsgCreateVendorInfo({ rootGetters }, { value }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -213,6 +205,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgCreateVendorInfo:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgDeleteVendorInfo({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgDeleteVendorInfo(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

@@ -18,7 +18,7 @@ import "cosmos_proto/cosmos.proto";
 service Query {
     // Queries a account by index.
 	rpc Account(QueryGetAccountRequest) returns (QueryGetAccountResponse) {
-		option (google.api.http).get = "/dcl/auth/account/{address}";
+		option (google.api.http).get = "/dcl/auth/accounts/{address}";
 	}
 
 	// Queries a list of account items.
@@ -35,7 +35,7 @@ service Query {
 
 	// Queries a list of pendingAccount items.
 	rpc PendingAccountAll(QueryAllPendingAccountRequest) returns (QueryAllPendingAccountResponse) {
-		option (google.api.http).get = "/dcl/auth/accounts/proposed";
+		option (google.api.http).get = "/dcl/auth/proposed-accounts";
 	}
 
 // Queries a pendingAccountRevocation by index.
@@ -47,7 +47,7 @@ service Query {
 
 	// Queries a list of pendingAccountRevocation items.
 	rpc PendingAccountRevocationAll(QueryAllPendingAccountRevocationRequest) returns (QueryAllPendingAccountRevocationResponse) {
-		option (google.api.http).get = "/dcl/auth/accounts/proposed/revoked";
+		option (google.api.http).get = "/dcl/auth/proposed-revocation-accounts";
 	}
 
 // Queries a accountStat by index.

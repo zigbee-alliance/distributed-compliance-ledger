@@ -4,20 +4,20 @@ import { StdFee } from "@cosmjs/launchpad";
 import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgDeleteVendorInfo } from "./types/vendorinfo/tx";
 import { MsgCreateVendorInfo } from "./types/vendorinfo/tx";
+import { MsgDeleteVendorInfo } from "./types/vendorinfo/tx";
 import { MsgUpdateVendorInfo } from "./types/vendorinfo/tx";
 
 
 const types = [
-  ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo", MsgDeleteVendorInfo],
   ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo", MsgCreateVendorInfo],
+  ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo", MsgDeleteVendorInfo],
   ["/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", MsgUpdateVendorInfo],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
 
-const registry = new Registry(<any>types);
+export const registry = new Registry(<any>types);
 
 const defaultFee = {
   amount: [],
@@ -35,15 +35,19 @@ interface SignAndBroadcastOptions {
 
 const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions = { addr: "http://localhost:26657" }) => {
   if (!wallet) throw MissingWalletError;
-
-  const client = await SigningStargateClient.connectWithSigner(addr, wallet, { registry });
+  let client;
+  if (addr) {
+    client = await SigningStargateClient.connectWithSigner(addr, wallet, { registry });
+  }else{
+    client = await SigningStargateClient.offline( wallet, { registry });
+  }
   const { address } = (await wallet.getAccounts())[0];
 
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
-    msgDeleteVendorInfo: (data: MsgDeleteVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo", value: data }),
-    msgCreateVendorInfo: (data: MsgCreateVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo", value: data }),
-    msgUpdateVendorInfo: (data: MsgUpdateVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", value: data }),
+    msgCreateVendorInfo: (data: MsgCreateVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo", value: MsgCreateVendorInfo.fromPartial( data ) }),
+    msgDeleteVendorInfo: (data: MsgDeleteVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo", value: MsgDeleteVendorInfo.fromPartial( data ) }),
+    msgUpdateVendorInfo: (data: MsgUpdateVendorInfo): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo", value: MsgUpdateVendorInfo.fromPartial( data ) }),
     
   };
 };

@@ -407,15 +407,6 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryAccount
-     * @summary Queries a account by index.
-     * @request GET:/dcl/auth/account/{address}
-     */
-    queryAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
      * @name QueryAccountAll
      * @summary Queries a list of account items.
      * @request GET:/dcl/auth/accounts
@@ -431,9 +422,27 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryAccountStat
+     * @summary Queries a accountStat by index.
+     * @request GET:/dcl/auth/accounts/stat
+     */
+    queryAccountStat: (params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountStatResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryAccount
+     * @summary Queries a account by index.
+     * @request GET:/dcl/auth/accounts/{address}
+     */
+    queryAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryPendingAccountAll
      * @summary Queries a list of pendingAccount items.
-     * @request GET:/dcl/auth/accounts/proposed
+     * @request GET:/dcl/auth/proposed-accounts
      */
     queryPendingAccountAll: (query?: {
         "pagination.key"?: string;
@@ -448,7 +457,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryPendingAccountRevocationAll
      * @summary Queries a list of pendingAccountRevocation items.
-     * @request GET:/dcl/auth/accounts/proposed/revoked
+     * @request GET:/dcl/auth/proposed-revocation-accounts
      */
     queryPendingAccountRevocationAll: (query?: {
         "pagination.key"?: string;
@@ -457,14 +466,5 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.countTotal"?: boolean;
         "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<DclauthQueryAllPendingAccountRevocationResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryAccountStat
-     * @summary Queries a accountStat by index.
-     * @request GET:/dcl/auth/accounts/stat
-     */
-    queryAccountStat: (params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetAccountStatResponse, RpcStatus>>;
 }
 export {};
