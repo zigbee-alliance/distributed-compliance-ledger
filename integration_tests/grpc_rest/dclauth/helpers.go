@@ -18,8 +18,11 @@ import (
 	"context"
 
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
+	"github.com/cosmos/go-bip39"
 	"github.com/stretchr/testify/require"
 
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -179,6 +182,57 @@ func ApproveAddAccount(
 ) (*sdk.TxResponse, error) {
 	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signer), accAddr)
 	return suite.BuildAndBroadcastTx(signer, []sdk.Msg{msg}, accnum, sequence)
+}
+
+func CreateAccountInfo(suite *utils.TestSuite, accountName string) keyring.Info {
+	entropySeed, err := bip39.NewEntropy(256)
+	require.NoError(suite.T, err)
+
+	mnemonic, err := bip39.NewMnemonic(entropySeed)
+	require.NoError(suite.T, err)
+
+	accountInfo, err := suite.Kr.NewAccount(accountName, mnemonic, testconstants.Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
+	require.NoError(suite.T, err)
+
+	return accountInfo
+}
+
+func CreateAccount(
+	suite *utils.TestSuite,
+	accountName string,
+	roles dclauthtypes.AccountRoles,
+	vendorID uint16,
+	proposerName string,
+	proposerAccount dclauthtypes.Account,
+	approverName string,
+	approverAccount dclauthtypes.Account,
+) keyring.Info {
+
+	accountInfo := CreateAccountInfo(suite, accountName)
+
+	_, err := ProposeAddAccount(
+		suite,
+		proposerName,
+		accountInfo.GetAddress(),
+		accountInfo.GetPubKey(),
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		testconstants.VID,
+		proposerAccount.GetAccountNumber(),
+		proposerAccount.GetSequence(),
+	)
+	require.NoError(suite.T, err)
+	proposerAccount.SetSequence(proposerAccount.GetSequence() + 1)
+
+	_, err = ApproveAddAccount(
+		suite,
+		approverName,
+		accountInfo.GetAddress(),
+		approverAccount.GetAccountNumber(),
+		approverAccount.GetSequence())
+	require.NoError(suite.T, err)
+	approverAccount.SetSequence(approverAccount.GetSequence() + 1)
+
+	return accountInfo
 }
 
 func ProposeRevokeAccount(
