@@ -20,7 +20,7 @@ func (k Keeper) ValidatorAll(c context.Context, req *types.QueryAllValidatorRequ
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	validatorStore := prefix.NewStore(store, types.ValidatorKeyPrefix)
+	validatorStore := prefix.NewStore(store, types.KeyPrefix(types.ValidatorKeyPrefix))
 
 	// TODO issue 99: add filtering per State support here
 	pageRes, err := query.Paginate(validatorStore, req.Pagination, func(key []byte, value []byte) error {
