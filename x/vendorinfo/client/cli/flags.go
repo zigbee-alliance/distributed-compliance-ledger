@@ -3,11 +3,11 @@ package cli
 const (
 	FlagVID                          = "vid"
 	FlagVendorName                   = "vendorName"
-	FlagVendorNameShortcut           = "vn"
+	FlagVendorNameShortcut           = "" // "vn"  NOTE multiple-chars shorthands are not accepted by viper anymore
 	FlagCompanyLegalName             = "companyLegalName"
-	FlagCompanyLegalNameShortcut     = "cln"
+	FlagCompanyLegalNameShortcut     = "" // "cln"
 	FlagCompanyPreferredName         = "companyPreferredName"
-	FlagCompanyPreferredNameShortcut = "cpn"
+	FlagCompanyPreferredNameShortcut = "" // "cpn"
 	FlagVendorLandingPageURL         = "vendorLandingPageURL"
-	FlagVendorLandingPageURLShortcut = "vlpu"
+	FlagVendorLandingPageURLShortcut = "" // "vlpu"
 )
