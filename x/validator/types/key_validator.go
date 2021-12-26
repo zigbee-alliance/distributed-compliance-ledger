@@ -12,7 +12,7 @@ const (
 	// ValidatorKeyPrefix is the prefix to retrieve all Validator
 	ValidatorKeyPrefix = "Validator/value/"
 	// ValidatorByConsAddrKeyPrefix is the prefix to retrieve all Validator by consensus address
-	ValidatorByConsAddrKeyPrefix = "Validator/value/"
+	ValidatorByConsAddrKeyPrefix = "ValidatorByConsAddr/value/"
 )
 
 // ValidatorKey returns the store key to retrieve a Validator from the index fields
