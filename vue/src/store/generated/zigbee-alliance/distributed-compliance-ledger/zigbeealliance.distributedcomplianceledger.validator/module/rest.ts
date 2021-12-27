@@ -553,25 +553,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryLastValidatorPower
-   * @summary Queries a lastValidatorPower by index.
-   * @request GET:/dcl/validator/lastPower/{owner}
-   */
-  queryLastValidatorPower = (owner: string, params: RequestParams = {}) =>
-    this.request<ValidatorQueryGetLastValidatorPowerResponse, RpcStatus>({
-      path: `/dcl/validator/lastPower/${owner}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryLastValidatorPowerAll
    * @summary Queries a list of lastValidatorPower items.
-   * @request GET:/dcl/validator/lastPowers
+   * @request GET:/dcl/validator/last-powers
    */
   queryLastValidatorPowerAll = (
     query?: {
@@ -584,7 +568,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<ValidatorQueryAllLastValidatorPowerResponse, RpcStatus>({
-      path: `/dcl/validator/lastPowers`,
+      path: `/dcl/validator/last-powers`,
       method: "GET",
       query: query,
       format: "json",
@@ -595,13 +579,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryValidator
-   * @summary Queries a validator by index.
-   * @request GET:/dcl/validator/node/{owner}
+   * @name QueryLastValidatorPower
+   * @summary Queries a lastValidatorPower by index.
+   * @request GET:/dcl/validator/last-powers/{owner}
    */
-  queryValidator = (owner: string, params: RequestParams = {}) =>
-    this.request<ValidatorQueryGetValidatorResponse, RpcStatus>({
-      path: `/dcl/validator/node/${owner}`,
+  queryLastValidatorPower = (owner: string, params: RequestParams = {}) =>
+    this.request<ValidatorQueryGetLastValidatorPowerResponse, RpcStatus>({
+      path: `/dcl/validator/last-powers/${owner}`,
       method: "GET",
       format: "json",
       ...params,
@@ -629,6 +613,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/dcl/validator/nodes`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryValidator
+   * @summary Queries a validator by index.
+   * @request GET:/dcl/validator/nodes/{owner}
+   */
+  queryValidator = (owner: string, params: RequestParams = {}) =>
+    this.request<ValidatorQueryGetValidatorResponse, RpcStatus>({
+      path: `/dcl/validator/nodes/${owner}`,
+      method: "GET",
       format: "json",
       ...params,
     });

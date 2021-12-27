@@ -586,22 +586,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryAccount
-   * @summary Queries a account by index.
-   * @request GET:/dcl/auth/account/{address}
-   */
-  queryAccount = (address: string, params: RequestParams = {}) =>
-    this.request<DclauthQueryGetAccountResponse, RpcStatus>({
-      path: `/dcl/auth/account/${address}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryAccountAll
    * @summary Queries a list of account items.
    * @request GET:/dcl/auth/accounts
@@ -628,9 +612,41 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryAccountStat
+   * @summary Queries a accountStat by index.
+   * @request GET:/dcl/auth/accounts/stat
+   */
+  queryAccountStat = (params: RequestParams = {}) =>
+    this.request<DclauthQueryGetAccountStatResponse, RpcStatus>({
+      path: `/dcl/auth/accounts/stat`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryAccount
+   * @summary Queries a account by index.
+   * @request GET:/dcl/auth/accounts/{address}
+   */
+  queryAccount = (address: string, params: RequestParams = {}) =>
+    this.request<DclauthQueryGetAccountResponse, RpcStatus>({
+      path: `/dcl/auth/accounts/${address}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryPendingAccountAll
    * @summary Queries a list of pendingAccount items.
-   * @request GET:/dcl/auth/accounts/proposed
+   * @request GET:/dcl/auth/proposed-accounts
    */
   queryPendingAccountAll = (
     query?: {
@@ -643,7 +659,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclauthQueryAllPendingAccountResponse, RpcStatus>({
-      path: `/dcl/auth/accounts/proposed`,
+      path: `/dcl/auth/proposed-accounts`,
       method: "GET",
       query: query,
       format: "json",
@@ -656,7 +672,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryPendingAccountRevocationAll
    * @summary Queries a list of pendingAccountRevocation items.
-   * @request GET:/dcl/auth/accounts/proposed/revoked
+   * @request GET:/dcl/auth/proposed-revocation-accounts
    */
   queryPendingAccountRevocationAll = (
     query?: {
@@ -669,25 +685,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclauthQueryAllPendingAccountRevocationResponse, RpcStatus>({
-      path: `/dcl/auth/accounts/proposed/revoked`,
+      path: `/dcl/auth/proposed-revocation-accounts`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryAccountStat
-   * @summary Queries a accountStat by index.
-   * @request GET:/dcl/auth/accounts/stat
-   */
-  queryAccountStat = (params: RequestParams = {}) =>
-    this.request<DclauthQueryGetAccountStatResponse, RpcStatus>({
-      path: `/dcl/auth/accounts/stat`,
-      method: "GET",
       format: "json",
       ...params,
     });

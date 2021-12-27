@@ -140,56 +140,12 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryAccount
-         * @summary Queries a account by index.
-         * @request GET:/dcl/auth/account/{address}
-         */
-        this.queryAccount = (address, params = {}) => this.request({
-            path: `/dcl/auth/account/${address}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryAccountAll
          * @summary Queries a list of account items.
          * @request GET:/dcl/auth/accounts
          */
         this.queryAccountAll = (query, params = {}) => this.request({
             path: `/dcl/auth/accounts`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryPendingAccountAll
-         * @summary Queries a list of pendingAccount items.
-         * @request GET:/dcl/auth/accounts/proposed
-         */
-        this.queryPendingAccountAll = (query, params = {}) => this.request({
-            path: `/dcl/auth/accounts/proposed`,
-            method: "GET",
-            query: query,
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryPendingAccountRevocationAll
-         * @summary Queries a list of pendingAccountRevocation items.
-         * @request GET:/dcl/auth/accounts/proposed/revoked
-         */
-        this.queryPendingAccountRevocationAll = (query, params = {}) => this.request({
-            path: `/dcl/auth/accounts/proposed/revoked`,
             method: "GET",
             query: query,
             format: "json",
@@ -206,6 +162,50 @@ export class Api extends HttpClient {
         this.queryAccountStat = (params = {}) => this.request({
             path: `/dcl/auth/accounts/stat`,
             method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryAccount
+         * @summary Queries a account by index.
+         * @request GET:/dcl/auth/accounts/{address}
+         */
+        this.queryAccount = (address, params = {}) => this.request({
+            path: `/dcl/auth/accounts/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryPendingAccountAll
+         * @summary Queries a list of pendingAccount items.
+         * @request GET:/dcl/auth/proposed-accounts
+         */
+        this.queryPendingAccountAll = (query, params = {}) => this.request({
+            path: `/dcl/auth/proposed-accounts`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryPendingAccountRevocationAll
+         * @summary Queries a list of pendingAccountRevocation items.
+         * @request GET:/dcl/auth/proposed-revocation-accounts
+         */
+        this.queryPendingAccountRevocationAll = (query, params = {}) => this.request({
+            path: `/dcl/auth/proposed-revocation-accounts`,
+            method: "GET",
+            query: query,
             format: "json",
             ...params,
         });

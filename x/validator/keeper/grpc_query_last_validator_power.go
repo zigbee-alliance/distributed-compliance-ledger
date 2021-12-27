@@ -20,7 +20,7 @@ func (k Keeper) LastValidatorPowerAll(c context.Context, req *types.QueryAllLast
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	lastValidatorPowerStore := prefix.NewStore(store, types.LastValidatorPowerKeyPrefix)
+	lastValidatorPowerStore := prefix.NewStore(store, types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
 
 	pageRes, err := query.Paginate(lastValidatorPowerStore, req.Pagination, func(key []byte, value []byte) error {
 		var lastValidatorPower types.LastValidatorPower

@@ -8,6 +8,11 @@ import (
 
 var _ binary.ByteOrder
 
+const (
+	// AccountKeyPrefix is the prefix to retrieve all Account
+	AccountKeyPrefix = "Account/value/"
+)
+
 // AccountKey returns the store key to retrieve a Account from the index fields
 func AccountKey(
 	address sdk.AccAddress,

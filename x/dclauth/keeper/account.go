@@ -10,7 +10,7 @@ import (
 
 // SetAccount set a specific account in the store from its index
 func (k Keeper) SetAccountO(ctx sdk.Context, account types.Account) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.AccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 	b := k.cdc.MustMarshal(&account)
 	store.Set(types.AccountKey(
 		account.GetAddress(),
@@ -41,7 +41,7 @@ func (k Keeper) GetAccountO(
 	address sdk.AccAddress,
 
 ) (val types.Account, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.AccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 
 	b := store.Get(types.AccountKey(
 		address,
@@ -67,7 +67,7 @@ func (k Keeper) GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.Accou
 
 // Check if the Account record associated with an address is present in the store or not.
 func (k Keeper) IsAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.AccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 
 	return store.Has(types.AccountKey(
 		address,
@@ -80,7 +80,7 @@ func (k Keeper) RemoveAccount(
 	address sdk.AccAddress,
 
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.AccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 	store.Delete(types.AccountKey(
 		address,
 	))
@@ -97,7 +97,7 @@ func (k Keeper) GetAllAccount(ctx sdk.Context) (list []types.Account) {
 }
 
 func (k Keeper) IterateAccounts(ctx sdk.Context, cb func(account types.Account) (stop bool)) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.AccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
