@@ -34,7 +34,7 @@ func TestProposedCertificateRevocationQuerySingle(t *testing.T) {
 				Subject:      msgs[0].Subject,
 				SubjectKeyId: msgs[0].SubjectKeyId,
 			},
-			response: &types.QueryGetProposedCertificateRevocationResponse{ProposedCertificateRevocation: msgs[0]},
+			response: &types.QueryGetProposedCertificateRevocationResponse{ProposedCertificateRevocation: &msgs[0]},
 		},
 		{
 			desc: "Second",
@@ -42,7 +42,7 @@ func TestProposedCertificateRevocationQuerySingle(t *testing.T) {
 				Subject:      msgs[1].Subject,
 				SubjectKeyId: msgs[1].SubjectKeyId,
 			},
-			response: &types.QueryGetProposedCertificateRevocationResponse{ProposedCertificateRevocation: msgs[1]},
+			response: &types.QueryGetProposedCertificateRevocationResponse{ProposedCertificateRevocation: &msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",

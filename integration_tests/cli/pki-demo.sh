@@ -41,6 +41,123 @@ test_divider
 
 # Body
 
+# 1. QUERY ALL (EMPTY)
+
+echo "1. QUERY ALL EMPTY"
+test_divider
+
+echo "Request approved certificate must be empty"
+result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
+
+echo "Request all approved certificates must be empty"
+result=$(dcld query pki all-x509-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
+
+test_divider
+
+echo "Request proposed Root certificate must be empty"
+result=$(dcld query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
+
+test_divider
+
+echo "Request all proposed Root certificates must be empty"
+result=$(dcld query pki all-proposed-x509-root-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request revoked certificate must be empty"
+result=$(dcld query pki revoked-x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+echo "$result"
+
+echo "Request all revoked certificates must be empty"
+result=$(dcld query pki all-revoked-x509-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
+
+echo "Request all certificates by subject must be empty"
+result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all approved root certificates must be empty"
+result=$(dcld query pki all-x509-root-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all revoked root certificates must be empty"
+result=$(dcld query pki all-revoked-x509-root-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request root certificate proposed to revoke must be empty"
+result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all root certificates proposed to revoke must be empty"
+result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all child certificates must be empty"
+result=$(dcld query pki all-child-x509-certs --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"$root_cert_subject\""
+response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+
+# 2. PROPOSE ROOT
+
+echo "2. PROPOSE ROOT CERT"
+test_divider
+
 echo "$user_account (Not Trustee) propose Root certificate"
 root_path="integration_tests/constants/root_cert"
 result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$root_path" --from $user_account --yes)
@@ -56,6 +173,7 @@ check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
 test_divider
+
 
 echo "Request proposed Root certificate"
 result=$(dcld query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
@@ -76,9 +194,12 @@ echo "$result"
 test_divider
 
 echo "Approved certificate must be empty"
-result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
-# echo "$result"
+result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
 
 test_divider
 
@@ -113,6 +234,11 @@ response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 echo "$result"
 
+test_divider
+
+# 3. APPROVE ROOT CERT
+
+echo "3. APPROVE ROOT CERT"
 test_divider
 
 echo "$trustee_account (Trustee) approve Root certificate"
@@ -157,15 +283,6 @@ echo "$result"
 
 test_divider
 
-# echo "Request certificate chain for Root certificate"
-# result=$(dcld query pki x509-cert-chain --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-# check_response "$result" "\"subject\": \"$root_cert_subject\""
-# check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-# check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
-# echo "$result"
-
-# test_divider
-
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
@@ -195,6 +312,11 @@ response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
 echo "$result"
+
+# 4. ADD INTERMEDIATE CERT
+
+echo "4. ADD INTERMEDIATE CERT"
+test_divider
 
 
 echo "$user_account (Not Trustee) add Intermediate certificate"
@@ -244,6 +366,11 @@ response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\"
 response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 echo "$result"
 
+test_divider
+
+# 5. ADD LEAF CERT
+
+echo "5. ADD LEAF CERT"
 test_divider
 
 echo "$trustee_account (Trustee) add Leaf certificate"
@@ -397,6 +524,43 @@ echo "$result"
 
 test_divider
 
+echo "Request all child certificates for root"
+result=$(dcld query pki all-child-x509-certs --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+
+echo "Request all child certificates for intermediate"
+result=$(dcld query pki all-child-x509-certs --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"subject\": \"$leaf_cert_subject\""
+check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+echo "Request all child certificates for leaf"
+result=$(dcld query pki all-child-x509-certs --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+echo "$result"
+
+test_divider
+
+# 6. REVOKE INTERMEDIATE (AND HENCE  LEAF) CERTS
+
+echo "6. REVOKE INTERMEDIATE (AND HENCE  LEAF) CERTS"
+test_divider
+
 echo "$user_account (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate."
 result=$(echo "$passphrase" | dcld tx pki revoke-x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" --from=$user_account --yes)
 check_response "$result" "\"code\": 0"
@@ -510,17 +674,28 @@ echo "$result"
 test_divider
 
 echo "Approved Intermediate certificate must be empty"
-result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
-# echo "$result"
+result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+echo "$result"
 
 test_divider
 
 echo "Approved Leaf certificate must be empty"
-result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id" 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
-# echo "$result"
+result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
+echo "$result"
 
+test_divider
+
+# 7. PROPOSE REVOCATION OF ROOT CERT
+
+echo "7. PROPOSE REVOCATION OF ROOT CERT"
 test_divider
 
 echo "$trustee_account (Trustee) proposes to revoke Root certificate"
@@ -529,6 +704,12 @@ check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
+
+echo "Request root certificate proposed to revoke"
+result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "\"$root_cert_subject\""
+check_response "$result" "\"$root_cert_subject_key_id\""
+echo "$result"
 
 echo "Request all root certificates proposed to revoke"
 result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
@@ -611,6 +792,12 @@ echo "$result"
 
 test_divider
 
+# 8. APPROVE REVOCATION OF ROOT CERT
+
+echo "8. APPROVE REVOCATION OF ROOT CERT"
+test_divider
+
+
 echo "$second_trustee_account (Trustee) approves to revoke Root certificate"
 result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" --from $second_trustee_account --yes)
 check_response "$result" "\"code\": 0"
@@ -690,23 +877,32 @@ echo "$result"
 test_divider
 
 echo "Approved Intermediate certificate must be empty"
-result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id" 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
-# echo "$result"
+result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
+echo "$result"
 
 test_divider
 
 echo "Approved Leaf certificate must be empty"
-result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id" 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
-# echo "$result"
+result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
+echo "$result"
 
 test_divider
 
 echo "Approved Root certificate must be empty"
-result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id" 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
-# echo "$result"
+result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+check_response "$result" "null"
+response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
+response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
+echo "$result"
 
 test_divider
 

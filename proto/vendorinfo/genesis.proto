@@ -1,11 +1,14 @@
 syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.vendorinfo;
 
+import "vendorinfo/vendor_info.proto";
 // this line is used by starport scaffolding # genesis/proto/import
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types";
 
 // GenesisState defines the vendorinfo module's genesis state.
 message GenesisState {
-    // this line is used by starport scaffolding # genesis/proto/state
+    repeated VendorInfo vendorInfoList = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
 }

@@ -32,6 +32,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
+const (
+	DCLAuthAccountsEndpoint                   = "/dcl/auth/accounts/"
+	DCLAuthProposedAccountsEndpoint           = "/dcl/auth/proposed-accounts"
+	DCLAuthProposedRevocationAccountsEndpoint = "/dcl/auth/proposed-revocation-accounts"
+)
+
 //nolint:godox
 /*
 	To Run test you need:
@@ -47,7 +53,7 @@ func GetAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.A
 		// TODO issue 99: explore the way how to get the endpoint from proto-
 		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryGetAccountResponse
-		err := suite.QueryREST("/dcl/auth/account/"+address.String(), &resp)
+		err := suite.QueryREST(DCLAuthAccountsEndpoint+address.String(), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -77,7 +83,7 @@ func GetAccounts(suite *utils.TestSuite) (res []dclauthtypes.Account, err error)
 		// TODO issue 99: explore the way how to get the endpoint from proto-
 		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryAllAccountResponse
-		err := suite.QueryREST("/dcl/auth/accounts", &resp)
+		err := suite.QueryREST(DCLAuthAccountsEndpoint, &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +112,7 @@ func GetProposedAccounts(suite *utils.TestSuite) (res []dclauthtypes.PendingAcco
 		// TODO issue 99: explore the way how to get the endpoint from proto-
 		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryAllPendingAccountResponse
-		err := suite.QueryREST("/dcl/auth/accounts/proposed", &resp)
+		err := suite.QueryREST(DCLAuthProposedAccountsEndpoint, &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -137,7 +143,7 @@ func GetProposedAccountsToRevoke(suite *utils.TestSuite) (
 		// TODO issue 99: explore the way how to get the endpoint from proto-
 		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryAllPendingAccountRevocationResponse
-		err := suite.QueryREST("/dcl/auth/accounts/proposed/revoked", &resp)
+		err := suite.QueryREST(DCLAuthProposedRevocationAccountsEndpoint, &resp)
 		if err != nil {
 			return nil, err
 		}

@@ -16,9 +16,7 @@ func (k Keeper) ApprovedRootCertificates(c context.Context, req *types.QueryGetA
 	ctx := sdk.UnwrapSDKContext(c)
 
 	val, _ := k.GetApprovedRootCertificates(ctx)
-	// if !found {
-	// 	return nil, status.Error(codes.InvalidArgument, "not found")
-	// }
 
+	// Return empty list if not found
 	return &types.QueryGetApprovedRootCertificatesResponse{ApprovedRootCertificates: val}, nil
 }

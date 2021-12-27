@@ -20,7 +20,7 @@ func (k Keeper) PendingAccountAll(c context.Context, req *types.QueryAllPendingA
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	pendingAccountStore := prefix.NewStore(store, types.PendingAccountKeyPrefix)
+	pendingAccountStore := prefix.NewStore(store, types.KeyPrefix(types.PendingAccountKeyPrefix))
 
 	pageRes, err := query.Paginate(pendingAccountStore, req.Pagination, func(key []byte, value []byte) error {
 		var pendingAccount types.PendingAccount

@@ -10,7 +10,7 @@ import (
 
 // SetValidator set a specific validator in the store from its index
 func (k Keeper) SetValidator(ctx sdk.Context, validator types.Validator) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))
 	b := k.cdc.MustMarshal(&validator)
 	store.Set(types.ValidatorKey(
 		validator.GetOwner(),
@@ -19,7 +19,7 @@ func (k Keeper) SetValidator(ctx sdk.Context, validator types.Validator) {
 
 // Check if the Validator record associated with a validator address is present in the store or not.
 func (k Keeper) IsValidatorPresent(ctx sdk.Context, owner sdk.ValAddress) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))
 
 	return store.Has(types.ValidatorKey(owner))
 }
@@ -30,7 +30,7 @@ func (k Keeper) GetValidator(
 	owner sdk.ValAddress,
 
 ) (val types.Validator, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))
 
 	b := store.Get(types.ValidatorKey(
 		owner,
@@ -68,17 +68,17 @@ func (k Keeper) RemoveValidator(
 		// TODO ??? issue 99: the best way to deal with that
 		panic(err)
 	} else {
-		store := prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorByConsAddrKeyPrefix)
+		store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorByConsAddrKeyPrefix))
 		store.Delete(types.ValidatorByConsAddrKey(
 			valConsAddr,
 		))
 	}
 
 	// FIXME issue 99: owner should be a key here
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.LastValidatorPowerKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
 	store.Delete(types.LastValidatorPowerKey(owner))
 
-	store = prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorKeyPrefix)
+	store = prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))
 	store.Delete(types.ValidatorKey(owner))
 
 	// TODO call hooks ???
@@ -91,7 +91,7 @@ func (k Keeper) SetValidatorByConsAddr(ctx sdk.Context, validator types.Validato
 		return err
 	}
 
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorByConsAddrKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorByConsAddrKeyPrefix))
 	store.Set(types.ValidatorByConsAddrKey(
 		consAddr,
 	), validator.GetOwner())
@@ -101,7 +101,7 @@ func (k Keeper) SetValidatorByConsAddr(ctx sdk.Context, validator types.Validato
 
 // get a single validator by consensus address
 func (k Keeper) GetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress) (validator types.Validator, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorByConsAddrKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorByConsAddrKeyPrefix))
 
 	owner := store.Get(types.ValidatorByConsAddrKey(
 		consAddr,
@@ -135,7 +135,7 @@ func (k Keeper) GetAllValidator(ctx sdk.Context) (list []types.Validator) {
 
 // iterate over validators and apply function.
 func (k Keeper) IterateValidators(ctx sdk.Context, process func(validator types.Validator) (stop bool)) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.ValidatorKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

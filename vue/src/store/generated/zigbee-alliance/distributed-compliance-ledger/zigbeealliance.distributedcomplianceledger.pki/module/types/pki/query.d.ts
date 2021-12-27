@@ -44,13 +44,6 @@ export interface QueryGetChildCertificatesRequest {
 export interface QueryGetChildCertificatesResponse {
     childCertificates: ChildCertificates | undefined;
 }
-export interface QueryAllChildCertificatesRequest {
-    pagination: PageRequest | undefined;
-}
-export interface QueryAllChildCertificatesResponse {
-    childCertificates: ChildCertificates[];
-    pagination: PageResponse | undefined;
-}
 export interface QueryGetProposedCertificateRevocationRequest {
     subject: string;
     subjectKeyId: string;
@@ -165,20 +158,6 @@ export declare const QueryGetChildCertificatesResponse: {
     toJSON(message: QueryGetChildCertificatesResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetChildCertificatesResponse>): QueryGetChildCertificatesResponse;
 };
-export declare const QueryAllChildCertificatesRequest: {
-    encode(message: QueryAllChildCertificatesRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllChildCertificatesRequest;
-    fromJSON(object: any): QueryAllChildCertificatesRequest;
-    toJSON(message: QueryAllChildCertificatesRequest): unknown;
-    fromPartial(object: DeepPartial<QueryAllChildCertificatesRequest>): QueryAllChildCertificatesRequest;
-};
-export declare const QueryAllChildCertificatesResponse: {
-    encode(message: QueryAllChildCertificatesResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryAllChildCertificatesResponse;
-    fromJSON(object: any): QueryAllChildCertificatesResponse;
-    toJSON(message: QueryAllChildCertificatesResponse): unknown;
-    fromPartial(object: DeepPartial<QueryAllChildCertificatesResponse>): QueryAllChildCertificatesResponse;
-};
 export declare const QueryGetProposedCertificateRevocationRequest: {
     encode(message: QueryGetProposedCertificateRevocationRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetProposedCertificateRevocationRequest;
@@ -289,8 +268,6 @@ export interface Query {
     ProposedCertificateAll(request: QueryAllProposedCertificateRequest): Promise<QueryAllProposedCertificateResponse>;
     /** Queries a ChildCertificates by index. */
     ChildCertificates(request: QueryGetChildCertificatesRequest): Promise<QueryGetChildCertificatesResponse>;
-    /** Queries a list of ChildCertificates items. */
-    ChildCertificatesAll(request: QueryAllChildCertificatesRequest): Promise<QueryAllChildCertificatesResponse>;
     /** Queries a ProposedCertificateRevocation by index. */
     ProposedCertificateRevocation(request: QueryGetProposedCertificateRevocationRequest): Promise<QueryGetProposedCertificateRevocationResponse>;
     /** Queries a list of ProposedCertificateRevocation items. */
@@ -314,7 +291,6 @@ export declare class QueryClientImpl implements Query {
     ProposedCertificate(request: QueryGetProposedCertificateRequest): Promise<QueryGetProposedCertificateResponse>;
     ProposedCertificateAll(request: QueryAllProposedCertificateRequest): Promise<QueryAllProposedCertificateResponse>;
     ChildCertificates(request: QueryGetChildCertificatesRequest): Promise<QueryGetChildCertificatesResponse>;
-    ChildCertificatesAll(request: QueryAllChildCertificatesRequest): Promise<QueryAllChildCertificatesResponse>;
     ProposedCertificateRevocation(request: QueryGetProposedCertificateRevocationRequest): Promise<QueryGetProposedCertificateRevocationResponse>;
     ProposedCertificateRevocationAll(request: QueryAllProposedCertificateRevocationRequest): Promise<QueryAllProposedCertificateRevocationResponse>;
     RevokedCertificates(request: QueryGetRevokedCertificatesRequest): Promise<QueryGetRevokedCertificatesResponse>;

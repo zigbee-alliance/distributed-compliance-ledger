@@ -20,7 +20,7 @@ func (k Keeper) AccountAll(c context.Context, req *types.QueryAllAccountRequest)
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	accountStore := prefix.NewStore(store, types.AccountKeyPrefix)
+	accountStore := prefix.NewStore(store, types.KeyPrefix(types.AccountKeyPrefix))
 
 	pageRes, err := query.Paginate(accountStore, req.Pagination, func(key []byte, value []byte) error {
 		var account types.Account

@@ -48,11 +48,6 @@ service Query {
 		option (google.api.http).get = "/dcl/pki/child_certificates/{issuer}/{authority_key_id}";
 	}
 
-	// Queries a list of ChildCertificates items.
-	rpc ChildCertificatesAll(QueryAllChildCertificatesRequest) returns (QueryAllChildCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/child_certificates";
-	}
-
 // Queries a ProposedCertificateRevocation by index.
 	rpc ProposedCertificateRevocation(QueryGetProposedCertificateRevocationRequest) returns (QueryGetProposedCertificateRevocationResponse) {
 		option (google.api.http).get = "/dcl/pki/proposed_certificate_revocation/{subject}/{subject_key_id}";
@@ -97,7 +92,7 @@ message QueryGetApprovedCertificatesRequest {
 }
 
 message QueryGetApprovedCertificatesResponse {
-	ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = false];
+	ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllApprovedCertificatesRequest {
@@ -116,7 +111,7 @@ message QueryGetProposedCertificateRequest {
 }
 
 message QueryGetProposedCertificateResponse {
-	ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = false];
+	ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllProposedCertificateRequest {
@@ -135,16 +130,7 @@ message QueryGetChildCertificatesRequest {
 }
 
 message QueryGetChildCertificatesResponse {
-	ChildCertificates childCertificates = 1 [(gogoproto.nullable) = false];
-}
-
-message QueryAllChildCertificatesRequest {
-	cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
-
-message QueryAllChildCertificatesResponse {
-	repeated ChildCertificates childCertificates = 1 [(gogoproto.nullable) = false];
-	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+	ChildCertificates childCertificates = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryGetProposedCertificateRevocationRequest {
@@ -154,7 +140,7 @@ message QueryGetProposedCertificateRevocationRequest {
 }
 
 message QueryGetProposedCertificateRevocationResponse {
-	ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = false];
+	ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllProposedCertificateRevocationRequest {
@@ -173,7 +159,7 @@ message QueryGetRevokedCertificatesRequest {
 }
 
 message QueryGetRevokedCertificatesResponse {
-	RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = false];
+	RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllRevokedCertificatesRequest {
@@ -201,7 +187,7 @@ message QueryGetApprovedCertificatesBySubjectRequest {
 }
 
 message QueryGetApprovedCertificatesBySubjectResponse {
-	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
+	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = true];
 }
 
 // this line is used by starport scaffolding # 3

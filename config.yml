@@ -1,6 +1,3 @@
-# TODO: create a proper config file
-build:
-  main: "cmd/dcld"
 accounts:
   - name: alice
     coins: ["20000token", "200000000stake"]
@@ -17,3 +14,5 @@ client:
 faucet:
   name: bob
   coins: ["5token", "100000stake"]
+build:
+  main: "app"
