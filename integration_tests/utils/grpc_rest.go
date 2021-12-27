@@ -184,3 +184,16 @@ func (suite *TestSuite) QueryREST(uri string, resp proto.Message) error {
 	require.NoError(suite.T, suite.EncodingConfig.Marshaler.UnmarshalJSON(respBytes, resp))
 	return nil
 }
+
+func (suite *TestSuite) AssertNotFound(err error) {
+	require.Error(suite.T, err)
+	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
+
+	if suite.Rest {
+		resterr, ok := err.(*RESTError)
+		if !ok {
+			panic("REST error is not RESTError type")
+		}
+		require.Equal(suite.T, resterr.resp.StatusCode, 404)
+	}
+}

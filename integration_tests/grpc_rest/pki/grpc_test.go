@@ -31,7 +31,7 @@ import (
 */
 
 //nolint:funlen
-func TestAuthDemoGRPC(t *testing.T) {
+func TestPkiDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	pki.PKIDemo(&suite)
 }

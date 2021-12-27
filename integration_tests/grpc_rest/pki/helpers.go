@@ -17,11 +17,17 @@ package pki
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"net/url"
+	"strconv"
+	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	dclauthhelpers "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -410,371 +416,467 @@ func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyId s
 	return res, nil
 }
 
-// Common Test Logic
-
 //nolint:funlen
 func PKIDemo(suite *utils.TestSuite) {
-	// rand.Seed(time.Now().UnixNano())
-
-	// jackName := testconstants.JackAccount
-	// aliceName := testconstants.AliceAccount
-
-	// jackKeyInfo, _ := suite.Kr.Key(jackName)
-	// aliceKeyInfo, _ := suite.Kr.Key(aliceName)
-
-	// // build map with an acc address as a key
-	// inputAccounts, err := dclauthhelpers.GetAccounts(suite)
-	// require.NoError(suite.T, err)
-	// accDataInitial := make(map[string]dclauthtypes.Account)
-	// for _, acc := range inputAccounts {
-	// 	accDataInitial[acc.GetAddress().String()] = acc
-	// }
-
-	// // Create account for Anna
-	// vendorAccountName := "newVendorAccount" + strconv.Itoa(rand.Intn(1000))
-	// _ = dclauthhelpers.CreateAccount(
-	// 	suite,
-	// 	vendorAccountName, dclauthtypes.AccountRoles{dclauthtypes.Vendor}, uint16(testconstants.VID),
-	// 	jackName, accDataInitial[jackKeyInfo.GetAddress().String()],
-	// 	aliceName, accDataInitial[aliceKeyInfo.GetAddress().String()],
-	// )
-
 	// All requests return empty or 404 value
 	proposedCertificates, _ := GetAllProposedX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))
 
 	_, err := GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Error(suite.T, err)
-	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	suite.AssertNotFound(err)
 
-	allCertificates, _ := GetAllX509Certs(suite)
-	require.Equal(suite.T, 0, len(allCertificates))
+	certificates, _ := GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
 
-	allRevokedCertificates, _ := GetAllRevokedX509Certs(suite)
-	require.Equal(suite.T, 0, len(allRevokedCertificates))
+	_, err = GetX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	suite.AssertNotFound(err)
 
-	allProposedRevocationCertificates, _ := GetAllProposedRevocationX509Certs(suite)
-	require.Equal(suite.T, 0, len(allProposedRevocationCertificates))
+	revokedCertificates, _ := GetAllRevokedX509Certs(suite)
+	require.Equal(suite.T, 0, len(revokedCertificates))
 
-	allRootCertificates, _ := GetAllRootX509Certs(suite)
-	require.Equal(suite.T, 0, len(allRootCertificates.Certs))
+	_, err = GetRevokedX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	suite.AssertNotFound(err)
 
-	allRevokedRootCertificates, _ := GetAllRevokedRootX509Certs(suite)
-	require.Equal(suite.T, 0, len(allRevokedRootCertificates.Certs))
+	proposedRevocationCertificates, _ := GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
+
+	_, err = GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	rootCertificates, _ := GetAllRootX509Certs(suite)
+	require.Equal(suite.T, 0, len(rootCertificates.Certs))
+
+	revokedRootCertificates, _ := GetAllRevokedRootX509Certs(suite)
+	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
 	_, err = GetAllChildX509Certs(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	require.Error(suite.T, err)
-	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	suite.AssertNotFound(err)
 
 	_, err = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
-	require.Error(suite.T, err)
-	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
+	suite.AssertNotFound(err)
 
-	// // Request all approved certificates
-	// certificates, _ := utils.GetAllX509Certs()
-	// require.Equal(suite.T, 0, len(certificates.Items))
+	jackName := testconstants.JackAccount
+	aliceName := testconstants.AliceAccount
+	jackKeyInfo, _ := suite.Kr.Key(jackName)
+	aliceKeyInfo, _ := suite.Kr.Key(aliceName)
 
-	// // User (Not Trustee) propose Root certificate
-	// msgProposeAddX509RootCert := pki.MsgProposeAddX509RootCert{
-	// 	Cert:   testconstants.RootCertPem,
-	// 	Signer: userKeyInfo.Address,
-	// }
-	// _, _ = utils.ProposeAddX509RootCert(msgProposeAddX509RootCert, userKeyInfo.Name, testconstants.Passphrase)
+	// build map with an acc address as a key
+	inputAccounts, err := dclauthhelpers.GetAccounts(suite)
+	require.NoError(suite.T, err)
+	accDataInitial := make(map[string]dclauthtypes.Account)
+	for _, acc := range inputAccounts {
+		accDataInitial[acc.GetAddress().String()] = acc
+	}
 
-	// // Request all proposed Root certificates
-	// proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
-	// require.Equal(suite.T, 1, len(proposedCertificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, proposedCertificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates.Items[0].SubjectKeyID)
+	// Create account for new Vendor
+	rand.Seed(time.Now().UnixNano())
+	vendorAccountName := "newVendorAccount" + strconv.Itoa(rand.Intn(1000))
+	userKeyInfo := dclauthhelpers.CreateAccount(
+		suite,
+		vendorAccountName, dclauthtypes.AccountRoles{dclauthtypes.Vendor}, uint16(testconstants.VID),
+		jackName, accDataInitial[jackKeyInfo.GetAddress().String()],
+		aliceName, accDataInitial[aliceKeyInfo.GetAddress().String()],
+	)
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 0, len(certificates.Items))
+	inputAccounts, err = dclauthhelpers.GetAccounts(suite)
+	require.NoError(suite.T, err)
+	accDataInitial = make(map[string]dclauthtypes.Account)
+	for _, acc := range inputAccounts {
+		accDataInitial[acc.GetAddress().String()] = acc
+	}
+	jackSequence := accDataInitial[jackKeyInfo.GetAddress().String()].GetSequence()
+	jackAccNum := accDataInitial[jackKeyInfo.GetAddress().String()].GetAccountNumber()
+	aliceSequence := accDataInitial[aliceKeyInfo.GetAddress().String()].GetSequence()
+	aliceAccNum := accDataInitial[aliceKeyInfo.GetAddress().String()].GetAccountNumber()
+	userSequence := accDataInitial[userKeyInfo.GetAddress().String()].GetSequence()
+	userAccNum := accDataInitial[userKeyInfo.GetAddress().String()].GetAccountNumber()
 
-	// // Request proposed Root certificate
-	// proposedCertificate, _ :=
-	// 	utils.GetProposedX509RootCert(testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	// require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, proposedCertificate.Owner)
-	// require.Nil(suite.T, proposedCertificate.Approvals)
+	// User (Not Trustee) propose Root certificate
+	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.RootCertPem,
+		Signer: userKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(vendorAccountName, []sdk.Msg{&msgProposeAddX509RootCert}, userAccNum, userSequence)
+	require.NoError(suite.T, err)
+	userSequence += 1
 
-	// // Jack (Trustee) approve Root certificate
-	// msgApproveAddX509RootCert := pki.MsgApproveAddX509RootCert{
-	// 	Subject:      proposedCertificate.Subject,
-	// 	SubjectKeyID: proposedCertificate.SubjectKeyID,
-	// 	Signer:       jackKeyInfo.Address,
-	// }
-	// _, _ = utils.ApproveAddX509RootCert(msgApproveAddX509RootCert, jackKeyInfo.Name, testconstants.Passphrase)
+	// Request all proposed Root certificates
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 1, len(proposedCertificates))
+	require.Equal(suite.T, testconstants.RootSubject, proposedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 
-	// // Request all proposed Root certificates
-	// proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
-	// require.Equal(suite.T, 1, len(proposedCertificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, proposedCertificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates.Items[0].SubjectKeyID)
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 0, len(certificates.Items))
+	// Request proposed Root certificate
+	proposedCertificate, _ :=
+		GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
+	require.Equal(suite.T, userKeyInfo.GetAddress().String(), proposedCertificate.Owner)
+	//require.Equal(suite.T, []string{}, proposedCertificate.Approvals)
 
-	// // Request proposed Root certificate
-	// proposedCertificate, _ =
-	// 	utils.GetProposedX509RootCert(testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	// require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, proposedCertificate.Owner)
-	// require.Equal(suite.T, []sdk.AccAddress{jackKeyInfo.Address}, proposedCertificate.Approvals)
+	// Jack (Trustee) approve Root certificate
+	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       jackKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(jackName, []sdk.Msg{&msgApproveAddX509RootCert}, jackAccNum, jackSequence)
+	require.NoError(suite.T, err)
+	jackSequence += 1
 
-	// // Alice (Trustee) approve Root certificate
-	// secondMsgApproveAddX509RootCert := pki.MsgApproveAddX509RootCert{
-	// 	Subject:      proposedCertificate.Subject,
-	// 	SubjectKeyID: proposedCertificate.SubjectKeyID,
-	// 	Signer:       aliceKeyInfo.Address,
-	// }
-	// _, _ = utils.ApproveAddX509RootCert(secondMsgApproveAddX509RootCert, aliceKeyInfo.Name, testconstants.Passphrase)
+	// Request all proposed Root certificates
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 1, len(proposedCertificates))
+	require.Equal(suite.T, testconstants.RootSubject, proposedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates[0].SubjectKeyId)
 
-	// // Request all proposed Root certificates
-	// proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
-	// require.Equal(suite.T, 0, len(proposedCertificates.Items))
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 1, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	// Request proposed Root certificate
+	proposedCertificate, _ =
+		GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
+	require.Equal(suite.T, userKeyInfo.GetAddress().String(), proposedCertificate.Owner)
+	require.Equal(suite.T, []string{jackKeyInfo.GetAddress().String()}, proposedCertificate.Approvals)
 
-	// // Request all approved Root certificates
-	// certificates, _ = utils.GetAllX509RootCerts()
-	// require.Equal(suite.T, 1, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	// Alice (Trustee) approve Root certificate
+	secondMsgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(aliceName, []sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceAccNum, aliceSequence)
+	require.NoError(suite.T, err)
+	aliceSequence += 1
 
-	// // Request approved Root certificate
-	// certificate, _ := utils.GetX509Cert(testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	// require.Equal(suite.T, testconstants.RootCertPem, certificate.PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, certificate.Owner)
-	// require.True(suite.T, certificate.IsRoot)
+	// Request all proposed Root certificates
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 0, len(proposedCertificates))
 
-	// // Request certificate chain for Root certificate
-	// certificateChain, _ := utils.GetX509CertChain(testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	// require.Len(suite.T, certificateChain.Items, 1)
-	// require.Equal(suite.T, testconstants.RootCertPem, certificateChain.Items[0].PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, certificateChain.Items[0].Owner)
-	// require.True(suite.T, certificateChain.Items[0].IsRoot)
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 1, len(certificates))
+	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
 
-	// // User (Not Trustee) add Intermediate certificate
-	// msgAddX509Cert := pki.MsgAddX509Cert{
-	// 	Cert:   testconstants.IntermediateCertPem,
-	// 	Signer: userKeyInfo.Address,
-	// }
-	// _, _ = utils.AddX509Cert(msgAddX509Cert, userKeyInfo.Name, testconstants.Passphrase)
+	// Request all approved Root certificates
+	rootCertificates, _ = GetAllRootX509Certs(suite)
+	require.Equal(suite.T, 1, len(rootCertificates.Certs))
+	require.Equal(suite.T, testconstants.RootSubject, rootCertificates.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
 
-	// // Request all proposed Root certificates
-	// proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
-	// require.Equal(suite.T, 0, len(proposedCertificates.Items))
+	// Request approved Root certificate
+	certificate, _ := GetX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, testconstants.RootSubject, certificate.Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, 1, len(certificate.Certs))
+	require.Equal(suite.T, testconstants.RootCertPem, certificate.Certs[0].PemCert)
+	require.Equal(suite.T, userKeyInfo.GetAddress().String(), certificate.Certs[0].Owner)
+	require.True(suite.T, certificate.Certs[0].IsRoot)
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 2, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.IntermediateSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificates.Items[0].SubjectKeyID)
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[1].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[1].SubjectKeyID)
+	// User (Not Trustee) add Intermediate certificate
+	msgAddX509Cert := pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.IntermediateCertPem,
+		Signer: userKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(vendorAccountName, []sdk.Msg{&msgAddX509Cert}, userAccNum, userSequence)
+	require.NoError(suite.T, err)
+	userSequence += 1
 
-	// // Request all approved Root certificates
-	// certificates, _ = utils.GetAllX509RootCerts()
-	// require.Equal(suite.T, 1, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	// Request all proposed Root certificates
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 0, len(proposedCertificates))
 
-	// // Request Intermediate certificate
-	// certificate, _ = utils.GetX509Cert(testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-	// require.Equal(suite.T, testconstants.IntermediateCertPem, certificate.PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, certificate.Owner)
-	// require.False(t, certificate.IsRoot)
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 2, len(certificates))
+	require.Equal(suite.T, testconstants.IntermediateSubject, certificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, certificates[1].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[1].SubjectKeyId)
 
-	// // Request certificate chain for Intermediate certificate
-	// certificateChain, _ = utils.GetX509CertChain(testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-	// require.Len(suite.T, certificateChain.Items, 2)
-	// require.Equal(suite.T, testconstants.IntermediateCertPem, certificateChain.Items[0].PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, certificateChain.Items[0].Owner)
-	// require.False(t, certificateChain.Items[0].IsRoot)
-	// require.Equal(suite.T, testconstants.RootCertPem, certificateChain.Items[1].PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, certificateChain.Items[1].Owner)
-	// require.True(suite.T, certificateChain.Items[1].IsRoot)
+	// Request all approved Root certificates
+	rootCertificates, _ = GetAllRootX509Certs(suite)
+	require.Equal(suite.T, 1, len(rootCertificates.Certs))
+	require.Equal(suite.T, testconstants.RootSubject, rootCertificates.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
 
-	// // Alice (Trustee) add Leaf certificate
-	// secondMsgAddX509Cert := pki.MsgAddX509Cert{
-	// 	Cert:   testconstants.LeafCertPem,
-	// 	Signer: aliceKeyInfo.Address,
-	// }
-	// _, _ = utils.AddX509Cert(secondMsgAddX509Cert, aliceKeyInfo.Name, testconstants.Passphrase)
+	// Request Intermediate certificate
+	certificate, _ = GetX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	require.Equal(suite.T, testconstants.IntermediateSubject, certificate.Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, 1, len(certificate.Certs))
+	require.Equal(suite.T, testconstants.IntermediateCertPem, certificate.Certs[0].PemCert)
+	require.Equal(suite.T, userKeyInfo.GetAddress().String(), certificate.Certs[0].Owner)
+	require.False(suite.T, certificate.Certs[0].IsRoot)
 
-	// // Request all proposed Root certificates
-	// proposedCertificates, _ = utils.GetAllProposedX509RootCerts()
-	// require.Equal(suite.T, 0, len(proposedCertificates.Items))
+	// Alice (Trustee) add Leaf certificate
+	secondMsgAddX509Cert := pkitypes.MsgAddX509Cert{
+		Cert:   testconstants.LeafCertPem,
+		Signer: aliceKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(aliceName, []sdk.Msg{&secondMsgAddX509Cert}, aliceAccNum, aliceSequence)
+	require.NoError(suite.T, err)
+	aliceSequence += 1
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 3, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.IntermediateSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificates.Items[0].SubjectKeyID)
-	// require.Equal(suite.T, testconstants.LeafSubject, certificates.Items[1].Subject)
-	// require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificates.Items[1].SubjectKeyID)
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[2].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[2].SubjectKeyID)
+	// Request all proposed Root certificates
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 0, len(proposedCertificates))
 
-	// // Request all approved Root certificates
-	// certificates, _ = utils.GetAllX509RootCerts()
-	// require.Equal(suite.T, 1, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 3, len(certificates))
+	require.Equal(suite.T, testconstants.IntermediateSubject, certificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, certificates[1].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, certificates[2].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[2].SubjectKeyId)
 
-	// // Request Leaf certificate
-	// certificate, _ = utils.GetX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
-	// require.Equal(suite.T, testconstants.LeafCertPem, certificate.PemCert)
-	// require.Equal(suite.T, aliceKeyInfo.Address, certificate.Owner)
-	// require.False(t, certificate.IsRoot)
+	// Request all approved Root certificates
+	rootCertificates, _ = GetAllRootX509Certs(suite)
+	require.Equal(suite.T, 1, len(rootCertificates.Certs))
+	require.Equal(suite.T, testconstants.RootSubject, rootCertificates.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
 
-	// // Request certificate chain for Leaf certificate
-	// certificateChain, _ = utils.GetX509CertChain(testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
-	// require.Len(suite.T, certificateChain.Items, 3)
-	// require.Equal(suite.T, testconstants.LeafCertPem, certificateChain.Items[0].PemCert)
-	// require.Equal(suite.T, aliceKeyInfo.Address, certificateChain.Items[0].Owner)
-	// require.False(t, certificateChain.Items[0].IsRoot)
-	// require.Equal(suite.T, testconstants.IntermediateCertPem, certificateChain.Items[1].PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, certificateChain.Items[1].Owner)
-	// require.False(t, certificateChain.Items[1].IsRoot)
-	// require.Equal(suite.T, testconstants.RootCertPem, certificateChain.Items[2].PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, certificateChain.Items[2].Owner)
-	// require.True(suite.T, certificateChain.Items[2].IsRoot)
+	// Request Leaf certificate
+	certificate, _ = GetX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	require.Equal(suite.T, testconstants.LeafSubject, certificate.Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, 1, len(certificate.Certs))
+	require.Equal(suite.T, testconstants.LeafCertPem, certificate.Certs[0].PemCert)
+	require.Equal(suite.T, aliceKeyInfo.GetAddress().String(), certificate.Certs[0].Owner)
+	require.Equal(suite.T, testconstants.LeafSubject, certificate.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.Certs[0].SubjectKeyId)
+	require.False(suite.T, certificate.Certs[0].IsRoot)
 
-	// // Request all Subject certificates
-	// certificates, _ = utils.GetAllSubjectX509Certs(testconstants.LeafSubject)
-	// require.Equal(suite.T, 1, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	// Request all Subject certificates
+	subjectCertificates, _ := GetAllX509CertsBySubject(suite, testconstants.LeafSubject)
+	require.Equal(suite.T, testconstants.LeafSubject, subjectCertificates.Subject)
+	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, subjectCertificates.SubjectKeyIds[0])
 
-	// // Request all Root certificates proposed to revoke
-	// proposedCertificateRevocations, _ := utils.GetAllProposedX509RootCertsToRevoke()
-	// require.Equal(suite.T, 0, len(proposedCertificateRevocations.Items))
+	subjectCertificates, _ = GetAllX509CertsBySubject(suite, testconstants.IntermediateSubject)
+	require.Equal(suite.T, testconstants.IntermediateSubject, subjectCertificates.Subject)
+	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, subjectCertificates.SubjectKeyIds[0])
 
-	// // Request all revoked certificates
-	// revokedCertificates, _ := utils.GetAllRevokedX509Certs()
-	// require.Equal(suite.T, 0, len(revokedCertificates.Items))
+	subjectCertificates, _ = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
+	require.Equal(suite.T, testconstants.RootSubject, subjectCertificates.Subject)
+	require.Equal(suite.T, 1, len(subjectCertificates.SubjectKeyIds))
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, subjectCertificates.SubjectKeyIds[0])
 
-	// // User (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate.
-	// msgRevokeX509Cert := pki.MsgRevokeX509Cert{
-	// 	Subject:      testconstants.IntermediateSubject,
-	// 	SubjectKeyID: testconstants.IntermediateSubjectKeyID,
-	// 	Signer:       userKeyInfo.Address,
-	// }
-	// _, _ = utils.RevokeX509Cert(msgRevokeX509Cert, userKeyInfo.Name, testconstants.Passphrase)
+	// Request all Root certificates proposed to revoke
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
 
-	// // Request all Root certificates proposed to revoke
-	// proposedCertificateRevocations, _ = utils.GetAllProposedX509RootCertsToRevoke()
-	// require.Equal(suite.T, 0, len(proposedCertificateRevocations.Items))
+	// Request all revoked certificates
+	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	require.Equal(suite.T, 0, len(revokedCertificates))
 
-	// // Request all revoked certificates
-	// revokedCertificates, _ = utils.GetAllRevokedX509Certs()
-	// require.Equal(suite.T, 2, len(revokedCertificates.Items))
-	// require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates.Items[0].SubjectKeyID)
-	// require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates.Items[1].Subject)
-	// require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates.Items[1].SubjectKeyID)
+	// Request all revoked Root certificates
+	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
-	// // Request all revoked Root certificates
-	// revokedCertificates, _ = utils.GetAllRevokedX509RootCerts()
-	// require.Equal(suite.T, 0, len(revokedCertificates.Items))
+	// Get all child certificates
+	childCertificates, _ := GetAllChildX509Certs(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, testconstants.RootSubject, childCertificates.Issuer)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, childCertificates.AuthorityKeyId)
+	require.Equal(suite.T, 1, len(childCertificates.CertIds))
+	require.Equal(suite.T, testconstants.IntermediateSubject, childCertificates.CertIds[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, childCertificates.CertIds[0].SubjectKeyId)
 
-	// // Request revoked Intermediate certificate
-	// revokedCertificate, _ := utils.GetRevokedX509Cert(
-	// 	testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
-	// require.Equal(suite.T, testconstants.IntermediateCertPem, revokedCertificate.PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, revokedCertificate.Owner)
-	// require.False(t, revokedCertificate.IsRoot)
+	childCertificates, _ = GetAllChildX509Certs(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	require.Equal(suite.T, testconstants.IntermediateSubject, childCertificates.Issuer)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, childCertificates.AuthorityKeyId)
+	require.Equal(suite.T, 1, len(childCertificates.CertIds))
+	require.Equal(suite.T, testconstants.LeafSubject, childCertificates.CertIds[0].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, childCertificates.CertIds[0].SubjectKeyId)
 
-	// // Request revoked Leaf certificate
-	// revokedCertificate, _ = utils.GetRevokedX509Cert(testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
-	// require.Equal(suite.T, testconstants.LeafCertPem, revokedCertificate.PemCert)
-	// require.Equal(suite.T, aliceKeyInfo.Address, revokedCertificate.Owner)
-	// require.False(t, revokedCertificate.IsRoot)
+	_, err = GetAllChildX509Certs(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	suite.AssertNotFound(err)
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 1, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	// User (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate.
+	msgRevokeX509Cert := pkitypes.MsgRevokeX509Cert{
+		Subject:      testconstants.IntermediateSubject,
+		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+		Signer:       userKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(vendorAccountName, []sdk.Msg{&msgRevokeX509Cert}, userAccNum, userSequence)
+	require.NoError(suite.T, err)
+	userSequence += 1
 
-	// // Jack (Trustee) proposes to revoke Root certificate
-	// msgProposeRevokeX509RootCert := pki.MsgProposeRevokeX509RootCert{
-	// 	Subject:      testconstants.RootSubject,
-	// 	SubjectKeyID: testconstants.RootSubjectKeyID,
-	// 	Signer:       jackKeyInfo.Address,
-	// }
-	// _, _ = utils.ProposeRevokeX509RootCert(msgProposeRevokeX509RootCert, jackKeyInfo.Name, testconstants.Passphrase)
+	// Request all Root certificates proposed to revoke
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
 
-	// // Request all Root certificates proposed to revoke
-	// proposedCertificateRevocations, _ = utils.GetAllProposedX509RootCertsToRevoke()
-	// require.Equal(suite.T, 1, len(proposedCertificateRevocations.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, proposedCertificateRevocations.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificateRevocations.Items[0].SubjectKeyID)
+	// Request all revoked certificates
+	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	require.Equal(suite.T, 2, len(revokedCertificates))
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
 
-	// // Request all revoked certificates
-	// revokedCertificates, _ = utils.GetAllRevokedX509Certs()
-	// require.Equal(suite.T, 2, len(revokedCertificates.Items))
-	// require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates.Items[0].SubjectKeyID)
-	// require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates.Items[1].Subject)
-	// require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates.Items[1].SubjectKeyID)
+	// Request all revoked Root certificates
+	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
-	// // Request all revoked Root certificates
-	// revokedCertificates, _ = utils.GetAllRevokedX509RootCerts()
-	// require.Equal(suite.T, 0, len(revokedCertificates.Items))
+	// Request revoked Intermediate certificate
+	revokedCertificate, _ := GetRevokedX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificate.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateCertPem, revokedCertificate.Certs[0].PemCert)
+	require.Equal(suite.T, userKeyInfo.GetAddress().String(), revokedCertificate.Certs[0].Owner)
+	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
-	// // Request Root certificate proposed to revoke
-	// proposedCertificateRevocation, _ :=
-	// 	utils.GetProposedX509RootCertToRevoke(testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	// require.Equal(suite.T, []sdk.AccAddress{jackKeyInfo.Address}, proposedCertificateRevocation.Approvals)
+	// Request revoked Leaf certificate
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafCertPem, revokedCertificate.Certs[0].PemCert)
+	require.Equal(suite.T, aliceKeyInfo.GetAddress().String(), revokedCertificate.Certs[0].Owner)
+	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 1, len(certificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, certificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates.Items[0].SubjectKeyID)
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 1, len(certificates))
+	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
 
-	// // Alice (Trustee) approves to revoke Root certificate
-	// msgApproveRevokeX509RootCert := pki.MsgApproveRevokeX509RootCert{
-	// 	Subject:      proposedCertificate.Subject,
-	// 	SubjectKeyID: proposedCertificate.SubjectKeyID,
-	// 	Signer:       aliceKeyInfo.Address,
-	// }
-	// _, _ = utils.ApproveRevokeX509RootCert(msgApproveRevokeX509RootCert, aliceKeyInfo.Name, testconstants.Passphrase)
+	// Jack (Trustee) proposes to revoke Root certificate
+	msgProposeRevokeX509RootCert := pkitypes.MsgProposeRevokeX509RootCert{
+		Subject:      testconstants.RootSubject,
+		SubjectKeyId: testconstants.RootSubjectKeyID,
+		Signer:       jackKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(jackName, []sdk.Msg{&msgProposeRevokeX509RootCert}, jackAccNum, jackSequence)
+	require.NoError(suite.T, err)
+	jackSequence += 1
 
-	// // Request all Root certificates proposed to revoke
-	// proposedCertificateRevocations, _ = utils.GetAllProposedX509RootCertsToRevoke()
-	// require.Equal(suite.T, 0, len(proposedCertificateRevocations.Items))
+	// Request all Root certificates proposed to revoke
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 1, len(proposedRevocationCertificates))
+	require.Equal(suite.T, testconstants.RootSubject, proposedRevocationCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedRevocationCertificates[0].SubjectKeyId)
 
-	// // Request all revoked certificates
-	// revokedCertificates, _ = utils.GetAllRevokedX509Certs()
-	// require.Equal(suite.T, 3, len(revokedCertificates.Items))
-	// require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates.Items[0].SubjectKeyID)
-	// require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates.Items[1].Subject)
-	// require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates.Items[1].SubjectKeyID)
-	// require.Equal(suite.T, testconstants.RootSubject, revokedCertificates.Items[2].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates.Items[2].SubjectKeyID)
+	// Request all revoked certificates
+	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	require.Equal(suite.T, 2, len(revokedCertificates))
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
 
-	// // Request all revoked Root certificates
-	// revokedCertificates, _ = utils.GetAllRevokedX509RootCerts()
-	// require.Equal(suite.T, 1, len(revokedCertificates.Items))
-	// require.Equal(suite.T, testconstants.RootSubject, revokedCertificates.Items[0].Subject)
-	// require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates.Items[0].SubjectKeyID)
+	// Request all revoked Root certificates
+	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
-	// // Request revoked Root certificate
-	// revokedCertificate, _ = utils.GetRevokedX509Cert(testconstants.RootSubject, testconstants.RootSubjectKeyID)
-	// require.Equal(suite.T, testconstants.RootCertPem, revokedCertificate.PemCert)
-	// require.Equal(suite.T, userKeyInfo.Address, revokedCertificate.Owner)
-	// require.True(suite.T, revokedCertificate.IsRoot)
+	// Request Root certificate proposed to revoke
+	proposedCertificateRevocation, _ :=
+		GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, testconstants.RootSubject, proposedCertificateRevocation.Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
+	require.Equal(suite.T, []string{jackKeyInfo.GetAddress().String()}, proposedCertificateRevocation.Approvals)
 
-	// // Request all approved certificates
-	// certificates, _ = utils.GetAllX509Certs()
-	// require.Equal(suite.T, 0, len(certificates.Items))
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 1, len(certificates))
+	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
+
+	// Alice (Trustee) approves to revoke Root certificate
+	msgApproveRevokeX509RootCert := pkitypes.MsgApproveRevokeX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceKeyInfo.GetAddress().String(),
+	}
+	_, err = suite.BuildAndBroadcastTx(aliceName, []sdk.Msg{&msgApproveRevokeX509RootCert}, aliceAccNum, aliceSequence)
+	require.NoError(suite.T, err)
+	aliceSequence += 1
+
+	// Request all Root certificates proposed to revoke
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
+
+	// Request all revoked certificates
+	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	require.Equal(suite.T, 3, len(revokedCertificates))
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[2].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[2].SubjectKeyId)
+
+	// Request all revoked Root certificates
+	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	require.Equal(suite.T, 1, len(revokedRootCertificates.Certs))
+	require.Equal(suite.T, testconstants.RootSubject, revokedRootCertificates.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedRootCertificates.Certs[0].SubjectKeyId)
+
+	// Request revoked Root certificate
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootCertPem, revokedCertificate.Certs[0].PemCert)
+	require.Equal(suite.T, userKeyInfo.GetAddress().String(), revokedCertificate.Certs[0].Owner)
+	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
+
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
+
+	_, err = GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
+
+	_, err = GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	rootCertificates, _ = GetAllRootX509Certs(suite)
+	require.Equal(suite.T, 0, len(rootCertificates.Certs))
+
+	_, err = GetAllChildX509Certs(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetAllChildX509Certs(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetAllChildX509Certs(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
+	suite.AssertNotFound(err)
+
+	_, err = GetAllX509CertsBySubject(suite, testconstants.IntermediateSubject)
+	suite.AssertNotFound(err)
+
+	_, err = GetAllX509CertsBySubject(suite, testconstants.LeafSubject)
+	suite.AssertNotFound(err)
+
 }
