@@ -101,14 +101,14 @@ func (suite *TestSuite) GetAddress(uid string) sdk.AccAddress {
 
 // Generates Protobuf-encoded bytes.
 func (suite *TestSuite) BuildTx(
-	signer string, msgs []sdk.Msg, accnum uint64, sequence uint64,
+	msgs []sdk.Msg, signer string, account *dclauthtypes.Account,
 ) []byte {
 	txfc := suite.Txf
 
-	require.NotEqual(suite.T, 0, accnum)
-	require.NotEqual(suite.T, 0, sequence)
+	require.NotEqual(suite.T, 0, account.GetAccountNumber())
+	require.NotEqual(suite.T, 0, account.GetSequence())
 
-	txfc = txfc.WithAccountNumber(accnum).WithSequence(sequence)
+	txfc = txfc.WithAccountNumber(account.GetAccountNumber()).WithSequence(account.GetSequence())
 
 	txSigned, err := GenTx(
 		txfc,
@@ -118,6 +118,7 @@ func (suite *TestSuite) BuildTx(
 		helpers.DefaultGenTxGas,
 		signer,
 	)
+	account.SetSequence(account.GetSequence() + 1)
 	require.NoError(suite.T, err)
 
 	// Generated Protobuf-encoded bytes.
@@ -168,10 +169,10 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 }
 
 func (suite *TestSuite) BuildAndBroadcastTx(
-	signer string, msgs []sdk.Msg, accnum uint64, sequence uint64,
+	msgs []sdk.Msg, signer string, account *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	// build Tx
-	txBytes := suite.BuildTx(signer, msgs, accnum, sequence)
+	txBytes := suite.BuildTx(msgs, signer, account)
 	// broadcast Tx
 	return suite.BroadcastTx(txBytes)
 }

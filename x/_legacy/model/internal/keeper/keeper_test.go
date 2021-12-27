@@ -28,25 +28,25 @@ func TestKeeper_ModelGetSet(t *testing.T) {
 	setup := Setup()
 
 	// check if model present
-	require.False(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.False(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.Vid, testconstants.Pid))
 
 	// no model before its created
 	require.Panics(t, func() {
-		setup.ModelKeeper.GetModel(setup.Ctx, testconstants.VID, testconstants.PID)
+		setup.ModelKeeper.GetModel(setup.Ctx, testconstants.Vid, testconstants.Pid)
 	})
 
 	// create model
 	setup.ModelKeeper.SetModel(setup.Ctx, DefaultModel())
 
 	// check if model present
-	require.True(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.True(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.Vid, testconstants.Pid))
 
 	// get model info
-	model := setup.ModelKeeper.GetModel(setup.Ctx, testconstants.VID, testconstants.PID)
+	model := setup.ModelKeeper.GetModel(setup.Ctx, testconstants.Vid, testconstants.Pid)
 	require.NotNil(t, model)
 	require.Equal(t, testconstants.ProductName, model.ProductName)
-	require.Equal(t, testconstants.VID, model.VID)
-	require.Equal(t, testconstants.PID, model.PID)
+	require.Equal(t, testconstants.Vid, model.VID)
+	require.Equal(t, testconstants.Pid, model.PID)
 }
 
 func TestKeeper_ModelIterator(t *testing.T) {
@@ -79,17 +79,17 @@ func TestKeeper_ModelDelete(t *testing.T) {
 	setup.ModelKeeper.SetModel(setup.Ctx, DefaultModel())
 
 	// check if model present
-	require.True(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.True(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.Vid, testconstants.Pid))
 
 	// delete model
-	setup.ModelKeeper.DeleteModel(setup.Ctx, testconstants.VID, testconstants.PID)
+	setup.ModelKeeper.DeleteModel(setup.Ctx, testconstants.Vid, testconstants.Pid)
 
 	// check if model present
-	require.False(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.VID, testconstants.PID))
+	require.False(t, setup.ModelKeeper.IsModelPresent(setup.Ctx, testconstants.Vid, testconstants.Pid))
 
 	// try to get model info
 	require.Panics(t, func() {
-		setup.ModelKeeper.GetModel(setup.Ctx, testconstants.VID, testconstants.PID)
+		setup.ModelKeeper.GetModel(setup.Ctx, testconstants.Vid, testconstants.Pid)
 	})
 }
 
@@ -98,10 +98,10 @@ func TestKeeper_VendorProductsUpdatesWithModel(t *testing.T) {
 	count := 10
 
 	// check if vendor products present
-	require.False(t, setup.ModelKeeper.IsVendorProductsPresent(setup.Ctx, testconstants.VID))
+	require.False(t, setup.ModelKeeper.IsVendorProductsPresent(setup.Ctx, testconstants.Vid))
 
 	// get vendor products
-	vendorProducts := setup.ModelKeeper.GetVendorProducts(setup.Ctx, testconstants.VID)
+	vendorProducts := setup.ModelKeeper.GetVendorProducts(setup.Ctx, testconstants.Vid)
 	require.True(t, vendorProducts.IsEmpty())
 
 	var PIDs []types.Product
@@ -121,7 +121,7 @@ func TestKeeper_VendorProductsUpdatesWithModel(t *testing.T) {
 		PIDs = append(PIDs, vendorProduct)
 
 		// check vendor products
-		vendorProducts = setup.ModelKeeper.GetVendorProducts(setup.Ctx, testconstants.VID)
+		vendorProducts = setup.ModelKeeper.GetVendorProducts(setup.Ctx, testconstants.Vid)
 		require.Equal(t, PIDs, vendorProducts.Products)
 	}
 
@@ -134,15 +134,15 @@ func TestKeeper_VendorProductsUpdatesWithModel(t *testing.T) {
 		PIDs = append(PIDs[:index], PIDs[index+1:]...)
 
 		// remove second model
-		setup.ModelKeeper.DeleteModel(setup.Ctx, testconstants.VID, pid.PID)
+		setup.ModelKeeper.DeleteModel(setup.Ctx, testconstants.Vid, pid.PID)
 
 		// check vendor products
-		vendorProducts = setup.ModelKeeper.GetVendorProducts(setup.Ctx, testconstants.VID)
+		vendorProducts = setup.ModelKeeper.GetVendorProducts(setup.Ctx, testconstants.Vid)
 		require.Equal(t, PIDs, vendorProducts.Products)
 	}
 
 	// check if vendor products present
-	require.False(t, setup.ModelKeeper.IsVendorProductsPresent(setup.Ctx, testconstants.VID))
+	require.False(t, setup.ModelKeeper.IsVendorProductsPresent(setup.Ctx, testconstants.Vid))
 }
 
 func TestKeeper_VendorProductsOverTwoModelsWithDifferentVendor(t *testing.T) {

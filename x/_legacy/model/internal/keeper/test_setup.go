@@ -65,9 +65,9 @@ func Setup() TestSetup {
 
 func DefaultModel() types.Model {
 	model := types.Model{
-		VID:          testconstants.VID,
-		PID:          testconstants.PID,
-		DeviceTypeID: testconstants.DeviceTypeID,
+		VID:          testconstants.Vid,
+		PID:          testconstants.Pid,
+		DeviceTypeID: testconstants.DeviceTypeId,
 		ProductName:  testconstants.ProductName,
 		ProductLabel: testconstants.ProductLabel,
 		PartNumber:   testconstants.PartNumber,

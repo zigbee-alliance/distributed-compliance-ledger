@@ -30,7 +30,7 @@ import (
 //nolint:funlen,lll
 func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	// Register new Vendor account
-	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, testconstants.VID)
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, testconstants.Vid)
 
 	// Register new TestHouse account
 	testHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse}, 0)
@@ -48,7 +48,7 @@ func TestComplianceDemo_KeepTrackCompliance(t *testing.T) {
 	inputRevokedModels, _ := utils.GetAllRevokedModels()
 
 	// Publish model
-	model := utils.NewMsgAddModel(vendor.Address, testconstants.VID)
+	model := utils.NewMsgAddModel(vendor.Address, testconstants.Vid)
 	_, _ = utils.AddModel(model, vendor)
 
 	// Publish modelVersion
