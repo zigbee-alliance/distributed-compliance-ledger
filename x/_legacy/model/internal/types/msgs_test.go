@@ -26,34 +26,34 @@ import (
 
 func getTestModel() Model {
 	return Model{
-		VID:                                      testconstants.VID,
-		PID:                                      testconstants.PID,
-		DeviceTypeID:                             testconstants.DeviceTypeID,
+		VID:                                      testconstants.Vid,
+		PID:                                      testconstants.Pid,
+		DeviceTypeID:                             testconstants.DeviceTypeId,
 		ProductName:                              testconstants.ProductName,
 		ProductLabel:                             testconstants.ProductLabel,
 		PartNumber:                               testconstants.PartNumber,
 		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
-		CommissioningCustomFlowURL:               testconstants.CommissioningCustomFlowURL,
+		CommissioningCustomFlowURL:               testconstants.CommissioningCustomFlowUrl,
 		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualURL: testconstants.UserManualURL,
-		SupportURL:    testconstants.SupportURL,
-		ProductURL:    testconstants.ProductURL,
+		UserManualURL: testconstants.UserManualUrl,
+		SupportURL:    testconstants.SupportUrl,
+		ProductURL:    testconstants.ProductUrl,
 	}
 }
 
 func getTestModelForUpdate() Model {
 	return Model{
-		VID:                        testconstants.VID,
-		PID:                        testconstants.PID,
-		DeviceTypeID:               testconstants.DeviceTypeID,
+		VID:                        testconstants.Vid,
+		PID:                        testconstants.Pid,
+		DeviceTypeID:               testconstants.DeviceTypeId,
 		ProductLabel:               testconstants.ProductLabel,
-		CommissioningCustomFlowURL: testconstants.CommissioningCustomFlowURL,
-		UserManualURL:              testconstants.UserManualURL,
-		SupportURL:                 testconstants.SupportURL,
-		ProductURL:                 testconstants.ProductURL,
+		CommissioningCustomFlowURL: testconstants.CommissioningCustomFlowUrl,
+		UserManualURL:              testconstants.UserManualUrl,
+		SupportURL:                 testconstants.SupportUrl,
+		ProductURL:                 testconstants.ProductUrl,
 	}
 }
 
@@ -397,18 +397,18 @@ func TestMsgUpdateModelVersionValidation(t *testing.T) {
 func getTestModelVersion() ModelVersion {
 	return ModelVersion{
 		VID:                          testconstants.VendorID1,
-		PID:                          testconstants.PID,
+		PID:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionString:        testconstants.SoftwareVersionString,
-		CDVersionNumber:              testconstants.CDVersionNumber,
+		CDVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
-		OtaURL:                       testconstants.OtaURL,
+		OtaURL:                       testconstants.OtaUrl,
 		OtaFileSize:                  testconstants.OtaFileSize,
 		OtaChecksum:                  testconstants.OtaChecksum,
 		OtaChecksumType:              testconstants.OtaChecksumType,
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
-		ReleaseNotesURL:              testconstants.ReleaseNotesURL,
+		ReleaseNotesURL:              testconstants.ReleaseNotesUrl,
 	}
 }

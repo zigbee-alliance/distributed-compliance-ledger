@@ -18,8 +18,11 @@ import (
 	"context"
 
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
+	"github.com/cosmos/go-bip39"
 	"github.com/stretchr/testify/require"
 
+	"github.com/cosmos/cosmos-sdk/crypto/hd"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -168,78 +171,130 @@ func GetProposedAccountsToRevoke(suite *utils.TestSuite) (
 
 func ProposeAddAccount(
 	suite *utils.TestSuite,
-	signer string,
-	accAddr sdk.AccAddress, accKey cryptotypes.PubKey,
-	roles dclauthtypes.AccountRoles, vendorID uint64,
-	accnum uint64, sequence uint64,
+	accAddr sdk.AccAddress,
+	accKey cryptotypes.PubKey,
+	roles dclauthtypes.AccountRoles,
+	vendorID uint64,
+	signerName string,
+	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
+
 	msg, err := dclauthtypes.NewMsgProposeAddAccount(
-		suite.GetAddress(signer), accAddr, accKey, roles, vendorID)
+		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID)
 	require.NoError(suite.T, err)
-	return suite.BuildAndBroadcastTx(signer, []sdk.Msg{msg}, accnum, sequence)
+	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
 func ApproveAddAccount(
 	suite *utils.TestSuite,
-	signer string, accAddr sdk.AccAddress, accnum uint64, sequence uint64,
+	accAddr sdk.AccAddress,
+	signerName string,
+	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signer), accAddr)
-	return suite.BuildAndBroadcastTx(signer, []sdk.Msg{msg}, accnum, sequence)
+
+	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signerName), accAddr)
+	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
 func ProposeRevokeAccount(
 	suite *utils.TestSuite,
-	signer string, accAddr sdk.AccAddress, accnum uint64, sequence uint64,
+	accAddr sdk.AccAddress,
+	signerName string,
+	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-	msg := dclauthtypes.NewMsgProposeRevokeAccount(suite.GetAddress(signer), accAddr)
-	return suite.BuildAndBroadcastTx(signer, []sdk.Msg{msg}, accnum, sequence)
+
+	msg := dclauthtypes.NewMsgProposeRevokeAccount(suite.GetAddress(signerName), accAddr)
+	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
 func ApproveRevokeAccount(
 	suite *utils.TestSuite,
-	signer string, accAddr sdk.AccAddress, accnum uint64, sequence uint64,
+	accAddr sdk.AccAddress,
+	signerName string,
+	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-	msg := dclauthtypes.NewMsgApproveRevokeAccount(suite.GetAddress(signer), accAddr)
-	return suite.BuildAndBroadcastTx(signer, []sdk.Msg{msg}, accnum, sequence)
+
+	msg := dclauthtypes.NewMsgApproveRevokeAccount(suite.GetAddress(signerName), accAddr)
+	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
+}
+
+func CreateAccountInfo(suite *utils.TestSuite, accountName string) keyring.Info {
+	entropySeed, err := bip39.NewEntropy(256)
+	require.NoError(suite.T, err)
+
+	mnemonic, err := bip39.NewMnemonic(entropySeed)
+	require.NoError(suite.T, err)
+
+	accountInfo, err := suite.Kr.NewAccount(accountName, mnemonic, testconstants.Passphrase, sdk.FullFundraiserPath, hd.Secp256k1)
+	require.NoError(suite.T, err)
+
+	return accountInfo
+}
+
+func CreateAccount(
+	suite *utils.TestSuite,
+	accountName string,
+	roles dclauthtypes.AccountRoles,
+	vendorId uint64,
+	proposerName string,
+	proposerAccount *dclauthtypes.Account,
+	approverName string,
+	approverAccount *dclauthtypes.Account,
+) *dclauthtypes.Account {
+
+	accountInfo := CreateAccountInfo(suite, accountName)
+
+	_, err := ProposeAddAccount(
+		suite,
+		accountInfo.GetAddress(),
+		accountInfo.GetPubKey(),
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vendorId,
+		proposerName,
+		proposerAccount,
+	)
+	require.NoError(suite.T, err)
+
+	_, err = ApproveAddAccount(
+		suite,
+		accountInfo.GetAddress(),
+		approverName,
+		approverAccount,
+	)
+	require.NoError(suite.T, err)
+
+	account, err := GetAccount(suite, accountInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	return account
 }
 
 // Common Test Logic
 
 //nolint:funlen
 func AuthDemo(suite *utils.TestSuite) {
+	// Jack, Alice and Bob are predefined Trustees
 	jackName := testconstants.JackAccount
+	jackKeyInfo, err := suite.Kr.Key(jackName)
+	require.NoError(suite.T, err)
+	jackAccount, err := GetAccount(suite, jackKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
 	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
 	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
 
 	// Query all active accounts
 	inputAccounts, err := GetAccounts(suite)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, 4, len(inputAccounts))
-
-	// build map with an acc address as a key
-	accDataInitial := make(map[string]dclauthtypes.Account)
-	for _, acc := range inputAccounts {
-		accDataInitial[acc.GetAddress().String()] = acc
-	}
-
-	// Jack, Alice and Bob are predefined Trustees
-	jackKeyInfo, err := suite.Kr.Key(jackName)
-	require.NoError(suite.T, err)
-	require.Contains(suite.T, accDataInitial, jackKeyInfo.GetAddress().String())
-	jackSequence := accDataInitial[jackKeyInfo.GetAddress().String()].GetSequence()
-	jackAccNum := accDataInitial[jackKeyInfo.GetAddress().String()].GetAccountNumber()
-
-	aliceKeyInfo, err := suite.Kr.Key(aliceName)
-	require.NoError(suite.T, err)
-	require.Contains(suite.T, accDataInitial, aliceKeyInfo.GetAddress().String())
-	aliceSequence := accDataInitial[aliceKeyInfo.GetAddress().String()].GetSequence()
-	aliceAccNum := accDataInitial[aliceKeyInfo.GetAddress().String()].GetAccountNumber()
-
-	bobKeyInfo, err := suite.Kr.Key(bobName)
-	require.NoError(suite.T, err)
-	require.Contains(suite.T, accDataInitial, bobKeyInfo.GetAddress().String())
-	bobSequence := accDataInitial[bobKeyInfo.GetAddress().String()].GetSequence()
-	bobAccNum := accDataInitial[bobKeyInfo.GetAddress().String()].GetAccountNumber()
 
 	// Query all proposed accounts
 	inputProposedAccounts, err := GetProposedAccounts(suite)
@@ -256,12 +311,11 @@ func AuthDemo(suite *utils.TestSuite) {
 	// Jack proposes new account
 	_, err = ProposeAddAccount(
 		suite,
-		jackName, testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, testconstants.VID,
-		jackAccNum, jackSequence,
+		testAccAddr, testAccPubKey,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, uint64(testconstants.Vid),
+		jackName, jackAccount,
 	)
 	require.NoError(suite.T, err)
-	jackSequence += 1
 
 	// Query all active accounts
 	receivedAccounts, _ := GetAccounts(suite)
@@ -276,9 +330,8 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
 	// Alice approves new account
-	_, err = ApproveAddAccount(suite, aliceName, testAccAddr, aliceAccNum, aliceSequence)
+	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
-	aliceSequence += 1
 
 	// Query all active accounts
 	receivedAccounts, _ = GetAccounts(suite)
@@ -292,7 +345,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	receivedProposedAccountsToRevoke, _ = GetProposedAccountsToRevoke(suite)
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
-	// Get info for new account
+	// Get new account
 	testAccount, err := GetAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testAccount.GetAddress())
@@ -312,12 +365,12 @@ func AuthDemo(suite *utils.TestSuite) {
 	*/
 
 	// Alice proposes to revoke new account
-	_, err = ProposeRevokeAccount(suite, aliceName, testAccAddr, aliceAccNum, aliceSequence)
+	_, err = ProposeRevokeAccount(suite, testAccAddr, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
-	aliceSequence += 1
 
 	// Query all active accounts
 	receivedAccounts, err = GetAccounts(suite)
+	require.NoError(suite.T, err)
 	require.Equal(suite.T, len(inputAccounts)+1, len(receivedAccounts))
 
 	// Query all proposed accounts
@@ -329,12 +382,12 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke)+1, len(receivedProposedAccountsToRevoke))
 
 	// Bob approves to revoke new account
-	_, err = ApproveRevokeAccount(suite, bobName, testAccAddr, bobAccNum, bobSequence)
+	_, err = ApproveRevokeAccount(suite, testAccAddr, bobName, bobAccount)
 	require.NoError(suite.T, err)
-	bobSequence += 1
 
 	// Query all active accounts
 	receivedAccounts, err = GetAccounts(suite)
+	require.NoError(suite.T, err)
 	require.Equal(suite.T, len(inputAccounts), len(receivedAccounts))
 
 	// Query all proposed accounts

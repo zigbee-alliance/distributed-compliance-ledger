@@ -1128,7 +1128,7 @@ func parseGetReqResponse(response []byte, entity interface{}, code int) {
 func InitStartData() (KeyInfo, KeyInfo, /* model.MsgAddModel, model.MsgAddModelVersion,
 ComplianceInfosHeadersResult, ComplianceInfosHeadersResult*/) {
 	// Register new Vendor account
-	vendor := CreateNewAccount(auth.AccountRoles{auth.Vendor}, constants.VID)
+	vendor := CreateNewAccount(auth.AccountRoles{auth.Vendor}, constants.Vid)
 
 	// Register new CertificationCenter account
 	zigbee := CreateNewAccount(auth.AccountRoles{auth.CertificationCenter}, 0)
