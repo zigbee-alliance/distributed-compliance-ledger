@@ -17,15 +17,13 @@ package pki
 import (
 	"context"
 	"fmt"
-	"math/rand"
 	"net/url"
-	"strconv"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	dclauthhelpers "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
+	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	pkitypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
@@ -455,50 +453,41 @@ func PKIDemo(suite *utils.TestSuite) {
 	_, err = GetAllX509CertsBySubject(suite, testconstants.RootSubject)
 	suite.AssertNotFound(err)
 
-	jackName := testconstants.JackAccount
+	// Alice and Jack are predefined Trustees
 	aliceName := testconstants.AliceAccount
-	jackKeyInfo, _ := suite.Kr.Key(jackName)
-	aliceKeyInfo, _ := suite.Kr.Key(aliceName)
-
-	// build map with an acc address as a key
-	inputAccounts, err := dclauthhelpers.GetAccounts(suite)
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
-	accDataInitial := make(map[string]dclauthtypes.Account)
-	for _, acc := range inputAccounts {
-		accDataInitial[acc.GetAddress().String()] = acc
-	}
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
 
-	// Create account for new Vendor
-	rand.Seed(time.Now().UnixNano())
-	vendorAccountName := "newVendorAccount" + strconv.Itoa(rand.Intn(1000))
-	userKeyInfo := dclauthhelpers.CreateAccount(
+	jackName := testconstants.JackAccount
+	jackKeyInfo, err := suite.Kr.Key(jackName)
+	require.NoError(suite.T, err)
+	jackAccount, err := test_dclauth.GetAccount(suite, jackKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vid := int32(tmrand.Uint16())
+	vendorName := utils.RandString()
+	vendorAccount := test_dclauth.CreateAccount(
 		suite,
-		vendorAccountName, dclauthtypes.AccountRoles{dclauthtypes.Vendor}, uint16(testconstants.VID),
-		jackName, accDataInitial[jackKeyInfo.GetAddress().String()],
-		aliceName, accDataInitial[aliceKeyInfo.GetAddress().String()],
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		uint64(vid),
+		aliceName,
+		aliceAccount,
+		jackName,
+		jackAccount,
 	)
-
-	inputAccounts, err = dclauthhelpers.GetAccounts(suite)
-	require.NoError(suite.T, err)
-	accDataInitial = make(map[string]dclauthtypes.Account)
-	for _, acc := range inputAccounts {
-		accDataInitial[acc.GetAddress().String()] = acc
-	}
-	jackSequence := accDataInitial[jackKeyInfo.GetAddress().String()].GetSequence()
-	jackAccNum := accDataInitial[jackKeyInfo.GetAddress().String()].GetAccountNumber()
-	aliceSequence := accDataInitial[aliceKeyInfo.GetAddress().String()].GetSequence()
-	aliceAccNum := accDataInitial[aliceKeyInfo.GetAddress().String()].GetAccountNumber()
-	userSequence := accDataInitial[userKeyInfo.GetAddress().String()].GetSequence()
-	userAccNum := accDataInitial[userKeyInfo.GetAddress().String()].GetAccountNumber()
+	require.NotNil(suite.T, vendorAccount)
 
 	// User (Not Trustee) propose Root certificate
 	msgProposeAddX509RootCert := pkitypes.MsgProposeAddX509RootCert{
 		Cert:   testconstants.RootCertPem,
-		Signer: userKeyInfo.GetAddress().String(),
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(vendorAccountName, []sdk.Msg{&msgProposeAddX509RootCert}, userAccNum, userSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509RootCert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
-	userSequence += 1
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -514,18 +503,17 @@ func PKIDemo(suite *utils.TestSuite) {
 	proposedCertificate, _ :=
 		GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, userKeyInfo.GetAddress().String(), proposedCertificate.Owner)
-	//require.Equal(suite.T, []string{}, proposedCertificate.Approvals)
+	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, []string{}, proposedCertificate.Approvals)
 
 	// Jack (Trustee) approve Root certificate
 	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
-		Signer:       jackKeyInfo.GetAddress().String(),
+		Signer:       jackAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(jackName, []sdk.Msg{&msgApproveAddX509RootCert}, jackAccNum, jackSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
-	jackSequence += 1
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -541,18 +529,17 @@ func PKIDemo(suite *utils.TestSuite) {
 	proposedCertificate, _ =
 		GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
-	require.Equal(suite.T, userKeyInfo.GetAddress().String(), proposedCertificate.Owner)
-	require.Equal(suite.T, []string{jackKeyInfo.GetAddress().String()}, proposedCertificate.Approvals)
+	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, []string{jackAccount.Address}, proposedCertificate.Approvals)
 
 	// Alice (Trustee) approve Root certificate
 	secondMsgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
-		Signer:       aliceKeyInfo.GetAddress().String(),
+		Signer:       aliceAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(aliceName, []sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceAccNum, aliceSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
-	aliceSequence += 1
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -576,17 +563,16 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.RootCertPem, certificate.Certs[0].PemCert)
-	require.Equal(suite.T, userKeyInfo.GetAddress().String(), certificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
 	require.True(suite.T, certificate.Certs[0].IsRoot)
 
 	// User (Not Trustee) add Intermediate certificate
 	msgAddX509Cert := pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.IntermediateCertPem,
-		Signer: userKeyInfo.GetAddress().String(),
+		Signer: vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(vendorAccountName, []sdk.Msg{&msgAddX509Cert}, userAccNum, userSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgAddX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
-	userSequence += 1
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -612,17 +598,16 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertPem, certificate.Certs[0].PemCert)
-	require.Equal(suite.T, userKeyInfo.GetAddress().String(), certificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
 	require.False(suite.T, certificate.Certs[0].IsRoot)
 
 	// Alice (Trustee) add Leaf certificate
 	secondMsgAddX509Cert := pkitypes.MsgAddX509Cert{
 		Cert:   testconstants.LeafCertPem,
-		Signer: aliceKeyInfo.GetAddress().String(),
+		Signer: aliceAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(aliceName, []sdk.Msg{&secondMsgAddX509Cert}, aliceAccNum, aliceSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgAddX509Cert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
-	aliceSequence += 1
 
 	// Request all proposed Root certificates
 	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
@@ -650,7 +635,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.SubjectKeyId)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.LeafCertPem, certificate.Certs[0].PemCert)
-	require.Equal(suite.T, aliceKeyInfo.GetAddress().String(), certificate.Certs[0].Owner)
+	require.Equal(suite.T, aliceAccount.Address, certificate.Certs[0].Owner)
 	require.Equal(suite.T, testconstants.LeafSubject, certificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.Certs[0].SubjectKeyId)
 	require.False(suite.T, certificate.Certs[0].IsRoot)
@@ -705,11 +690,10 @@ func PKIDemo(suite *utils.TestSuite) {
 	msgRevokeX509Cert := pkitypes.MsgRevokeX509Cert{
 		Subject:      testconstants.IntermediateSubject,
 		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
-		Signer:       userKeyInfo.GetAddress().String(),
+		Signer:       vendorAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(vendorAccountName, []sdk.Msg{&msgRevokeX509Cert}, userAccNum, userSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
-	userSequence += 1
 
 	// Request all Root certificates proposed to revoke
 	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
@@ -735,7 +719,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.IntermediateCertPem, revokedCertificate.Certs[0].PemCert)
-	require.Equal(suite.T, userKeyInfo.GetAddress().String(), revokedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
 	// Request revoked Leaf certificate
@@ -746,7 +730,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.LeafCertPem, revokedCertificate.Certs[0].PemCert)
-	require.Equal(suite.T, aliceKeyInfo.GetAddress().String(), revokedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, aliceAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.False(suite.T, revokedCertificate.Certs[0].IsRoot)
 
 	// Request all approved certificates
@@ -759,11 +743,10 @@ func PKIDemo(suite *utils.TestSuite) {
 	msgProposeRevokeX509RootCert := pkitypes.MsgProposeRevokeX509RootCert{
 		Subject:      testconstants.RootSubject,
 		SubjectKeyId: testconstants.RootSubjectKeyID,
-		Signer:       jackKeyInfo.GetAddress().String(),
+		Signer:       jackAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(jackName, []sdk.Msg{&msgProposeRevokeX509RootCert}, jackAccNum, jackSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
-	jackSequence += 1
 
 	// Request all Root certificates proposed to revoke
 	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
@@ -788,7 +771,7 @@ func PKIDemo(suite *utils.TestSuite) {
 		GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificateRevocation.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
-	require.Equal(suite.T, []string{jackKeyInfo.GetAddress().String()}, proposedCertificateRevocation.Approvals)
+	require.Equal(suite.T, []string{jackAccount.Address}, proposedCertificateRevocation.Approvals)
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)
@@ -800,11 +783,10 @@ func PKIDemo(suite *utils.TestSuite) {
 	msgApproveRevokeX509RootCert := pkitypes.MsgApproveRevokeX509RootCert{
 		Subject:      proposedCertificate.Subject,
 		SubjectKeyId: proposedCertificate.SubjectKeyId,
-		Signer:       aliceKeyInfo.GetAddress().String(),
+		Signer:       aliceAccount.Address,
 	}
-	_, err = suite.BuildAndBroadcastTx(aliceName, []sdk.Msg{&msgApproveRevokeX509RootCert}, aliceAccNum, aliceSequence)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveRevokeX509RootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
-	aliceSequence += 1
 
 	// Request all Root certificates proposed to revoke
 	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
@@ -834,7 +816,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootCertPem, revokedCertificate.Certs[0].PemCert)
-	require.Equal(suite.T, userKeyInfo.GetAddress().String(), revokedCertificate.Certs[0].Owner)
+	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
 
 	certificates, _ = GetAllX509Certs(suite)
