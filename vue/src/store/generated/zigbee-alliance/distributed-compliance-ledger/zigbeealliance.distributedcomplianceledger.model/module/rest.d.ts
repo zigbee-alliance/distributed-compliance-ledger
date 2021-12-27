@@ -78,45 +78,6 @@ export interface ModelQueryAllModelResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
-export interface ModelQueryAllModelVersionResponse {
-    modelVersion?: ModelModelVersion[];
-    /**
-     * PageResponse is to be embedded in gRPC response messages where the
-     * corresponding request message has used PageRequest.
-     *
-     *  message SomeResponse {
-     *          repeated Bar results = 1;
-     *          PageResponse page = 2;
-     *  }
-     */
-    pagination?: V1Beta1PageResponse;
-}
-export interface ModelQueryAllModelVersionsResponse {
-    modelVersions?: ModelModelVersions[];
-    /**
-     * PageResponse is to be embedded in gRPC response messages where the
-     * corresponding request message has used PageRequest.
-     *
-     *  message SomeResponse {
-     *          repeated Bar results = 1;
-     *          PageResponse page = 2;
-     *  }
-     */
-    pagination?: V1Beta1PageResponse;
-}
-export interface ModelQueryAllVendorProductsResponse {
-    vendorProducts?: ModelVendorProducts[];
-    /**
-     * PageResponse is to be embedded in gRPC response messages where the
-     * corresponding request message has used PageRequest.
-     *
-     *  message SomeResponse {
-     *          repeated Bar results = 1;
-     *          PageResponse page = 2;
-     *  }
-     */
-    pagination?: V1Beta1PageResponse;
-}
 export interface ModelQueryGetModelResponse {
     model?: ModelModel;
 }
@@ -262,8 +223,8 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      *
      * @tags Query
      * @name QueryModelAll
-     * @summary Queries a list of Model items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model
+     * @summary Queries a list of all Model items.
+     * @request GET:/dcl/model/models
      */
     queryModelAll: (query?: {
         "pagination.key"?: string;
@@ -276,82 +237,37 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryVendorProducts
+     * @summary Queries VendorProducts by index.
+     * @request GET:/dcl/model/models/{vid}
+     */
+    queryVendorProducts: (vid: number, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetVendorProductsResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryModel
      * @summary Queries a Model by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model/{vid}/{pid}
+     * @request GET:/dcl/model/models/{vid}/{pid}
      */
     queryModel: (vid: number, pid: number, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetModelResponse, RpcStatus>>;
     /**
      * No description
      *
      * @tags Query
-     * @name QueryModelVersionAll
-     * @summary Queries a list of ModelVersion items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version
-     */
-    queryModelVersionAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<ModelQueryAllModelVersionResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryModelVersion
-     * @summary Queries a ModelVersion by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_version/{vid}/{pid}/{softwareVersion}
-     */
-    queryModelVersion: (vid: number, pid: number, softwareVersion: number, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetModelVersionResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryModelVersionsAll
-     * @summary Queries a list of ModelVersions items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_versions
-     */
-    queryModelVersionsAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<ModelQueryAllModelVersionsResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
      * @name QueryModelVersions
-     * @summary Queries a ModelVersions by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/model_versions/{vid}/{pid}
+     * @summary Queries ModelVersions by index.
+     * @request GET:/dcl/model/versions/{vid}/{pid}
      */
     queryModelVersions: (vid: number, pid: number, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetModelVersionsResponse, RpcStatus>>;
     /**
      * No description
      *
      * @tags Query
-     * @name QueryVendorProductsAll
-     * @summary Queries a list of VendorProducts items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/vendor_products
+     * @name QueryModelVersion
+     * @summary Queries a ModelVersion by index.
+     * @request GET:/dcl/model/versions/{vid}/{pid}/{softwareVersion}
      */
-    queryVendorProductsAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<ModelQueryAllVendorProductsResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryVendorProducts
-     * @summary Queries a VendorProducts by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/model/vendor_products/{vid}
-     */
-    queryVendorProducts: (vid: number, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetVendorProductsResponse, RpcStatus>>;
+    queryModelVersion: (vid: number, pid: number, softwareVersion: number, params?: RequestParams) => Promise<HttpResponse<ModelQueryGetModelVersionResponse, RpcStatus>>;
 }
 export {};

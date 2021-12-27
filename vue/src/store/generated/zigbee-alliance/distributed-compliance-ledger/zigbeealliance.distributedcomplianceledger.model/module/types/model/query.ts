@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { Reader, Writer } from 'protobufjs/minimal'
 import { VendorProducts } from '../model/vendor_products'
-import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination'
 import { Model } from '../model/model'
+import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination'
 import { ModelVersion } from '../model/model_version'
 import { ModelVersions } from '../model/model_versions'
 
@@ -14,15 +14,6 @@ export interface QueryGetVendorProductsRequest {
 
 export interface QueryGetVendorProductsResponse {
   vendorProducts: VendorProducts | undefined
-}
-
-export interface QueryAllVendorProductsRequest {
-  pagination: PageRequest | undefined
-}
-
-export interface QueryAllVendorProductsResponse {
-  vendorProducts: VendorProducts[]
-  pagination: PageResponse | undefined
 }
 
 export interface QueryGetModelRequest {
@@ -53,15 +44,6 @@ export interface QueryGetModelVersionResponse {
   modelVersion: ModelVersion | undefined
 }
 
-export interface QueryAllModelVersionRequest {
-  pagination: PageRequest | undefined
-}
-
-export interface QueryAllModelVersionResponse {
-  modelVersion: ModelVersion[]
-  pagination: PageResponse | undefined
-}
-
 export interface QueryGetModelVersionsRequest {
   vid: number
   pid: number
@@ -69,15 +51,6 @@ export interface QueryGetModelVersionsRequest {
 
 export interface QueryGetModelVersionsResponse {
   modelVersions: ModelVersions | undefined
-}
-
-export interface QueryAllModelVersionsRequest {
-  pagination: PageRequest | undefined
-}
-
-export interface QueryAllModelVersionsResponse {
-  modelVersions: ModelVersions[]
-  pagination: PageResponse | undefined
 }
 
 const baseQueryGetVendorProductsRequest: object = { vid: 0 }
@@ -185,140 +158,6 @@ export const QueryGetVendorProductsResponse = {
       message.vendorProducts = VendorProducts.fromPartial(object.vendorProducts)
     } else {
       message.vendorProducts = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllVendorProductsRequest: object = {}
-
-export const QueryAllVendorProductsRequest = {
-  encode(message: QueryAllVendorProductsRequest, writer: Writer = Writer.create()): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllVendorProductsRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllVendorProductsRequest } as QueryAllVendorProductsRequest
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllVendorProductsRequest {
-    const message = { ...baseQueryAllVendorProductsRequest } as QueryAllVendorProductsRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllVendorProductsRequest): unknown {
-    const obj: any = {}
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllVendorProductsRequest>): QueryAllVendorProductsRequest {
-    const message = { ...baseQueryAllVendorProductsRequest } as QueryAllVendorProductsRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllVendorProductsResponse: object = {}
-
-export const QueryAllVendorProductsResponse = {
-  encode(message: QueryAllVendorProductsResponse, writer: Writer = Writer.create()): Writer {
-    for (const v of message.vendorProducts) {
-      VendorProducts.encode(v!, writer.uint32(10).fork()).ldelim()
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllVendorProductsResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllVendorProductsResponse } as QueryAllVendorProductsResponse
-    message.vendorProducts = []
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.vendorProducts.push(VendorProducts.decode(reader, reader.uint32()))
-          break
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllVendorProductsResponse {
-    const message = { ...baseQueryAllVendorProductsResponse } as QueryAllVendorProductsResponse
-    message.vendorProducts = []
-    if (object.vendorProducts !== undefined && object.vendorProducts !== null) {
-      for (const e of object.vendorProducts) {
-        message.vendorProducts.push(VendorProducts.fromJSON(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllVendorProductsResponse): unknown {
-    const obj: any = {}
-    if (message.vendorProducts) {
-      obj.vendorProducts = message.vendorProducts.map((e) => (e ? VendorProducts.toJSON(e) : undefined))
-    } else {
-      obj.vendorProducts = []
-    }
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllVendorProductsResponse>): QueryAllVendorProductsResponse {
-    const message = { ...baseQueryAllVendorProductsResponse } as QueryAllVendorProductsResponse
-    message.vendorProducts = []
-    if (object.vendorProducts !== undefined && object.vendorProducts !== null) {
-      for (const e of object.vendorProducts) {
-        message.vendorProducts.push(VendorProducts.fromPartial(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
     }
     return message
   }
@@ -729,140 +568,6 @@ export const QueryGetModelVersionResponse = {
   }
 }
 
-const baseQueryAllModelVersionRequest: object = {}
-
-export const QueryAllModelVersionRequest = {
-  encode(message: QueryAllModelVersionRequest, writer: Writer = Writer.create()): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllModelVersionRequest } as QueryAllModelVersionRequest
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllModelVersionRequest {
-    const message = { ...baseQueryAllModelVersionRequest } as QueryAllModelVersionRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllModelVersionRequest): unknown {
-    const obj: any = {}
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllModelVersionRequest>): QueryAllModelVersionRequest {
-    const message = { ...baseQueryAllModelVersionRequest } as QueryAllModelVersionRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllModelVersionResponse: object = {}
-
-export const QueryAllModelVersionResponse = {
-  encode(message: QueryAllModelVersionResponse, writer: Writer = Writer.create()): Writer {
-    for (const v of message.modelVersion) {
-      ModelVersion.encode(v!, writer.uint32(10).fork()).ldelim()
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllModelVersionResponse } as QueryAllModelVersionResponse
-    message.modelVersion = []
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.modelVersion.push(ModelVersion.decode(reader, reader.uint32()))
-          break
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllModelVersionResponse {
-    const message = { ...baseQueryAllModelVersionResponse } as QueryAllModelVersionResponse
-    message.modelVersion = []
-    if (object.modelVersion !== undefined && object.modelVersion !== null) {
-      for (const e of object.modelVersion) {
-        message.modelVersion.push(ModelVersion.fromJSON(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllModelVersionResponse): unknown {
-    const obj: any = {}
-    if (message.modelVersion) {
-      obj.modelVersion = message.modelVersion.map((e) => (e ? ModelVersion.toJSON(e) : undefined))
-    } else {
-      obj.modelVersion = []
-    }
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllModelVersionResponse>): QueryAllModelVersionResponse {
-    const message = { ...baseQueryAllModelVersionResponse } as QueryAllModelVersionResponse
-    message.modelVersion = []
-    if (object.modelVersion !== undefined && object.modelVersion !== null) {
-      for (const e of object.modelVersion) {
-        message.modelVersion.push(ModelVersion.fromPartial(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
 const baseQueryGetModelVersionsRequest: object = { vid: 0, pid: 0 }
 
 export const QueryGetModelVersionsRequest = {
@@ -990,158 +695,18 @@ export const QueryGetModelVersionsResponse = {
   }
 }
 
-const baseQueryAllModelVersionsRequest: object = {}
-
-export const QueryAllModelVersionsRequest = {
-  encode(message: QueryAllModelVersionsRequest, writer: Writer = Writer.create()): Writer {
-    if (message.pagination !== undefined) {
-      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionsRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllModelVersionsRequest } as QueryAllModelVersionsRequest
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.pagination = PageRequest.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllModelVersionsRequest {
-    const message = { ...baseQueryAllModelVersionsRequest } as QueryAllModelVersionsRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllModelVersionsRequest): unknown {
-    const obj: any = {}
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllModelVersionsRequest>): QueryAllModelVersionsRequest {
-    const message = { ...baseQueryAllModelVersionsRequest } as QueryAllModelVersionsRequest
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageRequest.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
-const baseQueryAllModelVersionsResponse: object = {}
-
-export const QueryAllModelVersionsResponse = {
-  encode(message: QueryAllModelVersionsResponse, writer: Writer = Writer.create()): Writer {
-    for (const v of message.modelVersions) {
-      ModelVersions.encode(v!, writer.uint32(10).fork()).ldelim()
-    }
-    if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): QueryAllModelVersionsResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseQueryAllModelVersionsResponse } as QueryAllModelVersionsResponse
-    message.modelVersions = []
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.modelVersions.push(ModelVersions.decode(reader, reader.uint32()))
-          break
-        case 2:
-          message.pagination = PageResponse.decode(reader, reader.uint32())
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): QueryAllModelVersionsResponse {
-    const message = { ...baseQueryAllModelVersionsResponse } as QueryAllModelVersionsResponse
-    message.modelVersions = []
-    if (object.modelVersions !== undefined && object.modelVersions !== null) {
-      for (const e of object.modelVersions) {
-        message.modelVersions.push(ModelVersions.fromJSON(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromJSON(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  },
-
-  toJSON(message: QueryAllModelVersionsResponse): unknown {
-    const obj: any = {}
-    if (message.modelVersions) {
-      obj.modelVersions = message.modelVersions.map((e) => (e ? ModelVersions.toJSON(e) : undefined))
-    } else {
-      obj.modelVersions = []
-    }
-    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<QueryAllModelVersionsResponse>): QueryAllModelVersionsResponse {
-    const message = { ...baseQueryAllModelVersionsResponse } as QueryAllModelVersionsResponse
-    message.modelVersions = []
-    if (object.modelVersions !== undefined && object.modelVersions !== null) {
-      for (const e of object.modelVersions) {
-        message.modelVersions.push(ModelVersions.fromPartial(e))
-      }
-    }
-    if (object.pagination !== undefined && object.pagination !== null) {
-      message.pagination = PageResponse.fromPartial(object.pagination)
-    } else {
-      message.pagination = undefined
-    }
-    return message
-  }
-}
-
 /** Query defines the gRPC querier service. */
 export interface Query {
-  /** Queries a VendorProducts by index. */
+  /** Queries VendorProducts by index. */
   VendorProducts(request: QueryGetVendorProductsRequest): Promise<QueryGetVendorProductsResponse>
-  /** Queries a list of VendorProducts items. */
-  VendorProductsAll(request: QueryAllVendorProductsRequest): Promise<QueryAllVendorProductsResponse>
   /** Queries a Model by index. */
   Model(request: QueryGetModelRequest): Promise<QueryGetModelResponse>
-  /** Queries a list of Model items. */
+  /** Queries a list of all Model items. */
   ModelAll(request: QueryAllModelRequest): Promise<QueryAllModelResponse>
   /** Queries a ModelVersion by index. */
   ModelVersion(request: QueryGetModelVersionRequest): Promise<QueryGetModelVersionResponse>
-  /** Queries a list of ModelVersion items. */
-  ModelVersionAll(request: QueryAllModelVersionRequest): Promise<QueryAllModelVersionResponse>
-  /** Queries a ModelVersions by index. */
+  /** Queries ModelVersions by index. */
   ModelVersions(request: QueryGetModelVersionsRequest): Promise<QueryGetModelVersionsResponse>
-  /** Queries a list of ModelVersions items. */
-  ModelVersionsAll(request: QueryAllModelVersionsRequest): Promise<QueryAllModelVersionsResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -1153,12 +718,6 @@ export class QueryClientImpl implements Query {
     const data = QueryGetVendorProductsRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'VendorProducts', data)
     return promise.then((data) => QueryGetVendorProductsResponse.decode(new Reader(data)))
-  }
-
-  VendorProductsAll(request: QueryAllVendorProductsRequest): Promise<QueryAllVendorProductsResponse> {
-    const data = QueryAllVendorProductsRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'VendorProductsAll', data)
-    return promise.then((data) => QueryAllVendorProductsResponse.decode(new Reader(data)))
   }
 
   Model(request: QueryGetModelRequest): Promise<QueryGetModelResponse> {
@@ -1179,22 +738,10 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryGetModelVersionResponse.decode(new Reader(data)))
   }
 
-  ModelVersionAll(request: QueryAllModelVersionRequest): Promise<QueryAllModelVersionResponse> {
-    const data = QueryAllModelVersionRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'ModelVersionAll', data)
-    return promise.then((data) => QueryAllModelVersionResponse.decode(new Reader(data)))
-  }
-
   ModelVersions(request: QueryGetModelVersionsRequest): Promise<QueryGetModelVersionsResponse> {
     const data = QueryGetModelVersionsRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'ModelVersions', data)
     return promise.then((data) => QueryGetModelVersionsResponse.decode(new Reader(data)))
-  }
-
-  ModelVersionsAll(request: QueryAllModelVersionsRequest): Promise<QueryAllModelVersionsResponse> {
-    const data = QueryAllModelVersionsRequest.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'ModelVersionsAll', data)
-    return promise.then((data) => QueryAllModelVersionsResponse.decode(new Reader(data)))
   }
 }
 

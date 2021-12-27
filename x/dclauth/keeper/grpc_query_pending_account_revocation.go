@@ -20,7 +20,7 @@ func (k Keeper) PendingAccountRevocationAll(c context.Context, req *types.QueryA
 	ctx := sdk.UnwrapSDKContext(c)
 
 	store := ctx.KVStore(k.storeKey)
-	pendingAccountRevocationStore := prefix.NewStore(store, types.PendingAccountRevocationKeyPrefix)
+	pendingAccountRevocationStore := prefix.NewStore(store, types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
 
 	pageRes, err := query.Paginate(pendingAccountRevocationStore, req.Pagination, func(key []byte, value []byte) error {
 		var pendingAccountRevocation types.PendingAccountRevocation

@@ -436,13 +436,13 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Validator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "node", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Validator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "nodes", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_ValidatorAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "nodes"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_LastValidatorPower_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "lastPower", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_LastValidatorPower_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "last-powers", "owner"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_LastValidatorPowerAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "lastPowers"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_LastValidatorPowerAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "last-powers"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

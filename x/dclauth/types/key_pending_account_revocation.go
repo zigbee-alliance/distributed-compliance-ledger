@@ -8,6 +8,11 @@ import (
 
 var _ binary.ByteOrder
 
+const (
+	// PendingAccountRevocationKeyPrefix is the prefix to retrieve all PendingAccountRevocation
+	PendingAccountRevocationKeyPrefix = "PendingAccountRevocation/value/"
+)
+
 // PendingAccountRevocationKey returns the store key to retrieve a PendingAccountRevocation from the index fields
 func PendingAccountRevocationKey(
 	address sdk.AccAddress,

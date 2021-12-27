@@ -8,6 +8,13 @@ import (
 
 var _ binary.ByteOrder
 
+const (
+	// ValidatorKeyPrefix is the prefix to retrieve all Validator
+	ValidatorKeyPrefix = "Validator/value/"
+	// ValidatorByConsAddrKeyPrefix is the prefix to retrieve all Validator by consensus address
+	ValidatorByConsAddrKeyPrefix = "ValidatorByConsAddr/value/"
+)
+
 // ValidatorKey returns the store key to retrieve a Validator from the index fields
 func ValidatorKey(
 	owner sdk.ValAddress,

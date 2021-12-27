@@ -8,6 +8,11 @@ import (
 
 var _ binary.ByteOrder
 
+const (
+	// PendingAccountKeyPrefix is the prefix to retrieve all PendingAccount
+	PendingAccountKeyPrefix = "PendingAccount/value/"
+)
+
 // PendingAccountKey returns the store key to retrieve a PendingAccount from the index fields
 func PendingAccountKey(
 	address sdk.AccAddress,

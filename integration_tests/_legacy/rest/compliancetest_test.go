@@ -32,7 +32,7 @@ import (
 //nolint:funlen
 func TestCompliancetestDemo(t *testing.T) {
 	// Register new Vendor account
-	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, testconstants.VID)
+	vendor := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, testconstants.Vid)
 
 	// Register new TestHouse account
 	testHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse}, 0)
@@ -41,7 +41,7 @@ func TestCompliancetestDemo(t *testing.T) {
 	secondTestHouse := utils.CreateNewAccount(auth.AccountRoles{auth.TestHouse}, 0)
 
 	// Publish model info
-	model := utils.NewMsgAddModel(vendor.Address, testconstants.VID)
+	model := utils.NewMsgAddModel(vendor.Address, testconstants.Vid)
 	_, _ = utils.AddModel(model, vendor)
 	// Publish modelVersion
 	modelVersion := utils.NewMsgAddModelVersion(model.VID, model.PID,
@@ -65,7 +65,7 @@ func TestCompliancetestDemo(t *testing.T) {
 	require.Equal(t, receivedTestingResult.Results[0].Owner, firstTestingResult.Signer)
 
 	// Publish second model info
-	secondModel := utils.NewMsgAddModel(vendor.Address, testconstants.VID)
+	secondModel := utils.NewMsgAddModel(vendor.Address, testconstants.Vid)
 	_, _ = utils.AddModel(secondModel, vendor)
 	// Publish second modelVersion
 	secondModelVersion := utils.NewMsgAddModelVersion(secondModel.VID, secondModel.PID,

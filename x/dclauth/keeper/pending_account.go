@@ -8,7 +8,7 @@ import (
 
 // SetPendingAccount set a specific pendingAccount in the store from its index
 func (k Keeper) SetPendingAccount(ctx sdk.Context, pendingAccount types.PendingAccount) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.PendingAccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 	b := k.cdc.MustMarshal(&pendingAccount)
 	store.Set(types.PendingAccountKey(
 		pendingAccount.GetAddress(),
@@ -21,7 +21,7 @@ func (k Keeper) GetPendingAccount(
 	address sdk.AccAddress,
 
 ) (val types.PendingAccount, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.PendingAccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 
 	b := store.Get(types.PendingAccountKey(
 		address,
@@ -36,7 +36,7 @@ func (k Keeper) GetPendingAccount(
 
 // Check if the Account record associated with an address is present in the store or not.
 func (k Keeper) IsPendingAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.PendingAccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 
 	return store.Has(types.PendingAccountKey(
 		address,
@@ -49,7 +49,7 @@ func (k Keeper) RemovePendingAccount(
 	address sdk.AccAddress,
 
 ) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.PendingAccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 	store.Delete(types.PendingAccountKey(
 		address,
 	))
@@ -66,7 +66,7 @@ func (k Keeper) GetAllPendingAccount(ctx sdk.Context) (list []types.PendingAccou
 }
 
 func (k Keeper) IteratePendingAccounts(ctx sdk.Context, cb func(account types.PendingAccount) (stop bool)) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.PendingAccountKeyPrefix)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()

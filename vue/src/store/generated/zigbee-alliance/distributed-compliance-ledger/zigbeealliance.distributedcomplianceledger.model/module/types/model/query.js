@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { Reader, Writer } from 'protobufjs/minimal';
 import { VendorProducts } from '../model/vendor_products';
-import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 import { Model } from '../model/model';
+import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 import { ModelVersion } from '../model/model_version';
 import { ModelVersions } from '../model/model_versions';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.model';
@@ -104,133 +104,6 @@ export const QueryGetVendorProductsResponse = {
         }
         else {
             message.vendorProducts = undefined;
-        }
-        return message;
-    }
-};
-const baseQueryAllVendorProductsRequest = {};
-export const QueryAllVendorProductsRequest = {
-    encode(message, writer = Writer.create()) {
-        if (message.pagination !== undefined) {
-            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllVendorProductsRequest };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.pagination = PageRequest.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseQueryAllVendorProductsRequest };
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageRequest.fromJSON(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseQueryAllVendorProductsRequest };
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageRequest.fromPartial(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    }
-};
-const baseQueryAllVendorProductsResponse = {};
-export const QueryAllVendorProductsResponse = {
-    encode(message, writer = Writer.create()) {
-        for (const v of message.vendorProducts) {
-            VendorProducts.encode(v, writer.uint32(10).fork()).ldelim();
-        }
-        if (message.pagination !== undefined) {
-            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllVendorProductsResponse };
-        message.vendorProducts = [];
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.vendorProducts.push(VendorProducts.decode(reader, reader.uint32()));
-                    break;
-                case 2:
-                    message.pagination = PageResponse.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseQueryAllVendorProductsResponse };
-        message.vendorProducts = [];
-        if (object.vendorProducts !== undefined && object.vendorProducts !== null) {
-            for (const e of object.vendorProducts) {
-                message.vendorProducts.push(VendorProducts.fromJSON(e));
-            }
-        }
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageResponse.fromJSON(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        if (message.vendorProducts) {
-            obj.vendorProducts = message.vendorProducts.map((e) => (e ? VendorProducts.toJSON(e) : undefined));
-        }
-        else {
-            obj.vendorProducts = [];
-        }
-        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseQueryAllVendorProductsResponse };
-        message.vendorProducts = [];
-        if (object.vendorProducts !== undefined && object.vendorProducts !== null) {
-            for (const e of object.vendorProducts) {
-                message.vendorProducts.push(VendorProducts.fromPartial(e));
-            }
-        }
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageResponse.fromPartial(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
         }
         return message;
     }
@@ -623,133 +496,6 @@ export const QueryGetModelVersionResponse = {
         return message;
     }
 };
-const baseQueryAllModelVersionRequest = {};
-export const QueryAllModelVersionRequest = {
-    encode(message, writer = Writer.create()) {
-        if (message.pagination !== undefined) {
-            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllModelVersionRequest };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.pagination = PageRequest.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseQueryAllModelVersionRequest };
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageRequest.fromJSON(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseQueryAllModelVersionRequest };
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageRequest.fromPartial(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    }
-};
-const baseQueryAllModelVersionResponse = {};
-export const QueryAllModelVersionResponse = {
-    encode(message, writer = Writer.create()) {
-        for (const v of message.modelVersion) {
-            ModelVersion.encode(v, writer.uint32(10).fork()).ldelim();
-        }
-        if (message.pagination !== undefined) {
-            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllModelVersionResponse };
-        message.modelVersion = [];
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.modelVersion.push(ModelVersion.decode(reader, reader.uint32()));
-                    break;
-                case 2:
-                    message.pagination = PageResponse.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseQueryAllModelVersionResponse };
-        message.modelVersion = [];
-        if (object.modelVersion !== undefined && object.modelVersion !== null) {
-            for (const e of object.modelVersion) {
-                message.modelVersion.push(ModelVersion.fromJSON(e));
-            }
-        }
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageResponse.fromJSON(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        if (message.modelVersion) {
-            obj.modelVersion = message.modelVersion.map((e) => (e ? ModelVersion.toJSON(e) : undefined));
-        }
-        else {
-            obj.modelVersion = [];
-        }
-        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseQueryAllModelVersionResponse };
-        message.modelVersion = [];
-        if (object.modelVersion !== undefined && object.modelVersion !== null) {
-            for (const e of object.modelVersion) {
-                message.modelVersion.push(ModelVersion.fromPartial(e));
-            }
-        }
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageResponse.fromPartial(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    }
-};
 const baseQueryGetModelVersionsRequest = { vid: 0, pid: 0 };
 export const QueryGetModelVersionsRequest = {
     encode(message, writer = Writer.create()) {
@@ -871,133 +617,6 @@ export const QueryGetModelVersionsResponse = {
         return message;
     }
 };
-const baseQueryAllModelVersionsRequest = {};
-export const QueryAllModelVersionsRequest = {
-    encode(message, writer = Writer.create()) {
-        if (message.pagination !== undefined) {
-            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllModelVersionsRequest };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.pagination = PageRequest.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseQueryAllModelVersionsRequest };
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageRequest.fromJSON(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseQueryAllModelVersionsRequest };
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageRequest.fromPartial(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    }
-};
-const baseQueryAllModelVersionsResponse = {};
-export const QueryAllModelVersionsResponse = {
-    encode(message, writer = Writer.create()) {
-        for (const v of message.modelVersions) {
-            ModelVersions.encode(v, writer.uint32(10).fork()).ldelim();
-        }
-        if (message.pagination !== undefined) {
-            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseQueryAllModelVersionsResponse };
-        message.modelVersions = [];
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.modelVersions.push(ModelVersions.decode(reader, reader.uint32()));
-                    break;
-                case 2:
-                    message.pagination = PageResponse.decode(reader, reader.uint32());
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseQueryAllModelVersionsResponse };
-        message.modelVersions = [];
-        if (object.modelVersions !== undefined && object.modelVersions !== null) {
-            for (const e of object.modelVersions) {
-                message.modelVersions.push(ModelVersions.fromJSON(e));
-            }
-        }
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageResponse.fromJSON(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        if (message.modelVersions) {
-            obj.modelVersions = message.modelVersions.map((e) => (e ? ModelVersions.toJSON(e) : undefined));
-        }
-        else {
-            obj.modelVersions = [];
-        }
-        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseQueryAllModelVersionsResponse };
-        message.modelVersions = [];
-        if (object.modelVersions !== undefined && object.modelVersions !== null) {
-            for (const e of object.modelVersions) {
-                message.modelVersions.push(ModelVersions.fromPartial(e));
-            }
-        }
-        if (object.pagination !== undefined && object.pagination !== null) {
-            message.pagination = PageResponse.fromPartial(object.pagination);
-        }
-        else {
-            message.pagination = undefined;
-        }
-        return message;
-    }
-};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -1006,11 +625,6 @@ export class QueryClientImpl {
         const data = QueryGetVendorProductsRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'VendorProducts', data);
         return promise.then((data) => QueryGetVendorProductsResponse.decode(new Reader(data)));
-    }
-    VendorProductsAll(request) {
-        const data = QueryAllVendorProductsRequest.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'VendorProductsAll', data);
-        return promise.then((data) => QueryAllVendorProductsResponse.decode(new Reader(data)));
     }
     Model(request) {
         const data = QueryGetModelRequest.encode(request).finish();
@@ -1027,19 +641,9 @@ export class QueryClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'ModelVersion', data);
         return promise.then((data) => QueryGetModelVersionResponse.decode(new Reader(data)));
     }
-    ModelVersionAll(request) {
-        const data = QueryAllModelVersionRequest.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'ModelVersionAll', data);
-        return promise.then((data) => QueryAllModelVersionResponse.decode(new Reader(data)));
-    }
     ModelVersions(request) {
         const data = QueryGetModelVersionsRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'ModelVersions', data);
         return promise.then((data) => QueryGetModelVersionsResponse.decode(new Reader(data)));
-    }
-    ModelVersionsAll(request) {
-        const data = QueryAllModelVersionsRequest.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.model.Query', 'ModelVersionsAll', data);
-        return promise.then((data) => QueryAllModelVersionsResponse.decode(new Reader(data)));
     }
 }

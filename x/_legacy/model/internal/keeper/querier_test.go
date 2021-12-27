@@ -53,7 +53,7 @@ func TestQuerier_QueryModelForUnknown(t *testing.T) {
 	// query model
 	result, err := setup.Querier(
 		setup.Ctx,
-		[]string{QueryModel, fmt.Sprintf("%v", testconstants.VID), fmt.Sprintf("%v", testconstants.PID)},
+		[]string{QueryModel, fmt.Sprintf("%v", testconstants.Vid), fmt.Sprintf("%v", testconstants.Pid)},
 		abci.RequestQuery{},
 	)
 
