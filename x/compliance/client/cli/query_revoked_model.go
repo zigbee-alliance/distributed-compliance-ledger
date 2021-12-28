@@ -7,13 +7,15 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
 func CmdListRevokedModel() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-revoked-model",
-		Short: "list all RevokedModel",
+		Use:   "all-revoked-model",
+		Short: "Query the list of all revoked models",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -45,27 +47,27 @@ func CmdListRevokedModel() *cobra.Command {
 
 func CmdShowRevokedModel() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-revoked-model [vid] [pid] [software-version] [certification-type]",
-		Short: "shows a RevokedModel",
-		Args:  cobra.ExactArgs(4),
+		Use:   "revoked-model",
+		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is revoked",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argVid, err := cast.ToInt32E(args[0])
+			argVid, err := cast.ToInt32E(viper.GetString(FlagVID))
 			if err != nil {
 				return err
 			}
-			argPid, err := cast.ToInt32E(args[1])
+			argPid, err := cast.ToInt32E(viper.GetString(FlagPID))
 			if err != nil {
 				return err
 			}
-			argSoftwareVersion, err := cast.ToUint32E(args[2])
+			argSoftwareVersion, err := cast.ToUint32E(viper.GetString(FlagSoftwareVersion))
 			if err != nil {
 				return err
 			}
-			argCertificationType := args[3]
+			argCertificationType := viper.GetString(FlagCertificationType)
 
 			params := &types.QueryGetRevokedModelRequest{
 				Vid:               argVid,
@@ -75,13 +77,27 @@ func CmdShowRevokedModel() *cobra.Command {
 			}
 
 			res, err := queryClient.RevokedModel(context.Background(), params)
-			if err != nil {
+			if cli.HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetRevokedModelResponse{RevokedModel: nil}
 			}
 
 			return clientCtx.PrintProto(res)
 		},
 	}
+
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
+
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagCertificationType)
 
 	flags.AddQueryFlagsToCmd(cmd)
 

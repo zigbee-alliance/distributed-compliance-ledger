@@ -15,9 +15,9 @@ var _ = strconv.Itoa(0)
 
 func CmdRevokeModel() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "revoke-model [vid] [pid] [software-version] [software-version-string] [revocation-date] [certification-type] [reason]",
-		Short: "Broadcast message RevokeModel",
-		Args:  cobra.ExactArgs(7),
+		Use:   "revoke-model",
+		Short: "Revoke an existing model. Note that the corresponding model version and test results must be present on ledger.",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argVid, err := cast.ToInt32E(args[0])
 			if err != nil {
@@ -57,6 +57,23 @@ func CmdRevokeModel() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	cmd.Flags().String(FlagVID, "", "Model vendor ID")
+	cmd.Flags().String(FlagPID, "", "Model product ID")
+	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
+	cmd.Flags().String(FlagSoftwareVersionString, "", "Model software version string")
+	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
+	cmd.Flags().StringP(FlagCertificationDate, FlagCertificationDateShortcut, "",
+		"The date of model certification (rfc3339 encoded)")
+	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
+		"Optional comment describing the reason of certification")
+
+	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(FlagPID)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersion)
+	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
+	_ = cmd.MarkFlagRequired(FlagCertificationType)
+	_ = cmd.MarkFlagRequired(FlagCertificationDate)
 
 	flags.AddTxFlagsToCmd(cmd)
 
