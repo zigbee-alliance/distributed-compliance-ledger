@@ -277,40 +277,4 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 	// Query all test results
 	testResults, _ = GetAllTestResults(suite)
 	require.Equal(suite.T, 2, len(testResults))
-
-	require.Equal(suite.T, testResults[0].Vid, firstTestingResult.Vid)
-	require.Equal(suite.T, testResults[0].Pid, firstTestingResult.Pid)
-	require.Equal(suite.T, testResults[0].SoftwareVersion, firstTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[0].SoftwareVersionString, firstTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, 2, len(testResults[0].Results))
-
-	require.Equal(suite.T, testResults[0].Results[0].Vid, firstTestingResult.Vid)
-	require.Equal(suite.T, testResults[0].Results[0].Pid, firstTestingResult.Pid)
-	require.Equal(suite.T, testResults[0].Results[0].SoftwareVersion, firstTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[0].Results[0].SoftwareVersionString, firstTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, testResults[0].Results[0].TestResult, firstTestingResult.TestResult)
-	require.Equal(suite.T, testResults[0].Results[0].TestDate, firstTestingResult.TestDate)
-	require.Equal(suite.T, testResults[0].Results[0].Owner, firstTestingResult.Signer)
-
-	require.Equal(suite.T, testResults[0].Results[1].Vid, secondTestingResult.Vid)
-	require.Equal(suite.T, testResults[0].Results[1].Pid, secondTestingResult.Pid)
-	require.Equal(suite.T, testResults[0].Results[1].SoftwareVersion, secondTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[0].Results[1].SoftwareVersionString, secondTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, testResults[0].Results[1].TestResult, secondTestingResult.TestResult)
-	require.Equal(suite.T, testResults[0].Results[1].TestDate, secondTestingResult.TestDate)
-	require.Equal(suite.T, testResults[0].Results[1].Owner, secondTestingResult.Signer)
-
-	require.Equal(suite.T, testResults[1].Vid, secondModelTestingResult.Vid)
-	require.Equal(suite.T, testResults[1].Pid, secondModelTestingResult.Pid)
-	require.Equal(suite.T, testResults[1].SoftwareVersion, secondModelTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[1].SoftwareVersionString, secondModelTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, 1, len(testResults[1].Results))
-	require.Equal(suite.T, testResults[1].Results[0].Vid, secondModelTestingResult.Vid)
-	require.Equal(suite.T, testResults[1].Results[0].Pid, secondModelTestingResult.Pid)
-	require.Equal(suite.T, testResults[1].Results[0].SoftwareVersion, secondModelTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[1].Results[0].SoftwareVersionString, secondModelTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, testResults[1].Results[0].TestResult, secondModelTestingResult.TestResult)
-	require.Equal(suite.T, testResults[1].Results[0].TestDate, secondModelTestingResult.TestDate)
-	require.Equal(suite.T, testResults[1].Results[0].Owner, secondModelTestingResult.Signer)
-
 }
