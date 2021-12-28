@@ -19,11 +19,45 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
+				ComplianceInfoList: []types.ComplianceInfo{
+					{
+						Vid:               0,
+						Pid:               0,
+						SoftwareVersion:   0,
+						CertificationType: "0",
+					},
+					{
+						Vid:               1,
+						Pid:               1,
+						SoftwareVersion:   1,
+						CertificationType: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated complianceInfo",
+			genState: &types.GenesisState{
+				ComplianceInfoList: []types.ComplianceInfo{
+					{
+						Vid:               0,
+						Pid:               0,
+						SoftwareVersion:   0,
+						CertificationType: "0",
+					},
+					{
+						Vid:               0,
+						Pid:               0,
+						SoftwareVersion:   0,
+						CertificationType: "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {

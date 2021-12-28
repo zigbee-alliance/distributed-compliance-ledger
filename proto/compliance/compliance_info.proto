@@ -1,0 +1,20 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.compliance;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types";
+
+message ComplianceInfo {
+  int32 vid = 1; 
+  int32 pid = 2; 
+  uint64 software_version = 3; 
+  string certification_type = 4; 
+  string software_version_string = 5; 
+  uint64 c_d_version_number = 6; 
+  uint64 software_version_certification_status = 7; 
+  string date = 8; 
+  string reason = 9; 
+  string owner = 10; 
+  repeated string history = 11; 
+  
+}
+

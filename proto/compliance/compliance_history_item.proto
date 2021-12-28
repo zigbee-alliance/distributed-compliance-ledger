@@ -1,0 +1,11 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.compliance;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types";
+
+message ComplianceHistoryItem {
+  
+  uint64 software_version_certification_status = 1; 
+  string date = 2; 
+  string reason = 3; 
+}

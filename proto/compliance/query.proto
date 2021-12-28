@@ -3,13 +3,46 @@ package zigbeealliance.distributedcomplianceledger.compliance;
 
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "compliance/compliance_info.proto";
 // this line is used by starport scaffolding # 1
+import "gogoproto/gogo.proto";
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types";
 
 // Query defines the gRPC querier service.
 service Query {
-    // this line is used by starport scaffolding # 2
+    // Queries a ComplianceInfo by index.
+	rpc ComplianceInfo(QueryGetComplianceInfoRequest) returns (QueryGetComplianceInfoResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info/{vid}/{pid}/{software_version}/{certification_type}";
+	}
+
+	// Queries a list of ComplianceInfo items.
+	rpc ComplianceInfoAll(QueryAllComplianceInfoRequest) returns (QueryAllComplianceInfoResponse) {
+		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+message QueryGetComplianceInfoRequest {
+	  int32 vid = 1;
+  int32 pid = 2;
+  uint64 software_version = 3;
+  string certification_type = 4;
+
+}
+
+message QueryGetComplianceInfoResponse {
+	ComplianceInfo complianceInfo = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllComplianceInfoRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllComplianceInfoResponse {
+	repeated ComplianceInfo complianceInfo = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

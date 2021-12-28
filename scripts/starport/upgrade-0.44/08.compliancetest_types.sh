@@ -1,4 +1,4 @@
-# PKI types
+# Compliance Tests types
 
 #    plain ones
 starport scaffold --module compliancetest type TestingResult vid:int pid:int softwareVersion:uint softwareVersionString owner testResult testDate
