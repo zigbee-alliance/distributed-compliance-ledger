@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -45,6 +44,8 @@ func CmdListVendorInfo() *cobra.Command {
 }
 
 func CmdShowVendorInfo() *cobra.Command {
+	var vid int32
+
 	cmd := &cobra.Command{
 		Use:   "vendor",
 		Short: "Get vendor details for the given vendorID",
@@ -54,13 +55,8 @@ func CmdShowVendorInfo() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			argVendorID, err := cast.ToInt32E(FlagVID)
-			if err != nil {
-				return err
-			}
-
 			params := &types.QueryGetVendorInfoRequest{
-				VendorID: argVendorID,
+				VendorID: vid,
 			}
 
 			res, err := queryClient.VendorInfo(context.Background(), params)
@@ -72,7 +68,7 @@ func CmdShowVendorInfo() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagVID, "", "Unique ID assigned to the vendor")
+	cmd.Flags().Int32Var(&vid, FlagVID, 0, "Unique ID assigned to the vendor")
 
 	flags.AddQueryFlagsToCmd(cmd)
 

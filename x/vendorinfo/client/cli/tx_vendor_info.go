@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -11,23 +10,19 @@ import (
 )
 
 func CmdCreateVendorInfo() *cobra.Command {
+	var (
+		vid                  int32
+		vendorName           string
+		companyLegalName     string
+		companyPreferredName string
+		vendorLandingPageURL string
+	)
+
 	cmd := &cobra.Command{
 		Use:   "add-vendor",
 		Short: "Add a new VendorInfo",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			// Get indexes
-			indexVendorID, err := cast.ToInt32E(FlagVID)
-			if err != nil {
-				return err
-			}
-
-			// Get value arguments
-			argVendorName := FlagVendorName
-			argCompanyLegalName := FlagCompanyLegalName
-			argCompanyPrefferedName := FlagCompanyPreferredName
-			argVendorLandingPageURL := FlagVendorLandingPageURL
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -35,11 +30,11 @@ func CmdCreateVendorInfo() *cobra.Command {
 
 			msg := types.NewMsgCreateVendorInfo(
 				clientCtx.GetFromAddress().String(),
-				indexVendorID,
-				argVendorName,
-				argCompanyLegalName,
-				argCompanyPrefferedName,
-				argVendorLandingPageURL,
+				vid,
+				vendorName,
+				companyLegalName,
+				companyPreferredName,
+				vendorLandingPageURL,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -48,43 +43,40 @@ func CmdCreateVendorInfo() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagVID,
-		"", "Vendor ID")
-	cmd.Flags().StringP(FlagVendorName, FlagVendorNameShortcut,
+	cmd.Flags().Int32Var(&vid, FlagVID, 0,
+		"Vendor ID")
+	cmd.Flags().StringVarP(&vendorName, FlagVendorName, FlagVendorNameShortcut,
 		"", "Vendor Name")
-	cmd.Flags().StringP(FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
+	cmd.Flags().StringVarP(&companyLegalName, FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
 		"", "Company Legal Name")
-	cmd.Flags().StringP(FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
+	cmd.Flags().StringVarP(&companyPreferredName, FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
 		"", "Company Preferred Name")
-	cmd.Flags().StringP(FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
+	cmd.Flags().StringVarP(&vendorLandingPageURL, FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
 		"", "Landing Page URL for the Vendor")
-	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagVendorName)
 	_ = cmd.MarkFlagRequired(FlagCompanyLegalName)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }
 
 func CmdUpdateVendorInfo() *cobra.Command {
+	var (
+		vid                  int32
+		vendorName           string
+		companyLegalName     string
+		companyPreferredName string
+		vendorLandingPageURL string
+	)
+
 	cmd := &cobra.Command{
-		Use:   "update-vendor [vendor-id] [vendor-name] [company-legal-name] [company-preffered-name] [vendor-landing-page-url]",
+		Use:   "update-vendor",
 		Short: "Update a VendorInfo",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			// Get indexes
-			indexVendorID, err := cast.ToInt32E(FlagVID)
-			if err != nil {
-				return err
-			}
-
-			// Get value arguments
-			argVendorName := FlagVendorName
-			argCompanyLegalName := FlagCompanyLegalName
-			argCompanyPrefferedName := FlagCompanyPreferredName
-			argVendorLandingPageURL := FlagVendorLandingPageURL
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -92,11 +84,11 @@ func CmdUpdateVendorInfo() *cobra.Command {
 
 			msg := types.NewMsgUpdateVendorInfo(
 				clientCtx.GetFromAddress().String(),
-				indexVendorID,
-				argVendorName,
-				argCompanyLegalName,
-				argCompanyPrefferedName,
-				argVendorLandingPageURL,
+				vid,
+				vendorName,
+				companyLegalName,
+				companyPreferredName,
+				vendorLandingPageURL,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -105,19 +97,20 @@ func CmdUpdateVendorInfo() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagVID,
-		"", "Vendor ID")
-	cmd.Flags().StringP(FlagVendorName, FlagVendorNameShortcut,
+	cmd.Flags().Int32Var(&vid, FlagVID, 0,
+		"Vendor ID")
+	cmd.Flags().StringVarP(&vendorName, FlagVendorName, FlagVendorNameShortcut,
 		"", "Vendor Name")
-	cmd.Flags().StringP(FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
+	cmd.Flags().StringVarP(&companyLegalName, FlagCompanyLegalName, FlagCompanyLegalNameShortcut,
 		"", "Company Legal Name")
-	cmd.Flags().StringP(FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
+	cmd.Flags().StringVarP(&companyPreferredName, FlagCompanyPreferredName, FlagCompanyPreferredNameShortcut,
 		"", "Company Preferred Name")
-	cmd.Flags().StringP(FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
+	cmd.Flags().StringVarP(&vendorLandingPageURL, FlagVendorLandingPageURL, FlagVendorLandingPageURLShortcut,
 		"", "Landing Page URL for the Vendor")
-	flags.AddQueryFlagsToCmd(cmd)
+	flags.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	return cmd
 }

@@ -20,6 +20,11 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
 	}
 
+	// check if creator has enough rights to create vendorinfo
+	if err := checkAddVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+		return nil, err
+	}
+
 	var vendorInfo = types.VendorInfo{
 		Creator:              msg.Creator,
 		VendorID:             msg.VendorID,
@@ -40,7 +45,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Check if the value exists
-	valFound, isFound := k.GetVendorInfo(
+	_, isFound := k.GetVendorInfo(
 		ctx,
 		msg.VendorID,
 	)
@@ -48,9 +53,9 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
-	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != valFound.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+	// check if creator has enough rights to update vendorinfo
+	if err := checkUpdateVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+		return nil, err
 	}
 
 	var vendorInfo = types.VendorInfo{
