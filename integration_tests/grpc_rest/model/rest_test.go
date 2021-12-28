@@ -45,20 +45,20 @@ func TestAddModelByNonVendorREST(t *testing.T) {
 
 func TestAddModelByDifferentVendorREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	model.AddModelByNonVendor(&suite)
+	model.AddModelByDifferentVendor(&suite)
 }
 
 func TestAddModelTwiceREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	model.AddModelByNonVendor(&suite)
+	model.AddModelTwice(&suite)
 }
 
 func TestGetModelForUnknownREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	model.AddModelByNonVendor(&suite)
+	model.GetModelForUnknown(&suite)
 }
 
 func TestGetModelForInvalidVidPidREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	model.AddModelByNonVendor(&suite)
+	model.GetModelForInvalidVidPid(&suite)
 }

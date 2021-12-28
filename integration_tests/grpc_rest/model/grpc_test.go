@@ -45,20 +45,20 @@ func TestAddModelByNonVendorGRPC(t *testing.T) {
 
 func TestAddModelByDifferentVendorGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	model.AddModelByNonVendor(&suite)
+	model.AddModelByDifferentVendor(&suite)
 }
 
 func TestAddModelTwiceGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	model.AddModelByNonVendor(&suite)
+	model.AddModelTwice(&suite)
 }
 
 func TestGetModelForUnknownGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	model.AddModelByNonVendor(&suite)
+	model.GetModelForUnknown(&suite)
 }
 
 func TestGetModelForInvalidVidPidGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	model.AddModelByNonVendor(&suite)
+	model.GetModelForInvalidVidPid(&suite)
 }
