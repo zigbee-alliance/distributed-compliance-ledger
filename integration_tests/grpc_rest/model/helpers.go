@@ -39,9 +39,10 @@ import (
 	TODO: provide tests for error cases
 */
 
-func NewMsgCreateModel(vid int32) *modeltypes.MsgCreateModel {
+func NewMsgCreateModel(vid int32, signer string) *modeltypes.MsgCreateModel {
 
 	return &modeltypes.MsgCreateModel{
+		Creator:                                  signer,
 		Vid:                                      vid,
 		Pid:                                      int32(tmrand.Uint16()),
 		DeviceTypeId:                             testconstants.DeviceTypeId,
@@ -60,9 +61,10 @@ func NewMsgCreateModel(vid int32) *modeltypes.MsgCreateModel {
 	}
 }
 
-func NewMsgUpdateModel(vid int32, pid int32) *modeltypes.MsgUpdateModel {
+func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdateModel {
 
 	return &modeltypes.MsgUpdateModel{
+		Creator:                    signer,
 		Vid:                        vid,
 		Pid:                        pid,
 		ProductLabel:               utils.RandString(),
@@ -78,9 +80,11 @@ func NewMsgCreateModelVersion(
 	pid int32,
 	softwareVersion uint32,
 	softwareVersionString string,
+	signer string,
 ) *modeltypes.MsgCreateModelVersion {
 
 	return &modeltypes.MsgCreateModelVersion{
+		Creator:                      signer,
 		Vid:                          vid,
 		Pid:                          pid,
 		SoftwareVersion:              softwareVersion,
@@ -102,10 +106,11 @@ func NewMsgUpdateModelVersion(
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
-	softwareVersionString string,
+	signer string,
 ) *modeltypes.MsgUpdateModelVersion {
 
 	return &modeltypes.MsgUpdateModelVersion{
+		Creator:         signer,
 		Vid:             vid,
 		Pid:             pid,
 		SoftwareVersion: softwareVersion,
@@ -329,8 +334,8 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// New vendor adds first model
-	createFirstModelMsg := NewMsgCreateModel(vid)
-	_, err = AddModel(suite, createFirstModelMsg, vendorName, vendorAccount)
+	createFirstModelMsg := NewMsgCreateModel(vid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check first model is added
@@ -342,8 +347,8 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, createFirstModelMsg.ProductLabel, receivedModel.ProductLabel)
 
 	// Add second model
-	createSecondModelMsg := NewMsgCreateModel(vid)
-	_, err = AddModel(suite, createSecondModelMsg, vendorName, vendorAccount)
+	createSecondModelMsg := NewMsgCreateModel(vid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check second model is added
@@ -367,8 +372,8 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, createSecondModelMsg.Pid, vendorModels.Products[1].Pid)
 
 	// Update second model
-	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid)
-	_, err = UpdateModel(suite, updateSecondModelMsg, vendorName, vendorAccount)
+	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check second model is updated
@@ -394,11 +399,11 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// register new account without Vendor role
-	accountName := utils.RandString()
+	testHouseName := utils.RandString()
 	vid := int32(tmrand.Uint16())
-	account := test_dclauth.CreateAccount(
+	testHouseAccount := test_dclauth.CreateAccount(
 		suite,
-		accountName,
+		testHouseName,
 		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
 		uint64(vid),
 		aliceName,
@@ -407,11 +412,11 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 		bobAccount,
 	)
 
-	require.NotContains(suite.T, account.Roles, dclauthtypes.Vendor)
+	require.NotContains(suite.T, testHouseAccount.Roles, dclauthtypes.Vendor)
 
 	// try to add createModelMsg
-	createModelMsg := NewMsgCreateModel(vid)
-	_, err = AddModel(suite, createModelMsg, accountName, account)
+	createModelMsg := NewMsgCreateModel(vid, testHouseAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, testHouseName, testHouseAccount)
 	require.Error(suite.T, err)
 	sdkerr := err.(*sdkerrors.Error)
 	require.Equal(suite.T, sdkerrors.ErrUnauthorized.Codespace(), sdkerr.Codespace())
@@ -447,8 +452,8 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 	)
 
 	// try to add createModelMsg
-	createModelMsg := NewMsgCreateModel(vid)
-	_, err = AddModel(suite, createModelMsg, vendorName, vendorAccount)
+	createModelMsg := NewMsgCreateModel(vid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.Error(suite.T, err)
 	sdkerr := err.(*sdkerrors.Error)
 	require.Equal(suite.T, sdkerrors.ErrUnauthorized.Codespace(), sdkerr.Codespace())
@@ -484,8 +489,8 @@ func AddModelTwice(suite *utils.TestSuite) {
 	)
 
 	// add model
-	createModelMsg := NewMsgCreateModel(vid)
-	_, err = AddModel(suite, createModelMsg, vendorName, vendorAccount)
+	createModelMsg := NewMsgCreateModel(vid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// add the same model second time
