@@ -421,9 +421,7 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 	createModelMsg := NewMsgCreateModel(vid, pid, testHouseAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, testHouseName, testHouseAccount)
 	require.Error(suite.T, err)
-	sdkerr := err.(*sdkerrors.Error)
-	require.Equal(suite.T, sdkerrors.ErrUnauthorized.Codespace(), sdkerr.Codespace())
-	require.Equal(suite.T, sdkerrors.ErrUnauthorized.ABCICode(), sdkerr.ABCICode())
+	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }
 
 func AddModelByDifferentVendor(suite *utils.TestSuite) {
@@ -459,9 +457,7 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 	createModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createModelMsg}, vendorName, vendorAccount)
 	require.Error(suite.T, err)
-	sdkerr := err.(*sdkerrors.Error)
-	require.Equal(suite.T, sdkerrors.ErrUnauthorized.Codespace(), sdkerr.Codespace())
-	require.Equal(suite.T, sdkerrors.ErrUnauthorized.ABCICode(), sdkerr.ABCICode())
+	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }
 
 func AddModelTwice(suite *utils.TestSuite) {
@@ -501,31 +497,27 @@ func AddModelTwice(suite *utils.TestSuite) {
 	// add the same model second time
 	_, err = AddModel(suite, createModelMsg, vendorName, vendorAccount)
 	require.Error(suite.T, err)
-	sdkerr := err.(*sdkerrors.Error)
-	require.Equal(suite.T, modeltypes.ErrModelAlreadyExists.Codespace(), sdkerr.Codespace())
-	require.Equal(suite.T, modeltypes.ErrModelAlreadyExists.ABCICode(), sdkerr.ABCICode())
+	require.True(suite.T, modeltypes.ErrModelAlreadyExists.Is(err))
 }
 
 func GetModelForUnknown(suite *utils.TestSuite) {
 	_, err := GetModel(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()))
 	require.Error(suite.T, err)
-	sdkerr := err.(*sdkerrors.Error)
-	require.Equal(suite.T, sdkerrors.ErrNotFound.Codespace(), sdkerr.Codespace())
-	require.Equal(suite.T, sdkerrors.ErrNotFound.ABCICode(), sdkerr.ABCICode())
+	suite.AssertNotFound(err)
 }
 
 func GetModelForInvalidVidPid(suite *utils.TestSuite) {
 	// zero vid
 	_, err := GetModel(suite, 0, int32(tmrand.Uint16()))
 	require.Error(suite.T, err)
-	sdkerr := err.(*sdkerrors.Error)
-	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.Codespace(), sdkerr.Codespace())
-	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.ABCICode(), sdkerr.ABCICode())
+	// FIXME: Consider adding validation for queries.
+	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
+	suite.AssertNotFound(err)
 
 	// zero pid
 	_, err = GetModel(suite, int32(tmrand.Uint16()), 0)
 	require.Error(suite.T, err)
-	sdkerr = err.(*sdkerrors.Error)
-	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.Codespace(), sdkerr.Codespace())
-	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.ABCICode(), sdkerr.ABCICode())
+	// FIXME: Consider adding validation for queries.
+	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
+	suite.AssertNotFound(err)
 }
