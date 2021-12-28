@@ -5,18 +5,18 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgApproveAddX509RootCert } from "./types/pki/tx";
-import { MsgApproveRevokeX509RootCert } from "./types/pki/tx";
 import { MsgRevokeX509Cert } from "./types/pki/tx";
 import { MsgProposeAddX509RootCert } from "./types/pki/tx";
+import { MsgApproveRevokeX509RootCert } from "./types/pki/tx";
 import { MsgProposeRevokeX509RootCert } from "./types/pki/tx";
 import { MsgAddX509Cert } from "./types/pki/tx";
 
 
 const types = [
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCert", MsgApproveAddX509RootCert],
-  ["/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", MsgApproveRevokeX509RootCert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509Cert", MsgRevokeX509Cert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert", MsgProposeAddX509RootCert],
+  ["/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", MsgApproveRevokeX509RootCert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCert", MsgProposeRevokeX509RootCert],
   ["/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", MsgAddX509Cert],
   
@@ -52,9 +52,9 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgApproveAddX509RootCert: (data: MsgApproveAddX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCert", value: MsgApproveAddX509RootCert.fromPartial( data ) }),
-    msgApproveRevokeX509RootCert: (data: MsgApproveRevokeX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", value: MsgApproveRevokeX509RootCert.fromPartial( data ) }),
     msgRevokeX509Cert: (data: MsgRevokeX509Cert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509Cert", value: MsgRevokeX509Cert.fromPartial( data ) }),
     msgProposeAddX509RootCert: (data: MsgProposeAddX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCert", value: MsgProposeAddX509RootCert.fromPartial( data ) }),
+    msgApproveRevokeX509RootCert: (data: MsgApproveRevokeX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCert", value: MsgApproveRevokeX509RootCert.fromPartial( data ) }),
     msgProposeRevokeX509RootCert: (data: MsgProposeRevokeX509RootCert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCert", value: MsgProposeRevokeX509RootCert.fromPartial( data ) }),
     msgAddX509Cert: (data: MsgAddX509Cert): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.pki.MsgAddX509Cert", value: MsgAddX509Cert.fromPartial( data ) }),
     

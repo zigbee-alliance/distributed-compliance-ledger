@@ -238,52 +238,492 @@ func (m *QueryAllComplianceInfoResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
+type QueryGetCertifiedModelRequest struct {
+	Vid               int32  `protobuf:"varint,1,opt,name=vid,proto3" json:"vid,omitempty"`
+	Pid               int32  `protobuf:"varint,2,opt,name=pid,proto3" json:"pid,omitempty"`
+	SoftwareVersion   uint32 `protobuf:"varint,3,opt,name=software_version,json=softwareVersion,proto3" json:"software_version,omitempty"`
+	CertificationType string `protobuf:"bytes,4,opt,name=certification_type,json=certificationType,proto3" json:"certification_type,omitempty"`
+}
+
+func (m *QueryGetCertifiedModelRequest) Reset()         { *m = QueryGetCertifiedModelRequest{} }
+func (m *QueryGetCertifiedModelRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCertifiedModelRequest) ProtoMessage()    {}
+func (*QueryGetCertifiedModelRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{4}
+}
+func (m *QueryGetCertifiedModelRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetCertifiedModelRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetCertifiedModelRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetCertifiedModelRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCertifiedModelRequest.Merge(m, src)
+}
+func (m *QueryGetCertifiedModelRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetCertifiedModelRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCertifiedModelRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetCertifiedModelRequest proto.InternalMessageInfo
+
+func (m *QueryGetCertifiedModelRequest) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *QueryGetCertifiedModelRequest) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *QueryGetCertifiedModelRequest) GetSoftwareVersion() uint32 {
+	if m != nil {
+		return m.SoftwareVersion
+	}
+	return 0
+}
+
+func (m *QueryGetCertifiedModelRequest) GetCertificationType() string {
+	if m != nil {
+		return m.CertificationType
+	}
+	return ""
+}
+
+type QueryGetCertifiedModelResponse struct {
+	CertifiedModel *CertifiedModel `protobuf:"bytes,1,opt,name=certifiedModel,proto3" json:"certifiedModel,omitempty"`
+}
+
+func (m *QueryGetCertifiedModelResponse) Reset()         { *m = QueryGetCertifiedModelResponse{} }
+func (m *QueryGetCertifiedModelResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetCertifiedModelResponse) ProtoMessage()    {}
+func (*QueryGetCertifiedModelResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{5}
+}
+func (m *QueryGetCertifiedModelResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetCertifiedModelResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetCertifiedModelResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetCertifiedModelResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetCertifiedModelResponse.Merge(m, src)
+}
+func (m *QueryGetCertifiedModelResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetCertifiedModelResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetCertifiedModelResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetCertifiedModelResponse proto.InternalMessageInfo
+
+func (m *QueryGetCertifiedModelResponse) GetCertifiedModel() *CertifiedModel {
+	if m != nil {
+		return m.CertifiedModel
+	}
+	return nil
+}
+
+type QueryAllCertifiedModelRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllCertifiedModelRequest) Reset()         { *m = QueryAllCertifiedModelRequest{} }
+func (m *QueryAllCertifiedModelRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllCertifiedModelRequest) ProtoMessage()    {}
+func (*QueryAllCertifiedModelRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{6}
+}
+func (m *QueryAllCertifiedModelRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllCertifiedModelRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllCertifiedModelRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllCertifiedModelRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllCertifiedModelRequest.Merge(m, src)
+}
+func (m *QueryAllCertifiedModelRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllCertifiedModelRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllCertifiedModelRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllCertifiedModelRequest proto.InternalMessageInfo
+
+func (m *QueryAllCertifiedModelRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllCertifiedModelResponse struct {
+	CertifiedModel []CertifiedModel    `protobuf:"bytes,1,rep,name=certifiedModel,proto3" json:"certifiedModel"`
+	Pagination     *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllCertifiedModelResponse) Reset()         { *m = QueryAllCertifiedModelResponse{} }
+func (m *QueryAllCertifiedModelResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllCertifiedModelResponse) ProtoMessage()    {}
+func (*QueryAllCertifiedModelResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{7}
+}
+func (m *QueryAllCertifiedModelResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllCertifiedModelResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllCertifiedModelResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllCertifiedModelResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllCertifiedModelResponse.Merge(m, src)
+}
+func (m *QueryAllCertifiedModelResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllCertifiedModelResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllCertifiedModelResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllCertifiedModelResponse proto.InternalMessageInfo
+
+func (m *QueryAllCertifiedModelResponse) GetCertifiedModel() []CertifiedModel {
+	if m != nil {
+		return m.CertifiedModel
+	}
+	return nil
+}
+
+func (m *QueryAllCertifiedModelResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryGetRevokedModelRequest struct {
+	Vid               int32  `protobuf:"varint,1,opt,name=vid,proto3" json:"vid,omitempty"`
+	Pid               int32  `protobuf:"varint,2,opt,name=pid,proto3" json:"pid,omitempty"`
+	SoftwareVersion   uint32 `protobuf:"varint,3,opt,name=software_version,json=softwareVersion,proto3" json:"software_version,omitempty"`
+	CertificationType string `protobuf:"bytes,4,opt,name=certification_type,json=certificationType,proto3" json:"certification_type,omitempty"`
+}
+
+func (m *QueryGetRevokedModelRequest) Reset()         { *m = QueryGetRevokedModelRequest{} }
+func (m *QueryGetRevokedModelRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetRevokedModelRequest) ProtoMessage()    {}
+func (*QueryGetRevokedModelRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{8}
+}
+func (m *QueryGetRevokedModelRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetRevokedModelRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetRevokedModelRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetRevokedModelRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRevokedModelRequest.Merge(m, src)
+}
+func (m *QueryGetRevokedModelRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetRevokedModelRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRevokedModelRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetRevokedModelRequest proto.InternalMessageInfo
+
+func (m *QueryGetRevokedModelRequest) GetVid() int32 {
+	if m != nil {
+		return m.Vid
+	}
+	return 0
+}
+
+func (m *QueryGetRevokedModelRequest) GetPid() int32 {
+	if m != nil {
+		return m.Pid
+	}
+	return 0
+}
+
+func (m *QueryGetRevokedModelRequest) GetSoftwareVersion() uint32 {
+	if m != nil {
+		return m.SoftwareVersion
+	}
+	return 0
+}
+
+func (m *QueryGetRevokedModelRequest) GetCertificationType() string {
+	if m != nil {
+		return m.CertificationType
+	}
+	return ""
+}
+
+type QueryGetRevokedModelResponse struct {
+	RevokedModel *RevokedModel `protobuf:"bytes,1,opt,name=revokedModel,proto3" json:"revokedModel,omitempty"`
+}
+
+func (m *QueryGetRevokedModelResponse) Reset()         { *m = QueryGetRevokedModelResponse{} }
+func (m *QueryGetRevokedModelResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetRevokedModelResponse) ProtoMessage()    {}
+func (*QueryGetRevokedModelResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{9}
+}
+func (m *QueryGetRevokedModelResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetRevokedModelResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetRevokedModelResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetRevokedModelResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetRevokedModelResponse.Merge(m, src)
+}
+func (m *QueryGetRevokedModelResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetRevokedModelResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetRevokedModelResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetRevokedModelResponse proto.InternalMessageInfo
+
+func (m *QueryGetRevokedModelResponse) GetRevokedModel() *RevokedModel {
+	if m != nil {
+		return m.RevokedModel
+	}
+	return nil
+}
+
+type QueryAllRevokedModelRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllRevokedModelRequest) Reset()         { *m = QueryAllRevokedModelRequest{} }
+func (m *QueryAllRevokedModelRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllRevokedModelRequest) ProtoMessage()    {}
+func (*QueryAllRevokedModelRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{10}
+}
+func (m *QueryAllRevokedModelRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllRevokedModelRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllRevokedModelRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllRevokedModelRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRevokedModelRequest.Merge(m, src)
+}
+func (m *QueryAllRevokedModelRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllRevokedModelRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRevokedModelRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllRevokedModelRequest proto.InternalMessageInfo
+
+func (m *QueryAllRevokedModelRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllRevokedModelResponse struct {
+	RevokedModel []RevokedModel      `protobuf:"bytes,1,rep,name=revokedModel,proto3" json:"revokedModel"`
+	Pagination   *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllRevokedModelResponse) Reset()         { *m = QueryAllRevokedModelResponse{} }
+func (m *QueryAllRevokedModelResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllRevokedModelResponse) ProtoMessage()    {}
+func (*QueryAllRevokedModelResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06039bbcb314fcaf, []int{11}
+}
+func (m *QueryAllRevokedModelResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllRevokedModelResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllRevokedModelResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllRevokedModelResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllRevokedModelResponse.Merge(m, src)
+}
+func (m *QueryAllRevokedModelResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllRevokedModelResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllRevokedModelResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllRevokedModelResponse proto.InternalMessageInfo
+
+func (m *QueryAllRevokedModelResponse) GetRevokedModel() []RevokedModel {
+	if m != nil {
+		return m.RevokedModel
+	}
+	return nil
+}
+
+func (m *QueryAllRevokedModelResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryGetComplianceInfoRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetComplianceInfoRequest")
 	proto.RegisterType((*QueryGetComplianceInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetComplianceInfoResponse")
 	proto.RegisterType((*QueryAllComplianceInfoRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllComplianceInfoRequest")
 	proto.RegisterType((*QueryAllComplianceInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllComplianceInfoResponse")
+	proto.RegisterType((*QueryGetCertifiedModelRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetCertifiedModelRequest")
+	proto.RegisterType((*QueryGetCertifiedModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetCertifiedModelResponse")
+	proto.RegisterType((*QueryAllCertifiedModelRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllCertifiedModelRequest")
+	proto.RegisterType((*QueryAllCertifiedModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllCertifiedModelResponse")
+	proto.RegisterType((*QueryGetRevokedModelRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetRevokedModelRequest")
+	proto.RegisterType((*QueryGetRevokedModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryGetRevokedModelResponse")
+	proto.RegisterType((*QueryAllRevokedModelRequest)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllRevokedModelRequest")
+	proto.RegisterType((*QueryAllRevokedModelResponse)(nil), "zigbeealliance.distributedcomplianceledger.compliance.QueryAllRevokedModelResponse")
 }
 
 func init() { proto.RegisterFile("compliance/query.proto", fileDescriptor_06039bbcb314fcaf) }
 
 var fileDescriptor_06039bbcb314fcaf = []byte{
-	// 550 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0x4f, 0x6b, 0x13, 0x41,
-	0x14, 0xcf, 0x24, 0xa9, 0xe0, 0x88, 0xb5, 0x1d, 0x44, 0x42, 0xd0, 0x6d, 0xdc, 0x83, 0x8d, 0x42,
-	0x76, 0x68, 0xc5, 0x0f, 0xd0, 0x8a, 0x16, 0xf1, 0xa2, 0x6b, 0xeb, 0x41, 0x0f, 0x61, 0xff, 0xbc,
-	0xac, 0x03, 0xdb, 0x9d, 0xe9, 0xce, 0x24, 0x1a, 0x43, 0x2e, 0x7e, 0x82, 0x82, 0x78, 0x11, 0xfc,
-	0x3e, 0x3d, 0x16, 0xbc, 0x78, 0x2a, 0x92, 0x78, 0xf1, 0x5b, 0xc8, 0xee, 0x6c, 0xcc, 0x6e, 0x9a,
-	0xb4, 0xd0, 0xf6, 0xb2, 0x0c, 0x6f, 0xe6, 0xbd, 0xdf, 0x9f, 0xf7, 0xde, 0xe2, 0x3b, 0x1e, 0xdf,
-	0x17, 0x21, 0x73, 0x22, 0x0f, 0xe8, 0x41, 0x17, 0xe2, 0xbe, 0x25, 0x62, 0xae, 0x38, 0x79, 0xf2,
-	0x99, 0x05, 0x2e, 0x80, 0x13, 0xea, 0x3b, 0xcb, 0x67, 0x52, 0xc5, 0xcc, 0xed, 0x2a, 0xf0, 0xa7,
-	0x19, 0x21, 0xf8, 0x01, 0xc4, 0xd6, 0x34, 0x50, 0xbf, 0x1b, 0x70, 0x1e, 0x84, 0x40, 0x1d, 0xc1,
-	0xa8, 0x13, 0x45, 0x5c, 0x39, 0x8a, 0xf1, 0x48, 0xea, 0xa2, 0xf5, 0x47, 0x1e, 0x97, 0xfb, 0x5c,
-	0x52, 0xd7, 0x91, 0x19, 0x1a, 0xed, 0x6d, 0xb8, 0xa0, 0x9c, 0x0d, 0x2a, 0x9c, 0x80, 0x45, 0xe9,
-	0xe3, 0xec, 0x6d, 0x23, 0x47, 0x6c, 0x7a, 0x6c, 0xb3, 0xa8, 0xc3, 0xb3, 0x17, 0xb7, 0x03, 0x1e,
-	0xf0, 0xf4, 0x48, 0x93, 0x93, 0x8e, 0x9a, 0x3f, 0x10, 0xbe, 0xf7, 0x3a, 0x29, 0xbd, 0x03, 0xea,
-	0xe9, 0xff, 0xbc, 0x17, 0x51, 0x87, 0xdb, 0x70, 0xd0, 0x05, 0xa9, 0xc8, 0x0a, 0xae, 0xf4, 0x98,
-	0x5f, 0x43, 0x0d, 0xd4, 0x5c, 0xb2, 0x93, 0x63, 0x12, 0x11, 0xcc, 0xaf, 0x95, 0x75, 0x44, 0x30,
-	0x9f, 0x3c, 0xc4, 0x2b, 0x92, 0x77, 0xd4, 0x47, 0x27, 0x86, 0x76, 0x0f, 0x62, 0xc9, 0x78, 0x54,
-	0xab, 0x34, 0x50, 0xf3, 0xa6, 0x7d, 0x6b, 0x12, 0x7f, 0xab, 0xc3, 0xa4, 0x85, 0x89, 0x07, 0xb1,
-	0x62, 0x1d, 0xe6, 0xa5, 0xfc, 0xdb, 0xaa, 0x2f, 0xa0, 0x56, 0x6d, 0xa0, 0xe6, 0x75, 0x7b, 0xb5,
-	0x70, 0xb3, 0xdb, 0x17, 0x60, 0x7e, 0x43, 0xd8, 0x58, 0xc4, 0x4f, 0x0a, 0x1e, 0x49, 0x20, 0x12,
-	0x2f, 0x7b, 0x85, 0x9b, 0x94, 0xeb, 0x8d, 0xcd, 0x67, 0xd6, 0x85, 0x9a, 0x62, 0x15, 0x61, 0xb6,
-	0xab, 0x47, 0x27, 0x6b, 0xc8, 0x9e, 0x81, 0x30, 0x83, 0xcc, 0xb6, 0xad, 0x30, 0x9c, 0x6f, 0xdb,
-	0x73, 0x8c, 0xa7, 0x4d, 0xca, 0x18, 0x3d, 0xb0, 0x74, 0x47, 0xad, 0xa4, 0xa3, 0x96, 0x9e, 0x9f,
-	0xac, 0xa3, 0xd6, 0x2b, 0x27, 0x80, 0x2c, 0xd7, 0xce, 0x65, 0x9a, 0x27, 0x13, 0x03, 0xe6, 0x20,
-	0x9d, 0x61, 0x40, 0xe5, 0x6a, 0x0d, 0x28, 0xcd, 0x1a, 0x40, 0x76, 0x0a, 0xfa, 0xca, 0xa9, 0xbe,
-	0xf5, 0x73, 0xf5, 0x69, 0xc6, 0x79, 0x81, 0x9b, 0x87, 0x55, 0xbc, 0x94, 0x0a, 0x24, 0xdf, 0xcb,
-	0x78, 0xb9, 0x88, 0x4d, 0x76, 0x2f, 0x28, 0xe1, 0xcc, 0x91, 0xae, 0xef, 0x5d, 0x71, 0x55, 0xad,
-	0xca, 0x7c, 0xff, 0xe5, 0xe7, 0x9f, 0xaf, 0xe5, 0x3d, 0xf2, 0x86, 0xfa, 0x5e, 0x48, 0xe7, 0x2e,
-	0x64, 0x2b, 0x59, 0x48, 0x3a, 0xe8, 0x31, 0x7f, 0x48, 0x07, 0x22, 0xfd, 0xce, 0x2e, 0xce, 0x90,
-	0x0e, 0x4e, 0x2f, 0xc8, 0x90, 0xfc, 0x45, 0x78, 0xb5, 0x88, 0xbb, 0x15, 0x86, 0x97, 0xf3, 0x67,
-	0xd1, 0xec, 0x5e, 0xce, 0x9f, 0x85, 0x73, 0x6a, 0xae, 0xa7, 0xfe, 0xdc, 0x27, 0x6b, 0xe7, 0xf8,
-	0xb3, 0x0d, 0x47, 0x23, 0x03, 0x1d, 0x8f, 0x0c, 0xf4, 0x7b, 0x64, 0xa0, 0xc3, 0xb1, 0x51, 0x3a,
-	0x1e, 0x1b, 0xa5, 0x5f, 0x63, 0xa3, 0xf4, 0xee, 0x65, 0xc0, 0xd4, 0x87, 0xae, 0x9b, 0x80, 0x52,
-	0xcd, 0xb1, 0x35, 0x21, 0x49, 0x73, 0x24, 0x5b, 0xb9, 0x8a, 0x9a, 0x26, 0xfd, 0x94, 0x07, 0x4c,
-	0x2c, 0x95, 0xee, 0xb5, 0xf4, 0x17, 0xf8, 0xf8, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x2b, 0xa6,
-	0x23, 0x7a, 0xd5, 0x05, 0x00, 0x00,
+	// 802 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x57, 0xdf, 0x6b, 0xd3, 0x50,
+	0x14, 0x6e, 0xda, 0x4d, 0xf0, 0x3a, 0xf7, 0xe3, 0x22, 0x52, 0xea, 0xcc, 0x6a, 0x1e, 0xb6, 0x2a,
+	0x34, 0x97, 0x4d, 0xfc, 0x03, 0xb6, 0xa1, 0x43, 0x44, 0xd0, 0xac, 0xdb, 0xc3, 0x14, 0x4a, 0xda,
+	0xdc, 0xc6, 0x8b, 0x69, 0x6e, 0x96, 0xa4, 0xd5, 0x39, 0xf6, 0xe2, 0xbb, 0x20, 0x0c, 0x7d, 0x70,
+	0xf8, 0xff, 0xec, 0x71, 0x20, 0x88, 0x4f, 0x43, 0x3a, 0x5f, 0xf4, 0xaf, 0x90, 0xdc, 0xdc, 0xae,
+	0xb9, 0x59, 0xba, 0x49, 0x13, 0x61, 0x2f, 0xe5, 0x72, 0xee, 0xcd, 0x3d, 0xdf, 0xf7, 0x9d, 0x2f,
+	0xe7, 0xa4, 0xe0, 0x66, 0x93, 0xb6, 0x1d, 0x8b, 0xe8, 0x76, 0x13, 0xa3, 0xed, 0x0e, 0x76, 0x77,
+	0x54, 0xc7, 0xa5, 0x3e, 0x85, 0x0f, 0xde, 0x11, 0xb3, 0x81, 0xb1, 0x6e, 0x85, 0x7b, 0xaa, 0x41,
+	0x3c, 0xdf, 0x25, 0x8d, 0x8e, 0x8f, 0x8d, 0xc1, 0x13, 0x16, 0x36, 0x4c, 0xec, 0xaa, 0x83, 0x40,
+	0x69, 0xd6, 0xa4, 0xd4, 0xb4, 0x30, 0xd2, 0x1d, 0x82, 0x74, 0xdb, 0xa6, 0xbe, 0xee, 0x13, 0x6a,
+	0x7b, 0xe1, 0xa5, 0xa5, 0x7b, 0x4d, 0xea, 0xb5, 0xa9, 0x87, 0x1a, 0xba, 0xc7, 0xb3, 0xa1, 0xee,
+	0x62, 0x03, 0xfb, 0xfa, 0x22, 0x72, 0x74, 0x93, 0xd8, 0xec, 0x30, 0x3f, 0x5b, 0x8e, 0x00, 0x1b,
+	0x2c, 0xeb, 0xc4, 0x6e, 0xd1, 0xa4, 0x13, 0xd8, 0xf5, 0x49, 0x8b, 0x60, 0xa3, 0xde, 0xa6, 0x06,
+	0xb6, 0xf8, 0x09, 0x39, 0x72, 0xc2, 0xc5, 0x5d, 0xfa, 0x3a, 0xb6, 0x7f, 0xc3, 0xa4, 0x26, 0x65,
+	0x4b, 0x14, 0xac, 0xc2, 0xa8, 0xf2, 0x55, 0x02, 0xb7, 0x9f, 0x07, 0xe0, 0xd6, 0xb0, 0xbf, 0x7a,
+	0x7a, 0xc1, 0x63, 0xbb, 0x45, 0x35, 0xbc, 0xdd, 0xc1, 0x9e, 0x0f, 0xa7, 0x41, 0xa1, 0x4b, 0x8c,
+	0xa2, 0x54, 0x96, 0x2a, 0xe3, 0x5a, 0xb0, 0x0c, 0x22, 0x0e, 0x31, 0x8a, 0xf9, 0x30, 0xe2, 0x10,
+	0x03, 0xde, 0x05, 0xd3, 0x1e, 0x6d, 0xf9, 0x6f, 0x74, 0x17, 0xd7, 0xbb, 0xd8, 0xf5, 0x08, 0xb5,
+	0x8b, 0x85, 0xb2, 0x54, 0xb9, 0xae, 0x4d, 0xf5, 0xe3, 0x9b, 0x61, 0x18, 0x56, 0x01, 0xe4, 0xf8,
+	0x9b, 0x4c, 0x81, 0xba, 0xbf, 0xe3, 0xe0, 0xe2, 0x58, 0x59, 0xaa, 0x5c, 0xd5, 0x66, 0x84, 0x9d,
+	0xda, 0x8e, 0x83, 0x95, 0x4f, 0x12, 0x90, 0x87, 0xe1, 0xf3, 0x1c, 0x6a, 0x7b, 0x18, 0x7a, 0x60,
+	0xb2, 0x29, 0xec, 0x30, 0xac, 0xd7, 0x96, 0x1e, 0xaa, 0x23, 0x95, 0x55, 0x15, 0xd3, 0xac, 0x8c,
+	0x1d, 0x1e, 0xcf, 0x49, 0x5a, 0x2c, 0x85, 0x62, 0x72, 0xd9, 0x96, 0x2d, 0x2b, 0x59, 0xb6, 0x47,
+	0x00, 0x0c, 0xca, 0xcc, 0x11, 0xcd, 0xab, 0xa1, 0x27, 0xd4, 0xc0, 0x13, 0x6a, 0xe8, 0x40, 0xee,
+	0x09, 0xf5, 0x99, 0x6e, 0x62, 0xfe, 0xac, 0x16, 0x79, 0x52, 0x39, 0xee, 0x0b, 0x90, 0x90, 0xe9,
+	0x1c, 0x01, 0x0a, 0xd9, 0x0a, 0x90, 0x8b, 0x0b, 0x00, 0xd7, 0x04, 0x7e, 0x79, 0xc6, 0x6f, 0xe1,
+	0x42, 0x7e, 0x21, 0x62, 0x81, 0xa0, 0xe0, 0xc0, 0xbe, 0xb3, 0x9f, 0x06, 0xc6, 0xbd, 0x84, 0x0e,
+	0x8c, 0xe1, 0x8b, 0x14, 0x40, 0xd8, 0x49, 0xeb, 0x40, 0xe1, 0xb2, 0x53, 0x07, 0x0a, 0x51, 0xc1,
+	0x81, 0x89, 0xb2, 0xfd, 0x17, 0x07, 0xfe, 0xbb, 0x00, 0x85, 0x6c, 0x05, 0xc8, 0xc5, 0x05, 0xc8,
+	0xce, 0x81, 0x07, 0x12, 0xb8, 0xd5, 0xaf, 0xb0, 0x16, 0x76, 0xce, 0x4b, 0xe4, 0xbf, 0x0f, 0x12,
+	0x98, 0x4d, 0x46, 0xc7, 0xc5, 0x6f, 0x83, 0x09, 0x37, 0x12, 0xe7, 0x95, 0x5e, 0x1d, 0x51, 0xfa,
+	0x68, 0x0a, 0xee, 0x3c, 0xe1, 0x7a, 0x05, 0x73, 0xb1, 0x96, 0x2d, 0x2b, 0x49, 0xac, 0xac, 0x5c,
+	0xf7, 0xbd, 0x4f, 0xfb, 0x4c, 0x9e, 0xa1, 0xb4, 0x0b, 0x59, 0xd2, 0xce, 0x89, 0xb4, 0x33, 0x73,
+	0xdb, 0xd2, 0xe7, 0x09, 0x30, 0xce, 0x88, 0xc1, 0x2f, 0x79, 0x30, 0x29, 0xf6, 0x5a, 0x58, 0x1b,
+	0x11, 0xfe, 0xb9, 0x23, 0xbc, 0xb4, 0x91, 0xf1, 0xad, 0x21, 0x2b, 0xe5, 0xc5, 0xfb, 0x6f, 0xbf,
+	0xf6, 0xf3, 0x1b, 0x70, 0x1d, 0x19, 0x4d, 0x0b, 0x25, 0x7e, 0xc2, 0x54, 0x83, 0x4f, 0x18, 0xb4,
+	0xdb, 0x25, 0xc6, 0x1e, 0xda, 0x75, 0xd8, 0x6f, 0xfc, 0x35, 0xd9, 0x43, 0xbb, 0x67, 0x5f, 0x87,
+	0x3d, 0xf8, 0x5b, 0x02, 0x33, 0x62, 0xde, 0x65, 0xcb, 0x4a, 0xa7, 0xcf, 0xb0, 0x59, 0x9d, 0x4e,
+	0x9f, 0xa1, 0x73, 0x59, 0x59, 0x60, 0xfa, 0xdc, 0x81, 0x73, 0x17, 0xe8, 0x03, 0x0f, 0x02, 0x23,
+	0x88, 0xcd, 0x2d, 0xb5, 0x11, 0x92, 0x46, 0x42, 0x7a, 0x23, 0x24, 0xb6, 0x7f, 0xe5, 0x25, 0x23,
+	0xba, 0x09, 0x6b, 0x67, 0x88, 0xf6, 0xcf, 0x57, 0xd9, 0x97, 0xa8, 0x37, 0x92, 0x13, 0xfe, 0x04,
+	0x4e, 0x10, 0x12, 0x67, 0xe2, 0x84, 0xec, 0x05, 0x1a, 0x3a, 0x1f, 0x95, 0x0a, 0x13, 0x48, 0x81,
+	0xe5, 0x8b, 0x04, 0x82, 0xfb, 0x79, 0x30, 0x11, 0xed, 0x45, 0x50, 0x4b, 0x59, 0xb2, 0x84, 0x1e,
+	0x5d, 0x5a, 0xcf, 0xf4, 0x4e, 0xce, 0x71, 0x8b, 0x71, 0xac, 0x41, 0x2d, 0xce, 0x91, 0xb7, 0xd1,
+	0x34, 0x16, 0xe8, 0x49, 0x60, 0x2a, 0x9a, 0x34, 0x30, 0x80, 0x96, 0xb2, 0x54, 0x99, 0x0b, 0x33,
+	0x64, 0x50, 0x29, 0xf3, 0x4c, 0x98, 0x32, 0x94, 0xcf, 0x17, 0x66, 0x05, 0x1f, 0xf6, 0x64, 0xe9,
+	0xa8, 0x27, 0x4b, 0x3f, 0x7b, 0xb2, 0xf4, 0xf1, 0x44, 0xce, 0x1d, 0x9d, 0xc8, 0xb9, 0x1f, 0x27,
+	0x72, 0x6e, 0xeb, 0x89, 0x49, 0xfc, 0x57, 0x9d, 0x46, 0x90, 0x11, 0x85, 0x00, 0xab, 0x7d, 0x84,
+	0x28, 0x82, 0xb0, 0x1a, 0xe9, 0x2b, 0x21, 0x46, 0xf4, 0x36, 0x9a, 0x2f, 0xd0, 0xd2, 0x6b, 0x5c,
+	0x61, 0x7f, 0xfc, 0xee, 0xff, 0x0d, 0x00, 0x00, 0xff, 0xff, 0xd0, 0x9e, 0xea, 0x3a, 0x0d, 0x0f,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -302,6 +742,14 @@ type QueryClient interface {
 	ComplianceInfo(ctx context.Context, in *QueryGetComplianceInfoRequest, opts ...grpc.CallOption) (*QueryGetComplianceInfoResponse, error)
 	// Queries a list of ComplianceInfo items.
 	ComplianceInfoAll(ctx context.Context, in *QueryAllComplianceInfoRequest, opts ...grpc.CallOption) (*QueryAllComplianceInfoResponse, error)
+	// Queries a CertifiedModel by index.
+	CertifiedModel(ctx context.Context, in *QueryGetCertifiedModelRequest, opts ...grpc.CallOption) (*QueryGetCertifiedModelResponse, error)
+	// Queries a list of CertifiedModel items.
+	CertifiedModelAll(ctx context.Context, in *QueryAllCertifiedModelRequest, opts ...grpc.CallOption) (*QueryAllCertifiedModelResponse, error)
+	// Queries a RevokedModel by index.
+	RevokedModel(ctx context.Context, in *QueryGetRevokedModelRequest, opts ...grpc.CallOption) (*QueryGetRevokedModelResponse, error)
+	// Queries a list of RevokedModel items.
+	RevokedModelAll(ctx context.Context, in *QueryAllRevokedModelRequest, opts ...grpc.CallOption) (*QueryAllRevokedModelResponse, error)
 }
 
 type queryClient struct {
@@ -330,12 +778,56 @@ func (c *queryClient) ComplianceInfoAll(ctx context.Context, in *QueryAllComplia
 	return out, nil
 }
 
+func (c *queryClient) CertifiedModel(ctx context.Context, in *QueryGetCertifiedModelRequest, opts ...grpc.CallOption) (*QueryGetCertifiedModelResponse, error) {
+	out := new(QueryGetCertifiedModelResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.compliance.Query/CertifiedModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) CertifiedModelAll(ctx context.Context, in *QueryAllCertifiedModelRequest, opts ...grpc.CallOption) (*QueryAllCertifiedModelResponse, error) {
+	out := new(QueryAllCertifiedModelResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.compliance.Query/CertifiedModelAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RevokedModel(ctx context.Context, in *QueryGetRevokedModelRequest, opts ...grpc.CallOption) (*QueryGetRevokedModelResponse, error) {
+	out := new(QueryGetRevokedModelResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.compliance.Query/RevokedModel", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) RevokedModelAll(ctx context.Context, in *QueryAllRevokedModelRequest, opts ...grpc.CallOption) (*QueryAllRevokedModelResponse, error) {
+	out := new(QueryAllRevokedModelResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.compliance.Query/RevokedModelAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Queries a ComplianceInfo by index.
 	ComplianceInfo(context.Context, *QueryGetComplianceInfoRequest) (*QueryGetComplianceInfoResponse, error)
 	// Queries a list of ComplianceInfo items.
 	ComplianceInfoAll(context.Context, *QueryAllComplianceInfoRequest) (*QueryAllComplianceInfoResponse, error)
+	// Queries a CertifiedModel by index.
+	CertifiedModel(context.Context, *QueryGetCertifiedModelRequest) (*QueryGetCertifiedModelResponse, error)
+	// Queries a list of CertifiedModel items.
+	CertifiedModelAll(context.Context, *QueryAllCertifiedModelRequest) (*QueryAllCertifiedModelResponse, error)
+	// Queries a RevokedModel by index.
+	RevokedModel(context.Context, *QueryGetRevokedModelRequest) (*QueryGetRevokedModelResponse, error)
+	// Queries a list of RevokedModel items.
+	RevokedModelAll(context.Context, *QueryAllRevokedModelRequest) (*QueryAllRevokedModelResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -347,6 +839,18 @@ func (*UnimplementedQueryServer) ComplianceInfo(ctx context.Context, req *QueryG
 }
 func (*UnimplementedQueryServer) ComplianceInfoAll(ctx context.Context, req *QueryAllComplianceInfoRequest) (*QueryAllComplianceInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ComplianceInfoAll not implemented")
+}
+func (*UnimplementedQueryServer) CertifiedModel(ctx context.Context, req *QueryGetCertifiedModelRequest) (*QueryGetCertifiedModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CertifiedModel not implemented")
+}
+func (*UnimplementedQueryServer) CertifiedModelAll(ctx context.Context, req *QueryAllCertifiedModelRequest) (*QueryAllCertifiedModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CertifiedModelAll not implemented")
+}
+func (*UnimplementedQueryServer) RevokedModel(ctx context.Context, req *QueryGetRevokedModelRequest) (*QueryGetRevokedModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokedModel not implemented")
+}
+func (*UnimplementedQueryServer) RevokedModelAll(ctx context.Context, req *QueryAllRevokedModelRequest) (*QueryAllRevokedModelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokedModelAll not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -389,6 +893,78 @@ func _Query_ComplianceInfoAll_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_CertifiedModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetCertifiedModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).CertifiedModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.compliance.Query/CertifiedModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).CertifiedModel(ctx, req.(*QueryGetCertifiedModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_CertifiedModelAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllCertifiedModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).CertifiedModelAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.compliance.Query/CertifiedModelAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).CertifiedModelAll(ctx, req.(*QueryAllCertifiedModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_RevokedModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetRevokedModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RevokedModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.compliance.Query/RevokedModel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RevokedModel(ctx, req.(*QueryGetRevokedModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_RevokedModelAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllRevokedModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).RevokedModelAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.compliance.Query/RevokedModelAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).RevokedModelAll(ctx, req.(*QueryAllRevokedModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.compliance.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -400,6 +976,22 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ComplianceInfoAll",
 			Handler:    _Query_ComplianceInfoAll_Handler,
+		},
+		{
+			MethodName: "CertifiedModel",
+			Handler:    _Query_CertifiedModel_Handler,
+		},
+		{
+			MethodName: "CertifiedModelAll",
+			Handler:    _Query_CertifiedModelAll_Handler,
+		},
+		{
+			MethodName: "RevokedModel",
+			Handler:    _Query_RevokedModel_Handler,
+		},
+		{
+			MethodName: "RevokedModelAll",
+			Handler:    _Query_RevokedModelAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -570,6 +1162,334 @@ func (m *QueryAllComplianceInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int,
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetCertifiedModelRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetCertifiedModelRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetCertifiedModelRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CertificationType) > 0 {
+		i -= len(m.CertificationType)
+		copy(dAtA[i:], m.CertificationType)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.CertificationType)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.SoftwareVersion != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.SoftwareVersion))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Pid != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Vid != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetCertifiedModelResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetCertifiedModelResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetCertifiedModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.CertifiedModel != nil {
+		{
+			size, err := m.CertifiedModel.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllCertifiedModelRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllCertifiedModelRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllCertifiedModelRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllCertifiedModelResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllCertifiedModelResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllCertifiedModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.CertifiedModel) > 0 {
+		for iNdEx := len(m.CertifiedModel) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.CertifiedModel[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetRevokedModelRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetRevokedModelRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetRevokedModelRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CertificationType) > 0 {
+		i -= len(m.CertificationType)
+		copy(dAtA[i:], m.CertificationType)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.CertificationType)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.SoftwareVersion != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.SoftwareVersion))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.Pid != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Pid))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Vid != 0 {
+		i = encodeVarintQuery(dAtA, i, uint64(m.Vid))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetRevokedModelResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetRevokedModelResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetRevokedModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.RevokedModel != nil {
+		{
+			size, err := m.RevokedModel.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllRevokedModelRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllRevokedModelRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllRevokedModelRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllRevokedModelResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllRevokedModelResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllRevokedModelResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.RevokedModel) > 0 {
+		for iNdEx := len(m.RevokedModel) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.RevokedModel[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -637,6 +1557,140 @@ func (m *QueryAllComplianceInfoResponse) Size() (n int) {
 	_ = l
 	if len(m.ComplianceInfo) > 0 {
 		for _, e := range m.ComplianceInfo {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetCertifiedModelRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Vid != 0 {
+		n += 1 + sovQuery(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovQuery(uint64(m.Pid))
+	}
+	if m.SoftwareVersion != 0 {
+		n += 1 + sovQuery(uint64(m.SoftwareVersion))
+	}
+	l = len(m.CertificationType)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetCertifiedModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.CertifiedModel != nil {
+		l = m.CertifiedModel.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllCertifiedModelRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllCertifiedModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.CertifiedModel) > 0 {
+		for _, e := range m.CertifiedModel {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetRevokedModelRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Vid != 0 {
+		n += 1 + sovQuery(uint64(m.Vid))
+	}
+	if m.Pid != 0 {
+		n += 1 + sovQuery(uint64(m.Pid))
+	}
+	if m.SoftwareVersion != 0 {
+		n += 1 + sovQuery(uint64(m.SoftwareVersion))
+	}
+	l = len(m.CertificationType)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetRevokedModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.RevokedModel != nil {
+		l = m.RevokedModel.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllRevokedModelRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllRevokedModelResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.RevokedModel) > 0 {
+		for _, e := range m.RevokedModel {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -1025,6 +2079,868 @@ func (m *QueryAllComplianceInfoResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.ComplianceInfo = append(m.ComplianceInfo, ComplianceInfo{})
 			if err := m.ComplianceInfo[len(m.ComplianceInfo)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetCertifiedModelRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetCertifiedModelRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetCertifiedModelRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersion", wireType)
+			}
+			m.SoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertificationType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CertificationType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetCertifiedModelResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetCertifiedModelResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetCertifiedModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertifiedModel", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.CertifiedModel == nil {
+				m.CertifiedModel = &CertifiedModel{}
+			}
+			if err := m.CertifiedModel.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllCertifiedModelRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllCertifiedModelRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllCertifiedModelRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllCertifiedModelResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllCertifiedModelResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllCertifiedModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertifiedModel", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CertifiedModel = append(m.CertifiedModel, CertifiedModel{})
+			if err := m.CertifiedModel[len(m.CertifiedModel)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetRevokedModelRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetRevokedModelRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetRevokedModelRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Vid", wireType)
+			}
+			m.Vid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Vid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pid", wireType)
+			}
+			m.Pid = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pid |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SoftwareVersion", wireType)
+			}
+			m.SoftwareVersion = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SoftwareVersion |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CertificationType", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CertificationType = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetRevokedModelResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetRevokedModelResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetRevokedModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokedModel", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.RevokedModel == nil {
+				m.RevokedModel = &RevokedModel{}
+			}
+			if err := m.RevokedModel.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllRevokedModelRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllRevokedModelRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllRevokedModelRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllRevokedModelResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllRevokedModelResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllRevokedModelResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RevokedModel", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.RevokedModel = append(m.RevokedModel, RevokedModel{})
+			if err := m.RevokedModel[len(m.RevokedModel)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

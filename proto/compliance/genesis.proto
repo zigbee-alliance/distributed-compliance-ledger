@@ -2,6 +2,8 @@ syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.compliance;
 
 import "compliance/compliance_info.proto";
+import "compliance/certified_model.proto";
+import "compliance/revoked_model.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -10,5 +12,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 // GenesisState defines the compliance module's genesis state.
 message GenesisState {
     repeated ComplianceInfo complianceInfoList = 1 [(gogoproto.nullable) = false];
+  repeated CertifiedModel certifiedModelList = 2 [(gogoproto.nullable) = false];
+  repeated RevokedModel revokedModelList = 3 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

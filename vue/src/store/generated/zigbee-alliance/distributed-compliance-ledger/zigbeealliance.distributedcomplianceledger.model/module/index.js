@@ -4,14 +4,14 @@ import { Registry } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgCreateModelVersion } from "./types/model/tx";
 import { MsgUpdateModelVersion } from "./types/model/tx";
-import { MsgCreateModel } from "./types/model/tx";
 import { MsgUpdateModel } from "./types/model/tx";
+import { MsgCreateModel } from "./types/model/tx";
 import { MsgDeleteModel } from "./types/model/tx";
 const types = [
     ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", MsgCreateModelVersion],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", MsgUpdateModelVersion],
-    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", MsgCreateModel],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", MsgUpdateModel],
+    ["/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", MsgCreateModel],
     ["/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", MsgDeleteModel],
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -35,8 +35,8 @@ const txClient = async (wallet, { addr: addr } = { addr: "http://localhost:26657
         signAndBroadcast: (msgs, { fee, memo } = { fee: defaultFee, memo: "" }) => client.signAndBroadcast(address, msgs, fee, memo),
         msgCreateModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersion", value: MsgCreateModelVersion.fromPartial(data) }),
         msgUpdateModelVersion: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersion", value: MsgUpdateModelVersion.fromPartial(data) }),
-        msgCreateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial(data) }),
         msgUpdateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgUpdateModel", value: MsgUpdateModel.fromPartial(data) }),
+        msgCreateModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgCreateModel", value: MsgCreateModel.fromPartial(data) }),
         msgDeleteModel: (data) => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.model.MsgDeleteModel", value: MsgDeleteModel.fromPartial(data) }),
     };
 };

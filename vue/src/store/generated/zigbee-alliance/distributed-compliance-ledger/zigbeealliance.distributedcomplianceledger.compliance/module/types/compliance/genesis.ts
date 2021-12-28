@@ -1,13 +1,17 @@
 /* eslint-disable */
 import { ComplianceInfo } from '../compliance/compliance_info'
+import { CertifiedModel } from '../compliance/certified_model'
+import { RevokedModel } from '../compliance/revoked_model'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance'
 
 /** GenesisState defines the compliance module's genesis state. */
 export interface GenesisState {
-  /** this line is used by starport scaffolding # genesis/proto/state */
   complianceInfoList: ComplianceInfo[]
+  certifiedModelList: CertifiedModel[]
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  revokedModelList: RevokedModel[]
 }
 
 const baseGenesisState: object = {}
@@ -17,6 +21,12 @@ export const GenesisState = {
     for (const v of message.complianceInfoList) {
       ComplianceInfo.encode(v!, writer.uint32(10).fork()).ldelim()
     }
+    for (const v of message.certifiedModelList) {
+      CertifiedModel.encode(v!, writer.uint32(18).fork()).ldelim()
+    }
+    for (const v of message.revokedModelList) {
+      RevokedModel.encode(v!, writer.uint32(26).fork()).ldelim()
+    }
     return writer
   },
 
@@ -25,11 +35,19 @@ export const GenesisState = {
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseGenesisState } as GenesisState
     message.complianceInfoList = []
+    message.certifiedModelList = []
+    message.revokedModelList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
           message.complianceInfoList.push(ComplianceInfo.decode(reader, reader.uint32()))
+          break
+        case 2:
+          message.certifiedModelList.push(CertifiedModel.decode(reader, reader.uint32()))
+          break
+        case 3:
+          message.revokedModelList.push(RevokedModel.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -42,9 +60,21 @@ export const GenesisState = {
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState
     message.complianceInfoList = []
+    message.certifiedModelList = []
+    message.revokedModelList = []
     if (object.complianceInfoList !== undefined && object.complianceInfoList !== null) {
       for (const e of object.complianceInfoList) {
         message.complianceInfoList.push(ComplianceInfo.fromJSON(e))
+      }
+    }
+    if (object.certifiedModelList !== undefined && object.certifiedModelList !== null) {
+      for (const e of object.certifiedModelList) {
+        message.certifiedModelList.push(CertifiedModel.fromJSON(e))
+      }
+    }
+    if (object.revokedModelList !== undefined && object.revokedModelList !== null) {
+      for (const e of object.revokedModelList) {
+        message.revokedModelList.push(RevokedModel.fromJSON(e))
       }
     }
     return message
@@ -57,15 +87,37 @@ export const GenesisState = {
     } else {
       obj.complianceInfoList = []
     }
+    if (message.certifiedModelList) {
+      obj.certifiedModelList = message.certifiedModelList.map((e) => (e ? CertifiedModel.toJSON(e) : undefined))
+    } else {
+      obj.certifiedModelList = []
+    }
+    if (message.revokedModelList) {
+      obj.revokedModelList = message.revokedModelList.map((e) => (e ? RevokedModel.toJSON(e) : undefined))
+    } else {
+      obj.revokedModelList = []
+    }
     return obj
   },
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState
     message.complianceInfoList = []
+    message.certifiedModelList = []
+    message.revokedModelList = []
     if (object.complianceInfoList !== undefined && object.complianceInfoList !== null) {
       for (const e of object.complianceInfoList) {
         message.complianceInfoList.push(ComplianceInfo.fromPartial(e))
+      }
+    }
+    if (object.certifiedModelList !== undefined && object.certifiedModelList !== null) {
+      for (const e of object.certifiedModelList) {
+        message.certifiedModelList.push(CertifiedModel.fromPartial(e))
+      }
+    }
+    if (object.revokedModelList !== undefined && object.revokedModelList !== null) {
+      for (const e of object.revokedModelList) {
+        message.revokedModelList.push(RevokedModel.fromPartial(e))
       }
     }
     return message

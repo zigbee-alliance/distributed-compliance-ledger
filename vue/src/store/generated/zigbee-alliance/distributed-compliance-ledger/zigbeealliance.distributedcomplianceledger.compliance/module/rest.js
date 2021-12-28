@@ -130,12 +130,41 @@ export class HttpClient {
     }
 }
 /**
- * @title compliance/compliance_history_item.proto
+ * @title compliance/certified_model.proto
  * @version version not set
  */
 export class Api extends HttpClient {
     constructor() {
         super(...arguments);
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryCertifiedModelAll
+         * @summary Queries a list of CertifiedModel items.
+         * @request GET:/dcl/compliance/certified-models
+         */
+        this.queryCertifiedModelAll = (query, params = {}) => this.request({
+            path: `/dcl/compliance/certified-models`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryCertifiedModel
+         * @summary Queries a CertifiedModel by index.
+         * @request GET:/dcl/compliance/certified-models/{vid}/{pid}/{softwareVersion}/{certificationType}
+         */
+        this.queryCertifiedModel = (vid, pid, softwareVersion, certificationType, params = {}) => this.request({
+            path: `/dcl/compliance/certified-models/${vid}/${pid}/${softwareVersion}/${certificationType}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
         /**
          * No description
          *
@@ -161,6 +190,35 @@ export class Api extends HttpClient {
          */
         this.queryComplianceInfo = (vid, pid, softwareVersion, certificationType, params = {}) => this.request({
             path: `/dcl/compliance/compliance-info/${vid}/${pid}/${softwareVersion}/${certificationType}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRevokedModelAll
+         * @summary Queries a list of RevokedModel items.
+         * @request GET:/dcl/compliance/revoked-models
+         */
+        this.queryRevokedModelAll = (query, params = {}) => this.request({
+            path: `/dcl/compliance/revoked-models`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRevokedModel
+         * @summary Queries a RevokedModel by index.
+         * @request GET:/dcl/compliance/revoked-models/{vid}/{pid}/{softwareVersion}/{certificationType}
+         */
+        this.queryRevokedModel = (vid, pid, softwareVersion, certificationType, params = {}) => this.request({
+            path: `/dcl/compliance/revoked-models/${vid}/${pid}/${softwareVersion}/${certificationType}`,
             method: "GET",
             format: "json",
             ...params,

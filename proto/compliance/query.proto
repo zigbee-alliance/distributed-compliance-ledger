@@ -4,6 +4,8 @@ package zigbeealliance.distributedcomplianceledger.compliance;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "compliance/compliance_info.proto";
+import "compliance/certified_model.proto";
+import "compliance/revoked_model.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -19,6 +21,26 @@ service Query {
 	// Queries a list of ComplianceInfo items.
 	rpc ComplianceInfoAll(QueryAllComplianceInfoRequest) returns (QueryAllComplianceInfoResponse) {
 		option (google.api.http).get = "/dcl/compliance/compliance-info";
+	}
+
+// Queries a CertifiedModel by index.
+	rpc CertifiedModel(QueryGetCertifiedModelRequest) returns (QueryGetCertifiedModelResponse) {
+		option (google.api.http).get = "/dcl/compliance/certified-models/{vid}/{pid}/{software_version}/{certification_type}";
+	}
+
+	// Queries a list of CertifiedModel items.
+	rpc CertifiedModelAll(QueryAllCertifiedModelRequest) returns (QueryAllCertifiedModelResponse) {
+		option (google.api.http).get = "/dcl/compliance/certified-models";
+	}
+
+// Queries a RevokedModel by index.
+	rpc RevokedModel(QueryGetRevokedModelRequest) returns (QueryGetRevokedModelResponse) {
+		option (google.api.http).get = "/dcl/compliance/revoked-models/{vid}/{pid}/{software_version}/{certification_type}";
+	}
+
+	// Queries a list of RevokedModel items.
+	rpc RevokedModelAll(QueryAllRevokedModelRequest) returns (QueryAllRevokedModelResponse) {
+		option (google.api.http).get = "/dcl/compliance/revoked-models";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -42,6 +64,48 @@ message QueryAllComplianceInfoRequest {
 
 message QueryAllComplianceInfoResponse {
 	repeated ComplianceInfo complianceInfo = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetCertifiedModelRequest {
+  int32 vid = 1;
+  int32 pid = 2;
+  uint32 software_version = 3;
+  string certification_type = 4;
+
+}
+
+message QueryGetCertifiedModelResponse {
+	CertifiedModel certifiedModel = 1 [(gogoproto.nullable) = true];
+}
+
+message QueryAllCertifiedModelRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllCertifiedModelResponse {
+	repeated CertifiedModel certifiedModel = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetRevokedModelRequest {
+  int32 vid = 1;
+  int32 pid = 2;
+  uint32 software_version = 3;
+  string certification_type = 4;
+
+}
+
+message QueryGetRevokedModelResponse {
+	RevokedModel revokedModel = 1 [(gogoproto.nullable) = true];
+}
+
+message QueryAllRevokedModelRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRevokedModelResponse {
+	repeated RevokedModel revokedModel = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

@@ -5,16 +5,16 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgApproveAddAccount } from "./types/dclauth/tx";
+import { MsgProposeAddAccount } from "./types/dclauth/tx";
 import { MsgApproveRevokeAccount } from "./types/dclauth/tx";
 import { MsgProposeRevokeAccount } from "./types/dclauth/tx";
-import { MsgProposeAddAccount } from "./types/dclauth/tx";
 
 
 const types = [
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", MsgApproveAddAccount],
+  ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", MsgProposeAddAccount],
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", MsgApproveRevokeAccount],
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", MsgProposeRevokeAccount],
-  ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", MsgProposeAddAccount],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -48,9 +48,9 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgApproveAddAccount: (data: MsgApproveAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", value: MsgApproveAddAccount.fromPartial( data ) }),
+    msgProposeAddAccount: (data: MsgProposeAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", value: MsgProposeAddAccount.fromPartial( data ) }),
     msgApproveRevokeAccount: (data: MsgApproveRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", value: MsgApproveRevokeAccount.fromPartial( data ) }),
     msgProposeRevokeAccount: (data: MsgProposeRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", value: MsgProposeRevokeAccount.fromPartial( data ) }),
-    msgProposeAddAccount: (data: MsgProposeAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", value: MsgProposeAddAccount.fromPartial( data ) }),
     
   };
 };

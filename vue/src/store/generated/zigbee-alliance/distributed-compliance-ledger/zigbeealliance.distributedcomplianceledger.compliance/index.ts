@@ -2,11 +2,13 @@ import { txClient, queryClient, MissingWalletError , registry} from './module'
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex'
 
+import { CertifiedModel } from "./module/types/compliance/certified_model"
 import { ComplianceHistoryItem } from "./module/types/compliance/compliance_history_item"
 import { ComplianceInfo } from "./module/types/compliance/compliance_info"
+import { RevokedModel } from "./module/types/compliance/revoked_model"
 
 
-export { ComplianceHistoryItem, ComplianceInfo };
+export { CertifiedModel, ComplianceHistoryItem, ComplianceInfo, RevokedModel };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -46,10 +48,16 @@ const getDefaultState = () => {
 	return {
 				ComplianceInfo: {},
 				ComplianceInfoAll: {},
+				CertifiedModel: {},
+				CertifiedModelAll: {},
+				RevokedModel: {},
+				RevokedModelAll: {},
 				
 				_Structure: {
+						CertifiedModel: getStructure(CertifiedModel.fromPartial({})),
 						ComplianceHistoryItem: getStructure(ComplianceHistoryItem.fromPartial({})),
 						ComplianceInfo: getStructure(ComplianceInfo.fromPartial({})),
+						RevokedModel: getStructure(RevokedModel.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -89,6 +97,30 @@ export default {
 						(<any> params).query=null
 					}
 			return state.ComplianceInfoAll[JSON.stringify(params)] ?? {}
+		},
+				getCertifiedModel: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.CertifiedModel[JSON.stringify(params)] ?? {}
+		},
+				getCertifiedModelAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.CertifiedModelAll[JSON.stringify(params)] ?? {}
+		},
+				getRevokedModel: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RevokedModel[JSON.stringify(params)] ?? {}
+		},
+				getRevokedModelAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.RevokedModelAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -167,6 +199,102 @@ export default {
 				return getters['getComplianceInfoAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new SpVuexError('QueryClient:QueryComplianceInfoAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryCertifiedModel({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryCertifiedModel( key.vid,  key.pid,  key.software_version,  key.certification_type)).data
+				
+					
+				commit('QUERY', { query: 'CertifiedModel', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCertifiedModel', payload: { options: { all }, params: {...key},query }})
+				return getters['getCertifiedModel']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryCertifiedModel', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryCertifiedModelAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryCertifiedModelAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryCertifiedModelAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'CertifiedModelAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCertifiedModelAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getCertifiedModelAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryCertifiedModelAll', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryRevokedModel({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryRevokedModel( key.vid,  key.pid,  key.software_version,  key.certification_type)).data
+				
+					
+				commit('QUERY', { query: 'RevokedModel', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedModel', payload: { options: { all }, params: {...key},query }})
+				return getters['getRevokedModel']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryRevokedModel', 'API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryRevokedModelAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryRevokedModelAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryRevokedModelAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'RevokedModelAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryRevokedModelAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getRevokedModelAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new SpVuexError('QueryClient:QueryRevokedModelAll', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
