@@ -149,16 +149,14 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())
-	firstModel := test_model.NewMsgCreateModel(vid, pid)
-	firstModel.Creator = suite.GetAddress(vendorName).String()
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	sv := uint32(tmrand.Uint32())
 	svs := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs)
-	firstModelVersion.Creator = suite.GetAddress(vendorName).String()
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -237,16 +235,14 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 
 	// Publish second model info
 	new_pid := int32(tmrand.Uint16())
-	secondModel := test_model.NewMsgCreateModel(vid, new_pid)
-	secondModel.Creator = vendorAccount.Address
+	secondModel := test_model.NewMsgCreateModel(vid, new_pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish second modelVersion
 	new_sv := uint32(tmrand.Uint32())
 	new_svs := utils.RandString()
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, new_pid, new_sv, new_svs)
-	secondModelVersion.Creator = vendorAccount.Address
+	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, new_pid, new_sv, new_svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
