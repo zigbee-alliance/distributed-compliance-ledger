@@ -24,3 +24,7 @@ starport scaffold --module pki single ApprovedRootCertificates certs:strings --n
 starport scaffold --module pki single RevokedRootCertificates certs:strings --no-message
 starport scaffold --module pki map ApprovedCertificatesBySubject subjectKeyIds:strings --index subject --no-message
 #starport scaffold --module pki map AllProposedCertificates --index subject,subjectKeyId --no-message
+
+# Allow colons (:) in subject ID part in REST URLs
+# TODO: need to copy the generated query.pb.gw.go into the correct folder
+protoc -I "proto" -I "third_party/proto" --grpc-gateway_out=logtostderr=true,allow_colon_final_segments=true:. "--gocosmos_out=plugins=interfacetype+grpc,Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:." proto/pki/query.proto 

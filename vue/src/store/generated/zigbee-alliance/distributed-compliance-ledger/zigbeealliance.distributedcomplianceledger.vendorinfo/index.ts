@@ -170,18 +170,18 @@ export default {
 		},
 		
 		
-		async sendMsgDeleteVendorInfo({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgUpdateVendorInfo({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDeleteVendorInfo(value)
+				const msg = await txClient.msgUpdateVendorInfo(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -200,32 +200,32 @@ export default {
 				}
 			}
 		},
-		async sendMsgUpdateVendorInfo({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgDeleteVendorInfo({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgUpdateVendorInfo(value)
+				const msg = await txClient.msgDeleteVendorInfo(value)
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Send', 'Could not broadcast Tx: '+ e.message)
+					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgDeleteVendorInfo({ rootGetters }, { value }) {
+		async MsgUpdateVendorInfo({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgDeleteVendorInfo(value)
+				const msg = await txClient.msgUpdateVendorInfo(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Create', 'Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Create', 'Could not create message: ' + e.message)
 					
 				}
 			}
@@ -244,16 +244,16 @@ export default {
 				}
 			}
 		},
-		async MsgUpdateVendorInfo({ rootGetters }, { value }) {
+		async MsgDeleteVendorInfo({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgUpdateVendorInfo(value)
+				const msg = await txClient.msgDeleteVendorInfo(value)
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
+					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgUpdateVendorInfo:Create', 'Could not create message: ' + e.message)
+					throw new SpVuexError('TxClient:MsgDeleteVendorInfo:Create', 'Could not create message: ' + e.message)
 					
 				}
 			}
