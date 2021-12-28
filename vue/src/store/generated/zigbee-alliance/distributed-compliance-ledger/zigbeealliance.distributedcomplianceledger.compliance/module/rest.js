@@ -142,10 +142,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryComplianceInfoAll
          * @summary Queries a list of ComplianceInfo items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info
+         * @request GET:/dcl/compliance/compliance-info
          */
         this.queryComplianceInfoAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info`,
+            path: `/dcl/compliance/compliance-info`,
             method: "GET",
             query: query,
             format: "json",
@@ -157,10 +157,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryComplianceInfo
          * @summary Queries a ComplianceInfo by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info/{vid}/{pid}/{softwareVersion}/{certificationType}
+         * @request GET:/dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}
          */
         this.queryComplianceInfo = (vid, pid, softwareVersion, certificationType, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info/${vid}/${pid}/${softwareVersion}/${certificationType}`,
+            path: `/dcl/compliance/compliance-info/${vid}/${pid}/${softwareVersion}/${certificationType}`,
             method: "GET",
             format: "json",
             ...params,

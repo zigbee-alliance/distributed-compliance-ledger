@@ -31,7 +31,7 @@ func networkWithComplianceInfoObjects(t *testing.T, n int) (*network.Network, []
 		complianceInfo := types.ComplianceInfo{
 			Vid:               int32(i),
 			Pid:               int32(i),
-			SoftwareVersion:   uint64(i),
+			SoftwareVersion:   uint32(i),
 			CertificationType: strconv.Itoa(i),
 		}
 		nullify.Fill(&complianceInfo)
@@ -54,7 +54,7 @@ func TestShowComplianceInfo(t *testing.T) {
 		desc                string
 		idVid               int32
 		idPid               int32
-		idSoftwareVersion   uint64
+		idSoftwareVersion   uint32
 		idCertificationType string
 
 		args []string

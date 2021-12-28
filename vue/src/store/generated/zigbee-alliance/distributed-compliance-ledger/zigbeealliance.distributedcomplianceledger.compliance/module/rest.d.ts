@@ -1,20 +1,26 @@
+export interface ComplianceComplianceHistoryItem {
+    /** @format int64 */
+    softwareVersionCertificationStatus?: number;
+    date?: string;
+    reason?: string;
+}
 export interface ComplianceComplianceInfo {
     /** @format int32 */
     vid?: number;
     /** @format int32 */
     pid?: number;
-    /** @format uint64 */
-    softwareVersion?: string;
+    /** @format int64 */
+    softwareVersion?: number;
     certificationType?: string;
     softwareVersionString?: string;
-    /** @format uint64 */
-    cDVersionNumber?: string;
-    /** @format uint64 */
-    softwareVersionCertificationStatus?: string;
+    /** @format int64 */
+    cDVersionNumber?: number;
+    /** @format int64 */
+    softwareVersionCertificationStatus?: number;
     date?: string;
     reason?: string;
     owner?: string;
-    history?: string[];
+    history?: ComplianceComplianceHistoryItem[];
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
 export declare type ComplianceMsgRevokeModelResponse = object;
@@ -163,7 +169,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryComplianceInfoAll
      * @summary Queries a list of ComplianceInfo items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info
+     * @request GET:/dcl/compliance/compliance-info
      */
     queryComplianceInfoAll: (query?: {
         "pagination.key"?: string;
@@ -178,8 +184,8 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryComplianceInfo
      * @summary Queries a ComplianceInfo by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info/{vid}/{pid}/{softwareVersion}/{certificationType}
+     * @request GET:/dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}
      */
-    queryComplianceInfo: (vid: number, pid: number, softwareVersion: string, certificationType: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetComplianceInfoResponse, RpcStatus>>;
+    queryComplianceInfo: (vid: number, pid: number, softwareVersion: number, certificationType: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetComplianceInfoResponse, RpcStatus>>;
 }
 export {};

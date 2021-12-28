@@ -11769,7 +11769,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/compliance/compliance_info:
+  /dcl/compliance/compliance-info:
     get:
       summary: Queries a list of ComplianceInfo items.
       operationId: ZigbeeallianceDistributedcomplianceledgerComplianceComplianceInfoAll
@@ -11791,18 +11791,18 @@ paths:
                       type: integer
                       format: int32
                     softwareVersion:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     certificationType:
                       type: string
                     softwareVersionString:
                       type: string
                     cDVersionNumber:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     softwareVersionCertificationStatus:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int64
                     date:
                       type: string
                     reason:
@@ -11812,7 +11812,15 @@ paths:
                     history:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          softwareVersionCertificationStatus:
+                            type: integer
+                            format: int64
+                          date:
+                            type: string
+                          reason:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -11917,7 +11925,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info/{vid}/{pid}/{softwareVersion}/{certificationType}':
+  '/dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}':
     get:
       summary: Queries a ComplianceInfo by index.
       operationId: ZigbeeallianceDistributedcomplianceledgerComplianceComplianceInfo
@@ -11937,18 +11945,18 @@ paths:
                     type: integer
                     format: int32
                   softwareVersion:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   certificationType:
                     type: string
                   softwareVersionString:
                     type: string
                   cDVersionNumber:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   softwareVersionCertificationStatus:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int64
                   date:
                     type: string
                   reason:
@@ -11958,7 +11966,15 @@ paths:
                   history:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        softwareVersionCertificationStatus:
+                          type: integer
+                          format: int64
+                        date:
+                          type: string
+                        reason:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -11991,8 +12007,8 @@ paths:
         - name: softwareVersion
           in: path
           required: true
-          type: string
-          format: uint64
+          type: integer
+          format: int64
         - name: certificationType
           in: path
           required: true
@@ -24292,6 +24308,16 @@ definitions:
     description: >-
       MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount
       response type.
+  zigbeealliance.distributedcomplianceledger.compliance.ComplianceHistoryItem:
+    type: object
+    properties:
+      softwareVersionCertificationStatus:
+        type: integer
+        format: int64
+      date:
+        type: string
+      reason:
+        type: string
   zigbeealliance.distributedcomplianceledger.compliance.ComplianceInfo:
     type: object
     properties:
@@ -24302,18 +24328,18 @@ definitions:
         type: integer
         format: int32
       softwareVersion:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       certificationType:
         type: string
       softwareVersionString:
         type: string
       cDVersionNumber:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       softwareVersionCertificationStatus:
-        type: string
-        format: uint64
+        type: integer
+        format: int64
       date:
         type: string
       reason:
@@ -24323,7 +24349,15 @@ definitions:
       history:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            softwareVersionCertificationStatus:
+              type: integer
+              format: int64
+            date:
+              type: string
+            reason:
+              type: string
   zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModelResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.compliance.MsgRevokeModelResponse:
@@ -24343,18 +24377,18 @@ definitions:
               type: integer
               format: int32
             softwareVersion:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             certificationType:
               type: string
             softwareVersionString:
               type: string
             cDVersionNumber:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             softwareVersionCertificationStatus:
-              type: string
-              format: uint64
+              type: integer
+              format: int64
             date:
               type: string
             reason:
@@ -24364,7 +24398,15 @@ definitions:
             history:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  softwareVersionCertificationStatus:
+                    type: integer
+                    format: int64
+                  date:
+                    type: string
+                  reason:
+                    type: string
       pagination:
         type: object
         properties:
@@ -24403,18 +24445,18 @@ definitions:
             type: integer
             format: int32
           softwareVersion:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           certificationType:
             type: string
           softwareVersionString:
             type: string
           cDVersionNumber:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           softwareVersionCertificationStatus:
-            type: string
-            format: uint64
+            type: integer
+            format: int64
           date:
             type: string
           reason:
@@ -24424,7 +24466,15 @@ definitions:
           history:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                softwareVersionCertificationStatus:
+                  type: integer
+                  format: int64
+                date:
+                  type: string
+                reason:
+                  type: string
   zigbeealliance.distributedcomplianceledger.compliancetest.MsgAddTestingResultResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.compliancetest.QueryAllTestingResultsResponse:

@@ -1,3 +1,4 @@
+import { ComplianceHistoryItem } from '../compliance/compliance_history_item';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.compliance";
 export interface ComplianceInfo {
@@ -11,7 +12,7 @@ export interface ComplianceInfo {
     date: string;
     reason: string;
     owner: string;
-    history: string[];
+    history: ComplianceHistoryItem[];
 }
 export declare const ComplianceInfo: {
     encode(message: ComplianceInfo, writer?: Writer): Writer;

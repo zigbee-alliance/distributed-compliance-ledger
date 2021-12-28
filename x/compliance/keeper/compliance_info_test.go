@@ -20,7 +20,7 @@ func createNComplianceInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 	for i := range items {
 		items[i].Vid = int32(i)
 		items[i].Pid = int32(i)
-		items[i].SoftwareVersion = uint64(i)
+		items[i].SoftwareVersion = uint32(i)
 		items[i].CertificationType = strconv.Itoa(i)
 
 		keeper.SetComplianceInfo(ctx, items[i])

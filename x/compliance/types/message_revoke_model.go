@@ -9,7 +9,7 @@ const TypeMsgRevokeModel = "revoke_model"
 
 var _ sdk.Msg = &MsgRevokeModel{}
 
-func NewMsgRevokeModel(signer string, vid int32, pid int32, softwareVersion uint64, softwareVersionString string, revocationDate string, certificationType string, reason string) *MsgRevokeModel {
+func NewMsgRevokeModel(signer string, vid int32, pid int32, softwareVersion uint32, softwareVersionString string, revocationDate string, certificationType string, reason string) *MsgRevokeModel {
 	return &MsgRevokeModel{
 		Signer:                signer,
 		Vid:                   vid,

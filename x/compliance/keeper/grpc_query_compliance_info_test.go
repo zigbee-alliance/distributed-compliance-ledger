@@ -36,7 +36,7 @@ func TestComplianceInfoQuerySingle(t *testing.T) {
 				SoftwareVersion:   msgs[0].SoftwareVersion,
 				CertificationType: msgs[0].CertificationType,
 			},
-			response: &types.QueryGetComplianceInfoResponse{ComplianceInfo: msgs[0]},
+			response: &types.QueryGetComplianceInfoResponse{ComplianceInfo: &msgs[0]},
 		},
 		{
 			desc: "Second",
@@ -46,7 +46,7 @@ func TestComplianceInfoQuerySingle(t *testing.T) {
 				SoftwareVersion:   msgs[1].SoftwareVersion,
 				CertificationType: msgs[1].CertificationType,
 			},
-			response: &types.QueryGetComplianceInfoResponse{ComplianceInfo: msgs[1]},
+			response: &types.QueryGetComplianceInfoResponse{ComplianceInfo: &msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",

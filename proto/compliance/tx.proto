@@ -3,6 +3,8 @@ package zigbeealliance.distributedcomplianceledger.compliance;
 
 // this line is used by starport scaffolding # proto/tx/import
 
+import "cosmos_proto/cosmos.proto";
+
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types";
 
 // Msg defines the Msg service.
@@ -13,10 +15,10 @@ service Msg {
 }
 
 message MsgCertifyModel {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   int32 vid = 2;
   int32 pid = 3;
-  uint64 software_version = 4;
+  uint32 software_version = 4;
   string software_version_string = 5;
   string certification_date = 6;
   string certification_type = 7;
@@ -27,10 +29,10 @@ message MsgCertifyModelResponse {
 }
 
 message MsgRevokeModel {
-  string signer = 1;
+  string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   int32 vid = 2;
   int32 pid = 3;
-  uint64 software_version = 4;
+  uint32 software_version = 4;
   string software_version_string = 5;
   string revocation_date = 6;
   string certification_type = 7;

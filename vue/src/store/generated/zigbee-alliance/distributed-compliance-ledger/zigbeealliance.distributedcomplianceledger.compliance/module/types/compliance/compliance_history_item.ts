@@ -1,6 +1,5 @@
 /* eslint-disable */
-import * as Long from 'long'
-import { util, configure, Writer, Reader } from 'protobufjs/minimal'
+import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance'
 
@@ -15,7 +14,7 @@ const baseComplianceHistoryItem: object = { softwareVersionCertificationStatus: 
 export const ComplianceHistoryItem = {
   encode(message: ComplianceHistoryItem, writer: Writer = Writer.create()): Writer {
     if (message.softwareVersionCertificationStatus !== 0) {
-      writer.uint32(8).uint64(message.softwareVersionCertificationStatus)
+      writer.uint32(8).uint32(message.softwareVersionCertificationStatus)
     }
     if (message.date !== '') {
       writer.uint32(18).string(message.date)
@@ -34,7 +33,7 @@ export const ComplianceHistoryItem = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.softwareVersionCertificationStatus = longToNumber(reader.uint64() as Long)
+          message.softwareVersionCertificationStatus = reader.uint32()
           break
         case 2:
           message.date = reader.string()
@@ -99,16 +98,6 @@ export const ComplianceHistoryItem = {
   }
 }
 
-declare var self: any | undefined
-declare var window: any | undefined
-var globalThis: any = (() => {
-  if (typeof globalThis !== 'undefined') return globalThis
-  if (typeof self !== 'undefined') return self
-  if (typeof window !== 'undefined') return window
-  if (typeof global !== 'undefined') return global
-  throw 'Unable to locate global object'
-})()
-
 type Builtin = Date | Function | Uint8Array | string | number | undefined
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -119,15 +108,3 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>
-
-function longToNumber(long: Long): number {
-  if (long.gt(Number.MAX_SAFE_INTEGER)) {
-    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER')
-  }
-  return long.toNumber()
-}
-
-if (util.Long !== Long) {
-  util.Long = Long as any
-  configure()
-}

@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as Long from 'long';
-import { util, configure, Writer, Reader } from 'protobufjs/minimal';
+import { ComplianceHistoryItem } from '../compliance/compliance_history_item';
+import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance';
 const baseComplianceInfo = {
     vid: 0,
@@ -12,8 +12,7 @@ const baseComplianceInfo = {
     softwareVersionCertificationStatus: 0,
     date: '',
     reason: '',
-    owner: '',
-    history: ''
+    owner: ''
 };
 export const ComplianceInfo = {
     encode(message, writer = Writer.create()) {
@@ -24,7 +23,7 @@ export const ComplianceInfo = {
             writer.uint32(16).int32(message.pid);
         }
         if (message.softwareVersion !== 0) {
-            writer.uint32(24).uint64(message.softwareVersion);
+            writer.uint32(24).uint32(message.softwareVersion);
         }
         if (message.certificationType !== '') {
             writer.uint32(34).string(message.certificationType);
@@ -33,10 +32,10 @@ export const ComplianceInfo = {
             writer.uint32(42).string(message.softwareVersionString);
         }
         if (message.cDVersionNumber !== 0) {
-            writer.uint32(48).uint64(message.cDVersionNumber);
+            writer.uint32(48).uint32(message.cDVersionNumber);
         }
         if (message.softwareVersionCertificationStatus !== 0) {
-            writer.uint32(56).uint64(message.softwareVersionCertificationStatus);
+            writer.uint32(56).uint32(message.softwareVersionCertificationStatus);
         }
         if (message.date !== '') {
             writer.uint32(66).string(message.date);
@@ -48,7 +47,7 @@ export const ComplianceInfo = {
             writer.uint32(82).string(message.owner);
         }
         for (const v of message.history) {
-            writer.uint32(90).string(v);
+            ComplianceHistoryItem.encode(v, writer.uint32(90).fork()).ldelim();
         }
         return writer;
     },
@@ -67,7 +66,7 @@ export const ComplianceInfo = {
                     message.pid = reader.int32();
                     break;
                 case 3:
-                    message.softwareVersion = longToNumber(reader.uint64());
+                    message.softwareVersion = reader.uint32();
                     break;
                 case 4:
                     message.certificationType = reader.string();
@@ -76,10 +75,10 @@ export const ComplianceInfo = {
                     message.softwareVersionString = reader.string();
                     break;
                 case 6:
-                    message.cDVersionNumber = longToNumber(reader.uint64());
+                    message.cDVersionNumber = reader.uint32();
                     break;
                 case 7:
-                    message.softwareVersionCertificationStatus = longToNumber(reader.uint64());
+                    message.softwareVersionCertificationStatus = reader.uint32();
                     break;
                 case 8:
                     message.date = reader.string();
@@ -91,7 +90,7 @@ export const ComplianceInfo = {
                     message.owner = reader.string();
                     break;
                 case 11:
-                    message.history.push(reader.string());
+                    message.history.push(ComplianceHistoryItem.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -165,7 +164,7 @@ export const ComplianceInfo = {
         }
         if (object.history !== undefined && object.history !== null) {
             for (const e of object.history) {
-                message.history.push(String(e));
+                message.history.push(ComplianceHistoryItem.fromJSON(e));
             }
         }
         return message;
@@ -183,7 +182,7 @@ export const ComplianceInfo = {
         message.reason !== undefined && (obj.reason = message.reason);
         message.owner !== undefined && (obj.owner = message.owner);
         if (message.history) {
-            obj.history = message.history.map((e) => e);
+            obj.history = message.history.map((e) => (e ? ComplianceHistoryItem.toJSON(e) : undefined));
         }
         else {
             obj.history = [];
@@ -255,30 +254,9 @@ export const ComplianceInfo = {
         }
         if (object.history !== undefined && object.history !== null) {
             for (const e of object.history) {
-                message.history.push(e);
+                message.history.push(ComplianceHistoryItem.fromPartial(e));
             }
         }
         return message;
     }
 };
-var globalThis = (() => {
-    if (typeof globalThis !== 'undefined')
-        return globalThis;
-    if (typeof self !== 'undefined')
-        return self;
-    if (typeof window !== 'undefined')
-        return window;
-    if (typeof global !== 'undefined')
-        return global;
-    throw 'Unable to locate global object';
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
-}

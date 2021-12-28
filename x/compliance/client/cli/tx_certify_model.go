@@ -27,7 +27,7 @@ func CmdCertifyModel() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argSoftwareVersion, err := cast.ToUint64E(args[2])
+			argSoftwareVersion, err := cast.ToUint32E(args[2])
 			if err != nil {
 				return err
 			}

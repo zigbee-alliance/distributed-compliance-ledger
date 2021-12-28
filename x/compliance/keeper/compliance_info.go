@@ -23,7 +23,7 @@ func (k Keeper) GetComplianceInfo(
 	ctx sdk.Context,
 	vid int32,
 	pid int32,
-	softwareVersion uint64,
+	softwareVersion uint32,
 	certificationType string,
 
 ) (val types.ComplianceInfo, found bool) {
@@ -48,7 +48,7 @@ func (k Keeper) RemoveComplianceInfo(
 	ctx sdk.Context,
 	vid int32,
 	pid int32,
-	softwareVersion uint64,
+	softwareVersion uint32,
 	certificationType string,
 
 ) {

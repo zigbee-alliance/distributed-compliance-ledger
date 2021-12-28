@@ -9,6 +9,13 @@
  * ---------------------------------------------------------------
  */
 
+export interface ComplianceComplianceHistoryItem {
+  /** @format int64 */
+  softwareVersionCertificationStatus?: number;
+  date?: string;
+  reason?: string;
+}
+
 export interface ComplianceComplianceInfo {
   /** @format int32 */
   vid?: number;
@@ -16,20 +23,20 @@ export interface ComplianceComplianceInfo {
   /** @format int32 */
   pid?: number;
 
-  /** @format uint64 */
-  softwareVersion?: string;
+  /** @format int64 */
+  softwareVersion?: number;
   certificationType?: string;
   softwareVersionString?: string;
 
-  /** @format uint64 */
-  cDVersionNumber?: string;
+  /** @format int64 */
+  cDVersionNumber?: number;
 
-  /** @format uint64 */
-  softwareVersionCertificationStatus?: string;
+  /** @format int64 */
+  softwareVersionCertificationStatus?: number;
   date?: string;
   reason?: string;
   owner?: string;
-  history?: string[];
+  history?: ComplianceComplianceHistoryItem[];
 }
 
 export type ComplianceMsgCertifyModelResponse = object;
@@ -331,7 +338,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryComplianceInfoAll
    * @summary Queries a list of ComplianceInfo items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info
+   * @request GET:/dcl/compliance/compliance-info
    */
   queryComplianceInfoAll = (
     query?: {
@@ -344,7 +351,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<ComplianceQueryAllComplianceInfoResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info`,
+      path: `/dcl/compliance/compliance-info`,
       method: "GET",
       query: query,
       format: "json",
@@ -357,17 +364,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryComplianceInfo
    * @summary Queries a ComplianceInfo by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info/{vid}/{pid}/{softwareVersion}/{certificationType}
+   * @request GET:/dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}
    */
   queryComplianceInfo = (
     vid: number,
     pid: number,
-    softwareVersion: string,
+    softwareVersion: number,
     certificationType: string,
     params: RequestParams = {},
   ) =>
     this.request<ComplianceQueryGetComplianceInfoResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/compliance/compliance_info/${vid}/${pid}/${softwareVersion}/${certificationType}`,
+      path: `/dcl/compliance/compliance-info/${vid}/${pid}/${softwareVersion}/${certificationType}`,
       method: "GET",
       format: "json",
       ...params,

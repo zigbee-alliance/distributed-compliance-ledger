@@ -71,7 +71,7 @@ func request_Query_ComplianceInfo_0(ctx context.Context, marshaler runtime.Marsh
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
 	}
 
-	protoReq.SoftwareVersion, err = runtime.Uint64(val)
+	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
@@ -131,7 +131,7 @@ func local_request_Query_ComplianceInfo_0(ctx context.Context, marshaler runtime
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
 	}
 
-	protoReq.SoftwareVersion, err = runtime.Uint64(val)
+	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
@@ -326,9 +326,9 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_ComplianceInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6, 1, 0, 4, 1, 5, 7}, []string{"zigbee-alliance", "distributedcomplianceledger", "compliance", "compliance_info", "vid", "pid", "software_version", "certification_type"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ComplianceInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "compliance-info", "vid", "pid", "software_version", "certification_type"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ComplianceInfoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "compliance", "compliance_info"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ComplianceInfoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "compliance-info"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from 'protobufjs/minimal';
-import * as Long from 'long';
+import { Reader, Writer } from 'protobufjs/minimal';
 import { ComplianceInfo } from '../compliance/compliance_info';
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance';
@@ -14,7 +13,7 @@ export const QueryGetComplianceInfoRequest = {
             writer.uint32(16).int32(message.pid);
         }
         if (message.softwareVersion !== 0) {
-            writer.uint32(24).uint64(message.softwareVersion);
+            writer.uint32(24).uint32(message.softwareVersion);
         }
         if (message.certificationType !== '') {
             writer.uint32(34).string(message.certificationType);
@@ -35,7 +34,7 @@ export const QueryGetComplianceInfoRequest = {
                     message.pid = reader.int32();
                     break;
                 case 3:
-                    message.softwareVersion = longToNumber(reader.uint64());
+                    message.softwareVersion = reader.uint32();
                     break;
                 case 4:
                     message.certificationType = reader.string();
@@ -304,25 +303,4 @@ export class QueryClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Query', 'ComplianceInfoAll', data);
         return promise.then((data) => QueryAllComplianceInfoResponse.decode(new Reader(data)));
     }
-}
-var globalThis = (() => {
-    if (typeof globalThis !== 'undefined')
-        return globalThis;
-    if (typeof self !== 'undefined')
-        return self;
-    if (typeof window !== 'undefined')
-        return window;
-    if (typeof global !== 'undefined')
-        return global;
-    throw 'Unable to locate global object';
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
 }
