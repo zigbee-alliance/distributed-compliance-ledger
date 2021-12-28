@@ -85,10 +85,11 @@ func (k Keeper) AppendTestingResult(ctx sdk.Context, testingResult types.Testing
 
 	if testingResultsBytes == nil {
 		testingResults = types.TestingResults{
-			Vid:             testingResult.Vid,
-			Pid:             testingResult.Pid,
-			SoftwareVersion: testingResult.SoftwareVersion,
-			Results:         []*types.TestingResult{},
+			Vid:                   testingResult.Vid,
+			Pid:                   testingResult.Pid,
+			SoftwareVersion:       testingResult.SoftwareVersion,
+			SoftwareVersionString: testingResult.SoftwareVersionString,
+			Results:               []*types.TestingResult{},
 		}
 	} else {
 		k.cdc.MustUnmarshal(testingResultsBytes, &testingResults)
