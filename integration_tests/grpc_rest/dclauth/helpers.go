@@ -248,7 +248,7 @@ func CreateAccount(
 		suite,
 		accountInfo.GetAddress(),
 		accountInfo.GetPubKey(),
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		roles,
 		vendorId,
 		proposerName,
 		proposerAccount,

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -11,7 +12,11 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// check signer has enough rights to create model version
-	if err := checkModelRights(ctx, k.Keeper, msg.GetSigners()[0], msg.Vid, "MsgCreateModelVersion"); err != nil {
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgCreateModelVersion"); err != nil {
 		return nil, err
 	}
 
@@ -71,7 +76,11 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// check signer has enough rights to update model version
-	if err := checkModelRights(ctx, k.Keeper, msg.GetSigners()[0], msg.Vid, "MsgCreateModelVersion"); err != nil {
+	signerAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+	if err := checkModelRights(ctx, k.Keeper, signerAddr, msg.Vid, "MsgCreateModelVersion"); err != nil {
 		return nil, err
 	}
 

@@ -38,11 +38,11 @@ import (
 	TODO: provide tests for error cases
 */
 
-func NewMsgCreateModel(vid int32) *modeltypes.MsgCreateModel {
+func NewMsgCreateModel(vid int32, pid int32) *modeltypes.MsgCreateModel {
 
 	return &modeltypes.MsgCreateModel{
 		Vid:                                      vid,
-		Pid:                                      int32(tmrand.Uint16()),
+		Pid:                                      pid,
 		DeviceTypeId:                             testconstants.DeviceTypeId,
 		ProductName:                              utils.RandString(),
 		ProductLabel:                             utils.RandString(),
@@ -328,7 +328,8 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// New vendor adds first model
-	firstModel := NewMsgCreateModel(vid)
+	pid1 := int32(tmrand.Uint16())
+	firstModel := NewMsgCreateModel(vid, pid1)
 	_, err = AddModel(suite, firstModel, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -341,7 +342,8 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, firstModel.ProductLabel, receivedModel.ProductLabel)
 
 	// Add second model
-	secondModel := NewMsgCreateModel(vid)
+	pid2 := int32(tmrand.Uint16())
+	secondModel := NewMsgCreateModel(vid, pid2)
 	_, err = AddModel(suite, secondModel, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
