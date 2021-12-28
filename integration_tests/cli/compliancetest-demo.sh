@@ -112,9 +112,9 @@ create_model_and_version $vid $new_pid $sv $svs $vendor_account
 test_divider
 
 echo "Add Testing Result for Model VID: $vid PID: $new_pid SV: $sv"
-new_testing_result="blob string"
 new_test_date="2020-11-24T10:00:00Z"
-result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$new_pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$new_testing_result" --test-date="$new_test_date" --from $test_house_account --yes)
+test_results_path="integration_tests/constants/test_results"
+result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$new_pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$test_results_path" --test-date="$new_test_date" --from $test_house_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -126,7 +126,9 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $new_pid"
 check_response "$result" "\"software_version\": $sv"
 check_response "$result" "\"software_version_string\": \"$svs\""
-check_response "$result" "\"test_result\": \"$new_testing_result\""
+check_response "$result" "\"test_result\": \"Some test results line1"
+check_response "$result" "line2"
+check_response "$result" "line3"
 check_response "$result" "\"test_date\": \"$new_test_date\""
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"test_result\": \"$testing_result\""
@@ -146,7 +148,9 @@ check_response "$result" "\"test_result\": \"$testing_result\""
 check_response "$result" "\"test_date\": \"$test_date\""
 check_response "$result" "\"test_result\": \"$second_testing_result\""
 check_response "$result" "\"test_date\": \"$second_test_date\""
-check_response "$result" "\"test_result\": \"$new_testing_result\""
+check_response "$result" "\"test_result\": \"Some test results line1"
+check_response "$result" "line2"
+check_response "$result" "line3"
 check_response "$result" "\"test_date\": \"$new_test_date\""
 echo "$result"
 
