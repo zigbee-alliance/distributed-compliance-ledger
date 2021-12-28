@@ -6,6 +6,7 @@ package zigbeealliance.distributedcomplianceledger.pki;
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
 import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
 
 // Msg defines the Msg service.
 service Msg {
@@ -28,8 +29,8 @@ message MsgProposeAddX509RootCertResponse {
 
 message MsgApproveAddX509RootCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string subject = 2;
-  string subject_key_id = 3;
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required\""];
+  string subject_key_id = 3 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgApproveAddX509RootCertResponse {
@@ -37,7 +38,7 @@ message MsgApproveAddX509RootCertResponse {
 
 message MsgAddX509Cert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string cert = 2;
+  string cert = 2 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgAddX509CertResponse {
@@ -45,8 +46,8 @@ message MsgAddX509CertResponse {
 
 message MsgProposeRevokeX509RootCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string subject = 2;
-  string subject_key_id = 3;
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required\""];
+  string subject_key_id = 3 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgProposeRevokeX509RootCertResponse {
@@ -54,8 +55,8 @@ message MsgProposeRevokeX509RootCertResponse {
 
 message MsgApproveRevokeX509RootCert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string subject = 2;
-  string subject_key_id = 3;
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required\""];
+  string subject_key_id = 3 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgApproveRevokeX509RootCertResponse {
@@ -63,8 +64,8 @@ message MsgApproveRevokeX509RootCertResponse {
 
 message MsgRevokeX509Cert {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  string subject = 2;
-  string subject_key_id = 3;
+  string subject = 2 [(gogoproto.moretags) = "validate:\"required\""];
+  string subject_key_id = 3 [(gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgRevokeX509CertResponse {
