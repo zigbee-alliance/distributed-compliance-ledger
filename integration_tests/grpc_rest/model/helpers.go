@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 
@@ -328,30 +329,30 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// New vendor adds first model
-	firstModel := NewMsgCreateModel(vid)
-	_, err = AddModel(suite, firstModel, vendorName, vendorAccount)
+	createFirstModelMsg := NewMsgCreateModel(vid)
+	_, err = AddModel(suite, createFirstModelMsg, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check first model is added
-	receivedModel, err := GetModel(suite, firstModel.Vid, firstModel.Pid)
+	receivedModel, err := GetModel(suite, createFirstModelMsg.Vid, createFirstModelMsg.Pid)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, firstModel.Vid, receivedModel.Vid)
-	require.Equal(suite.T, firstModel.Pid, receivedModel.Pid)
-	require.Equal(suite.T, firstModel.ProductName, receivedModel.ProductName)
-	require.Equal(suite.T, firstModel.ProductLabel, receivedModel.ProductLabel)
+	require.Equal(suite.T, createFirstModelMsg.Vid, receivedModel.Vid)
+	require.Equal(suite.T, createFirstModelMsg.Pid, receivedModel.Pid)
+	require.Equal(suite.T, createFirstModelMsg.ProductName, receivedModel.ProductName)
+	require.Equal(suite.T, createFirstModelMsg.ProductLabel, receivedModel.ProductLabel)
 
 	// Add second model
-	secondModel := NewMsgCreateModel(vid)
-	_, err = AddModel(suite, secondModel, vendorName, vendorAccount)
+	createSecondModelMsg := NewMsgCreateModel(vid)
+	_, err = AddModel(suite, createSecondModelMsg, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check second model is added
-	receivedModel, err = GetModel(suite, secondModel.Vid, secondModel.Pid)
+	receivedModel, err = GetModel(suite, createSecondModelMsg.Vid, createSecondModelMsg.Pid)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, secondModel.Vid, receivedModel.Vid)
-	require.Equal(suite.T, secondModel.Pid, receivedModel.Pid)
-	require.Equal(suite.T, secondModel.ProductName, receivedModel.ProductName)
-	require.Equal(suite.T, secondModel.ProductLabel, receivedModel.ProductLabel)
+	require.Equal(suite.T, createSecondModelMsg.Vid, receivedModel.Vid)
+	require.Equal(suite.T, createSecondModelMsg.Pid, receivedModel.Pid)
+	require.Equal(suite.T, createSecondModelMsg.ProductName, receivedModel.ProductName)
+	require.Equal(suite.T, createSecondModelMsg.ProductLabel, receivedModel.ProductLabel)
 
 	// Get all models
 	receivedModels, err := GetModels(suite)
@@ -362,70 +363,159 @@ func ModelDemo(suite *utils.TestSuite) {
 	vendorModels, err := GetVendorModels(suite, vid)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, 2, len(vendorModels.Products))
-	require.Equal(suite.T, firstModel.Pid, vendorModels.Products[0].Pid)
-	require.Equal(suite.T, secondModel.Pid, vendorModels.Products[1].Pid)
+	require.Equal(suite.T, createFirstModelMsg.Pid, vendorModels.Products[0].Pid)
+	require.Equal(suite.T, createSecondModelMsg.Pid, vendorModels.Products[1].Pid)
 
 	// Update second model
-	secondModelUpdate := NewMsgUpdateModel(secondModel.Vid, secondModel.Pid)
-	_, err = UpdateModel(suite, secondModelUpdate, vendorName, vendorAccount)
+	updateSecondModelMsg := NewMsgUpdateModel(createSecondModelMsg.Vid, createSecondModelMsg.Pid)
+	_, err = UpdateModel(suite, updateSecondModelMsg, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Check second model is updated
-	receivedModel, err = GetModel(suite, secondModel.Vid, secondModel.Pid)
+	receivedModel, err = GetModel(suite, createSecondModelMsg.Vid, createSecondModelMsg.Pid)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, secondModelUpdate.ProductLabel, receivedModel.ProductLabel)
+	require.Equal(suite.T, updateSecondModelMsg.ProductLabel, receivedModel.ProductLabel)
 }
 
-// /* Error cases */
+/* Error cases */
 
-// func Test_AddModel_ByNonVendor(suite *utils.TestSuite) {
-// 	// register new account
-// 	vid := common.RandUint16()
-// 	testAccount := utils.CreateNewAccount(auth.AccountRoles{}, vid)
+func AddModelByNonVendor(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
 
-// 	// try to publish model info
-// 	model := utils.NewMsgAddModel(testAccount.Address, vid)
-// 	res, _ := utils.SignAndBroadcastMessage(testAccount, model)
-// 	require.Equal(suite.T, sdk.CodeUnauthorized, sdk.CodeType(res.Code))
-// }
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
 
-// func Test_AddModel_ByDifferentVendor(suite *utils.TestSuite) {
-// 	// register new account
-// 	vid := common.RandUint16()
-// 	testAccount := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, vid+1)
+	// register new account without Vendor role
+	accountName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	account := test_dclauth.CreateAccount(
+		suite,
+		accountName,
+		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
+		uint64(vid),
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+	)
 
-// 	// try to publish model info
-// 	model := utils.NewMsgAddModel(testAccount.Address, vid)
-// 	res, _ := utils.SignAndBroadcastMessage(testAccount, model)
-// 	require.Equal(suite.T, sdk.CodeUnauthorized, sdk.CodeType(res.Code))
-// }
+	require.NotContains(suite.T, account.Roles, dclauthtypes.Vendor)
 
-// func Test_AddModel_Twice(suite *utils.TestSuite) {
-// 	// register new account
-// 	vid := common.RandUint16()
-// 	testAccount := utils.CreateNewAccount(auth.AccountRoles{auth.Vendor}, vid)
+	// try to add createModelMsg
+	createModelMsg := NewMsgCreateModel(vid)
+	_, err = AddModel(suite, createModelMsg, accountName, account)
+	require.Error(suite.T, err)
+	sdkerr := err.(*sdkerrors.Error)
+	require.Equal(suite.T, sdkerrors.ErrUnauthorized.Codespace(), sdkerr.Codespace())
+	require.Equal(suite.T, sdkerrors.ErrUnauthorized.ABCICode(), sdkerr.ABCICode())
+}
 
-// 	// publish modelMsg info
-// 	modelMsg := utils.NewMsgAddModel(testAccount.Address, vid)
-// 	res, _ := utils.AddModel(modelMsg, testAccount)
-// 	require.Equal(suite.T, sdk.CodeOK, sdk.CodeType(res.Code))
+func AddModelByDifferentVendor(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
 
-// 	// publish second time
-// 	res, _ = utils.AddModel(modelMsg, testAccount)
-// 	require.Equal(suite.T, model.CodeModelAlreadyExists, sdk.CodeType(res.Code))
-// }
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
 
-// func Test_GetModel_ForUnknown(suite *utils.TestSuite) {
-// 	_, code := utils.GetModel(common.RandUint16(), common.RandUint16())
-// 	require.Equal(suite.T, http.StatusNotFound, code)
-// }
+	// register new Vendor account
+	vendorName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	vendorAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		uint64(vid+1),
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+	)
 
-// func Test_GetModel_ForInvalidVidPid(suite *utils.TestSuite) {
-// 	// zero vid
-// 	_, code := utils.GetModel(0, common.RandUint16())
-// 	require.Equal(suite.T, http.StatusBadRequest, code)
+	// try to add createModelMsg
+	createModelMsg := NewMsgCreateModel(vid)
+	_, err = AddModel(suite, createModelMsg, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+	sdkerr := err.(*sdkerrors.Error)
+	require.Equal(suite.T, sdkerrors.ErrUnauthorized.Codespace(), sdkerr.Codespace())
+	require.Equal(suite.T, sdkerrors.ErrUnauthorized.ABCICode(), sdkerr.ABCICode())
+}
 
-// 	// zero pid
-// 	_, code = utils.GetModel(common.RandUint16(), 0)
-// 	require.Equal(suite.T, http.StatusBadRequest, code)
-// }
+func AddModelTwice(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new Vendor account
+	vendorName := utils.RandString()
+	vid := int32(tmrand.Uint16())
+	vendorAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		uint64(vid),
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+	)
+
+	// add model
+	createModelMsg := NewMsgCreateModel(vid)
+	_, err = AddModel(suite, createModelMsg, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// add the same model second time
+	_, err = AddModel(suite, createModelMsg, vendorName, vendorAccount)
+	require.Error(suite.T, err)
+	sdkerr := err.(*sdkerrors.Error)
+	require.Equal(suite.T, modeltypes.ErrModelAlreadyExists.Codespace(), sdkerr.Codespace())
+	require.Equal(suite.T, modeltypes.ErrModelAlreadyExists.ABCICode(), sdkerr.ABCICode())
+}
+
+func GetModelForUnknown(suite *utils.TestSuite) {
+	_, err := GetModel(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()))
+	require.Error(suite.T, err)
+	sdkerr := err.(*sdkerrors.Error)
+	require.Equal(suite.T, sdkerrors.ErrNotFound.Codespace(), sdkerr.Codespace())
+	require.Equal(suite.T, sdkerrors.ErrNotFound.ABCICode(), sdkerr.ABCICode())
+}
+
+func GetModelForInvalidVidPid(suite *utils.TestSuite) {
+	// zero vid
+	_, err := GetModel(suite, 0, int32(tmrand.Uint16()))
+	require.Error(suite.T, err)
+	sdkerr := err.(*sdkerrors.Error)
+	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.Codespace(), sdkerr.Codespace())
+	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.ABCICode(), sdkerr.ABCICode())
+
+	// zero pid
+	_, err = GetModel(suite, int32(tmrand.Uint16()), 0)
+	require.Error(suite.T, err)
+	sdkerr = err.(*sdkerrors.Error)
+	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.Codespace(), sdkerr.Codespace())
+	require.Equal(suite.T, sdkerrors.ErrInvalidRequest.ABCICode(), sdkerr.ABCICode())
+}

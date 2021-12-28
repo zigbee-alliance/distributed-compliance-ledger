@@ -33,6 +33,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
@@ -163,7 +164,10 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 	}
 
 	resp := broadcastResp.TxResponse
-	require.Equal(suite.T, uint32(0), resp.Code, resp)
+	if resp.Code != 0 {
+		err = sdkerrors.New(resp.Codespace, resp.Code, resp.RawLog)
+		return nil, err
+	}
 
 	return resp, nil
 }

@@ -33,8 +33,32 @@ import (
 	TODO: provide tests for error cases
 */
 
-//nolint:funlen
 func TestModelDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	model.ModelDemo(&suite)
+}
+
+func TestAddModelByNonVendorGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestAddModelByDifferentVendorGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestAddModelTwiceGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestGetModelForUnknownGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestGetModelForInvalidVidPidGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	model.AddModelByNonVendor(&suite)
 }

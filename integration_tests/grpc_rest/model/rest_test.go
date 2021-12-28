@@ -33,8 +33,32 @@ import (
 	TODO: provide tests for error cases
 */
 
-//nolint:funlen
 func TestModelDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.ModelDemo(&suite)
+}
+
+func TestAddModelByNonVendorREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestAddModelByDifferentVendorREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestAddModelTwiceREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestGetModelForUnknownREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestGetModelForInvalidVidPidREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelByNonVendor(&suite)
 }
