@@ -166,7 +166,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryTestingResultsAll
      * @summary Queries a list of TestingResults items.
-     * @request GET:/dcl/compliancetest/testing_results
+     * @request GET:/dcl/compliancetest/testing-results
      */
     queryTestingResultsAll: (query?: {
         "pagination.key"?: string;
@@ -181,7 +181,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryTestingResults
      * @summary Queries a TestingResults by index.
-     * @request GET:/dcl/compliancetest/testing_results/{vid}/{pid}/{softwareVersion}
+     * @request GET:/dcl/compliancetest/testing-results/{vid}/{pid}/{softwareVersion}
      */
     queryTestingResults: (vid: number, pid: number, softwareVersion: number, params?: RequestParams) => Promise<HttpResponse<CompliancetestQueryGetTestingResultsResponse, RpcStatus>>;
 }

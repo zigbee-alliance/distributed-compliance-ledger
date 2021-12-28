@@ -13,12 +13,12 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 service Query {
     // Queries a TestingResults by index.
 	rpc TestingResults(QueryGetTestingResultsRequest) returns (QueryGetTestingResultsResponse) {
-		option (google.api.http).get = "/dcl/compliancetest/testing_results/{vid}/{pid}/{software_version}";
+		option (google.api.http).get = "/dcl/compliancetest/testing-results/{vid}/{pid}/{software_version}";
 	}
 
 	// Queries a list of TestingResults items.
 	rpc TestingResultsAll(QueryAllTestingResultsRequest) returns (QueryAllTestingResultsResponse) {
-		option (google.api.http).get = "/dcl/compliancetest/testing_results";
+		option (google.api.http).get = "/dcl/compliancetest/testing-results";
 	}
 
 // this line is used by starport scaffolding # 2

@@ -11769,7 +11769,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/compliancetest/testing_results:
+  /dcl/compliancetest/testing-results:
     get:
       summary: Queries a list of TestingResults items.
       operationId: ZigbeeallianceDistributedcomplianceledgerCompliancetestTestingResultsAll
@@ -11921,7 +11921,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/compliancetest/testing_results/{vid}/{pid}/{softwareVersion}':
+  '/dcl/compliancetest/testing-results/{vid}/{pid}/{softwareVersion}':
     get:
       summary: Queries a TestingResults by index.
       operationId: ZigbeeallianceDistributedcomplianceledgerCompliancetestTestingResults

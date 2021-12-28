@@ -334,7 +334,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryTestingResultsAll
    * @summary Queries a list of TestingResults items.
-   * @request GET:/dcl/compliancetest/testing_results
+   * @request GET:/dcl/compliancetest/testing-results
    */
   queryTestingResultsAll = (
     query?: {
@@ -347,7 +347,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<CompliancetestQueryAllTestingResultsResponse, RpcStatus>({
-      path: `/dcl/compliancetest/testing_results`,
+      path: `/dcl/compliancetest/testing-results`,
       method: "GET",
       query: query,
       format: "json",
@@ -360,11 +360,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryTestingResults
    * @summary Queries a TestingResults by index.
-   * @request GET:/dcl/compliancetest/testing_results/{vid}/{pid}/{softwareVersion}
+   * @request GET:/dcl/compliancetest/testing-results/{vid}/{pid}/{softwareVersion}
    */
   queryTestingResults = (vid: number, pid: number, softwareVersion: number, params: RequestParams = {}) =>
     this.request<CompliancetestQueryGetTestingResultsResponse, RpcStatus>({
-      path: `/dcl/compliancetest/testing_results/${vid}/${pid}/${softwareVersion}`,
+      path: `/dcl/compliancetest/testing-results/${vid}/${pid}/${softwareVersion}`,
       method: "GET",
       format: "json",
       ...params,
