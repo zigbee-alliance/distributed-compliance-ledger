@@ -39,12 +39,12 @@ import (
 	TODO: provide tests for error cases
 */
 
-func NewMsgCreateModel(vid int32, signer string) *modeltypes.MsgCreateModel {
+func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreateModel {
 
 	return &modeltypes.MsgCreateModel{
 		Creator:                                  signer,
 		Vid:                                      vid,
-		Pid:                                      int32(tmrand.Uint16()),
+		Pid:                                      pid,
 		DeviceTypeId:                             testconstants.DeviceTypeId,
 		ProductName:                              utils.RandString(),
 		ProductLabel:                             utils.RandString(),
@@ -334,7 +334,8 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// New vendor adds first model
-	createFirstModelMsg := NewMsgCreateModel(vid, vendorAccount.Address)
+	pid1 := int32(tmrand.Uint16())
+    createFirstModelMsg := NewMsgCreateModel(vid, pid1, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -347,7 +348,8 @@ func ModelDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, createFirstModelMsg.ProductLabel, receivedModel.ProductLabel)
 
 	// Add second model
-	createSecondModelMsg := NewMsgCreateModel(vid, vendorAccount.Address)
+	pid2 := int32(tmrand.Uint16())
+	createSecondModelMsg := NewMsgCreateModel(vid, pid2, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createSecondModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 

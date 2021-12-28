@@ -504,7 +504,7 @@ func PKIDemo(suite *utils.TestSuite) {
 		GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
-	require.Equal(suite.T, []string{}, proposedCertificate.Approvals)
+	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
 
 	// Jack (Trustee) approve Root certificate
 	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{

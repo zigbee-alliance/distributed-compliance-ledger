@@ -11,6 +11,18 @@ import (
 
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
+		TestingResultsList: []types.TestingResults{
+			{
+				Vid:             0,
+				Pid:             0,
+				SoftwareVersion: 0,
+			},
+			{
+				Vid:             1,
+				Pid:             1,
+				SoftwareVersion: 1,
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -19,5 +31,6 @@ func TestGenesis(t *testing.T) {
 	got := compliancetest.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
 
+	require.ElementsMatch(t, genesisState.TestingResultsList, got.TestingResultsList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
