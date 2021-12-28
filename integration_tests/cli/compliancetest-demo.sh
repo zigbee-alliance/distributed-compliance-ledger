@@ -45,6 +45,34 @@ create_model_and_version $vid $pid $sv $svs $vendor_account
 
 test_divider
 
+echo "Get Testing Result for Unknown Model"
+unknown_pid=$RANDOM
+result=$(dcld query compliancetest test-result --vid=$vid --pid=$unknown_pid --softwareVersion=$sv)
+check_response "$result" "null"
+response_does_not_contain "$result" "\"pid\": $unknown_pid"
+response_does_not_contain "$result" "\"vid\": $vid"
+echo "$result"
+
+test_divider
+
+echo "Get Testing Result for Unknown Test Results"
+result=$(dcld query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
+check_response "$result" "null"
+response_does_not_contain "$result" "\"pid\": $pid"
+response_does_not_contain "$result" "\"vid\": $vid"
+echo "$result"
+
+test_divider
+
+echo "Get All Testing Result empty"
+result=$(dcld query compliancetest all-test-results)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"pid\": $pid"
+response_does_not_contain "$result" "\"vid\": $vid"
+echo "$result"
+
+test_divider
+
 echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="http://first.place.com"
 test_date="2020-01-01T00:00:00Z"
@@ -105,6 +133,21 @@ response_does_not_contain "$result" "\"test_result\": \"$testing_result\""
 response_does_not_contain "$result" "\"test_result\": \"$second_testing_result\""
 response_does_not_contain "$result" "\"test_date\": \"$test_date\""
 response_does_not_contain "$result" "\"test_date\": \"$second_test_date\""
+echo "$result"
+
+test_divider
+
+echo "Get All Testing Result"
+result=$(dcld query compliancetest all-test-results)
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $new_pid"
+check_response "$result" "\"test_result\": \"$testing_result\""
+check_response "$result" "\"test_date\": \"$test_date\""
+check_response "$result" "\"test_result\": \"$second_testing_result\""
+check_response "$result" "\"test_date\": \"$second_test_date\""
+check_response "$result" "\"test_result\": \"$new_testing_result\""
+check_response "$result" "\"test_date\": \"$new_test_date\""
 echo "$result"
 
 test_divider
