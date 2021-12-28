@@ -71,3 +71,35 @@ func (k Keeper) GetAllTestingResults(ctx sdk.Context) (list []types.TestingResul
 
 	return
 }
+
+// Add a testing result to the list of results
+func (k Keeper) AppendTestingResult(ctx sdk.Context, testingResult types.TestingResult) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TestingResultsKeyPrefix))
+
+	testingResultsBytes := store.Get(types.TestingResultsKey(
+		testingResult.Vid,
+		testingResult.Pid,
+		testingResult.SoftwareVersion,
+	))
+	var testingResults types.TestingResults
+
+	if testingResultsBytes == nil {
+		testingResults = types.TestingResults{
+			Vid:             testingResult.Vid,
+			Pid:             testingResult.Pid,
+			SoftwareVersion: testingResult.SoftwareVersion,
+			Results:         []*types.TestingResult{},
+		}
+	} else {
+		k.cdc.MustUnmarshal(testingResultsBytes, &testingResults)
+	}
+
+	testingResults.Results = append(testingResults.Results, &testingResult)
+
+	b := k.cdc.MustMarshal(&testingResults)
+	store.Set(types.TestingResultsKey(
+		testingResult.Vid,
+		testingResult.Pid,
+		testingResult.SoftwareVersion,
+	), b)
+}

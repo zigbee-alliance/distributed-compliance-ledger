@@ -64,6 +64,7 @@ func (msg *MsgCreateModel) Type() string {
 func (msg *MsgCreateModel) GetSigners() []sdk.AccAddress {
 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
+		// TODO: do not raise panic
 		panic(err)
 	}
 	return []sdk.AccAddress{creator}
