@@ -4,11 +4,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-// SetLastValidatorPower set a specific lastValidatorPower in the store from its index
+// SetLastValidatorPower set a specific lastValidatorPower in the store from its index.
 func (k Keeper) SetLastValidatorPower(ctx sdk.Context, lastValidatorPower types.LastValidatorPower) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
 
@@ -30,7 +29,7 @@ func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, owner sdk.ValAddres
 	return store.Has(types.LastValidatorPowerKey(owner))
 }
 
-// GetLastValidatorPower returns a lastValidatorPower from its index
+// GetLastValidatorPower returns a lastValidatorPower from its index.
 func (k Keeper) GetLastValidatorPower(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
@@ -49,7 +48,7 @@ func (k Keeper) GetLastValidatorPower(
 	return val, true
 }
 
-// RemoveLastValidatorPower removes a lastValidatorPower from the store
+// RemoveLastValidatorPower removes a lastValidatorPower from the store.
 func (k Keeper) RemoveLastValidatorPower(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
@@ -61,7 +60,7 @@ func (k Keeper) RemoveLastValidatorPower(
 	))
 }
 
-// GetAllLastValidatorPower returns all lastValidatorPower
+// GetAllLastValidatorPower returns all lastValidatorPower.
 func (k Keeper) GetAllLastValidatorPower(ctx sdk.Context) (list []types.LastValidatorPower) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

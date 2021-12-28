@@ -6,14 +6,14 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetApprovedRootCertificates set approvedRootCertificates in the store
+// SetApprovedRootCertificates set approvedRootCertificates in the store.
 func (k Keeper) SetApprovedRootCertificates(ctx sdk.Context, approvedRootCertificates types.ApprovedRootCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKey))
 	b := k.cdc.MustMarshal(&approvedRootCertificates)
 	store.Set([]byte{0}, b)
 }
 
-// GetApprovedRootCertificates returns approvedRootCertificates
+// GetApprovedRootCertificates returns approvedRootCertificates.
 func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.ApprovedRootCertificates, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKey))
 
@@ -26,13 +26,13 @@ func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.Approved
 	return val, true
 }
 
-// RemoveApprovedRootCertificates removes approvedRootCertificates from the store
+// RemoveApprovedRootCertificates removes approvedRootCertificates from the store.
 func (k Keeper) RemoveApprovedRootCertificates(ctx sdk.Context) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKey))
 	store.Delete([]byte{0})
 }
 
-// Add root certificate to the list
+// Add root certificate to the list.
 func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certId types.CertificateIdentifier) {
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
 
@@ -48,7 +48,7 @@ func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certId types.Certifi
 	k.SetApprovedRootCertificates(ctx, rootCertificates)
 }
 
-// Remove root certificate from the list
+// Remove root certificate from the list.
 func (k Keeper) RemoveApprovedRootCertificate(ctx sdk.Context, certId types.CertificateIdentifier) {
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
 

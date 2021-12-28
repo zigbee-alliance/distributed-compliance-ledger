@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
-// SetVendorInfo set a specific vendorInfo in the store from its index
+// SetVendorInfo set a specific vendorInfo in the store from its index.
 func (k Keeper) SetVendorInfo(ctx sdk.Context, vendorInfo types.VendorInfo) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorInfoKeyPrefix))
 	b := k.cdc.MustMarshal(&vendorInfo)
@@ -15,7 +15,7 @@ func (k Keeper) SetVendorInfo(ctx sdk.Context, vendorInfo types.VendorInfo) {
 	), b)
 }
 
-// GetVendorInfo returns a vendorInfo from its index
+// GetVendorInfo returns a vendorInfo from its index.
 func (k Keeper) GetVendorInfo(
 	ctx sdk.Context,
 	vendorID int32,
@@ -34,7 +34,7 @@ func (k Keeper) GetVendorInfo(
 	return val, true
 }
 
-// RemoveVendorInfo removes a vendorInfo from the store
+// RemoveVendorInfo removes a vendorInfo from the store.
 func (k Keeper) RemoveVendorInfo(
 	ctx sdk.Context,
 	vendorID int32,
@@ -46,7 +46,7 @@ func (k Keeper) RemoveVendorInfo(
 	))
 }
 
-// GetAllVendorInfo returns all vendorInfo
+// GetAllVendorInfo returns all vendorInfo.
 func (k Keeper) GetAllVendorInfo(ctx sdk.Context) (list []types.VendorInfo) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorInfoKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

@@ -6,7 +6,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// x/vendorinfo module sentinel errors
+// x/vendorinfo module sentinel errors.
 var (
 	DefaultCodespace string = ModuleName
 

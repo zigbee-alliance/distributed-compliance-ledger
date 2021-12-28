@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
 )
 
-// SetTestingResults set a specific testingResults in the store from its index
+// SetTestingResults set a specific testingResults in the store from its index.
 func (k Keeper) SetTestingResults(ctx sdk.Context, testingResults types.TestingResults) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TestingResultsKeyPrefix))
 	b := k.cdc.MustMarshal(&testingResults)
@@ -17,7 +17,7 @@ func (k Keeper) SetTestingResults(ctx sdk.Context, testingResults types.TestingR
 	), b)
 }
 
-// GetTestingResults returns a testingResults from its index
+// GetTestingResults returns a testingResults from its index.
 func (k Keeper) GetTestingResults(
 	ctx sdk.Context,
 	vid int32,
@@ -40,7 +40,7 @@ func (k Keeper) GetTestingResults(
 	return val, true
 }
 
-// RemoveTestingResults removes a testingResults from the store
+// RemoveTestingResults removes a testingResults from the store.
 func (k Keeper) RemoveTestingResults(
 	ctx sdk.Context,
 	vid int32,
@@ -56,7 +56,7 @@ func (k Keeper) RemoveTestingResults(
 	))
 }
 
-// GetAllTestingResults returns all testingResults
+// GetAllTestingResults returns all testingResults.
 func (k Keeper) GetAllTestingResults(ctx sdk.Context) (list []types.TestingResults) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TestingResultsKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -72,7 +72,7 @@ func (k Keeper) GetAllTestingResults(ctx sdk.Context) (list []types.TestingResul
 	return
 }
 
-// Add a testing result to the list of results
+// Add a testing result to the list of results.
 func (k Keeper) AppendTestingResult(ctx sdk.Context, testingResult types.TestingResult) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.TestingResultsKeyPrefix))
 

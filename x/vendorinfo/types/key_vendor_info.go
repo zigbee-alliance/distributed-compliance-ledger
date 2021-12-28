@@ -4,12 +4,10 @@ import "encoding/binary"
 
 var _ binary.ByteOrder
 
-var (
-	// VendorInfoKeyPrefix is the prefix to retrieve all VendorInfo
-	VendorInfoKeyPrefix = []byte{0x01} // prefix for each key to a pending account
-)
+// VendorInfoKeyPrefix is the prefix to retrieve all VendorInfo.
+var VendorInfoKeyPrefix = []byte{0x01} // prefix for each key to a pending account
 
-// VendorInfoKey returns the store key to retrieve a VendorInfo from the index fields
+// VendorInfoKey returns the store key to retrieve a VendorInfo from the index fields.
 func VendorInfoKey(
 	vendorID int32,
 ) []byte {

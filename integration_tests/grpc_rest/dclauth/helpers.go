@@ -17,19 +17,16 @@ package dclauth
 import (
 	"context"
 
-	"github.com/cosmos/cosmos-sdk/testutil/testdata"
-	"github.com/cosmos/go-bip39"
-	"github.com/stretchr/testify/require"
-
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-
+	"github.com/cosmos/go-bip39"
+	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 const (
@@ -75,7 +72,6 @@ func GetAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.A
 	}
 
 	return &res, nil
-
 }
 
 func GetAccounts(suite *utils.TestSuite) (res []dclauthtypes.Account, err error) {
@@ -178,7 +174,6 @@ func ProposeAddAccount(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg, err := dclauthtypes.NewMsgProposeAddAccount(
 		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID)
 	require.NoError(suite.T, err)
@@ -191,7 +186,6 @@ func ApproveAddAccount(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signerName), accAddr)
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -202,7 +196,6 @@ func ProposeRevokeAccount(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg := dclauthtypes.NewMsgProposeRevokeAccount(suite.GetAddress(signerName), accAddr)
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -213,7 +206,6 @@ func ApproveRevokeAccount(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg := dclauthtypes.NewMsgApproveRevokeAccount(suite.GetAddress(signerName), accAddr)
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -241,7 +233,6 @@ func CreateAccount(
 	approverName string,
 	approverAccount *dclauthtypes.Account,
 ) *dclauthtypes.Account {
-
 	accountInfo := CreateAccountInfo(suite, accountName)
 
 	_, err := ProposeAddAccount(

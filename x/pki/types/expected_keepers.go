@@ -2,7 +2,6 @@ package types
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 

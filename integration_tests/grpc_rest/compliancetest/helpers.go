@@ -316,5 +316,4 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testResults[1].Results[0].TestResult, secondModelTestingResult.TestResult)
 	require.Equal(suite.T, testResults[1].Results[0].TestDate, secondModelTestingResult.TestDate)
 	require.Equal(suite.T, testResults[1].Results[0].Owner, secondModelTestingResult.Signer)
-
 }

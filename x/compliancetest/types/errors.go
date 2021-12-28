@@ -6,7 +6,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// x/compliancetest module sentinel errors
+// x/compliancetest module sentinel errors.
 var (
 	ErrTestingResultsDoNotExist       = sdkerrors.Register(ModuleName, 201, "testing result does not exist")
 	ErrModelVersionStringDoesNotMatch = sdkerrors.Register(ModuleName, 202, "model version does not match")

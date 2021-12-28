@@ -170,6 +170,7 @@ func NewMsgDeleteModel(
 		Pid:     pid,
 	}
 }
+
 func (msg *MsgDeleteModel) Route() string {
 	return RouterKey
 }

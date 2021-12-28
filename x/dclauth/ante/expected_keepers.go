@@ -4,7 +4,7 @@ import (
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 )
 
-// TODO issue 99: add GetParams and GetModuleAddress stubs in dclauth.AccountKeeper
+// TODO issue 99: add GetParams and GetModuleAddress stubs in dclauth.AccountKeeper.
 type AccountKeeper authante.AccountKeeper
 
 // which is

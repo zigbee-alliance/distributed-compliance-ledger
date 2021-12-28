@@ -10,7 +10,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// TODO refactor duplication of msg ValidateBasic
+// TODO refactor duplication of msg ValidateBasic.
 func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgProposeAddAccount) (*types.MsgProposeAddAccountResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 

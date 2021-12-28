@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNApprovedCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ApprovedCertificates {
@@ -41,6 +41,7 @@ func TestApprovedCertificatesGet(t *testing.T) {
 		)
 	}
 }
+
 func TestApprovedCertificatesRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t)
 	items := createNApprovedCertificates(keeper, ctx, 10)

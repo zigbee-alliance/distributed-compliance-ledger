@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// VendorProductsKeyPrefix is the prefix to retrieve all VendorProducts
+	// VendorProductsKeyPrefix is the prefix to retrieve all VendorProducts.
 	VendorProductsKeyPrefix = "VendorProducts/value/"
 )
 
-// VendorProductsKey returns the store key to retrieve a VendorProducts from the index fields
+// VendorProductsKey returns the store key to retrieve a VendorProducts from the index fields.
 func VendorProductsKey(
 	vid int32,
 ) []byte {

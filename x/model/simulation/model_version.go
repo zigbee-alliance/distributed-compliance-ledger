@@ -15,7 +15,7 @@ import (
 
 // FIXME issue 110: fix dependencies on AccountKeeper and BankKeeper
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func SimulateMsgCreateModelVersion(

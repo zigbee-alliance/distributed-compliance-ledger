@@ -25,7 +25,7 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 		return nil, err
 	}
 
-	var vendorInfo = types.VendorInfo{
+	vendorInfo := types.VendorInfo{
 		Creator:              msg.Creator,
 		VendorID:             msg.VendorID,
 		VendorName:           msg.VendorName,
@@ -58,7 +58,7 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 		return nil, err
 	}
 
-	var vendorInfo = types.VendorInfo{
+	vendorInfo := types.VendorInfo{
 		Creator:              msg.Creator,
 		VendorID:             msg.VendorID,
 		VendorName:           msg.VendorName,

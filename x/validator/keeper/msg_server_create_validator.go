@@ -3,13 +3,11 @@ package keeper
 import (
 	"context"
 
-	tmstrings "github.com/tendermint/tendermint/libs/strings"
-
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-
+	tmstrings "github.com/tendermint/tendermint/libs/strings"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
@@ -65,7 +63,6 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	}
 
 	validator, err := types.NewValidator(valAddr, pk, msg.Description)
-
 	if err != nil {
 		return nil, err
 	}

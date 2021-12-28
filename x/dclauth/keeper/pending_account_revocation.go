@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// SetPendingAccountRevocation set a specific pendingAccountRevocation in the store from its index
+// SetPendingAccountRevocation set a specific pendingAccountRevocation in the store from its index.
 func (k Keeper) SetPendingAccountRevocation(ctx sdk.Context, pendingAccountRevocation types.PendingAccountRevocation) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
 	b := k.cdc.MustMarshal(&pendingAccountRevocation)
@@ -16,7 +16,7 @@ func (k Keeper) SetPendingAccountRevocation(ctx sdk.Context, pendingAccountRevoc
 	), b)
 }
 
-// GetPendingAccountRevocation returns a pendingAccountRevocation from its index
+// GetPendingAccountRevocation returns a pendingAccountRevocation from its index.
 func (k Keeper) GetPendingAccountRevocation(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -44,7 +44,7 @@ func (k Keeper) IsPendingAccountRevocationPresent(ctx sdk.Context, address sdk.A
 	))
 }
 
-// RemovePendingAccountRevocation removes a pendingAccountRevocation from the store
+// RemovePendingAccountRevocation removes a pendingAccountRevocation from the store.
 func (k Keeper) RemovePendingAccountRevocation(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -56,7 +56,7 @@ func (k Keeper) RemovePendingAccountRevocation(
 	))
 }
 
-// GetAllPendingAccountRevocation returns all pendingAccountRevocation
+// GetAllPendingAccountRevocation returns all pendingAccountRevocation.
 func (k Keeper) GetAllPendingAccountRevocation(ctx sdk.Context) (list []types.PendingAccountRevocation) {
 	k.IteratePendingAccountRevocations(ctx, func(acc types.PendingAccountRevocation) (stop bool) {
 		list = append(list, acc)

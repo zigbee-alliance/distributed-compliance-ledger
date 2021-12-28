@@ -21,20 +21,17 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/cosmos/cosmos-sdk/types/tx"
-
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
+	"github.com/cosmos/cosmos-sdk/types/tx"
+	"github.com/golang/protobuf/proto"
+	"github.com/stretchr/testify/require"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"google.golang.org/grpc"
 )
 
 // NOTE
@@ -62,7 +59,6 @@ func (suite *TestSuite) GetGRPCConn() *grpc.ClientConn {
 }
 
 func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
-
 	inBuf := bufio.NewReader(os.Stdin)
 
 	// TODO issue 99: pass as an arg

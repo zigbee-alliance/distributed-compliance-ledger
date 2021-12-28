@@ -3,22 +3,19 @@ package dclgenutil
 import (
 	"encoding/json"
 
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
+	abci "github.com/tendermint/tendermint/abci/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
 )
 
-// SetGenTxsInAppGenesisState - sets the genesis transactions in the app genesis state
+// SetGenTxsInAppGenesisState - sets the genesis transactions in the app genesis state.
 func SetGenTxsInAppGenesisState(
 	cdc codec.JSONCodec, txJSONEncoder sdk.TxEncoder, appGenesisState map[string]json.RawMessage, genTxs []sdk.Tx,
 ) (map[string]json.RawMessage, error) {
-
 	genesisState := types.GetGenesisStateFromAppState(cdc, appGenesisState)
 	genTxsBz := make([]json.RawMessage, 0, len(genTxs))
 
@@ -82,7 +79,6 @@ func DeliverGenTxs(
 	validatorKeeper types.ValidatorKeeper, deliverTx deliverTxfn,
 	txEncodingConfig client.TxEncodingConfig,
 ) ([]abci.ValidatorUpdate, error) {
-
 	for _, genTx := range genTxs {
 		tx, err := txEncodingConfig.TxJSONDecoder()(genTx)
 		if err != nil {
