@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package compliancetest_test
+package compliance_test
 
 import (
+
+	//"net/http".
 	"testing"
 
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/compliancetest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/compliance"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
@@ -26,12 +28,22 @@ import (
 /*
 	To Run test you need:
 		* Run LocalNet with: `make install && make localnet_init && make localnet_start`
+		* run RPC service with `dclcli rest-server --chain-id dclchain`
 
 	TODO: provide tests for error cases
 */
 
-//nolint:funlen
-func TestComplianceTestDemoREST(t *testing.T) {
+func TestComplianceTrackComplianceDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	compliancetest.ComplianceTestDemo(&suite)
+	compliance.ComplianceDemoTrackCompliance(&suite)
+}
+
+func TestComplianceTrackRevocationDemoREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	compliance.ComplianceDemoTrackRevocation(&suite)
+}
+
+func TestComplianceTrackProvisionDemoREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	compliance.ComplianceDemoTrackProvision(&suite)
 }
