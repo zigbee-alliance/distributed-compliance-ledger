@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-// SetModel set a specific model in the store from its index
+// SetModel set a specific model in the store from its index.
 func (k Keeper) SetModel(ctx sdk.Context, model types.Model) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelKeyPrefix))
 	b := k.cdc.MustMarshal(&model)
@@ -16,7 +16,7 @@ func (k Keeper) SetModel(ctx sdk.Context, model types.Model) {
 	), b)
 }
 
-// GetModel returns a model from its index
+// GetModel returns a model from its index.
 func (k Keeper) GetModel(
 	ctx sdk.Context,
 	vid int32,
@@ -37,7 +37,7 @@ func (k Keeper) GetModel(
 	return val, true
 }
 
-// RemoveModel removes a model from the store
+// RemoveModel removes a model from the store.
 func (k Keeper) RemoveModel(
 	ctx sdk.Context,
 	vid int32,
@@ -51,7 +51,7 @@ func (k Keeper) RemoveModel(
 	))
 }
 
-// GetAllModel returns all model
+// GetAllModel returns all model.
 func (k Keeper) GetAllModel(ctx sdk.Context) (list []types.Model) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

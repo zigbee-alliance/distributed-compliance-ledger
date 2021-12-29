@@ -9,7 +9,7 @@ import (
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-//TODO issue 99: review
+// TODO issue 99: review.
 type AccountKeeper interface {
 	// NewAccount(sdk.Context, auth.Account) auth.Account
 	SetAccountO(sdk.Context, dclauthtypes.Account)
@@ -21,7 +21,7 @@ type ValidatorKeeper interface {
 	ApplyAndReturnValidatorSetUpdates(sdk.Context) (updates []abci.ValidatorUpdate, err error)
 }
 
-// GenesisAccountsIterator defines the expected iterating genesis accounts object (noalias)
+// GenesisAccountsIterator defines the expected iterating genesis accounts object (noalias).
 type GenesisAccountsIterator interface {
 	IterateGenesisAccounts(
 		cdc *codec.LegacyAmino,

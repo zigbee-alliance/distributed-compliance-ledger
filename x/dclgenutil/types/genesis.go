@@ -5,21 +5,19 @@ import (
 	"errors"
 	"fmt"
 
-	tmos "github.com/tendermint/tendermint/libs/os"
-	tmtypes "github.com/tendermint/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
+	tmos "github.com/tendermint/tendermint/libs/os"
+	tmtypes "github.com/tendermint/tendermint/types"
 	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 // this line is used by starport scaffolding # genesis/types/import
 
-// DefaultIndex is the default capability global index
+// DefaultIndex is the default capability global index.
 const DefaultIndex uint64 = 1
 
-// DefaultGenesis returns the default Capability genesis state
+// DefaultGenesis returns the default Capability genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		GenTxs: []json.RawMessage{},
@@ -29,7 +27,7 @@ func DefaultGenesis() *GenesisState {
 }
 
 // FIXME issue 99 review
-// NewGenesisState creates a new GenesisState object
+// NewGenesisState creates a new GenesisState object.
 func NewGenesisState(genTxs []json.RawMessage) *GenesisState {
 	// Ensure genTxs is never nil, https://github.com/cosmos/cosmos-sdk/issues/5086
 	if len(genTxs) == 0 {
@@ -42,7 +40,7 @@ func NewGenesisState(genTxs []json.RawMessage) *GenesisState {
 
 // FIXME issue 99 review
 // NewGenesisStateFromTx creates a new GenesisState object
-// from auth transactions
+// from auth transactions.
 func NewGenesisStateFromTx(txJSONEncoder sdk.TxEncoder, genTxs []sdk.Tx) *GenesisState {
 	genTxsBz := make([]json.RawMessage, len(genTxs))
 	for i, genTx := range genTxs {
@@ -55,7 +53,7 @@ func NewGenesisStateFromTx(txJSONEncoder sdk.TxEncoder, genTxs []sdk.Tx) *Genesi
 	return NewGenesisState(genTxsBz)
 }
 
-// GetGenesisStateFromAppState gets the genutil genesis state from the expected app state
+// GetGenesisStateFromAppState gets the genutil genesis state from the expected app state.
 func GetGenesisStateFromAppState(cdc codec.JSONCodec, appState map[string]json.RawMessage) *GenesisState {
 	var genesisState GenesisState
 	if appState[ModuleName] != nil {
@@ -64,11 +62,10 @@ func GetGenesisStateFromAppState(cdc codec.JSONCodec, appState map[string]json.R
 	return &genesisState
 }
 
-// SetGenesisStateInAppState sets the genutil genesis state within the expected app state
+// SetGenesisStateInAppState sets the genutil genesis state within the expected app state.
 func SetGenesisStateInAppState(
 	cdc codec.JSONCodec, appState map[string]json.RawMessage, genesisState *GenesisState,
 ) map[string]json.RawMessage {
-
 	genesisStateBz := cdc.MustMarshalJSON(genesisState)
 	appState[ModuleName] = genesisStateBz
 	return appState
@@ -105,7 +102,7 @@ func GenesisStateFromGenFile(genFile string) (genesisState map[string]json.RawMe
 	return genesisState, genDoc, err
 }
 
-// ValidateGenesis validates GenTx transactions
+// ValidateGenesis validates GenTx transactions.
 func ValidateGenesis(genesisState *GenesisState, txJSONDecoder sdk.TxDecoder) error {
 	for i, genTx := range genesisState.GenTxs {
 		var tx sdk.Tx

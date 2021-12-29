@@ -8,7 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// x/dclauth module sentinel errors
+// x/dclauth module sentinel errors.
 var (
 	CodeAccountAlreadyExists                  = sdkerrors.Register(ModuleName, 101, "account already exists")
 	CodeAccountDoesNotExist                   = sdkerrors.Register(ModuleName, 102, "account not found")

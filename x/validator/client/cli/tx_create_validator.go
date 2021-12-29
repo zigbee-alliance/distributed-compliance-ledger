@@ -5,14 +5,13 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/spf13/cobra"
-	flag "github.com/spf13/pflag"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+	flag "github.com/spf13/pflag"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -98,7 +97,7 @@ func newBuildCreateValidatorMsg(clientCtx client.Context, txf tx.Factory, fs *fl
 }
 
 // Return the flagset, particular flags, and a description of defaults
-// this is anticipated to be used with the gen-tx
+// this is anticipated to be used with the gen-tx.
 func CreateValidatorMsgFlagSet(ipDefault string) (fs *flag.FlagSet) {
 	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
 	fsCreateValidator.String(FlagIP, ipDefault, "The node's public IP")

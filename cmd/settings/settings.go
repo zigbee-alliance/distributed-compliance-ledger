@@ -25,5 +25,5 @@ const (
 )
 
 // PruningStrategy of the application: Store every state. Keep last two states.
-// FIXME issue 9 review the arguments and especially the 3rd one (a new one)
+// FIXME issue 9 review the arguments and especially the 3rd one (a new one).
 var PruningStrategy = types.NewPruningOptions(2, 1, 1)

@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"strconv"
-
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -27,7 +26,6 @@ func CmdProposeAddAccount() *cobra.Command {
 		Short: "Broadcast message ProposeAddAccount",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err

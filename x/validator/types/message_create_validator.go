@@ -83,7 +83,7 @@ func (msg *MsgCreateValidator) ValidateBasic() error {
 	return nil
 }
 
-// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces.
 func (msg MsgCreateValidator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
 	return unpacker.UnpackAny(msg.PubKey, &pubKey)

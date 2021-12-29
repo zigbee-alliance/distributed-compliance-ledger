@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetChildCertificates set a specific childCertificates in the store from its index
+// SetChildCertificates set a specific childCertificates in the store from its index.
 func (k Keeper) SetChildCertificates(ctx sdk.Context, childCertificates types.ChildCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&childCertificates)
@@ -16,7 +16,7 @@ func (k Keeper) SetChildCertificates(ctx sdk.Context, childCertificates types.Ch
 	), b)
 }
 
-// GetChildCertificates returns a childCertificates from its index
+// GetChildCertificates returns a childCertificates from its index.
 func (k Keeper) GetChildCertificates(
 	ctx sdk.Context,
 	issuer string,
@@ -37,7 +37,7 @@ func (k Keeper) GetChildCertificates(
 	return val, true
 }
 
-// RemoveChildCertificates removes a childCertificates from the store
+// RemoveChildCertificates removes a childCertificates from the store.
 func (k Keeper) RemoveChildCertificates(
 	ctx sdk.Context,
 	issuer string,
@@ -51,7 +51,7 @@ func (k Keeper) RemoveChildCertificates(
 	))
 }
 
-// GetAllChildCertificates returns all childCertificates
+// GetAllChildCertificates returns all childCertificates.
 func (k Keeper) GetAllChildCertificates(ctx sdk.Context) (list []types.ChildCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -67,7 +67,7 @@ func (k Keeper) GetAllChildCertificates(ctx sdk.Context) (list []types.ChildCert
 	return
 }
 
-// Add a child certificate to the list of child certificate IDs for the issuer/authorityKeyId map
+// Add a child certificate to the list of child certificate IDs for the issuer/authorityKeyId map.
 func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKeyId string, certId types.CertificateIdentifier) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 
@@ -126,7 +126,6 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 
 func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, authorityKeyId string,
 	certIdentifier types.CertificateIdentifier) {
-
 	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyId)
 
 	certIDIndex := -1

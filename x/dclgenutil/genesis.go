@@ -7,7 +7,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
 )
 
-// InitGenesis - initialize accounts and deliver genesis transactions
+// InitGenesis - initialize accounts and deliver genesis transactions.
 func InitGenesis(
 	ctx sdk.Context, validatorKeeper types.ValidatorKeeper,
 	deliverTx deliverTxfn, genesisState types.GenesisState,

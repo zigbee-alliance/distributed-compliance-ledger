@@ -3,10 +3,9 @@ package app
 import (
 	"encoding/json"
 
+	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator"
-
-	servertypes "github.com/cosmos/cosmos-sdk/server/types"
 )
 
 // ExportAppStateAndValidators exports the state of the application for a genesis
@@ -14,7 +13,6 @@ import (
 func (app *App) ExportAppStateAndValidators(
 	forZeroHeight bool, jailAllowedAddrs []string,
 ) (servertypes.ExportedApp, error) {
-
 	// as if they could withdraw from the start of the next block
 	ctx := app.NewContext(true, tmproto.Header{Height: app.LastBlockHeight()})
 

@@ -6,20 +6,18 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 
-	// "github.com/cosmos/cosmos-sdk/crypto/keyring"
+	// "github.com/cosmos/cosmos-sdk/crypto/keyring".
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 	dclgenutiltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
@@ -55,7 +53,6 @@ the address will be looked up in the local Keybase.
 			//if err != nil {
 			//	return err
 			//}
-
 			// TODO migration of keyring was not released yet in cosmos (in v.0.44.4)
 			if err != nil {
 				inBuf := bufio.NewReader(cmd.InOrStdin())

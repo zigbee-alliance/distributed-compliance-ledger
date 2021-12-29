@@ -118,7 +118,7 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 	return nil
 }
 
-// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces.
 func (msg MsgProposeAddAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
 	return unpacker.UnpackAny(msg.PubKey, &pubKey)

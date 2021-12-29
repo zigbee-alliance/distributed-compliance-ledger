@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-// SetModelVersions set a specific modelVersions in the store from its index
+// SetModelVersions set a specific modelVersions in the store from its index.
 func (k Keeper) SetModelVersions(ctx sdk.Context, modelVersions types.ModelVersions) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelVersionsKeyPrefix))
 	b := k.cdc.MustMarshal(&modelVersions)
@@ -16,7 +16,7 @@ func (k Keeper) SetModelVersions(ctx sdk.Context, modelVersions types.ModelVersi
 	), b)
 }
 
-// GetModelVersions returns a modelVersions from its index
+// GetModelVersions returns a modelVersions from its index.
 func (k Keeper) GetModelVersions(
 	ctx sdk.Context,
 	vid int32,
@@ -37,7 +37,7 @@ func (k Keeper) GetModelVersions(
 	return val, true
 }
 
-// RemoveModelVersions removes a modelVersions from the store
+// RemoveModelVersions removes a modelVersions from the store.
 func (k Keeper) RemoveModelVersions(
 	ctx sdk.Context,
 	vid int32,
@@ -51,7 +51,7 @@ func (k Keeper) RemoveModelVersions(
 	))
 }
 
-// GetAllModelVersions returns all modelVersions
+// GetAllModelVersions returns all modelVersions.
 func (k Keeper) GetAllModelVersions(ctx sdk.Context) (list []types.ModelVersions) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelVersionsKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -67,7 +67,7 @@ func (k Keeper) GetAllModelVersions(ctx sdk.Context) (list []types.ModelVersions
 	return
 }
 
-// AddModelVersion adds a softwareVersion to existing or new ModelVersions
+// AddModelVersion adds a softwareVersion to existing or new ModelVersions.
 func (k Keeper) AddModelVersion(ctx sdk.Context, vid int32, pid int32, softwareVersion uint32) {
 	modelVersions, found := k.GetModelVersions(ctx, vid, pid)
 
@@ -79,7 +79,6 @@ func (k Keeper) AddModelVersion(ctx sdk.Context, vid int32, pid int32, softwareV
 		}
 
 		modelVersions.SoftwareVersions = append(modelVersions.SoftwareVersions, softwareVersion)
-
 	} else {
 		modelVersions.Vid = vid
 		modelVersions.Pid = pid

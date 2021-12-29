@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-// SetModelVersion set a specific modelVersion in the store from its index
+// SetModelVersion set a specific modelVersion in the store from its index.
 func (k Keeper) SetModelVersion(ctx sdk.Context, modelVersion types.ModelVersion) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelVersionKeyPrefix))
 	b := k.cdc.MustMarshal(&modelVersion)
@@ -17,7 +17,7 @@ func (k Keeper) SetModelVersion(ctx sdk.Context, modelVersion types.ModelVersion
 	), b)
 }
 
-// GetModelVersion returns a modelVersion from its index
+// GetModelVersion returns a modelVersion from its index.
 func (k Keeper) GetModelVersion(
 	ctx sdk.Context,
 	vid int32,
@@ -40,7 +40,7 @@ func (k Keeper) GetModelVersion(
 	return val, true
 }
 
-// RemoveModelVersion removes a modelVersion from the store
+// RemoveModelVersion removes a modelVersion from the store.
 func (k Keeper) RemoveModelVersion(
 	ctx sdk.Context,
 	vid int32,
@@ -56,7 +56,7 @@ func (k Keeper) RemoveModelVersion(
 	))
 }
 
-// GetAllModelVersion returns all modelVersion
+// GetAllModelVersion returns all modelVersion.
 func (k Keeper) GetAllModelVersion(ctx sdk.Context) (list []types.ModelVersion) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelVersionKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

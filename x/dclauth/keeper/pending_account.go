@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// SetPendingAccount set a specific pendingAccount in the store from its index
+// SetPendingAccount set a specific pendingAccount in the store from its index.
 func (k Keeper) SetPendingAccount(ctx sdk.Context, pendingAccount types.PendingAccount) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 	b := k.cdc.MustMarshal(&pendingAccount)
@@ -15,7 +15,7 @@ func (k Keeper) SetPendingAccount(ctx sdk.Context, pendingAccount types.PendingA
 	), b)
 }
 
-// GetPendingAccount returns a pendingAccount from its index
+// GetPendingAccount returns a pendingAccount from its index.
 func (k Keeper) GetPendingAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -43,7 +43,7 @@ func (k Keeper) IsPendingAccountPresent(ctx sdk.Context, address sdk.AccAddress)
 	))
 }
 
-// RemovePendingAccount removes a pendingAccount from the store
+// RemovePendingAccount removes a pendingAccount from the store.
 func (k Keeper) RemovePendingAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -55,7 +55,7 @@ func (k Keeper) RemovePendingAccount(
 	))
 }
 
-// GetAllPendingAccount returns all pendingAccount
+// GetAllPendingAccount returns all pendingAccount.
 func (k Keeper) GetAllPendingAccount(ctx sdk.Context) (list []types.PendingAccount) {
 	k.IteratePendingAccounts(ctx, func(acc types.PendingAccount) (stop bool) {
 		list = append(list, acc)

@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// ProposedCertificateKeyPrefix is the prefix to retrieve all ProposedCertificate
+	// ProposedCertificateKeyPrefix is the prefix to retrieve all ProposedCertificate.
 	ProposedCertificateKeyPrefix = "ProposedCertificate/value/"
 )
 
-// ProposedCertificateKey returns the store key to retrieve a ProposedCertificate from the index fields
+// ProposedCertificateKey returns the store key to retrieve a ProposedCertificate from the index fields.
 func ProposedCertificateKey(
 	subject string,
 	subjectKeyId string,

@@ -11,7 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNVendorInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.VendorInfo {
@@ -35,6 +35,7 @@ func TestVendorInfoGet(t *testing.T) {
 		require.Equal(t, item, rst)
 	}
 }
+
 func TestVendorInfoRemove(t *testing.T) {
 	keeper, ctx := keepertest.VendorinfoKeeper(t)
 	items := createNVendorInfo(keeper, ctx, 10)

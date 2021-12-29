@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNProposedCertificateRevocation(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ProposedCertificateRevocation {
@@ -41,6 +41,7 @@ func TestProposedCertificateRevocationGet(t *testing.T) {
 		)
 	}
 }
+
 func TestProposedCertificateRevocationRemove(t *testing.T) {
 	keeper, ctx := keepertest.PkiKeeper(t)
 	items := createNProposedCertificateRevocation(keeper, ctx, 10)

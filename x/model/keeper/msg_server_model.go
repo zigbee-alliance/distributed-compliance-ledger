@@ -30,7 +30,7 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		return nil, types.NewErrModelAlreadyExists(msg.Vid, msg.Pid)
 	}
 
-	var model = types.Model{
+	model := types.Model{
 		Creator:                                  msg.Creator,
 		Vid:                                      msg.Vid,
 		Pid:                                      msg.Pid,

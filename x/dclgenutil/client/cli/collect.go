@@ -4,21 +4,19 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
-	tmtypes "github.com/tendermint/tendermint/types"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/server"
-
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	tmtypes "github.com/tendermint/tendermint/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 )
 
 const flagGenTxDir = "gentx-dir"
 
-// CollectGenTxsCmd - return the cobra command to collect genesis transactions
+// CollectGenTxsCmd - return the cobra command to collect genesis transactions.
 func CollectGenTxsCmd(genAccIterator dclauthtypes.GenesisAccountsIterator, defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "collect-gentxs",

@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNTestingResults(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.TestingResults {
@@ -43,6 +43,7 @@ func TestTestingResultsGet(t *testing.T) {
 		)
 	}
 }
+
 func TestTestingResultsRemove(t *testing.T) {
 	keeper, ctx := keepertest.CompliancetestKeeper(t)
 	items := createNTestingResults(keeper, ctx, 10)

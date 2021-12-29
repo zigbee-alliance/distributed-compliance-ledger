@@ -3,12 +3,11 @@ package cli
 import (
 	"context"
 
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
