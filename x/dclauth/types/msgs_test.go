@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //nolint:testpackage
-package types_test
+package types
 
 import (
 	"testing"
@@ -22,11 +22,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 /*
-	dclauthtypes.MsgProposeAddAccount
+	MsgProposeAddAccount
 */
 
 func NewMsgProposeAddAccountWrapper(
@@ -34,10 +33,10 @@ func NewMsgProposeAddAccountWrapper(
 	signer sdk.AccAddress,
 	address sdk.AccAddress,
 	pubKey cryptotypes.PubKey,
-	roles dclauthtypes.AccountRoles,
+	roles AccountRoles,
 	vendorID uint64,
-) *dclauthtypes.MsgProposeAddAccount {
-	msg, err := dclauthtypes.NewMsgProposeAddAccount(signer, address, pubKey, roles, vendorID)
+) *MsgProposeAddAccount {
+	msg, err := NewMsgProposeAddAccount(signer, address, pubKey, roles, vendorID)
 	require.NoError(t, err)
 	return msg
 }
@@ -47,10 +46,10 @@ func TestNewMsgProposeAddAccount(t *testing.T) {
 		t,
 		testconstants.Signer,
 		testconstants.Address1, testconstants.PubKey1,
-		dclauthtypes.AccountRoles{}, testconstants.VendorID1,
+		AccountRoles{}, testconstants.VendorID1,
 	)
 
-	require.Equal(t, msg.Route(), dclauthtypes.RouterKey)
+	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "propose_add_account")
 	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
@@ -58,24 +57,24 @@ func TestNewMsgProposeAddAccount(t *testing.T) {
 func TestValidateMsgProposeAddAccount(t *testing.T) {
 	cases := []struct {
 		valid bool
-		msg   *dclauthtypes.MsgProposeAddAccount
+		msg   *MsgProposeAddAccount
 	}{
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			dclauthtypes.AccountRoles{}, 0)}, // no roles provided
+			AccountRoles{}, 0)}, // no roles provided
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0)},
+			AccountRoles{NodeAdmin}, 0)},
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			dclauthtypes.AccountRoles{dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, testconstants.VendorID1)},
+			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			dclauthtypes.AccountRoles{dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, testconstants.VendorID1)},
+			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, nil, testconstants.PubKey1,
-			dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0)},
+			AccountRoles{NodeAdmin}, 0)},
 		//{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, "",
-		//	dclauthtypes.AccountRoles{}, 0)},
+		//	AccountRoles{}, 0)},
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			dclauthtypes.AccountRoles{"Wrong Role"}, 0)},
+			AccountRoles{"Wrong Role"}, 0)},
 		{false, NewMsgProposeAddAccountWrapper(t, nil, testconstants.Address1, testconstants.PubKey1,
-			dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, 0)},
+			AccountRoles{NodeAdmin}, 0)},
 	}
 
 	for _, tc := range cases {
@@ -91,7 +90,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 
 func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address2, testconstants.PubKey2,
-		dclauthtypes.AccountRoles{}, testconstants.VendorID1)
+		AccountRoles{}, testconstants.VendorID1)
 
 	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","pubKey":{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"}` +
 		`,"roles":[],"signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","vendorID":"1000"}`
@@ -100,13 +99,13 @@ func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 }
 
 /*
-	dclauthtypes.MsgApproveAddAccount
+	MsgApproveAddAccount
 */
 
 func TestNewMsgApproveAddAccount(t *testing.T) {
-	msg := dclauthtypes.NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1)
+	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1)
 
-	require.Equal(t, msg.Route(), dclauthtypes.RouterKey)
+	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_add_account")
 	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
@@ -114,11 +113,11 @@ func TestNewMsgApproveAddAccount(t *testing.T) {
 func TestValidateMsgApproveAddAccount(t *testing.T) {
 	cases := []struct {
 		valid bool
-		msg   *dclauthtypes.MsgApproveAddAccount
+		msg   *MsgApproveAddAccount
 	}{
-		{true, dclauthtypes.NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1)},
-		{false, dclauthtypes.NewMsgApproveAddAccount(testconstants.Signer, nil)},
-		{false, dclauthtypes.NewMsgApproveAddAccount(nil, testconstants.Address1)},
+		{true, NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1)},
+		{false, NewMsgApproveAddAccount(testconstants.Signer, nil)},
+		{false, NewMsgApproveAddAccount(nil, testconstants.Address1)},
 	}
 
 	for _, tc := range cases {
@@ -133,7 +132,7 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 }
 
 func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
-	msg := dclauthtypes.NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address2)
+	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address2)
 
 	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
@@ -144,9 +143,9 @@ func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgProposeRevokeAccount(t *testing.T) {
-	msg := dclauthtypes.NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1)
+	msg := NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1)
 
-	require.Equal(t, msg.Route(), dclauthtypes.RouterKey)
+	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "propose_revoke_account")
 	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
@@ -154,11 +153,11 @@ func TestNewMsgProposeRevokeAccount(t *testing.T) {
 func TestValidateMsgProposeRevokeAccount(t *testing.T) {
 	cases := []struct {
 		valid bool
-		msg   *dclauthtypes.MsgProposeRevokeAccount
+		msg   *MsgProposeRevokeAccount
 	}{
-		{true, dclauthtypes.NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1)},
-		{false, dclauthtypes.NewMsgProposeRevokeAccount(testconstants.Signer, nil)},
-		{false, dclauthtypes.NewMsgProposeRevokeAccount(nil, testconstants.Address1)},
+		{true, NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1)},
+		{false, NewMsgProposeRevokeAccount(testconstants.Signer, nil)},
+		{false, NewMsgProposeRevokeAccount(nil, testconstants.Address1)},
 	}
 
 	for _, tc := range cases {
@@ -173,20 +172,20 @@ func TestValidateMsgProposeRevokeAccount(t *testing.T) {
 }
 
 func TestMsgProposeRevokeAccountGetSignBytes(t *testing.T) {
-	msg := dclauthtypes.NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address2)
+	msg := NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address2)
 
 	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
 /*
-	dclauthtypes.MsgApproveRevokeAccount
+	MsgApproveRevokeAccount
 */
 
 func TestNewMsgApproveRevokeAccount(t *testing.T) {
-	msg := dclauthtypes.NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1)
+	msg := NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1)
 
-	require.Equal(t, msg.Route(), dclauthtypes.RouterKey)
+	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_revoke_account")
 	require.Equal(t, msg.GetSigners(), []sdk.AccAddress{testconstants.Signer})
 }
@@ -194,11 +193,11 @@ func TestNewMsgApproveRevokeAccount(t *testing.T) {
 func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 	cases := []struct {
 		valid bool
-		msg   *dclauthtypes.MsgApproveRevokeAccount
+		msg   *MsgApproveRevokeAccount
 	}{
-		{true, dclauthtypes.NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1)},
-		{false, dclauthtypes.NewMsgApproveRevokeAccount(testconstants.Signer, nil)},
-		{false, dclauthtypes.NewMsgApproveRevokeAccount(nil, testconstants.Address1)},
+		{true, NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1)},
+		{false, NewMsgApproveRevokeAccount(testconstants.Signer, nil)},
+		{false, NewMsgApproveRevokeAccount(nil, testconstants.Address1)},
 	}
 
 	for _, tc := range cases {
@@ -213,7 +212,7 @@ func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 }
 
 func TestMsgApproveRevokeAccountGetSignBytes(t *testing.T) {
-	msg := dclauthtypes.NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address2)
+	msg := NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address2)
 	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
