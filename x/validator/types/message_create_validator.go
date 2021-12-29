@@ -80,6 +80,11 @@ func (msg *MsgCreateValidator) ValidateBasic() error {
 		return err
 	}
 
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

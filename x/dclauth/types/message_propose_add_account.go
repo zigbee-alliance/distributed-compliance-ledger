@@ -115,6 +115,11 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 		return ErrMissingVendorIDForVendorAccount()
 	}
 
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

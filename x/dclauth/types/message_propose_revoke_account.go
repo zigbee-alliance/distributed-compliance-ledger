@@ -56,5 +56,10 @@ func (msg *MsgProposeRevokeAccount) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
