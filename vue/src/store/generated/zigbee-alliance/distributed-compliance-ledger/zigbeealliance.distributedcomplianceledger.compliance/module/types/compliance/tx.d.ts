@@ -6,6 +6,7 @@ export interface MsgCertifyModel {
     pid: number;
     softwareVersion: number;
     softwareVersionString: string;
+    cDVersionNumber: number;
     certificationDate: string;
     certificationType: string;
     reason: string;
@@ -18,11 +19,25 @@ export interface MsgRevokeModel {
     pid: number;
     softwareVersion: number;
     softwareVersionString: string;
+    cDVersionNumber: number;
     revocationDate: string;
     certificationType: string;
     reason: string;
 }
 export interface MsgRevokeModelResponse {
+}
+export interface MsgProvisionModel {
+    signer: string;
+    vid: number;
+    pid: number;
+    softwareVersion: number;
+    softwareVersionString: string;
+    cDVersionNumber: number;
+    provisionalDate: string;
+    certificationType: string;
+    reason: string;
+}
+export interface MsgProvisionModelResponse {
 }
 export declare const MsgCertifyModel: {
     encode(message: MsgCertifyModel, writer?: Writer): Writer;
@@ -52,17 +67,33 @@ export declare const MsgRevokeModelResponse: {
     toJSON(_: MsgRevokeModelResponse): unknown;
     fromPartial(_: DeepPartial<MsgRevokeModelResponse>): MsgRevokeModelResponse;
 };
+export declare const MsgProvisionModel: {
+    encode(message: MsgProvisionModel, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgProvisionModel;
+    fromJSON(object: any): MsgProvisionModel;
+    toJSON(message: MsgProvisionModel): unknown;
+    fromPartial(object: DeepPartial<MsgProvisionModel>): MsgProvisionModel;
+};
+export declare const MsgProvisionModelResponse: {
+    encode(_: MsgProvisionModelResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgProvisionModelResponse;
+    fromJSON(_: any): MsgProvisionModelResponse;
+    toJSON(_: MsgProvisionModelResponse): unknown;
+    fromPartial(_: DeepPartial<MsgProvisionModelResponse>): MsgProvisionModelResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
     CertifyModel(request: MsgCertifyModel): Promise<MsgCertifyModelResponse>;
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     RevokeModel(request: MsgRevokeModel): Promise<MsgRevokeModelResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    ProvisionModel(request: MsgProvisionModel): Promise<MsgProvisionModelResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
     CertifyModel(request: MsgCertifyModel): Promise<MsgCertifyModelResponse>;
     RevokeModel(request: MsgRevokeModel): Promise<MsgRevokeModelResponse>;
+    ProvisionModel(request: MsgProvisionModel): Promise<MsgProvisionModelResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

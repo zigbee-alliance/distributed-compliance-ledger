@@ -7,9 +7,10 @@ export interface ComplianceHistoryItem {
   softwareVersionCertificationStatus: number
   date: string
   reason: string
+  cDVersionNumber: number
 }
 
-const baseComplianceHistoryItem: object = { softwareVersionCertificationStatus: 0, date: '', reason: '' }
+const baseComplianceHistoryItem: object = { softwareVersionCertificationStatus: 0, date: '', reason: '', cDVersionNumber: 0 }
 
 export const ComplianceHistoryItem = {
   encode(message: ComplianceHistoryItem, writer: Writer = Writer.create()): Writer {
@@ -21,6 +22,9 @@ export const ComplianceHistoryItem = {
     }
     if (message.reason !== '') {
       writer.uint32(26).string(message.reason)
+    }
+    if (message.cDVersionNumber !== 0) {
+      writer.uint32(32).uint32(message.cDVersionNumber)
     }
     return writer
   },
@@ -40,6 +44,9 @@ export const ComplianceHistoryItem = {
           break
         case 3:
           message.reason = reader.string()
+          break
+        case 4:
+          message.cDVersionNumber = reader.uint32()
           break
         default:
           reader.skipType(tag & 7)
@@ -66,6 +73,11 @@ export const ComplianceHistoryItem = {
     } else {
       message.reason = ''
     }
+    if (object.cDVersionNumber !== undefined && object.cDVersionNumber !== null) {
+      message.cDVersionNumber = Number(object.cDVersionNumber)
+    } else {
+      message.cDVersionNumber = 0
+    }
     return message
   },
 
@@ -74,6 +86,7 @@ export const ComplianceHistoryItem = {
     message.softwareVersionCertificationStatus !== undefined && (obj.softwareVersionCertificationStatus = message.softwareVersionCertificationStatus)
     message.date !== undefined && (obj.date = message.date)
     message.reason !== undefined && (obj.reason = message.reason)
+    message.cDVersionNumber !== undefined && (obj.cDVersionNumber = message.cDVersionNumber)
     return obj
   },
 
@@ -93,6 +106,11 @@ export const ComplianceHistoryItem = {
       message.reason = object.reason
     } else {
       message.reason = ''
+    }
+    if (object.cDVersionNumber !== undefined && object.cDVersionNumber !== null) {
+      message.cDVersionNumber = object.cDVersionNumber
+    } else {
+      message.cDVersionNumber = 0
     }
     return message
   }

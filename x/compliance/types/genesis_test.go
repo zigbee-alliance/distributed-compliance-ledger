@@ -63,6 +63,20 @@ func TestGenesisState_Validate(t *testing.T) {
 						CertificationType: "1",
 					},
 				},
+				ProvisionalModelList: []types.ProvisionalModel{
+					{
+						Vid:               0,
+						Pid:               0,
+						SoftwareVersion:   0,
+						CertificationType: "0",
+					},
+					{
+						Vid:               1,
+						Pid:               1,
+						SoftwareVersion:   1,
+						CertificationType: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -111,6 +125,26 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated revokedModel",
 			genState: &types.GenesisState{
 				RevokedModelList: []types.RevokedModel{
+					{
+						Vid:               0,
+						Pid:               0,
+						SoftwareVersion:   0,
+						CertificationType: "0",
+					},
+					{
+						Vid:               0,
+						Pid:               0,
+						SoftwareVersion:   0,
+						CertificationType: "0",
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated provisionalModel",
+			genState: &types.GenesisState{
+				ProvisionalModelList: []types.ProvisionalModel{
 					{
 						Vid:               0,
 						Pid:               0,

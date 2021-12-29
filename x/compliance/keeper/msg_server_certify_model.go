@@ -45,7 +45,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			// if complianceInfo.Owner != msg.Signer {
 			// 	return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid)
 			// }
-			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid)
+			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		} else {
 			// if state changes on `certified` check that certification_date is after revocation_date
 			newDate, err := time.Parse(time.RFC3339, msg.CertificationDate)
@@ -96,11 +96,38 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			Owner:                              msg.Signer,
 			SoftwareVersionCertificationStatus: types.CodeCertified,
 			History:                            []*types.ComplianceHistoryItem{},
+			CDVersionNumber:                    msg.CDVersionNumber,
 		}
 	}
 
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
+
+	// update certified/revoked index
+	certifiedModel := types.CertifiedModel{
+		Vid:               msg.Vid,
+		Pid:               msg.Pid,
+		SoftwareVersion:   msg.SoftwareVersion,
+		CertificationType: msg.CertificationType,
+		Value:             true,
+	}
+	k.SetCertifiedModel(ctx, certifiedModel)
+	revokedModel := types.RevokedModel{
+		Vid:               msg.Vid,
+		Pid:               msg.Pid,
+		SoftwareVersion:   msg.SoftwareVersion,
+		CertificationType: msg.CertificationType,
+		Value:             false,
+	}
+	k.SetRevokedModel(ctx, revokedModel)
+	provisionalModel := types.ProvisionalModel{
+		Vid:               msg.Vid,
+		Pid:               msg.Pid,
+		SoftwareVersion:   msg.SoftwareVersion,
+		CertificationType: msg.CertificationType,
+		Value:             false,
+	}
+	k.SetProvisionalModel(ctx, provisionalModel)
 
 	return &types.MsgCertifyModelResponse{}, nil
 }

@@ -19,7 +19,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
-	// check if sender has enough rights to certify model
+	// check if sender has enough rights to revoke model
 	// sender must have CertificationCenter role to certify/revoke model
 	if !k.dclauthKeeper.HasRole(ctx, signerAddr, dclauthtypes.CertificationCenter) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
@@ -43,7 +43,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			// if complianceInfo.Owner != msg.Signer {
 			// 	return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid)
 			// }
-			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid)
+			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		} else {
 			// if state changes on `revoked` check that revocation_date is after certification_date
 			newDate, err := time.Parse(time.RFC3339, msg.RevocationDate)
@@ -63,6 +63,24 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 
 			complianceInfo.UpdateComplianceInfo(msg.RevocationDate, msg.Reason)
 		}
+
+		// update certified/revoked index
+		certifiedModel := types.CertifiedModel{
+			Vid:               msg.Vid,
+			Pid:               msg.Pid,
+			SoftwareVersion:   msg.SoftwareVersion,
+			CertificationType: msg.CertificationType,
+			Value:             false,
+		}
+		k.SetCertifiedModel(ctx, certifiedModel)
+		provisionalModel := types.ProvisionalModel{
+			Vid:               msg.Vid,
+			Pid:               msg.Pid,
+			SoftwareVersion:   msg.SoftwareVersion,
+			CertificationType: msg.CertificationType,
+			Value:             false,
+		}
+		k.SetProvisionalModel(ctx, provisionalModel)
 	} else {
 		// Only revocation is tracked on the ledger. There is no compliance record yet.
 		// The corresponding Model Info and test results are not required to be on the ledger.
@@ -78,8 +96,22 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			Owner:                              msg.Signer,
 			SoftwareVersionCertificationStatus: types.CodeRevoked,
 			History:                            []*types.ComplianceHistoryItem{},
+			CDVersionNumber:                    msg.CDVersionNumber,
 		}
 	}
+
+	// store compliance info
+	k.SetComplianceInfo(ctx, complianceInfo)
+
+	// update certified/revoked index
+	revokedModel := types.RevokedModel{
+		Vid:               msg.Vid,
+		Pid:               msg.Pid,
+		SoftwareVersion:   msg.SoftwareVersion,
+		CertificationType: msg.CertificationType,
+		Value:             true,
+	}
+	k.SetRevokedModel(ctx, revokedModel)
 
 	return &types.MsgRevokeModelResponse{}, nil
 }

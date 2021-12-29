@@ -53,6 +53,20 @@ func TestGenesis(t *testing.T) {
 				CertificationType: "1",
 			},
 		},
+		ProvisionalModelList: []types.ProvisionalModel{
+			{
+				Vid:               0,
+				Pid:               0,
+				SoftwareVersion:   0,
+				CertificationType: "0",
+			},
+			{
+				Vid:               1,
+				Pid:               1,
+				SoftwareVersion:   1,
+				CertificationType: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -64,5 +78,6 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.ComplianceInfoList, got.ComplianceInfoList)
 	require.ElementsMatch(t, genesisState.CertifiedModelList, got.CertifiedModelList)
 	require.ElementsMatch(t, genesisState.RevokedModelList, got.RevokedModelList)
+	require.ElementsMatch(t, genesisState.ProvisionalModelList, got.ProvisionalModelList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

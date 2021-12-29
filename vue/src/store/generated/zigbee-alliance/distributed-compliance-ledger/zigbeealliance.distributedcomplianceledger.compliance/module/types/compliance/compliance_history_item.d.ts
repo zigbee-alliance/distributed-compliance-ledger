@@ -4,6 +4,7 @@ export interface ComplianceHistoryItem {
     softwareVersionCertificationStatus: number;
     date: string;
     reason: string;
+    cDVersionNumber: number;
 }
 export declare const ComplianceHistoryItem: {
     encode(message: ComplianceHistoryItem, writer?: Writer): Writer;

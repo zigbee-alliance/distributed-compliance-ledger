@@ -13,6 +13,7 @@ func (d *ComplianceInfo) UpdateComplianceInfo(date string, reason string) {
 		SoftwareVersionCertificationStatus: d.SoftwareVersionCertificationStatus,
 		Date:                               d.Date,
 		Reason:                             d.Reason,
+		CDVersionNumber:                    d.CDVersionNumber,
 	}
 	d.History = append(d.History, &historyItem)
 	d.SoftwareVersionCertificationStatus = svCertificationStatus

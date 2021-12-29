@@ -4,6 +4,7 @@ import { ComplianceInfo } from '../compliance/compliance_info';
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 import { CertifiedModel } from '../compliance/certified_model';
 import { RevokedModel } from '../compliance/revoked_model';
+import { ProvisionalModel } from '../compliance/provisional_model';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance';
 const baseQueryGetComplianceInfoRequest = { vid: 0, pid: 0, softwareVersion: 0, certificationType: '' };
 export const QueryGetComplianceInfoRequest = {
@@ -863,6 +864,292 @@ export const QueryAllRevokedModelResponse = {
         return message;
     }
 };
+const baseQueryGetProvisionalModelRequest = { vid: 0, pid: 0, softwareVersion: 0, certificationType: '' };
+export const QueryGetProvisionalModelRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.vid !== 0) {
+            writer.uint32(8).int32(message.vid);
+        }
+        if (message.pid !== 0) {
+            writer.uint32(16).int32(message.pid);
+        }
+        if (message.softwareVersion !== 0) {
+            writer.uint32(24).uint32(message.softwareVersion);
+        }
+        if (message.certificationType !== '') {
+            writer.uint32(34).string(message.certificationType);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetProvisionalModelRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.vid = reader.int32();
+                    break;
+                case 2:
+                    message.pid = reader.int32();
+                    break;
+                case 3:
+                    message.softwareVersion = reader.uint32();
+                    break;
+                case 4:
+                    message.certificationType = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetProvisionalModelRequest };
+        if (object.vid !== undefined && object.vid !== null) {
+            message.vid = Number(object.vid);
+        }
+        else {
+            message.vid = 0;
+        }
+        if (object.pid !== undefined && object.pid !== null) {
+            message.pid = Number(object.pid);
+        }
+        else {
+            message.pid = 0;
+        }
+        if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+            message.softwareVersion = Number(object.softwareVersion);
+        }
+        else {
+            message.softwareVersion = 0;
+        }
+        if (object.certificationType !== undefined && object.certificationType !== null) {
+            message.certificationType = String(object.certificationType);
+        }
+        else {
+            message.certificationType = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.vid !== undefined && (obj.vid = message.vid);
+        message.pid !== undefined && (obj.pid = message.pid);
+        message.softwareVersion !== undefined && (obj.softwareVersion = message.softwareVersion);
+        message.certificationType !== undefined && (obj.certificationType = message.certificationType);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetProvisionalModelRequest };
+        if (object.vid !== undefined && object.vid !== null) {
+            message.vid = object.vid;
+        }
+        else {
+            message.vid = 0;
+        }
+        if (object.pid !== undefined && object.pid !== null) {
+            message.pid = object.pid;
+        }
+        else {
+            message.pid = 0;
+        }
+        if (object.softwareVersion !== undefined && object.softwareVersion !== null) {
+            message.softwareVersion = object.softwareVersion;
+        }
+        else {
+            message.softwareVersion = 0;
+        }
+        if (object.certificationType !== undefined && object.certificationType !== null) {
+            message.certificationType = object.certificationType;
+        }
+        else {
+            message.certificationType = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetProvisionalModelResponse = {};
+export const QueryGetProvisionalModelResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.provisionalModel !== undefined) {
+            ProvisionalModel.encode(message.provisionalModel, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetProvisionalModelResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.provisionalModel = ProvisionalModel.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetProvisionalModelResponse };
+        if (object.provisionalModel !== undefined && object.provisionalModel !== null) {
+            message.provisionalModel = ProvisionalModel.fromJSON(object.provisionalModel);
+        }
+        else {
+            message.provisionalModel = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.provisionalModel !== undefined && (obj.provisionalModel = message.provisionalModel ? ProvisionalModel.toJSON(message.provisionalModel) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetProvisionalModelResponse };
+        if (object.provisionalModel !== undefined && object.provisionalModel !== null) {
+            message.provisionalModel = ProvisionalModel.fromPartial(object.provisionalModel);
+        }
+        else {
+            message.provisionalModel = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllProvisionalModelRequest = {};
+export const QueryAllProvisionalModelRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllProvisionalModelRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllProvisionalModelRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllProvisionalModelRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllProvisionalModelResponse = {};
+export const QueryAllProvisionalModelResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.provisionalModel) {
+            ProvisionalModel.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllProvisionalModelResponse };
+        message.provisionalModel = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.provisionalModel.push(ProvisionalModel.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllProvisionalModelResponse };
+        message.provisionalModel = [];
+        if (object.provisionalModel !== undefined && object.provisionalModel !== null) {
+            for (const e of object.provisionalModel) {
+                message.provisionalModel.push(ProvisionalModel.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.provisionalModel) {
+            obj.provisionalModel = message.provisionalModel.map((e) => (e ? ProvisionalModel.toJSON(e) : undefined));
+        }
+        else {
+            obj.provisionalModel = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllProvisionalModelResponse };
+        message.provisionalModel = [];
+        if (object.provisionalModel !== undefined && object.provisionalModel !== null) {
+            for (const e of object.provisionalModel) {
+                message.provisionalModel.push(ProvisionalModel.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -896,5 +1183,15 @@ export class QueryClientImpl {
         const data = QueryAllRevokedModelRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Query', 'RevokedModelAll', data);
         return promise.then((data) => QueryAllRevokedModelResponse.decode(new Reader(data)));
+    }
+    ProvisionalModel(request) {
+        const data = QueryGetProvisionalModelRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Query', 'ProvisionalModel', data);
+        return promise.then((data) => QueryGetProvisionalModelResponse.decode(new Reader(data)));
+    }
+    ProvisionalModelAll(request) {
+        const data = QueryAllProvisionalModelRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.compliance.Query', 'ProvisionalModelAll', data);
+        return promise.then((data) => QueryAllProvisionalModelResponse.decode(new Reader(data)));
     }
 }

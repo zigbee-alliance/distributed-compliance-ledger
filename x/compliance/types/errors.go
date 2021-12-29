@@ -8,25 +8,15 @@ import (
 
 // x/compliance module sentinel errors
 var (
-	ErrComplianceInfoDoesNotExist     = sdkerrors.Register(ModuleName, 301, "compliance info does not exist")
+	ErrComplianceInfoAlreadyExist     = sdkerrors.Register(ModuleName, 301, "compliance info already exist")
 	ErrInconsistentDates              = sdkerrors.Register(ModuleName, 302, "inconsistent dates")
 	ErrAlreadyCertified               = sdkerrors.Register(ModuleName, 303, "model already certified")
 	ErrAlreadyRevoked                 = sdkerrors.Register(ModuleName, 304, "model already revoked")
-	ErrModelVersionStringDoesNotMatch = sdkerrors.Register(ModuleName, 305, "model version does not match")
-	ErrInvalidTestDateFormat          = sdkerrors.Register(ModuleName, 306, "test date must be in RFC3339 format")
-	ErrInvalidCertificationType       = sdkerrors.Register(ModuleName, 307, "invalid certification type")
+	ErrAlreadyProvisional             = sdkerrors.Register(ModuleName, 305, "model already in provisional state")
+	ErrModelVersionStringDoesNotMatch = sdkerrors.Register(ModuleName, 306, "model version does not match")
+	ErrInvalidTestDateFormat          = sdkerrors.Register(ModuleName, 307, "test date must be in RFC3339 format")
+	ErrInvalidCertificationType       = sdkerrors.Register(ModuleName, 308, "invalid certification type")
 )
-
-func NewErrComplianceInfoDoesNotExist(vid interface{}, pid interface{},
-	softwareVersion interface{}, certificationType interface{}) error {
-	return sdkerrors.Wrapf(
-		ErrComplianceInfoDoesNotExist,
-		"No certification information about the model with vid=%v, pid=%v softwareVersion=%v "+
-			"certification_type=%v on the ledger. This means that the model is either not certified yet or "+
-			"certified by default (off-ledger).",
-		vid, pid, softwareVersion, certificationType,
-	)
-}
 
 func NewErrInconsistentDates(err interface{}) error {
 	return sdkerrors.Wrapf(
@@ -36,18 +26,34 @@ func NewErrInconsistentDates(err interface{}) error {
 	)
 }
 
-func NewErrAlreadyCertified(vid interface{}, pid interface{}) error {
+func NewErrAlreadyCertified(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
 	return sdkerrors.Wrapf(
 		ErrAlreadyCertified,
-		"Model with vid=%v, pid=%v already certified on the ledger",
+		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already certified on the ledger",
 		vid, pid,
 	)
 }
 
-func NewErrAlreadyRevoked(vid interface{}, pid interface{}) error {
+func NewErrAlreadyRevoked(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
 	return sdkerrors.Wrapf(
 		ErrAlreadyRevoked,
-		"Model with vid=%v, pid=%v already revoked on the ledger",
+		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already revoked on the ledger",
+		vid, pid,
+	)
+}
+
+func NewErrAlreadyProvisional(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrAlreadyRevoked,
+		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v is already in provisional state on the ledger",
+		vid, pid,
+	)
+}
+
+func NewErrComplianceInfoAlreadyExist(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrAlreadyRevoked,
+		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already has compliance info on the ledger",
 		vid, pid,
 	)
 }

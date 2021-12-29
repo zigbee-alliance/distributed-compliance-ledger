@@ -13,6 +13,8 @@ export interface ComplianceComplianceHistoryItem {
     softwareVersionCertificationStatus?: number;
     date?: string;
     reason?: string;
+    /** @format int64 */
+    cDVersionNumber?: number;
 }
 export interface ComplianceComplianceInfo {
     /** @format int32 */
@@ -33,7 +35,18 @@ export interface ComplianceComplianceInfo {
     history?: ComplianceComplianceHistoryItem[];
 }
 export declare type ComplianceMsgCertifyModelResponse = object;
+export declare type ComplianceMsgProvisionModelResponse = object;
 export declare type ComplianceMsgRevokeModelResponse = object;
+export interface ComplianceProvisionalModel {
+    /** @format int32 */
+    vid?: number;
+    /** @format int32 */
+    pid?: number;
+    /** @format int64 */
+    softwareVersion?: number;
+    certificationType?: string;
+    value?: boolean;
+}
 export interface ComplianceQueryAllCertifiedModelResponse {
     certifiedModel?: ComplianceCertifiedModel[];
     /**
@@ -49,6 +62,19 @@ export interface ComplianceQueryAllCertifiedModelResponse {
 }
 export interface ComplianceQueryAllComplianceInfoResponse {
     complianceInfo?: ComplianceComplianceInfo[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
+export interface ComplianceQueryAllProvisionalModelResponse {
+    provisionalModel?: ComplianceProvisionalModel[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -78,6 +104,9 @@ export interface ComplianceQueryGetCertifiedModelResponse {
 }
 export interface ComplianceQueryGetComplianceInfoResponse {
     complianceInfo?: ComplianceComplianceInfo;
+}
+export interface ComplianceQueryGetProvisionalModelResponse {
+    provisionalModel?: ComplianceProvisionalModel;
 }
 export interface ComplianceQueryGetRevokedModelResponse {
     revokedModel?: ComplianceRevokedModel;
@@ -263,6 +292,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}
      */
     queryComplianceInfo: (vid: number, pid: number, softwareVersion: number, certificationType: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetComplianceInfoResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryProvisionalModelAll
+     * @summary Queries a list of ProvisionalModel items.
+     * @request GET:/dcl/compliance/provisional-models
+     */
+    queryProvisionalModelAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryAllProvisionalModelResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryProvisionalModel
+     * @summary Queries a ProvisionalModel by index.
+     * @request GET:/dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}
+     */
+    queryProvisionalModel: (vid: number, pid: number, softwareVersion: number, certificationType: string, params?: RequestParams) => Promise<HttpResponse<ComplianceQueryGetProvisionalModelResponse, RpcStatus>>;
     /**
      * No description
      *

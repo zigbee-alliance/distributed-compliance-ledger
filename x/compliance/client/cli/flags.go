@@ -22,11 +22,13 @@ const (
 	FlagCertificationType         = "certificationType"
 	FlagCertificationTypeShortcut = "t"
 	FlagCertificationDate         = "certificationDate"
-	FlagCertificationDateShortcut = "d"
+	FlagDateShortcut              = "d"
 	FlagIsProvisional             = "isProvisional"
 	FlagRevocationDate            = "revocationDate"
 	FlagReason                    = "reason"
 	FlagReasonShortcut            = "r"
+	FlagCDVersionNumber           = "cdVersionNumber"
+	FlagProvisionalDate           = "provisionalDate"
 
 	TextCertificationType = "Certification type - Currently 'zigbee' and 'matter' types are supported"
 )

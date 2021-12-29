@@ -2,6 +2,7 @@
 import { ComplianceInfo } from '../compliance/compliance_info'
 import { CertifiedModel } from '../compliance/certified_model'
 import { RevokedModel } from '../compliance/revoked_model'
+import { ProvisionalModel } from '../compliance/provisional_model'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance'
@@ -10,8 +11,9 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compl
 export interface GenesisState {
   complianceInfoList: ComplianceInfo[]
   certifiedModelList: CertifiedModel[]
-  /** this line is used by starport scaffolding # genesis/proto/state */
   revokedModelList: RevokedModel[]
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  provisionalModelList: ProvisionalModel[]
 }
 
 const baseGenesisState: object = {}
@@ -27,6 +29,9 @@ export const GenesisState = {
     for (const v of message.revokedModelList) {
       RevokedModel.encode(v!, writer.uint32(26).fork()).ldelim()
     }
+    for (const v of message.provisionalModelList) {
+      ProvisionalModel.encode(v!, writer.uint32(34).fork()).ldelim()
+    }
     return writer
   },
 
@@ -37,6 +42,7 @@ export const GenesisState = {
     message.complianceInfoList = []
     message.certifiedModelList = []
     message.revokedModelList = []
+    message.provisionalModelList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -48,6 +54,9 @@ export const GenesisState = {
           break
         case 3:
           message.revokedModelList.push(RevokedModel.decode(reader, reader.uint32()))
+          break
+        case 4:
+          message.provisionalModelList.push(ProvisionalModel.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -62,6 +71,7 @@ export const GenesisState = {
     message.complianceInfoList = []
     message.certifiedModelList = []
     message.revokedModelList = []
+    message.provisionalModelList = []
     if (object.complianceInfoList !== undefined && object.complianceInfoList !== null) {
       for (const e of object.complianceInfoList) {
         message.complianceInfoList.push(ComplianceInfo.fromJSON(e))
@@ -75,6 +85,11 @@ export const GenesisState = {
     if (object.revokedModelList !== undefined && object.revokedModelList !== null) {
       for (const e of object.revokedModelList) {
         message.revokedModelList.push(RevokedModel.fromJSON(e))
+      }
+    }
+    if (object.provisionalModelList !== undefined && object.provisionalModelList !== null) {
+      for (const e of object.provisionalModelList) {
+        message.provisionalModelList.push(ProvisionalModel.fromJSON(e))
       }
     }
     return message
@@ -97,6 +112,11 @@ export const GenesisState = {
     } else {
       obj.revokedModelList = []
     }
+    if (message.provisionalModelList) {
+      obj.provisionalModelList = message.provisionalModelList.map((e) => (e ? ProvisionalModel.toJSON(e) : undefined))
+    } else {
+      obj.provisionalModelList = []
+    }
     return obj
   },
 
@@ -105,6 +125,7 @@ export const GenesisState = {
     message.complianceInfoList = []
     message.certifiedModelList = []
     message.revokedModelList = []
+    message.provisionalModelList = []
     if (object.complianceInfoList !== undefined && object.complianceInfoList !== null) {
       for (const e of object.complianceInfoList) {
         message.complianceInfoList.push(ComplianceInfo.fromPartial(e))
@@ -118,6 +139,11 @@ export const GenesisState = {
     if (object.revokedModelList !== undefined && object.revokedModelList !== null) {
       for (const e of object.revokedModelList) {
         message.revokedModelList.push(RevokedModel.fromPartial(e))
+      }
+    }
+    if (object.provisionalModelList !== undefined && object.provisionalModelList !== null) {
+      for (const e of object.provisionalModelList) {
+        message.provisionalModelList.push(ProvisionalModel.fromPartial(e))
       }
     }
     return message

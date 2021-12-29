@@ -10,9 +10,10 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default Capability genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		ComplianceInfoList: []ComplianceInfo{},
-		CertifiedModelList: []CertifiedModel{},
-		RevokedModelList:   []RevokedModel{},
+		ComplianceInfoList:   []ComplianceInfo{},
+		CertifiedModelList:   []CertifiedModel{},
+		RevokedModelList:     []RevokedModel{},
+		ProvisionalModelList: []ProvisionalModel{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -49,6 +50,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for revokedModel")
 		}
 		revokedModelIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in provisionalModel
+	provisionalModelIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.ProvisionalModelList {
+		index := string(ProvisionalModelKey(elem.Vid, elem.Pid, elem.SoftwareVersion, elem.CertificationType))
+		if _, ok := provisionalModelIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for provisionalModel")
+		}
+		provisionalModelIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

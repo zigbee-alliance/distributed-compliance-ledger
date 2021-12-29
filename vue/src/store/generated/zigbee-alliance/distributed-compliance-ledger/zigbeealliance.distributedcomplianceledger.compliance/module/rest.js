@@ -198,6 +198,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryProvisionalModelAll
+         * @summary Queries a list of ProvisionalModel items.
+         * @request GET:/dcl/compliance/provisional-models
+         */
+        this.queryProvisionalModelAll = (query, params = {}) => this.request({
+            path: `/dcl/compliance/provisional-models`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProvisionalModel
+         * @summary Queries a ProvisionalModel by index.
+         * @request GET:/dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}
+         */
+        this.queryProvisionalModel = (vid, pid, softwareVersion, certificationType, params = {}) => this.request({
+            path: `/dcl/compliance/provisional-models/${vid}/${pid}/${softwareVersion}/${certificationType}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryRevokedModelAll
          * @summary Queries a list of RevokedModel items.
          * @request GET:/dcl/compliance/revoked-models

@@ -27,6 +27,9 @@ export interface ComplianceComplianceHistoryItem {
   softwareVersionCertificationStatus?: number;
   date?: string;
   reason?: string;
+
+  /** @format int64 */
+  cDVersionNumber?: number;
 }
 
 export interface ComplianceComplianceInfo {
@@ -54,7 +57,22 @@ export interface ComplianceComplianceInfo {
 
 export type ComplianceMsgCertifyModelResponse = object;
 
+export type ComplianceMsgProvisionModelResponse = object;
+
 export type ComplianceMsgRevokeModelResponse = object;
+
+export interface ComplianceProvisionalModel {
+  /** @format int32 */
+  vid?: number;
+
+  /** @format int32 */
+  pid?: number;
+
+  /** @format int64 */
+  softwareVersion?: number;
+  certificationType?: string;
+  value?: boolean;
+}
 
 export interface ComplianceQueryAllCertifiedModelResponse {
   certifiedModel?: ComplianceCertifiedModel[];
@@ -73,6 +91,21 @@ export interface ComplianceQueryAllCertifiedModelResponse {
 
 export interface ComplianceQueryAllComplianceInfoResponse {
   complianceInfo?: ComplianceComplianceInfo[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
+export interface ComplianceQueryAllProvisionalModelResponse {
+  provisionalModel?: ComplianceProvisionalModel[];
 
   /**
    * PageResponse is to be embedded in gRPC response messages where the
@@ -107,6 +140,10 @@ export interface ComplianceQueryGetCertifiedModelResponse {
 
 export interface ComplianceQueryGetComplianceInfoResponse {
   complianceInfo?: ComplianceComplianceInfo;
+}
+
+export interface ComplianceQueryGetProvisionalModelResponse {
+  provisionalModel?: ComplianceProvisionalModel;
 }
 
 export interface ComplianceQueryGetRevokedModelResponse {
@@ -487,6 +524,54 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   ) =>
     this.request<ComplianceQueryGetComplianceInfoResponse, RpcStatus>({
       path: `/dcl/compliance/compliance-info/${vid}/${pid}/${softwareVersion}/${certificationType}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryProvisionalModelAll
+   * @summary Queries a list of ProvisionalModel items.
+   * @request GET:/dcl/compliance/provisional-models
+   */
+  queryProvisionalModelAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<ComplianceQueryAllProvisionalModelResponse, RpcStatus>({
+      path: `/dcl/compliance/provisional-models`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryProvisionalModel
+   * @summary Queries a ProvisionalModel by index.
+   * @request GET:/dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}
+   */
+  queryProvisionalModel = (
+    vid: number,
+    pid: number,
+    softwareVersion: number,
+    certificationType: string,
+    params: RequestParams = {},
+  ) =>
+    this.request<ComplianceQueryGetProvisionalModelResponse, RpcStatus>({
+      path: `/dcl/compliance/provisional-models/${vid}/${pid}/${softwareVersion}/${certificationType}`,
       method: "GET",
       format: "json",
       ...params,

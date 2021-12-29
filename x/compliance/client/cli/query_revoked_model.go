@@ -48,7 +48,7 @@ func CmdListRevokedModel() *cobra.Command {
 func CmdShowRevokedModel() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revoked-model",
-		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid` and `certification_type`) is revoked",
+		Short: "Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`) is revoked",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)

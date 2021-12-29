@@ -21,6 +21,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.RevokedModelList {
 		k.SetRevokedModel(ctx, elem)
 	}
+	// Set all the provisionalModel
+	for _, elem := range genState.ProvisionalModelList {
+		k.SetProvisionalModel(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 }
 
@@ -31,6 +35,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.ComplianceInfoList = k.GetAllComplianceInfo(ctx)
 	genesis.CertifiedModelList = k.GetAllCertifiedModel(ctx)
 	genesis.RevokedModelList = k.GetAllRevokedModel(ctx)
+	genesis.ProvisionalModelList = k.GetAllProvisionalModel(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

@@ -1,14 +1,16 @@
 import { ComplianceInfo } from '../compliance/compliance_info';
 import { CertifiedModel } from '../compliance/certified_model';
 import { RevokedModel } from '../compliance/revoked_model';
+import { ProvisionalModel } from '../compliance/provisional_model';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.compliance";
 /** GenesisState defines the compliance module's genesis state. */
 export interface GenesisState {
     complianceInfoList: ComplianceInfo[];
     certifiedModelList: CertifiedModel[];
-    /** this line is used by starport scaffolding # genesis/proto/state */
     revokedModelList: RevokedModel[];
+    /** this line is used by starport scaffolding # genesis/proto/state */
+    provisionalModelList: ProvisionalModel[];
 }
 export declare const GenesisState: {
     encode(message: GenesisState, writer?: Writer): Writer;

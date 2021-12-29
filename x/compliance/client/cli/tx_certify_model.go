@@ -36,6 +36,10 @@ func CmdCertifyModel() *cobra.Command {
 			argCertificationDate := viper.GetString(FlagCertificationDate)
 			argCertificationType := viper.GetString(FlagCertificationType)
 			argReason := viper.GetString(FlagReason)
+			argCDVersionNumber, err := cast.ToUint32E(viper.GetString(FlagCDVersionNumber))
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -48,6 +52,7 @@ func CmdCertifyModel() *cobra.Command {
 				argPid,
 				argSoftwareVersion,
 				argSoftwareVersionString,
+				argCDVersionNumber,
 				argCertificationDate,
 				argCertificationType,
 				argReason,
@@ -64,10 +69,11 @@ func CmdCertifyModel() *cobra.Command {
 	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
 	cmd.Flags().String(FlagSoftwareVersionString, "", "Model software version string")
 	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
-	cmd.Flags().StringP(FlagCertificationDate, FlagCertificationDateShortcut, "",
+	cmd.Flags().StringP(FlagCertificationDate, FlagDateShortcut, "",
 		"The date of model certification (rfc3339 encoded)")
 	cmd.Flags().StringP(FlagReason, FlagReasonShortcut, "",
 		"Optional comment describing the reason of certification")
+	cmd.Flags().String(FlagCDVersionNumber, "", "CD Version Number of the certification")
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

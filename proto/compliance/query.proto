@@ -6,6 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "compliance/compliance_info.proto";
 import "compliance/certified_model.proto";
 import "compliance/revoked_model.proto";
+import "compliance/provisional_model.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -41,6 +42,16 @@ service Query {
 	// Queries a list of RevokedModel items.
 	rpc RevokedModelAll(QueryAllRevokedModelRequest) returns (QueryAllRevokedModelResponse) {
 		option (google.api.http).get = "/dcl/compliance/revoked-models";
+	}
+
+// Queries a ProvisionalModel by index.
+	rpc ProvisionalModel(QueryGetProvisionalModelRequest) returns (QueryGetProvisionalModelResponse) {
+		option (google.api.http).get = "/dcl/compliance/provisional-models/{vid}/{pid}/{software_version}/{certification_type}";
+	}
+
+	// Queries a list of ProvisionalModel items.
+	rpc ProvisionalModelAll(QueryAllProvisionalModelRequest) returns (QueryAllProvisionalModelResponse) {
+		option (google.api.http).get = "/dcl/compliance/provisional-models";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -106,6 +117,27 @@ message QueryAllRevokedModelRequest {
 
 message QueryAllRevokedModelResponse {
 	repeated RevokedModel revokedModel = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetProvisionalModelRequest {
+  int32 vid = 1;
+  int32 pid = 2;
+  uint32 software_version = 3;
+  string certification_type = 4;
+
+}
+
+message QueryGetProvisionalModelResponse {
+	ProvisionalModel provisionalModel = 1 [(gogoproto.nullable) = true];
+}
+
+message QueryAllProvisionalModelRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllProvisionalModelResponse {
+	repeated ProvisionalModel provisionalModel = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

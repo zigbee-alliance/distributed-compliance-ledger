@@ -3,6 +3,7 @@ import { ComplianceInfo } from '../compliance/compliance_info';
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 import { CertifiedModel } from '../compliance/certified_model';
 import { RevokedModel } from '../compliance/revoked_model';
+import { ProvisionalModel } from '../compliance/provisional_model';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.compliance";
 export interface QueryGetComplianceInfoRequest {
     vid: number;
@@ -50,6 +51,22 @@ export interface QueryAllRevokedModelRequest {
 }
 export interface QueryAllRevokedModelResponse {
     revokedModel: RevokedModel[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetProvisionalModelRequest {
+    vid: number;
+    pid: number;
+    softwareVersion: number;
+    certificationType: string;
+}
+export interface QueryGetProvisionalModelResponse {
+    provisionalModel: ProvisionalModel | undefined;
+}
+export interface QueryAllProvisionalModelRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllProvisionalModelResponse {
+    provisionalModel: ProvisionalModel[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetComplianceInfoRequest: {
@@ -136,6 +153,34 @@ export declare const QueryAllRevokedModelResponse: {
     toJSON(message: QueryAllRevokedModelResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllRevokedModelResponse>): QueryAllRevokedModelResponse;
 };
+export declare const QueryGetProvisionalModelRequest: {
+    encode(message: QueryGetProvisionalModelRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetProvisionalModelRequest;
+    fromJSON(object: any): QueryGetProvisionalModelRequest;
+    toJSON(message: QueryGetProvisionalModelRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetProvisionalModelRequest>): QueryGetProvisionalModelRequest;
+};
+export declare const QueryGetProvisionalModelResponse: {
+    encode(message: QueryGetProvisionalModelResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetProvisionalModelResponse;
+    fromJSON(object: any): QueryGetProvisionalModelResponse;
+    toJSON(message: QueryGetProvisionalModelResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetProvisionalModelResponse>): QueryGetProvisionalModelResponse;
+};
+export declare const QueryAllProvisionalModelRequest: {
+    encode(message: QueryAllProvisionalModelRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllProvisionalModelRequest;
+    fromJSON(object: any): QueryAllProvisionalModelRequest;
+    toJSON(message: QueryAllProvisionalModelRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllProvisionalModelRequest>): QueryAllProvisionalModelRequest;
+};
+export declare const QueryAllProvisionalModelResponse: {
+    encode(message: QueryAllProvisionalModelResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllProvisionalModelResponse;
+    fromJSON(object: any): QueryAllProvisionalModelResponse;
+    toJSON(message: QueryAllProvisionalModelResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllProvisionalModelResponse>): QueryAllProvisionalModelResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a ComplianceInfo by index. */
@@ -150,6 +195,10 @@ export interface Query {
     RevokedModel(request: QueryGetRevokedModelRequest): Promise<QueryGetRevokedModelResponse>;
     /** Queries a list of RevokedModel items. */
     RevokedModelAll(request: QueryAllRevokedModelRequest): Promise<QueryAllRevokedModelResponse>;
+    /** Queries a ProvisionalModel by index. */
+    ProvisionalModel(request: QueryGetProvisionalModelRequest): Promise<QueryGetProvisionalModelResponse>;
+    /** Queries a list of ProvisionalModel items. */
+    ProvisionalModelAll(request: QueryAllProvisionalModelRequest): Promise<QueryAllProvisionalModelResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -160,6 +209,8 @@ export declare class QueryClientImpl implements Query {
     CertifiedModelAll(request: QueryAllCertifiedModelRequest): Promise<QueryAllCertifiedModelResponse>;
     RevokedModel(request: QueryGetRevokedModelRequest): Promise<QueryGetRevokedModelResponse>;
     RevokedModelAll(request: QueryAllRevokedModelRequest): Promise<QueryAllRevokedModelResponse>;
+    ProvisionalModel(request: QueryGetProvisionalModelRequest): Promise<QueryGetProvisionalModelResponse>;
+    ProvisionalModelAll(request: QueryAllProvisionalModelRequest): Promise<QueryAllProvisionalModelResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

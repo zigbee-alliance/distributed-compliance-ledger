@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.compliance';
-const baseComplianceHistoryItem = { softwareVersionCertificationStatus: 0, date: '', reason: '' };
+const baseComplianceHistoryItem = { softwareVersionCertificationStatus: 0, date: '', reason: '', cDVersionNumber: 0 };
 export const ComplianceHistoryItem = {
     encode(message, writer = Writer.create()) {
         if (message.softwareVersionCertificationStatus !== 0) {
@@ -12,6 +12,9 @@ export const ComplianceHistoryItem = {
         }
         if (message.reason !== '') {
             writer.uint32(26).string(message.reason);
+        }
+        if (message.cDVersionNumber !== 0) {
+            writer.uint32(32).uint32(message.cDVersionNumber);
         }
         return writer;
     },
@@ -30,6 +33,9 @@ export const ComplianceHistoryItem = {
                     break;
                 case 3:
                     message.reason = reader.string();
+                    break;
+                case 4:
+                    message.cDVersionNumber = reader.uint32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -58,6 +64,12 @@ export const ComplianceHistoryItem = {
         else {
             message.reason = '';
         }
+        if (object.cDVersionNumber !== undefined && object.cDVersionNumber !== null) {
+            message.cDVersionNumber = Number(object.cDVersionNumber);
+        }
+        else {
+            message.cDVersionNumber = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -65,6 +77,7 @@ export const ComplianceHistoryItem = {
         message.softwareVersionCertificationStatus !== undefined && (obj.softwareVersionCertificationStatus = message.softwareVersionCertificationStatus);
         message.date !== undefined && (obj.date = message.date);
         message.reason !== undefined && (obj.reason = message.reason);
+        message.cDVersionNumber !== undefined && (obj.cDVersionNumber = message.cDVersionNumber);
         return obj;
     },
     fromPartial(object) {
@@ -86,6 +99,12 @@ export const ComplianceHistoryItem = {
         }
         else {
             message.reason = '';
+        }
+        if (object.cDVersionNumber !== undefined && object.cDVersionNumber !== null) {
+            message.cDVersionNumber = object.cDVersionNumber;
+        }
+        else {
+            message.cDVersionNumber = 0;
         }
         return message;
     }

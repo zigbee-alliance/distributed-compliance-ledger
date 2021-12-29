@@ -8,4 +8,5 @@ message ComplianceHistoryItem {
   uint32 software_version_certification_status = 1; 
   string date = 2; 
   string reason = 3; 
+  uint32 c_d_version_number = 4; 
 }
