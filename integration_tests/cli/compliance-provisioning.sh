@@ -247,7 +247,7 @@ svs3=$RANDOM
 
 echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid3"
 revocation_date="2021-02-02T02:20:20Z"
-revocation_reason="some reason"
+revocation_reason="some reason 11"
 result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid3 --softwareVersion=$sv3 --softwareVersionString=$svs3 --certificationType="$certification_type_zb" --revocationDate="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -277,7 +277,7 @@ echo "$result"
 test_divider
 
 echo "Certify provisioned Model with VID: $vid PID: $pid"
-certification_date="2020-02-02T02:20:19Z"
+certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_zb" --certificationDate="$certification_date" --reason "$certification_reason" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
@@ -286,8 +286,8 @@ echo "$result"
 test_divider
 
 echo "Revoke provisioned Model with VID: $vid PID: $pid"
-revocation_date="2020-02-02T02:20:20Z"
-revocation_reason="some reason"
+revocation_date="2021-02-02T02:20:20Z"
+revocation_reason="some reason 22"
 result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$certification_type_matter" --revocationDate="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
@@ -314,7 +314,7 @@ echo "$result"
 
 test_divider
 
-echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created for ZB"
+echo "Get Certified Model with VID: ${vid} PID: ${pid} for ZB"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_zb")
 check_response "$result" "true"
 check_response "$result" "\"pid\": $pid"
@@ -324,18 +324,18 @@ echo "$result"
 
 test_divider
 
-echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created for Matter"
+echo "Get Certified Model with VID: ${vid} PID: ${pid} for Matter"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_matter")
-check_response "$result" "null"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "false"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"certification_type\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
 
 
-echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} before compliance record was created for ZB"
+echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} for ZB"
 result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_zb")
 check_response "$result" "false"
 check_response "$result" "\"pid\": $pid"
@@ -345,7 +345,7 @@ echo "$result"
 
 test_divider
 
-echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} before compliance record was created for Matter"
+echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} for Matter"
 result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_matter")
 check_response "$result" "true"
 check_response "$result" "\"pid\": $pid"

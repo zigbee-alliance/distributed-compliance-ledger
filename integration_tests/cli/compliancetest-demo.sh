@@ -120,7 +120,7 @@ create_model_and_version $vid $new_pid $sv $svs $vendor_account
 test_divider
 
 echo "Add Testing Result for Model VID: $vid PID: $new_pid SV: $sv"
-new_test_date="2020-11-24T10:00:00Z"
+new_test_date="2021-11-24T10:00:00Z"
 test_results_path="integration_tests/constants/test_results"
 result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$new_pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$test_results_path" --test-date="$new_test_date" --from $test_house_account --yes)
 check_response "$result" "\"code\": 0"

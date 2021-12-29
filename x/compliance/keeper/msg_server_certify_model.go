@@ -63,7 +63,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 				)
 			}
 
-			complianceInfo.UpdateComplianceInfo(msg.CertificationDate, msg.Reason)
+			complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason)
 		}
 	} else {
 		// Compliance is tracked on ledger. There is no compliance record yet.

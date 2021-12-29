@@ -61,7 +61,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 				)
 			}
 
-			complianceInfo.UpdateComplianceInfo(msg.RevocationDate, msg.Reason)
+			complianceInfo.SetRevokedStatus(msg.RevocationDate, msg.Reason)
 		}
 
 		// update certified/revoked index
