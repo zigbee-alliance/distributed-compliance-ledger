@@ -42,11 +42,9 @@ func Setup(t *testing.T) TestSetup {
 	k, ctx := testkeeper.DclauthKeeper(t)
 
 	setup := TestSetup{
-		//Cdc:     cdc,
 		Ctx:     ctx,
 		Keeper:  *k,
 		Handler: NewHandler(*k),
-		//Querier: querier,
 	}
 
 	return setup

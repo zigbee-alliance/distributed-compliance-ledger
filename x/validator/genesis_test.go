@@ -30,7 +30,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.ValidatorKeeper(t)
+	k, ctx := keepertest.ValidatorKeeper(t, nil)
 	validator.InitGenesis(ctx, *k, genesisState)
 	got := validator.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
