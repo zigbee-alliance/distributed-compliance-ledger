@@ -16,7 +16,7 @@ var _ = strconv.Itoa(0)
 func CmdRevokeModel() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "revoke-model",
-		Short: "Revoke an existing model. Note that the corresponding model version and test results must be present on ledger.",
+		Short: "Revoke an existing model",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argVid, err := cast.ToInt32E(args[0])

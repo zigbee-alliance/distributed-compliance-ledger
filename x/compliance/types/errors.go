@@ -11,7 +11,7 @@ var (
 	ErrComplianceInfoDoesNotExist     = sdkerrors.Register(ModuleName, 301, "compliance info does not exist")
 	ErrInconsistentDates              = sdkerrors.Register(ModuleName, 302, "inconsistent dates")
 	ErrAlreadyCertified               = sdkerrors.Register(ModuleName, 303, "model already certified")
-	ErrModelDoesNotExist              = sdkerrors.Register(ModuleName, 304, "model does not exist")
+	ErrAlreadyRevoked                 = sdkerrors.Register(ModuleName, 304, "model already revoked")
 	ErrModelVersionStringDoesNotMatch = sdkerrors.Register(ModuleName, 305, "model version does not match")
 	ErrInvalidTestDateFormat          = sdkerrors.Register(ModuleName, 306, "test date must be in RFC3339 format")
 	ErrInvalidCertificationType       = sdkerrors.Register(ModuleName, 307, "invalid certification type")
@@ -36,7 +36,7 @@ func NewErrInconsistentDates(err interface{}) error {
 	)
 }
 
-func NewErrAlreadyCertifyed(vid interface{}, pid interface{}) error {
+func NewErrAlreadyCertified(vid interface{}, pid interface{}) error {
 	return sdkerrors.Wrapf(
 		ErrAlreadyCertified,
 		"Model with vid=%v, pid=%v already certified on the ledger",
@@ -44,10 +44,10 @@ func NewErrAlreadyCertifyed(vid interface{}, pid interface{}) error {
 	)
 }
 
-func NewErrModelDoesNotExist(vid interface{}, pid interface{}) error {
+func NewErrAlreadyRevoked(vid interface{}, pid interface{}) error {
 	return sdkerrors.Wrapf(
-		ErrModelDoesNotExist,
-		"Model with vid=%v, pid=%v does not exist on the ledger",
+		ErrAlreadyRevoked,
+		"Model with vid=%v, pid=%v already revoked on the ledger",
 		vid, pid,
 	)
 }

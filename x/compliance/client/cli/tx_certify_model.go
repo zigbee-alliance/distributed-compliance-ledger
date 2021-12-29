@@ -17,7 +17,7 @@ var _ = strconv.Itoa(0)
 func CmdCertifyModel() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "certify-model",
-		Short: "Certify an existing model. Note that the corresponding model version and test results must be present on ledger",
+		Short: "Certify an existing model. Note that either corresponding model version and test results or revocation info must be present on ledger",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argVid, err := cast.ToInt32E(viper.GetString(FlagVID))
