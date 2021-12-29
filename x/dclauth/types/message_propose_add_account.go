@@ -7,6 +7,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const TypeMsgProposeAddAccount = "propose_add_account"
@@ -113,6 +114,11 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 
 	if msg.HasRole(Vendor) && msg.VendorID <= 0 {
 		return ErrMissingVendorIDForVendorAccount()
+	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil

@@ -2,7 +2,6 @@ package cli
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -45,11 +44,6 @@ func CmdAddTestingResult() *cobra.Command {
 				return err_
 			}
 			argTestDate := viper.GetString(FlagTestDate)
-
-			_, err_ = time.Parse(time.RFC3339, argTestDate)
-			if err_ != nil {
-				return types.NewErrInvalidTestDateFormat(argTestDate)
-			}
 
 			msg := types.NewMsgAddTestingResult(
 				clientCtx.GetFromAddress().String(),
