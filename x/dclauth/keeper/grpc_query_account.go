@@ -31,7 +31,6 @@ func (k Keeper) AccountAll(c context.Context, req *types.QueryAllAccountRequest)
 		accounts = append(accounts, account)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -46,7 +45,6 @@ func (k Keeper) Account(c context.Context, req *types.QueryGetAccountRequest) (*
 	ctx := sdk.UnwrapSDKContext(c)
 
 	addr, err := sdk.AccAddressFromBech32(req.Address)
-
 	if err != nil {
 		return nil, err
 	}

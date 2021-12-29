@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetUniqueCertificate set a specific uniqueCertificate in the store from its index
+// SetUniqueCertificate set a specific uniqueCertificate in the store from its index.
 func (k Keeper) SetUniqueCertificate(ctx sdk.Context, uniqueCertificate types.UniqueCertificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
 	b := k.cdc.MustMarshal(&uniqueCertificate)
@@ -16,7 +16,7 @@ func (k Keeper) SetUniqueCertificate(ctx sdk.Context, uniqueCertificate types.Un
 	), b)
 }
 
-// GetUniqueCertificate returns a uniqueCertificate from its index
+// GetUniqueCertificate returns a uniqueCertificate from its index.
 func (k Keeper) GetUniqueCertificate(
 	ctx sdk.Context,
 	issuer string,
@@ -37,7 +37,7 @@ func (k Keeper) GetUniqueCertificate(
 	return val, true
 }
 
-// RemoveUniqueCertificate removes a uniqueCertificate from the store
+// RemoveUniqueCertificate removes a uniqueCertificate from the store.
 func (k Keeper) RemoveUniqueCertificate(
 	ctx sdk.Context,
 	issuer string,
@@ -51,7 +51,7 @@ func (k Keeper) RemoveUniqueCertificate(
 	))
 }
 
-// GetAllUniqueCertificate returns all uniqueCertificate
+// GetAllUniqueCertificate returns all uniqueCertificate.
 func (k Keeper) GetAllUniqueCertificate(ctx sdk.Context) (list []types.UniqueCertificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

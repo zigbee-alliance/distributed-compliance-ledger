@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/tendermint/tendermint/libs/log"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-	// "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
 )
 
 type (

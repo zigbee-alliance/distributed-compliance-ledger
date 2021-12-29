@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNVendorProducts(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.VendorProducts {
@@ -39,6 +39,7 @@ func TestVendorProductsGet(t *testing.T) {
 		)
 	}
 }
+
 func TestVendorProductsRemove(t *testing.T) {
 	keeper, ctx := keepertest.ModelKeeper(t)
 	items := createNVendorProducts(keeper, ctx, 10)

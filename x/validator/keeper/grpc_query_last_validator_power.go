@@ -31,7 +31,6 @@ func (k Keeper) LastValidatorPowerAll(c context.Context, req *types.QueryAllLast
 		lastValidatorPowers = append(lastValidatorPowers, lastValidatorPower)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

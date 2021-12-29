@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// TestingResultsKeyPrefix is the prefix to retrieve all TestingResults
+	// TestingResultsKeyPrefix is the prefix to retrieve all TestingResults.
 	TestingResultsKeyPrefix = "TestingResults/value/"
 )
 
-// TestingResultsKey returns the store key to retrieve a TestingResults from the index fields
+// TestingResultsKey returns the store key to retrieve a TestingResults from the index fields.
 func TestingResultsKey(
 	vid int32,
 	pid int32,

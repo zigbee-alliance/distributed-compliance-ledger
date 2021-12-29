@@ -9,13 +9,13 @@ import (
 )
 
 // TODO issue 99: do we need that
-// DefaultIndex is the default capability global index
+// DefaultIndex is the default capability global index.
 const DefaultIndex uint64 = 1
 
 // TODO issue 99: review - do we need pack/unpack/sanitize for accounts
 //	              data in genesis as it is implemented in cosmos now
 
-// DefaultGenesis returns the default Capability genesis state
+// DefaultGenesis returns the default Capability genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		AccountList:                  []Account{},

@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetProposedCertificateRevocation set a specific proposedCertificateRevocation in the store from its index
+// SetProposedCertificateRevocation set a specific proposedCertificateRevocation in the store from its index.
 func (k Keeper) SetProposedCertificateRevocation(ctx sdk.Context, proposedCertificateRevocation types.ProposedCertificateRevocation) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 	b := k.cdc.MustMarshal(&proposedCertificateRevocation)
@@ -16,7 +16,7 @@ func (k Keeper) SetProposedCertificateRevocation(ctx sdk.Context, proposedCertif
 	), b)
 }
 
-// GetProposedCertificateRevocation returns a proposedCertificateRevocation from its index
+// GetProposedCertificateRevocation returns a proposedCertificateRevocation from its index.
 func (k Keeper) GetProposedCertificateRevocation(
 	ctx sdk.Context,
 	subject string,
@@ -37,7 +37,7 @@ func (k Keeper) GetProposedCertificateRevocation(
 	return val, true
 }
 
-// RemoveProposedCertificateRevocation removes a proposedCertificateRevocation from the store
+// RemoveProposedCertificateRevocation removes a proposedCertificateRevocation from the store.
 func (k Keeper) RemoveProposedCertificateRevocation(
 	ctx sdk.Context,
 	subject string,
@@ -51,7 +51,7 @@ func (k Keeper) RemoveProposedCertificateRevocation(
 	))
 }
 
-// GetAllProposedCertificateRevocation returns all proposedCertificateRevocation
+// GetAllProposedCertificateRevocation returns all proposedCertificateRevocation.
 func (k Keeper) GetAllProposedCertificateRevocation(ctx sdk.Context) (list []types.ProposedCertificateRevocation) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -68,7 +68,7 @@ func (k Keeper) GetAllProposedCertificateRevocation(ctx sdk.Context) (list []typ
 }
 
 // Check if the Proposed Certificate Revocation record associated with a
-// Subject/SubjectKeyID combination is present in the store
+// Subject/SubjectKeyID combination is present in the store.
 func (k Keeper) IsProposedCertificateRevocationPresent(
 	ctx sdk.Context,
 	subject string,

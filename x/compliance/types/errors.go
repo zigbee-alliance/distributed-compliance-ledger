@@ -6,7 +6,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// x/compliance module sentinel errors
+// x/compliance module sentinel errors.
 var (
 	ErrComplianceInfoAlreadyExist     = sdkerrors.Register(ModuleName, 301, "compliance info already exist")
 	ErrInconsistentDates              = sdkerrors.Register(ModuleName, 302, "inconsistent dates")

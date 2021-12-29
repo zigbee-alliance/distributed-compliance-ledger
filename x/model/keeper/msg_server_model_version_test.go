@@ -7,13 +7,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func TestModelVersionMsgServerCreate(t *testing.T) {
@@ -22,7 +21,8 @@ func TestModelVersionMsgServerCreate(t *testing.T) {
 	wctx := sdk.WrapSDKContext(ctx)
 	creator := "A"
 	for i := 0; i < 5; i++ {
-		expected := &types.MsgCreateModelVersion{Creator: creator,
+		expected := &types.MsgCreateModelVersion{
+			Creator:         creator,
 			Vid:             int32(i),
 			Pid:             int32(i),
 			SoftwareVersion: uint32(i),
@@ -49,7 +49,8 @@ func TestModelVersionMsgServerUpdate(t *testing.T) {
 	}{
 		{
 			desc: "Completed",
-			request: &types.MsgUpdateModelVersion{Creator: creator,
+			request: &types.MsgUpdateModelVersion{
+				Creator:         creator,
 				Vid:             0,
 				Pid:             0,
 				SoftwareVersion: 0,
@@ -57,7 +58,8 @@ func TestModelVersionMsgServerUpdate(t *testing.T) {
 		},
 		{
 			desc: "Unauthorized",
-			request: &types.MsgUpdateModelVersion{Creator: "B",
+			request: &types.MsgUpdateModelVersion{
+				Creator:         "B",
 				Vid:             0,
 				Pid:             0,
 				SoftwareVersion: 0,
@@ -66,7 +68,8 @@ func TestModelVersionMsgServerUpdate(t *testing.T) {
 		},
 		{
 			desc: "KeyNotFound",
-			request: &types.MsgUpdateModelVersion{Creator: creator,
+			request: &types.MsgUpdateModelVersion{
+				Creator:         creator,
 				Vid:             100000,
 				Pid:             100000,
 				SoftwareVersion: 100000,
@@ -78,7 +81,8 @@ func TestModelVersionMsgServerUpdate(t *testing.T) {
 			k, ctx := keepertest.ModelKeeper(t)
 			srv := keeper.NewMsgServerImpl(*k)
 			wctx := sdk.WrapSDKContext(ctx)
-			expected := &types.MsgCreateModelVersion{Creator: creator,
+			expected := &types.MsgCreateModelVersion{
+				Creator:         creator,
 				Vid:             0,
 				Pid:             0,
 				SoftwareVersion: 0,

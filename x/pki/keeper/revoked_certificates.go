@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetRevokedCertificates set a specific revokedCertificates in the store from its index
+// SetRevokedCertificates set a specific revokedCertificates in the store from its index.
 func (k Keeper) SetRevokedCertificates(ctx sdk.Context, revokedCertificates types.RevokedCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&revokedCertificates)
@@ -16,7 +16,7 @@ func (k Keeper) SetRevokedCertificates(ctx sdk.Context, revokedCertificates type
 	), b)
 }
 
-// GetRevokedCertificates returns a revokedCertificates from its index
+// GetRevokedCertificates returns a revokedCertificates from its index.
 func (k Keeper) GetRevokedCertificates(
 	ctx sdk.Context,
 	subject string,
@@ -37,7 +37,7 @@ func (k Keeper) GetRevokedCertificates(
 	return val, true
 }
 
-// RemoveRevokedCertificates removes a revokedCertificates from the store
+// RemoveRevokedCertificates removes a revokedCertificates from the store.
 func (k Keeper) RemoveRevokedCertificates(
 	ctx sdk.Context,
 	subject string,
@@ -51,7 +51,7 @@ func (k Keeper) RemoveRevokedCertificates(
 	))
 }
 
-// GetAllRevokedCertificates returns all revokedCertificates
+// GetAllRevokedCertificates returns all revokedCertificates.
 func (k Keeper) GetAllRevokedCertificates(ctx sdk.Context) (list []types.RevokedCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -67,7 +67,7 @@ func (k Keeper) GetAllRevokedCertificates(ctx sdk.Context) (list []types.Revoked
 	return
 }
 
-// Add revoked certificates to the list of revoked certificates for the subject/subjectKeyId map
+// Add revoked certificates to the list of revoked certificates for the subject/subjectKeyId map.
 func (k Keeper) AddRevokedCertificates(ctx sdk.Context, approvedCertificates types.ApprovedCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 

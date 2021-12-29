@@ -130,6 +130,7 @@ func NewMsgDeleteVendorInfo(
 		VendorID: vendorID,
 	}
 }
+
 func (msg *MsgDeleteVendorInfo) Route() string {
 	return RouterKey
 }

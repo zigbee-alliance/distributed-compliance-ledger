@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// SimAppChainID hardcoded chainID for simulation
+// SimAppChainID hardcoded chainID for simulation.
 const (
 	DefaultGenTxGas = 1000000
 	SimAppChainID   = "simulation-app"

@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# FIXME issue 99: enable once implemented
-exit 0
-
 set -euo pipefail
 source integration_tests/cli/common.sh
 
@@ -36,7 +33,7 @@ echo "Create VendorInfo Record for VID: $vid"
 companyLegalName="XYZ IOT Devices Inc"
 vendorName="XYZ Devices"
 result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes)
-check_response "$result" "\"success\": true"
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
@@ -56,7 +53,7 @@ echo "Update vendor info record for VID: $vid"
 companyLegalName="ABC Subsidiary Corporation"
 vendorLandingPageURL="https://www.w3.org/"
 result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorLandingPageURL=$vendorLandingPageURL --vendorName="$vendorName" --from=$vendor_account --yes)
-check_response "$result" "\"success\": true"
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider

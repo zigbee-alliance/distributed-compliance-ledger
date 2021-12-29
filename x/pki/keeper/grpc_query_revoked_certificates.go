@@ -31,7 +31,6 @@ func (k Keeper) RevokedCertificatesAll(c context.Context, req *types.QueryAllRev
 		revokedCertificatess = append(revokedCertificatess, revokedCertificates)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

@@ -9,11 +9,10 @@ import (
 	"testing"
 	"time"
 
-	tmed25519 "github.com/tendermint/tendermint/crypto/ed25519"
-	"github.com/tendermint/tendermint/privval"
-
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/tendermint/config"
+	tmed25519 "github.com/tendermint/tendermint/crypto/ed25519"
+	"github.com/tendermint/tendermint/privval"
 )
 
 func TestExportGenesisFileWithTime(t *testing.T) {

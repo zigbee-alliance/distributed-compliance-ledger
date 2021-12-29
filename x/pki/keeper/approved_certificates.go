@@ -9,7 +9,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/x509"
 )
 
-// SetApprovedCertificates set a specific approvedCertificates in the store from its index
+// SetApprovedCertificates set a specific approvedCertificates in the store from its index.
 func (k Keeper) SetApprovedCertificates(ctx sdk.Context, approvedCertificates types.ApprovedCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedCertificates)
@@ -19,7 +19,7 @@ func (k Keeper) SetApprovedCertificates(ctx sdk.Context, approvedCertificates ty
 	), b)
 }
 
-// GetApprovedCertificates returns a approvedCertificates from its index
+// GetApprovedCertificates returns a approvedCertificates from its index.
 func (k Keeper) GetApprovedCertificates(
 	ctx sdk.Context,
 	subject string,
@@ -40,7 +40,7 @@ func (k Keeper) GetApprovedCertificates(
 	return val, true
 }
 
-// RemoveApprovedCertificates removes a approvedCertificates from the store
+// RemoveApprovedCertificates removes a approvedCertificates from the store.
 func (k Keeper) RemoveApprovedCertificates(
 	ctx sdk.Context,
 	subject string,
@@ -54,7 +54,7 @@ func (k Keeper) RemoveApprovedCertificates(
 	))
 }
 
-// GetAllApprovedCertificates returns all approvedCertificates
+// GetAllApprovedCertificates returns all approvedCertificates.
 func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.ApprovedCertificates) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -70,7 +70,7 @@ func (k Keeper) GetAllApprovedCertificates(ctx sdk.Context) (list []types.Approv
 	return
 }
 
-// Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map
+// Add an approved certificate to the list of approved certificates for the subject/subjectKeyId map.
 func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate types.Certificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
@@ -100,7 +100,7 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 }
 
 // Check if the Approved Certificate record associated with a
-// Subject/SubjectKeyID combination is present in the store
+// Subject/SubjectKeyID combination is present in the store.
 func (k Keeper) IsApprovedCertificatePresent(
 	ctx sdk.Context,
 	subject string,

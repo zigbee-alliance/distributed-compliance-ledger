@@ -20,7 +20,7 @@ const (
 	FlagGenesisFormat = "genesis-format"
 )
 
-// common flagsets to add to various functions
+// common flagsets to add to various functions.
 var (
 	fsValidator = flag.NewFlagSet("", flag.ContinueOnError)
 )

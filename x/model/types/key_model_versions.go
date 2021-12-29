@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// ModelVersionsKeyPrefix is the prefix to retrieve all ModelVersions
+	// ModelVersionsKeyPrefix is the prefix to retrieve all ModelVersions.
 	ModelVersionsKeyPrefix = "ModelVersions/value/"
 )
 
-// ModelVersionsKey returns the store key to retrieve a ModelVersions from the index fields
+// ModelVersionsKey returns the store key to retrieve a ModelVersions from the index fields.
 func ModelVersionsKey(
 	vid int32,
 	pid int32,

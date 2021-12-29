@@ -5,12 +5,12 @@ import (
 )
 
 var (
-	// Model Error Codes
+	// Model Error Codes.
 	ErrModelAlreadyExists       = sdkerrors.Register(ModuleName, 501, "model already exists")
 	ErrModelDoesNotExist        = sdkerrors.Register(ModuleName, 502, "model does not exist")
 	ErrVendorProductsDoNotExist = sdkerrors.Register(ModuleName, 504, "vendor products do not exist")
 
-	// Model Version Error Codes
+	// Model Version Error Codes.
 	ErrSoftwareVersionStringInvalid = sdkerrors.Register(ModuleName, 511, "software version string invalid")
 	ErrFirmwareDigestsInvalid       = sdkerrors.Register(ModuleName, 512, "firmware digests invalid")
 	ErrCDVersionNumberInvalid       = sdkerrors.Register(ModuleName, 513, "CD version number invalid")

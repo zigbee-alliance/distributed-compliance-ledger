@@ -31,7 +31,6 @@ func (k Keeper) ProposedCertificateAll(c context.Context, req *types.QueryAllPro
 		proposedCertificates = append(proposedCertificates, proposedCertificate)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

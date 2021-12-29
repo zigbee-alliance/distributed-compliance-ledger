@@ -26,18 +26,16 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
+	"github.com/tendermint/spm/cosmoscmd"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
-
-	"github.com/tendermint/spm/cosmoscmd"
-
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	dclgenutilcli "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/client/cli"
 )
 
 type (
-	// appCreator is an app creator
+	// appCreator is an app creator.
 	appCreator struct {
 		encodingConfig cosmoscmd.EncodingConfig
 		buildApp       cosmoscmd.AppBuilder
@@ -89,7 +87,7 @@ func WithEnvPrefix(envPrefix string) Option {
 }
 */
 
-// NewRootCmd creates a new root command for a Cosmos SDK application
+// NewRootCmd creates a new root command for a Cosmos SDK application.
 func NewRootCmd(
 	appName,
 	accountAddressPrefix,
@@ -217,7 +215,7 @@ func initRootCmd(
 	}
 }
 
-// queryCommand returns the sub-command to send queries to the app
+// queryCommand returns the sub-command to send queries to the app.
 func queryCommand(moduleBasics module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "query",
@@ -242,7 +240,7 @@ func queryCommand(moduleBasics module.BasicManager) *cobra.Command {
 	return cmd
 }
 
-// txCommand returns the sub-command to send transactions to the app
+// txCommand returns the sub-command to send transactions to the app.
 func txCommand(moduleBasics module.BasicManager) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:                        "tx",
@@ -291,7 +289,7 @@ func overwriteFlagDefaults(c *cobra.Command, defaults map[string]string) {
 	}
 }
 
-// newApp creates a new Cosmos SDK app
+// newApp creates a new Cosmos SDK app.
 func (a appCreator) newApp(
 	logger log.Logger,
 	db dbm.DB,
@@ -348,7 +346,7 @@ func (a appCreator) newApp(
 	)
 }
 
-// appExport creates a new simapp (optionally at a given height)
+// appExport creates a new simapp (optionally at a given height).
 func (a appCreator) appExport(
 	logger log.Logger,
 	db dbm.DB,
@@ -358,7 +356,6 @@ func (a appCreator) appExport(
 	jailAllowedAddrs []string,
 	appOpts servertypes.AppOptions,
 ) (servertypes.ExportedApp, error) {
-
 	var exportableApp cosmoscmd.ExportableApp
 
 	homePath, ok := appOpts.Get(flags.FlagHome).(string)

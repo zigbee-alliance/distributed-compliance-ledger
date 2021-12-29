@@ -6,7 +6,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// x/pki module sentinel errors
+// x/pki module sentinel errors.
 var (
 	ErrProposedCertificateAlreadyExists           = sdkerrors.Register(ModuleName, 401, "proposed certificate already exists")
 	ErrProposedCertificateDoesNotExist            = sdkerrors.Register(ModuleName, 402, "proposed certificate does not exist")

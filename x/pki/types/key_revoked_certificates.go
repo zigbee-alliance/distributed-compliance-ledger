@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// RevokedCertificatesKeyPrefix is the prefix to retrieve all RevokedCertificates
+	// RevokedCertificatesKeyPrefix is the prefix to retrieve all RevokedCertificates.
 	RevokedCertificatesKeyPrefix = "RevokedCertificates/value/"
 )
 
-// RevokedCertificatesKey returns the store key to retrieve a RevokedCertificates from the index fields
+// RevokedCertificatesKey returns the store key to retrieve a RevokedCertificates from the index fields.
 func RevokedCertificatesKey(
 	subject string,
 	subjectKeyId string,

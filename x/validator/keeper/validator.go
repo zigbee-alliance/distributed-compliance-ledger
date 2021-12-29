@@ -8,7 +8,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-// SetValidator set a specific validator in the store from its index
+// SetValidator set a specific validator in the store from its index.
 func (k Keeper) SetValidator(ctx sdk.Context, validator types.Validator) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))
 	b := k.cdc.MustMarshal(&validator)
@@ -24,7 +24,7 @@ func (k Keeper) IsValidatorPresent(ctx sdk.Context, owner sdk.ValAddress) bool {
 	return store.Has(types.ValidatorKey(owner))
 }
 
-// GetValidator returns a validator from its index
+// GetValidator returns a validator from its index.
 func (k Keeper) GetValidator(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
@@ -52,7 +52,7 @@ func (k Keeper) mustGetValidator(ctx sdk.Context, owner sdk.ValAddress) types.Va
 	return validator
 }
 
-// RemoveValidator removes a validator from the store
+// RemoveValidator removes a validator from the store.
 func (k Keeper) RemoveValidator(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
@@ -84,7 +84,7 @@ func (k Keeper) RemoveValidator(
 	// TODO call hooks ???
 }
 
-// validator index
+// validator index.
 func (k Keeper) SetValidatorByConsAddr(ctx sdk.Context, validator types.Validator) error {
 	consAddr, err := validator.GetConsAddr()
 	if err != nil {
@@ -99,7 +99,7 @@ func (k Keeper) SetValidatorByConsAddr(ctx sdk.Context, validator types.Validato
 	return nil
 }
 
-// get a single validator by consensus address
+// get a single validator by consensus address.
 func (k Keeper) GetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress) (validator types.Validator, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorByConsAddrKeyPrefix))
 
@@ -122,7 +122,7 @@ func (k Keeper) mustGetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAdd
 	return validator
 }
 
-// GetAllValidator returns all validator
+// GetAllValidator returns all validator.
 func (k Keeper) GetAllValidator(ctx sdk.Context) (list []types.Validator) {
 	k.IterateValidators(ctx, func(validator types.Validator) (stop bool) {
 		list = append(list, validator)
