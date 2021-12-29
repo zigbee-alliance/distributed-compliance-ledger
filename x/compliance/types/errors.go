@@ -30,7 +30,7 @@ func NewErrAlreadyCertified(vid interface{}, pid interface{}, sv interface{}, ce
 	return sdkerrors.Wrapf(
 		ErrAlreadyCertified,
 		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already certified on the ledger",
-		vid, pid,
+		vid, pid, sv, certificationType,
 	)
 }
 
@@ -38,7 +38,7 @@ func NewErrAlreadyRevoked(vid interface{}, pid interface{}, sv interface{}, cert
 	return sdkerrors.Wrapf(
 		ErrAlreadyRevoked,
 		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already revoked on the ledger",
-		vid, pid,
+		vid, pid, sv, certificationType,
 	)
 }
 
@@ -46,7 +46,7 @@ func NewErrAlreadyProvisional(vid interface{}, pid interface{}, sv interface{}, 
 	return sdkerrors.Wrapf(
 		ErrAlreadyRevoked,
 		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v is already in provisional state on the ledger",
-		vid, pid,
+		vid, pid, sv, certificationType,
 	)
 }
 
@@ -54,7 +54,7 @@ func NewErrComplianceInfoAlreadyExist(vid interface{}, pid interface{}, sv inter
 	return sdkerrors.Wrapf(
 		ErrAlreadyRevoked,
 		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v already has compliance info on the ledger",
-		vid, pid,
+		vid, pid, sv, certificationType,
 	)
 }
 
