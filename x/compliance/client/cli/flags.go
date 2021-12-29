@@ -18,6 +18,7 @@ const (
 	FlagVID                       = "vid"
 	FlagPID                       = "pid"
 	FlagSoftwareVersion           = "softwareVersion"
+	FlagSoftwareVersionShortcut   = "v"
 	FlagSoftwareVersionString     = "softwareVersionString"
 	FlagCertificationType         = "certificationType"
 	FlagCertificationTypeShortcut = "t"

@@ -22,15 +22,25 @@ func (k Keeper) ProvisionalModelAll(c context.Context, req *types.QueryAllProvis
 	store := ctx.KVStore(k.storeKey)
 	provisionalModelStore := prefix.NewStore(store, types.KeyPrefix(types.ProvisionalModelKeyPrefix))
 
-	pageRes, err := query.Paginate(provisionalModelStore, req.Pagination, func(key []byte, value []byte) error {
-		var provisionalModel types.ProvisionalModel
-		if err := k.cdc.Unmarshal(value, &provisionalModel); err != nil {
-			return err
-		}
-
-		provisionalModels = append(provisionalModels, provisionalModel)
-		return nil
-	})
+	pageRes, err := query.FilteredPaginate(
+		provisionalModelStore, req.Pagination,
+		func(key []byte, value []byte, accumulate bool) (bool, error) {
+			var provisionalModel types.ProvisionalModel
+			if err := k.cdc.Unmarshal(value, &provisionalModel); err != nil {
+				return false, err
+			}
+			if !provisionalModel.Value {
+				return false, nil
+			}
+			if accumulate {
+				provisionalModels = append(provisionalModels, provisionalModel)
+			}
+			return true, nil
+		},
+	)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

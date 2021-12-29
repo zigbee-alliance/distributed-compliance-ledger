@@ -22,15 +22,22 @@ func (k Keeper) RevokedModelAll(c context.Context, req *types.QueryAllRevokedMod
 	store := ctx.KVStore(k.storeKey)
 	revokedModelStore := prefix.NewStore(store, types.KeyPrefix(types.RevokedModelKeyPrefix))
 
-	pageRes, err := query.Paginate(revokedModelStore, req.Pagination, func(key []byte, value []byte) error {
-		var revokedModel types.RevokedModel
-		if err := k.cdc.Unmarshal(value, &revokedModel); err != nil {
-			return err
-		}
-
-		revokedModels = append(revokedModels, revokedModel)
-		return nil
-	})
+	pageRes, err := query.FilteredPaginate(
+		revokedModelStore, req.Pagination,
+		func(key []byte, value []byte, accumulate bool) (bool, error) {
+			var revokedModel types.RevokedModel
+			if err := k.cdc.Unmarshal(value, &revokedModel); err != nil {
+				return false, err
+			}
+			if !revokedModel.Value {
+				return false, nil
+			}
+			if accumulate {
+				revokedModels = append(revokedModels, revokedModel)
+			}
+			return true, nil
+		},
+	)
 
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

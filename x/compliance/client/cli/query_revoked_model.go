@@ -14,7 +14,7 @@ import (
 
 func CmdListRevokedModel() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-revoked-model",
+		Use:   "all-revoked-models",
 		Short: "Query the list of all revoked models",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)

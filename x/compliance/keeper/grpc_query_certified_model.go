@@ -22,16 +22,22 @@ func (k Keeper) CertifiedModelAll(c context.Context, req *types.QueryAllCertifie
 	store := ctx.KVStore(k.storeKey)
 	certifiedModelStore := prefix.NewStore(store, types.KeyPrefix(types.CertifiedModelKeyPrefix))
 
-	pageRes, err := query.Paginate(certifiedModelStore, req.Pagination, func(key []byte, value []byte) error {
-		var certifiedModel types.CertifiedModel
-		if err := k.cdc.Unmarshal(value, &certifiedModel); err != nil {
-			return err
-		}
-
-		certifiedModels = append(certifiedModels, certifiedModel)
-		return nil
-	})
-
+	pageRes, err := query.FilteredPaginate(
+		certifiedModelStore, req.Pagination,
+		func(key []byte, value []byte, accumulate bool) (bool, error) {
+			var certifiedModel types.CertifiedModel
+			if err := k.cdc.Unmarshal(value, &certifiedModel); err != nil {
+				return false, err
+			}
+			if !certifiedModel.Value {
+				return false, nil
+			}
+			if accumulate {
+				certifiedModels = append(certifiedModels, certifiedModel)
+			}
+			return true, nil
+		},
+	)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

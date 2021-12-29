@@ -14,8 +14,8 @@ import (
 
 func CmdListComplianceInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-compliance-info",
-		Short: "list all ComplianceInfo",
+		Use:   "all-compliance-info",
+		Short: "Query the list of all compliance info records",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 

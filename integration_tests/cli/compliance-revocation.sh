@@ -49,7 +49,7 @@ test_divider
 echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
 testing_result="http://first.place.com"
 test_date="2020-11-24T10:00:00Z"
-result=$(echo "test1234" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
+result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
@@ -59,7 +59,7 @@ echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid"
 revocation_date="2020-02-02T02:20:20Z"
 revocation_reason="some reason"
 certification_type="zigbee"
-result=$(echo "test1234" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
+result=$(echo "$passphrase" | dcld tx compliance revoke-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="$certification_type" --revocationDate="$revocation_date" --reason "$revocation_reason" --from $zb_account --yes)
 check_response "$result" "\"success\": true"
 echo "$result"
 
