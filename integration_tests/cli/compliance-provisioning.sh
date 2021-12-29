@@ -394,9 +394,6 @@ check_response "$result" "\"certification_type\": \"$certification_type_zb\""
 check_response "$result" "\"certification_type\": \"$certification_type_matter\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
 check_response "$result" "\"reason\": \"$certification_reason\""
-response_does_not_contain "$result" "\"reason\": \"$provision_reason\""
-response_does_not_contain "$result" "\"reason\": \"$provision_date\""
-response_does_not_contain "$result" "\"software_version_certification_status\": 1"
 echo "$result"
 
 test_divider
@@ -405,7 +402,6 @@ echo "Get All Revoked Models"
 result=$(dcld query compliance all-revoked-models)
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"vid\": $vid"
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type_zb\""
 check_response "$result" "\"certification_type\": \"$certification_type_matter\""
 echo "$result"
 
@@ -416,7 +412,6 @@ result=$(dcld query compliance all-certified-models)
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"certification_type\": \"$certification_type_zb\""
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
