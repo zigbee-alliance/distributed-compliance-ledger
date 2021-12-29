@@ -44,7 +44,7 @@ func NewErrAlreadyRevoked(vid interface{}, pid interface{}, sv interface{}, cert
 
 func NewErrAlreadyProvisional(vid interface{}, pid interface{}, sv interface{}, certificationType interface{}) error {
 	return sdkerrors.Wrapf(
-		ErrAlreadyRevoked,
+		ErrAlreadyProvisional,
 		"Model with vid=%v, pid=%v, softwareVersion=%v, certificationType=%v is already in provisional state on the ledger",
 		vid, pid, sv, certificationType,
 	)

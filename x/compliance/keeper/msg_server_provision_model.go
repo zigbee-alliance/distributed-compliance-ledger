@@ -50,7 +50,7 @@ func (k msgServer) ProvisionModel(goCtx context.Context, msg *types.MsgProvision
 		Date:                               msg.ProvisionalDate,
 		Reason:                             msg.Reason,
 		Owner:                              msg.Signer,
-		SoftwareVersionCertificationStatus: types.CodeCertified,
+		SoftwareVersionCertificationStatus: types.CodeProvisional,
 		History:                            []*types.ComplianceHistoryItem{},
 		CDVersionNumber:                    msg.CDVersionNumber,
 	}
