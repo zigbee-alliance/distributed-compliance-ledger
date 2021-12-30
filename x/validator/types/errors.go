@@ -20,37 +20,11 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-const (
-	Codespace string = ModuleName
-
-	CodeValidatorAlreadyExist uint32 = 601
-	CodeValidatorDoesNotExist uint32 = 602
-	CodePoolIsFull            uint32 = 603
-	CodeAccountAlreadyHasNode uint32 = 604
+var (
+	PoolIsFull = sdkerrors.Register(ModuleName, 601, "maximum number of active nodes reached")
 )
 
-// TODO issue 99: either remove completely or replace cosmos's staking errors
-
-/*
-func ErrValidatorExists(owner sdk.ConsAddress) *sdkerrors.Error {
-	return sdkerrors.Register(Codespace, CodeValidatorAlreadyExist,
-		fmt.Sprintf("Validator with the consensus address %v already exists on the ledger", owner))
-}
-
-func ErrValidatorDoesNotExist(owner sdk.ValAddress) *sdkerrors.Error {
-	return sdkerrors.Register(Codespace, CodeValidatorDoesNotExist,
-		fmt.Sprintf("No validator associated with the account address %v exists on the ledger", owner))
-}
-*/
-
-func ErrPoolIsFull() *sdkerrors.Error {
-	return sdkerrors.Register(Codespace, CodePoolIsFull,
+func ErrPoolIsFull() error {
+	return sdkerrors.Wrapf(PoolIsFull,
 		fmt.Sprintf("Pool ledger already contains maximum number of active nodes: \"%v\"", MaxNodes))
 }
-
-/*
-func ErrAccountAlreadyHasNode(owner sdk.AccAddress) *sdkerrors.Error {
-	return sdkerrors.Register(Codespace, CodeAccountAlreadyHasNode,
-		fmt.Sprintf("Validator associated with the account address %v already exists on the ledger", owner))
-}
-*/

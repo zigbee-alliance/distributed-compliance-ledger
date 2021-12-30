@@ -5,6 +5,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 var (
@@ -77,6 +78,11 @@ func (msg *MsgCreateValidator) ValidateBasic() error {
 	}
 
 	if err := msg.Description.Validate(); err != nil {
+		return err
+	}
+
+	err = validator.Validate(msg)
+	if err != nil {
 		return err
 	}
 

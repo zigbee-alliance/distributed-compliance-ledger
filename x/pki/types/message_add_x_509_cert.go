@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const TypeMsgAddX509Cert = "add_x_509_cert"
@@ -42,5 +43,11 @@ func (msg *MsgAddX509Cert) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid signer address (%s)", err)
 	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
