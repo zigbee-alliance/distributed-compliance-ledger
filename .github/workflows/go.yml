@@ -74,6 +74,7 @@ jobs:
           args: --timeout 5m0s
 
   license:
+    if: false # TODO issue 99
     name: License
     runs-on: ubuntu-latest
     steps:
