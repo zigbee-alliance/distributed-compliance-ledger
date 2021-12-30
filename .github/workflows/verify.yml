@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, issue-99-master-PR-preparation ]
   workflow_dispatch:
 
 jobs:
