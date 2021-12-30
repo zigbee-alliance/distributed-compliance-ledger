@@ -96,9 +96,8 @@ func Setup(t *testing.T) TestSetup {
 		Keeper:        keeper,
 		DclauthKeeper: dclauthKeeper,
 		Handler:       NewHandler(*keeper),
-		// Handler:       NewHandler(*keeper),
-		Vendor:   vendor,
-		VendorID: vendorID,
+		Vendor:        vendor,
+		VendorID:      vendorID,
 	}
 
 	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vendorID)
