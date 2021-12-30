@@ -22,9 +22,11 @@ DCL_DIR="/var/lib/dcl/.dcl"
 random_string account
 container="validator-demo"
 node_name="node-demo"
+node_p2p_port=26670
+node_client_port=26671
 chain_id="dclchain"
 ip="192.167.10.6"
-node0="tcp://192.167.10.2:26657"
+node0conn="tcp://192.167.10.2:26657"
 passphrase="test1234"
 docker_network="distributed-compliance-ledger_localnet"
 
@@ -43,7 +45,7 @@ trap cleanup EXIT
 
 cleanup
 
-docker run -d --name $container --ip $ip -p "26664-26665:26656-26657" --network $docker_network -i dcledger
+docker run -d --name $container --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
 
 test_divider
 
@@ -51,7 +53,7 @@ echo "$account Configure CLI"
 docker exec $container /bin/sh -c "
   dcld config chain-id dclchain &&
   dcld config output json &&
-  dcld config node $node0 &&
+  dcld config node $node0conn &&
   dcld config keyring-backend test &&
   dcld config broadcast-mode block"
 
@@ -83,9 +85,18 @@ echo $passphrase | dcld tx auth approve-add-account --address="$address" --from 
 
 test_divider
 
-echo "$account Add Node \"$node_name\" to validator set"
 vaddress=$(docker exec $container dcld tendermint show-address)
 vpubkey=$(docker exec $container dcld tendermint show-validator)
+
+echo "Check pool response for yet unknown node \"$node_name\""
+result=$(dcld query validator node --address "$address")
+check_response "$result" "null"
+echo "$result"
+result=$(dcld query validator last-power --address "$address")
+check_response "$result" "null"
+echo "$result"
+
+echo "$account Add Node \"$node_name\" to validator set"
 
 ! read -r -d '' _script << EOF
     set -eu; echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --name="$node_name" --from="$account" --yes
@@ -112,7 +123,7 @@ echo "$result"
 test_divider
 
 echo "Connect CLI to node \"$node_name\" and check status"
-dcld config node "tcp://localhost:26665"
+dcld config node "tcp://localhost:$node_client_port"
 result=$(dcld status)
 check_response "$result" "\"moniker\": \"$node_name\""
 echo "$result"
@@ -131,21 +142,21 @@ echo "Publish Model"
 pid=$RANDOM
 productName="TestingProductLabel"
 echo "Add Model with VID: $vid PID: $pid"
-result=$(echo 'test1234' | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+result=$(echo 'test1234' | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productName" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
-
-# FIXME issue 99: enable once implemented
-exit 0
 
 test_divider
 
 sleep 5
 
 echo "Connect CLI to node \"node0\""
-dcld config node "tcp://localhost:26657"
+dcld config node "$node0conn"
+node0id=$(docker exec node0 dcld tendermint show-node-id)
 result=$(dcld status)
-check_response "$result" "\"moniker\": \"node0\""
+# FIXME issue 99: moniker is returned wrongly
+# check_response "$result" "\"moniker\": \"node0\""
+check_response "$result" "\"id\": \"$node0id\""
 echo "$result"
 
 test_divider
@@ -157,5 +168,7 @@ check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"product_label\": \"$productName\""
 echo "$result"
+
+echo "PASSED"
 
 cleanup

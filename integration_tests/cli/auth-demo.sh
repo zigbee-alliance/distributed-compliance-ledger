@@ -34,6 +34,12 @@ user_pubkey=$(echo $passphrase | dcld keys show $user -p)
 vid=$RANDOM
 pid=$RANDOM
 
+echo "Get not yet proposed $user account"
+result=$(dcld query auth account --address=$user_address 2>&1) || true
+check_response "$result" "null"
+
+test_divider
+
 echo "Jack proposes account for $user"
 result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid" --from jack --yes)
 check_response "$result" "\"code\": 0"
@@ -54,7 +60,7 @@ test_divider
 
 echo "Get all proposed accounts to revoke. No $user account in the list"
 result=$(dcld query auth all-proposed-accounts-to-revoke)
-response_does_not_contain "$result" "\"address\": \"$user_address\""
+check_response "$result" "\[\]"
 
 test_divider
 
@@ -72,13 +78,13 @@ test_divider
 
 echo "Get all proposed accounts. No $user account in the list anymore"
 result=$(dcld query auth all-proposed-accounts)
-response_does_not_contain "$result" "\"address\": \"$user_address\""
+check_response "$result" "\[\]"
 
 test_divider
 
 echo "Get all proposed accounts to revoke. No $user account in the list"
 result=$(dcld query auth all-proposed-accounts-to-revoke)
-response_does_not_contain "$result" "\"address\": \"$user_address\""
+check_response "$result" "\[\]"
 
 test_divider
 
@@ -88,9 +94,6 @@ check_response_and_report "$result" "\"address\": \"$user_address\""
 
 test_divider
 
-
-# FIXME issue 99: enable once implemented
-if [[ 0 -eq 1 ]]; then
 productName="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes)
@@ -115,8 +118,7 @@ echo "Get Model with VID: $vid PID: $pid"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"productName\": \"$productName\""
-fi
+check_response "$result" "\"product_name\": \"$productName\""
 
 test_divider
 
@@ -136,7 +138,7 @@ test_divider
 
 echo "Get all proposed accounts. No $user account in the list"
 result=$(dcld query auth all-proposed-accounts)
-response_does_not_contain "$result" "\"address\": \"$user_address\""
+check_response "$result" "\[\]"
 
 
 test_divider
@@ -161,19 +163,19 @@ test_divider
 
 echo "Get all proposed accounts. No $user account in the list"
 result=$(dcld query auth all-proposed-accounts)
-response_does_not_contain "$result" "\"address\": \"$user_address\""
+check_response "$result" "\[\]"
 
 test_divider
 
 echo "Get all proposed accounts to revoke. No $user account in the list anymore"
 result=$(dcld query auth all-proposed-accounts-to-revoke)
-response_does_not_contain "$result" "\"address\": \"$user_address\""
+check_response "$result" "\[\]"
 
 test_divider
 
 echo "Get $user account"
 result=$(dcld query auth account --address=$user_address 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
+check_response "$result" "null"
 
 test_divider
 
@@ -182,4 +184,6 @@ pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
-check_response_and_report "$result" "rpc error: code = InvalidArgument desc = not found" raw
+check_response "$result" "NotFound" raw
+
+echo "PASSED"

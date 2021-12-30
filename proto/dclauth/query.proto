@@ -63,7 +63,7 @@ message QueryGetAccountRequest {
 }
 
 message QueryGetAccountResponse {
-	Account account = 1 [(gogoproto.nullable) = false];
+	Account account = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllAccountRequest {
@@ -81,7 +81,7 @@ message QueryGetPendingAccountRequest {
 }
 
 message QueryGetPendingAccountResponse {
-	PendingAccount pendingAccount = 1 [(gogoproto.nullable) = false];
+	PendingAccount pendingAccount = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllPendingAccountRequest {
@@ -99,7 +99,7 @@ message QueryGetPendingAccountRevocationRequest {
 }
 
 message QueryGetPendingAccountRevocationResponse {
-	PendingAccountRevocation pendingAccountRevocation = 1 [(gogoproto.nullable) = false];
+	PendingAccountRevocation pendingAccountRevocation = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllPendingAccountRevocationRequest {

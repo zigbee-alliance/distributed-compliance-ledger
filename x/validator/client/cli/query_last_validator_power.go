@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -56,7 +57,11 @@ func CmdShowLastValidatorPower() *cobra.Command {
 
 			addr, err := sdk.ValAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
-				return err
+				owner, err2 := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+				if err2 != nil {
+					return err2
+				}
+				addr = sdk.ValAddress(owner)
 			}
 
 			params := &types.QueryGetLastValidatorPowerRequest{
@@ -64,15 +69,19 @@ func CmdShowLastValidatorPower() *cobra.Command {
 			}
 
 			res, err := queryClient.LastValidatorPower(context.Background(), params)
-			if err != nil {
+			if cliutils.HandleError(err) != nil {
 				return err
+			}
+			if err != nil {
+				// show default (empty) value in CLI
+				res = &types.QueryGetLastValidatorPowerResponse{LastValidatorPower: nil}
 			}
 
 			return clientCtx.PrintProto(res)
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded validator address")
+	cmd.Flags().String(FlagAddress, "", "Bench32 encoded validator address or owner account")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagAddress)
