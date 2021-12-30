@@ -61,7 +61,7 @@ func GetVendorInfo(
 		// TODO issue 99: explore the way how to get the endpoint from proto-
 		//      instead of the hard coded value (the same for all rest queries)
 		var resp vendorinfotypes.QueryGetVendorInfoResponse
-		err := suite.QueryREST(fmt.Sprintf("/dcl/vendorinfo/vendorinfos/%v", vid), &resp)
+		err := suite.QueryREST(fmt.Sprintf("/dcl/vendorinfo/vendor/%v", vid), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -90,7 +90,7 @@ func GetVendorInfos(suite *utils.TestSuite) (res []vendorinfotypes.VendorInfo, e
 		// TODO issue 99: explore the way how to get the endpoint from proto-
 		//      instead of the hard coded value (the same for all rest queries)
 		var resp vendorinfotypes.QueryAllVendorInfoResponse
-		err := suite.QueryREST("/dcl/vendorinfo/vendorinfos", &resp)
+		err := suite.QueryREST("/dcl/vendorinfo/vendors", &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -143,10 +143,6 @@ func VendorInfoDemo(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, vendorAccount)
 
-	// Get all vendorinfos
-	inputVendorInfos, err := GetVendorInfos(suite)
-	require.NoError(suite.T, err)
-
 	// New vendor adds first vendorinfo
 	createFirstVendorInfoMsg := NewMsgCreateVendorInfo(vid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstVendorInfoMsg}, vendorName, vendorAccount)
@@ -161,34 +157,9 @@ func VendorInfoDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, createFirstVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
 	require.Equal(suite.T, createFirstVendorInfoMsg.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
 
-	// Add second vendorinfo
-	createSecondVendorInfoMsg := NewMsgCreateVendorInfo(vid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createSecondVendorInfoMsg}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Check second vendorinfo is added
-	receivedVendorInfo, err = GetVendorInfo(suite, createSecondVendorInfoMsg.VendorID)
-	require.NoError(suite.T, err)
-	require.Equal(suite.T, createSecondVendorInfoMsg.VendorID, receivedVendorInfo.VendorID)
-	require.Equal(suite.T, createSecondVendorInfoMsg.VendorName, receivedVendorInfo.VendorName)
-	require.Equal(suite.T, createSecondVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
-	require.Equal(suite.T, createSecondVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
-	require.Equal(suite.T, createSecondVendorInfoMsg.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
-
 	// Get all vendorinfos
-	receivedVendorInfos, err := GetVendorInfos(suite)
+	_, err = GetVendorInfos(suite)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, len(inputVendorInfos)+2, len(receivedVendorInfos))
-
-	// Update second vendorinfo
-	updateSecondVendorInfoMsg := NewMsgUpdateVendorInfo(createSecondVendorInfoMsg.VendorID, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{updateSecondVendorInfoMsg}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Check second vendorinfo is updated
-	receivedVendorInfo, err = GetVendorInfo(suite, createSecondVendorInfoMsg.VendorID)
-	require.NoError(suite.T, err)
-	require.Equal(suite.T, updateSecondVendorInfoMsg.VendorName, receivedVendorInfo.VendorName)
 }
 
 /* Error cases */

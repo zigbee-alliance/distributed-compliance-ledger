@@ -24,27 +24,27 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 )
 
-func TestVendorInfoDemoREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
+func TestVendorInfoDemoGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.VendorInfoDemo(&suite)
 }
 
-func TestAddVendorInfoByNonVendorREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
+func TestAddVendorInfoByNonVendorGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.AddVendorInfoByNonVendor(&suite)
 }
 
-func TestAddVendorInfoByDifferentVendorREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
+func TestAddVendorInfoByDifferentVendorGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.AddVendorInfoByDifferentVendor(&suite)
 }
 
-func TestGetVendorInfoForUnknownREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
+func TestGetVendorInfoForUnknownGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.GetVendorInfoForUnknown(&suite)
 }
 
-func TestGetVendorInfoForInvalidVidREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, true)
+func TestGetVendorInfoForInvalidVidGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.GetVendorInfoForInvalidVid(&suite)
 }
