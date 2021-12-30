@@ -9,8 +9,7 @@ on:
 
 jobs:
 
-  unit_tests:
-    name: Unit tests
+  unit:
     runs-on: ubuntu-latest
     steps:
 
@@ -35,8 +34,7 @@ jobs:
       - name: Run units
         run: make test
 
-  integration_tests:
-    name: Integration tests
+  integration:
     runs-on: ubuntu-latest
     steps:
 
@@ -61,8 +59,7 @@ jobs:
       - name: Run integration tests
         run: bash integration_tests/ci/run-all.sh
 
-  golangci:
-    name: Lint
+  lint:
     runs-on: ubuntu-latest
     steps:
 
@@ -76,7 +73,6 @@ jobs:
 
   license:
     if: false # TODO issue 99
-    name: License
     runs-on: ubuntu-latest
     steps:
 
