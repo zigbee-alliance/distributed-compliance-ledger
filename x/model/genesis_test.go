@@ -1,6 +1,6 @@
 package model_test
 
-/*
+/* TODO issue 99
 import (
 	"testing"
 
