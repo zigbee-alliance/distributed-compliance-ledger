@@ -94,6 +94,7 @@ jobs:
           go-version: ^1.13
 
       - name: Get google/addlicense
+        if: false # TODO issue 99
         run: go get -u github.com/google/addlicense
 
       - name: Check out code into the Go module directory
