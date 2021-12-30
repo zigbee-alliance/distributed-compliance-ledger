@@ -272,7 +272,7 @@ func AddVendorInfoTwice(suite *utils.TestSuite) {
 	// add the same vendorinfo second time
 	_, err = AddVendorInfo(suite, createVendorInfoMsg, vendorName, vendorAccount)
 	require.Error(suite.T, err)
-	require.True(suite.T, vendorinfotypes.CodeVendorInfoAlreadyExists.Is(err))
+	require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
 }
 
 func GetVendorInfoForUnknown(suite *utils.TestSuite) {

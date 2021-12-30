@@ -48,3 +48,8 @@ func TestGetVendorInfoForInvalidVidREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.GetVendorInfoForInvalidVid(&suite)
 }
+
+func TestAddVendorInfoTwiceREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	vendorinfo.AddVendorInfoTwice(&suite)
+}

@@ -48,3 +48,8 @@ func TestGetVendorInfoForInvalidVidGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
 	vendorinfo.GetVendorInfoForInvalidVid(&suite)
 }
+
+func TestAddVendorInfoTwiceGRPC(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	vendorinfo.AddVendorInfoTwice(&suite)
+}
