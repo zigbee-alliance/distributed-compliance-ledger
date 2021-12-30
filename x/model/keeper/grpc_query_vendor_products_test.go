@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -66,3 +67,4 @@ func TestVendorProductsQuerySingle(t *testing.T) {
 		})
 	}
 }
+*/

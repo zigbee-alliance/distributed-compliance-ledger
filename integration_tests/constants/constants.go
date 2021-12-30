@@ -17,10 +17,25 @@ package testconstants
 import (
 	"time"
 
+	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
+	var pk cryptotypes.PubKey
+	if err := cdc.UnmarshalInterfaceJSON([]byte(pkStr), &pk); err != nil {
+		panic(err)
+	}
+	return pk
+}
+
 var (
+	// default context
+	// TODO issue 99: design test context better
+	defEncConfig = simapp.MakeTestEncodingConfig()
+
 	// Base constants.
 	JackAccount  = "jack"
 	AliceAccount = "alice"
@@ -84,26 +99,38 @@ var (
 	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
 
 	//
-	Address1, _        = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
-	Address2, _        = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
-	Address3, _        = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	VendorID1   uint16 = 1000
-	VendorID2   uint16 = 2000
-	VendorID3   uint16 = 3000
-	Pubkey1Str         = "cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h"
-	// FIXME issue 99 PubKey1, _               = sdk.GetAccPubKeyBech32(Pubkey1Str).
-	PubKey2Str = "cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng"
-	// FIXME issue 99 PubKey2, _               = sdk.GetAccPubKeyBech32(PubKey2Str).
-	PubKey3Str = "cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn"
-	// FIXME issue 99 PubKey3, _               = sdk.GetAccPubKeyBech32(PubKey3Str).
+	Address1, _        = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
+	Address2, _        = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
+	Address3, _        = sdk.AccAddressFromBech32("cosmos12r9vsus5js32pvnayt33zhcd4y9wcqcly45gr9")
+	VendorID1   uint64 = 1000
+	VendorID2   uint64 = 2000
+	VendorID3   uint64 = 3000
+	PubKey1            = strToPubKey(
+		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aw1XXHQ8i6JVNKsFQ9eQArJVt2GXEO0EBFsQL6XJ5BxY"}`,
+		defEncConfig.Marshaler,
+	)
+	PubKey2 = strToPubKey(
+		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"}`,
+		defEncConfig.Marshaler,
+	)
+	PubKey3 = strToPubKey(
+		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A0GnKr6hItYE1A7dzoxNSMwMZuu1zauOLWAqJWen1RzF"}`,
+		defEncConfig.Marshaler,
+	)
 	Signer           = Address1
-	ValidatorPubKey1 = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
-	ValidatorPubKey2 = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
-	// FIXME issue 99 ValidatorAddress1 = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey1).Address())
-	// FIXME issue 99 ValidatorAddress2 = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey2).Address()).
-	ValidHTTPSURL = "https://valid.url.com"
-	ValidHTTPURL  = "http://valid.url.com"
-	NotAValidURL  = "not a valid url"
+	ValidatorPubKey1 = strToPubKey(
+		`{"@type":"/cosmos.crypto.ed25519.PubKey","key":"1e+1/jHGaJi0b2zgCN46eelKCYpKiuTgPN18mL3fzx8="}`,
+		defEncConfig.Marshaler,
+	)
+	ValidatorPubKey2 = strToPubKey(
+		`{"@type":"/cosmos.crypto.ed25519.PubKey","key":"NB8hcdxKYDCaPWR67OiUXUSltZfYYOWYryPDUdbWRlA="}`,
+		defEncConfig.Marshaler,
+	)
+	ValidatorAddress1 = "cosmosvalcons1uks7yvlwqsfyp730w6da64g5fw20d9ynh00k53"
+	ValidatorAddress2 = "cosmosvalcons12tg2p3rjsaczddufmsjjrw9nvhg8wkc4hcz3zw"
+	ValidHTTPSURL     = "https://valid.url.com"
+	ValidHTTPURL      = "http://valid.url.com"
+	NotAValidURL      = "not a valid url"
 )
 
 /*
@@ -172,15 +199,3 @@ zj0EAwIDSQAwRgIhAPq8sXrMDueq9XplZBcbS/3VlTakULzdOlo7PzquUdDnAiEA
 	LeafSubjectKeyID   = "30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
 	LeafSerialNumber   = "143290473708569835418599774898811724528308722063"
 )
-
-// FIXME issue 99
-/*
-func TestAddress() (sdk.AccAddress, crypto.PubKey, string) {
-	key := secp256k1.GenPrivKey()
-	pub := key.PubKey()
-	addr := sdk.AccAddress(pub.Address())
-	pubStr := sdk.MustBech32ifyAccPub(pub)
-
-	return addr, pub, pubStr
-}
-*/

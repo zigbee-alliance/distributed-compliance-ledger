@@ -20,8 +20,6 @@ var _ = strconv.Itoa(0)
 
 func CmdProposeAddAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		// TODO issue 99: move from required flags to positional arguments
-		//		(to keep the same direction as in cosmos sdk https://github.com/cosmos/cosmos-sdk/issues/1956)
 		Use:   "propose-add-account",
 		Short: "Broadcast message ProposeAddAccount",
 		Args:  cobra.ExactArgs(0),
