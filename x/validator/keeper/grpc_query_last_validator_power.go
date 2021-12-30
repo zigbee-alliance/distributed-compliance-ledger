@@ -59,8 +59,8 @@ func (k Keeper) LastValidatorPower(c context.Context, req *types.QueryGetLastVal
 		valAddr,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetLastValidatorPowerResponse{LastValidatorPower: val}, nil
+	return &types.QueryGetLastValidatorPowerResponse{LastValidatorPower: &val}, nil
 }

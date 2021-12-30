@@ -54,8 +54,8 @@ func (k Keeper) PendingAccountRevocation(c context.Context, req *types.QueryGetP
 		addr,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetPendingAccountRevocationResponse{PendingAccountRevocation: val}, nil
+	return &types.QueryGetPendingAccountRevocationResponse{PendingAccountRevocation: &val}, nil
 }

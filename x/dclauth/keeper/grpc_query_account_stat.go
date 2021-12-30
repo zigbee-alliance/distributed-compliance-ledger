@@ -17,7 +17,7 @@ func (k Keeper) AccountStat(c context.Context, req *types.QueryGetAccountStatReq
 
 	val, found := k.GetAccountStat(ctx)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetAccountStatResponse{AccountStat: val}, nil

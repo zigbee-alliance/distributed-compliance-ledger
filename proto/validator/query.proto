@@ -42,7 +42,7 @@ message QueryGetValidatorRequest {
 }
 
 message QueryGetValidatorResponse {
-	Validator validator = 1 [(gogoproto.nullable) = false];
+	Validator validator = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllValidatorRequest {
@@ -60,7 +60,7 @@ message QueryGetLastValidatorPowerRequest {
 }
 
 message QueryGetLastValidatorPowerResponse {
-	LastValidatorPower lastValidatorPower = 1 [(gogoproto.nullable) = false];
+	LastValidatorPower lastValidatorPower = 1 [(gogoproto.nullable) = true];
 }
 
 message QueryAllLastValidatorPowerRequest {
