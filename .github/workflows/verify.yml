@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master, issue-99-master-PR-preparation ]
+    branches: [ master, issue-99-cosmos-upgrade-v0.44 ]
   workflow_dispatch:
 
 jobs:
