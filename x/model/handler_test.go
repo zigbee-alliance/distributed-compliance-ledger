@@ -73,23 +73,25 @@ func (setup *TestSetup) AddAccount(
 	roles []dclauthtypes.AccountRole,
 	vendorID uint64,
 ) {
-	for _, role := range roles {
-		setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, role).Return(true)
-	}
-	setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
+	dclauthKeeper := setup.DclauthKeeper
 
-	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, vendorID).Return(true)
-	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, mock.Anything).Return(false)
+	for _, role := range roles {
+		dclauthKeeper.On("HasRole", mock.Anything, accAddress, role).Return(true)
+	}
+	dclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
+
+	dclauthKeeper.On("HasVendorID", mock.Anything, accAddress, vendorID).Return(true)
+	dclauthKeeper.On("HasVendorID", mock.Anything, accAddress, mock.Anything).Return(false)
 }
 
-func Setup(t *testing.T) TestSetup {
+func Setup(t *testing.T) *TestSetup {
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper)
 
 	vendor := GenerateAccAddress()
 	vendorID := uint64(testconstants.VendorID1)
 
-	setup := TestSetup{
+	setup := &TestSetup{
 		T:             t,
 		Ctx:           ctx,
 		Wctx:          sdk.WrapSDKContext(ctx),
@@ -444,7 +446,7 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 }
 
 func queryModel(
-	setup TestSetup,
+	setup *TestSetup,
 	vid int32,
 	pid int32,
 ) (*types.Model, error) {
@@ -465,7 +467,7 @@ func queryModel(
 }
 
 func queryModelVersion(
-	setup TestSetup,
+	setup *TestSetup,
 	vid int32,
 	pid int32,
 	softwareVersion uint32,
