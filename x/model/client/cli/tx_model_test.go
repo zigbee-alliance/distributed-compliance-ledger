@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -199,3 +200,4 @@ func TestDeleteModel(t *testing.T) {
 		})
 	}
 }
+*/

@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -97,3 +98,4 @@ func TestShowChildCertificates(t *testing.T) {
 		})
 	}
 }
+*/

@@ -1,5 +1,6 @@
 package keeper_test
 
+/* TODO issue 99
 import (
 	"strconv"
 	"testing"
@@ -133,3 +134,4 @@ func TestProvisionalModelQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
+*/
