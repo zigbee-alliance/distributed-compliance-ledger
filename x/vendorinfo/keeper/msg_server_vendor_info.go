@@ -72,27 +72,27 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	return &types.MsgUpdateVendorInfoResponse{}, nil
 }
 
-func (k msgServer) DeleteVendorInfo(goCtx context.Context, msg *types.MsgDeleteVendorInfo) (*types.MsgDeleteVendorInfoResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
+// func (k msgServer) DeleteVendorInfo(goCtx context.Context, msg *types.MsgDeleteVendorInfo) (*types.MsgDeleteVendorInfoResponse, error) {
+// 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Check if the value exists
-	valFound, isFound := k.GetVendorInfo(
-		ctx,
-		msg.VendorID,
-	)
-	if !isFound {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
-	}
+// 	// Check if the value exists
+// 	valFound, isFound := k.GetVendorInfo(
+// 		ctx,
+// 		msg.VendorID,
+// 	)
+// 	if !isFound {
+// 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
+// 	}
 
-	// Checks if the the msg creator is the same as the current owner
-	if msg.Creator != valFound.Creator {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
-	}
+// 	// Checks if the the msg creator is the same as the current owner
+// 	if msg.Creator != valFound.Creator {
+// 		return nil, sdkerrors.Wrap(sdkerrors.ErrUnauthorized, "incorrect owner")
+// 	}
 
-	k.RemoveVendorInfo(
-		ctx,
-		msg.VendorID,
-	)
+// 	k.RemoveVendorInfo(
+// 		ctx,
+// 		msg.VendorID,
+// 	)
 
-	return &types.MsgDeleteVendorInfoResponse{}, nil
-}
+// 	return &types.MsgDeleteVendorInfoResponse{}, nil
+// }
