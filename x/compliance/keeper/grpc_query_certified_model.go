@@ -62,5 +62,5 @@ func (k Keeper) CertifiedModel(c context.Context, req *types.QueryGetCertifiedMo
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetCertifiedModelResponse{CertifiedModel: &val}, nil
+	return &types.QueryGetCertifiedModelResponse{CertifiedModel: val}, nil
 }

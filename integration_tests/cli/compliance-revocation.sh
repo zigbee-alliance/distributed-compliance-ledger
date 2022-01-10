@@ -79,7 +79,7 @@ test_divider
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created for ZB"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"certification_type\": \"$certification_type\""
@@ -89,7 +89,7 @@ test_divider
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created for Matter"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_matter")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""
@@ -179,7 +179,7 @@ test_divider
 
 echo "Get Provisional Model with VID: ${vid} PID: ${pid} SV: ${sv} for zigbee certification"
 result=$(dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type)
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
@@ -261,7 +261,7 @@ test_divider
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} and SV: ${sv} for Matter"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_matter")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""

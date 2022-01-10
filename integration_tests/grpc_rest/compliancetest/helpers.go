@@ -42,7 +42,9 @@ func GetAllTestResults(suite *utils.TestSuite) (res []compliancetesttypes.Testin
 	return res, nil
 }
 
-func GetTestResult(suite *utils.TestSuite, vid int32, pid int32, sv uint32) (res *compliancetesttypes.TestingResults, err error) {
+func GetTestResult(suite *utils.TestSuite, vid int32, pid int32, sv uint32) (*compliancetesttypes.TestingResults, error) {
+	var res compliancetesttypes.TestingResults
+
 	if suite.Rest {
 		var resp compliancetesttypes.QueryGetTestingResultsResponse
 		err := suite.QueryREST(
@@ -78,7 +80,7 @@ func GetTestResult(suite *utils.TestSuite, vid int32, pid int32, sv uint32) (res
 		res = resp.GetTestingResults()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 //nolint:funlen

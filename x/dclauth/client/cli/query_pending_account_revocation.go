@@ -5,7 +5,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -48,28 +51,29 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 		Short: "shows a PendingAccountRevocation",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			return nil
-			/*	FIXME issue 99
-				clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx := client.GetClientContextFromCmd(cmd)
 
-				queryClient := types.NewQueryClient(clientCtx)
+			queryClient := types.NewQueryClient(clientCtx)
 
-				argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
-				if err != nil {
-					return err
-				}
+			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+			if err != nil {
+				return err
+			}
 
-				params := &types.QueryGetPendingAccountRevocationRequest{
-					Address: argAddress.String(),
-				}
+			params := &types.QueryGetPendingAccountRevocationRequest{
+				Address: argAddress.String(),
+			}
 
-				res, err := queryClient.PendingAccountRevocation(context.Background(), params)
-				if err != nil {
-					return err
-				}
+			res, err := queryClient.PendingAccountRevocation(context.Background(), params)
+			if cli.IsNotFound(err) {
+				return clientCtx.PrintString(cli.NotFoundOutput)
+			}
+			if err != nil {
+				return err
+			}
 
-				return clientCtx.PrintProto(res)
-			*/
+			return clientCtx.PrintProto(res)
+
 		},
 	}
 

@@ -48,7 +48,7 @@ test_divider
 
 echo "Request approved certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -66,7 +66,7 @@ test_divider
 
 echo "Request proposed Root certificate must be empty"
 result=$(dcld query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -85,7 +85,7 @@ test_divider
 
 echo "Request revoked certificate must be empty"
 result=$(dcld query pki revoked-x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
@@ -100,7 +100,7 @@ echo "$result"
 
 echo "Request all certificates by subject must be empty"
 result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 echo "$result"
@@ -127,7 +127,7 @@ test_divider
 
 echo "Request root certificate proposed to revoke must be empty"
 result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 echo "$result"
@@ -145,7 +145,7 @@ test_divider
 
 echo "Request all child certificates must be empty"
 result=$(dcld query pki all-child-x509-certs --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 echo "$result"
@@ -195,7 +195,7 @@ test_divider
 
 echo "Approved certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -547,7 +547,7 @@ test_divider
 
 echo "Request all child certificates for leaf"
 result=$(dcld query pki all-child-x509-certs --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -675,7 +675,7 @@ test_divider
 
 echo "Approved Intermediate certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
@@ -685,7 +685,7 @@ test_divider
 
 echo "Approved Leaf certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
@@ -878,7 +878,7 @@ test_divider
 
 echo "Approved Intermediate certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
@@ -888,7 +888,7 @@ test_divider
 
 echo "Approved Leaf certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
@@ -898,7 +898,7 @@ test_divider
 
 echo "Approved Root certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""

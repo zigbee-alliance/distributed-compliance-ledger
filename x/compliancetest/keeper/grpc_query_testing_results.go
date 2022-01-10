@@ -54,5 +54,5 @@ func (k Keeper) TestingResults(c context.Context, req *types.QueryGetTestingResu
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetTestingResultsResponse{TestingResults: &val}, nil
+	return &types.QueryGetTestingResultsResponse{TestingResults: val}, nil
 }

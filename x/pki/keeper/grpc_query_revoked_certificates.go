@@ -53,5 +53,5 @@ func (k Keeper) RevokedCertificates(c context.Context, req *types.QueryGetRevoke
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetRevokedCertificatesResponse{RevokedCertificates: &val}, nil
+	return &types.QueryGetRevokedCertificatesResponse{RevokedCertificates: val}, nil
 }

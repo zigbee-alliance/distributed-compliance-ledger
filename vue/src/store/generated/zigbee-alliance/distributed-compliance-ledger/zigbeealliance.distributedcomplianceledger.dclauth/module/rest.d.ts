@@ -70,6 +70,12 @@ export interface DclauthQueryGetAccountResponse {
 export interface DclauthQueryGetAccountStatResponse {
     AccountStat?: DclauthAccountStat;
 }
+export interface DclauthQueryGetPendingAccountResponse {
+    pendingAccount?: DclauthPendingAccount;
+}
+export interface DclauthQueryGetPendingAccountRevocationResponse {
+    pendingAccountRevocation?: DclauthPendingAccountRevocation;
+}
 /**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
 URL that describes the type of the serialized message.
@@ -455,6 +461,15 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryPendingAccount
+     * @summary Queries a pendingAccount by index.
+     * @request GET:/dcl/auth/proposed-accounts/{address}
+     */
+    queryPendingAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetPendingAccountResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryPendingAccountRevocationAll
      * @summary Queries a list of pendingAccountRevocation items.
      * @request GET:/dcl/auth/proposed-revocation-accounts
@@ -466,5 +481,14 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.countTotal"?: boolean;
         "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<DclauthQueryAllPendingAccountRevocationResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryPendingAccountRevocation
+     * @summary Queries a pendingAccountRevocation by index.
+     * @request GET:/dcl/auth/proposed-revocation-accounts/{address}
+     */
+    queryPendingAccountRevocation: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetPendingAccountRevocationResponse, RpcStatus>>;
 }
 export {};
