@@ -462,7 +462,7 @@ can be found here: [running-node.md](running-node.md).
         The value of `latest_block_height` reflects the current node height.
 
     * Wait until the value of `catching_up` field gets to `false` value.
-    * Add validator node: `dcld tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name>`
+    * Add validator node: `dcld tx validator add-node --pubkey=<validator pubkey> --name=<node name> --from=<name>`
 
 * Congrats! You are an owner of the validator node.
 
@@ -481,7 +481,7 @@ Example:
 * `sudo ufw allow 26657/tcp`
 * `dcld start`
 * `dcld status`
-* `dcld tx validator add-node --validator-address=$(dcld tendermint show-address) --validator-pubkey=$(dcld tendermint show-validator) --name=node-name --from=node_admin`
+* `dcld tx validator add-node --pubkey=$(dcld tendermint show-validator) --name=node-name --from=node_admin`
 * `dcld query validator all-nodes`
 
 ##### Policy

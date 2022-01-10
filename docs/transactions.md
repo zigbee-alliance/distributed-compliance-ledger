@@ -22,7 +22,6 @@ This is useful to avoid correlation by the sender's IP address.
 
 ## How to write to the Ledger
 - Local CLI
-    - CLI is started in a CLI mode.
     - Generate and store a private key for the Account to be used for sending.
     - Send transactions to the ledger from the Account (`--from`).
         - it will automatically build a request, sign it by the account's key, and broadcast to the ledger.
@@ -34,7 +33,7 @@ This is useful to avoid correlation by the sender's IP address.
 - CLI (keys at the edge)
     - There are two CLIs are started in a CLI mode.
         - CLI 1: Stores private key. Does not have a connection to the network of nodes.
-        - CLI 2: Is connected to the network of nodes. Doesn't has access to private key.
+        - CLI 2: Is connected to the network of nodes. Doesn't have access to private key.
     - CLI 1: A private key is generated and stored off-server (in the user's private wallet).
     - CLI 2: Register account containing generated `Address` and `PubKey` on the ledger.
     - CLI 2: Build transaction using the account (`--from`) and `--generate-only` flag.
@@ -48,116 +47,35 @@ This is useful to avoid correlation by the sender's IP address.
         CLI 1: dcld tx sign /home/artem/dc-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
         CLI 2: dcld tx broadcast /home/artem/dc-ledger/txn.json
         ```
-- Non-trusted REST API (keys at the edge):
-    - CLI is started in a server mode.
+- REST API (keys at the edge):
     - A private key is generated and stored off-server (in the user's private wallet).
-    - Build transaction one of the following ways
-        - The user builds the transaction manually (see `Extensions` section to find transactions format):.
-        - The user does a `POST` to the server specifying the transaction parameters. The server builds the transaction.
-        - The user uses corresponding CLI commands with specifying of `--generate-only` flag.
-    - Sign the transaction manually using CLI or `tx/sign` endpoint.
-    - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `tx/broadcast`.     
+    - Build and sign transaction one of the following ways
+        - In code (see examples in integration tests)
+        - Via CLI commands specifying `--generate-only` flag and using `dcld tx sign`
+    - The user does a `POST` of the signed request to the CLI-based server for broadcasting using `http://<node-ip>:26640/cosmos/tx/v1beta1/txs`.     
     - Example
         ```
-        POST /model/models
-        POST tx/sign
-        POST tx/broadcast
+        dcld tx model add-model --vid 1 --pid 1 --deviceTypeID 1 --productName "Device #1" --productLabel "Device Description" --partNumber "SKU12FS" --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
+        dcld query auth all-accounts
+        dcld tx sign /home/artem/dc-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
+        POST http://<node-ip>:26640/cosmos/tx/v1beta1/txs
         ```
-- Trusted REST API (keys at the server):
-    - CLI is started in a server mode.
-    - A private key is generated and stored on the server (assuming it's within the user's domain and the user trusts it).
-    - The user sends a POST to the server specifying the transaction parameters and account details (passphrase etc.) using `Authorization` header`.
-    The server builds the request, signs it by the specified account's private key and broadcasts to the ledger
-     in a way similar to the local CLI case.
-    - See `REST API` section for every write request (transaction).
-    - Example
-        ```
-        POST /model/models with setting Authorization header 
-        ```
+
 
 ## How to read from the Ledger
 - Local CLI
-    - CLI is started in a CLI mode.
     - No keys/account is needed as the ledger is public for reads
     - See `CLI` section for every read request.
 - REST API
-    - CLI is started in a server mode.
     - No keys/account is needed as the ledger is public for reads
     - See `REST API` section for every read request.   
     
 ##### Query types     
 - Query single value:
-    - By default, all read requests are performed for the last ledger state (height) and 
-        then state proof verification is performed for result values.
-        In order to verify state proof, app must have the next ledger state (height + 1) which will be created after some time.
-        Because of this expectation queries may take significant time. 
-    
-        In order to avoid this delay CLI and REST exposes optional flag/parameter `prev-height`.
-        When this flag is specified read requests will be performed for previous state (height-1). 
-        The next state (height) is already present on the ledger so state proof verification is performed immediately.
-    
-        Note:     
-        * In case simple reading use `prev-height` flag to get quick response.
-        * In case of sequent add/read requests flag `prev-height` can be used. In case of failure for height-1 one more request for current height will be sent.
-        * In case of sequent update/read requests flag `prev-height` must not be used because data before modification can be returned.
-             
 - Query list of values:
-    - At the current moment, there is no state proof verification for list queries so there are no delays for those queries.
+    - Pagination is supported
         
 
-## KV Store
-A summary of KV store and paths used:
-- KV store name: `pki`
-    - Proposed but not approved root certificates:
-        - `1:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<Certificate> + <List of approved trustee account IDs>`
-    - Approved root and Non-root certificates:    
-        - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : list[`<Certificate>`]
-    - Certificate Chain:
-        - `3:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<a list of child certificates (subject/subjectKeyId pairs)>`
-    - Proposed but not approved revocation of certificates:
-        - `4:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<List of approved trustee account IDs>`
-    - CRL (Certificate Revocation List):
-        - `5` : `CRL (Certificate Revocation List)`
-    - Certificate uniqueness:
-        - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
-- KV store name: `model`
-    - Model  
-        - `1:<vid>:<pid>` : `<model info>`
-    - Model  Versions
-        - `2:<vid>:<pid>` : ` list of model versions`
-    - Model  Version
-        - `2:<vid>:<pid>:<softwareVersion>` : `<model version>`
-    - Vendor to products (models) index:
-        - `3:<vid>` : `<list of pids + metadata>`
-- KV store name: `compliancetest`
-    - Test results for every model
-        - `1:<vid>:<pid>:<softwareVersion>` : `<list of test results>`
-- KV store name: `compliance`
-    - Compliance results for every model       
-       - `1:<certification_type>:<vid>:<pid>:<softwareVersion>` : `<compliance info>`
-    - A list of compliant models (`pid`s) for the given vendor. 
-       - `2:<vid>` : `<compliance pids>`  
-    - A list of revoked models (`pid`s) for the given vendor.       
-       - `3:<vid>` : `<revocation pids>`     
-- KV store name: `auth`
-    - Proposed but not approved accounts
-      - `1:<address>` : `<account info> + <list of approvers>`
-    - Approved accounts
-      - `2:<address>` : `<account info>` 
-    - Proposed but not approved accounts to be revoked
-      - `3:<address>` : `<account info> + <list of approvers>`
-- KV store name: `validator`
-    - Main index to store validators (active/jailed)
-      - `1:<Validator Address>` : `<Validator>`
-    - Helper index to track the last active validator set
-      - `2:<Validator Address>` : `<Validator Last Power>`
-    - Helper index to track that each validator owner has only one node
-      - `5:<Account Address>` : `<Validator Address>`
-    - Helper index to track validator signatures
-      - `6:<Validator Address>` : `<Signing Info>`
-    - Helper index to track whether validator signed a block
-      - `7:<Validator Address:index>` : `<bool>`
-   
 ## X509 PKI
 
 **NOTE**: X.509 v3 certificates are only supported (all certificates MUST contain `Subject Key ID` field).
@@ -176,19 +94,11 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 - Parameters:
   - `cert`: PEM-encoded certificate
-- In State:
-  - `pki` store  
-  - `1:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<Certificate> + <List of approved trustee account IDs>`
-  - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]` (if just 1 Trustee is required)  
-  - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
+- In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Any role
-- The current number of required approvals: 
-    - 2
 - CLI command: 
     -   `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
-- REST API: 
-    -   POST `/pki/certs/proposed/root`
 - Validation:
     - provided certificate must be root: 
         - `Issuer` == `Subject` 
@@ -209,18 +119,13 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Parameters:
   - `subject`: string  - proposed certificates's `Subject`
   - `subject_key_id`: string  - proposed certificates's `Subject Key Id`
-- In State:
-  - `pki` store  
-  - `1:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<Certificate> + <List of approved trustee account IDs>`
-  - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]`
+- In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Trustee
 - The current number of required approvals: 
-    - 2
+    - 2/3 of Trustees
 - CLI command: 
     -   `dcld tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
-- REST API: 
-    -   PATCH `/pki/certs/proposed/root/<subject>/<subject_key_id>`
 - Validation:
     - the proposed certificate hasn't been approved by the signer yet
         
@@ -234,17 +139,11 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 - Parameters:
   - `cert`: PEM-encoded certificate
-- In State:
-  - `pki` store  
-  - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]`
-  - `3:<Parent Certificate's Subject>:<Parent Certificate's Subject Key ID>` : `<a list of child certificates (subject/subjectKeyId pairs)>`
-  - `6:<Certificate's Subject>:<Certificate's Subject Key ID>` : bool
+- In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Any role
 - CLI command: 
     -   `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
-- REST API: 
-    -   POST `/pki/certs`
 - Validation:
     - provided certificate must not be root: 
         - `Issuer` != `Subject` 
@@ -269,17 +168,11 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-- In State:
-  - `pki` store  
-  - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]`  
-  - `3:<Parent Certificate's Subject>:<Parent Certificate's Subject Key ID>` : `<a list of child certificates (subject/subjectKeyId pairs)>`
-  - `5` : `CRL (Certificate Revocation List)`
+- In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Any role; owner
 - CLI command: 
     -   `dcld tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
-- REST API: 
-    -   DELETE `/pki/certs/<subject>/<subject_key_id>`
 
 #### PROPOSE_REVOKE_X509_ROOT_CERT
 **Status: Implemented**
@@ -294,15 +187,11 @@ then the certificate will be in a pending state until sufficient number of other
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-- In State:
-  - `pki` store  
-  - `4:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<List of approved trustee account IDs>`
+- In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Trustee
 - CLI command: 
     -   `dcld tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
-- REST API: 
-    -   PUT `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
     
 
 
@@ -317,50 +206,23 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-- In State:
-  - `pki` store  
-  - `4:<Certificate's Subject>:<Certificate's Subject Key ID>` : `<List of approved trustee account IDs>`
-  - `2:<Certificate's Subject>:<Certificate's Subject Key ID>` : `List[<Certificate>]`  
-  - `3:<Parent Certificate's Subject>:<Parent Certificate's Subject Key ID>` : `<a list of child certificates (subject/subjectKeyId pairs)>`
-  - `5` : `CRL (Certificate Revocation List)`
+- In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Trustee
+- The current number of required approvals: 
+    - 2/3 of Trustees 
 - CLI command: 
     -   `dcld tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
-- REST API: 
-    -   PATCH `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
         
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS
 **Status: Implemented**
 
 Gets all proposed but not approved root certificates.
 
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dcld query pki all-proposed-x509-root-certs ... `
+    -   `dcld query pki all-proposed-x509-root-certs`
 - REST API: 
-    -   GET `/pki/certs/proposed/root`
-- Result:
-```json
-{
-  "result": {
-    "total": string,
-    "items": [
-      {
-        "pem_cert": string, //pem encoded certificate
-        "subject": string,
-        "subject_key_id": string,
-        "serial_number": string,
-        "approvals": optional([string]),
-        "owner": string
-      }
-    ]
-  },
-  "height": string
-}
-```
+    -   GET `dcl/pki/proposed-certificates`
 
 #### GET_PROPOSED_X509_ROOT_CERT
 **Status: Implemented**
@@ -370,24 +232,10 @@ Gets a proposed but not approved root certificate with the given subject and sub
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dcld query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dcld query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string>`
 - REST API: 
-    -   GET `/pki/certs/proposed/root/<subject>/<subject_key_id>`
-```json
-{
-  "result": {
-    "pem_cert": string, //pem encoded certificate
-    "subject": string,
-    "subject_key_id": string,
-    "serial_number": string,
-    "approvals": optional([string]),
-    "owner": string
-  },
-  "height": string
-}
-```
+    -   GET `/dcl/pki/proposed-certificates/{subject}/{subject_key_id}`
 
 #### GET_ALL_X509_ROOT_CERTS
 **Status: Implemented**
@@ -395,35 +243,11 @@ Gets a proposed but not approved root certificate with the given subject and sub
 Gets all approved root certificates. Revoked certificates are not returned. 
 Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certificates. 
 
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dcld query pki all-x509-root-certs .... `
+    -   `dcld query pki all-x509-root-certs`
 - REST API: 
-    -   GET `/pki/certs/root`
-```json
-{
-  "result": {
-    "total": string,
-    "items": [
-      {
-        "pem_cert": string, //pem encoded certificate
-        "subject": string,
-        "subject_key_id": string,
-        "serial_number": string,
-        "issuer": string,
-        "authority_key_id": string,
-        "root_subject": string,
-        "root_subject_key_id": string,      
-        "is_root": boolean, 
-        "owner": string,
-      }
-    ]
-  },
-  "height": string
-}
-```
+    -   GET `/dcl/pki/root-certificates`
+
 
 #### GET_X509_CERT
 **Status: Implemented**
@@ -435,69 +259,24 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dcld query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dcld query pki x509-cert --subject=<string> --subject-key-id=<hex string>`
 - REST API: 
-    -   GET `/pki/certs/<subject>/<subject_key_id>`
-```json
-{
-  "result": {
-    "items": [
-      {
-        "pem_cert": string, //pem encoded certificate
-        "subject": string,
-        "subject_key_id": string,
-        "serial_number": string,
-        "issuer": string, // omitted for root certificates
-        "authority_key_id": string, // omitted for root certificates
-        "root_subject": string, // omitted for root certificates
-        "root_subject_key_id": string, // omitted for root certificates
-        "is_root": boolean, 
-        "owner": string,
-      }
-    ]
-  },
-  "height": string
-}
-```
+    -   GET `/dcl/pki/certificates/{subject}/{subject_key_id}`
 
-#### GET_X509_CERT_CHAIN
+#### GET_ALL_CHILD_X509_CERTS
 **Status: Implemented**
 
-Gets the complete chain for a certificate with the given combination of subject and subject-key-id.
+Gets all child certificates for the given certificate.
 Revoked certificates are not returned. 
-Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
 - Parameters:
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
-  - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dcld query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dcld query pki all-child-x509-certs --subject=<string> --subject-key-id=<hex string>`
 - REST API: 
-    -   GET `/pki/certs/chain/<subject>/<subject_key_id>`
-```json
-{
-  "result": {
-    "items": [
-      {
-        "pem_cert": string, //pem encoded certificate
-        "subject": string,
-        "subject_key_id": string,
-        "serial_number": string,
-        "issuer": string, // omitted for root certificate (last in the chain)
-        "authority_key_id": string, // omitted for root certificate (last in the chain)
-        "root_subject": string, // omitted for root certificate (last in the chain)
-        "root_subject_key_id": string, // omitted for root certificate (last in the chain)
-        "is_root": boolean, 
-        "owner": string,
-      }
-    ]
-  },
-  "height": string
-}
-```
+    -   GET `/dcl/pki/child-certificates/{subject}/{subject_key_id}`
 
 #### GET_ALL_X509_CERTS
 **Status: Implemented**
@@ -507,45 +286,12 @@ Gets all certificates (root, intermediate and leaf).
 Revoked certificates are not returned. 
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
-Can optionally be filtered by the root certificate's subject or subject key id so that 
-only the certificate chains started with the given root certificate are returned.   
-
-`GET_ALL_X509_CERTS_SINCE` can be used to incrementally update the list stored locally. 
-
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
-  - `root_subject`: string (optional) - root certificates's `Subject`
-  - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
-    -   `dcld query pki all-x509-certs .... `
+    -   `dcld query pki all-x509-certs`
 - REST API: 
-    -   GET `/pki/certs`
-    -   GET `/pki/certs?root_subject=<>`
-    -   GET `/pki/certs?root_subject_key_id=<>`
-    -   GET `/pki/certs?root_subject=<>;root_subject_key_id=<>`
-```json
-{
-  "result": {
-    "total": string,
-    "items": [
-      {
-        "pem_cert": string, //pem encoded certificate
-        "subject": string,
-        "subject_key_id": string,
-        "serial_number": string,
-        "issuer": string, // omitted for root certificates
-        "authority_key_id": string, // omitted for root certificates
-        "root_subject": string, // omitted for root certificates
-        "root_subject_key_id": string, // omitted for root certificates
-        "is_root": boolean, 
-        "owner": string,
-      }
-    ]
-  },
-  "height": string
-}
-```
+    - GET `/dcl/pki/certificates`
+
+
 
 #### GET_ALL_SUBJECT_X509_CERTS
 **Status: Implemented**
@@ -555,56 +301,22 @@ Gets all certificates (root, intermediate and leaf) associated with a subject.
 Revoked certificates are not returned. 
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
-Can optionally be filtered by the root certificate's subject or subject key id so that 
-only the certificate chains started with the given root certificate are returned. 
-
 - Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
-  - `root_subject`: string (optional) - root certificates's `Subject`
-  - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
+  - `subject`: string  - certificates's `Subject`
 - CLI command: 
-    -   `dcld query pki all-subject-x509-certs --subject=<string> .... `
+    -   `dcld query pki all-subject-x509-certs --subject=<string>`
 - REST API: 
-    -   GET `/pki/certs/<subject>`
-    -   GET `/pki/certs/<subject>?root_subject=<>`
-    -   GET `/pki/certs/<subject>?root_subject_key_id=<>`
-    -   GET `/pki/certs/<subject>?root_subject=<>;root_subject_key_id=<>`
-```json
-{
-  "result": {
-    "total": string,
-    "items": [
-      {
-        "pem_cert": string, //pem encoded certificate
-        "subject": string,
-        "subject_key_id": string,
-        "serial_number": string,
-        "issuer": string, // omitted for root certificates
-        "authority_key_id": string, // omitted for root certificates
-        "root_subject": string, // omitted for root certificates
-        "root_subject_key_id": string, // omitted for root certificates
-        "is_root": boolean, 
-        "owner": string,
-      }
-    ]
-  },
-  "height": string
-}
-```
+    - GET `/dcl/pki/certificates/{subject}`
 
 #### GET_ALL_PROPOSED_X509_ROOT_CERTS_TO_REVOKE
 **Status: Implemented**
 
 Gets all proposed but not approved root certificates to be revoked.
 
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dcld query pki all-proposed-x509-root-certs-to-revoke .... `
+    -   `dcld query pki all-proposed-x509-root-certs-to-revoke`
 - REST API: 
-    -   GET `/pki/certs/proposed/revoked/root`
+    -   GET `/dcl/pki/proposed-revocation-certificates`
 
 #### GET_PROPOSED_X509_ROOT_CERT_TO_REVOKE
 **Status: Implemented**
@@ -617,53 +329,29 @@ Gets a proposed but not approved root certificate to be revoked.
 - CLI command: 
     -   `dcld query pki proposed-x509-root-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
 - REST API: 
-    -   GET `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
+    -   GET `/dcl/pki/proposed-revocation-certificates/{subject}/{subject_key_id}`
 
 #### GET_ALL_REVOKED_X509_CERTS
 **Status: Implemented**
 
 Gets all revoked certificates (both root and non-root).
    
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dcld query pki all-revoked-x509-certs .... `
+    -   `dcld query pki all-revoked-x509-certs`
 - REST API: 
-    -   GET `/pki/certs/revoked`
+    -   GET `/dcl/pki/revoked-certificates`
 
 #### GET_ALL_REVOKED_X509_ROOT_CERTS
 **Status: Implemented**
 
 Gets all revoked root certificates.
    
-- Parameters:
-  - `skip`: optional(int)  - number records to skip (`0` by default)
-  - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dcld query pki all-revoked-x509-root-certs .... `
+    -   `dcld query pki all-revoked-x509-root-certs`
 - REST API: 
-    -   GET `/pki/certs/revoked/root`    
+    -   GET `/dcl/pki/revoked-root-certificates`    
 
-#### GET_ALL_X509_CERTS_SINCE
-**Status: Not Implemented**
-
-Gets all certificates (root, intermediate and leaf) which has been added since 
-the given ledger's `height`.
-
-Can optionally be filtered by the root certificate's subject and subject key id so that 
-only the certificate chains started with the given root certificate are returned.   
-
-- Parameters:
-  - `since`: integer - the last ledger's height the user has locally.
-  - `root_subject`: string (optional) - root certificates's `Subject`
-  - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id` 
-- CLI command: 
-    -   `dcld query pki all-x509-certs-delta --since=<integer>.... `
-- REST API: 
-    -   GET `/pki/certs?since=<>`
-    -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
-    
+   
 ## MODEL and MODEL_VERSION
 
 #### ADD_MODEL
@@ -1597,7 +1285,7 @@ Adds a new Validator node.
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `dcld tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
+    -   `dcld tx validator add-node --pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
 - REST API: 
     -   POST `/validators`
 
@@ -1652,7 +1340,7 @@ Gets a validator node.
 - Parameters:
     - `validator_address`: string // the tendermint validator address; bech32 encoded
 - CLI command: 
-    -   `dcld query validator node --validator-address=<validator address>.... `
+    -   `dcld query validator node --address=<validator address>.... `
 - REST API: 
     -   GET `/validators/<validator_address>`   
 - Result:
@@ -1695,7 +1383,7 @@ Updates the Validator node by the owner. Only `description` can be changed.
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `dcld tx validator update-node --validator-address=<validator address> --from=<owner>.... `
+    -   `dcld tx validator update-node --address=<validator address> --from=<owner>.... `
 - REST API: 
     -   PUT `/validators/<validator_address>`    
 
@@ -1716,7 +1404,7 @@ Deletes the Validator node (removes from the validator set) by the owner.
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `dcld tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
+    -   `dcld tx validator remove-node --address=<validator address> --from=<owner>.... `
 - REST API: 
     -   DELETE `/validators/<validator_address>`
 
@@ -1774,7 +1462,7 @@ the node will be unjailed and returned to the active validator set.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dcld tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
+    -   `dcld tx validator unjail-node --address=<validator address> --from=<trustee>.... `
 - REST API: 
     -   PATCH `/validators/<validator_address>`
             

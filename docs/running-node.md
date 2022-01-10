@@ -232,7 +232,7 @@ an account with `NodeAdmin` role. And **wait** until:
 
 ```bash
 $ dcld tx validator add-node \
-    --validator-address=<validator address> --validator-pubkey=<validator pubkey> \
+    --pubkey=<validator pubkey> \
     --name=<node name> --from=<key name>
 ```
 

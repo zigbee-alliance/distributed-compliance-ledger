@@ -86,7 +86,7 @@ func CmdProposeAddAccount() *cobra.Command {
 
 	flags.AddTxFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(flags.FlagFrom) // XXX issue 99: was absent in legacy code ???
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 	_ = cmd.MarkFlagRequired(FlagAddress)
 	_ = cmd.MarkFlagRequired(FlagPubKey)
 

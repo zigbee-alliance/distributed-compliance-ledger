@@ -44,7 +44,7 @@ func CmdApproveAddAccount() *cobra.Command {
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
 	flags.AddTxFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(flags.FlagFrom) // XXX issue 99: was absent in legacy code ???
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd

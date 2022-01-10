@@ -162,28 +162,59 @@ Roles:
   Command: `dcld query auth all-accounts`
  
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default) 
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
  
   Example: `dcld query auth accounts`
+
+- Get a proposed accounts.
+
+  Command: `dcld query auth proposed-account`
+ 
+  Flags:
+  - address: `string` - bench32 encoded account address
+ 
+  Example: `dcld query auth proposed-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
 
 - Get all proposed accounts.
 
   Command: `dcld query auth all-proposed-accounts`
  
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default) 
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
  
   Example: `dcld query auth all-proposed-accounts`
+
+- Get a proposed accounts to revoke.
+
+  Command: `dcld query auth proposed-account-to-revoke`
+ 
+  Flags:
+  - address: `string` - bench32 encoded account address
+ 
+  Example: `dcld query auth proposed-account-to-revoke --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7`
+
 
 - Get all proposed accounts to revoke.
 
   Command: `dcld query auth all-proposed-accounts-to-revoke`
  
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default) 
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
  
   Example: `dcld query auth all-proposed-accounts-to-revoke`
 
@@ -279,8 +310,12 @@ The set of commands that allows you to manage X.509 certificates.
   Command: `dcld query pki all-proposed-x509-root-certs`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
     
   Example: `dcld query pki all-proposed-x509-root-certs`
   
@@ -298,10 +333,6 @@ The set of commands that allows you to manage X.509 certificates.
 
   Command: `dcld query pki all-x509-root-certs`
 
-  Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
-  
   Example: `dcld query pki all-x509-root-certs`
   
 - Get a certificate (either root, intermediate or leaf). Revoked certificates are not returned.
@@ -319,16 +350,14 @@ The set of commands that allows you to manage X.509 certificates.
   Command: `dcld query pki all-x509-certs`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
-  - root-subject: `optional(string)` - filter certificates by Subject of root certificate (only the certificates started with the given root certificate are returned)
-  - root-subject-key-id: `optional(string)` -   - root-subject-key-id: `optional(string)` - filter certificates by Subject of root certificate (only the certificates started with the given root certificate are returned)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
 
   Example: `dcld query pki x509-certs`
-  
-  Example: `dcld query pki x509-certs --root-subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
-  
-  Example: `dcld query pki x509-certs --root-subject="CN=dsr-corporation.com"`
   
 - Get all certificates (root, intermediate and leaf) associated with subject. Revoked certificates are not returned.
 
@@ -336,34 +365,30 @@ The set of commands that allows you to manage X.509 certificates.
 
   Flags:
   - subject: `string` - certificates's `Subject`
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
-  - root-subject: `optional(string)` - filter certificates by Subject of root certificate (only the certificates started with the given root certificate are returned)
-  - root-subject-key-id: `optional(string)` -   - root-subject-key-id: `optional(string)` - filter certificates by Subject of root certificate (only the certificates started with the given root certificate are returned)
 
   Example: `dcld query pki all-subject-x509-certs --subject="CN=dsr"`
 
-  Example: `dcld query pki all-subject-x509-certs --subject="CN=dsr" --root-subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
-  
-  Example: `dcld query pki all-subject-x509-certs --subject="CN=dsr" --root-subject="CN=dsr-corporation.com"`
+- Gets all child certificates for the given certificate. Revoked certificates are not returned.
 
-- Get a complete chain for a certificate. Revoked certificates are not returned.
-
-  Command: `dcld query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string>`
+  Command: `dcld query pki all-child-x509-certs --subject=<string> --subject-key-id=<hex string>`
 
   Flags:
     - subject: `string` - certificates's `Subject`.
     - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
 
-  Example: `dcld query pki x509-cert-chain --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
+  Example: `dcld query pki all-child-x509-certs --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE"`
 
 - Get all proposed but not approved root certificates to be revoked.
 
   Command: `dcld query pki all-proposed-x509-root-certs-to-revoke`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
 
   Example: `dcld query pki all-proposed-x509-root-certs-to-revoke`
 
@@ -382,18 +407,18 @@ The set of commands that allows you to manage X.509 certificates.
   Command: `dcld query pki all-revoked-x509-certs`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
 
   Example: `dcld query pki all-revoked-x509-certs`
 
 - Get all revoked root certificates.
 
   Command: `dcld query pki all-revoked-x509-root-certs`
-
-  Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
 
   Example: `dcld query pki all-revoked-x509-root-certs`
 
@@ -449,8 +474,12 @@ The set of commands that allows the Vendor to update contact information.
   Command: `dcld query vendorinfo all-vendors`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
     
   Example: `dcld query vendorinfo all-vendors`
 
@@ -588,8 +617,12 @@ The set of commands that allows you to manage model and model versions.
   Command: `dcld query model all-models`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
     
   Example: `dcld query model all-models`
 
@@ -600,29 +633,15 @@ The set of commands that allows you to manage model and model versions.
   Flags:
   - vid: `uint16` -  model vendor ID
   - pid: `uint16` -  model product ID
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
     
   Example: `dcld query model all-model-versions --vid=1 --pid=1`  
 
-- Query a list of all vendors.
-
-  Command: `dcld query model vendors`
-  
-  Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
-    
-  Example: `dcld query model vendors`
-  
 - Query a list of all models for the given vendor.
 
   Command: `dcld query model vendor-models --vid=<uint16>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
 
   Example: `dcld query model vendor-models --vid=1`
 
@@ -723,9 +742,12 @@ Only the owner can update an existing record.
   Command: `dcld query compliance all-certified-models`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
-
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
   Example: `dcld query compliance all-certified-models`
   
 - Check if the model associated with the given VID/PID/SoftwareVersion is revoked.
@@ -745,8 +767,12 @@ Only the owner can update an existing record.
   Command: `dcld query compliance all-revoked-models`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
 
   Example: `dcld query compliance all-revoked-models`
   
@@ -763,13 +789,17 @@ Only the owner can update an existing record.
   
 - Query all compliance infos. 
 
-  Command: `dcld query compliance all-compliance-info-records`
+  Command: `dcld query compliance all-compliance-info`
 
   Flags:
-  - skip: `optional(int)` - number records to skip (`0` by default)
-  - take: `optional(int)` - number records to take (all records are returned by default)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
 
-  Example: `dcld query compliance all-compliance-info-records`
+  Example: `dcld query compliance all-compliance-info`
 
 ### Validator
 
@@ -780,34 +810,38 @@ The set of commands that allows you to manage the set of validator nodes in the 
 
   Role: `NodeAdmin`
 
-  Command: `dcld tx validator add-node --validator-address=<address> --validator-pubkey=<pubkey> --name=<node name> --from=<account>`
+  Command: `dcld tx validator add-node --pubkey=<pubkey> --name=<node name> --from=<account>`
   
   Flags:
-  - validator-address: `string` - the tendermint validator address
-  - validator-pubkey: `string` - the tendermint validator public key
+  - pubkey: `string` - the tendermint validator public key
   - name: `string` -  validator name
   - from: `string` - name or address of private key with which to sign
   - website: `optional(string)` - optional validator's website
   - identity: `optional(string)` - optional identity signature
   - details: `optional(string)` - optional validator's details
   
-  Example: `dcld tx validator add-node --validator-address=cosmosvalcons1tl46nm39xtuutvw2wqaeyyd6csknfe0a7xqnrw --validator-pubkey=cosmosvalconspub1zcjduepqn5nz4c8n5jwfmgd6tqfqzu8arpne3au4g7tfsz33g8y6dcvhkf4sw054j8 --name=node1 --from=jack`
+  Example: `dcld tx validator add-node --pubkey=cosmosvalconspub1zcjduepqn5nz4c8n5jwfmgd6tqfqzu8arpne3au4g7tfsz33g8y6dcvhkf4sw054j8 --name=node1 --from=jack`
  
 ##### Queries
 - Query a validator node by the given validator address.
 
-  Command: `dcld query validator node --validator-address=<address>`
+  Command: `dcld query validator node --address=<address>`
 
   Flags:
-  - validator-address: `string` - the tendermint validator address
+  - address: `string` - Bench32 encoded validator address or owner account
 
-  Example: `dcld query validator node --validator-address=cosmosvaloper1jnr3hcrvcpvqm5fdcafg70azkg0awf96tvu79z`
+  Example: `dcld query validator node --address=cosmosvaloper1jnr3hcrvcpvqm5fdcafg70azkg0awf96tvu79z`
   
 - Query all validator nodes.
 
   Command: `dcld query validator all-nodes`
 
   Flags:
-  - state: `string` - state of a validator (active/jailed)
+    - count-total `optional(bool)`:      count total number of records in all-proposed-x509-root-certs to query for
+    - limit `optional(uint)`:        pagination limit of all-proposed-x509-root-certs to query for (default 100)
+    - offset `optional(uint)`:       pagination offset of all-proposed-x509-root-certs to query for
+    - page `optional(uint)`:         pagination page of all-proposed-x509-root-certs to query for. This sets offset to a multiple of limit (default 1)
+    - page-key `optional(string)`:   pagination page-key of all-proposed-x509-root-certs to query for
+    - reverse `optional(bool)`:          results are sorted in descending order
 
   Example: `dcld query validator all-nodes`

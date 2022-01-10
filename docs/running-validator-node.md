@@ -139,7 +139,7 @@ and contains the genesis and persistent_peers files.
        
    * Wait until the value of `catching_up` field gets to `false` value.
       
-   * Add validator node: `dcld tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<key name>`.
+   * Add validator node: `dcld tx validator add-node --pubkey=<validator pubkey> --name=<node name> --from=<key name>`.
    If the transaction has been successfully written you would find `"success": true` in the output JSON. 
 
 6. Check the node is running and participates in consensus:
