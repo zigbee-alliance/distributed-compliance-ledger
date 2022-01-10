@@ -34,7 +34,7 @@ $ cd distributed-compliance-ledger
 $ make install
 ----
 
-After successful comletion of above steps, `dclcli` should be installed.
+After successful completion of above steps, `dclcli` should be installed.
 
 .DCL CLI Test
 [source,bash]
