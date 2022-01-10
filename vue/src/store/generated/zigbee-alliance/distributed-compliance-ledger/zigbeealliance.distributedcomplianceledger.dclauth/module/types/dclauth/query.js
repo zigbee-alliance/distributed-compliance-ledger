@@ -791,10 +791,20 @@ export class QueryClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'AccountAll', data);
         return promise.then((data) => QueryAllAccountResponse.decode(new Reader(data)));
     }
+    PendingAccount(request) {
+        const data = QueryGetPendingAccountRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'PendingAccount', data);
+        return promise.then((data) => QueryGetPendingAccountResponse.decode(new Reader(data)));
+    }
     PendingAccountAll(request) {
         const data = QueryAllPendingAccountRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'PendingAccountAll', data);
         return promise.then((data) => QueryAllPendingAccountResponse.decode(new Reader(data)));
+    }
+    PendingAccountRevocation(request) {
+        const data = QueryGetPendingAccountRevocationRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'PendingAccountRevocation', data);
+        return promise.then((data) => QueryGetPendingAccountRevocationResponse.decode(new Reader(data)));
     }
     PendingAccountRevocationAll(request) {
         const data = QueryAllPendingAccountRevocationRequest.encode(request).finish();

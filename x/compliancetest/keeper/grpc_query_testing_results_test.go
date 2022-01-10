@@ -35,7 +35,7 @@ func TestTestingResultsQuerySingle(t *testing.T) {
 				Pid:             msgs[0].Pid,
 				SoftwareVersion: msgs[0].SoftwareVersion,
 			},
-			response: &types.QueryGetTestingResultsResponse{TestingResults: &msgs[0]},
+			response: &types.QueryGetTestingResultsResponse{TestingResults: msgs[0]},
 		},
 		{
 			desc: "Second",
@@ -44,7 +44,7 @@ func TestTestingResultsQuerySingle(t *testing.T) {
 				Pid:             msgs[1].Pid,
 				SoftwareVersion: msgs[1].SoftwareVersion,
 			},
-			response: &types.QueryGetTestingResultsResponse{TestingResults: &msgs[1]},
+			response: &types.QueryGetTestingResultsResponse{TestingResults: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
@@ -53,7 +53,7 @@ func TestTestingResultsQuerySingle(t *testing.T) {
 				Pid:             100000,
 				SoftwareVersion: 100000,
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",

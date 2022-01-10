@@ -90,10 +90,10 @@ vpubkey=$(docker exec $container dcld tendermint show-validator)
 
 echo "Check pool response for yet unknown node \"$node_name\""
 result=$(dcld query validator node --address "$address")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 echo "$result"
 result=$(dcld query validator last-power --address "$address")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 echo "$result"
 
 echo "$account Add Node \"$node_name\" to validator set"

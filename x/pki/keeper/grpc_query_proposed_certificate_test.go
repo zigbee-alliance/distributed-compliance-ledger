@@ -34,7 +34,7 @@ func TestProposedCertificateQuerySingle(t *testing.T) {
 				Subject:      msgs[0].Subject,
 				SubjectKeyId: msgs[0].SubjectKeyId,
 			},
-			response: &types.QueryGetProposedCertificateResponse{ProposedCertificate: &msgs[0]},
+			response: &types.QueryGetProposedCertificateResponse{ProposedCertificate: msgs[0]},
 		},
 		{
 			desc: "Second",
@@ -42,7 +42,7 @@ func TestProposedCertificateQuerySingle(t *testing.T) {
 				Subject:      msgs[1].Subject,
 				SubjectKeyId: msgs[1].SubjectKeyId,
 			},
-			response: &types.QueryGetProposedCertificateResponse{ProposedCertificate: &msgs[1]},
+			response: &types.QueryGetProposedCertificateResponse{ProposedCertificate: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
@@ -50,7 +50,7 @@ func TestProposedCertificateQuerySingle(t *testing.T) {
 				Subject:      strconv.Itoa(100000),
 				SubjectKeyId: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",

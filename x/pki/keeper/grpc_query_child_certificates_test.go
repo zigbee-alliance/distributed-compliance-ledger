@@ -33,7 +33,7 @@ func TestChildCertificatesQuerySingle(t *testing.T) {
 				Issuer:         msgs[0].Issuer,
 				AuthorityKeyId: msgs[0].AuthorityKeyId,
 			},
-			response: &types.QueryGetChildCertificatesResponse{ChildCertificates: &msgs[0]},
+			response: &types.QueryGetChildCertificatesResponse{ChildCertificates: msgs[0]},
 		},
 		{
 			desc: "Second",
@@ -41,7 +41,7 @@ func TestChildCertificatesQuerySingle(t *testing.T) {
 				Issuer:         msgs[1].Issuer,
 				AuthorityKeyId: msgs[1].AuthorityKeyId,
 			},
-			response: &types.QueryGetChildCertificatesResponse{ChildCertificates: &msgs[1]},
+			response: &types.QueryGetChildCertificatesResponse{ChildCertificates: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
@@ -49,7 +49,7 @@ func TestChildCertificatesQuerySingle(t *testing.T) {
 				Issuer:         strconv.Itoa(100000),
 				AuthorityKeyId: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",

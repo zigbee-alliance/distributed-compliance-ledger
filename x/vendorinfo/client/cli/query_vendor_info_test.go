@@ -64,7 +64,7 @@ func TestShowVendorInfo(t *testing.T) {
 			idVendorID: 100000,
 
 			args: common,
-			err:  status.Error(codes.InvalidArgument, "not found"),
+			err:  status.Error(codes.NotFound, "not found"),
 		},
 	} {
 		tc := tc

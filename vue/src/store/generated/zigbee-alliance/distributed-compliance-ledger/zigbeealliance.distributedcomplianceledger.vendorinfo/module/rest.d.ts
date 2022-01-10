@@ -64,7 +64,6 @@ export interface V1Beta1PageResponse {
     total?: string;
 }
 export declare type VendorinfoMsgCreateVendorInfoResponse = object;
-export declare type VendorinfoMsgDeleteVendorInfoResponse = object;
 export declare type VendorinfoMsgUpdateVendorInfoResponse = object;
 export interface VendorinfoQueryAllVendorInfoResponse {
     vendorInfo?: VendorinfoVendorInfo[];

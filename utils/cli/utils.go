@@ -8,6 +8,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	NotFoundOutput = "\"Not Found\""
+)
+
 func ReadFromFile(target string) (string, error) {
 	if _, err := os.Stat(target); err == nil { // check whether it is a path
 		bytes, err := ioutil.ReadFile(target)
@@ -21,16 +25,13 @@ func ReadFromFile(target string) (string, error) {
 	}
 }
 
-func HandleError(err error) error {
+func IsNotFound(err error) bool {
 	if err == nil {
-		return nil
+		return false
 	}
 	s, ok := status.FromError(err)
 	if !ok {
-		return err
+		return false
 	}
-	if s.Code() != codes.NotFound {
-		return err
-	}
-	return nil
+	return s.Code() == codes.NotFound
 }

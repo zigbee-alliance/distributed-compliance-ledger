@@ -66,5 +66,5 @@ func (k Keeper) ProvisionalModel(c context.Context, req *types.QueryGetProvision
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetProvisionalModelResponse{ProvisionalModel: &val}, nil
+	return &types.QueryGetProvisionalModelResponse{ProvisionalModel: val}, nil
 }

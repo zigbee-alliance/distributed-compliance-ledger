@@ -63,5 +63,5 @@ func (k Keeper) Validator(c context.Context, req *types.QueryGetValidatorRequest
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetValidatorResponse{Validator: &val}, nil
+	return &types.QueryGetValidatorResponse{Validator: val}, nil
 }

@@ -85,8 +85,6 @@ export interface V1Beta1PageResponse {
 
 export type VendorinfoMsgCreateVendorInfoResponse = object;
 
-export type VendorinfoMsgDeleteVendorInfoResponse = object;
-
 export type VendorinfoMsgUpdateVendorInfoResponse = object;
 
 export interface VendorinfoQueryAllVendorInfoResponse {

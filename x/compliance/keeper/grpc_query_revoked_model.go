@@ -63,5 +63,5 @@ func (k Keeper) RevokedModel(c context.Context, req *types.QueryGetRevokedModelR
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetRevokedModelResponse{RevokedModel: &val}, nil
+	return &types.QueryGetRevokedModelResponse{RevokedModel: val}, nil
 }

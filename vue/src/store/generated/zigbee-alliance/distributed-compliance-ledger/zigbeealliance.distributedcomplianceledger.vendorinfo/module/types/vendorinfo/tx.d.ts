@@ -20,12 +20,6 @@ export interface MsgUpdateVendorInfo {
 }
 export interface MsgUpdateVendorInfoResponse {
 }
-export interface MsgDeleteVendorInfo {
-    creator: string;
-    vendorID: number;
-}
-export interface MsgDeleteVendorInfoResponse {
-}
 export declare const MsgCreateVendorInfo: {
     encode(message: MsgCreateVendorInfo, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateVendorInfo;
@@ -54,33 +48,17 @@ export declare const MsgUpdateVendorInfoResponse: {
     toJSON(_: MsgUpdateVendorInfoResponse): unknown;
     fromPartial(_: DeepPartial<MsgUpdateVendorInfoResponse>): MsgUpdateVendorInfoResponse;
 };
-export declare const MsgDeleteVendorInfo: {
-    encode(message: MsgDeleteVendorInfo, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgDeleteVendorInfo;
-    fromJSON(object: any): MsgDeleteVendorInfo;
-    toJSON(message: MsgDeleteVendorInfo): unknown;
-    fromPartial(object: DeepPartial<MsgDeleteVendorInfo>): MsgDeleteVendorInfo;
-};
-export declare const MsgDeleteVendorInfoResponse: {
-    encode(_: MsgDeleteVendorInfoResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): MsgDeleteVendorInfoResponse;
-    fromJSON(_: any): MsgDeleteVendorInfoResponse;
-    toJSON(_: MsgDeleteVendorInfoResponse): unknown;
-    fromPartial(_: DeepPartial<MsgDeleteVendorInfoResponse>): MsgDeleteVendorInfoResponse;
-};
 /** Msg defines the Msg service. */
 export interface Msg {
     CreateVendorInfo(request: MsgCreateVendorInfo): Promise<MsgCreateVendorInfoResponse>;
-    UpdateVendorInfo(request: MsgUpdateVendorInfo): Promise<MsgUpdateVendorInfoResponse>;
     /** this line is used by starport scaffolding # proto/tx/rpc */
-    DeleteVendorInfo(request: MsgDeleteVendorInfo): Promise<MsgDeleteVendorInfoResponse>;
+    UpdateVendorInfo(request: MsgUpdateVendorInfo): Promise<MsgUpdateVendorInfoResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
     CreateVendorInfo(request: MsgCreateVendorInfo): Promise<MsgCreateVendorInfoResponse>;
     UpdateVendorInfo(request: MsgUpdateVendorInfo): Promise<MsgUpdateVendorInfoResponse>;
-    DeleteVendorInfo(request: MsgDeleteVendorInfo): Promise<MsgDeleteVendorInfoResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

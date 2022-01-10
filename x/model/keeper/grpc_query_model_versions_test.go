@@ -49,7 +49,7 @@ func TestModelVersionsQuerySingle(t *testing.T) {
 				Vid: 100000,
 				Pid: 100000,
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",

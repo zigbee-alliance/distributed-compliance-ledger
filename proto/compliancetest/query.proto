@@ -32,7 +32,7 @@ message QueryGetTestingResultsRequest {
 }
 
 message QueryGetTestingResultsResponse {
-	TestingResults testingResults = 1 [(gogoproto.nullable) = true];
+	TestingResults testingResults = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllTestingResultsRequest {
