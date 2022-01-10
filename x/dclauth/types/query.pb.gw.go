@@ -677,11 +677,11 @@ var (
 
 	pattern_Query_AccountAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "auth", "accounts"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PendingAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "auth", "pendingAccount", "address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PendingAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "auth", "proposed-accounts", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_PendingAccountAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "auth", "proposed-accounts"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_PendingAccountRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "auth", "pendingAccountRevocation", "address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_PendingAccountRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "auth", "proposed-revocation-accounts", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_PendingAccountRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "auth", "proposed-revocation-accounts"}, "", runtime.AssumeColonVerbOpt(true)))
 

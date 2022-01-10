@@ -28,7 +28,7 @@ service Query {
 
 // Queries a pendingAccount by index.
 	rpc PendingAccount(QueryGetPendingAccountRequest) returns (QueryGetPendingAccountResponse) {
-		option (google.api.http).get = "/dcl/auth/pendingAccount/{address}";
+		option (google.api.http).get = "/dcl/auth/proposed-accounts/{address}";
 	}
 
 	// Queries a list of pendingAccount items.
@@ -38,7 +38,7 @@ service Query {
 
 // Queries a pendingAccountRevocation by index.
 	rpc PendingAccountRevocation(QueryGetPendingAccountRevocationRequest) returns (QueryGetPendingAccountRevocationResponse) {
-		option (google.api.http).get = "/dcl/auth/pendingAccountRevocation/{address}";
+		option (google.api.http).get = "/dcl/auth/proposed-revocation-accounts/{address}";
 	}
 
 	// Queries a list of pendingAccountRevocation items.

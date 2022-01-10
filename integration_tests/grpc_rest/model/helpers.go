@@ -504,6 +504,14 @@ func GetModelForUnknown(suite *utils.TestSuite) {
 	_, err := GetModel(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()))
 	require.Error(suite.T, err)
 	suite.AssertNotFound(err)
+
+	_, err = GetModelVersion(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()), uint32(tmrand.Uint32()))
+	require.Error(suite.T, err)
+	suite.AssertNotFound(err)
+
+	_, err = GetVendorModels(suite, int32(tmrand.Uint16()))
+	require.Error(suite.T, err)
+	suite.AssertNotFound(err)
 }
 
 func GetModelForInvalidVidPid(suite *utils.TestSuite) {
