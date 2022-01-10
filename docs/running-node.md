@@ -8,10 +8,8 @@ This document describes in how to:
 ## Components
 
 *   Common release artifacts:
-    *   Binary artifacts (part of the release):
-        *   dcld: The binary used for running a node.
-        *   dclcli: The binary that allows users to interact with the network of nodes.
-    *   The service configuration file `dcld.service`
+    * dcld (part of the release): The binary used for running a node and CLI.  
+    * The service configuration file `dcld.service`
         (either part of the release or [deployment](../deployment) folder).
 *   Additional generated data (for validators and observers):
     *   Genesis transactions file: `genesis.json`
@@ -57,8 +55,8 @@ Required if a host has been already used in another DCLedger setup.
 
 ```bash
 $ sudo systemctl stop dcld 
-$ sudo rm -f "$(which dcld)" "$(which dclcli)"
-$ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
+$ sudo rm -f "$(which dcld)"
+$ rm -rf "$HOME/.dcl" 
 ```
 
 </p>
@@ -66,7 +64,7 @@ $ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
 
 ### Get the artifacts
 
-*   download `dclcli`, `dcld` and `dcld.service` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
+*   download `dcld` and `dcld.service` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
 *   Get setup scripts either from [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases) or
     from [repository](../deployment/scripts) if you need latest development version.
 *   (for validator and observer) Get the running DCLedegr network data:
@@ -79,7 +77,6 @@ $ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
 
 ```bash
 # release artifacts
-curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dclcli
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld.service
 
@@ -101,7 +98,7 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 
 ### Setup DCL binaries
 
-*   put `dlcd` and `dclcli` binaries in a folder listed in `$PATH` (e.g. `/usr/bin/`)
+*   put `dlcd` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
 *   set a proper owner and executable permissions
 
 <details>
@@ -109,11 +106,10 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 <p>
 
 ```bash
-$ sudo cp -f ./dclcli ./dcld -t /usr/bin
-$ sudo chown ubuntu /usr/bin/dclcli /usr/bin/dcld
-$ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
+$ sudo cp -f ./dcld -t /usr/bin
+$ sudo chown ubuntu /usr/bin/dcld
+$ sudo chmod u+x /usr/bin/dcld
 $ dcld version
-$ dclcli version
 ```
 
 </p>
@@ -152,7 +148,7 @@ Every network (e.g. `test-net`, `main-net` etc.) must have a unique chain ID.
 ### Create keys for a node admin and a trustee genesis accounts
 
 ```bash
-dclcli keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
+dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
 ```
 
 *Notes*
@@ -194,7 +190,7 @@ The following steps automates a set of instructions that you can find in [Runnin
 Run the following to create a key:
 
 ```bash
-dclcli keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
+dcld keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
 ```
 
 And provide the output address and a public key to the network trustees.
@@ -230,12 +226,12 @@ an account with `NodeAdmin` role. And **wait** until:
 
 *   Account is created
 *   The node completed a catch-up:
-    *   `dclcli status --node <ip:port>` returns `false` for `catching_up` field
+    *   `dcld status --node <ip:port>` returns `false` for `catching_up` field
 
 ### Make the node a validator
 
 ```bash
-$ dclcli tx validator add-node \
+$ dcld tx validator add-node \
     --validator-address=<validator address> --validator-pubkey=<validator pubkey> \
     --name=<node name> --from=<key name>
 ```
@@ -246,7 +242,7 @@ If the transaction has been successfully written you would find `"success": true
 
 Provide the node's `ID`, `IP` and a peer port (by default `26656`) to other validator admins.
 
-*Note* Node `ID` can be found either in the output of the `run_dcl_node` script or using `dclcli status` command.
+*Note* Node `ID` can be found either in the output of the `run_dcl_node` script or using `dcld status` command.
 
 ### (Optional) Create a key for a new trustee
 
@@ -282,18 +278,18 @@ As a general guidance you may consider to use only the peers you own and/or trus
 ## Deployment Verification
 
 *   Check the account:
-    *   `dclcli query auth account --address=<address>`
+    *   `dcld query auth account --address=<address>`
 *   Check the node is running properly:
-    *   `dclcli status --node <ip:port>`
-    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcld/config/config.toml`
+    *   `dcld status --node <ip:port>`
+    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
     *   Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 *   Get the list of nodes participating in the consensus for the last block:
-    *   `dclcli tendermint-validator-set`.
-    *   You can pass the additional value to get the result for a specific height: `dclcli tendermint-validator-set 100`.
+    *   `dcld tendermint-validator-set`.
+    *   You can pass the additional value to get the result for a specific height: `dcld tendermint-validator-set 100`.
 
 ## Validator Node Maintenance
 
-*   `persistent_peers` field in `$HOME/.dcld/config/config.toml` should include the latest version of the validators list
+*   `persistent_peers` field in `$HOME/.dcl/config/config.toml` should include the latest version of the validators list
 
     *   you can use [update_peers](../deployment/scripts/update_peers)
 

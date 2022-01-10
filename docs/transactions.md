@@ -29,7 +29,7 @@ This is useful to avoid correlation by the sender's IP address.
     - See `CLI` section for every write request (transaction).
     - Example
         ```bash
-        dclcli tx model add-model --vid 1 --pid 1 --deviceTypeID 1 --productName "Device #1" --productLabel "Device Description" --partNumber "SKU12FS" --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
+        dcld tx model add-model --vid 1 --pid 1 --deviceTypeID 1 --productName "Device #1" --productLabel "Device Description" --partNumber "SKU12FS" --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y
         ```
 - CLI (keys at the edge)
     - There are two CLIs are started in a CLI mode.
@@ -39,14 +39,14 @@ This is useful to avoid correlation by the sender's IP address.
     - CLI 2: Register account containing generated `Address` and `PubKey` on the ledger.
     - CLI 2: Build transaction using the account (`--from`) and `--generate-only` flag.
     - CLI 2: Fetch `account number` and `sequence`
-    - CLI 1: Sign the transaction manually. `dclcli tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
+    - CLI 1: Sign the transaction manually. `dcld tx sign [path-to-txn-file] --from [address] --account-number [value] --sequence [value] --gas "auto" --offline`
     - CLI 2: Broadcast signed transaction using CLI (`broadcast command)
     - Example
         ```bash
-        CLI 2: dclcli tx model add-model --vid 1 --pid 1 --deviceTypeID 1 --productName "Device #1" --productLabel "Device Description" --partNumber "SKU12FS" --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
-        CLI 2: dclcli query auth all-accounts
-        CLI 1: dclcli tx sign /home/artem/dc-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
-        CLI 2: dclcli tx broadcast /home/artem/dc-ledger/txn.json
+        CLI 2: dcld tx model add-model --vid 1 --pid 1 --deviceTypeID 1 --productName "Device #1" --productLabel "Device Description" --partNumber "SKU12FS" --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --generate-only
+        CLI 2: dcld query auth all-accounts
+        CLI 1: dcld tx sign /home/artem/dc-ledger/txn.json --from cosmos1ar04n6hxwk8ny54s2kzkpyqjcsnqm7jzv5y62y --account-number 0 --sequence 24 --gas "auto" --offline --output-document txn.json
+        CLI 2: dcld tx broadcast /home/artem/dc-ledger/txn.json
         ```
 - Non-trusted REST API (keys at the edge):
     - CLI is started in a server mode.
@@ -186,7 +186,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - The current number of required approvals: 
     - 2
 - CLI command: 
-    -   `dclcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
+    -   `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 - REST API: 
     -   POST `/pki/certs/proposed/root`
 - Validation:
@@ -218,7 +218,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - The current number of required approvals: 
     - 2
 - CLI command: 
-    -   `dclcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dcld tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PATCH `/pki/certs/proposed/root/<subject>/<subject_key_id>`
 - Validation:
@@ -242,7 +242,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 - Who can send: 
     - Any role
 - CLI command: 
-    -   `dclcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
+    -   `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 - REST API: 
     -   POST `/pki/certs`
 - Validation:
@@ -277,7 +277,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - Who can send: 
     - Any role; owner
 - CLI command: 
-    -   `dclcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dcld tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   DELETE `/pki/certs/<subject>/<subject_key_id>`
 
@@ -300,7 +300,7 @@ then the certificate will be in a pending state until sufficient number of other
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dcld tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PUT `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
     
@@ -326,7 +326,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+    -   `dcld tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 - REST API: 
     -   PATCH `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
         
@@ -339,7 +339,7 @@ Gets all proposed but not approved root certificates.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query pki all-proposed-x509-root-certs ... `
+    -   `dcld query pki all-proposed-x509-root-certs ... `
 - REST API: 
     -   GET `/pki/certs/proposed/root`
 - Result:
@@ -372,7 +372,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dcld query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/proposed/root/<subject>/<subject_key_id>`
 ```json
@@ -399,7 +399,7 @@ Use `GET_ALL_REVOKED_X509_CERTS_ROOT` to get a list of all revoked root certific
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query pki all-x509-root-certs .... `
+    -   `dcld query pki all-x509-root-certs .... `
 - REST API: 
     -   GET `/pki/certs/root`
 ```json
@@ -437,7 +437,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dcld query pki x509-cert --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/<subject>/<subject_key_id>`
 ```json
@@ -474,7 +474,7 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
   - `subject_key_id`: string  - certificates's `Subject Key Id`
   - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
+    -   `dcld query pki x509-cert-chain --subject=<string> --subject-key-id=<hex string> ... `
 - REST API: 
     -   GET `/pki/certs/chain/<subject>/<subject_key_id>`
 ```json
@@ -518,7 +518,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
-    -   `dclcli query pki all-x509-certs .... `
+    -   `dcld query pki all-x509-certs .... `
 - REST API: 
     -   GET `/pki/certs`
     -   GET `/pki/certs?root_subject=<>`
@@ -564,7 +564,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id`
 - CLI command: 
-    -   `dclcli query pki all-subject-x509-certs --subject=<string> .... `
+    -   `dcld query pki all-subject-x509-certs --subject=<string> .... `
 - REST API: 
     -   GET `/pki/certs/<subject>`
     -   GET `/pki/certs/<subject>?root_subject=<>`
@@ -602,7 +602,7 @@ Gets all proposed but not approved root certificates to be revoked.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query pki all-proposed-x509-root-certs-to-revoke .... `
+    -   `dcld query pki all-proposed-x509-root-certs-to-revoke .... `
 - REST API: 
     -   GET `/pki/certs/proposed/revoked/root`
 
@@ -615,7 +615,7 @@ Gets a proposed but not approved root certificate to be revoked.
   - `subject`: string  - certificates's `Subject`
   - `subject_key_id`: string  - certificates's `Subject Key Id`
 - CLI command: 
-    -   `dclcli query pki proposed-x509-root-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
+    -   `dcld query pki proposed-x509-root-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
 - REST API: 
     -   GET `/pki/certs/proposed/revoked/root/<subject>/<subject_key_id>`
 
@@ -628,7 +628,7 @@ Gets all revoked certificates (both root and non-root).
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query pki all-revoked-x509-certs .... `
+    -   `dcld query pki all-revoked-x509-certs .... `
 - REST API: 
     -   GET `/pki/certs/revoked`
 
@@ -641,7 +641,7 @@ Gets all revoked root certificates.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query pki all-revoked-x509-root-certs .... `
+    -   `dcld query pki all-revoked-x509-root-certs .... `
 - REST API: 
     -   GET `/pki/certs/revoked/root`    
 
@@ -659,7 +659,7 @@ only the certificate chains started with the given root certificate are returned
   - `root_subject`: string (optional) - root certificates's `Subject`
   - `root_subject_key_id`: string (optional) - root certificates's `Subject Key Id` 
 - CLI command: 
-    -   `dclcli query pki all-x509-certs-delta --since=<integer>.... `
+    -   `dcld query pki all-x509-certs-delta --since=<integer>.... `
 - REST API: 
     -   GET `/pki/certs?since=<>`
     -   GET `/pki/certs?since=<>;root_subject=<>;root_subject_key_id={}`
@@ -692,7 +692,7 @@ a new model info with a new `vid` or `pid` can be created.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
   
-  Example: `dclcli tx model add-model --vid=1 --pid=1 --deviceTypeID=1 --productName="Device #1" --productLabel="Device Description" --partNumber="SKU12FS"  --from="jack"`
+  Example: `dcld tx model add-model --vid=1 --pid=1 --deviceTypeID=1 --productName="Device #1" --productLabel="Device Description" --partNumber="SKU12FS"  --from="jack"`
 - In State:
   - `model` store  
   - `1:<vid>:<pid>` : `<model info>`
@@ -700,7 +700,7 @@ a new model info with a new `vid` or `pid` can be created.
 - Who can send: 
     - Vendor account who is associated with given vid
 - CLI command: 
-    -   `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint32> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
+    -   `dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint32> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
 --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string> --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<uint32> --productURL=<string> --from=<account> .... `
 - REST API: 
     -   POST `/model/models`
@@ -737,7 +737,7 @@ All non-edited fields remain the same.
 - Who can send: 
     - Vendor account associated with the same vid
 - CLI command: 
-    -   `dclcli tx model update-model --vid=<uint16> --pid=<uint16> --userManualUrl=<string> --from=<account> .... `
+    -   `dcld tx model update-model --vid=<uint16> --pid=<uint16> --userManualUrl=<string> --from=<account> .... `
 - REST API: 
     -   PUT `/model/models/vid/pid`
 
@@ -751,7 +751,7 @@ Gets all Model Infos for all vendors.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query model all-models ...`
+    -   `dcld query model all-models ...`
 - REST API: 
     -   GET `/model/models`
 - Result
@@ -781,7 +781,7 @@ Gets all Model Info by the given Vendor (`vid`).
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `dclcli query model vendor-models --vid=<uint16>`
+    -   `dcld query model vendor-models --vid=<uint16>`
 - REST API: 
     -   GET `/model/models/vid`
 - Result
@@ -812,7 +812,7 @@ Gets a Model Info with the given `vid` (vendor ID) and `pid` (product ID).
     - `pid`: 16 bits int
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query model get-model --vid=<uint16> --pid=<uint16> .... `
+    -   `dcld query model get-model --vid=<uint16> --pid=<uint16> .... `
 - REST API: 
     -   GET `/model/models/vid/pid`
 - Result
@@ -850,7 +850,7 @@ Get a list of all Vendors (`vid`s).
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query model vendors .... `
+    -   `dcld query model vendors .... `
 - REST API: 
     -   GET `/model/vendors`
 - Result
@@ -900,7 +900,7 @@ If one of `OTA_URl`, `OTA_checksum` and `OTA_checksum_type` fields is set, then 
 - Who can send: 
     - Vendor with same vendorID
 - CLI command: 
-    -   dclcli tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack" .... `
+    -   dcld tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack" .... `
 - REST API: 
     -   POST `/model/version`
 
@@ -933,7 +933,7 @@ All non-edited fields remain the same.
 - Who can send: 
     - Vendor associated with the same vid
 - CLI command: 
-    -   `dclcli tx model update-model-version --vid=1 --pid=1 --softwareVersion=1 --releaseNotesURL="https://release.notes.url.info" --from=jack .... `
+    -   `dcld tx model update-model-version --vid=1 --pid=1 --softwareVersion=1 --releaseNotesURL="https://release.notes.url.info" --from=jack .... `
 - REST API: 
     -   PUT `/model/version/vid/pid/softwareVersion`
 
@@ -947,7 +947,7 @@ Gets all Model Software Versions for give `vid` `pid` combination.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query model all-model-versions ...`
+    -   `dcld query model all-model-versions ...`
 - REST API: 
     -   GET `/model/versions/vid/pid`
 - Result
@@ -995,7 +995,7 @@ Another test result can be submitted instead.
 - Who can send: 
     - TestHouse
 - CLI command: 
-    -   `dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
+    -   `dcld tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 - REST API: 
     -   POST `/compliancetest/testresults`
 
@@ -1010,7 +1010,7 @@ Gets a test result for the given `vid` (vendor ID) `pid` (product ID) and `softw
     - `softwareVersion` : 32 bits int
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliancetest test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> .... `
+    -   `dcld query compliancetest test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> .... `
 - REST API: 
     -   GET `/compliancetest/testresults/vid/pid/softwareVersion`
 - Result:
@@ -1066,7 +1066,7 @@ from the revocation list.
 - Who can send: 
     - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --from=<account> .... `
+    -   `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/certified/vid/pid/softwareVersion/softwareVersionString/certification_type`
     
@@ -1097,7 +1097,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 - Who can send: 
     - CertificationCenter
 - CLI command: 
-    -   `dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --revocationDate=<rfc3339 encoded date> --from=<account> .... `
+    -   `dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --revocationDate=<rfc3339 encoded date> --from=<account> .... `
 - REST API: 
     -   PUT `/compliance/revoked/vid/pid/softwareVersion/certification_type`    
     
@@ -1123,7 +1123,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
+    -   `dcld query compliance certified-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
 - REST API: 
     -   GET `/compliance/certified/vid/pid/softwareVersion/certification_type`
 - Result
@@ -1157,7 +1157,7 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
     - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
+    -   `dcld query compliance revoked-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
 - REST API: 
     -   GET `/compliance/revoked/vid/pid/softwareVersion/certification_type`
 - Result:
@@ -1186,7 +1186,7 @@ This function responds with `NotFoundError` (404 code) if compliance information
     - `certification_type`: string  - `matter or zigbee` is the and the only supported values for now
     - `prev-height`: optional(bool) - query data from previous height to avoid delay linked to state proof verification
 - CLI command: 
-    -   `dclcli query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
+    -   `dcld query compliance compliance-info --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<zigbee|matter> .... `
 - REST API: 
     -   GET `/compliance/vid/pid/softwareVersion/certification_type`
 - Result:
@@ -1245,7 +1245,7 @@ It contains information about revocation only, so it should be used in cases
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query compliance all-revoked-models ... `
+    -   `dcld query compliance all-revoked-models ... `
 - REST API: 
     -   GET `/compliance/revoked`
         - optional query parameter `certification_type` can be passed to filter by certification type.
@@ -1282,7 +1282,7 @@ revocation information for every vid/pid. It should be used in cases where compl
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query compliance all-certified-models `
+    -   `dcld query compliance all-certified-models `
 - REST API: 
     -   GET `/compliance/certified`
         - optional query parameter `certification_type` can be passed to filter by certification type.
@@ -1316,7 +1316,7 @@ Gets all stored compliance information records.
   - `skip`: optional(int)  - number records to skip (`0` by default)
   - `take`: optional(int)  - number records to take (all records are returned by default)
 - CLI command: 
-    -   `dclcli query compliance all-compliance-info-records`
+    -   `dcld query compliance all-compliance-info-records`
 - REST API: 
     -   GET `/compliance`
         - optional query parameter `certification_type` can be passed
@@ -1355,7 +1355,7 @@ revocation information for every vid/pid/softwareVersion. It should be used in c
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `dclcli query compliance certified-vendor-models --vid=<uint16> .... `
+    -   `dcld query compliance certified-vendor-models --vid=<uint16> .... `
 - REST API: 
     -   GET `/compliance/certified/vid`
     
@@ -1371,7 +1371,7 @@ It contains information about revocation only, so  it should be used in cases
 - Parameters:
     - `vid`: 16 bits int
 - CLI command: 
-    -   `dclcli query compliance revoked-vendor-models --vid=<uint16>  .... `
+    -   `dcld query compliance revoked-vendor-models --vid=<uint16>  .... `
 - REST API: 
     -   GET `/compliance/revoked/vid`
 
@@ -1387,7 +1387,7 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `dclcli query compliance all-certified-models-delta `
+    -   `dcld query compliance all-certified-models-delta `
 - REST API: 
     -   GET `/compliance/certified?since=<>`
     
@@ -1403,7 +1403,7 @@ revocation information for every vid/pid. It should be used in cases where compl
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `dclcli query compliance all-revoked-models-delta `
+    -   `dcld query compliance all-revoked-models-delta `
 - REST API: 
     -   GET `/compliance/revoked?since=<>`
     
@@ -1415,7 +1415,7 @@ Gets a delta of all compliance info records which has been added or revoked sinc
 - Parameters: 
   - `since`: integer - the last ledger's height the user has locally.
 - CLI command: 
-    -   `dclcli query compliance all-compliance-info-records-delta `
+    -   `dcld query compliance all-compliance-info-records-delta `
 - REST API: 
     -   GET `/compliance?since=<>`
     
@@ -1441,7 +1441,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --vid=<uint16> --from=<trustee name>`
+    -   `dcld tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --vid=<uint16> --from=<trustee name>`
 - REST API: 
     -   POST `/auth/accounts/proposed`
     
@@ -1461,7 +1461,7 @@ The account is not active until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
+    -   `dcld tx auth approve-add-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   PATCH `/auth/accounts/proposed/<address>`
     
@@ -1484,7 +1484,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx auth propose-revoke-account --address=<account address> --from=<trustee name>`
+    -   `dcld tx auth propose-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   POST `/auth/accounts/proposed/revoked`
     
@@ -1504,7 +1504,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx auth approve-revoke-account --address=<account address> --from=<trustee name>`
+    -   `dcld tx auth approve-revoke-account --address=<account address> --from=<trustee name>`
 - REST API: 
     -   PATCH `/auth/accounts/proposed/revoked/<address>`
     
@@ -1515,7 +1515,7 @@ Gets all proposed but not approved accounts.
 
 - Parameters: No
 - CLI command: 
-    -   `dclcli query auth all-proposed-accounts .... `
+    -   `dcld query auth all-proposed-accounts .... `
 - REST API: 
     -   GET `/auth/accounts/proposed`
     
@@ -1526,7 +1526,7 @@ Gets all accounts. Revoked accounts are not returned.
 
 - Parameters: No
 - CLI command: 
-    -   `dclcli query auth all-accounts .... `
+    -   `dcld query auth all-accounts .... `
 - REST API: 
     -   GET `/auth/accounts`           
 
@@ -1538,7 +1538,7 @@ Gets an accounts by the address. Revoked accounts are not returned.
 - Parameters:
     - `address`
 - CLI command: 
-    -   `dclcli query auth account .... `
+    -   `dcld query auth account .... `
 - REST API: 
     -   GET `/auth/accounts/<address>`         
     
@@ -1549,7 +1549,7 @@ Gets all proposed but not approved accounts to be revoked.
 
 - Parameters: No
 - CLI command: 
-    -   `dclcli query auth all-proposed-accounts-to-revoke`
+    -   `dcld query auth all-proposed-accounts-to-revoke`
 - REST API: 
     -   GET `/auth/accounts/proposed/revoked`
     
@@ -1568,7 +1568,7 @@ Rotate's the Account's public key by the owner.
 - Who can send: 
     - Any role; owner
 - CLI command: 
-    -   `dclcli tx auth rotate-key .... `
+    -   `dcld tx auth rotate-key .... `
 - REST API: 
     -   PUT `/auth/accounts/<address>`
     
@@ -1597,7 +1597,7 @@ Adds a new Validator node.
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `dclcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
+    -   `dcld tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name> .... `
 - REST API: 
     -   POST `/validators`
 
@@ -1614,7 +1614,7 @@ In order to get an active validator set use `state` query parameter or specific 
   - `take`: optional(int)  - number records to take (all records are returned by default)
   - `state`: string (optional) - state of the validator (active/jailed)
 - CLI command: 
-    -   `dclcli query validator all-nodes .... `
+    -   `dcld query validator all-nodes .... `
 - REST API: 
     -   GET `/validators`   
 - Result:
@@ -1652,7 +1652,7 @@ Gets a validator node.
 - Parameters:
     - `validator_address`: string // the tendermint validator address; bech32 encoded
 - CLI command: 
-    -   `dclcli query validator node --validator-address=<validator address>.... `
+    -   `dcld query validator node --validator-address=<validator address>.... `
 - REST API: 
     -   GET `/validators/<validator_address>`   
 - Result:
@@ -1695,7 +1695,7 @@ Updates the Validator node by the owner. Only `description` can be changed.
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `dclcli tx validator update-node --validator-address=<validator address> --from=<owner>.... `
+    -   `dcld tx validator update-node --validator-address=<validator address> --from=<owner>.... `
 - REST API: 
     -   PUT `/validators/<validator_address>`    
 
@@ -1716,7 +1716,7 @@ Deletes the Validator node (removes from the validator set) by the owner.
 - Who can send: 
     - NodeAdmin; owner
 - CLI command: 
-    -   `dclcli tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
+    -   `dcld tx validator remove-node --validator-address=<validator address> --from=<owner>.... `
 - REST API: 
     -   DELETE `/validators/<validator_address>`
 
@@ -1734,7 +1734,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx validator propose-remove-node .... `
+    -   `dcld tx validator propose-remove-node .... `
 - REST API: 
     -   POST `/validators/proposed/removed`
 
@@ -1751,7 +1751,7 @@ The account is not removed until sufficient number of Trustees approve it.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx validator approve-remove-node .... `
+    -   `dcld tx validator approve-remove-node .... `
 - REST API: 
     -   PATCH `/validators/proposed/removed/<validator_address>`
                       
@@ -1774,7 +1774,7 @@ the node will be unjailed and returned to the active validator set.
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dclcli tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
+    -   `dcld tx validator unjail-node --validator-address=<validator address> --from=<trustee>.... `
 - REST API: 
     -   PATCH `/validators/<validator_address>`
             
@@ -1786,7 +1786,7 @@ Gets all proposed but not approved validator nodes to be removed.
 
 - Parameters: No
 - CLI command: 
-    -   `dclcli query validator all-proposed-nodes-to-remove .... `
+    -   `dcld query validator all-proposed-nodes-to-remove .... `
 - REST API: 
     -   GET `/validators/proposed/removed`   
     
@@ -1803,7 +1803,7 @@ Sign transaction by the given key.
     - `sequence` - (optional) the sequence number of the signing account.
     - `chain-id` - (optional) chain id.
 - CLI command: 
-    -   `dclcli tx sign [path-to-txn-file] --from [address]`
+    -   `dcld tx sign [path-to-txn-file] --from [address]`
     - Transaction:
         ```
         {
@@ -1854,7 +1854,7 @@ Broadcast transaction to the ledger.
 - Parameters:
     - `txn` - transaction to broadcast
 - CLI command: 
-    -   `dclcli tx broadcast [path-to-txn-file]`
+    -   `dcld tx broadcast [path-to-txn-file]`
 - REST API: 
     - POST `/tx/broadcast`  
 - Transaction:
@@ -1889,7 +1889,7 @@ Query status of a node.
 - Parameters:
     - `node`: optional(string) - node physical address to query (by default queries the node specified in CLI config file or else "tcp://localhost:26657")
 - CLI command: 
-    -   `dclcli status [--node=<node ip>]`
+    -   `dcld status [--node=<node ip>]`
         ```
 - REST API: 
     - GET `/status?node=<node ip>`  
@@ -1937,7 +1937,7 @@ Get the list of tendermint validators participating in the consensus at given he
 - Parameters:
     - `height`: optional(uint) - height to query (the latest by default)
 - CLI command: 
-    -   `dclcli tendermint-validator-set [height]`
+    -   `dcld tendermint-validator-set [height]`
         ```
 - REST API: 
     - GET `/validator-set?height=<height>`

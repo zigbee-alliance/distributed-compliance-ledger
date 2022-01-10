@@ -43,7 +43,7 @@ the following instructions can be used for every role (see [Use Case Diagrams](u
 
 ## CLI Configuration
 
-CLI configuration file can be created or updated by executing of the command: `dclcli config <key> [value]`.
+CLI configuration file can be created or updated by executing of the command: `dcld config <key> [value]`.
 Here is the list of supported settings:
 * chain-id <chain id> - unique chain ID of the network you are going to connect to
 * output <type> - Output format (text/json)
@@ -55,14 +55,14 @@ Here is the list of supported settings:
 
 In order to connect the CLI to a DC Ledger Network (Chain), the following parameters should be used:
 
-* `dclcli config chain-id <chain-id>` - `<chain-id>` defines the Network you want to connect to
+* `dcld config chain-id <chain-id>` - `<chain-id>` defines the Network you want to connect to
     * Use `testnet` if you want to connect to persistent Test Net
     * A full list of available persistent chains can be found in [Persistent Chains](../deployment/persistent_chains)
     where every sub-folder matches the corresponding chain-id.
-* `dclcli config output json` - Output format (text/json).
-* `dclcli config indent true` - Add indent to JSON response.
-* `dclcli config trust-node false` - Verify proofs for node responses.
-* `dclcli config node <address>` - Address of a node to connect.
+* `dcld config output json` - Output format (text/json).
+* `dcld config indent true` - Add indent to JSON response.
+* `dcld config trust-node false` - Verify proofs for node responses.
+* `dcld config node <address>` - Address of a node to connect.
     * Example: `tcp://18.157.114.34:26657` or `on1.testnet.dcl.dev.dsr-corporation.com:26657`.
     * The address there is the address (IP or domain name) of one of the nodes (Validators or Observers) from the Network you are going to connect to.
     * A list of Observer Node addresses for persistent networks (such as the Test Net)
@@ -82,19 +82,19 @@ In order to send write transactions to the ledger you need:
   - Sign every transaction by the private key.
 
 Here is steps for getting an account:
-* Generate keys and local account: `dclcli keys add <account name>`.
+* Generate keys and local account: `dcld keys add <account name>`.
     * You can remember and securely save the mnemonic phrase shown after the key is created
         to be able to recover the key later.
 * Share generated `address` and `pubkey` with a number of `Trustee`s sufficient for account addition operation.
-* One of `Trustee`s proposes to add the account to the ledger: `dclcli tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --vid=<vendorID for vendor role> --from=<trustee name>` (p.s. A vendor role is tied to a Vendor ID, hence while proposing a Vendor Role vid is a required field.)
-* Sufficient number of other `Trustee`s approve the proposed account: `dclcli tx auth approve-add-account --address=<account address> --from=<trustee name>`
-* Check that the active account exists: `dclcli query auth account --address=<account address>`
+* One of `Trustee`s proposes to add the account to the ledger: `dcld tx auth propose-add-account --address=<account address> --pubkey=<account pubkey> --roles=<role1,role2,...> --vid=<vendorID for vendor role> --from=<trustee name>` (p.s. A vendor role is tied to a Vendor ID, hence while proposing a Vendor Role vid is a required field.)
+* Sufficient number of other `Trustee`s approve the proposed account: `dcld tx auth approve-add-account --address=<account address> --from=<trustee name>`
+* Check that the active account exists: `dcld query auth account --address=<account address>`
 
 Example:
-* `dclcli keys add steve`
-* `dclcli tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --roles=Vendor,NodeAdmin --vid=4563 --from jack`
-* `dclcli tx auth approve-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --from alice`
-* `dclcli query auth account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
+* `dcld keys add steve`
+* `dcld tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --roles=Vendor,NodeAdmin --vid=4563 --from jack`
+* `dcld tx auth approve-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --from alice`
+* `dcld query auth account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
 ## Exporting and Importing Accounts
 
@@ -107,13 +107,13 @@ There are two options on how it can be done:
 Example:
 * Recovering an exiting key:
 
-    `dclcli keys add jack --recover`
+    `dcld keys add jack --recover`
 
 * Exporting and importing a key:
 
-    * `dclcli keys export jack`
+    * `dcld keys export jack`
     * store the exported ASCII-armored encrypted key to a file `jack_exported_priv_key_file.txt`
-    * `dclcli keys import jack jack_exported_priv_key_file.txt`
+    * `dcld keys import jack jack_exported_priv_key_file.txt`
 
 
 ## Trustee Instructions
@@ -123,7 +123,7 @@ After this account goes to the proposed accounts set. Then this account must be 
 Once approved the account can be used to send transactions. See [use_case_txn_auth](use_cases/use_cases_txn_auth.png).
 
 ##### 1. Create an Account proposal for the user
-  Command: `dclcli tx auth propose-add-account --address=<string> --pubkey=<string> --roles=<roles> --from=<account>`
+  Command: `dcld tx auth propose-add-account --address=<string> --pubkey=<string> --roles=<roles> --from=<account>`
 
   Flags:
   - address: `string` - bench32 encoded account address
@@ -131,76 +131,76 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
   - roles: `optional(string)` - comma-separated list of roles (supported roles: Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin)
   - from: `string` - name or address of private key with which to sign
 
-  Example: `dclcli tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --from=jack`
+  Example: `dcld tx auth propose-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --pubkey=cosmospub1addwnpepqtrnrp93hswlsrzvltc3n8z7hjg9dxuh3n4rkp2w2verwfr8yg27c95l4k3 --roles=Vendor,NodeAdmin --from=jack`
 
 ##### 2. Approve proposed Account
-  Command: `dclcli tx auth approve-add-account --address=<string> --from=<account>`
+  Command: `dcld tx auth approve-add-account --address=<string> --from=<account>`
 
   Flags:
   - address: `string` - bench32 encoded account address to approve
   - from: `string` - name or address of private key with which to sign
 
-  Example: `dclcli tx auth approve-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
+  Example: `dcld tx auth approve-add-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
 ##### 3. Propose revocation of an Account
-  Command: `dclcli tx auth propose-revoke-account --address=<string> --from=<account>`
+  Command: `dcld tx auth propose-revoke-account --address=<string> --from=<account>`
 
   Flags:
   - address: `string` - bench32 encoded account address to approve
   - from: `string` - name or address of private key with which to sign
 
-  Example: `dclcli tx auth propose-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
+  Example: `dcld tx auth propose-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
 ##### 4. Approve revocation of an Account
-  Command: `dclcli tx auth approve-revoke-account --address=<string> --from=<account>`
+  Command: `dcld tx auth approve-revoke-account --address=<string> --from=<account>`
 
   Flags:
   - address: `string` - bench32 encoded account address to approve
   - from: `string` - name or address of private key with which to sign
 
-  Example: `dclcli tx auth approve-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
+  Example: `dcld tx auth approve-revoke-account --address=cosmos15ljvz60tfekhstz8lcyy0c9l8dys5qa2nnx4d7 --from=jack`
 
 ##### 5. Propose a new self-signed root certificate
-  Command: `dclcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
+  Command: `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 
   Flags:
    - certificate: `string` - PEM encoded certificate (string or path to file containing data).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
+  Example: `dcld tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
+  Example: `dcld tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
 
 ##### 6. Approve proposed X509 root certificate  
-  Command: `dclcli tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+  Command: `dcld tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
    - subject: `string` - certificates's `Subject`.
    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+  Example: `dcld tx pki approve-add-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
  
 ##### 7. Propose revocation of an X509 root certificate  
-  Command: `dclcli tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+  Command: `dcld tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
    - subject: `string` - certificates's `Subject`.
    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki propose-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+  Example: `dcld tx pki propose-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
   
  
 ##### 8. Approve revocation of an X509 root certificate  
-  Command: `dclcli tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+  Command: `dcld tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
 
   Flags:
    - subject: `string` - certificates's `Subject`.
    - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki approve-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
+  Example: `dcld tx pki approve-revoke-x509-root-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`
   
   
 ## CA instructions
@@ -208,40 +208,40 @@ Currently any role can propose an X509 root certificate, or publish
 (intermediate or leaf) X509 certificates. 
 
 ##### 1. Propose a new self-signed root certificate
-  Command: `dclcli tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
+  Command: `dcld tx pki propose-add-x509-root-cert --certificate=<string-or-path> --from=<account>`
 
   Flags:
    - certificate: `string` - PEM encoded certificate (string or path to file containing data).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
+  Example: `dcld tx pki propose-add-x509-root-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `dclcli tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
+  Example: `dcld tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`
 
 ##### 2. Publish an intermediate or leaf X509 certificate
  The certificate must be signed by a chain of certificates which must be already present on the ledger.
  
- Command: `dclcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
+ Command: `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 
   Flags:
    - certificate: `string` - PEM encoded certificate (string or path to file containing data).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
+  Example: `dcld tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
+  Example: `dcld tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
 ##### 3. Revoke an intermediate or leaf X509 certificate
  Can be done by the certificate's issuer only.
  
- Command: `dclcli tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>``
+ Command: `dcld tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>``
 
   Flags:
     - subject: `string` - certificates's `Subject`.
     - subject-key-id: `string` - certificates's `Subject Key ID` (hex-encoded uppercase string).
     - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki revoke-x509-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`  
+  Example: `dcld tx pki revoke-x509-cert --subject="CN=dsr-corporation.com" --subject-key-id="8A:E9:AC:D4:16:81:2F:87:66:8E:61:BE:A9:C5:1C:0:1B:F7:BB:AE" --from=jack`  
     
     
 ## Vendor Instructions
@@ -249,15 +249,15 @@ Currently any role can propose an X509 root certificate, or publish
 ##### 1. Publish an intermediate or leaf X509 certificate(s) to be used for signing X509 Certificates for every Device
 The certificate must be signed by a chain of certificates which must be already present on the ledger.
  
- Command: `dclcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
+ Command: `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 
   Flags:
    - certificate: `string` - PEM encoded certificate (string or path to file containing data).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
+  Example: `dcld tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
+  Example: `dcld tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
 
 
@@ -267,7 +267,7 @@ Add a new vendor contact info.
 
   Role: `Vendor`
   
-  Command: `dclcli tx vendorinfo add-vendor --companyLegalName=<string> --companyPreferredName=<string> --vendorName=<string> --vid=<uint16> ----vendorLandingPageURL=<url> --from=<account>`
+  Command: `dcld tx vendorinfo add-vendor --companyLegalName=<string> --companyPreferredName=<string> --vendorName=<string> --vid=<uint16> ----vendorLandingPageURL=<url> --from=<account>`
 
   Flags:
   - companyLegalName `string (max64)` - Company Legal Name
@@ -277,12 +277,12 @@ Add a new vendor contact info.
   - vid `uint16` - Vendor ID      
   
 
-  Example: `dclcli tx vendorinfo add-vendor --companyLegalName="XYZ Technology Solutions" --vid=123 --vendorName="XYZ Inc" --from="jack"`
+  Example: `dcld tx vendorinfo add-vendor --companyLegalName="XYZ Technology Solutions" --vid=123 --vendorName="XYZ Inc" --from="jack"`
 ##### 3. Add a new model info with the given VID/PID
 
   Role: `Vendor`
 
-  Command: `dclcli tx model add-model --vid=<uint16> --pid=<uint16> --productName=<string> --productLabel=<string or path> --sku=<string> --softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
+  Command: `dcld tx model add-model --vid=<uint16> --pid=<uint16> --productName=<string> --productLabel=<string or path> --sku=<string> --softwareVersion=<uint32> --softwareVersionString=<string> --hardwareVersion=<uint32> --hardwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -315,13 +315,13 @@ Add a new vendor contact info.
   - chipBlob: `optional(string)` - chipBlob SHALL identify CHIP specific configurations
   - vendorBlob: `optional(string)` - field for vendors to provide any additional metadata about the device model using a string, blob, or URL.  
 
-  Example: `dclcli tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack`
+  Example: `dcld tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack`
   
-  Example: `dclcli tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack --cid=1 --custom="Some Custom information"`
+  Example: `dcld tx model add-model --vid=1 --pid=1 --productName="Device #1" --productLabel="Device Description" --sku="SKU12FS" --softwareVersion="10123" --softwareVersionString="1.0b123"  --hardwareVersion="5123" --hardwareVersionString="5.1.23"  --cdVersionNumber="32" --from=jack --cid=1 --custom="Some Custom information"`
 
 ##### 4. Add a new model version for the given VID/PID and Software Version
 
-Command: `dclcli tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
+Command: `dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint16> --from=<account>`
 
   Flags:
 - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -339,29 +339,29 @@ Command: `dclcli tx model add-model-version --vid=<uint16> --pid=<uint16> --soft
   - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
   - releaseNotesURL `string` - URL that contains product specific web page that contains release notes for the device model.
 
-  Example: `dclcli tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack"`
+  Example: `dcld tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack"`
 ## Test House Instructions
 ##### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
 This step is needed for off-ledger certification use case only, see [use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png).
 
 The certificate must be signed by a chain of certificates which must be already present on the ledger.
  
- Command: `dclcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
+ Command: `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 
   Flags:
    - certificate: `string` - PEM encoded certificate (string or path to file containing data).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
+  Example: `dcld tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
+  Example: `dcld tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
 ##### 1B. Add a new testing result for the device model with the given VID/PID
 This step is needed for on-ledger certification use case only, see [use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png).
 
  The corresponding model must present on the ledger.
  
- Command: ` dclcli tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
+ Command: ` dcld tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
@@ -370,9 +370,9 @@ This step is needed for on-ledger certification use case only, see [use_cases_de
   - test-date: `string` -  date of test result (rfc3339 encoded)
   - from: `string` - Name or address of private key with which to sign
 
-  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dcld tx compliancetest add-test-result --vid=1 --pid=1 --test-result="Test Document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `dclcli tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dcld tx compliancetest add-test-result --vid=1 --pid=1 --test-result="path/to/document" --test-date="2020-04-16T06:04:57.05Z" --from=jack`
   
    
 ## Certification Center Instructions
@@ -381,22 +381,22 @@ This step is needed for off-ledger certification use case only, see [use_cases_d
 
 The certificate must be signed by a chain of certificates which must be already present on the ledger.
  
- Command: `dclcli tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
+ Command: `dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>`
 
   Flags:
    - certificate: `string` - PEM encoded certificate (string or path to file containing data).
    - from: `string` - Name or address of private key with which to sign.
 
-  Example: `dclcli tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
+  Example: `dcld tx pki add-x509-cert --certificate="/path/to/certificate/file" --from=jack`
   
-  Example: `dclcli tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
+  Example: `dcld tx pki add-x509-cert --certificate="----BEGIN CERTIFICATE----- ......" --from=jack`  
     
 ##### 1B. Certify the device model with the given VID/PID
 This step is needed for on-ledger certification use case only, see [use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png).
 
 The corresponding model and the test results must present on the ledger.
 
- Command: `dclcli tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zigbee|matter> --certificationDate=<rfc3339 encoded date> --from=<account>`
+ Command: `dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --certificationType=<zigbee|matter> --certificationDate=<rfc3339 encoded date> --from=<account>`
   
   Flags:
   - vid: `uint16` -  model vendor ID
@@ -406,14 +406,14 @@ The corresponding model and the test results must present on the ledger.
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of certification
 
-  Example: `dclcli tx compliance certify-model --vid=1 --pid=1 --certificationType="matter" --certificationDate="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dcld tx compliance certify-model --vid=1 --pid=1 --certificationType="matter" --certificationDate="2020-04-16T06:04:57.05Z" --from=jack`
 
 ##### 2. Revoke certification for the device model with the given VID/PID
 This step can be used in either on-ledger certification use case
  ([use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png))
   or off-ledger certification use case ([use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png)).
  
-  Command: ` dclcli tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --revocationDate=<rfc3339 encoded date> --from=<account>`
+  Command: ` dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --certificationType=<zb> --revocationDate=<rfc3339 encoded date> --from=<account>`
 
   Flags:
   - vid: `uint16` -  model vendor ID
@@ -423,9 +423,9 @@ This step can be used in either on-ledger certification use case
   - from: `string` - name or address of private key with which to sign
   - reason: `optional(string)` -  an optional comment describing the reason of revocation
 
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --from=jack`
+  Example: `dcld tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --from=jack`
   
-  Example: `dclcli tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
+  Example: `dcld tx compliance revoke-model --vid=1 --pid=1 --certificationType="zb" --revocationDate="2020-04-16T06:04:57.05Z" --reason "Some Reason" --from=jack`
   
  
 ## Node Admin Instructions (Setting up a new Validator Node)
@@ -443,9 +443,9 @@ can be found here: [running-node.md](running-node.md).
     for a list of available networks. Each subfolder there represents `<chain-id>` 
     and contains the genesis and persistent_peers files. 
     * Init Node: `dcld init <node name> --chain-id <chain-id>`.
-    * Fetch the network `genesis.json` file and put it into dcld's config directory (usually `$HOME/.dcld/config/`).
+    * Fetch the network `genesis.json` file and put it into dcld's config directory (usually `$HOME/.dcl/config/`).
     * In order to join network your node needs to know how to find alive peers. 
-    Update `persistent_peers` field of `$HOME/.dcld/config/config.toml` file to contain peers info in the format:
+    Update `persistent_peers` field of `$HOME/.dcl/config/config.toml` file to contain peers info in the format:
     `<node1 id>@<node1 listen_addr>,<node2 id>@<node2 listen_addr>,.....`
     * Open `26656` (p2p) and `26657` (RPC) ports.
     
@@ -458,33 +458,33 @@ can be found here: [running-node.md](running-node.md).
     * In the output, you can notice that `height` increases quickly over time. 
     This means that the node is in updating to the latest network state (it takes some time).
     
-        You can also check node status by connecting CLI to your local node `dclcli config node tcp://0.0.0.0:26657`
-        and executing the command `dclcli status` to get the current status.
+        You can also check node status by connecting CLI to your local node `dcld config node tcp://0.0.0.0:26657`
+        and executing the command `dcld status` to get the current status.
         The `true` value for `catching_up` field means that the node is in the updating process.
         The value of `latest_block_height` reflects the current node height.
 
     * Wait until the value of `catching_up` field gets to `false` value.
-    * Add validator node: `dclcli tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name>`
+    * Add validator node: `dcld tx validator add-node --validator-address=<validator address> --validator-pubkey=<validator pubkey> --name=<node name> --from=<name>`
 
 * Congrats! You are an owner of the validator node.
 
 * Check node is alive and participate in consensus:
-    * Get the list of all nodes: `dclcli query validator all-nodes`. 
+    * Get the list of all nodes: `dcld query validator all-nodes`. 
     The node must present in the list and has the following params: `power:10` and `jailed:false`.
-    * Get the list of nodes participating in the consensus for the last block: `dclcli tendermint-validator-set`
-        * You can pass the additional value to get the result for a specific height: `dclcli tendermint-validator-set 100`  
-    * Get the node status: `dclcli status --node <node ip>`
+    * Get the list of nodes participating in the consensus for the last block: `dcld tendermint-validator-set`
+        * You can pass the additional value to get the result for a specific height: `dcld tendermint-validator-set 100`  
+    * Get the node status: `dcld status --node <node ip>`
 
 Example:
 * `dcld init node-name --chain-id dclchain`
-* `cp /source/genesis.json $HOME/.dcld/config/`
-* `sed -i "s/persistent_peers = \"\"/<node id>@<node ip>,<node2 id>@<node2 ip>/g" $HOME/.dcld/config/config.toml`
+* `cp /source/genesis.json $HOME/.dcl/config/`
+* `sed -i "s/persistent_peers = \"\"/<node id>@<node ip>,<node2 id>@<node2 ip>/g" $HOME/.dcl/config/config.toml`
 * `sudo ufw allow 26656/tcp`
 * `sudo ufw allow 26657/tcp`
 * `dcld start`
 * `dcld status`
-* `dclcli tx validator add-node --validator-address=$(dcld tendermint show-address) --validator-pubkey=$(dcld tendermint show-validator) --name=node-name --from=node_admin`
-* `dclcli query validator all-nodes`
+* `dcld tx validator add-node --validator-address=$(dcld tendermint show-address) --validator-pubkey=$(dcld tendermint show-validator) --name=node-name --from=node_admin`
+* `dcld query validator all-nodes`
 
 ##### Policy
 
