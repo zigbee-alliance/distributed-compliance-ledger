@@ -10,7 +10,6 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmtypes "github.com/tendermint/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 )
 

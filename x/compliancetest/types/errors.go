@@ -6,7 +6,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// x/compliancetest module sentinel errors
+// x/compliancetest module sentinel errors.
 var (
 	ErrTestingResultsDoNotExist       = sdkerrors.Register(ModuleName, 201, "testing result does not exist")
 	ErrModelVersionStringDoesNotMatch = sdkerrors.Register(ModuleName, 202, "model version does not match")
@@ -23,7 +23,7 @@ func NewErrTestingResultsDoNotExist(vid interface{}, pid interface{}, softwareVe
 func NewErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},
 	softwareVersion interface{}, softwareVersionString interface{}) error {
 	return sdkerrors.Wrapf(ErrModelVersionStringDoesNotMatch,
-		"Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have "+
+		"Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have"+
 			" matching softwareVersionString=%v",
 		vid, pid, softwareVersion, softwareVersionString,
 	)

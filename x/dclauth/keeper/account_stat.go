@@ -16,7 +16,7 @@ func (k Keeper) SetAccountStat(ctx sdk.Context, accountStat types.AccountStat) {
 	store.Set([]byte{0}, b)
 }
 
-// GetAccountStat returns accountStat
+// GetAccountStat returns accountStat.
 func (k Keeper) GetAccountStat(ctx sdk.Context) (val types.AccountStat, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountStatKey))
 

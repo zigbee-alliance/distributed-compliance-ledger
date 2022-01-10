@@ -149,16 +149,14 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())
-	firstModel := test_model.NewMsgCreateModel(vid, pid)
-	firstModel.Creator = suite.GetAddress(vendorName).String()
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
 	sv := uint32(tmrand.Uint32())
 	svs := utils.RandString()
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs)
-	firstModelVersion.Creator = suite.GetAddress(vendorName).String()
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -237,16 +235,14 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 
 	// Publish second model info
 	new_pid := int32(tmrand.Uint16())
-	secondModel := test_model.NewMsgCreateModel(vid, new_pid)
-	secondModel.Creator = vendorAccount.Address
+	secondModel := test_model.NewMsgCreateModel(vid, new_pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	// Publish second modelVersion
 	new_sv := uint32(tmrand.Uint32())
 	new_svs := utils.RandString()
-	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, new_pid, new_sv, new_svs)
-	secondModelVersion.Creator = vendorAccount.Address
+	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, new_pid, new_sv, new_svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
@@ -281,40 +277,4 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 	// Query all test results
 	testResults, _ = GetAllTestResults(suite)
 	require.Equal(suite.T, 2, len(testResults))
-
-	require.Equal(suite.T, testResults[0].Vid, firstTestingResult.Vid)
-	require.Equal(suite.T, testResults[0].Pid, firstTestingResult.Pid)
-	require.Equal(suite.T, testResults[0].SoftwareVersion, firstTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[0].SoftwareVersionString, firstTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, 2, len(testResults[0].Results))
-
-	require.Equal(suite.T, testResults[0].Results[0].Vid, firstTestingResult.Vid)
-	require.Equal(suite.T, testResults[0].Results[0].Pid, firstTestingResult.Pid)
-	require.Equal(suite.T, testResults[0].Results[0].SoftwareVersion, firstTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[0].Results[0].SoftwareVersionString, firstTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, testResults[0].Results[0].TestResult, firstTestingResult.TestResult)
-	require.Equal(suite.T, testResults[0].Results[0].TestDate, firstTestingResult.TestDate)
-	require.Equal(suite.T, testResults[0].Results[0].Owner, firstTestingResult.Signer)
-
-	require.Equal(suite.T, testResults[0].Results[1].Vid, secondTestingResult.Vid)
-	require.Equal(suite.T, testResults[0].Results[1].Pid, secondTestingResult.Pid)
-	require.Equal(suite.T, testResults[0].Results[1].SoftwareVersion, secondTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[0].Results[1].SoftwareVersionString, secondTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, testResults[0].Results[1].TestResult, secondTestingResult.TestResult)
-	require.Equal(suite.T, testResults[0].Results[1].TestDate, secondTestingResult.TestDate)
-	require.Equal(suite.T, testResults[0].Results[1].Owner, secondTestingResult.Signer)
-
-	require.Equal(suite.T, testResults[1].Vid, secondModelTestingResult.Vid)
-	require.Equal(suite.T, testResults[1].Pid, secondModelTestingResult.Pid)
-	require.Equal(suite.T, testResults[1].SoftwareVersion, secondModelTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[1].SoftwareVersionString, secondModelTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, 1, len(testResults[1].Results))
-	require.Equal(suite.T, testResults[1].Results[0].Vid, secondModelTestingResult.Vid)
-	require.Equal(suite.T, testResults[1].Results[0].Pid, secondModelTestingResult.Pid)
-	require.Equal(suite.T, testResults[1].Results[0].SoftwareVersion, secondModelTestingResult.SoftwareVersion)
-	require.Equal(suite.T, testResults[1].Results[0].SoftwareVersionString, secondModelTestingResult.SoftwareVersionString)
-	require.Equal(suite.T, testResults[1].Results[0].TestResult, secondModelTestingResult.TestResult)
-	require.Equal(suite.T, testResults[1].Results[0].TestDate, secondModelTestingResult.TestDate)
-	require.Equal(suite.T, testResults[1].Results[0].Owner, secondModelTestingResult.Signer)
-
 }

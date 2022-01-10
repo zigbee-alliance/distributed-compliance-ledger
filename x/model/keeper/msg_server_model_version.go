@@ -46,7 +46,7 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		return nil, types.NewErrMaxSVLessThanMinSV(msg.MinApplicableSoftwareVersion, msg.MaxApplicableSoftwareVersion)
 	}
 
-	var modelVersion = types.ModelVersion{
+	modelVersion := types.ModelVersion{
 		Creator:                      msg.Creator,
 		Vid:                          msg.Vid,
 		Pid:                          msg.Pid,

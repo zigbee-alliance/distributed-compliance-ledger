@@ -31,7 +31,6 @@ func (k Keeper) PendingAccountRevocationAll(c context.Context, req *types.QueryA
 		pendingAccountRevocations = append(pendingAccountRevocations, pendingAccountRevocation)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -46,7 +45,6 @@ func (k Keeper) PendingAccountRevocation(c context.Context, req *types.QueryGetP
 	ctx := sdk.UnwrapSDKContext(c)
 
 	addr, err := sdk.AccAddressFromBech32(req.Address)
-
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +54,8 @@ func (k Keeper) PendingAccountRevocation(c context.Context, req *types.QueryGetP
 		addr,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetPendingAccountRevocationResponse{PendingAccountRevocation: val}, nil
+	return &types.QueryGetPendingAccountRevocationResponse{PendingAccountRevocation: &val}, nil
 }

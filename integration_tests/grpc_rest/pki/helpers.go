@@ -860,5 +860,4 @@ func PKIDemo(suite *utils.TestSuite) {
 
 	_, err = GetAllX509CertsBySubject(suite, testconstants.LeafSubject)
 	suite.AssertNotFound(err)
-
 }

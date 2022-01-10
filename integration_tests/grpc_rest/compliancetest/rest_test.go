@@ -32,6 +32,6 @@ import (
 
 //nolint:funlen
 func TestComplianceTestDemoREST(t *testing.T) {
-	suite := utils.SetupTest(t, testconstants.ChainID, false)
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	compliancetest.ComplianceTestDemo(&suite)
 }

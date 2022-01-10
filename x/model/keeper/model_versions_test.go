@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -12,7 +13,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNModelVersions(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ModelVersions {
@@ -41,6 +42,7 @@ func TestModelVersionsGet(t *testing.T) {
 		)
 	}
 }
+
 func TestModelVersionsRemove(t *testing.T) {
 	keeper, ctx := keepertest.ModelKeeper(t)
 	items := createNModelVersions(keeper, ctx, 10)
@@ -65,3 +67,4 @@ func TestModelVersionsGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllModelVersions(ctx)),
 	)
 }
+*/

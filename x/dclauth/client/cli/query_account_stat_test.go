@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"testing"
@@ -7,12 +8,11 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"google.golang.org/grpc/status"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"google.golang.org/grpc/status"
 )
 
 func networkWithAccountStatObjects(t *testing.T) (*network.Network, types.AccountStat) {
@@ -71,3 +71,4 @@ func TestShowAccountStat(t *testing.T) {
 		})
 	}
 }
+*/

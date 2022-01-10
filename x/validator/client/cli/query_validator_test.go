@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -9,15 +10,14 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func networkWithValidatorObjects(t *testing.T, n int) (*network.Network, []types.Validator) {
@@ -145,3 +145,4 @@ func TestListValidator(t *testing.T) {
 		require.Equal(t, objs, resp.Validator)
 	})
 }
+*/

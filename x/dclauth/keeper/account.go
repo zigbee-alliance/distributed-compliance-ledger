@@ -4,11 +4,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// SetAccount set a specific account in the store from its index
+// SetAccount set a specific account in the store from its index.
 func (k Keeper) SetAccountO(ctx sdk.Context, account types.Account) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 	b := k.cdc.MustMarshal(&account)
@@ -17,7 +16,7 @@ func (k Keeper) SetAccountO(ctx sdk.Context, account types.Account) {
 	), b)
 }
 
-// TODO issue 99: currently it's just a dirty fullfill
+// TODO issue 99: currently it's just a dirty fulfill
 //		to satisfy comsmos auth.keeper.AccountI ifaces
 func (k Keeper) SetAccount(ctx sdk.Context, account authtypes.AccountI) {
 	dclAcc, ok := account.(types.DCLAccountI)
@@ -35,7 +34,7 @@ func (k Keeper) SetAccount(ctx sdk.Context, account authtypes.AccountI) {
 	k.SetAccountO(ctx, *dclAccO)
 }
 
-// GetAccount returns a account from its index
+// GetAccount returns a account from its index.
 func (k Keeper) GetAccountO(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -55,7 +54,7 @@ func (k Keeper) GetAccountO(
 }
 
 // exists to satisfy cosmos AccountKeeper.GetAccount interface
-// TODO consider better way
+// TODO consider better way.
 func (k Keeper) GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI {
 	acc, found := k.GetAccountO(ctx, addr)
 	if !found {
@@ -74,7 +73,7 @@ func (k Keeper) IsAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
 	))
 }
 
-// RemoveAccount removes a account from the store
+// RemoveAccount removes a account from the store.
 func (k Keeper) RemoveAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -86,7 +85,7 @@ func (k Keeper) RemoveAccount(
 	))
 }
 
-// GetAllAccount returns all account
+// GetAllAccount returns all account.
 func (k Keeper) GetAllAccount(ctx sdk.Context) (list []types.Account) {
 	k.IterateAccounts(ctx, func(acc types.Account) (stop bool) {
 		list = append(list, acc)
@@ -162,12 +161,12 @@ func (k Keeper) CountAccountsWithRole(ctx sdk.Context, roleToCount types.Account
 	return res
 }
 
-// just a stub to have AccountKeeper.GetModuleAddress API filled
+// just a stub to have AccountKeeper.GetModuleAddress API filled.
 func (k Keeper) GetModuleAddress(moduleName string) sdk.AccAddress {
 	return nil
 }
 
-// just a stub to have AccountKeeper.GetParams API filled
+// just a stub to have AccountKeeper.GetParams API filled.
 func (k Keeper) GetParams(ctx sdk.Context) (params authtypes.Params) {
 	params = authtypes.DefaultParams()
 	return

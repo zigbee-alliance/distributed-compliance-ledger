@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -8,16 +9,15 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func networkWithApprovedCertificatesBySubjectObjects(t *testing.T, n int) (*network.Network, []types.ApprovedCertificatesBySubject) {
@@ -93,3 +93,4 @@ func TestShowApprovedCertificatesBySubject(t *testing.T) {
 		})
 	}
 }
+*/

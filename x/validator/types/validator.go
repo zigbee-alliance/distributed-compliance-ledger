@@ -1,16 +1,15 @@
 package types
 
 import (
-	abci "github.com/tendermint/tendermint/abci/types"
-	tmprotocrypto "github.com/tendermint/tendermint/proto/tendermint/crypto"
-	"sigs.k8s.io/yaml"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	abci "github.com/tendermint/tendermint/abci/types"
+	tmprotocrypto "github.com/tendermint/tendermint/proto/tendermint/crypto"
+	"sigs.k8s.io/yaml"
 )
 
 // TODO implement ValidatorI as export interface with:
@@ -59,7 +58,6 @@ func (v Validator) GetConsPubKey() (cryptotypes.PubKey, error) {
 	}
 
 	return pk, nil
-
 }
 
 func (v Validator) GetPower() int32 { return v.Power }
@@ -119,12 +117,12 @@ func (v Validator) String() string {
 	return string(out)
 }
 
-// return the redelegation
+// return the redelegation.
 func MustMarshalValidator(cdc codec.BinaryCodec, validator *Validator) []byte {
 	return cdc.MustMarshal(validator)
 }
 
-// unmarshal a redelegation from a store value
+// unmarshal a redelegation from a store value.
 func MustUnmarshalValidator(cdc codec.BinaryCodec, value []byte) Validator {
 	validator, err := UnmarshalValidator(cdc, value)
 	if err != nil {
@@ -134,7 +132,7 @@ func MustUnmarshalValidator(cdc codec.BinaryCodec, value []byte) Validator {
 	return validator
 }
 
-// unmarshal a redelegation from a store value
+// unmarshal a redelegation from a store value.
 func UnmarshalValidator(cdc codec.BinaryCodec, value []byte) (v Validator, err error) {
 	err = cdc.Unmarshal(value, &v)
 	return v, err
@@ -155,7 +153,7 @@ func (v Validator) TmConsPublicKey() (tmprotocrypto.PublicKey, error) {
 	return tmPk, nil
 }
 
-// GetConsAddr extracts Consensus key address
+// GetConsAddr extracts Consensus key address.
 func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
 	pk, ok := v.PubKey.GetCachedValue().(cryptotypes.PubKey)
 	if !ok {
@@ -165,7 +163,7 @@ func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
 	return sdk.ConsAddress(pk.Address()), nil
 }
 
-// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces
+// UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces.
 func (v Validator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pk cryptotypes.PubKey
 	return unpacker.UnpackAny(v.PubKey, &pk)

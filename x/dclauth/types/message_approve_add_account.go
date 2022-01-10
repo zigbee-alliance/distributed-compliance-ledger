@@ -3,6 +3,7 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 const TypeMsgApproveAddAccount = "approve_add_account"
@@ -54,6 +55,11 @@ func (msg *MsgApproveAddAccount) ValidateBasic() error {
 	_, err = sdk.AccAddressFromBech32(msg.Signer)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid Signer: (%s)", err)
+	}
+
+	err = validator.Validate(msg)
+	if err != nil {
+		return err
 	}
 
 	return nil

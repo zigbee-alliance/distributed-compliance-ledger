@@ -31,7 +31,6 @@ func (k Keeper) PendingAccountAll(c context.Context, req *types.QueryAllPendingA
 		pendingAccounts = append(pendingAccounts, pendingAccount)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -46,7 +45,6 @@ func (k Keeper) PendingAccount(c context.Context, req *types.QueryGetPendingAcco
 	ctx := sdk.UnwrapSDKContext(c)
 
 	addr, err := sdk.AccAddressFromBech32(req.Address)
-
 	if err != nil {
 		return nil, err
 	}
@@ -56,8 +54,8 @@ func (k Keeper) PendingAccount(c context.Context, req *types.QueryGetPendingAcco
 		addr,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetPendingAccountResponse{PendingAccount: val}, nil
+	return &types.QueryGetPendingAccountResponse{PendingAccount: &val}, nil
 }

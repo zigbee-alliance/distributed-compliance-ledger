@@ -15,8 +15,8 @@
 package model_test
 
 import (
-	//"net/http"
 
+	//"net/http".
 	"testing"
 
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -33,8 +33,32 @@ import (
 	TODO: provide tests for error cases
 */
 
-//nolint:funlen
 func TestModelDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.ModelDemo(&suite)
+}
+
+func TestAddModelByNonVendorREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelByNonVendor(&suite)
+}
+
+func TestAddModelByDifferentVendorREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelByDifferentVendor(&suite)
+}
+
+func TestAddModelTwiceREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.AddModelTwice(&suite)
+}
+
+func TestGetModelForUnknownREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.GetModelForUnknown(&suite)
+}
+
+func TestGetModelForInvalidVidPidREST(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.GetModelForInvalidVidPid(&suite)
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetApprovedCertificatesBySubject set a specific approvedCertificatesBySubject in the store from its index
+// SetApprovedCertificatesBySubject set a specific approvedCertificatesBySubject in the store from its index.
 func (k Keeper) SetApprovedCertificatesBySubject(ctx sdk.Context, approvedCertificatesBySubject types.ApprovedCertificatesBySubject) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedCertificatesBySubject)
@@ -15,7 +15,7 @@ func (k Keeper) SetApprovedCertificatesBySubject(ctx sdk.Context, approvedCertif
 	), b)
 }
 
-// GetApprovedCertificatesBySubject returns a approvedCertificatesBySubject from its index
+// GetApprovedCertificatesBySubject returns a approvedCertificatesBySubject from its index.
 func (k Keeper) GetApprovedCertificatesBySubject(
 	ctx sdk.Context,
 	subject string,
@@ -34,7 +34,7 @@ func (k Keeper) GetApprovedCertificatesBySubject(
 	return val, true
 }
 
-// RemoveApprovedCertificatesBySubject removes a approvedCertificatesBySubject from the store
+// RemoveApprovedCertificatesBySubject removes a approvedCertificatesBySubject from the store.
 func (k Keeper) RemoveApprovedCertificatesBySubject(
 	ctx sdk.Context,
 	subject string,
@@ -46,7 +46,7 @@ func (k Keeper) RemoveApprovedCertificatesBySubject(
 	))
 }
 
-// GetAllApprovedCertificatesBySubject returns all approvedCertificatesBySubject
+// GetAllApprovedCertificatesBySubject returns all approvedCertificatesBySubject.
 func (k Keeper) GetAllApprovedCertificatesBySubject(ctx sdk.Context) (list []types.ApprovedCertificatesBySubject) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -62,7 +62,7 @@ func (k Keeper) GetAllApprovedCertificatesBySubject(ctx sdk.Context) (list []typ
 	return
 }
 
-// Add ApprovedCertificates to a subject->subjectKeyId index
+// Add ApprovedCertificates to a subject->subjectKeyId index.
 func (k Keeper) AddApprovedCertificateBySubject(ctx sdk.Context, subject string, subjectKeyId string) {
 	approvedCertificatesBySubject, _ := k.GetApprovedCertificatesBySubject(ctx, subject)
 
@@ -79,7 +79,7 @@ func (k Keeper) AddApprovedCertificateBySubject(ctx sdk.Context, subject string,
 	k.SetApprovedCertificatesBySubject(ctx, approvedCertificatesBySubject)
 }
 
-// Remove revoked root certificate from the list
+// Remove revoked root certificate from the list.
 func (k Keeper) RemoveApprovedCertificateBySubject(ctx sdk.Context, subject string, subjectKeyId string) {
 	approvedCertificatesBySubject, _ := k.GetApprovedCertificatesBySubject(ctx, subject)
 

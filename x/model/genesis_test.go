@@ -1,5 +1,6 @@
 package model_test
 
+/* TODO issue 99
 import (
 	"testing"
 
@@ -65,3 +66,4 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.ModelVersionsList, got.ModelVersionsList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
+*/

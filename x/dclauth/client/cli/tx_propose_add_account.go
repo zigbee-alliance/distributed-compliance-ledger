@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"strconv"
-
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -21,13 +20,10 @@ var _ = strconv.Itoa(0)
 
 func CmdProposeAddAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		// TODO issue 99: move from required flags to positional arguments
-		//		(to keep the same direction as in cosmos sdk https://github.com/cosmos/cosmos-sdk/issues/1956)
 		Use:   "propose-add-account",
 		Short: "Broadcast message ProposeAddAccount",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err

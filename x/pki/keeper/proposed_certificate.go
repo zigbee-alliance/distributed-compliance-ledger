@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-// SetProposedCertificate set a specific proposedCertificate in the store from its index
+// SetProposedCertificate set a specific proposedCertificate in the store from its index.
 func (k Keeper) SetProposedCertificate(ctx sdk.Context, proposedCertificate types.ProposedCertificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
 	b := k.cdc.MustMarshal(&proposedCertificate)
@@ -16,7 +16,7 @@ func (k Keeper) SetProposedCertificate(ctx sdk.Context, proposedCertificate type
 	), b)
 }
 
-// GetProposedCertificate returns a proposedCertificate from its index
+// GetProposedCertificate returns a proposedCertificate from its index.
 func (k Keeper) GetProposedCertificate(
 	ctx sdk.Context,
 	subject string,
@@ -37,7 +37,7 @@ func (k Keeper) GetProposedCertificate(
 	return val, true
 }
 
-// RemoveProposedCertificate removes a proposedCertificate from the store
+// RemoveProposedCertificate removes a proposedCertificate from the store.
 func (k Keeper) RemoveProposedCertificate(
 	ctx sdk.Context,
 	subject string,
@@ -51,7 +51,7 @@ func (k Keeper) RemoveProposedCertificate(
 	))
 }
 
-// GetAllProposedCertificate returns all proposedCertificate
+// GetAllProposedCertificate returns all proposedCertificate.
 func (k Keeper) GetAllProposedCertificate(ctx sdk.Context) (list []types.ProposedCertificate) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -68,7 +68,7 @@ func (k Keeper) GetAllProposedCertificate(ctx sdk.Context) (list []types.Propose
 }
 
 // Check if the Proposed Certificate record associated with a
-// Subject/SubjectKeyID combination is present in the store
+// Subject/SubjectKeyID combination is present in the store.
 func (k Keeper) IsProposedCertificatePresent(
 	ctx sdk.Context,
 	subject string,

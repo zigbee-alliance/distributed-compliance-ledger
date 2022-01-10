@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// ApprovedCertificatesBySubjectKeyPrefix is the prefix to retrieve all ApprovedCertificatesBySubject
+	// ApprovedCertificatesBySubjectKeyPrefix is the prefix to retrieve all ApprovedCertificatesBySubject.
 	ApprovedCertificatesBySubjectKeyPrefix = "ApprovedCertificatesBySubject/value/"
 )
 
-// ApprovedCertificatesBySubjectKey returns the store key to retrieve a ApprovedCertificatesBySubject from the index fields
+// ApprovedCertificatesBySubjectKey returns the store key to retrieve a ApprovedCertificatesBySubject from the index fields.
 func ApprovedCertificatesBySubjectKey(
 	subject string,
 ) []byte {

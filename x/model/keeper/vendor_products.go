@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-// SetVendorProducts set a specific vendorProducts in the store from its index
+// SetVendorProducts set a specific vendorProducts in the store from its index.
 func (k Keeper) SetVendorProducts(ctx sdk.Context, vendorProducts types.VendorProducts) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorProductsKeyPrefix))
 	b := k.cdc.MustMarshal(&vendorProducts)
@@ -15,7 +15,7 @@ func (k Keeper) SetVendorProducts(ctx sdk.Context, vendorProducts types.VendorPr
 	), b)
 }
 
-// GetVendorProducts returns a vendorProducts from its index
+// GetVendorProducts returns a vendorProducts from its index.
 func (k Keeper) GetVendorProducts(
 	ctx sdk.Context,
 	vid int32,
@@ -34,7 +34,7 @@ func (k Keeper) GetVendorProducts(
 	return val, true
 }
 
-// RemoveVendorProducts removes a vendorProducts from the store
+// RemoveVendorProducts removes a vendorProducts from the store.
 func (k Keeper) RemoveVendorProducts(
 	ctx sdk.Context,
 	vid int32,
@@ -46,7 +46,7 @@ func (k Keeper) RemoveVendorProducts(
 	))
 }
 
-// GetAllVendorProducts returns all vendorProducts
+// GetAllVendorProducts returns all vendorProducts.
 func (k Keeper) GetAllVendorProducts(ctx sdk.Context) (list []types.VendorProducts) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorProductsKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
@@ -62,7 +62,7 @@ func (k Keeper) GetAllVendorProducts(ctx sdk.Context) (list []types.VendorProduc
 	return
 }
 
-// SetVendorProduct sets a product to existing or new VendorProducts
+// SetVendorProduct sets a product to existing or new VendorProducts.
 func (k Keeper) SetVendorProduct(
 	ctx sdk.Context,
 	vid int32,
@@ -83,7 +83,6 @@ func (k Keeper) SetVendorProduct(
 		if !productFound {
 			vendorProducts.Products = append(vendorProducts.Products, &product)
 		}
-
 	} else {
 		vendorProducts.Vid = vid
 		vendorProducts.Products = []*types.Product{&product}
@@ -92,7 +91,7 @@ func (k Keeper) SetVendorProduct(
 	k.SetVendorProducts(ctx, vendorProducts)
 }
 
-// RemoveVendorProduct removes a product from existing VendorProducts
+// RemoveVendorProduct removes a product from existing VendorProducts.
 func (k Keeper) RemoveVendorProduct(
 	ctx sdk.Context,
 	vid int32,

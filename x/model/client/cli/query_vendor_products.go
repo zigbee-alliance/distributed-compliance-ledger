@@ -10,9 +10,7 @@ import (
 )
 
 func CmdShowVendorProducts() *cobra.Command {
-	var (
-		vid int32
-	)
+	var vid int32
 
 	cmd := &cobra.Command{
 		Use:   "vendor-models",

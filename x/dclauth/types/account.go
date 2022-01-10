@@ -65,7 +65,7 @@ func (roles AccountRoles) Validate() error {
 	return nil
 }
 
-// TODO: think about better way
+// TODO: think about better way.
 func FromSlice(roles []AccountRole) *AccountRoles {
 	var res AccountRoles
 	for _, role := range roles {
@@ -98,7 +98,6 @@ func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID uint64) 
 // Validate checks for errors on the vesting and module account parameters.
 func (acc Account) Validate() error {
 	err := acc.BaseAccount.Validate()
-
 	if err != nil {
 		return err
 	}

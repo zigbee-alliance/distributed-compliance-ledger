@@ -32,7 +32,6 @@ func (k Keeper) ValidatorAll(c context.Context, req *types.QueryAllValidatorRequ
 		validators = append(validators, validator)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -61,8 +60,8 @@ func (k Keeper) Validator(c context.Context, req *types.QueryGetValidatorRequest
 		valAddr,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetValidatorResponse{Validator: val}, nil
+	return &types.QueryGetValidatorResponse{Validator: &val}, nil
 }

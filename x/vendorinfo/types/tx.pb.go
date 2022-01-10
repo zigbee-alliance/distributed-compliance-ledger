@@ -30,7 +30,7 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MsgCreateVendorInfo struct {
-	Creator              string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Creator              string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" validate:"required"`
 	VendorID             int32  `protobuf:"varint,2,opt,name=vendorID,proto3" json:"vendorID,omitempty" validate:"required,gte=0,lte=65535"`
 	VendorName           string `protobuf:"bytes,3,opt,name=vendorName,proto3" json:"vendorName,omitempty" validate:"required,min=2,max=32"`
 	CompanyLegalName     string `protobuf:"bytes,4,opt,name=companyLegalName,proto3" json:"companyLegalName,omitempty" validate:"required,min=2,max=64"`
@@ -150,7 +150,7 @@ func (m *MsgCreateVendorInfoResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgCreateVendorInfoResponse proto.InternalMessageInfo
 
 type MsgUpdateVendorInfo struct {
-	Creator              string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Creator              string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" validate:"required"`
 	VendorID             int32  `protobuf:"varint,2,opt,name=vendorID,proto3" json:"vendorID,omitempty" validate:"required,gte=0,lte=65535"`
 	VendorName           string `protobuf:"bytes,3,opt,name=vendorName,proto3" json:"vendorName,omitempty" validate:"required,min=2,max=32"`
 	CompanyLegalName     string `protobuf:"bytes,4,opt,name=companyLegalName,proto3" json:"companyLegalName,omitempty" validate:"required,min=2,max=64"`
@@ -269,142 +269,142 @@ func (m *MsgUpdateVendorInfoResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateVendorInfoResponse proto.InternalMessageInfo
 
-type MsgDeleteVendorInfo struct {
-	Creator  string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	VendorID int32  `protobuf:"varint,2,opt,name=vendorID,proto3" json:"vendorID,omitempty" validate:"required,gte=0,lte=65535"`
-}
+// type MsgDeleteVendorInfo struct {
+// 	Creator  string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" validate:"required"`
+// 	VendorID int32  `protobuf:"varint,2,opt,name=vendorID,proto3" json:"vendorID,omitempty" validate:"required,gte=0,lte=65535"`
+// }
 
-func (m *MsgDeleteVendorInfo) Reset()         { *m = MsgDeleteVendorInfo{} }
-func (m *MsgDeleteVendorInfo) String() string { return proto.CompactTextString(m) }
-func (*MsgDeleteVendorInfo) ProtoMessage()    {}
-func (*MsgDeleteVendorInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_193d895112924f09, []int{4}
-}
-func (m *MsgDeleteVendorInfo) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgDeleteVendorInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgDeleteVendorInfo.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgDeleteVendorInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeleteVendorInfo.Merge(m, src)
-}
-func (m *MsgDeleteVendorInfo) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgDeleteVendorInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeleteVendorInfo.DiscardUnknown(m)
-}
+// func (m *MsgDeleteVendorInfo) Reset()         { *m = MsgDeleteVendorInfo{} }
+// func (m *MsgDeleteVendorInfo) String() string { return proto.CompactTextString(m) }
+// func (*MsgDeleteVendorInfo) ProtoMessage()    {}
+// func (*MsgDeleteVendorInfo) Descriptor() ([]byte, []int) {
+// 	return fileDescriptor_193d895112924f09, []int{4}
+// }
+// func (m *MsgDeleteVendorInfo) XXX_Unmarshal(b []byte) error {
+// 	return m.Unmarshal(b)
+// }
+// func (m *MsgDeleteVendorInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+// 	if deterministic {
+// 		return xxx_messageInfo_MsgDeleteVendorInfo.Marshal(b, m, deterministic)
+// 	} else {
+// 		b = b[:cap(b)]
+// 		n, err := m.MarshalToSizedBuffer(b)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		return b[:n], nil
+// 	}
+// }
+// func (m *MsgDeleteVendorInfo) XXX_Merge(src proto.Message) {
+// 	xxx_messageInfo_MsgDeleteVendorInfo.Merge(m, src)
+// }
+// func (m *MsgDeleteVendorInfo) XXX_Size() int {
+// 	return m.Size()
+// }
+// func (m *MsgDeleteVendorInfo) XXX_DiscardUnknown() {
+// 	xxx_messageInfo_MsgDeleteVendorInfo.DiscardUnknown(m)
+// }
 
-var xxx_messageInfo_MsgDeleteVendorInfo proto.InternalMessageInfo
+// var xxx_messageInfo_MsgDeleteVendorInfo proto.InternalMessageInfo
 
-func (m *MsgDeleteVendorInfo) GetCreator() string {
-	if m != nil {
-		return m.Creator
-	}
-	return ""
-}
+// func (m *MsgDeleteVendorInfo) GetCreator() string {
+// 	if m != nil {
+// 		return m.Creator
+// 	}
+// 	return ""
+// }
 
-func (m *MsgDeleteVendorInfo) GetVendorID() int32 {
-	if m != nil {
-		return m.VendorID
-	}
-	return 0
-}
+// func (m *MsgDeleteVendorInfo) GetVendorID() int32 {
+// 	if m != nil {
+// 		return m.VendorID
+// 	}
+// 	return 0
+// }
 
-type MsgDeleteVendorInfoResponse struct {
-}
+// type MsgDeleteVendorInfoResponse struct {
+// }
 
-func (m *MsgDeleteVendorInfoResponse) Reset()         { *m = MsgDeleteVendorInfoResponse{} }
-func (m *MsgDeleteVendorInfoResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgDeleteVendorInfoResponse) ProtoMessage()    {}
-func (*MsgDeleteVendorInfoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_193d895112924f09, []int{5}
-}
-func (m *MsgDeleteVendorInfoResponse) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *MsgDeleteVendorInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgDeleteVendorInfoResponse.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *MsgDeleteVendorInfoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgDeleteVendorInfoResponse.Merge(m, src)
-}
-func (m *MsgDeleteVendorInfoResponse) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgDeleteVendorInfoResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgDeleteVendorInfoResponse.DiscardUnknown(m)
-}
+// func (m *MsgDeleteVendorInfoResponse) Reset()         { *m = MsgDeleteVendorInfoResponse{} }
+// func (m *MsgDeleteVendorInfoResponse) String() string { return proto.CompactTextString(m) }
+// func (*MsgDeleteVendorInfoResponse) ProtoMessage()    {}
+// func (*MsgDeleteVendorInfoResponse) Descriptor() ([]byte, []int) {
+// 	return fileDescriptor_193d895112924f09, []int{5}
+// }
+// func (m *MsgDeleteVendorInfoResponse) XXX_Unmarshal(b []byte) error {
+// 	return m.Unmarshal(b)
+// }
+// func (m *MsgDeleteVendorInfoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+// 	if deterministic {
+// 		return xxx_messageInfo_MsgDeleteVendorInfoResponse.Marshal(b, m, deterministic)
+// 	} else {
+// 		b = b[:cap(b)]
+// 		n, err := m.MarshalToSizedBuffer(b)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		return b[:n], nil
+// 	}
+// }
+// func (m *MsgDeleteVendorInfoResponse) XXX_Merge(src proto.Message) {
+// 	xxx_messageInfo_MsgDeleteVendorInfoResponse.Merge(m, src)
+// }
+// func (m *MsgDeleteVendorInfoResponse) XXX_Size() int {
+// 	return m.Size()
+// }
+// func (m *MsgDeleteVendorInfoResponse) XXX_DiscardUnknown() {
+// 	xxx_messageInfo_MsgDeleteVendorInfoResponse.DiscardUnknown(m)
+// }
 
-var xxx_messageInfo_MsgDeleteVendorInfoResponse proto.InternalMessageInfo
+// var xxx_messageInfo_MsgDeleteVendorInfoResponse proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*MsgCreateVendorInfo)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfo")
 	proto.RegisterType((*MsgCreateVendorInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfoResponse")
 	proto.RegisterType((*MsgUpdateVendorInfo)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfo")
 	proto.RegisterType((*MsgUpdateVendorInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfoResponse")
-	proto.RegisterType((*MsgDeleteVendorInfo)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo")
-	proto.RegisterType((*MsgDeleteVendorInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfoResponse")
+	// proto.RegisterType((*MsgDeleteVendorInfo)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfo")
+	// proto.RegisterType((*MsgDeleteVendorInfoResponse)(nil), "zigbeealliance.distributedcomplianceledger.vendorinfo.MsgDeleteVendorInfoResponse")
 }
 
 func init() { proto.RegisterFile("vendorinfo/tx.proto", fileDescriptor_193d895112924f09) }
 
 var fileDescriptor_193d895112924f09 = []byte{
-	// 551 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x95, 0xc1, 0x8e, 0xd2, 0x40,
-	0x18, 0xc7, 0xa9, 0xec, 0xae, 0x3a, 0xa7, 0xb5, 0x8b, 0x09, 0xa2, 0x16, 0x52, 0x4d, 0xdc, 0x03,
-	0xb4, 0x06, 0x84, 0x83, 0x09, 0x07, 0x59, 0x2e, 0x28, 0x6b, 0x48, 0xcd, 0x1a, 0xe3, 0x65, 0x53,
-	0x98, 0x8f, 0x71, 0x92, 0xb6, 0x53, 0xa7, 0xc3, 0x06, 0x7c, 0x08, 0xe3, 0x43, 0xf8, 0x04, 0xc6,
-	0x87, 0x30, 0xf1, 0xb2, 0xf1, 0xe4, 0x89, 0x18, 0x78, 0x03, 0x9e, 0xc0, 0x30, 0x43, 0x17, 0x02,
-	0xdd, 0xc4, 0x88, 0x07, 0x63, 0xbc, 0x7d, 0x7c, 0xe5, 0xfb, 0x7d, 0xbf, 0xf4, 0x3f, 0x6d, 0xd1,
-	0xc1, 0x19, 0x04, 0x98, 0x71, 0x1a, 0xf4, 0x99, 0x2d, 0x86, 0x56, 0xc8, 0x99, 0x60, 0x7a, 0xf5,
-	0x1d, 0x25, 0x5d, 0x00, 0xd7, 0xf3, 0xa8, 0x1b, 0xf4, 0xc0, 0xc2, 0x34, 0x12, 0x9c, 0x76, 0x07,
-	0x02, 0x70, 0x8f, 0xf9, 0xa1, 0xea, 0x7a, 0x80, 0x09, 0x70, 0x6b, 0x39, 0x9f, 0xbb, 0xb3, 0xc2,
-	0x52, 0xe5, 0xe9, 0xbc, 0x56, 0xd0, 0x5c, 0x86, 0x30, 0xc2, 0x64, 0x69, 0xcf, 0xab, 0x45, 0xf7,
-	0x56, 0x8f, 0x45, 0x3e, 0x8b, 0x4e, 0xd5, 0x05, 0xf5, 0x43, 0x5d, 0x32, 0xbf, 0xa6, 0xd1, 0xc1,
-	0x71, 0x44, 0x8e, 0x38, 0xb8, 0x02, 0x5e, 0x4a, 0x5e, 0x2b, 0xe8, 0x33, 0xbd, 0x8c, 0xae, 0xf6,
-	0xe6, 0x3d, 0xc6, 0xb3, 0x5a, 0x41, 0x3b, 0xbc, 0xde, 0xc8, 0x7e, 0xfb, 0x5c, 0xca, 0x2c, 0x46,
-	0x9f, 0x60, 0xcc, 0x21, 0x8a, 0x5e, 0x08, 0x4e, 0x03, 0xe2, 0xc4, 0x7f, 0xd4, 0x8f, 0xd0, 0x35,
-	0x65, 0xd4, 0x6a, 0x66, 0xaf, 0x14, 0xb4, 0xc3, 0xdd, 0xc6, 0x83, 0xd9, 0x38, 0x7f, 0xef, 0xcc,
-	0xf5, 0x28, 0x76, 0x05, 0x3c, 0x36, 0x39, 0xbc, 0x1d, 0x50, 0x0e, 0xb8, 0x48, 0x04, 0xd4, 0x1f,
-	0x16, 0x3d, 0x01, 0xf5, 0x5a, 0xb5, 0x5a, 0xa9, 0x9a, 0xce, 0xc5, 0xa0, 0xde, 0x44, 0x48, 0xd5,
-	0xcf, 0x5d, 0x1f, 0xb2, 0x69, 0xb9, 0xfb, 0xfe, 0x6c, 0x9c, 0x2f, 0x24, 0x60, 0x7c, 0x1a, 0xd4,
-	0xcb, 0x45, 0xdf, 0x1d, 0xd6, 0x2b, 0x65, 0xd3, 0x59, 0x99, 0xd3, 0x3b, 0x68, 0x7f, 0x7e, 0x13,
-	0xdd, 0x60, 0xd4, 0x06, 0xe2, 0x7a, 0x92, 0xb5, 0xf3, 0x8b, 0xac, 0xda, 0x23, 0xd3, 0xd9, 0x98,
-	0xd6, 0x5b, 0x28, 0xb3, 0xe8, 0x75, 0x38, 0xf4, 0xfb, 0xc0, 0x01, 0x4b, 0xea, 0xae, 0xa4, 0xde,
-	0x9c, 0x8d, 0xf3, 0x37, 0x96, 0xd4, 0x18, 0x93, 0x38, 0xa2, 0xbf, 0x42, 0x19, 0xa5, 0xda, 0x76,
-	0x03, 0x4c, 0x03, 0xd2, 0x71, 0x09, 0x9c, 0x38, 0xed, 0xec, 0x5e, 0x92, 0x20, 0xf3, 0xa9, 0x00,
-	0x3f, 0x14, 0x23, 0xe9, 0x56, 0xae, 0xd6, 0x8a, 0x03, 0xee, 0x99, 0x4e, 0x22, 0xc1, 0xbc, 0x8b,
-	0x6e, 0x27, 0x84, 0xe9, 0x40, 0x14, 0xb2, 0x20, 0x82, 0x38, 0xec, 0x93, 0x10, 0xff, 0x0f, 0xfb,
-	0x5f, 0x09, 0x7b, 0x3d, 0xcc, 0x8b, 0xb0, 0xdf, 0x6b, 0x32, 0xec, 0x26, 0x78, 0xf0, 0x57, 0x84,
-	0xbd, 0xf0, 0x5d, 0xf7, 0x89, 0x7d, 0xcb, 0x1f, 0x77, 0x50, 0xfa, 0x38, 0x22, 0xfa, 0x27, 0x0d,
-	0xed, 0x6f, 0xbc, 0x8e, 0x9e, 0x5a, 0xbf, 0xf5, 0xb6, 0xb4, 0x12, 0x9e, 0x86, 0x9c, 0xf3, 0xe7,
-	0x58, 0xb1, 0xbc, 0x94, 0xde, 0x78, 0xac, 0xb6, 0x90, 0x5e, 0x67, 0x6d, 0x23, 0x7d, 0xd9, 0x09,
-	0x91, 0xd2, 0x1b, 0xc7, 0x63, 0x0b, 0xe9, 0x75, 0xd6, 0x36, 0xd2, 0x97, 0x1d, 0x93, 0x06, 0x7c,
-	0x99, 0x18, 0xda, 0xf9, 0xc4, 0xd0, 0x7e, 0x4c, 0x0c, 0xed, 0xc3, 0xd4, 0x48, 0x9d, 0x4f, 0x8d,
-	0xd4, 0xf7, 0xa9, 0x91, 0x7a, 0xfd, 0x8c, 0x50, 0xf1, 0x66, 0xd0, 0xb5, 0x7a, 0xcc, 0xb7, 0xd5,
-	0xde, 0x52, 0xbc, 0xd8, 0x5e, 0x59, 0x5c, 0x5a, 0x6e, 0x2e, 0xa9, 0xd5, 0xf6, 0xd0, 0x5e, 0xfd,
-	0x40, 0x8f, 0x42, 0x88, 0xba, 0x7b, 0xf2, 0xf3, 0x58, 0xf9, 0x19, 0x00, 0x00, 0xff, 0xff, 0x4e,
-	0x38, 0x3b, 0x99, 0xbb, 0x07, 0x00, 0x00,
+	// 559 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x95, 0x41, 0x8f, 0xd2, 0x4e,
+	0x18, 0xc6, 0xe9, 0x9f, 0xdd, 0xfd, 0xeb, 0x9c, 0xd6, 0x82, 0x09, 0xa2, 0x16, 0x52, 0x4d, 0xdc,
+	0x03, 0xb4, 0x06, 0x84, 0x83, 0x09, 0x07, 0x59, 0x2e, 0x28, 0x6b, 0x48, 0xcd, 0x1a, 0xe3, 0x65,
+	0x53, 0x98, 0x97, 0x71, 0x92, 0xb6, 0x53, 0xa7, 0xc3, 0x06, 0xfc, 0x14, 0x7e, 0x08, 0xfd, 0x02,
+	0xc6, 0x0f, 0xe1, 0x71, 0xe3, 0xc9, 0x13, 0x31, 0xf0, 0x0d, 0xf8, 0x04, 0x86, 0x19, 0xba, 0x10,
+	0xe8, 0x26, 0x46, 0x3c, 0x18, 0xe3, 0xed, 0xe5, 0x6d, 0x9e, 0xdf, 0xfb, 0x0c, 0xf3, 0xcc, 0x0c,
+	0xca, 0x9c, 0x43, 0x80, 0x19, 0xa7, 0xc1, 0x80, 0xd9, 0x62, 0x64, 0x85, 0x9c, 0x09, 0xa6, 0xd7,
+	0xde, 0x51, 0xd2, 0x03, 0x70, 0x3d, 0x8f, 0xba, 0x41, 0x1f, 0x2c, 0x4c, 0x23, 0xc1, 0x69, 0x6f,
+	0x28, 0x00, 0xf7, 0x99, 0x1f, 0xaa, 0xae, 0x07, 0x98, 0x00, 0xb7, 0x56, 0xfa, 0xfc, 0x9d, 0x35,
+	0x96, 0x2a, 0xcf, 0x16, 0xb5, 0x82, 0xe6, 0xb3, 0x84, 0x11, 0x26, 0x4b, 0x7b, 0x51, 0x2d, 0xbb,
+	0xb7, 0xfa, 0x2c, 0xf2, 0x59, 0x74, 0xa6, 0x3e, 0xa8, 0x1f, 0xea, 0x93, 0x39, 0x4d, 0xa3, 0xcc,
+	0x49, 0x44, 0x8e, 0x39, 0xb8, 0x02, 0x5e, 0x4a, 0x5e, 0x3b, 0x18, 0x30, 0xbd, 0x8d, 0xfe, 0xef,
+	0x2f, 0x7a, 0x8c, 0xe7, 0xb4, 0xa2, 0x76, 0x74, 0xbd, 0x69, 0xcf, 0x27, 0x85, 0xcc, 0xb9, 0xeb,
+	0x51, 0xec, 0x0a, 0x78, 0x6c, 0x72, 0x78, 0x3b, 0xa4, 0x1c, 0xb0, 0xf9, 0xf5, 0x73, 0x39, 0xbb,
+	0x24, 0x3e, 0xc1, 0x98, 0x43, 0x14, 0xbd, 0x10, 0x9c, 0x06, 0xc4, 0x89, 0xf5, 0xfa, 0x31, 0xba,
+	0xa6, 0x8c, 0xb6, 0x5b, 0xb9, 0xff, 0x8a, 0xda, 0xd1, 0x7e, 0xf3, 0xc1, 0x7c, 0x52, 0xb8, 0xb7,
+	0xcd, 0x2a, 0x11, 0x01, 0x8d, 0x87, 0x25, 0x4f, 0x40, 0xa3, 0x5e, 0xab, 0x55, 0x6b, 0xa6, 0x73,
+	0x29, 0xd4, 0x5b, 0x08, 0xa9, 0xfa, 0xb9, 0xeb, 0x43, 0x2e, 0x2d, 0x2d, 0xdd, 0x9f, 0x4f, 0x0a,
+	0xc5, 0x04, 0x8c, 0x4f, 0x83, 0x46, 0xa5, 0xe4, 0xbb, 0xa3, 0x46, 0xb5, 0x62, 0x3a, 0x6b, 0x3a,
+	0xbd, 0x8b, 0x0e, 0x17, 0xff, 0xad, 0x1b, 0x8c, 0x3b, 0x40, 0x5c, 0x4f, 0xb2, 0xf6, 0x7e, 0x92,
+	0x55, 0x7f, 0x64, 0x3a, 0x5b, 0x6a, 0xbd, 0x8d, 0xb2, 0xcb, 0x5e, 0x97, 0xc3, 0x60, 0x00, 0x1c,
+	0xb0, 0xa4, 0xee, 0x4b, 0xea, 0xcd, 0xf9, 0xa4, 0x70, 0x63, 0x45, 0x8d, 0x31, 0x89, 0x12, 0xfd,
+	0x15, 0xca, 0x2a, 0xab, 0x1d, 0x37, 0xc0, 0x34, 0x20, 0x5d, 0x97, 0xc0, 0xa9, 0xd3, 0xc9, 0x1d,
+	0x24, 0x19, 0x64, 0x3e, 0x15, 0xe0, 0x87, 0x62, 0x2c, 0xbd, 0x55, 0x6a, 0xf5, 0xd2, 0x90, 0x7b,
+	0xa6, 0x93, 0x48, 0x30, 0xef, 0xa2, 0xdb, 0x09, 0x7b, 0xec, 0x40, 0x14, 0xb2, 0x20, 0x82, 0x38,
+	0x03, 0xa7, 0x21, 0xfe, 0x97, 0x81, 0xbf, 0x3c, 0x03, 0x9b, 0x7b, 0x7c, 0x99, 0x81, 0x8f, 0x9a,
+	0xcc, 0x40, 0x0b, 0x3c, 0xf8, 0x93, 0x33, 0xb0, 0x5c, 0xc6, 0xa6, 0xcd, 0x78, 0x19, 0x95, 0x0f,
+	0x7b, 0x28, 0x7d, 0x12, 0x11, 0xfd, 0x93, 0x86, 0x0e, 0xb7, 0xee, 0xb4, 0xa7, 0xd6, 0x2f, 0x5d,
+	0xb9, 0x56, 0xc2, 0xd9, 0xc9, 0x3b, 0xbf, 0x8f, 0x15, 0x9b, 0x97, 0xa6, 0xb7, 0x0e, 0xe1, 0x0e,
+	0xa6, 0x37, 0x59, 0xbb, 0x98, 0xbe, 0x2a, 0x38, 0xd2, 0xf4, 0x56, 0x6a, 0x76, 0x30, 0xbd, 0xc9,
+	0xda, 0xc5, 0xf4, 0x55, 0x31, 0x69, 0xc2, 0x97, 0xa9, 0xa1, 0x5d, 0x4c, 0x0d, 0xed, 0xfb, 0xd4,
+	0xd0, 0xde, 0xcf, 0x8c, 0xd4, 0xc5, 0xcc, 0x48, 0x7d, 0x9b, 0x19, 0xa9, 0xd7, 0xcf, 0x08, 0x15,
+	0x6f, 0x86, 0x3d, 0xab, 0xcf, 0x7c, 0x5b, 0xcd, 0x2d, 0xc7, 0x83, 0xed, 0xb5, 0xc1, 0xe5, 0xd5,
+	0xe4, 0xb2, 0x1a, 0x6d, 0x8f, 0xec, 0xf5, 0x57, 0x7e, 0x1c, 0x42, 0xd4, 0x3b, 0x90, 0x6f, 0x6c,
+	0xf5, 0x47, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd6, 0xe9, 0x42, 0x41, 0x00, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -421,7 +421,7 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	CreateVendorInfo(ctx context.Context, in *MsgCreateVendorInfo, opts ...grpc.CallOption) (*MsgCreateVendorInfoResponse, error)
 	UpdateVendorInfo(ctx context.Context, in *MsgUpdateVendorInfo, opts ...grpc.CallOption) (*MsgUpdateVendorInfoResponse, error)
-	DeleteVendorInfo(ctx context.Context, in *MsgDeleteVendorInfo, opts ...grpc.CallOption) (*MsgDeleteVendorInfoResponse, error)
+	// DeleteVendorInfo(ctx context.Context, in *MsgDeleteVendorInfo, opts ...grpc.CallOption) (*MsgDeleteVendorInfoResponse, error)
 }
 
 type msgClient struct {
@@ -450,20 +450,20 @@ func (c *msgClient) UpdateVendorInfo(ctx context.Context, in *MsgUpdateVendorInf
 	return out, nil
 }
 
-func (c *msgClient) DeleteVendorInfo(ctx context.Context, in *MsgDeleteVendorInfo, opts ...grpc.CallOption) (*MsgDeleteVendorInfoResponse, error) {
-	out := new(MsgDeleteVendorInfoResponse)
-	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.vendorinfo.Msg/DeleteVendorInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
+// func (c *msgClient) DeleteVendorInfo(ctx context.Context, in *MsgDeleteVendorInfo, opts ...grpc.CallOption) (*MsgDeleteVendorInfoResponse, error) {
+// 	out := new(MsgDeleteVendorInfoResponse)
+// 	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.vendorinfo.Msg/DeleteVendorInfo", in, out, opts...)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return out, nil
+// }
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	CreateVendorInfo(context.Context, *MsgCreateVendorInfo) (*MsgCreateVendorInfoResponse, error)
 	UpdateVendorInfo(context.Context, *MsgUpdateVendorInfo) (*MsgUpdateVendorInfoResponse, error)
-	DeleteVendorInfo(context.Context, *MsgDeleteVendorInfo) (*MsgDeleteVendorInfoResponse, error)
+	// DeleteVendorInfo(context.Context, *MsgDeleteVendorInfo) (*MsgDeleteVendorInfoResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -476,9 +476,10 @@ func (*UnimplementedMsgServer) CreateVendorInfo(ctx context.Context, req *MsgCre
 func (*UnimplementedMsgServer) UpdateVendorInfo(ctx context.Context, req *MsgUpdateVendorInfo) (*MsgUpdateVendorInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateVendorInfo not implemented")
 }
-func (*UnimplementedMsgServer) DeleteVendorInfo(ctx context.Context, req *MsgDeleteVendorInfo) (*MsgDeleteVendorInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteVendorInfo not implemented")
-}
+
+// func (*UnimplementedMsgServer) DeleteVendorInfo(ctx context.Context, req *MsgDeleteVendorInfo) (*MsgDeleteVendorInfoResponse, error) {
+// 	return nil, status.Errorf(codes.Unimplemented, "method DeleteVendorInfo not implemented")
+// }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
@@ -520,23 +521,23 @@ func _Msg_UpdateVendorInfo_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Msg_DeleteVendorInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgDeleteVendorInfo)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MsgServer).DeleteVendorInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zigbeealliance.distributedcomplianceledger.vendorinfo.Msg/DeleteVendorInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).DeleteVendorInfo(ctx, req.(*MsgDeleteVendorInfo))
-	}
-	return interceptor(ctx, in, info, handler)
-}
+// func _Msg_DeleteVendorInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+// 	in := new(MsgDeleteVendorInfo)
+// 	if err := dec(in); err != nil {
+// 		return nil, err
+// 	}
+// 	if interceptor == nil {
+// 		return srv.(MsgServer).DeleteVendorInfo(ctx, in)
+// 	}
+// 	info := &grpc.UnaryServerInfo{
+// 		Server:     srv,
+// 		FullMethod: "/zigbeealliance.distributedcomplianceledger.vendorinfo.Msg/DeleteVendorInfo",
+// 	}
+// 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+// 		return srv.(MsgServer).DeleteVendorInfo(ctx, req.(*MsgDeleteVendorInfo))
+// 	}
+// 	return interceptor(ctx, in, info, handler)
+// }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.vendorinfo.Msg",
@@ -550,10 +551,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 			MethodName: "UpdateVendorInfo",
 			Handler:    _Msg_UpdateVendorInfo_Handler,
 		},
-		{
-			MethodName: "DeleteVendorInfo",
-			Handler:    _Msg_DeleteVendorInfo_Handler,
-		},
+		// {
+		// 	MethodName: "DeleteVendorInfo",
+		// 	Handler:    _Msg_DeleteVendorInfo_Handler,
+		// },
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "vendorinfo/tx.proto",
@@ -731,63 +732,63 @@ func (m *MsgUpdateVendorInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgDeleteVendorInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+// func (m *MsgDeleteVendorInfo) Marshal() (dAtA []byte, err error) {
+// 	size := m.Size()
+// 	dAtA = make([]byte, size)
+// 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return dAtA[:n], nil
+// }
 
-func (m *MsgDeleteVendorInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+// func (m *MsgDeleteVendorInfo) MarshalTo(dAtA []byte) (int, error) {
+// 	size := m.Size()
+// 	return m.MarshalToSizedBuffer(dAtA[:size])
+// }
 
-func (m *MsgDeleteVendorInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.VendorID != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.VendorID))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Creator) > 0 {
-		i -= len(m.Creator)
-		copy(dAtA[i:], m.Creator)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
+// func (m *MsgDeleteVendorInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+// 	i := len(dAtA)
+// 	_ = i
+// 	var l int
+// 	_ = l
+// 	if m.VendorID != 0 {
+// 		i = encodeVarintTx(dAtA, i, uint64(m.VendorID))
+// 		i--
+// 		dAtA[i] = 0x10
+// 	}
+// 	if len(m.Creator) > 0 {
+// 		i -= len(m.Creator)
+// 		copy(dAtA[i:], m.Creator)
+// 		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+// 		i--
+// 		dAtA[i] = 0xa
+// 	}
+// 	return len(dAtA) - i, nil
+// }
 
-func (m *MsgDeleteVendorInfoResponse) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+// func (m *MsgDeleteVendorInfoResponse) Marshal() (dAtA []byte, err error) {
+// 	size := m.Size()
+// 	dAtA = make([]byte, size)
+// 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return dAtA[:n], nil
+// }
 
-func (m *MsgDeleteVendorInfoResponse) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+// func (m *MsgDeleteVendorInfoResponse) MarshalTo(dAtA []byte) (int, error) {
+// 	size := m.Size()
+// 	return m.MarshalToSizedBuffer(dAtA[:size])
+// }
 
-func (m *MsgDeleteVendorInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	return len(dAtA) - i, nil
-}
+// func (m *MsgDeleteVendorInfoResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+// 	i := len(dAtA)
+// 	_ = i
+// 	var l int
+// 	_ = l
+// 	return len(dAtA) - i, nil
+// }
 
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
@@ -882,30 +883,30 @@ func (m *MsgUpdateVendorInfoResponse) Size() (n int) {
 	return n
 }
 
-func (m *MsgDeleteVendorInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Creator)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if m.VendorID != 0 {
-		n += 1 + sovTx(uint64(m.VendorID))
-	}
-	return n
-}
+// func (m *MsgDeleteVendorInfo) Size() (n int) {
+// 	if m == nil {
+// 		return 0
+// 	}
+// 	var l int
+// 	_ = l
+// 	l = len(m.Creator)
+// 	if l > 0 {
+// 		n += 1 + l + sovTx(uint64(l))
+// 	}
+// 	if m.VendorID != 0 {
+// 		n += 1 + sovTx(uint64(m.VendorID))
+// 	}
+// 	return n
+// }
 
-func (m *MsgDeleteVendorInfoResponse) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	return n
-}
+// func (m *MsgDeleteVendorInfoResponse) Size() (n int) {
+// 	if m == nil {
+// 		return 0
+// 	}
+// 	var l int
+// 	_ = l
+// 	return n
+// }
 
 func sovTx(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
@@ -1471,157 +1472,158 @@ func (m *MsgUpdateVendorInfoResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgDeleteVendorInfo) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeleteVendorInfo: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeleteVendorInfo: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTx
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTx
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Creator = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field VendorID", wireType)
-			}
-			m.VendorID = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTx
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.VendorID |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *MsgDeleteVendorInfoResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTx
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgDeleteVendorInfoResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgDeleteVendorInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTx(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTx
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+// func (m *MsgDeleteVendorInfo) Unmarshal(dAtA []byte) error {
+// 	l := len(dAtA)
+// 	iNdEx := 0
+// 	for iNdEx < l {
+// 		preIndex := iNdEx
+// 		var wire uint64
+// 		for shift := uint(0); ; shift += 7 {
+// 			if shift >= 64 {
+// 				return ErrIntOverflowTx
+// 			}
+// 			if iNdEx >= l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			b := dAtA[iNdEx]
+// 			iNdEx++
+// 			wire |= uint64(b&0x7F) << shift
+// 			if b < 0x80 {
+// 				break
+// 			}
+// 		}
+// 		fieldNum := int32(wire >> 3)
+// 		wireType := int(wire & 0x7)
+// 		if wireType == 4 {
+// 			return fmt.Errorf("proto: MsgDeleteVendorInfo: wiretype end group for non-group")
+// 		}
+// 		if fieldNum <= 0 {
+// 			return fmt.Errorf("proto: MsgDeleteVendorInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+// 		}
+// 		switch fieldNum {
+// 		case 1:
+// 			if wireType != 2 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+// 			}
+// 			var stringLen uint64
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTx
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				stringLen |= uint64(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 			intStringLen := int(stringLen)
+// 			if intStringLen < 0 {
+// 				return ErrInvalidLengthTx
+// 			}
+// 			postIndex := iNdEx + intStringLen
+// 			if postIndex < 0 {
+// 				return ErrInvalidLengthTx
+// 			}
+// 			if postIndex > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			m.Creator = string(dAtA[iNdEx:postIndex])
+// 			iNdEx = postIndex
+// 		case 2:
+// 			if wireType != 0 {
+// 				return fmt.Errorf("proto: wrong wireType = %d for field VendorID", wireType)
+// 			}
+// 			m.VendorID = 0
+// 			for shift := uint(0); ; shift += 7 {
+// 				if shift >= 64 {
+// 					return ErrIntOverflowTx
+// 				}
+// 				if iNdEx >= l {
+// 					return io.ErrUnexpectedEOF
+// 				}
+// 				b := dAtA[iNdEx]
+// 				iNdEx++
+// 				m.VendorID |= int32(b&0x7F) << shift
+// 				if b < 0x80 {
+// 					break
+// 				}
+// 			}
+// 		default:
+// 			iNdEx = preIndex
+// 			skippy, err := skipTx(dAtA[iNdEx:])
+// 			if err != nil {
+// 				return err
+// 			}
+// 			if (skippy < 0) || (iNdEx+skippy) < 0 {
+// 				return ErrInvalidLengthTx
+// 			}
+// 			if (iNdEx + skippy) > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			iNdEx += skippy
+// 		}
+// 	}
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
+// 	if iNdEx > l {
+// 		return io.ErrUnexpectedEOF
+// 	}
+// 	return nil
+// }
+// func (m *MsgDeleteVendorInfoResponse) Unmarshal(dAtA []byte) error {
+// 	l := len(dAtA)
+// 	iNdEx := 0
+// 	for iNdEx < l {
+// 		preIndex := iNdEx
+// 		var wire uint64
+// 		for shift := uint(0); ; shift += 7 {
+// 			if shift >= 64 {
+// 				return ErrIntOverflowTx
+// 			}
+// 			if iNdEx >= l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			b := dAtA[iNdEx]
+// 			iNdEx++
+// 			wire |= uint64(b&0x7F) << shift
+// 			if b < 0x80 {
+// 				break
+// 			}
+// 		}
+// 		fieldNum := int32(wire >> 3)
+// 		wireType := int(wire & 0x7)
+// 		if wireType == 4 {
+// 			return fmt.Errorf("proto: MsgDeleteVendorInfoResponse: wiretype end group for non-group")
+// 		}
+// 		if fieldNum <= 0 {
+// 			return fmt.Errorf("proto: MsgDeleteVendorInfoResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+// 		}
+// 		switch fieldNum {
+// 		default:
+// 			iNdEx = preIndex
+// 			skippy, err := skipTx(dAtA[iNdEx:])
+// 			if err != nil {
+// 				return err
+// 			}
+// 			if (skippy < 0) || (iNdEx+skippy) < 0 {
+// 				return ErrInvalidLengthTx
+// 			}
+// 			if (iNdEx + skippy) > l {
+// 				return io.ErrUnexpectedEOF
+// 			}
+// 			iNdEx += skippy
+// 		}
+// 	}
+
+// 	if iNdEx > l {
+// 		return io.ErrUnexpectedEOF
+// 	}
+// 	return nil
+// }
 func skipTx(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0

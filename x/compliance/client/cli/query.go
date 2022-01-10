@@ -2,18 +2,17 @@ package cli
 
 import (
 	"fmt"
-	// "strings"
-
-	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
-	// sdk "github.com/cosmos/cosmos-sdk/types"
 
+	// "strings".
+	"github.com/spf13/cobra"
+
+	// sdk "github.com/cosmos/cosmos-sdk/types".
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// GetQueryCmd returns the cli query commands for this module
+// GetQueryCmd returns the cli query commands for this module.
 func GetQueryCmd(queryRoute string) *cobra.Command {
 	// Group compliance queries under a subcommand
 	cmd := &cobra.Command{
@@ -24,6 +23,14 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
+	cmd.AddCommand(CmdListComplianceInfo())
+	cmd.AddCommand(CmdShowComplianceInfo())
+	cmd.AddCommand(CmdListCertifiedModel())
+	cmd.AddCommand(CmdShowCertifiedModel())
+	cmd.AddCommand(CmdListRevokedModel())
+	cmd.AddCommand(CmdShowRevokedModel())
+	cmd.AddCommand(CmdListProvisionalModel())
+	cmd.AddCommand(CmdShowProvisionalModel())
 	// this line is used by starport scaffolding # 1
 
 	return cmd

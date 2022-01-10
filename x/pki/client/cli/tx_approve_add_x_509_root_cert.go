@@ -19,7 +19,6 @@ func CmdApproveAddX509RootCert() *cobra.Command {
 		Short: "Approves the proposed root certificate correspondent to combination of subject and subject-key-id",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
