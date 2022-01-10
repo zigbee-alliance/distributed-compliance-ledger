@@ -15,7 +15,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 	// decode pem certificate
 	x509Certificate, err := x509.DecodeX509Certificate(msg.Cert)
 	if err != nil {
-		return nil, types.NewErrCodeInvalidCertificate(err)
+		return nil, types.NewErrInvalidCertificate(err)
 	}
 
 	// fail if certificate is not self-signed

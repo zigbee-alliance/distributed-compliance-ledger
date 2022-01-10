@@ -127,7 +127,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 	} else {
 		parentCertificates, found := k.GetApprovedCertificates(ctx, x509Certificate.Issuer, x509Certificate.AuthorityKeyID)
 		if !found {
-			return "", "", types.NewErrCodeInvalidCertificate(
+			return "", "", types.NewErrInvalidCertificate(
 				fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 					x509Certificate.Subject, x509Certificate.SubjectKeyID))
 		}
@@ -150,7 +150,7 @@ func (k Keeper) verifyCertificate(ctx sdk.Context,
 		}
 	}
 
-	return "", "", types.NewErrCodeInvalidCertificate(
+	return "", "", types.NewErrInvalidCertificate(
 		fmt.Sprintf("Certificate verification failed for certificate with subject=%v and subjectKeyID=%v",
 			x509Certificate.Subject, x509Certificate.SubjectKeyID))
 }

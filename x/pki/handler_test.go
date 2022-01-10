@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/keeper"
@@ -75,9 +76,52 @@ func Setup(t *testing.T) *TestSetup {
 		Trustee:       trustee,
 	}
 
-	setup.AddAccount(trustee, []dclauthtypes.AccountRole{dclauthtypes.Vendor})
+	setup.AddAccount(trustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 
 	return setup
+}
+
+func TestHandler_ProposeAddX509RootCert_ByNotTrustee(t *testing.T) {
+	setup := Setup(t)
+
+	for _, role := range []dclauthtypes.AccountRole{
+		dclauthtypes.Vendor,
+		dclauthtypes.TestHouse,
+		dclauthtypes.CertificationCenter,
+		dclauthtypes.NodeAdmin,
+	} {
+		accAddress := GenerateAccAddress()
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role})
+
+		// propose x509 root certificate
+		proposeAddX509RootCert := types.NewMsgProposeAddX509RootCert(testconstants.RootCertPem, testconstants.Address1.String())
+		_, err := setup.Handler(setup.Ctx, proposeAddX509RootCert)
+		require.NoError(t, err)
+
+		// query proposed certificate
+		proposedCertificate, _ := queryProposedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+
+		// check proposed certificate
+		require.Equal(t, proposeAddX509RootCert.Cert, proposedCertificate.PemCert)
+		require.Equal(t, proposeAddX509RootCert.Signer, proposedCertificate.Owner)
+		require.Equal(t, testconstants.RootSubject, proposedCertificate.Subject)
+		require.Equal(t, testconstants.RootSubjectKeyID, proposedCertificate.SubjectKeyId)
+		require.Equal(t, testconstants.RootSerialNumber, proposedCertificate.SerialNumber)
+		require.Nil(t, proposedCertificate.Approvals)
+
+		// check that unique certificate key is registered
+		require.True(t, setup.Keeper.IsUniqueCertificatePresent(
+			setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber))
+
+		// try to query approved certificate
+		_, err = querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+		require.Error(t, err)
+		require.True(t, types.ErrCertificateDoesNotExist.Is(err))
+
+		// cleanup for next iteration
+		setup.Keeper.RemoveProposedCertificate(setup.Ctx, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+		setup.Keeper.RemoveUniqueCertificate(setup.Ctx, testconstants.RootIssuer, testconstants.RootSerialNumber)
+	}
 }
 
 func queryProposedCertificate(
