@@ -24,8 +24,6 @@ rm -rf ~/.dcld
 
 dclcli config chain-id dclchain
 dclcli config output json
-dclcli config indent true
-dclcli config trust-node false
 
 echo 'test1234' | dclcli keys add jack
 echo 'test1234' | dclcli keys add alice

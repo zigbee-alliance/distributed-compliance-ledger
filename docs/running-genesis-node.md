@@ -42,8 +42,6 @@ must have a unique chain ID.
 3. Configure CLI:
     * `dcld config chain-id <chain-id>` - the chosen unique chain ID.
     * `dcld config output json` - Output format (text/json).
-    * `dcld config indent true` - Add indent to JSON response.
-    * `dcld config trust-node false` - Verify proofs for node responses.
     * `dcld config node tcp://localhost:26657` - Address of the genesis node (this is a local node). 
 
 4. Prepare keys:

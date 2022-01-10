@@ -44,10 +44,6 @@ dcld config output json
 # TODO issue 99: empty value will override defaults by some reason
 #       (e.g. in dcld status)
 dcld config node "tcp://localhost:26657"
-# TODO issue 99: check the replacement for the setting
-# dcld config indent true
-# TODO issue 99: check the replacement for the setting
-# dcld config trust-node false
 dcld config keyring-backend test
 dcld config broadcast-mode block
 

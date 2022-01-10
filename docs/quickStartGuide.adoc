@@ -42,35 +42,6 @@ After successful completion of above steps, `dcld` should be installed.
 $ ls -l ~/go/bin/dcld
 $ dcld
 
-DcLedger Client
-
-Usage:
-  dcld [command]
-
-Available Commands:
-  status                   Query remote node for status
-  tendermint-validator-set Get the full tendermint validator set at given height
-  config                   Create or query an application CLI configuration file
-  query                    Querying subcommands
-  tx                       Transactions subcommands
-                           
-  rest-server              Start LCD (light-client daemon), a local REST server
-                           
-  keys                     Add or view local private keys
-                           
-  version                  Print the app version
-  help                     Help about any command
-
-Flags:
-      --broadcast-mode string   Transaction broadcast mode to use (block, sync, async) (default "block")
-      --chain-id string         Chain ID of tendermint node
-  -e, --encoding string         Binary encoding (hex|b64|btc) (default "hex")
-  -h, --help                    help for dcld
-      --home string             directory for config and data (default "~/.dcl")
-  -o, --output string           Output format (text|json) (default "text")
-      --trace                   print out full stack trace on errors
-
-Use "dcld [command] --help" for more information about a command.
 ----
 
 .DCL CLI Configure
@@ -79,10 +50,6 @@ Use "dcld [command] --help" for more information about a command.
 # Configure `dcld` to connect to one of the testnet nodes
 $ dcld config chain-id testnet
 $ dcld config output json
-$ dcld config indent true
-# dcld connects to a single node. Set following property to ensure every reply from node is
-# cryptographically verified.
-$ dcld config trust-node false
 $ dcld config node tcp://54.73.187.91:26657
 
 # Run `dclci` to connect to one of the testnet nodes

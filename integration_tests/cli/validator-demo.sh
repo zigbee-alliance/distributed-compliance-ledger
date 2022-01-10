@@ -57,11 +57,6 @@ docker exec $container /bin/sh -c "
   dcld config keyring-backend test &&
   dcld config broadcast-mode block"
 
-# TODO issue 99: check the replacement for the setting
-#  dcld config indent true &&
-#  dcld config trust-node false &&
-
-
 test_divider
 
 echo "$account Prepare Node configuration files"

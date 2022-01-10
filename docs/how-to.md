@@ -60,8 +60,6 @@ In order to connect the CLI to a DC Ledger Network (Chain), the following parame
     * A full list of available persistent chains can be found in [Persistent Chains](../deployment/persistent_chains)
     where every sub-folder matches the corresponding chain-id.
 * `dcld config output json` - Output format (text/json).
-* `dcld config indent true` - Add indent to JSON response.
-* `dcld config trust-node false` - Verify proofs for node responses.
 * `dcld config node <address>` - Address of a node to connect.
     * Example: `tcp://18.157.114.34:26657` or `on1.testnet.dcl.dev.dsr-corporation.com:26657`.
     * The address there is the address (IP or domain name) of one of the nodes (Validators or Observers) from the Network you are going to connect to.

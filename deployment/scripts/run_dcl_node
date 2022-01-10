@@ -194,8 +194,6 @@ function config_cli {
 
     dclcli config chain-id "$_chain_id"
     dclcli config output json
-    dclcli config indent true
-    dclcli config trust-node false
     if [[ -n "$_peer_host" ]]; then
         dclcli config node tcp://"$_peer_host"
     fi

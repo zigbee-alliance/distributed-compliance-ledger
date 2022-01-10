@@ -50,9 +50,6 @@ and contains the genesis and persistent_peers files.
 2. Configure CLI:
     * `dcld config chain-id testnet`
     * `dcld config output json` - Output format (text/json).
-    * `dcld config indent true` - Add indent to JSON response.
-    * `dcld config trust-node false` - Verify proofs for node responses.
-
 
 3. Initialize the observer node and create the necessary config files:
     * Init Node: `dcld init <node name> --chain-id testnet`.
