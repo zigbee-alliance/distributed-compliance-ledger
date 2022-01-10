@@ -38,7 +38,7 @@ cleanup() {
       fi
 
       echo "Removing container"
-      docker container rm "$container"
+      docker container rm -f "$container"
     fi
 }
 trap cleanup EXIT

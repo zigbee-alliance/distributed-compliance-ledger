@@ -64,7 +64,8 @@ func GetAllProposedX509RootCerts(suite *utils.TestSuite) (res []pkitypes.Propose
 	return res, nil
 }
 
-func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyId string) (res *pkitypes.ProposedCertificate, err error) {
+func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ProposedCertificate, error) {
+	var res pkitypes.ProposedCertificate
 	if suite.Rest {
 		var resp pkitypes.QueryGetProposedCertificateResponse
 		err := suite.QueryREST(
@@ -97,7 +98,7 @@ func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyI
 		res = resp.GetProposedCertificate()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAllX509Certs(suite *utils.TestSuite) (res []pkitypes.ApprovedCertificates, err error) {
@@ -127,7 +128,8 @@ func GetAllX509Certs(suite *utils.TestSuite) (res []pkitypes.ApprovedCertificate
 	return res, nil
 }
 
-func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (res *pkitypes.ApprovedCertificates, err error) {
+func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ApprovedCertificates, error) {
+	var res pkitypes.ApprovedCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetApprovedCertificatesResponse
 		err := suite.QueryREST(
@@ -160,7 +162,7 @@ func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (r
 		res = resp.GetApprovedCertificates()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAllRevokedX509Certs(suite *utils.TestSuite) (res []pkitypes.RevokedCertificates, err error) {
@@ -190,7 +192,8 @@ func GetAllRevokedX509Certs(suite *utils.TestSuite) (res []pkitypes.RevokedCerti
 	return res, nil
 }
 
-func GetRevokedX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (res *pkitypes.RevokedCertificates, err error) {
+func GetRevokedX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.RevokedCertificates, error) {
+	var res pkitypes.RevokedCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetRevokedCertificatesResponse
 		err := suite.QueryREST(
@@ -223,7 +226,7 @@ func GetRevokedX509Cert(suite *utils.TestSuite, subject string, subjectKeyId str
 		res = resp.GetRevokedCertificates()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAllProposedRevocationX509Certs(suite *utils.TestSuite) (res []pkitypes.ProposedCertificateRevocation, err error) {
@@ -253,7 +256,8 @@ func GetAllProposedRevocationX509Certs(suite *utils.TestSuite) (res []pkitypes.P
 	return res, nil
 }
 
-func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (res *pkitypes.ProposedCertificateRevocation, err error) {
+func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ProposedCertificateRevocation, error) {
+	var res pkitypes.ProposedCertificateRevocation
 	if suite.Rest {
 		var resp pkitypes.QueryGetProposedCertificateRevocationResponse
 		err := suite.QueryREST(
@@ -286,7 +290,7 @@ func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subje
 		res = resp.GetProposedCertificateRevocation()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAllRootX509Certs(suite *utils.TestSuite) (res pkitypes.ApprovedRootCertificates, err error) {
@@ -343,7 +347,8 @@ func GetAllRevokedRootX509Certs(suite *utils.TestSuite) (res pkitypes.RevokedRoo
 	return res, nil
 }
 
-func GetAllX509CertsBySubject(suite *utils.TestSuite, subject string) (res *pkitypes.ApprovedCertificatesBySubject, err error) {
+func GetAllX509CertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes.ApprovedCertificatesBySubject, error) {
+	var res pkitypes.ApprovedCertificatesBySubject
 	if suite.Rest {
 		var resp pkitypes.QueryGetApprovedCertificatesBySubjectResponse
 		err := suite.QueryREST(
@@ -375,10 +380,11 @@ func GetAllX509CertsBySubject(suite *utils.TestSuite, subject string) (res *pkit
 		res = resp.GetApprovedCertificatesBySubject()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
-func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyId string) (res *pkitypes.ChildCertificates, err error) {
+func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ChildCertificates, error) {
+	var res pkitypes.ChildCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetChildCertificatesResponse
 		err := suite.QueryREST(
@@ -411,7 +417,7 @@ func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyId s
 		res = resp.GetChildCertificates()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 //nolint:funlen
