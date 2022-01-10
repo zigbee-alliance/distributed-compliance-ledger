@@ -16,7 +16,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-func PkiKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+func PkiKeeper(t testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -31,7 +31,7 @@ func PkiKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		codec.NewProtoCodec(registry),
 		storeKey,
 		memStoreKey,
-		nil,
+		dclauthKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

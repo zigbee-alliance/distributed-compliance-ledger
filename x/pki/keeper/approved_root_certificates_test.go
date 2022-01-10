@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"testing"
 
@@ -35,3 +36,4 @@ func TestApprovedRootCertificatesRemove(t *testing.T) {
 	_, found := keeper.GetApprovedRootCertificates(ctx)
 	require.False(t, found)
 }
+*/
