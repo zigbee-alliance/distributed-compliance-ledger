@@ -44,7 +44,7 @@ const (
 */
 
 func GetAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.Account, error) {
-	var res dclauthtypes.Account
+	var res *dclauthtypes.Account
 
 	if suite.Rest {
 		// TODO issue 99: explore the way how to get the endpoint from proto-
@@ -71,7 +71,7 @@ func GetAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.A
 		res = resp.GetAccount()
 	}
 
-	return &res, nil
+	return res, nil
 }
 
 func GetAccounts(suite *utils.TestSuite) (res []dclauthtypes.Account, err error) {
@@ -392,7 +392,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	// Ensure that new account is not available anymore
 	_, err = GetAccount(suite, testAccAddr)
 	require.Error(suite.T, err)
-	require.Contains(suite.T, err.Error(), "rpc error: code = InvalidArgument desc = not found: invalid request")
+	suite.AssertNotFound(err)
 
 	// FIXME issue 99: enable once implemented
 	/*

@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -144,3 +145,4 @@ func TestListValidator(t *testing.T) {
 		require.Equal(t, objs, resp.Validator)
 	})
 }
+*/

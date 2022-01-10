@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -88,8 +89,8 @@ func TestShowVendorInfo(t *testing.T) {
 	}
 }
 
-func TestListVendorInfo(t *testing.T) {
-	net, objs := networkWithVendorInfoObjects(t, 5)
+// func TestListVendorInfo(t *testing.T) {
+// 	net, objs := networkWithVendorInfoObjects(t, 5)
 
 	ctx := net.Validators[0].ClientCtx
 	request := func(next []byte, offset, limit uint64, total bool) []string {
@@ -144,3 +145,4 @@ func TestListVendorInfo(t *testing.T) {
 		require.Equal(t, objs, resp.VendorInfo)
 	})
 }
+*/

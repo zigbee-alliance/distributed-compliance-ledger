@@ -118,50 +118,50 @@ func (msg *MsgUpdateVendorInfo) ValidateBasic() error {
 	return nil
 }
 
-var _ sdk.Msg = &MsgDeleteVendorInfo{}
+// var _ sdk.Msg = &MsgDeleteVendorInfo{}
 
-func NewMsgDeleteVendorInfo(
-	creator string,
-	vendorID int32,
+// func NewMsgDeleteVendorInfo(
+// 	creator string,
+// 	vendorID int32,
 
-) *MsgDeleteVendorInfo {
-	return &MsgDeleteVendorInfo{
-		Creator:  creator,
-		VendorID: vendorID,
-	}
-}
+// ) *MsgDeleteVendorInfo {
+// 	return &MsgDeleteVendorInfo{
+// 		Creator:  creator,
+// 		VendorID: vendorID,
+// 	}
+// }
 
-func (msg *MsgDeleteVendorInfo) Route() string {
-	return RouterKey
-}
+// func (msg *MsgDeleteVendorInfo) Route() string {
+// 	return RouterKey
+// }
 
-func (msg *MsgDeleteVendorInfo) Type() string {
-	return "DeleteVendorInfo"
-}
+// func (msg *MsgDeleteVendorInfo) Type() string {
+// 	return "DeleteVendorInfo"
+// }
 
-func (msg *MsgDeleteVendorInfo) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		panic(err)
-	}
-	return []sdk.AccAddress{creator}
-}
+// func (msg *MsgDeleteVendorInfo) GetSigners() []sdk.AccAddress {
+// 	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	return []sdk.AccAddress{creator}
+// }
 
-func (msg *MsgDeleteVendorInfo) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
-	return sdk.MustSortJSON(bz)
-}
+// func (msg *MsgDeleteVendorInfo) GetSignBytes() []byte {
+// 	bz := ModuleCdc.MustMarshalJSON(msg)
+// 	return sdk.MustSortJSON(bz)
+// }
 
-func (msg *MsgDeleteVendorInfo) ValidateBasic() error {
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
-	}
+// func (msg *MsgDeleteVendorInfo) ValidateBasic() error {
+// 	_, err := sdk.AccAddressFromBech32(msg.Creator)
+// 	if err != nil {
+// 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+// 	}
 
-	err = validator.Validate(msg)
-	if err != nil {
-		return err
-	}
+// 	err = validator.Validate(msg)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

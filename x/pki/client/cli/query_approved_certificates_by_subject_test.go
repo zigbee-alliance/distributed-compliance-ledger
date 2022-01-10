@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -92,3 +93,4 @@ func TestShowApprovedCertificatesBySubject(t *testing.T) {
 		})
 	}
 }
+*/

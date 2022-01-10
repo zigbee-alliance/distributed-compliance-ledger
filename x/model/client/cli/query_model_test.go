@@ -1,5 +1,6 @@
 package cli_test
 
+/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -164,3 +165,4 @@ func TestListModel(t *testing.T) {
 		)
 	})
 }
+*/

@@ -1,5 +1,7 @@
 package types
 
+/* TODO issue 99
+
 import (
 	"testing"
 
@@ -69,3 +71,4 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 		})
 	}
 }
+*/
