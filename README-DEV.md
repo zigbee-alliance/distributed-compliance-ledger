@@ -32,7 +32,7 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
 
 2. Run unit tests
-    ```
+    ```bash
     make test
     ```
 
@@ -42,17 +42,28 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
     REST integration tests need to have a backend running (CLI in REST mode).
 
     The following script will start all necessary things and run the tests:
-    ```
+    ```bash
     ./integration_tests/run-all.sh
     ```
 
-    If you want to run integration tests one by one, or debug them, then
-    1. Start a local pool of nodes 
+    If you want to run a particular test you may:
+
+    ```bash
+    make localnet_rebuild localnet_start
+
+    bash <path-to-shell-script>  # to run a cli test
+    # OR
+    go test <path-to-go-test-file> # to run REST or gRPC go test
     ```
-    ./integration_tests/start-pool-for-tests.sh
+
+4. Run deployment test
+    
+    The deployment test verifies deployment steps described in [docs/running-node.md](./docs/running-node.md).
+
+    ```bash
+    ./integration_tests/deploy/test_deploy.sh
     ```
-    2. Run/Debug every CLI-based test from `./integration_tests/cli` as a bash script 
-    3. Run/Debug every gRPC/REST-based test from `./integration_tests/grpc_rest` as common Go tests.
+
 
 ## Run local pool
 The easiest way to run a local pool is to start it in Docker:

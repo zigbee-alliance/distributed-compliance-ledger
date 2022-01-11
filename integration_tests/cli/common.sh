@@ -15,7 +15,14 @@
 
 set -euo pipefail
 
+# common constants
+node_p2p_port=26670
+node_client_port=26671
+chain_id="dclchain"
+node0conn="tcp://192.167.10.2:26657"
+docker_network="distributed-compliance-ledger_localnet"
 passphrase="test1234"
+LOCALNET_DIR=".localnet"
 
 # RED=`tput setaf 1`
 # GREEN=`tput setaf 2`
@@ -165,3 +172,37 @@ test_divider() {
   echo ""
 }
 
+wait_for_height() {
+  local target_height=${1:-1} # Default is 1
+  local wait_time=${2:-10}    # In seconds, default - 10
+
+  local _output=${DETAILED_OUTPUT_TARGET:-/dev/stdout}
+
+  local waited=0
+  local wait_interval=1
+
+  while true; do
+    sleep "${wait_interval}"
+    waited=$((waited + wait_interval))
+
+    current_height="$(dcld status | jq | grep latest_block_height | awk -F'"' '{print $4}')"
+
+    if [[ -z "$current_height" ]]; then
+      echo "No height found in status" &>${_output}
+      exit 1
+    fi
+
+    if ((current_height >= target_height)); then
+      echo "Height $target_height is reached in $waited seconds" &>${_output}
+      break
+    fi
+
+    if ((waited > wait_time)); then
+      echo "Height $target_height is not reached in $wait_time seconds" &>${_output}
+      exit 1
+    fi
+
+    echo "Waiting for height: $target_height... Current height: $current_height, " \
+      "wait time: $waited, time limit: $wait_time." &>${_output}
+  done
+}

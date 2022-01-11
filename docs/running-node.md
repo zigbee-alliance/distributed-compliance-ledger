@@ -8,8 +8,9 @@ This document describes in how to:
 ## Components
 
 *   Common release artifacts:
-    * dcld (part of the release): The binary used for running a node and CLI.  
-    * The service configuration file `dcld.service`
+    *   Binary artifacts (part of the release):
+        *   dcld: The binary used for both running a node and interacting with it.
+    *   The service configuration file `dcld.service`
         (either part of the release or [deployment](../deployment) folder).
 *   Additional generated data (for validators and observers):
     *   Genesis transactions file: `genesis.json`
@@ -231,12 +232,11 @@ an account with `NodeAdmin` role. And **wait** until:
 ### Make the node a validator
 
 ```bash
-$ dcld tx validator add-node \
-    --pubkey=<validator pubkey> \
+$ dcld tx validator add-node --pubkey=<validator pubkey> \
     --name=<node name> --from=<key name>
 ```
 
-If the transaction has been successfully written you would find `"success": true` in the output JSON.
+If the transaction has been successfully written you would find `"code": 0` in the output JSON.
 
 ### Notify other validator admins
 
@@ -280,12 +280,12 @@ As a general guidance you may consider to use only the peers you own and/or trus
 *   Check the account:
     *   `dcld query auth account --address=<address>`
 *   Check the node is running properly:
-    *   `dcld status --node <ip:port>`
-    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
+    *   `dcld status --node tcp://<ip:port>`
+    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcld/config/config.toml`
     *   Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 *   Get the list of nodes participating in the consensus for the last block:
-    *   `dcld tendermint-validator-set`.
-    *   You can pass the additional value to get the result for a specific height: `dcld tendermint-validator-set 100`.
+    *   `dcld query tendermint-validator-set`.
+    *   You can pass the additional value to get the result for a specific height: `dcld query tendermint-validator-set 100`.
 
 ## Validator Node Maintenance
 
