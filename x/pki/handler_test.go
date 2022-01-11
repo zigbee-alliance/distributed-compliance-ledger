@@ -522,8 +522,7 @@ func queryProposedCertificate(
 	}
 
 	require.NotNil(setup.T, resp)
-	require.NotNil(setup.T, resp.ProposedCertificate)
-	return resp.ProposedCertificate, nil
+	return &resp.ProposedCertificate, nil
 }
 
 func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificates, error) {
@@ -578,8 +577,7 @@ func queryApprovedCertificates(
 	}
 
 	require.NotNil(setup.T, resp)
-	require.NotNil(setup.T, resp.ApprovedCertificates)
-	return resp.ApprovedCertificates, nil
+	return &resp.ApprovedCertificates, nil
 }
 
 func queryAllProposedCertificateRevocations(setup *TestSetup) ([]types.ProposedCertificateRevocation, error) {
@@ -616,8 +614,7 @@ func queryProposedCertificateRevocation(
 	}
 
 	require.NotNil(setup.T, resp)
-	require.NotNil(setup.T, resp.ProposedCertificateRevocation)
-	return resp.ProposedCertificateRevocation, nil
+	return &resp.ProposedCertificateRevocation, nil
 }
 
 func queryAllRevokedCertificates(setup *TestSetup) ([]types.RevokedCertificates, error) {
@@ -672,8 +669,7 @@ func queryRevokedCertificates(
 	}
 
 	require.NotNil(setup.T, resp)
-	require.NotNil(setup.T, resp.RevokedCertificates)
-	return resp.RevokedCertificates, nil
+	return &resp.RevokedCertificates, nil
 }
 
 func queryChildCertificates(
@@ -695,8 +691,7 @@ func queryChildCertificates(
 	}
 
 	require.NotNil(setup.T, resp)
-	require.NotNil(setup.T, resp.ChildCertificates)
-	return resp.ChildCertificates, nil
+	return &resp.ChildCertificates, nil
 }
 
 func rootCertificate(address sdk.AccAddress) types.Certificate {
