@@ -85,8 +85,8 @@ Adds a record about a Vendor.
 
 - Parameters:
   - vid: `uint16` -  Vendor ID (positive non-zero)
-  - vendorName: `optional(string)` -  Vendor name
-  - companyLegalName: `optional(string)` -  Legal name of the vendor company
+  - vendorName: `string` -  Vendor name
+  - companyLegalName: `string` -  Legal name of the vendor company
   - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
 - In State: `vendorinfo/VendorInfo/value/<vid>`
@@ -109,7 +109,7 @@ Updates a record about a Vendor.
   - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
 - In State: `vendorinfo/VendorInfo/value/<vid>`
 - Who can send: 
-    - Vendor account who created initial entry
+    - Account with a vendor role who has the matching Vendor ID
 - CLI command:
   - `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<account>`
 
@@ -1032,7 +1032,7 @@ Gets a proposed but not approved accounts by its address
 - Parameters:
     - address: `string` - account address; Bench32 encoded
 - CLI command: 
-    -   `dcld query auth proposed-account --addres <bench32 encoded string>`
+    -   `dcld query auth proposed-account --address <bench32 encoded string>`
 - REST API: 
     -   GET `/dcl/auth/proposed-accounts/{address}`       
 
@@ -1044,7 +1044,7 @@ Gets a proposed but not approved accounts to be revoked by its address.
 - Parameters:
     - address: `string` - account address; Bench32 encoded
 - CLI command: 
-    -   `dcld query auth proposed-account-to-revoke --addres <bench32 encoded string>`
+    -   `dcld query auth proposed-account-to-revoke --address <bench32 encoded string>`
 - REST API: 
     -   GET `/dcl/auth/proposed-revocation-accounts/{address}`      
 

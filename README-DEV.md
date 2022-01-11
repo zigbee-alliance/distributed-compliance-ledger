@@ -66,14 +66,21 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
 
 ## Run local pool
-The easiest way to run a local pool is to start it in Docker:
+The easiest way to run a local pool is to start it in Docker.
 
-    make install
+Validator nodes only (no Observers):
+```bash
+make install
+make localnet_init
+make localnet_start
+```
 
-    # DCL_OBSERVERS=1    # to initialize observers as well
-    make localnet_init
-
-    make localnet_start
+Validator and Observer nodes:
+```bash
+make install
+DCL_OBSERVERS=1 make localnet_init
+make localnet_start
+```    
 
 This will start a local pool of 4 validator nodes in Docker. The nodes will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26663` correspondingly.
 
