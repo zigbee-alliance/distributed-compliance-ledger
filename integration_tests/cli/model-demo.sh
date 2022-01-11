@@ -28,6 +28,27 @@ test_divider
 
 # Body
 
+echo "Query non existant model"
+result=$(dcld query model get-model --vid=$vid --pid=$pid)
+check_response "$result" "Not Found"
+echo "$result"
+
+test_divider
+
+echo "Query non existant Vendor Models"
+result=$(dcld query model vendor-models --vid=$vid)
+check_response "$result" "Not Found"
+echo "$result"
+
+test_divider
+
+echo "Request all models must be empty"
+result=$(dcld query model all-models)
+check_response "$result" "\[\]"
+echo "$result"
+
+test_divider
+
 productLabel="Device #1"
 echo "Add Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)

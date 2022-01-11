@@ -57,5 +57,5 @@ func (k Keeper) PendingAccount(c context.Context, req *types.QueryGetPendingAcco
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetPendingAccountResponse{PendingAccount: &val}, nil
+	return &types.QueryGetPendingAccountResponse{PendingAccount: val}, nil
 }

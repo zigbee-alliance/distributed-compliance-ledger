@@ -56,5 +56,5 @@ func (k Keeper) ComplianceInfo(c context.Context, req *types.QueryGetComplianceI
 		return nil, status.Error(codes.NotFound, "not found")
 	}
 
-	return &types.QueryGetComplianceInfoResponse{ComplianceInfo: &val}, nil
+	return &types.QueryGetComplianceInfoResponse{ComplianceInfo: val}, nil
 }

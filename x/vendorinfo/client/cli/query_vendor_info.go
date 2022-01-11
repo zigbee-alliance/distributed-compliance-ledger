@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
@@ -59,6 +60,9 @@ func CmdShowVendorInfo() *cobra.Command {
 			}
 
 			res, err := queryClient.VendorInfo(context.Background(), params)
+			if cli.IsNotFound(err) {
+				return clientCtx.PrintString(cli.NotFoundOutput)
+			}
 			if err != nil {
 				return err
 			}

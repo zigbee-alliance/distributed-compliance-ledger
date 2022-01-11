@@ -5,7 +5,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -48,8 +51,6 @@ func CmdShowPendingAccount() *cobra.Command {
 		Short: "shows a PendingAccount",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			return nil
-			/* FIXME issue 99
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
@@ -64,12 +65,14 @@ func CmdShowPendingAccount() *cobra.Command {
 			}
 
 			res, err := queryClient.PendingAccount(context.Background(), params)
+			if cli.IsNotFound(err) {
+				return clientCtx.PrintString(cli.NotFoundOutput)
+			}
 			if err != nil {
 				return err
 			}
 
 			return clientCtx.PrintProto(res)
-			*/
 		},
 	}
 

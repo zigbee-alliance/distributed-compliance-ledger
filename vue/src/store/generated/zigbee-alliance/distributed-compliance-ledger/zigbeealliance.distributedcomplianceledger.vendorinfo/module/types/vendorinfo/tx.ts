@@ -25,13 +25,6 @@ export interface MsgUpdateVendorInfo {
 
 export interface MsgUpdateVendorInfoResponse {}
 
-export interface MsgDeleteVendorInfo {
-  creator: string
-  vendorID: number
-}
-
-export interface MsgDeleteVendorInfoResponse {}
-
 const baseMsgCreateVendorInfo: object = { creator: '', vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferedName: '', vendorLandingPageURL: '' }
 
 export const MsgCreateVendorInfo = {
@@ -388,122 +381,11 @@ export const MsgUpdateVendorInfoResponse = {
   }
 }
 
-const baseMsgDeleteVendorInfo: object = { creator: '', vendorID: 0 }
-
-export const MsgDeleteVendorInfo = {
-  encode(message: MsgDeleteVendorInfo, writer: Writer = Writer.create()): Writer {
-    if (message.creator !== '') {
-      writer.uint32(10).string(message.creator)
-    }
-    if (message.vendorID !== 0) {
-      writer.uint32(16).int32(message.vendorID)
-    }
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): MsgDeleteVendorInfo {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgDeleteVendorInfo } as MsgDeleteVendorInfo
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        case 1:
-          message.creator = reader.string()
-          break
-        case 2:
-          message.vendorID = reader.int32()
-          break
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(object: any): MsgDeleteVendorInfo {
-    const message = { ...baseMsgDeleteVendorInfo } as MsgDeleteVendorInfo
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator)
-    } else {
-      message.creator = ''
-    }
-    if (object.vendorID !== undefined && object.vendorID !== null) {
-      message.vendorID = Number(object.vendorID)
-    } else {
-      message.vendorID = 0
-    }
-    return message
-  },
-
-  toJSON(message: MsgDeleteVendorInfo): unknown {
-    const obj: any = {}
-    message.creator !== undefined && (obj.creator = message.creator)
-    message.vendorID !== undefined && (obj.vendorID = message.vendorID)
-    return obj
-  },
-
-  fromPartial(object: DeepPartial<MsgDeleteVendorInfo>): MsgDeleteVendorInfo {
-    const message = { ...baseMsgDeleteVendorInfo } as MsgDeleteVendorInfo
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator
-    } else {
-      message.creator = ''
-    }
-    if (object.vendorID !== undefined && object.vendorID !== null) {
-      message.vendorID = object.vendorID
-    } else {
-      message.vendorID = 0
-    }
-    return message
-  }
-}
-
-const baseMsgDeleteVendorInfoResponse: object = {}
-
-export const MsgDeleteVendorInfoResponse = {
-  encode(_: MsgDeleteVendorInfoResponse, writer: Writer = Writer.create()): Writer {
-    return writer
-  },
-
-  decode(input: Reader | Uint8Array, length?: number): MsgDeleteVendorInfoResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input
-    let end = length === undefined ? reader.len : reader.pos + length
-    const message = { ...baseMsgDeleteVendorInfoResponse } as MsgDeleteVendorInfoResponse
-    while (reader.pos < end) {
-      const tag = reader.uint32()
-      switch (tag >>> 3) {
-        default:
-          reader.skipType(tag & 7)
-          break
-      }
-    }
-    return message
-  },
-
-  fromJSON(_: any): MsgDeleteVendorInfoResponse {
-    const message = { ...baseMsgDeleteVendorInfoResponse } as MsgDeleteVendorInfoResponse
-    return message
-  },
-
-  toJSON(_: MsgDeleteVendorInfoResponse): unknown {
-    const obj: any = {}
-    return obj
-  },
-
-  fromPartial(_: DeepPartial<MsgDeleteVendorInfoResponse>): MsgDeleteVendorInfoResponse {
-    const message = { ...baseMsgDeleteVendorInfoResponse } as MsgDeleteVendorInfoResponse
-    return message
-  }
-}
-
 /** Msg defines the Msg service. */
 export interface Msg {
   CreateVendorInfo(request: MsgCreateVendorInfo): Promise<MsgCreateVendorInfoResponse>
-  UpdateVendorInfo(request: MsgUpdateVendorInfo): Promise<MsgUpdateVendorInfoResponse>
   /** this line is used by starport scaffolding # proto/tx/rpc */
-  DeleteVendorInfo(request: MsgDeleteVendorInfo): Promise<MsgDeleteVendorInfoResponse>
+  UpdateVendorInfo(request: MsgUpdateVendorInfo): Promise<MsgUpdateVendorInfoResponse>
 }
 
 export class MsgClientImpl implements Msg {
@@ -521,12 +403,6 @@ export class MsgClientImpl implements Msg {
     const data = MsgUpdateVendorInfo.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.vendorinfo.Msg', 'UpdateVendorInfo', data)
     return promise.then((data) => MsgUpdateVendorInfoResponse.decode(new Reader(data)))
-  }
-
-  DeleteVendorInfo(request: MsgDeleteVendorInfo): Promise<MsgDeleteVendorInfoResponse> {
-    const data = MsgDeleteVendorInfo.encode(request).finish()
-    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.vendorinfo.Msg', 'DeleteVendorInfo', data)
-    return promise.then((data) => MsgDeleteVendorInfoResponse.decode(new Reader(data)))
   }
 }
 

@@ -48,7 +48,7 @@ test_divider
 echo "Get Testing Result for Unknown Model"
 unknown_pid=$RANDOM
 result=$(dcld query compliancetest test-result --vid=$vid --pid=$unknown_pid --softwareVersion=$sv)
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $unknown_pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
@@ -57,7 +57,7 @@ test_divider
 
 echo "Get Testing Result for Unknown Test Results"
 result=$(dcld query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv)
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
