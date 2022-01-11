@@ -16,7 +16,7 @@ PS. Don't forget to define node ips in their configurations so they will be able
 
 ## Setting up client:
 
-Ansible is used to quickly deploy `dclcli` running in rest-server mode.
+Ansible is used to quickly deploy `dcld` running in rest-server mode.
 
 1. Add target machine to the `clients` group in your inventory file:
     - Hosts file is usually located in: `/etc/ansible/hosts`

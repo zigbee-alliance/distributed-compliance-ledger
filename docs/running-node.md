@@ -227,7 +227,7 @@ an account with `NodeAdmin` role. And **wait** until:
 
 *   Account is created
 *   The node completed a catch-up:
-    *   `dcld status --node <ip:port>` returns `false` for `catching_up` field
+    *   `dcld status --node tcp://<ip:port>` returns `false` for `catching_up` field
 
 ### Make the node a validator
 

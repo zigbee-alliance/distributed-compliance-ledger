@@ -140,13 +140,13 @@ and contains the genesis and persistent_peers files.
    * Wait until the value of `catching_up` field gets to `false` value.
       
    * Add validator node: `dcld tx validator add-node --pubkey=<validator pubkey> --name=<node name> --from=<key name>`.
-   If the transaction has been successfully written you would find `"success": true` in the output JSON. 
+   If the transaction has been successfully written you would find `"code": 0` in the output JSON. 
 
 6. Check the node is running and participates in consensus:
     * Get the list of all nodes: `dcld query validator all-nodes`. 
     The node must present in the list and has the following params: `power:10` and `jailed:false`.
 
-    * Get the node status: `dcld status --node <node ip>`. 
+    * Get the node status: `dcld status --node tcp://<node_ip>:26657`. 
     The value of `node ip` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
     (TCP or UNIX socket address for the RPC server to listen on).  
     Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
@@ -188,7 +188,7 @@ and contains the genesis and persistent_peers files.
         }
         ```
     
-    * Get the list of nodes participating in the consensus for the last block: `dcld tendermint-validator-set`.
-        * You can pass the additional value to get the result for a specific height: `dcld tendermint-validator-set 100`  .
+    * Get the list of nodes participating in the consensus for the last block: `dcld query tendermint-validator-set`.
+        * You can pass the additional value to get the result for a specific height: `dcld query tendermint-validator-set 100`  .
       
 7. Congrats! You are an owner of the validator node.

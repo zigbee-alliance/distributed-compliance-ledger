@@ -138,5 +138,5 @@ Please take into account the following when sending a PR:
 
 
 ## Other
-For more details, please have a look at [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial).
-Use __dcld__, __dclcli__ instead of __nameserviced__, __nameservicecli__.
+For more details, please have a look at [Cosmos SDK tutorial](https://tutorials.cosmos.network/).
+
