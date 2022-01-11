@@ -27,7 +27,8 @@ from pathlib import Path
 from render import render
 
 
-DCLCLI = "dclcli"
+DCLCLI = "dcld"
+DCL_CHAIN_ID = "dclchain"
 
 DEF_ACCOUNT_N_START = 4
 DEF_SEQUENCE_START = 0
@@ -36,10 +37,8 @@ ACCOUNT_N_START_F = "account-number-start"
 SEQUENCE_START_F = "sequence-number-start"
 QUERIES_F = "q"
 
-TEST_PASSWORD = "test1234"
-
 MODEL_INFO_PREFIX = 1
-VENDOR_PRODUCTS_PREFIX = 2
+# VENDOR_PRODUCTS_PREFIX = 2
 
 
 def pack_model_info_key(vid, pid):
@@ -110,14 +109,13 @@ def txn_generate(u_address, txn_t_cls, txn_t_cmd, **params):
 
 
 def txn_sign(u_address, account, sequence, f_path):
-    cmd = [DCLCLI, "tx", "sign"]
+    cmd = [DCLCLI, "tx", "sign", "--chain-id", DCL_CHAIN_ID]
     params = {"from": u_address}
     cmd += to_cli_args(
         account_number=account, sequence=sequence, gas="auto", **params
     )
     cmd.extend(["--offline", f_path])
-    cmd = f"echo '{TEST_PASSWORD}' | {' '.join(cmd)}"
-    return run_shell_cmd(cmd, shell=True).stdout
+    return run_shell_cmd(cmd).stdout
 
 
 def txn_encode(f_path):
