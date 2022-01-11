@@ -58,10 +58,8 @@ func GetVendorInfo(
 	var res vendorinfotypes.VendorInfo
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp vendorinfotypes.QueryGetVendorInfoResponse
-		err := suite.QueryREST(fmt.Sprintf("/dcl/vendorinfo/vendor/%v", vid), &resp)
+		err := suite.QueryREST(fmt.Sprintf("/dcl/vendorinfo/vendors/%v", vid), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -87,8 +85,6 @@ func GetVendorInfo(
 
 func GetVendorInfos(suite *utils.TestSuite) (res []vendorinfotypes.VendorInfo, err error) {
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp vendorinfotypes.QueryAllVendorInfoResponse
 		err := suite.QueryREST("/dcl/vendorinfo/vendors", &resp)
 		if err != nil {

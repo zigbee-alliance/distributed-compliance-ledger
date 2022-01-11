@@ -13,7 +13,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 service Query {
     // Queries a vendorInfo by index.
 	rpc VendorInfo(QueryGetVendorInfoRequest) returns (QueryGetVendorInfoResponse) {
-		option (google.api.http).get = "/dcl/vendorinfo/vendor/{vendorID}";
+		option (google.api.http).get = "/dcl/vendorinfo/vendors/{vendorID}";
 	}
 
 	// Queries a list of vendorInfo items.
