@@ -21,18 +21,21 @@ export PATH="$PATH:/usr/bin"
 SCRIPT_PATH="$(readlink -f "$0")"
 BASEDIR="$(dirname "$SCRIPT_PATH")"
 
+JSON_PARSER=
+
 # TODO errors to stderr
 #
 # TODO
 #   - check wherther ip6 and domain names in persistent-peers work
 #   - do not show private data
-#       - requries 'dclcli keys' adjustment, pipes configuration is not an option
+#       - requries 'dcld keys' adjustment, pipes configuration is not an option
 
 SERVICE_FILE="./dcld.service"
 PERSISTENT_PEERS_FILE='./persistent_peers.txt'
 GENESIS_IN_FILE="./genesis.json"
-CONFIG_FILE="$HOME/.dcld/config/config.toml"
-GENESIS_FILE="$HOME/.dcld/config/genesis.json"
+DCL_HOME="$HOME/.dcl"
+CONFIG_FILE="$DCL_HOME/config/config.toml"
+GENESIS_FILE="$DCL_HOME/config/genesis.json"
 
 CLI_PORT=26657
 NT_GENESIS="genesis"
@@ -123,7 +126,7 @@ function parse_args {
                 shift 2
                 ;;
             -u|--user)
-                USER="$2"
+                NODE_USER="$2"
                 shift 2
                 ;;
             -t|--type)
@@ -185,6 +188,31 @@ function parse_args {
     fi
 }
 
+
+function _jq() {
+    set -eu
+    set -o pipefail
+
+    local _input="$1"
+
+    if [[ "$JSON_PARSER" == "python3" ]]; then
+        echo "$_input" | python3 -c 'import json; import sys; json.dump(json.load(sys.stdin), sys.stdout, indent=4)'
+    else
+        echo "$_input" | jq
+    fi
+}
+
+
+function validate_env() {
+    JSON_PARSER="$(jq --version >/dev/null 2>&1 && echo 'jq' || true)"
+    if [[ -z "$JSON_PARSER" ]]; then
+        JSON_PARSER="$(python3 --version >/dev/null 2>&1 && echo "python3" || true)"
+    fi
+    if [[ -z "$JSON_PARSER" ]]; then
+        echo "neither jq nor python3 are available" && exit 1
+    fi
+}
+
 function config_cli {
     set -eu
     set -o pipefail
@@ -192,12 +220,12 @@ function config_cli {
     local _chain_id="$1"
     local _peer_host="${2:-}"
 
-    dclcli config chain-id "$_chain_id"
-    dclcli config output json
-    dclcli config indent true
-    dclcli config trust-node false
+    dcld config chain-id "$_chain_id"
+    dcld config output json
+    dcld config broadcast-mode block
+
     if [[ -n "$_peer_host" ]]; then
-        dclcli config node tcp://"$_peer_host"
+        dcld config node tcp://"$_peer_host"
     fi
 }
 
@@ -209,7 +237,7 @@ function add_key {
     local _key_name="$1"
     local _output="${2:-${_key_name}.dclkey.json}"
 
-    dclcli keys add "$_key_name" 2>&1 | tee "$_output"
+    dcld keys add "$_key_name" 2>&1 | tee "$_output"
     echo -e "\tSaved key data in '$_output'"
 }
 
@@ -221,7 +249,7 @@ function node_init {
     local _name="$1"
     local _chain_id="$2"
 
-    rm -rf "$HOME/.dcld/config/gentx"
+    rm -rf "$DCL_HOME/config/gentx"
     rm -f "$GENESIS_FILE"
 
     dcld init "$_name" --chain-id "$_chain_id"
@@ -277,7 +305,7 @@ function config_node {
             # sudo ufw allow 26657/tcp
 
             # set systemd dcld.service
-            sed -i -r "s~^User=ubuntu$~User=${NODE_USER}~" "$_dcld_service_p"
+            sed -i -r "s~^User=ubuntu$~User=${_node_user}~" "$_dcld_service_p"
             sudo cp -f "$_dcld_service_p" /etc/systemd/system/dcld.service
         } || { echo "WARNING: Not a systemd system. Skipping systemd service configuration";}
     fi
@@ -303,7 +331,7 @@ function run_node {
         echo -e "\tUse 'systemctl status dcld' to get the node service status."
         echo "Use 'journalctl -u dcld.service -f' to see node logs."
     else
-        dcld start &
+        dcld start >./dcl.log 2>&1 &
         echo "Node has been stared in the backgroud."
     fi
 }
@@ -314,7 +342,7 @@ function wait_node_up {
     local _try=1
 
     echo -e "Waiting the node becomes up"
-    until dclcli status >/dev/null 2>&1
+    until dcld status >/dev/null 2>&1
     do
         if [[ "$_try" -gt "$_timeout" ]]; then
             echo -e "\nERROR: dcld node seems not ready after $_timeout seconds."
@@ -332,17 +360,20 @@ function verify_node {
     set -eu
     set -o pipefail
 
-    local _node_ip="${1:-0.0.0.0:26657}"
+    local _node_host="${1:-0.0.0.0}"
+    local _node_port="${2:-26657}"
 
     echo "Checking a node's 'sync_info.latest_block_height' value is not increasing..."
 
     echo "sync_info.latest_block_height Try 1"
-    check1="$(dclcli status --node "$_node_ip" | grep latest_block_height)"
+    local status="$(dcld status --node "tcp://${_node_host}:${_node_port}")"
+    local check1="$(_jq "$status" | grep latest_block_height)"
 
     echo "sync_info.latest_block_height Try 2"
     # TODO it should depend on empty block creation setting value
     sleep 6
-    check2="$(dclcli status --node "$_node_ip" | grep latest_block_height)"
+    status="$(dcld status --node "tcp://${_node_host}:${_node_port}")"
+    local check2="$(_jq "$status" | grep latest_block_height)"
 
     if [[ "$check1" == "$check2" ]]; then
         echo "Error: sync_info.latest_block_height value is not increasing..."
@@ -351,7 +382,7 @@ function verify_node {
 
     # TODO improve: makes sense only for initial genesis node
     echo "Checking the node is participating in consensus..."
-    dclcli tendermint-validator-set | grep -q address
+    dcld query tendermint-validator-set | grep -q address
 
     # TODO check: catching_up is false
 
@@ -368,11 +399,11 @@ function add_account {
     local _acc_roles="$3"
     local _from="$4"
 
-    dclcli tx auth propose-add-account --address="$_acc_address" --pubkey="$_acc_pubkey" \
+    dcld tx auth propose-add-account --address="$_acc_address" --pubkey="$_acc_pubkey" \
         --roles="$_acc_roles" --from="$_from"
 
     echo "Account added"
-    echo "To approve run: dclcli tx auth approve-add-account --address=<string> --from=<account>"
+    echo "To approve run: dcld tx auth approve-add-account --address=<string> --from=<account>"
 }
 
 
@@ -383,12 +414,14 @@ function approve_account {
     local _acc_address="$1"
     local _from="$2"
 
-    dclcli tx auth approve-add-account --address="$_acc_address" --from="$_from"
+    dcld tx auth approve-add-account --address="$_acc_address" --from="$_from"
 
     echo "Account approved by $_from"
 }
 
 # =======================================================
+
+validate_env
 
 parse_args "$@"
 
@@ -415,13 +448,15 @@ config_cli "$CHAIN_ID"
 ACC_ADDR="<acc-addr>"
 ACC_PUBKEY="<acc-pubkey>"
 if [[ -n "$KEY_NAME" ]]; then
-    ACC_ADDR="$(dclcli keys show "${KEY_NAME}" | grep address | awk -F'"' '{print $4}')"
-    ACC_PUBKEY="$(dclcli keys show "${KEY_NAME}" | grep pubkey | awk -F'"' '{print $4}')"
+    KEY_INFO="$(dcld keys show "${KEY_NAME}")"
+    ACC_ADDR="$(_jq "$KEY_INFO" | grep address | awk -F'"' '{print $4}')"
+    ACC_PUBKEY="$(_jq "$KEY_INFO" | grep pubkey | awk -F'"' '{print $4}')"
 fi
 
 if [[ -n "$KEY_NAME_GEN_TRUSTEE" ]]; then
-    ACC_ADDR_TR="$(dclcli keys show "${KEY_NAME_GEN_TRUSTEE}" | grep address | awk -F'"' '{print $4}')"
-    ACC_PUBKEY_TR="$(dclcli keys show "${KEY_NAME_GEN_TRUSTEE}" | grep pubkey | awk -F'"' '{print $4}')"
+    KEY_INFO="$(dcld keys show "${KEY_NAME_GEN_TRUSTEE}")"
+    ACC_ADDR_TR="$(_jq "$KEY_INFO" | grep address | awk -F'"' '{print $4}')"
+    ACC_PUBKEY_TR="$(_jq "$KEY_INFO" | grep pubkey | awk -F'"' '{print $4}')"
 fi
 
 echo "Initializing the node"
@@ -445,8 +480,10 @@ echo "Running the node"
 run_node
 
 VAL_ID="unknown"
-wait_node_up && VAL_ID="$(dclcli status | grep '"id"' | awk -F'"' '{print $4}')"
+wait_node_up
 
+STATUS="$(dcld status)"
+VAL_ID="$(_jq "$STATUS"| grep '"id"' | awk -F'"' '{print $4}')"
 VAL_ADDR="$(dcld tendermint show-address)"
 VAL_PUBKEY="$(dcld tendermint show-validator)"
 
@@ -471,7 +508,7 @@ elif [[ "$NODE_TYPE" == "$NT_VALIDATOR" ]]; then
 
     echo -e "\nNext steps:"
     echo -e "\n\t1. If you have an approved NodeAdmin account please run the following command to make the node a validator:"
-    echo -e "\t\t'dclcli tx validator add-node --validator-address=$VAL_ADDR --validator-pubkey=$VAL_PUBKEY --name=$NODE_NAME --from=$KEY_NAME'"
+    echo -e "\t\t'dcld tx validator add-node --pubkey='$VAL_PUBKEY' --name=$NODE_NAME --from=$KEY_NAME'"
     echo -e "\n\t2. Explore the node external IP and provide it along with validator ID '$VAL_ID'"
     echo -e "\t\t to DCLedger '$CHAIN_ID' network validator administrators"
 
@@ -479,11 +516,11 @@ fi
 
 # useful commands
 # - keys:
-#   dclcli keys show <name>: to get address and oubkey for a ketname
+#   dcld keys show <name>: to get address and pubkey for a keyname
 # - node status:
 #   - systemctl status dcld: to get the node service status. 
 #   - journalctl -u dcld.service -f: to see node logs. 
-#   - dclcli status [--node <node ip>`]: to get the current status.
-#   - dclcli tendermint-validator-set [height]: list of nodes participating in consensus
+#   - dcld status [--node tcp://<node host>:<node port>`]: to get the current status.
+#   - dcld query tendermint-validator-set [height]: list of nodes participating in consensus
 # - account status:
-#   - dclcli query auth account --address=<address>: to ensure that account is created and has assigned role
+#   - dcld query auth account --address=<address>: to ensure that account is created and has assigned role
