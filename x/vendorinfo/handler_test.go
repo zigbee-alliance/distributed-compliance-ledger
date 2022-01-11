@@ -193,11 +193,10 @@ func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
 		accAddress := GenerateAccAddress()
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
 
-		// // update existing vendorinfo by user without Vendor role
-		// msgUpdateVendorInfo := NewMsgUpdateVendorInfo(accAddress)
-		// _, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
-		// require.Error(t, err)
-		// require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+		// update existing vendorinfo by user without Vendor role
+		msgUpdateVendorInfo := NewMsgUpdateVendorInfo(accAddress)
+		_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+		require.NoError(t, err)
 	}
 
 	anotherVendor := GenerateAccAddress()
