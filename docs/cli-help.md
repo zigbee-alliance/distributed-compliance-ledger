@@ -503,7 +503,6 @@ The set of commands that allows you to manage model and model versions.
   - productName: `string` -  model name
   - productLabel: `string` -  model description (string or path to file containing data)
   - partNumber: `string` -  stock keeping unit
-   
   - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
@@ -555,18 +554,17 @@ The set of commands that allows you to manage model and model versions.
   - softwareVersion: `uint32` - model software version
   - softwareVersionSting: `string` - model software version string 
   - cdVersionNumber `uint32` - CD Version Number of the certification
-  - firmwareDigests `string` - FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device
-  - softwareVersionValid `bool` - Flag to indicate whether the software version is valid or not (default true)
-  - otaURL `string` - URL where to obtain the OTA image
-  - otaFileSize `string`  - OtaFileSize is the total size of the OTA software image in bytes
-  - otaChecksum `string` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
-  - otaChecksumType `string` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
+  - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied 
   - maxApplicableSoftwareVersion `uint32` - MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied
-  - minApplicableSoftwareVersion `uint32` - MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied
-  - releaseNotesURL `string` - URL that contains product specific web page that contains release notes for the device model.
+  - firmwareDigests `optional(string)` - FirmwareDigests field included in the Device Attestation response when this Software Image boots on the device
+  - softwareVersionValid `optional(bool)` - Flag to indicate whether the software version is valid or not (default true)
+  - otaURL `optional(string)` - URL where to obtain the OTA image
+  - otaFileSize `optional(string)`  - OtaFileSize is the total size of the OTA software image in bytes
+  - otaChecksum `optional(string)` - Digest of the entire contents of the associated OTA Software Update Image under the OtaUrl attribute, encoded in base64 string representation. The digest SHALL have been computed using the algorithm specified in OtaChecksumType
+  - otaChecksumType `optional(string)` - Numeric identifier as defined in IANA Named Information Hash Algorithm Registry for the type of otaChecksum. For example, a value of 1 would match the sha-256 identifier, which maps to the SHA-256 digest algorithm
+  - releaseNotesURL `optional(string)` - URL that contains product specific web page that contains release notes for the device model.
 
-  Example: `dcld tx model add-model-version --vid=1 --pid=1 --softwareVersion=20 --softwareVersionString="1.0" --cdVersionNumber=1 --minApplicableSoftwareVersion=1 --maxApplicableSoftwareVersion=10  --from="jack"`
-  
+
 - Update an existing model version. Only the vendor role with associated vendorID can edit a Model.
 
   Role: `Vendor`

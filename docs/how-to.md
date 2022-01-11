@@ -47,10 +47,7 @@ CLI configuration file can be created or updated by executing of the command: `d
 Here is the list of supported settings:
 * chain-id <chain id> - unique chain ID of the network you are going to connect to
 * output <type> - Output format (text/json)
-* indent <bool> - Add indent to JSON response
-* trust-node <bool> - Trust connected full node (don't verify proofs for responses). The `false` value is recommended.
 * node <node-ip> - Address `<host>:<port>` of the node to connect. 
-* trace <bool> - Print out full stack trace on errors.
 * broadcast-mode <mode> - Write transaction broadcast mode to use (one of: `sync`, `async`, `block`. `block` is default).
 
 In order to connect the CLI to a DC Ledger Network (Chain), the following parameters should be used:
