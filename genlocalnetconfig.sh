@@ -25,7 +25,7 @@ if [ "$(uname)" == "Darwin" ]; then
 fi
 
 DCL_DIR="$HOME/.dcl"
-KEYPASSWD=test1234
+KEYPASSWD=test1234  # NOTE not necessary actually since we yse 'test' keyring backend now
 CHAIN_ID=dclchain
 
 rm -rf "$DCL_DIR"
@@ -41,13 +41,7 @@ fi
 
 dcld config chain-id "$CHAIN_ID"
 dcld config output json
-# TODO issue 99: empty value will override defaults by some reason
-#       (e.g. in dcld status)
 dcld config node "tcp://localhost:26657"
-# TODO issue 99: check the replacement for the setting
-# dcld config indent true
-# TODO issue 99: check the replacement for the setting
-# dcld config trust-node false
 dcld config keyring-backend test
 dcld config broadcast-mode block
 
