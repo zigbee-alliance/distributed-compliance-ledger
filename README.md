@@ -26,10 +26,12 @@ DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](htt
        - The CLI is based on the Cosmos SDK
        - See [CLI Usage](#cli-usage) section for details.
      - **REST**
-       - Exposed by every running node.
+       - Exposed by every running node
+       - See https://docs.cosmos.network/master/core/grpc_rest.html
        - See [transactions](docs/transactions.md) for a full list of endpoints.
      - **gRPC**.
-       - A client code can be generated for all popular languages from the proto files [proto](proto), see https://grpc.io/docs/languages/.   
+       - A client code can be generated for all popular languages from the proto files [proto](proto), see https://grpc.io/docs/languages/.
+       - See https://docs.cosmos.network/master/core/grpc_rest.html
      - **Light Client**
        - Tendermint's Light Client can be used for a direct communication on API level.
        - There are currently no DC Ledger specific API libraries for various platforms and languages, 
@@ -75,7 +77,7 @@ an Account created on the Ledger with an appropriate role (see [how-to.md](docs/
 Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
 
 ### REST Usage
-Any running node exposes a REST API at port `1317`. 
+Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html. 
 
 A list of all REST API calls can be found in [transactions.md](docs/transactions.md).
 

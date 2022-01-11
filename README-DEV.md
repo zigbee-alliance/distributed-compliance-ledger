@@ -97,7 +97,7 @@ Have a look at [How To](docs/how-to.md) and [transactions](docs/transactions.md)
 ## REST
 Start a local pool as described above.
 
-Every node exposes a REST API at `http://<node-ip>:1317`.
+Every node exposes a REST API at `http://<node-host>:1317` (see https://docs.cosmos.network/master/core/grpc_rest.html).
 
 Have a look at [transactions](docs/transactions.md) for a full list of REST endpoints.
 
