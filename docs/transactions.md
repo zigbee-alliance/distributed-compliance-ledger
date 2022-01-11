@@ -75,8 +75,69 @@ an Account or sign the request.
 - reverse `optional(bool)`:       results are sorted in descending order
 
 
+## VENDOR INFO
 
-   
+
+#### ADD_VENDOR_INFO
+**Status: Implemented**
+
+Adds a record about a Vendor.
+
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero)
+  - vendorName: `optional(string)` -  Vendor name
+  - companyLegalName: `optional(string)` -  Legal name of the vendor company
+  - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
+  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
+- In State: `vendorinfo/VendorInfo/value/<vid>`
+- Who can send: 
+    - Vendor account
+- CLI command:
+  - `dcld tx vendorinfo add-vendor --vid=<uint16> --vendorName=<string> --companyLegalName=<string> --companyPreferredName=<string> --vendorLandingPageURL=<string> --from=<account>`
+
+
+#### UPDATE_VENDOR_INFO
+**Status: Implemented**
+
+Updates a record about a Vendor.
+
+- Parameters:
+  - vid: `uint16` -  Vendor ID (positive non-zero)
+  - vendorName: `optional(string)` -  Vendor name
+  - companyLegalName: `optional(string)` -  Legal name of the vendor company
+  - companyPreferredName: `optional(string)` -  Preferred name of the vendor company
+  - vendorLandingPageURL: `optional(string)` -  URL of the vendor's landing page
+- In State: `vendorinfo/VendorInfo/value/<vid>`
+- Who can send: 
+    - Vendor account who created initial entry
+- CLI command:
+  - `dcld tx vendorinfo update-vendor --vid=<uint16> ... --from=<account>`
+
+
+#### GET_VENDOR_INFO
+**Status: Implemented**
+
+Gets a Vendor Info for the given `vid` (vendor ID).
+
+- Parameters:
+    - vid: `uint16` -  model vendor ID (positive non-zero)
+- CLI command: 
+    -   `dcld query vendorinfo vendor --vid=<uint16>`
+- REST API: 
+    - GET `/dcl/vendorinfo/vendors/{vid}`
+
+#### GET_ALL_VENDOR_INFO
+**Status: Implemented**
+
+Gets information about all vendors for all VIDs.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command: 
+    -   `dcld query vendorinfo all-vendors`
+- REST API: 
+    - GET `/dcl/vendorinfo/vendors`
+
 ## MODEL and MODEL_VERSION
 
 #### ADD_MODEL
@@ -183,14 +244,14 @@ If one of `OTA_URl`, `OTA_checksum` or `OTA_checksum_type` fields is set, then t
 - CLI command minimal:
 ```
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
---minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32> --from="jack"
+--minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32> --from=<account>
 ```
 - CLI command full:
 ```
 dcld tx model add-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --cdVersionNumber=<uint32>
 --minApplicableSoftwareVersion=<uint32> --maxApplicableSoftwareVersion=<uint32>
 --firmwareDigests=<string> --softwareVersionValid=<bool> --otaURL=<string> --otaFileSize=<string> --otaChecksum=<string> --otaChecksumType=<string> --releaseNotesURL=<string> 
---from="jack"
+--from=<account>
 ```
 
 #### EDIT_MODEL_VERSION
@@ -219,7 +280,7 @@ All non-edited fields remain the same.
 - Who can send: 
     - Vendor associated with the same vid who created the Model
 - CLI command: 
-    -   `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=jack`
+    -   `dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>`
 
 
 
@@ -314,7 +375,7 @@ Another test result can be submitted instead.
 - Who can send: 
     - TestHouse
 - CLI command: 
-    -   `dcld tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string> --test-date=<rfc3339 encoded date> --from=<account>`
+    -   `dcld tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string-or-path> --test-date=<rfc3339 encoded date> --from=<account>`
 
 #### GET_TEST_RESULT
 **Status: Implemented**
