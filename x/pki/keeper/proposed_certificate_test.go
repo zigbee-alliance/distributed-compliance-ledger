@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -66,3 +67,4 @@ func TestProposedCertificateGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllProposedCertificate(ctx)),
 	)
 }
+*/

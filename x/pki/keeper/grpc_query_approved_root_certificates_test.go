@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"testing"
 
@@ -46,3 +47,4 @@ func TestApprovedRootCertificatesQuery(t *testing.T) {
 		})
 	}
 }
+*/
