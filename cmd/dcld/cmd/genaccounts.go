@@ -16,6 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -27,6 +28,7 @@ const (
 	FlagAddress = "address"
 	FlagPubKey  = "pubkey"
 	FlagRoles   = "roles"
+	FlagVID     = "vid"
 )
 
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
@@ -95,8 +97,17 @@ the address will be looked up in the local Keybase.
 			//	    and uses pack/unpack API to extract accounts from genesis state
 
 			ba := authtypes.NewBaseAccount(addr, pk, 0, 0)
+
+			var vendorID uint64 = 0
+			if viper.GetString(FlagVID) != "" {
+				vendorID, err = cast.ToUint64E(viper.GetString(FlagVID))
+				if err != nil {
+					return err
+				}
+			}
+
 			// FIXME issue 99 VendorID
-			genAccount = dclauthtypes.NewAccount(ba, roles, 0)
+			genAccount = dclauthtypes.NewAccount(ba, roles, vendorID)
 
 			if err := genAccount.Validate(); err != nil {
 				return fmt.Errorf("failed to validate new genesis account: %w", err)
@@ -138,6 +149,7 @@ the address will be looked up in the local Keybase.
 	cmd.Flags().String(FlagPubKey, "", "The validator's Protobuf JSON encoded public key")
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles (split by comma) to assign to account (supported roles: %v)", dclauthtypes.Roles))
+	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account. Required only for Vendor Roles")
 
 	cmd.Flags().String(flags.FlagHome, defaultNodeHome, "The application home directory")
 	cmd.Flags().String(flags.FlagKeyringBackend, flags.DefaultKeyringBackend, "Select keyring's backend (os|file|kwallet|pass|test)")
