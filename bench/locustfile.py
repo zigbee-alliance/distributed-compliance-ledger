@@ -123,6 +123,7 @@ class DCLUser(HttpUser):
                 f"{self.host}/", json.dumps(payload), name="write-txn",
                 catch_response=True
             ) as response:
+                # logger.debug(f"{self.username}: response {response.__dict__}")
                 logger.debug(f"{self.username}: response {response.text}")
                 payload = json.loads(response.text)
                 if "error" in payload:

@@ -28,7 +28,7 @@ By that reason load test uses prepared load data which can be generated as follo
 *   Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
 
     ```bash
-    sudo make localnet_clean
+    make localnet_clean
 
     # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
     make localnet_init

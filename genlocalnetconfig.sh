@@ -25,7 +25,7 @@ if [ "$(uname)" == "Darwin" ]; then
 fi
 
 DCL_DIR="$HOME/.dcl"
-KEYPASSWD=test1234
+KEYPASSWD=test1234  # NOTE not necessary actually since we yse 'test' keyring backend now
 CHAIN_ID=dclchain
 
 rm -rf "$DCL_DIR"
@@ -41,13 +41,7 @@ fi
 
 dcld config chain-id "$CHAIN_ID"
 dcld config output json
-# TODO issue 99: empty value will override defaults by some reason
-#       (e.g. in dcld status)
 dcld config node "tcp://localhost:26657"
-# TODO issue 99: check the replacement for the setting
-# dcld config indent true
-# TODO issue 99: check the replacement for the setting
-# dcld config trust-node false
 dcld config keyring-backend test
 dcld config broadcast-mode block
 
@@ -136,6 +130,8 @@ dcld validate-genesis
 
 # Update genesis for all nodes
 
+cp "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR"
+
 for node_name in node0 node1 node2 node3; do
     cp "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR/$node_name/config/"
 done
@@ -153,6 +149,8 @@ id3=$(ls "$LOCALNET_DIR/node3/config/gentx" | sed 's/gentx-\(.*\).json/\1/')
 
 # Update address book of the first node
 peers="$id0@192.167.10.2:26656,$id1@192.167.10.3:26656,$id2@192.167.10.4:26656,$id3@192.167.10.5:26656"
+
+echo "$peers" >"$LOCALNET_DIR"/persistent_peers.txt
 
 # Update address book of the first node 
 sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" "$LOCALNET_DIR/node0/config/config.toml"

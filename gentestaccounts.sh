@@ -21,30 +21,30 @@ if [ "$(uname)" == "Darwin" ]; then
     SED_EXT="''"
 fi
 
+DCL_DIR="$HOME/.dcl"
 LOCALNET_DIR=".localnet"
 
 rm -rf "$LOCALNET_DIR"/client/*
 
-PASSWD=test1234
 NUMUSERS="${1:-10}"
 
 for i in $(seq 1 "$NUMUSERS"); do
     userN="$(printf "%05d\n" "$i")"
     username="tu${userN}"
-    echo $PASSWD"" | dclcli keys add "$username"
+    dcld keys add "$username"
 
-    tu_address="$(dclcli keys show "$username" -a)"
-    tu_pubkey="$(dclcli keys show "$username" -p)"
+    tu_address="$(dcld keys show "$username" -a)"
+    tu_pubkey="$(dcld keys show "$username" -p)"
 
-    dcld add-genesis-account --address=$tu_address --pubkey=$tu_pubkey --roles="Vendor"
+    dcld add-genesis-account --address=$tu_address --pubkey=$tu_pubkey --roles="Vendor" --vid="$i"
     echo "$username generated"
 done
 
 dcld validate-genesis
 
-cp -r ~/.dclcli/* "$LOCALNET_DIR"/client
+cp -r "$DCL_DIR"/* "$LOCALNET_DIR"/client
 for node_id in node0 node1 node2 node3 observer0; do
     if [[ -d "$LOCALNET_DIR/${node_id}" ]]; then
-        cp -f ~/.dcld/config/genesis.json "$LOCALNET_DIR/${node_id}/config/"
+        cp -f "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR/${node_id}/config/"
     fi
 done
