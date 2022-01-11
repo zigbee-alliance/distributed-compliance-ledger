@@ -43,9 +43,16 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
     The following script will start all necessary things and run the tests:
     ```
-    ./integration_tests/ci/run-all.sh
+    ./integration_tests/run-all.sh
     ```
 
+    If you want to run integration tests one by one, or debug them, then
+    1. Start a local pool of nodes 
+    ```
+    ./integration_tests/start-pool-for-tests.sh
+    ```
+    2. Run/Debug every CLI-based test from `./integration_tests/cli` as a bash script 
+    3. Run/Debug every gRPC/REST-based test from `./integration_tests/grpc_rest` as common Go tests.
 
 ## Run local pool
 The easiest way to run a local pool is to start it in Docker:
@@ -69,12 +76,19 @@ If you need to start a new clean network then run `make localnet_rebuild` prior 
 It will remove `.dcl` directories from your user home directory (`~`), remove `.localnet` directory from the root directory of the cloned project,
 and initialize a new network data using `make localnet_init`.
 
-## Run CLI
+## CLI
 Start a local pool as described above, and then just execute
 ```
 dcld
 ```
-Have a look at [How To](docs/how-to.md) and [CLI Help](docs/cli-help.md) for instructions how to configure and use the CLI.
+Have a look at [How To](docs/how-to.md) and [transactions](docs/transactions.md) for instructions how to configure and use the CLI.
+
+## REST
+Start a local pool as described above.
+
+Every node exposes a REST API at `http://<node-ip>:26640`.
+
+Have a look at [transactions](docs/transactions.md) for a full list of REST endpoints.
 
 ## Remote Debugging local pool 
 If you want to remotely debug the node running in docker in order to inspect and step thru the code, modify the following lines in the `docker-compose.yml`. Comment out the default `dcld start` command with the `dlv` as shown below (delve is the go remote debugger) 
