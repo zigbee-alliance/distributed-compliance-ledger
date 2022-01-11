@@ -27,11 +27,9 @@ service Query {
 	}
 
 // Queries a pendingAccount by index.
-    /*
 	rpc PendingAccount(QueryGetPendingAccountRequest) returns (QueryGetPendingAccountResponse) {
-		option (google.api.http).get = "/dcl/auth/pendingAccount/{address}";
+		option (google.api.http).get = "/dcl/auth/proposed-accounts/{address}";
 	}
-    */
 
 	// Queries a list of pendingAccount items.
 	rpc PendingAccountAll(QueryAllPendingAccountRequest) returns (QueryAllPendingAccountResponse) {
@@ -39,11 +37,9 @@ service Query {
 	}
 
 // Queries a pendingAccountRevocation by index.
-    /*
 	rpc PendingAccountRevocation(QueryGetPendingAccountRevocationRequest) returns (QueryGetPendingAccountRevocationResponse) {
-		option (google.api.http).get = "/dcl/auth/pendingAccountRevocation/{address}";
+		option (google.api.http).get = "/dcl/auth/proposed-revocation-accounts/{address}";
 	}
-    */
 
 	// Queries a list of pendingAccountRevocation items.
 	rpc PendingAccountRevocationAll(QueryAllPendingAccountRevocationRequest) returns (QueryAllPendingAccountRevocationResponse) {
@@ -63,7 +59,7 @@ message QueryGetAccountRequest {
 }
 
 message QueryGetAccountResponse {
-	Account account = 1 [(gogoproto.nullable) = true];
+	Account account = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllAccountRequest {
@@ -81,7 +77,7 @@ message QueryGetPendingAccountRequest {
 }
 
 message QueryGetPendingAccountResponse {
-	PendingAccount pendingAccount = 1 [(gogoproto.nullable) = true];
+	PendingAccount pendingAccount = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllPendingAccountRequest {
@@ -99,7 +95,7 @@ message QueryGetPendingAccountRevocationRequest {
 }
 
 message QueryGetPendingAccountRevocationResponse {
-	PendingAccountRevocation pendingAccountRevocation = 1 [(gogoproto.nullable) = true];
+	PendingAccountRevocation pendingAccountRevocation = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllPendingAccountRevocationRequest {

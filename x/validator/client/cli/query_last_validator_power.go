@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -69,12 +69,11 @@ func CmdShowLastValidatorPower() *cobra.Command {
 			}
 
 			res, err := queryClient.LastValidatorPower(context.Background(), params)
-			if cliutils.HandleError(err) != nil {
-				return err
+			if cli.IsNotFound(err) {
+				return clientCtx.PrintString(cli.NotFoundOutput)
 			}
 			if err != nil {
-				// show default (empty) value in CLI
-				res = &types.QueryGetLastValidatorPowerResponse{LastValidatorPower: nil}
+				return err
 			}
 
 			return clientCtx.PrintProto(res)

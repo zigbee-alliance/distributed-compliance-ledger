@@ -98,7 +98,7 @@ test_divider
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created for ZB"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_zb")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"certification_type\": \"$certification_type_zb\""
@@ -108,7 +108,7 @@ test_divider
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} before compliance record was created for Matter"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_matter")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""
@@ -119,7 +119,7 @@ test_divider
 
 echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} before compliance record was created for ZB"
 result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_zb")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"certification_type\": \"$certification_type_zb\""
@@ -129,7 +129,7 @@ test_divider
 
 echo "Get Revoked Model with VID: ${vid} PID: ${pid} and SV: ${sv} before compliance record was created for Matter"
 result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVersion=$sv --certificationType="$certification_type_matter")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""

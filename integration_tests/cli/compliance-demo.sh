@@ -97,7 +97,7 @@ test_divider
 
 echo "Get Compliance Info with VID: ${vid} PID: ${pid} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo $result
@@ -106,7 +106,7 @@ test_divider
 
 echo "Get Certified Model with VID: ${vid} PID: ${pid} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo $result
@@ -115,7 +115,7 @@ test_divider
 
 echo "Get Revoked Model with VID: ${vid} PID: ${pid} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
@@ -124,7 +124,7 @@ test_divider
 
 echo "Get Revoked Model with VID: ${vid} PID: ${pid} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee")
-check_response "$result" "null"
+check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"

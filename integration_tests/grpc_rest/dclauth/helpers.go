@@ -20,19 +20,21 @@ import (
 	"github.com/cosmos/cosmos-sdk/crypto/hd"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/go-bip39"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 const (
 	DCLAuthAccountsEndpoint                   = "/dcl/auth/accounts/"
-	DCLAuthProposedAccountsEndpoint           = "/dcl/auth/proposed-accounts"
-	DCLAuthProposedRevocationAccountsEndpoint = "/dcl/auth/proposed-revocation-accounts"
+	DCLAuthProposedAccountsEndpoint           = "/dcl/auth/proposed-accounts/"
+	DCLAuthProposedRevocationAccountsEndpoint = "/dcl/auth/proposed-revocation-accounts/"
 )
 
 //nolint:godox
@@ -44,11 +46,9 @@ const (
 */
 
 func GetAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.Account, error) {
-	var res *dclauthtypes.Account
+	var res dclauthtypes.Account
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryGetAccountResponse
 		err := suite.QueryREST(DCLAuthAccountsEndpoint+address.String(), &resp)
 		if err != nil {
@@ -71,13 +71,11 @@ func GetAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.A
 		res = resp.GetAccount()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAccounts(suite *utils.TestSuite) (res []dclauthtypes.Account, err error) {
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryAllAccountResponse
 		err := suite.QueryREST(DCLAuthAccountsEndpoint, &resp)
 		if err != nil {
@@ -105,8 +103,6 @@ func GetAccounts(suite *utils.TestSuite) (res []dclauthtypes.Account, err error)
 
 func GetProposedAccounts(suite *utils.TestSuite) (res []dclauthtypes.PendingAccount, err error) {
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryAllPendingAccountResponse
 		err := suite.QueryREST(DCLAuthProposedAccountsEndpoint, &resp)
 		if err != nil {
@@ -132,12 +128,39 @@ func GetProposedAccounts(suite *utils.TestSuite) (res []dclauthtypes.PendingAcco
 	return res, nil
 }
 
+func GetProposedAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.PendingAccount, error) {
+	var res dclauthtypes.PendingAccount
+
+	if suite.Rest {
+		var resp dclauthtypes.QueryGetPendingAccountResponse
+		err := suite.QueryREST(DCLAuthProposedAccountsEndpoint+address.String(), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPendingAccount()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/dclauth service.
+		accClient := dclauthtypes.NewQueryClient(grpcConn)
+		resp, err := accClient.PendingAccount(
+			context.Background(),
+			&dclauthtypes.QueryGetPendingAccountRequest{Address: address.String()},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPendingAccount()
+	}
+
+	return &res, nil
+}
+
 func GetProposedAccountsToRevoke(suite *utils.TestSuite) (
 	res []dclauthtypes.PendingAccountRevocation, err error,
 ) {
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp dclauthtypes.QueryAllPendingAccountRevocationResponse
 		err := suite.QueryREST(DCLAuthProposedRevocationAccountsEndpoint, &resp)
 		if err != nil {
@@ -163,7 +186,34 @@ func GetProposedAccountsToRevoke(suite *utils.TestSuite) (
 	return res, nil
 }
 
-// TODO issue 99: add support for query accounts stat
+func GetProposedAccountToRevoke(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.PendingAccountRevocation, error) {
+	var res dclauthtypes.PendingAccountRevocation
+
+	if suite.Rest {
+		var resp dclauthtypes.QueryGetPendingAccountRevocationResponse
+		err := suite.QueryREST(DCLAuthProposedRevocationAccountsEndpoint+address.String(), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPendingAccountRevocation()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		// This creates a gRPC client to query the x/dclauth service.
+		accClient := dclauthtypes.NewQueryClient(grpcConn)
+		resp, err := accClient.PendingAccountRevocation(
+			context.Background(),
+			&dclauthtypes.QueryGetPendingAccountRevocationRequest{Address: address.String()},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetPendingAccountRevocation()
+	}
+
+	return &res, nil
+}
 
 func ProposeAddAccount(
 	suite *utils.TestSuite,
@@ -260,6 +310,28 @@ func CreateAccount(
 	return account
 }
 
+func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreateModel {
+
+	return &modeltypes.MsgCreateModel{
+		Creator:                                  signer,
+		Vid:                                      vid,
+		Pid:                                      pid,
+		DeviceTypeId:                             testconstants.DeviceTypeId,
+		ProductName:                              utils.RandString(),
+		ProductLabel:                             utils.RandString(),
+		PartNumber:                               utils.RandString(),
+		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
+		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowUrl,
+		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
+		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
+		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
+		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
+		UserManualUrl: testconstants.UserManualUrl,
+		SupportUrl:    testconstants.SupportUrl,
+		ProductUrl:    testconstants.ProductUrl,
+	}
+}
+
 // Common Test Logic
 
 //nolint:funlen
@@ -297,13 +369,29 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, 0, len(inputProposedAccountsToRevoke))
 
-	_, testAccPubKey, testAccAddr := testdata.KeyTestPubAddr()
+	accountName := utils.RandString()
+	accountInfo := CreateAccountInfo(suite, accountName)
+	testAccPubKey := accountInfo.GetPubKey()
+	testAccAddr := accountInfo.GetAddress()
+
+	// Query unknown account
+	_, err = GetAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account to revoke
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
 
 	// Jack proposes new account
+	vid := int32(tmrand.Uint16())
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, uint64(testconstants.Vid),
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, uint64(vid),
 		jackName, jackAccount,
 	)
 	require.NoError(suite.T, err)
@@ -319,6 +407,20 @@ func AuthDemo(suite *utils.TestSuite) {
 	// Query all accounts proposed to be revoked
 	receivedProposedAccountsToRevoke, _ := GetProposedAccountsToRevoke(suite)
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
+
+	// Query unknown account
+	_, err = GetAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account to revoke
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query proposed account
+	proposedAccount, err := GetProposedAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, proposedAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
 
 	// Alice approves new account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount)
@@ -342,18 +444,13 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testAccAddr, testAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testAccount.GetRoles())
 
-	// FIXME issue 99: enable once implemented
-	/*
-		// Publish model info by test account
-		model := NewMsgAddModel(suite, testAccountKeyInfo.Address, testconstants.VID)
-		_, _ = AddModel(suite, model, testAccountKeyInfo)
+	// Query unknown proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
 
-		// Check model is created
-		receivedModel, _ := GetModel(suite, model.VID, model.PID)
-		require.Equal(suite.T, receivedModel.VID, model.VID)
-		require.Equal(suite.T, receivedModel.PID, model.PID)
-		require.Equal(suite.T, receivedModel.ProductName, model.ProductName)
-	*/
+	// Query unknown proposed account to revoke
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
 
 	// Alice proposes to revoke new account
 	_, err = ProposeRevokeAccount(suite, testAccAddr, aliceName, aliceAccount)
@@ -371,6 +468,11 @@ func AuthDemo(suite *utils.TestSuite) {
 	// Query all accounts proposed to be revoked
 	receivedProposedAccountsToRevoke, _ = GetProposedAccountsToRevoke(suite)
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke)+1, len(receivedProposedAccountsToRevoke))
+
+	// Query proposed account to revoke
+	proposedToRevokeAccount, err := GetProposedAccountToRevoke(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr.String(), proposedToRevokeAccount.GetAddress())
 
 	// Bob approves to revoke new account
 	_, err = ApproveRevokeAccount(suite, testAccAddr, bobName, bobAccount)
@@ -394,12 +496,19 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 	suite.AssertNotFound(err)
 
-	// FIXME issue 99: enable once implemented
-	/*
-		// Try to publish another model info by test account.
-		// Ensure that the request is responded with not OK status code.
-		model = NewMsgAddModel(suite, testAccountKeyInfo.Address, testconstants.VID)
-		_, code = AddModel(suite, model, testAccountKeyInfo)
-		require.NotEqual(suite.T, http.StatusOK, code)
-	*/
+	_, err = GetProposedAccount(suite, testAccAddr)
+	require.Error(suite.T, err)
+	suite.AssertNotFound(err)
+
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	require.Error(suite.T, err)
+	suite.AssertNotFound(err)
+
+	// Try to publish another model info by test account.
+	// Ensure that the request is responded with not OK status code.
+	pid := int32(tmrand.Uint16())
+	firstModel := NewMsgCreateModel(vid, pid, testAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, accountName, testAccount)
+	require.Error(suite.T, err)
+	require.True(suite.T, sdkerrors.ErrUnknownAddress.Is(err))
 }

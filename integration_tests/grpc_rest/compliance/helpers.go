@@ -65,7 +65,9 @@ func GetAllComplianceInfo(suite *utils.TestSuite) (res []compliancetypes.Complia
 	return res, nil
 }
 
-func GetComplianceInfo(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (res *compliancetypes.ComplianceInfo, err error) {
+func GetComplianceInfo(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (*compliancetypes.ComplianceInfo, error) {
+	var res compliancetypes.ComplianceInfo
+
 	if suite.Rest {
 		var resp compliancetypes.QueryGetComplianceInfoResponse
 		err := suite.QueryREST(
@@ -103,7 +105,7 @@ func GetComplianceInfo(suite *utils.TestSuite, vid int32, pid int32, sv uint32, 
 		res = resp.GetComplianceInfo()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAllCertifiedModels(suite *utils.TestSuite) (res []compliancetypes.CertifiedModel, err error) {
@@ -133,7 +135,9 @@ func GetAllCertifiedModels(suite *utils.TestSuite) (res []compliancetypes.Certif
 	return res, nil
 }
 
-func GetCertifiedModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (res *compliancetypes.CertifiedModel, err error) {
+func GetCertifiedModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (*compliancetypes.CertifiedModel, error) {
+	var res compliancetypes.CertifiedModel
+
 	if suite.Rest {
 		var resp compliancetypes.QueryGetCertifiedModelResponse
 		err := suite.QueryREST(
@@ -171,7 +175,7 @@ func GetCertifiedModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, 
 		res = resp.GetCertifiedModel()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAllRevokedModels(suite *utils.TestSuite) (res []compliancetypes.RevokedModel, err error) {
@@ -201,7 +205,9 @@ func GetAllRevokedModels(suite *utils.TestSuite) (res []compliancetypes.RevokedM
 	return res, nil
 }
 
-func GetRevokedModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (res *compliancetypes.RevokedModel, err error) {
+func GetRevokedModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (*compliancetypes.RevokedModel, error) {
+	var res compliancetypes.RevokedModel
+
 	if suite.Rest {
 		var resp compliancetypes.QueryGetRevokedModelResponse
 		err := suite.QueryREST(
@@ -239,7 +245,7 @@ func GetRevokedModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct
 		res = resp.GetRevokedModel()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func GetAllProvisionalModels(suite *utils.TestSuite) (res []compliancetypes.ProvisionalModel, err error) {
@@ -269,7 +275,9 @@ func GetAllProvisionalModels(suite *utils.TestSuite) (res []compliancetypes.Prov
 	return res, nil
 }
 
-func GetProvisionalModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (res *compliancetypes.ProvisionalModel, err error) {
+func GetProvisionalModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32, ct string) (*compliancetypes.ProvisionalModel, error) {
+	var res compliancetypes.ProvisionalModel
+
 	if suite.Rest {
 		var resp compliancetypes.QueryGetProvisionalModelResponse
 		err := suite.QueryREST(
@@ -307,7 +315,7 @@ func GetProvisionalModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32
 		res = resp.GetProvisionalModel()
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {

@@ -78,12 +78,11 @@ func CmdShowCertifiedModel() *cobra.Command {
 			}
 
 			res, err := queryClient.CertifiedModel(context.Background(), params)
-			if cli.HandleError(err) != nil {
-				return err
+			if cli.IsNotFound(err) {
+				return clientCtx.PrintString(cli.NotFoundOutput)
 			}
 			if err != nil {
-				// show default (empty) value in CLI
-				res = &types.QueryGetCertifiedModelResponse{CertifiedModel: nil}
+				return err
 			}
 
 			return clientCtx.PrintProto(res)

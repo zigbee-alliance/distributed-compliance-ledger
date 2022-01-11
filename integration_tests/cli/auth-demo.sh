@@ -34,9 +34,35 @@ user_pubkey=$(echo $passphrase | dcld keys show $user -p)
 vid=$RANDOM
 pid=$RANDOM
 
+echo "Get not yet approved $user account"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get not yet proposed $user account to revoke"
+result=$(dcld query auth proposed-account-to-revoke --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
 echo "Get not yet proposed $user account"
-result=$(dcld query auth account --address=$user_address 2>&1) || true
-check_response "$result" "null"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
+echo "Get all proposed accounts must be empty"
+result=$(dcld query auth all-proposed-accounts)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get all proposed accounts to revoke must be empty"
+result=$(dcld query auth all-proposed-accounts-to-revoke)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"address\": \"$user_address\""
 
 test_divider
 
@@ -49,6 +75,16 @@ test_divider
 echo "Get all active accounts. No $user account in the list because not enough approvals received"
 result=$(dcld query auth all-accounts)
 response_does_not_contain "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get an account for $user is not found"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "Not Found"
+
+echo "Get a proposed account for $user"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
 
@@ -94,6 +130,12 @@ check_response_and_report "$result" "\"address\": \"$user_address\""
 
 test_divider
 
+echo "Get a proposed account for $user is not found"
+result=$(dcld query auth proposed-account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
+
 productName="Device #1"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description"   --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes)
@@ -109,7 +151,7 @@ check_response_and_report "$result" "transaction should be signed by a vendor ac
 test_divider
 
 echo "$user updates Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --partNumber=12 --from=$user_address --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --partNumber=12 --from=$user_address --yes)
 check_response_and_report "$result" "\"code\": 0"
 
 test_divider
@@ -149,6 +191,12 @@ check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
 
+echo "Get a proposed account to revoke for $user"
+result=$(dcld query auth proposed-account-to-revoke --address="$user_address")
+check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
 echo "Bob approves to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth approve-revoke-account --address="$user_address" --from bob --yes)
 check_response "$result" "\"code\": 0"
@@ -173,17 +221,22 @@ check_response "$result" "\[\]"
 
 test_divider
 
-echo "Get $user account"
-result=$(dcld query auth account --address=$user_address 2>&1) || true
-check_response "$result" "null"
+echo "Get a proposed account to revoke for $user is not found"
+result=$(dcld query auth proposed-account-to-revoke --address="$user_address")
+check_response "$result" "Not Found"
 
 test_divider
 
+echo "Get $user account"
+result=$(dcld query auth account --address=$user_address)
+check_response "$result" "Not Found"
+
+test_divider
 
 pid=$RANDOM
 productName="Device #2"
 echo "$user adds Model with VID: $vid PID: $pid"
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --productName="$productName" --productLabel="Device Description" --commissioningCustomFlow=0 --deviceTypeID=12 --partNumber=12 --from=$user_address --yes 2>&1) || true
-check_response "$result" "NotFound" raw
+check_response_and_report "$result" "key not found" raw
 
 echo "PASSED"

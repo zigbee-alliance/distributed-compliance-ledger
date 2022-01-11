@@ -357,108 +357,6 @@ export const MsgUpdateVendorInfoResponse = {
         return message;
     }
 };
-const baseMsgDeleteVendorInfo = { creator: '', vendorID: 0 };
-export const MsgDeleteVendorInfo = {
-    encode(message, writer = Writer.create()) {
-        if (message.creator !== '') {
-            writer.uint32(10).string(message.creator);
-        }
-        if (message.vendorID !== 0) {
-            writer.uint32(16).int32(message.vendorID);
-        }
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgDeleteVendorInfo };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.creator = reader.string();
-                    break;
-                case 2:
-                    message.vendorID = reader.int32();
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(object) {
-        const message = { ...baseMsgDeleteVendorInfo };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = String(object.creator);
-        }
-        else {
-            message.creator = '';
-        }
-        if (object.vendorID !== undefined && object.vendorID !== null) {
-            message.vendorID = Number(object.vendorID);
-        }
-        else {
-            message.vendorID = 0;
-        }
-        return message;
-    },
-    toJSON(message) {
-        const obj = {};
-        message.creator !== undefined && (obj.creator = message.creator);
-        message.vendorID !== undefined && (obj.vendorID = message.vendorID);
-        return obj;
-    },
-    fromPartial(object) {
-        const message = { ...baseMsgDeleteVendorInfo };
-        if (object.creator !== undefined && object.creator !== null) {
-            message.creator = object.creator;
-        }
-        else {
-            message.creator = '';
-        }
-        if (object.vendorID !== undefined && object.vendorID !== null) {
-            message.vendorID = object.vendorID;
-        }
-        else {
-            message.vendorID = 0;
-        }
-        return message;
-    }
-};
-const baseMsgDeleteVendorInfoResponse = {};
-export const MsgDeleteVendorInfoResponse = {
-    encode(_, writer = Writer.create()) {
-        return writer;
-    },
-    decode(input, length) {
-        const reader = input instanceof Uint8Array ? new Reader(input) : input;
-        let end = length === undefined ? reader.len : reader.pos + length;
-        const message = { ...baseMsgDeleteVendorInfoResponse };
-        while (reader.pos < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        return message;
-    },
-    fromJSON(_) {
-        const message = { ...baseMsgDeleteVendorInfoResponse };
-        return message;
-    },
-    toJSON(_) {
-        const obj = {};
-        return obj;
-    },
-    fromPartial(_) {
-        const message = { ...baseMsgDeleteVendorInfoResponse };
-        return message;
-    }
-};
 export class MsgClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -472,10 +370,5 @@ export class MsgClientImpl {
         const data = MsgUpdateVendorInfo.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.vendorinfo.Msg', 'UpdateVendorInfo', data);
         return promise.then((data) => MsgUpdateVendorInfoResponse.decode(new Reader(data)));
-    }
-    DeleteVendorInfo(request) {
-        const data = MsgDeleteVendorInfo.encode(request).finish();
-        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.vendorinfo.Msg', 'DeleteVendorInfo', data);
-        return promise.then((data) => MsgDeleteVendorInfoResponse.decode(new Reader(data)));
     }
 }

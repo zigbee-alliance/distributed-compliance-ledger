@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -65,12 +65,11 @@ func CmdShowAccount() *cobra.Command {
 			}
 
 			res, err := queryClient.Account(context.Background(), params)
-			if cliutils.HandleError(err) != nil {
-				return err
+			if cli.IsNotFound(err) {
+				return clientCtx.PrintString(cli.NotFoundOutput)
 			}
 			if err != nil {
-				// show default (empty) value in CLI
-				res = &types.QueryGetAccountResponse{Account: nil}
+				return err
 			}
 
 			return clientCtx.PrintProto(res)

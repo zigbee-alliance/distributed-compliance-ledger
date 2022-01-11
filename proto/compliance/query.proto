@@ -66,7 +66,7 @@ message QueryGetComplianceInfoRequest {
 }
 
 message QueryGetComplianceInfoResponse {
-	ComplianceInfo complianceInfo = 1 [(gogoproto.nullable) = true];
+	ComplianceInfo complianceInfo = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllComplianceInfoRequest {
@@ -87,7 +87,7 @@ message QueryGetCertifiedModelRequest {
 }
 
 message QueryGetCertifiedModelResponse {
-	CertifiedModel certifiedModel = 1 [(gogoproto.nullable) = true];
+	CertifiedModel certifiedModel = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllCertifiedModelRequest {
@@ -108,7 +108,7 @@ message QueryGetRevokedModelRequest {
 }
 
 message QueryGetRevokedModelResponse {
-	RevokedModel revokedModel = 1 [(gogoproto.nullable) = true];
+	RevokedModel revokedModel = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllRevokedModelRequest {
@@ -129,7 +129,7 @@ message QueryGetProvisionalModelRequest {
 }
 
 message QueryGetProvisionalModelResponse {
-	ProvisionalModel provisionalModel = 1 [(gogoproto.nullable) = true];
+	ProvisionalModel provisionalModel = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllProvisionalModelRequest {

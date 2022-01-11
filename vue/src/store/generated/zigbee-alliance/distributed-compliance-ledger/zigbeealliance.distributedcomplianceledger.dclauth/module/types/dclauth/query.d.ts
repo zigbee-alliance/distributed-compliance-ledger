@@ -153,8 +153,12 @@ export interface Query {
     Account(request: QueryGetAccountRequest): Promise<QueryGetAccountResponse>;
     /** Queries a list of account items. */
     AccountAll(request: QueryAllAccountRequest): Promise<QueryAllAccountResponse>;
+    /** Queries a pendingAccount by index. */
+    PendingAccount(request: QueryGetPendingAccountRequest): Promise<QueryGetPendingAccountResponse>;
     /** Queries a list of pendingAccount items. */
     PendingAccountAll(request: QueryAllPendingAccountRequest): Promise<QueryAllPendingAccountResponse>;
+    /** Queries a pendingAccountRevocation by index. */
+    PendingAccountRevocation(request: QueryGetPendingAccountRevocationRequest): Promise<QueryGetPendingAccountRevocationResponse>;
     /** Queries a list of pendingAccountRevocation items. */
     PendingAccountRevocationAll(request: QueryAllPendingAccountRevocationRequest): Promise<QueryAllPendingAccountRevocationResponse>;
     /** Queries a accountStat by index. */
@@ -165,7 +169,9 @@ export declare class QueryClientImpl implements Query {
     constructor(rpc: Rpc);
     Account(request: QueryGetAccountRequest): Promise<QueryGetAccountResponse>;
     AccountAll(request: QueryAllAccountRequest): Promise<QueryAllAccountResponse>;
+    PendingAccount(request: QueryGetPendingAccountRequest): Promise<QueryGetPendingAccountResponse>;
     PendingAccountAll(request: QueryAllPendingAccountRequest): Promise<QueryAllPendingAccountResponse>;
+    PendingAccountRevocation(request: QueryGetPendingAccountRevocationRequest): Promise<QueryGetPendingAccountRevocationResponse>;
     PendingAccountRevocationAll(request: QueryAllPendingAccountRevocationRequest): Promise<QueryAllPendingAccountRevocationResponse>;
     AccountStat(request: QueryGetAccountStatRequest): Promise<QueryGetAccountStatResponse>;
 }

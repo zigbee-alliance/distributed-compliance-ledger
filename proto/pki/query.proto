@@ -92,7 +92,7 @@ message QueryGetApprovedCertificatesRequest {
 }
 
 message QueryGetApprovedCertificatesResponse {
-	ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = true];
+	ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllApprovedCertificatesRequest {
@@ -111,7 +111,7 @@ message QueryGetProposedCertificateRequest {
 }
 
 message QueryGetProposedCertificateResponse {
-	ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = true];
+	ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllProposedCertificateRequest {
@@ -130,7 +130,7 @@ message QueryGetChildCertificatesRequest {
 }
 
 message QueryGetChildCertificatesResponse {
-	ChildCertificates childCertificates = 1 [(gogoproto.nullable) = true];
+	ChildCertificates childCertificates = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryGetProposedCertificateRevocationRequest {
@@ -140,7 +140,7 @@ message QueryGetProposedCertificateRevocationRequest {
 }
 
 message QueryGetProposedCertificateRevocationResponse {
-	ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = true];
+	ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllProposedCertificateRevocationRequest {
@@ -159,7 +159,7 @@ message QueryGetRevokedCertificatesRequest {
 }
 
 message QueryGetRevokedCertificatesResponse {
-	RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = true];
+	RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllRevokedCertificatesRequest {
@@ -187,7 +187,7 @@ message QueryGetApprovedCertificatesBySubjectRequest {
 }
 
 message QueryGetApprovedCertificatesBySubjectResponse {
-	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = true];
+	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

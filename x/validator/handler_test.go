@@ -176,5 +176,5 @@ func queryValidator(setup TestSetup, owner string) (*types.Validator, error) {
 	if err != nil {
 		return nil, err
 	}
-	return resp.Validator, nil
+	return &resp.Validator, nil
 }

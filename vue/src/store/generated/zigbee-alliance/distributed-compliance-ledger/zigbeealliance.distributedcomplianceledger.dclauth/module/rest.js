@@ -198,6 +198,20 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryPendingAccount
+         * @summary Queries a pendingAccount by index.
+         * @request GET:/dcl/auth/proposed-accounts/{address}
+         */
+        this.queryPendingAccount = (address, params = {}) => this.request({
+            path: `/dcl/auth/proposed-accounts/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryPendingAccountRevocationAll
          * @summary Queries a list of pendingAccountRevocation items.
          * @request GET:/dcl/auth/proposed-revocation-accounts
@@ -206,6 +220,20 @@ export class Api extends HttpClient {
             path: `/dcl/auth/proposed-revocation-accounts`,
             method: "GET",
             query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryPendingAccountRevocation
+         * @summary Queries a pendingAccountRevocation by index.
+         * @request GET:/dcl/auth/proposed-revocation-accounts/{address}
+         */
+        this.queryPendingAccountRevocation = (address, params = {}) => this.request({
+            path: `/dcl/auth/proposed-revocation-accounts/${address}`,
+            method: "GET",
             format: "json",
             ...params,
         });
