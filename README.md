@@ -69,10 +69,7 @@ an Account created on the Ledger with an appropriate role (see [how-to.md](docs/
 Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
 
 ### REST Usage
-A REST API server is a CLI run in a REST mode: 
-`dclcli rest-server --chain-id <chain_id>`.
- 
-Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
+Any running node exposes a REST API at port `26640`. 
 
 A list of all REST API calls can be found in [transactions.md](docs/transactions.md).
 
