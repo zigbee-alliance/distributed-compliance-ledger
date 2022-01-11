@@ -75,7 +75,7 @@ an Account created on the Ledger with an appropriate role (see [how-to.md](docs/
 Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
 
 ### REST Usage
-Any running node exposes a REST API at port `26640`. 
+Any running node exposes a REST API at port `1317`. 
 
 A list of all REST API calls can be found in [transactions.md](docs/transactions.md).
 

@@ -50,7 +50,7 @@ and contains the genesis and persistent_peers files.
     * `dcld config chain-id <chain-id>`
       * Use `testnet` if you want to connect to the persistent Test Net
     * `dcld config output json` - Output format (text/json).
-    * `dcld config node <ip address>` - Address of a node to connect. 
+    * `dcld config node tcp://<host>:<port>` - Address of a node to connect. 
     Choose one of the listed in `persistent_peers.txt` file. 
     Example: `tcp://18.157.114.34:26657`.
 

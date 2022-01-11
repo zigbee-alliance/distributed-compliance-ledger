@@ -70,7 +70,7 @@ The easiest way to run a local pool is to start it in Docker:
 
     make install
 
-    DCL_OBSERVERS=1    # to initialize observers as well
+    # DCL_OBSERVERS=1    # to initialize observers as well
     make localnet_init
 
     make localnet_start
@@ -97,7 +97,7 @@ Have a look at [How To](docs/how-to.md) and [transactions](docs/transactions.md)
 ## REST
 Start a local pool as described above.
 
-Every node exposes a REST API at `http://<node-ip>:26640`.
+Every node exposes a REST API at `http://<node-ip>:1317`.
 
 Have a look at [transactions](docs/transactions.md) for a full list of REST endpoints.
 

@@ -43,13 +43,13 @@ an Account or sign the request.
     - Build and sign a transaction by one of the following ways
         - In code via gRPC (see above)
         - Via CLI commands specifying `--generate-only` flag and using `dcld tx sign` (see above)
-    - The user does a `POST` of the signed request to `http://<node-ip>:26640/cosmos/tx/v1beta1/txs` endpoint.     
+    - The user does a `POST` of the signed request to `http://<node-ip>:1317/cosmos/tx/v1beta1/txs` endpoint.     
     - Example
         ```
         dcld tx ... --generate-only
         dcld query auth account --address <address>
         dcld tx sign txn.json --from <from> --account-number <int> --sequence <int> --gas "auto" --offline --output-document txn.json
-        POST http://<node-ip>:26640/cosmos/tx/v1beta1/txs
+        POST http://<node-ip>:1317/cosmos/tx/v1beta1/txs
         ```
 
 ## How to read from the Ledger

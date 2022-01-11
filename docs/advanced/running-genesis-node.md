@@ -42,7 +42,6 @@ must have a unique chain ID.
 3. Configure CLI:
     * `dcld config chain-id <chain-id>` - the chosen unique chain ID.
     * `dcld config output json` - Output format (text/json).
-    * `dcld config node tcp://localhost:26657` - Address of the genesis node (this is a local node). 
 
 4. Prepare keys:
     * Derive a new private key and encrypt to disk: `dcld keys add <name>`.
