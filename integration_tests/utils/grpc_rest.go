@@ -27,7 +27,6 @@ import (
 
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
@@ -72,7 +71,7 @@ func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
 
 	homeDir := filepath.Join(userHomeDir, ".dcl")
 
-	kr, err := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, inBuf)
+	kr, _ := keyring.New(sdk.KeyringServiceName(), keyring.BackendTest, homeDir, inBuf)
 
 	encConfig := simapp.MakeTestEncodingConfig()
 	dclauthtypes.RegisterInterfaces(encConfig.InterfaceRegistry)
@@ -115,8 +114,6 @@ func (suite *TestSuite) BuildTx(
 		txfc,
 		suite.EncodingConfig.TxConfig,
 		msgs,
-		sdk.Coins{},
-		helpers.DefaultGenTxGas,
 		signer,
 	)
 	account.SetSequence(account.GetSequence() + 1)
