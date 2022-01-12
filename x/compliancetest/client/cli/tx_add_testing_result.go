@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
@@ -79,7 +78,7 @@ func CmdAddTestingResult() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagTestDate)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

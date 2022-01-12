@@ -4,9 +4,9 @@ import (
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
@@ -76,7 +76,7 @@ func CmdProvisionModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagProvisionalDate)
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

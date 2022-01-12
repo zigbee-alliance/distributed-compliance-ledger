@@ -9,6 +9,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -42,7 +43,7 @@ func CmdProposeRevokeAccount() *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 	_ = cmd.MarkFlagRequired(FlagAddress)
