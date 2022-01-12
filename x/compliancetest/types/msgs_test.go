@@ -8,7 +8,7 @@ import (
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
-func TestValidateMsgCreateModel(t *testing.T) {
+func TestValidateMsgAddTestingResul(t *testing.T) {
 	cases := []struct {
 		valid bool
 		msg   *MsgAddTestingResult
@@ -20,14 +20,14 @@ func TestValidateMsgCreateModel(t *testing.T) {
 		{true, newMsgAddTestingResult(0, 0, 0, "1", testconstants.Signer)},
 
 		// negative VID - not OK
-		{true, newMsgAddTestingResult(-1, 1, 1, "1", testconstants.Signer)},
+		{false, newMsgAddTestingResult(-1, 1, 1, "1", testconstants.Signer)},
 		// negative PID - not OK
-		{true, newMsgAddTestingResult(1, -1, 1, "1", testconstants.Signer)},
+		{false, newMsgAddTestingResult(1, -1, 1, "1", testconstants.Signer)},
 
 		// too large VID - not OK
-		{true, newMsgAddTestingResult(65535+1, 1, 1, "1", testconstants.Signer)},
+		{false, newMsgAddTestingResult(65535+1, 1, 1, "1", testconstants.Signer)},
 		// too large PID - not OK
-		{true, newMsgAddTestingResult(1, 65535+1, 1, "1", testconstants.Signer)},
+		{false, newMsgAddTestingResult(1, 65535+1, 1, "1", testconstants.Signer)},
 	}
 
 	for _, tc := range cases {
