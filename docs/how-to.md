@@ -87,7 +87,9 @@ Here is steps for getting an account:
 
 Example:
 * `dcld keys add steve`
-* `dcld tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey=cosmospub1addwnpepqvnfd2f99vew4t7phe3mqprmceq3jgavm0rguef3gkv8z8jd6lg25egq6d5 --roles=Vendor,NodeAdmin --vid=4563 --from jack`
+* `dcld keys show steve -a`   # assume it returns cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv
+* `dcld keys show steve -p`   # assume it returns {"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A9v90lbd1tCtvXTKH3Fmir9wIg/cLlWU+/HSDnDYfaMm"}
+* `dcld tx auth propose-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --pubkey={"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A9v90lbd1tCtvXTKH3Fmir9wIg/cLlWU+/HSDnDYfaMm"} --roles=Vendor,NodeAdmin --vid=4563 --from jack`
 * `dcld tx auth approve-add-account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv --from alice`
 * `dcld query auth account --address=cosmos1sug8cquqnn5jddkqt4ud6hcr290sn4wh96x5tv`
 
@@ -119,7 +121,7 @@ Once approved the account can be used to send transactions. See [use_case_txn_au
 
 ##### 1. Create an Account proposal for the user
 ```
-dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<bench32 encoded string> --roles=<role1,role2,...> --vid=<uint16> --from=<account>
+dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --from=<account>
 ```
 
 ##### 2. Approve proposed Account

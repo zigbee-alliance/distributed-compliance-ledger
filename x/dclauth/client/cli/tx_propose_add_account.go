@@ -78,7 +78,7 @@ func CmdProposeAddAccount() *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
-	cmd.Flags().String(FlagPubKey, "", "Bench32 encoded account public key")
+	cmd.Flags().String(FlagPubKey, "", "The account's Protobuf JSON encoded public key")
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
 			types.Roles))

@@ -952,14 +952,14 @@ will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
     - address: `string` - account address; Bench32 encoded
-    - pub_key: `string` - account public key; Bench32 encoded
+    - pub_key: `string` - account's Protobuf JSON encoded public key
     - vid: `optional(uint16)` - vendor id (only needed for vendor role)
     - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`. 
 - In State: `dclauth/PendingAccount/value/<address>`
 - Who can send: 
     - Trustee
 - CLI command: 
-    -   `dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<bench32 encoded string> --roles=<role1,role2,...> --vid=<uint16> --from=<account>`
+    -   `dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=<role1,role2,...> --vid=<uint16> --from=<account>`
     
 #### APPROVE_ADD_ACCOUNT
 **Status: Implemented**
@@ -1114,7 +1114,7 @@ Adds a new Validator node.
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `dcld tx validator add-node --pubkey=<Protobuf JSON encoded string> --name=<string> --from=<account>`
+    -   `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --name=<string> --from=<account>`
 
 #### GET_VALIDATOR
 **Status: Implemented**
