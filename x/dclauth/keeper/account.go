@@ -166,8 +166,12 @@ func (k Keeper) GetModuleAddress(moduleName string) sdk.AccAddress {
 	return nil
 }
 
-// just a stub to have AccountKeeper.GetParams API filled.
 func (k Keeper) GetParams(ctx sdk.Context) (params authtypes.Params) {
-	params = authtypes.DefaultParams()
-	return
+	return authtypes.Params{
+		MaxMemoCharacters:      types.DclMaxMemoCharacters,
+		TxSigLimit:             types.DclTxSigLimit,
+		TxSizeCostPerByte:      types.DclTxSizeCostPerByte,
+		SigVerifyCostED25519:   types.DclSigVerifyCostED25519,
+		SigVerifyCostSecp256k1: types.DclSigVerifyCostSecp256k1,
+	}
 }
