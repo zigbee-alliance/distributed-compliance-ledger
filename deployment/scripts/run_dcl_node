@@ -279,11 +279,14 @@ function config_node {
     set -eu
     set -o pipefail
 
-    local _node_user="$1"
-    local _dcld_service_p="${2:-./dcld.service}"
-    local _peers="${3:-}"
+    local _node_name="$1"
+    local _node_user="$2"
+    local _dcld_service_p="${3:-./dcld.service}"
+    local _peers="${4:-}"
 
     local _debug="${DEBUG:-}"
+
+    sed -i -r "s~^moniker = .*~moniker = \"$_node_name\"~" "$CONFIG_FILE"
 
     sed -i -r 's~^laddr = "tcp://127.0.0.1:~laddr = "tcp://0.0.0.0:~' "$CONFIG_FILE"
 
@@ -472,7 +475,7 @@ else
 fi
 
 echo "Configuring node"
-config_node "$NODE_USER" "$SERVICE_FILE" "$PERSISTENT_PEERS"
+config_node "$NODE_NAME" "$NODE_USER" "$SERVICE_FILE" "$PERSISTENT_PEERS"
 echo -e "\tDone."
 echo -e "\nOptionally, edit '$CONFIG_FILE' in order to set different setting (like listen address)"
 
