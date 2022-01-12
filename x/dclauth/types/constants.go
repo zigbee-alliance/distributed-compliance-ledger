@@ -14,9 +14,14 @@
 
 package types
 
+import (
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+)
+
 // Default parameter values.
 const (
-	DclMaxMemoCharacters      uint64  = 256
+	DclMaxMemoCharacters      uint64  = authtypes.DefaultMaxMemoCharacters
+	DclTxSigLimit             uint64  = authtypes.DefaultTxSigLimit
 	DclTxSizeCostPerByte      uint64  = 0 // gas is not needed in DCL
 	DclSigVerifyCostED25519   uint64  = 0 // gas is not needed in DCL
 	DclSigVerifyCostSecp256k1 uint64  = 0 // gas is not needed in DCL

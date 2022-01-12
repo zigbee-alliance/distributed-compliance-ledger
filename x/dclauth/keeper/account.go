@@ -169,7 +169,7 @@ func (k Keeper) GetModuleAddress(moduleName string) sdk.AccAddress {
 func (k Keeper) GetParams(ctx sdk.Context) (params authtypes.Params) {
 	return authtypes.Params{
 		MaxMemoCharacters:      types.DclMaxMemoCharacters,
-		TxSigLimit:             authtypes.DefaultTxSigLimit,
+		TxSigLimit:             types.DclTxSigLimit,
 		TxSizeCostPerByte:      types.DclTxSizeCostPerByte,
 		SigVerifyCostED25519:   types.DclSigVerifyCostED25519,
 		SigVerifyCostSecp256k1: types.DclSigVerifyCostSecp256k1,

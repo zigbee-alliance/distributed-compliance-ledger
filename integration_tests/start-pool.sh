@@ -14,10 +14,7 @@ patch_consensus_config() {
   done
 }
 
-make localnet_clean
-make install
-make image
-make localnet_init
+make install image localnet_rebuild
 patch_consensus_config
 make localnet_start
 wait_for_height 2 20

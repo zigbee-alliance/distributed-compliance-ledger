@@ -180,7 +180,7 @@ Please take into account the following when sending a PR:
 - Add gRPC/REST-based integration tests to `integration_tests/grpc_rest/<module>` (see other modules for reference)
 
 ## How To Make Changes in Data Model for Existing Modules
-- Do the changes in `.proto` files. Never change `.pb` file manually.
+- **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
 - **Note**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
