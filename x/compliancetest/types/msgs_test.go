@@ -56,6 +56,6 @@ func newMsgAddTestingResult(
 		SoftwareVersion:       softwareVersion,
 		SoftwareVersionString: softwareVersionString,
 		TestResult:            testconstants.TestResult,
-		TestDate:              testconstants.TestDate.String(),
+		TestDate:              testconstants.TestDate,
 	}
 }
