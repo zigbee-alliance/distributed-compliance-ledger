@@ -1265,6 +1265,67 @@ func TestHandler_RevokeX509Cert_ByNotOwner(t *testing.T) {
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 }
 
+func TestHandler_RevokeX509Cert_ForTree(t *testing.T) {
+	setup := Setup(t)
+
+	// add root x509 certificate
+	proposeAndApproveRootCertificate(setup, setup.Trustee)
+
+	// add intermediate x509 certificate
+	addIntermediateX509Cert := types.NewMsgAddX509Cert(setup.Trustee.String(), testconstants.IntermediateCertPem)
+	_, err := setup.Handler(setup.Ctx, addIntermediateX509Cert)
+	require.NoError(t, err)
+
+	// add leaf x509 certificate
+	addLeafX509Cert := types.NewMsgAddX509Cert(setup.Trustee.String(), testconstants.LeafCertPem)
+	_, err = setup.Handler(setup.Ctx, addLeafX509Cert)
+	require.NoError(t, err)
+
+	// revoke x509 certificate
+	revokeX509Cert := types.NewMsgRevokeX509Cert(
+		setup.Trustee.String(), testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	_, err = setup.Handler(setup.Ctx, revokeX509Cert)
+	require.NoError(t, err)
+
+	// check that intermediate and leaf certificates have been revoked
+	allRevokedCertificates, _ := queryAllRevokedCertificates(setup)
+	require.Equal(t, 2, len(allRevokedCertificates))
+	require.Equal(t, testconstants.IntermediateSubject, allRevokedCertificates[0].Subject)
+	require.Equal(t, testconstants.IntermediateSubjectKeyID, allRevokedCertificates[0].SubjectKeyId)
+	require.Equal(t, 1, len(allRevokedCertificates[0].Certs))
+	require.Equal(t, testconstants.IntermediateCertPem, allRevokedCertificates[0].Certs[0].PemCert)
+	require.Equal(t, testconstants.LeafSubject, allRevokedCertificates[1].Subject)
+	require.Equal(t, testconstants.LeafSubjectKeyID, allRevokedCertificates[1].SubjectKeyId)
+	require.Equal(t, 1, len(allRevokedCertificates[1].Certs))
+	require.Equal(t, testconstants.LeafCertPem, allRevokedCertificates[1].Certs[0].PemCert)
+
+	// check that root certificate stays approved
+	allApprovedCertificates, _ := queryAllApprovedCertificates(setup)
+	require.Equal(t, 1, len(allApprovedCertificates))
+	require.Equal(t, testconstants.RootSubject, allApprovedCertificates[0].Subject)
+	require.Equal(t, testconstants.RootSubjectKeyID, allApprovedCertificates[0].SubjectKeyId)
+
+	// check that no proposed certificate revocations have been created
+	allProposedCertificateRevocations, _ := queryAllProposedCertificateRevocations(setup)
+	require.NoError(t, err)
+	require.Equal(t, 0, len(allProposedCertificateRevocations))
+
+	// check that no child certificate identifiers are now registered for root certificate
+	_, err = queryChildCertificates(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// check that no child certificate identifiers are registered for revoked intermediate certificate
+	_, err = queryChildCertificates(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+
+	// check that no child certificate identifiers are registered for revoked leaf certificate
+	_, err = queryChildCertificates(setup, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
 func proposeAndApproveRootCertificate(setup *TestSetup, ownerTrustee sdk.AccAddress) {
 	// ensure that `ownerTrustee` is trustee to eventually have enough approvals
 	require.True(setup.T, setup.DclauthKeeper.HasRole(setup.Ctx, ownerTrustee, types.RootCertificateApprovalRole))
