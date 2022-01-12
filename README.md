@@ -5,6 +5,9 @@ If you are interested in how to build and run the project locally, please look a
 Please note, that the only officially supported platform now is Linux.
 It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
+**Please note, that there were breaking changes in DCL 0.6 (migration to the latest Cosmos SDK), so 
+the current master and DCL releases 0.6+ are not compatible with pools and Test Nets running DCL 0.5.** 
+
 ## Overview
 DC Ledger is a public permissioned Ledger which can be used for two main use cases:
  - ZB/Matter compliance certification of device models
