@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -84,7 +85,7 @@ func CmdProposeAddAccount() *cobra.Command {
 			types.Roles))
 	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account. Required only for Vendor Roles")
 
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom) // XXX issue 99: was absent in legacy code ???
 	_ = cmd.MarkFlagRequired(FlagAddress)
