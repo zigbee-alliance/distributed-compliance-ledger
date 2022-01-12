@@ -1,5 +1,6 @@
 package compliancetest_test
 
+/*
 import (
 	"testing"
 
@@ -34,3 +35,4 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.TestingResultsList, got.TestingResultsList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
+*/
