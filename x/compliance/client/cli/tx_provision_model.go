@@ -74,6 +74,7 @@ func CmdProvisionModel() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagCertificationType)
 	_ = cmd.MarkFlagRequired(FlagProvisionalDate)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
 	flags.AddTxFlagsToCmd(cmd)
 

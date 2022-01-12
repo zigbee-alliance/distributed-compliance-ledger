@@ -43,7 +43,7 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
     The following script will start all necessary things and run the tests:
     ```bash
-    ./integration_tests/ci/run-all.sh
+    ./integration_tests/run-all.sh
     ```
 
     If you want to run a particular test you may:
@@ -66,14 +66,21 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
 
 ## Run local pool
-The easiest way to run a local pool is to start it in Docker:
+The easiest way to run a local pool is to start it in Docker.
 
-    make install
+Validator nodes only (no Observers):
+```bash
+make install
+make localnet_init
+make localnet_start
+```
 
-    # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
-    make localnet_init
-
-    make localnet_start
+Validator and Observer nodes:
+```bash
+make install
+DCL_OBSERVERS=1 make localnet_init
+make localnet_start
+```    
 
 This will start a local pool of 4 validator nodes in Docker. The nodes will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26663` correspondingly.
 
@@ -83,16 +90,23 @@ This will start a local pool of 4 validator nodes in Docker. The nodes will expo
 
  Then you can start the network again with the existing data using `make localnet_start`
 
-If you need to start a new clean network then do the following steps prior to executing `make localnet_start`:
-  - Remove `.dclcli` and `.dcld` directories from your user home directory (`~`)
-  - Remove `.localnet` directory from the root directory of the cloned project
-  - Initialize the new network data using `make localnet_init` 
-## Run CLI
+If you need to start a new clean network then run `make localnet_rebuild` prior to executing `make localnet_start`.
+It will remove `.dcl` directories from your user home directory (`~`), remove `.localnet` directory from the root directory of the cloned project,
+and initialize a new network data using `make localnet_init`.
+
+## CLI
 Start a local pool as described above, and then just execute
 ```
-dclcli
+dcld
 ```
-Have a look at [How To](docs/how-to.md) and [CLI Help](docs/cli-help.md) for instructions how to configure and use the CLI.
+Have a look at [How To](docs/how-to.md) and [transactions](docs/transactions.md) for instructions how to configure and use the CLI.
+
+## REST
+Start a local pool as described above.
+
+Every node exposes a REST API at `http://<node-host>:1317` (see https://docs.cosmos.network/master/core/grpc_rest.html).
+
+Have a look at [transactions](docs/transactions.md) for a full list of REST endpoints.
 
 ## Remote Debugging local pool 
 If you want to remotely debug the node running in docker in order to inspect and step thru the code, modify the following lines in the `docker-compose.yml`. Comment out the default `dcld start` command with the `dlv` as shown below (delve is the go remote debugger) 
@@ -131,5 +145,5 @@ Please take into account the following when sending a PR:
 
 
 ## Other
-For more details, please have a look at [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial).
-Use __dcld__, __dclcli__ instead of __nameserviced__, __nameservicecli__.
+For more details, please have a look at [Cosmos SDK tutorial](https://tutorials.cosmos.network/).
+

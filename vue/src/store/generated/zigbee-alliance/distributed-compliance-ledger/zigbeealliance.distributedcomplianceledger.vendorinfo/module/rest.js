@@ -140,20 +140,6 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
-         * @name QueryVendorInfo
-         * @summary Queries a vendorInfo by index.
-         * @request GET:/dcl/vendorinfo/vendor/{vendorID}
-         */
-        this.queryVendorInfo = (vendorID, params = {}) => this.request({
-            path: `/dcl/vendorinfo/vendor/${vendorID}`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
-        /**
-         * No description
-         *
-         * @tags Query
          * @name QueryVendorInfoAll
          * @summary Queries a list of vendorInfo items.
          * @request GET:/dcl/vendorinfo/vendors
@@ -162,6 +148,20 @@ export class Api extends HttpClient {
             path: `/dcl/vendorinfo/vendors`,
             method: "GET",
             query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryVendorInfo
+         * @summary Queries a vendorInfo by index.
+         * @request GET:/dcl/vendorinfo/vendors/{vendorID}
+         */
+        this.queryVendorInfo = (vendorID, params = {}) => this.request({
+            path: `/dcl/vendorinfo/vendors/${vendorID}`,
+            method: "GET",
             format: "json",
             ...params,
         });

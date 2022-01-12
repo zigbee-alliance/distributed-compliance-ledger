@@ -78,7 +78,7 @@ func CmdProposeAddAccount() *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
-	cmd.Flags().String(FlagPubKey, "", "The validator's Protobuf JSON encoded public key")
+	cmd.Flags().String(FlagPubKey, "", "The account's Protobuf JSON encoded public key")
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
 			types.Roles))
@@ -86,7 +86,7 @@ func CmdProposeAddAccount() *cobra.Command {
 
 	flags.AddTxFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(flags.FlagFrom) // XXX issue 99: was absent in legacy code ???
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 	_ = cmd.MarkFlagRequired(FlagAddress)
 	_ = cmd.MarkFlagRequired(FlagPubKey)
 

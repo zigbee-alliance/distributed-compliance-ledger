@@ -172,8 +172,6 @@ func GetModel(
 	var res modeltypes.Model
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryGetModelResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%v/%v", vid, pid), &resp)
 		if err != nil {
@@ -209,8 +207,6 @@ func GetModelVersion(
 	var res modeltypes.ModelVersion
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryGetModelVersionResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/model/versions/%v/%v/%v", vid, pid, softwareVersion), &resp)
 		if err != nil {
@@ -238,8 +234,6 @@ func GetModelVersion(
 
 func GetModels(suite *utils.TestSuite) (res []modeltypes.Model, err error) {
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryAllModelResponse
 		err := suite.QueryREST("/dcl/model/models", &resp)
 		if err != nil {
@@ -273,8 +267,6 @@ func GetVendorModels(
 	var res modeltypes.VendorProducts
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryGetVendorProductsResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%v", vid), &resp)
 		if err != nil {

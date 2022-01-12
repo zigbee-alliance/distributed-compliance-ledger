@@ -18206,58 +18206,6 @@ paths:
           type: string
       tags:
         - Query
-  '/dcl/vendorinfo/vendor/{vendorID}':
-    get:
-      summary: Queries a vendorInfo by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              vendorInfo:
-                type: object
-                properties:
-                  vendorID:
-                    type: integer
-                    format: int32
-                  vendorName:
-                    type: string
-                  companyLegalName:
-                    type: string
-                  companyPrefferedName:
-                    type: string
-                  vendorLandingPageURL:
-                    type: string
-                  creator:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: vendorID
-          in: path
-          required: true
-          type: integer
-          format: int32
-      tags:
-        - Query
   /dcl/vendorinfo/vendors:
     get:
       summary: Queries a list of vendorInfo items.
@@ -18388,6 +18336,58 @@ paths:
           in: query
           required: false
           type: boolean
+      tags:
+        - Query
+  '/dcl/vendorinfo/vendors/{vendorID}':
+    get:
+      summary: Queries a vendorInfo by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorInfo:
+                type: object
+                properties:
+                  vendorID:
+                    type: integer
+                    format: int32
+                  vendorName:
+                    type: string
+                  companyLegalName:
+                    type: string
+                  companyPrefferedName:
+                    type: string
+                  vendorLandingPageURL:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vendorID
+          in: path
+          required: true
+          type: integer
+          format: int32
       tags:
         - Query
 definitions:

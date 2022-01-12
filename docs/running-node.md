@@ -57,7 +57,7 @@ Required if a host has been already used in another DCLedger setup.
 ```bash
 $ sudo systemctl stop dcld 
 $ sudo rm -f "$(which dcld)"
-$ rm -rf "$HOME/.dcld"
+$ rm -rf "$HOME/.dcl" 
 ```
 
 </p>
@@ -137,7 +137,7 @@ $ sudo ufw allow 26657/tcp
 
 This part describes how to configure a genesis node - a starting point of any new network.
 
-The following steps automates a set of instructions that you can find in [Running Genesis Node](running-genesis-node.md) document.
+The following steps automates a set of instructions that you can find in [Running Genesis Node](advanced/running-genesis-node.md) document.
 
 **Note** This part is not required for all validator owners: it is performed only once for the initial (genesis) node of a DCLedger network.
 If you are not going to become a genesis node admin you may jump to [Validator Node](#validator-node).
@@ -177,14 +177,14 @@ This command:
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
     *   current user is in sudoers list
-*   if it's not acceptable for your case please consult a less automated guide [Running Genesis Node](running-genesis-node.md)
+*   if it's not acceptable for your case please consult a less automated guide [Running Genesis Node](advanced/running-genesis-node.md)
 *   you may likely want to note the summary that this script prints, in particular: node's address, public key and ID.
 
 ## Validator Node
 
 This part describes how to configure a validator node and add it to the existing network.
 
-The following steps automates a set of instructions that you can find in [Running Validator Node](running-validator-node.md) document
+The following steps automates a set of instructions that you can find in [Running Validator Node](advanced/running-validator-node.md) document
 
 ### Create a NodeAdmin account
 
@@ -213,7 +213,7 @@ $ ./run_dcl_node -c <chain-id> <node-name>
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
     *   current user is in sudoers list
-*   if it's not acceptable for your case please consult a less automated guide [Running Validator Node](running-validator-node.md)
+*   if it's not acceptable for your case please consult a less automated guide [Running Validator Node](advanced/running-validator-node.md)
 
 This command:
 
@@ -227,7 +227,7 @@ an account with `NodeAdmin` role. And **wait** until:
 
 *   Account is created
 *   The node completed a catch-up:
-    *   `dcld status --node <ip:port>` returns `false` for `catching_up` field
+    *   `dcld status --node tcp://<ip:port>` returns `false` for `catching_up` field
 
 ### Make the node a validator
 
@@ -254,7 +254,7 @@ The procedure is similar to [NodeAdmin account creation](#create-a-nodeadmin-acc
 
 This part describes how to configure an observer node and add it to the existing network.
 
-The following command automates a set of instructions that you can find in [Running Observer Node](running-observer-node.md) document
+The following command automates a set of instructions that you can find in [Running Observer Node](advanced/running-observer-node.md) document
 
 Run
 
@@ -267,7 +267,7 @@ $ ./run_dcl_node -t observer -c <chain-id> <node-name>
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
     *   current user is in sudoers list
-*   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](running-observer-node.md)
+*   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](advanced/running-observer-node.md)
 
 ### Observer Peers
 
@@ -289,7 +289,7 @@ As a general guidance you may consider to use only the peers you own and/or trus
 
 ## Validator Node Maintenance
 
-*   `persistent_peers` field in `$HOME/.dcld/config/config.toml` should include the latest version of the validators list
+*   `persistent_peers` field in `$HOME/.dcl/config/config.toml` should include the latest version of the validators list
 
     *   you can use [update_peers](../deployment/scripts/update_peers)
 

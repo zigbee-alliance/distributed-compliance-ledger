@@ -1,19 +1,19 @@
 == Disctributed Compliance Ledger (DCL)
 
 === Quick Start Guide for CLI for testnet
-This guide will help you configure DCL `dclcli` and interact with DCL TestNet.
+This guide will help you configure DCL CLI (`dcld`) and interact with DCL TestNet.
 
 === Test Net Infrastructure
 Please refer to https://github.com/zigbee-alliance/distributed-compliance-ledger/tree/master/deployment/persistent_chains/testnet for upto date node info.
-TestNet consists of following nodes:<ID>@IP:port are to be used with `dclcli`.
+TestNet consists of following nodes:<ID>@IP:port are to be used with `dcld`.
 
 . tcp://54.73.187.91:26657
 . tcp://3.124.76.30:26657
 . tcp://34.224.48.142:26657
 . tcp://44.239.5.82:26657
 
-=== dclcli setup
-These steps will configure `dclcli` on Ubuntu platform.
+=== DCL CLI setup
+These steps will configure `dcld` on Ubuntu platform.
 
 ==== GOLANG 1.3+
 Make sure you have goLang 1.3+ installed.
@@ -22,8 +22,8 @@ Ubuntu
 MacOS
     https://www.jajaldoang.com/post/how-to-update-golang
 
-==== Download Pre Compiled `dclcli`
-A pre-built version of DCLCLI for Ubuntu: https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.4/dclcli, so no need to clone the repo and run make at all.
+==== Download Pre Compiled `dcld`
+A pre-built version of DCL for Ubuntu: https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.0/dcld, so no need to clone the repo and run make at all.
 
 ==== Download DCL Source Code from repo
 .DCL CLI Build
@@ -34,107 +34,50 @@ $ cd distributed-compliance-ledger
 $ make install
 ----
 
-After successful comletion of above steps, `dclcli` should be installed.
+After successful completion of above steps, `dcld` should be installed.
 
 .DCL CLI Test
 [source,bash]
 ----
-$ ls -l ~/go/bin/dclcli
-$ dclcli
+$ ls -l ~/go/bin/dcld
+$ dcld
 
-DcLedger Client
-
-Usage:
-  dclcli [command]
-
-Available Commands:
-  status                   Query remote node for status
-  tendermint-validator-set Get the full tendermint validator set at given height
-  config                   Create or query an application CLI configuration file
-  query                    Querying subcommands
-  tx                       Transactions subcommands
-                           
-  rest-server              Start LCD (light-client daemon), a local REST server
-                           
-  keys                     Add or view local private keys
-                           
-  version                  Print the app version
-  help                     Help about any command
-
-Flags:
-      --broadcast-mode string   Transaction broadcast mode to use (block, sync, async) (default "block")
-      --chain-id string         Chain ID of tendermint node
-  -e, --encoding string         Binary encoding (hex|b64|btc) (default "hex")
-  -h, --help                    help for dclcli
-      --home string             directory for config and data (default "/home/ahaque201/.dclcli")
-  -o, --output string           Output format (text|json) (default "text")
-      --trace                   print out full stack trace on errors
-
-Use "dclcli [command] --help" for more information about a command.
 ----
 
 .DCL CLI Configure
 [source,bash]
 ----
-# Configure `dclci` to connect to one of the testnet nodes
-$ dclcli config chain-id testnet
-$ dclcli config output json
-$ dclcli config indent true
-# dclcli connects to a single node. Set following property to ensure every reply from node is 
-# cryptographically verified.
-$ dclcli config trust-node false
-$ dclcli config node tcp://54.73.187.91:26657
+# Configure `dcld` to connect to one of the testnet nodes
+$ dcld config chain-id testnet
+$ dcld config output json
+# Please refer to https://github.com/zigbee-alliance/distributed-compliance-ledger/tree/master/deployment/persistent_chains/testnet for up to date list of available nodes.
+$ dcld config node tcp://54.73.187.91:26657
 
-# Run `dclci` to connect to one of the testnet nodes
-$ dclcli query model get-model --vid=100 --pid=100
-`{
-  "result": {
-    "vid": 100,
-    "pid": 100,
-    "name": "test-device-dsr-1",
-    "description": "test-device-dsr-1",
-    "sku": "test-sku",
-    "hardware_version": "1.0",
-    "firmware_version": "1.0",
-    "tis_or_trp_testing_completed": false,
-    "owner": "cosmos1x5xqekntys4drpamxtear5jcnahx7j4e08qzj6"
-  },
-  "height": "2147531"
-}
-`
+# Run `dcld` to connect to one of the testnet nodes
+$ dcld query model get-model --vid=100 --pid=100
 ----
 
 ==== Create Vendor Account Steps
-.DCL CLI Steps
 [source,bash]
 ----
 # First create vendor account. Remember the password and mnemonic below.
 # mnemonic can be used to recover your key, therefore it is important
 # to safeguard it
-$ dclcli keys add <vendor-name>
-`Enter a passphrase to encrypt your key to disk:
-Repeat the passphrase:
-{
-  "name": "cool-vendor",
-  "type": "local",
-  "address": "cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693",
-  "pubkey": "cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn",
-  "mnemonic": "mandate rally glue ugly next erode link clarify disease adjust relief runway better rack saddle page sight fly vital ribbon captain dinner dish edit"
-}
-`
+$ dcld keys add <vendor-name>
+
 # Send your `address` and `pubkey` to Zigbee Alliance to be enrolled in DCL.
 # Zigbee Alliance will propose your account to DCL
-$ dclcli tx auth propose-add-account \ 
+$ dcld tx auth propose-add-account \
 --address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 \ 
---pubkey=cosmospub1addwnpepq0tgh3uxwas2n2rky2ulmqza269mkxvwzq63t69ay7xpsc83q888gngalmn \
+--pubkey={"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A9v90lbd1tCtvXTKH3Fmir9wIg/cLlWU+/HSDnDYfaMm"} \
  --roles=Vendor --from=<Zigbee Aliance Account>
 
 # 2/3rd DCL Trustees will need to approve using following txn.
-$ dclcli tx auth approve-add-account \
+$ dcld tx auth approve-add-account \
 --address=cosmos1pkxl6k9r4r5ng9k6upp3e4f2wt2putq652w693 --from=<trustee-account>
 
 # After account approval, you can submit your product information
-$ dclcli tx model add-model --vid=12345 --pid=675463 --deviceTypeID=1 \
+$ dcld tx model add-model --vid=12345 --pid=675463 --deviceTypeID=1 \
 --productName="CHIP Discoball" --partNumber=A1234GH 
 --from=cool-vendor
  
@@ -143,85 +86,20 @@ $ dclcli tx model add-model --vid=12345 --pid=675463 --deviceTypeID=1 \
 ==== Check TestHouse Test Status
 [source,bash]
 ----
-$ dclcli query compliancetest test-result --vid=2020 --pid=10 --softwareVersion=20
-`{
-  "result": {
-    "vid": 2020,
-    "pid": 10,
-    "softwareVersion": "20",
-    "results": [
-      {
-        "owner": "cosmos1w3waz79mptxt6wtcdcex74apt42x3y7j2n4v39",
-        "test_result": "#Results\nPassed\n",
-        "test_date": "2021-02-16T06:04:57.05Z"
-      }
-    ]
-  },
-  "height": "2147544"
-}
-`
+$ dcld query compliancetest test-result --vid=2020 --pid=10 --softwareVersion=20
 ----
 
 ==== Check Zigbee Certification Status
 [source,bash]
 ----
-$ dclcli query compliance certified-model --vid=2020 --pid=10 --certificationType="matter"
-`{
-  "result": {
-    "value": true
-  },
-  "height": "2147601"
-}`
+$ dcld query compliance certified-model --vid=2020 --pid=10 --certificationType="matter"
 
-$ dclcli query compliance all-certified-models
-`{
-  "result": {
-    "total": "1",
-    "items": [
-      {
-        "vid": 2020,
-        "pid": 10,
-        "softwareVersion": "20",
-        "certification_type": "matter"
-      }
-    ]
-  },
-  "height": "2147611"
-}
-`
+$ dcld query compliance all-certified-models
 ----
 
 ==== Download PAA Certs
 [source,bash]
 ----
-$ dclcli query pki all-x509-certs
-`{
-  "result": {
-    "total": "2",
-    "items": [
-      {
-        "pem_cert": "-----BEGIN CERTIFICATE-----\nMIIBvjCCAWWgAwIBAgIUIkOmG+Xw20N4HMLyeXybk0jmlo8wCgYIKoZIzj0EAwIw\nOTE3MDUGA1UEAwwuQ29tY2FzdCBJbnRlZ3JhdGlvbiBUZXN0aW5nIEVDQyBDbGFz\ncyBJSUkgUm9vdDAeFw0yMDA3MDcyMzA3NTFaFw00NTA1MDUyMzExMzhaMB4xHDAa\nBgNVBAMME0NISVAgREVWIENsYXNzMyBJQ0EwWTATBgcqhkjOPQIBBggqhkjOPQMB\nBwNCAAQ0wmDbYmHmVFn6Ly/LqFFZQmFS+1td7s+yZD8LboM3jcrBW/ayS3AnIO6c\nNHD4iJDioNLFMab9xUzVGmSYgoUCo2YwZDASBgNVHRMBAf8ECDAGAQH/AgEAMB8G\nA1UdIwQYMBaAFDb0CqUK9CvOTlfUzH+wMqyqy9i1MB0GA1UdDgQWBBSeb0Sqjfti\nW3jND3YfySG6TDuakDAOBgNVHQ8BAf8EBAMCAYYwCgYIKoZIzj0EAwIDRwAwRAIg\naZQRxZAA8RVyjD1oTNxqdEkKNCueew9tM8HzZ9+rGT4CIDFD/3i5wDck2GxgQqgQ\n1DCUgDuwpCvFosPZ1GzmDBco\n-----END CERTIFICATE-----\n",
-        "subject": "CN=CHIP DEV Class3 ICA",
-        "subject_key_id": "9E:6F:44:AA:8D:FB:62:5B:78:CD:F:76:1F:C9:21:BA:4C:3B:9A:90",
-        "serial_number": "195614306269044484114648791458657602232633431695",
-        "issuer": "CN=Comcast Integration Testing ECC Class III Root",
-        "authority_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
-        "root_subject": "CN=Comcast Integration Testing ECC Class III Root",
-        "root_subject_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
-        "is_root": false,
-        "owner": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6"
-      },
-      {
-        "pem_cert": "-----BEGIN CERTIFICATE-----\nMIIB2jCCAYCgAwIBAgIUSpw4NDgjpSefY8fDfnEVw3pRiTIwCgYIKoZIzj0EAwIw\nOTE3MDUGA1UEAwwuQ29tY2FzdCBJbnRlZ3JhdGlvbiBUZXN0aW5nIEVDQyBDbGFz\ncyBJSUkgUm9vdDAeFw0yMDA1MTEyMzExMzhaFw00NTA1MDUyMzExMzhaMDkxNzA1\nBgNVBAMMLkNvbWNhc3QgSW50ZWdyYXRpb24gVGVzdGluZyBFQ0MgQ2xhc3MgSUlJ\nIFJvb3QwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAQeHvQ24mds4HkSkZtMcuzy\nQO5wSWIQMRfOQ4fXz+i11A/ceJ8fac4j4a52vD8lm/1PmHg+Fx8VSBV9Dismg6SP\no2YwZDASBgNVHRMBAf8ECDAGAQH/AgEBMB8GA1UdIwQYMBaAFDb0CqUK9CvOTlfU\nzH+wMqyqy9i1MB0GA1UdDgQWBBQ29AqlCvQrzk5X1Mx/sDKsqsvYtTAOBgNVHQ8B\nAf8EBAMCAYYwCgYIKoZIzj0EAwIDSAAwRQIhAJNYLBfsx0+JFlicYl1BZEckgRaz\nnddXAsMw7+XQNo3PAiApvkNkkTJk4cAxuQptW8O/ov99C3nc9drePBvo2RA8Zg==\n-----END CERTIFICATE-----\n",
-        "subject": "CN=Comcast Integration Testing ECC Class III Root",
-        "subject_key_id": "36:F4:A:A5:A:F4:2B:CE:4E:57:D4:CC:7F:B0:32:AC:AA:CB:D8:B5",
-        "serial_number": "425949129349252008356760222047868300335909013810",
-        "is_root": true,
-        "owner": "cosmos1fchu73y8n0h47mlxyyyd9wtwz5767cl8mcpvv6"
-      }
-    ]
-  },
-  "height": "2147366"
-}
-`
+$ dcld query pki all-x509-root-certs
+$ dcld query pki x509-cert --subject="O=intermediate-ca,ST=some-state,C=AU" --subject-key-id=O="4E:3B:73:F4:70:4D:C2:98:D:DB:C8:5A:5F:2:3B:BF:86:25:56:2B"
 ----
