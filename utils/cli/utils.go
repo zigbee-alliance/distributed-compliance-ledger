@@ -50,11 +50,10 @@ func AddTxFlagsToCmd(cmd *cobra.Command) {
 		flags.FlagGasAdjustment,
 		flags.FlagGas,
 		flags.FlagFeeAccount,
+		flags.FlagDryRun,
 	}
 	for _, f := range hiddenFlags {
 		cmd.Flags().MarkHidden(f)
 	}
 
-	// TODO is it possible to update a usage for already added flag ? (the below option will fail)
-	// cmd.Flags().Bool(flags.FlagDryRun, false, "perform a simulation of a transaction, but don't broadcast it")
 }
