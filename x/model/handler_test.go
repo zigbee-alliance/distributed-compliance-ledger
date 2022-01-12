@@ -47,7 +47,7 @@ func (m *DclauthKeeperMock) HasRole(
 func (m *DclauthKeeperMock) HasVendorID(
 	ctx sdk.Context,
 	addr sdk.AccAddress,
-	vid uint64,
+	vid int32,
 ) bool {
 	args := m.Called(ctx, addr, vid)
 	return args.Bool(0)
@@ -65,13 +65,13 @@ type TestSetup struct {
 	Handler       sdk.Handler
 	// Querier     sdk.Querier
 	Vendor   sdk.AccAddress
-	VendorID uint64
+	VendorID int32
 }
 
 func (setup *TestSetup) AddAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
-	vendorID uint64,
+	vendorID int32,
 ) {
 	dclauthKeeper := setup.DclauthKeeper
 
@@ -89,7 +89,7 @@ func Setup(t *testing.T) *TestSetup {
 	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper)
 
 	vendor := GenerateAccAddress()
-	vendorID := uint64(testconstants.VendorID1)
+	vendorID := testconstants.VendorID1
 
 	setup := &TestSetup{
 		T:             t,
@@ -180,7 +180,7 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModel := NewMsgUpdateModel(anotherVendor)
@@ -236,7 +236,7 @@ func TestHandler_AddModelByVendorWithAnotherVendorId(t *testing.T) {
 	setup := Setup(t)
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// add new model
 	model := NewMsgCreateModel(anotherVendor)
@@ -431,7 +431,7 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(anotherVendor)

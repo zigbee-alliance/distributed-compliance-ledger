@@ -13,7 +13,7 @@ func checkModelRights(ctx sdk.Context, k Keeper, signer sdk.AccAddress, vid int3
 			"signed by an account with the %s role", message, dclauthtypes.Vendor)
 	}
 
-	if !k.dclauthKeeper.HasVendorID(ctx, signer, uint64(vid)) {
+	if !k.dclauthKeeper.HasVendorID(ctx, signer, vid) {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "%s transaction should be "+
 			"signed by a vendor account containing the vendorID %v ", message, vid)
 	}

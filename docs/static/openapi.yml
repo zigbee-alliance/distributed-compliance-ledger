@@ -13069,8 +13069,8 @@ paths:
                               so protobuf takes care about repeated items in generated code,
                               (but that might be not the final solution)
                     vendorID:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int32
               pagination:
                 type: object
                 properties:
@@ -13762,8 +13762,8 @@ paths:
                             so protobuf takes care about repeated items in generated code,
                             (but that might be not the final solution)
                   vendorID:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int32
         default:
           description: An unexpected error response.
           schema:
@@ -14180,8 +14180,8 @@ paths:
                                   so protobuf takes care about repeated items in generated code,
                                   (but that might be not the final solution)
                         vendorID:
-                          type: string
-                          format: uint64
+                          type: integer
+                          format: int32
                     approvals:
                       type: array
                       items:
@@ -14679,8 +14679,8 @@ paths:
                                 so protobuf takes care about repeated items in generated code,
                                 (but that might be not the final solution)
                       vendorID:
-                        type: string
-                        format: uint64
+                        type: integer
+                        format: int32
                   approvals:
                     type: array
                     items:
@@ -26497,8 +26497,8 @@ definitions:
                 so protobuf takes care about repeated items in generated code,
                 (but that might be not the final solution)
       vendorID:
-        type: string
-        format: uint64
+        type: integer
+        format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.AccountStat:
     type: object
     properties:
@@ -26717,8 +26717,8 @@ definitions:
                     so protobuf takes care about repeated items in generated code,
                     (but that might be not the final solution)
           vendorID:
-            type: string
-            format: uint64
+            type: integer
+            format: int32
       approvals:
         type: array
         items:
@@ -26942,8 +26942,8 @@ definitions:
                       so protobuf takes care about repeated items in generated code,
                       (but that might be not the final solution)
             vendorID:
-              type: string
-              format: uint64
+              type: integer
+              format: int32
       pagination:
         type: object
         properties:
@@ -27184,8 +27184,8 @@ definitions:
                           so protobuf takes care about repeated items in generated code,
                           (but that might be not the final solution)
                 vendorID:
-                  type: string
-                  format: uint64
+                  type: integer
+                  format: int32
             approvals:
               type: array
               items:
@@ -27458,8 +27458,8 @@ definitions:
                     so protobuf takes care about repeated items in generated code,
                     (but that might be not the final solution)
           vendorID:
-            type: string
-            format: uint64
+            type: integer
+            format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse:
     type: object
     properties:
@@ -27680,8 +27680,8 @@ definitions:
                         so protobuf takes care about repeated items in generated code,
                         (but that might be not the final solution)
               vendorID:
-                type: string
-                format: uint64
+                type: integer
+                format: int32
           approvals:
             type: array
             items:

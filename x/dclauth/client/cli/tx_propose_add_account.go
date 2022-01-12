@@ -50,9 +50,9 @@ func CmdProposeAddAccount() *cobra.Command {
 				}
 			}
 
-			var argVendorID uint64
+			var argVendorID int32
 			if viper.GetString(FlagVID) != "" {
-				argVendorID, err = cast.ToUint64E(viper.GetString(FlagVID))
+				argVendorID, err = cast.ToInt32E(viper.GetString(FlagVID))
 				if err != nil {
 					return err
 				}

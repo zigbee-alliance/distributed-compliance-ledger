@@ -83,11 +83,11 @@ type DCLAccountI interface {
 	authtypes.AccountI
 
 	GetRoles() []AccountRole
-	GetVendorID() uint64
+	GetVendorID() int32
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID uint64) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID int32) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
@@ -120,7 +120,7 @@ func (acc Account) GetRoles() []AccountRole {
 	return acc.Roles
 }
 
-func (acc Account) GetVendorID() uint64 {
+func (acc Account) GetVendorID() int32 {
 	return acc.VendorID
 }
 

@@ -623,7 +623,7 @@ func storeTrustee(setup TestSetup) sdk.AccAddress {
 	return storeAccountWithVendorID(setup, types.Trustee, 0)
 }
 
-func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID uint64) sdk.AccAddress {
+func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID int32) sdk.AccAddress {
 	_, pubKey, address := testdata.KeyTestPubAddr()
 	ba := authtypes.NewBaseAccount(address, pubKey, 0, 0)
 	account := types.NewAccount(ba, types.AccountRoles{role}, vendorID)

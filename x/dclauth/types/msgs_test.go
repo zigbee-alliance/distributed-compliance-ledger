@@ -34,7 +34,7 @@ func NewMsgProposeAddAccountWrapper(
 	address sdk.AccAddress,
 	pubKey cryptotypes.PubKey,
 	roles AccountRoles,
-	vendorID uint64,
+	vendorID int32,
 ) *MsgProposeAddAccount {
 	msg, err := NewMsgProposeAddAccount(signer, address, pubKey, roles, vendorID)
 	require.NoError(t, err)
@@ -65,6 +65,18 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			AccountRoles{NodeAdmin}, 0)},
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
+
+		// zero VID - error - can not create Vendor with vid=0 (reserved)
+		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
+			AccountRoles{Vendor, NodeAdmin}, 0)},
+
+		// negative VID - error
+		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
+			AccountRoles{Vendor, NodeAdmin}, -1)},
+		// too large VID - error
+		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
+			AccountRoles{Vendor, NodeAdmin}, 65535+1)},
+
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, nil, testconstants.PubKey1,
@@ -93,7 +105,7 @@ func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 		AccountRoles{}, testconstants.VendorID1)
 
 	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","pubKey":{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"}` +
-		`,"roles":[],"signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","vendorID":"1000"}`
+		`,"roles":[],"signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","vendorID":1000}`
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
