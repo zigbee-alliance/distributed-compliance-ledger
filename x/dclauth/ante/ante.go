@@ -33,17 +33,24 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	}
 
 	anteDecorators := []sdk.AnteDecorator{
-		authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		// gas is not needed in DCL
+		NewInfiniteGasSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		//authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+
 		authante.NewRejectExtensionOptionsDecorator(),
 		authante.NewValidateBasicDecorator(),
 		authante.NewTxTimeoutHeightDecorator(),
 		authante.NewValidateMemoDecorator(options.AccountKeeper),
-		authante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
-		// TODO issue 99: review, in legacy code it was not used
-		// authante.NewSetPubKeyDecorator(options.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators
-		// TODO issue 99: review, in legacy code it was not used
-		// authante.NewValidateSigCountDecorator(options.AccountKeeper),
-		authante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
+
+		// gas is not needed in DCL
+		//authante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
+
+		authante.NewSetPubKeyDecorator(options.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators
+		authante.NewValidateSigCountDecorator(options.AccountKeeper),
+
+		// gas is not needed in DCL
+		//authante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
+
 		authante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		authante.NewIncrementSequenceDecorator(options.AccountKeeper),
 	}

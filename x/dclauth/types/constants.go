@@ -16,9 +16,9 @@ package types
 
 // Default parameter values.
 const (
-	MaxMemoCharacters             uint64  = 256
-	TxSizeCostPerByte             uint64  = 10
-	DefaultSigVerifyCostED25519   uint64  = 590
-	DefaultSigVerifyCostSecp256k1 uint64  = 1000
-	AccountApprovalPercent        float64 = 0.66
+	DclMaxMemoCharacters      uint64  = 256
+	DclTxSizeCostPerByte      uint64  = 0 // gas is not needed in DCL
+	DclSigVerifyCostED25519   uint64  = 0 // gas is not needed in DCL
+	DclSigVerifyCostSecp256k1 uint64  = 0 // gas is not needed in DCL
+	AccountApprovalPercent    float64 = 0.66
 )
