@@ -67,7 +67,7 @@ dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles
 dcld tx auth approve-add-account --address="$address" --from alice --yes
 
 echo "$account Add Node \"$TEST_NODE\" to validator set"
-docker exec -u "$DCL_USER" "$TEST_NODE" dcld tx validator add-node --pubkey="$vpubkey" --name="$TEST_NODE" --from="$account" --yes
+docker exec -u "$DCL_USER" "$TEST_NODE" dcld tx validator add-node --pubkey="$vpubkey" --moniker="$TEST_NODE" --from="$account" --yes
 
 echo "Check node \"$TEST_NODE\" is in the validator set"
 result=$(dcld query validator all-nodes)

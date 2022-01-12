@@ -96,7 +96,7 @@ var (
 
 	// Testing Result.
 	TestResult = "http://test.result.com"
-	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
+	TestDate   = "2020-02-02T02:00:00Z"
 
 	//
 	Address1, _       = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")

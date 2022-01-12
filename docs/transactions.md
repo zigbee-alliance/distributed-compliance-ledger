@@ -1104,7 +1104,7 @@ Adds a new Validator node.
 
 - Parameters:
     - pubkey: `string` - The validator's Protobuf JSON encoded public key
-    - name: `string` - The validator's name
+    - moniker: `string` - The validator's human-readable name
     - identity: `optional(string)` - identity signature (ex. UPort or Keybase)
     - website: `optional(string)` - The validator's website link
     - details: `optional(string)` - The validator's details
@@ -1114,7 +1114,7 @@ Adds a new Validator node.
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --name=<string> --from=<account>`
+    -   `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --moniker=<string> --from=<account>`
 
 #### GET_VALIDATOR
 **Status: Implemented**
@@ -1153,7 +1153,7 @@ Updates the Validator node by the owner.
 
 - Parameters: 
     - address: `string` - Bench32 encoded validator address or owner account
-    - name: `string` - The validator's name
+    - moniker: `string` - The validator's human-readable name
     - identity: `optional(string)` - identity signature (ex. UPort or Keybase)
     - website: `optional(string)` - The validator's website link
     - details: `optional(string)` - The validator's details

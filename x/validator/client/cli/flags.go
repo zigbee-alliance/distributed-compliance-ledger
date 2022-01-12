@@ -8,7 +8,7 @@ const (
 	FlagAddress = "address"
 	FlagPubKey  = "pubkey"
 
-	FlagName     = "name"
+	FlagMoniker  = "moniker"
 	FlagIdentity = "identity"
 	FlagWebsite  = "website"
 	FlagDetails  = "details"
@@ -35,7 +35,7 @@ func FlagSetPublicKey() *flag.FlagSet {
 func flagSetDescriptionCreate() *flag.FlagSet {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
 
-	fs.String(FlagName, "", "The validator's name")
+	fs.String(FlagMoniker, "", "The validator's name")
 	fs.String(FlagIdentity, "", "The optional identity signature (ex. UPort or Keybase)")
 	fs.String(FlagWebsite, "", "The validator's (optional) website")
 	fs.String(FlagDetails, "", "The validator's (optional) details")

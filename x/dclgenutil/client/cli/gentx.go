@@ -44,7 +44,7 @@ file.
 
 Example:
 $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=test-chain-1 \
-    --name="myvalidator" \
+    --moniker="myvalidator" \
     --details="..." \
     --website="..."
 `, version.AppName,
@@ -100,7 +100,7 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 			}
 
 			moniker := config.Moniker
-			if m, _ := cmd.Flags().GetString(validatorcli.FlagName); m != "" {
+			if m, _ := cmd.Flags().GetString(validatorcli.FlagMoniker); m != "" {
 				moniker = m
 			}
 
