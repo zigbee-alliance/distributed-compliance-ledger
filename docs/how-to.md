@@ -314,7 +314,7 @@ can be found here: [running-node.md](running-node.md).
 * `sudo ufw allow 26657/tcp`
 * `dcld start`
 * `dcld status`
-* `dcld tx validator add-node --pubkey=(dcld tendermint show-validator) --name=<string> --from=<account>`
+* `dcld tx validator add-node --pubkey=(dcld tendermint show-validator) --moniker=<string> --from=<account>`
 * `dcld query validator all-nodes`
 
 ##### Policy

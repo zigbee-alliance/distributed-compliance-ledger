@@ -1114,7 +1114,7 @@ Adds a new Validator node.
 - Who can send: 
     - NodeAdmin
 - CLI command: 
-    -   `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --name=<string> --from=<account>`
+    -   `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --moniker=<string> --from=<account>`
 
 #### GET_VALIDATOR
 **Status: Implemented**

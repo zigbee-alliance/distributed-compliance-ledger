@@ -233,7 +233,7 @@ an account with `NodeAdmin` role. And **wait** until:
 
 ```bash
 $ dcld tx validator add-node --pubkey=<validator pubkey> \
-    --name=<node name> --from=<key name>
+    --moniker=<node name> --from=<key name>
 ```
 
 If the transaction has been successfully written you would find `"code": 0` in the output JSON.

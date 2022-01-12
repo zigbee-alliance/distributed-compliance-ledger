@@ -17329,9 +17329,9 @@ paths:
                       title: description of the validator
                       type: object
                       properties:
-                        name:
+                        moniker:
                           type: string
-                          description: name.
+                          description: a human-readable name for the validator.
                         identity:
                           type: string
                           description: optional identity signature.
@@ -17818,9 +17818,9 @@ paths:
                     title: description of the validator
                     type: object
                     properties:
-                      name:
+                      moniker:
                         type: string
-                        description: name.
+                        description: a human-readable name for the validator.
                       identity:
                         type: string
                         description: optional identity signature.
@@ -28592,9 +28592,9 @@ definitions:
   zigbeealliance.distributedcomplianceledger.validator.Description:
     type: object
     properties:
-      name:
+      moniker:
         type: string
-        description: name.
+        description: a human-readable name for the validator.
       identity:
         type: string
         description: optional identity signature.
@@ -28667,9 +28667,9 @@ definitions:
               title: description of the validator
               type: object
               properties:
-                name:
+                moniker:
                   type: string
-                  description: name.
+                  description: a human-readable name for the validator.
                 identity:
                   type: string
                   description: optional identity signature.
@@ -28906,9 +28906,9 @@ definitions:
             title: description of the validator
             type: object
             properties:
-              name:
+              moniker:
                 type: string
-                description: name.
+                description: a human-readable name for the validator.
               identity:
                 type: string
                 description: optional identity signature.
@@ -29102,9 +29102,9 @@ definitions:
         title: description of the validator
         type: object
         properties:
-          name:
+          moniker:
             type: string
-            description: name.
+            description: a human-readable name for the validator.
           identity:
             type: string
             description: optional identity signature.

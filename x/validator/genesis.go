@@ -56,7 +56,7 @@ func WriteValidators(ctx sdk.Context, k keeper.Keeper) (vals []tmtypes.GenesisVa
 			Address: sdk.ConsAddress(tmPk.Address()).Bytes(),
 			PubKey:  tmPk,
 			Power:   int64(validator.GetPower()),
-			Name:    validator.GetName(),
+			Name:    validator.GetMoniker(),
 		})
 
 		return false

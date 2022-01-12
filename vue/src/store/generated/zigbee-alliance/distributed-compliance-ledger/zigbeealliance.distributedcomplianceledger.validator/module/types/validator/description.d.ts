@@ -1,8 +1,8 @@
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 export interface Description {
-    /** name. */
-    name: string;
+    /** a human-readable name for the validator. */
+    moniker: string;
     /** optional identity signature. */
     identity: string;
     /** optional website link. */
