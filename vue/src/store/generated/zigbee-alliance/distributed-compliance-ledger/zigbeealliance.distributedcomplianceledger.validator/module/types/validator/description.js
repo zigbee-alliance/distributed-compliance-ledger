@@ -1,11 +1,11 @@
 /* eslint-disable */
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator';
-const baseDescription = { name: '', identity: '', website: '', details: '' };
+const baseDescription = { moniker: '', identity: '', website: '', details: '' };
 export const Description = {
     encode(message, writer = Writer.create()) {
-        if (message.name !== '') {
-            writer.uint32(10).string(message.name);
+        if (message.moniker !== '') {
+            writer.uint32(10).string(message.moniker);
         }
         if (message.identity !== '') {
             writer.uint32(18).string(message.identity);
@@ -26,7 +26,7 @@ export const Description = {
             const tag = reader.uint32();
             switch (tag >>> 3) {
                 case 1:
-                    message.name = reader.string();
+                    message.moniker = reader.string();
                     break;
                 case 2:
                     message.identity = reader.string();
@@ -46,11 +46,11 @@ export const Description = {
     },
     fromJSON(object) {
         const message = { ...baseDescription };
-        if (object.name !== undefined && object.name !== null) {
-            message.name = String(object.name);
+        if (object.moniker !== undefined && object.moniker !== null) {
+            message.moniker = String(object.moniker);
         }
         else {
-            message.name = '';
+            message.moniker = '';
         }
         if (object.identity !== undefined && object.identity !== null) {
             message.identity = String(object.identity);
@@ -74,7 +74,7 @@ export const Description = {
     },
     toJSON(message) {
         const obj = {};
-        message.name !== undefined && (obj.name = message.name);
+        message.moniker !== undefined && (obj.moniker = message.moniker);
         message.identity !== undefined && (obj.identity = message.identity);
         message.website !== undefined && (obj.website = message.website);
         message.details !== undefined && (obj.details = message.details);
@@ -82,11 +82,11 @@ export const Description = {
     },
     fromPartial(object) {
         const message = { ...baseDescription };
-        if (object.name !== undefined && object.name !== null) {
-            message.name = object.name;
+        if (object.moniker !== undefined && object.moniker !== null) {
+            message.moniker = object.moniker;
         }
         else {
-            message.name = '';
+            message.moniker = '';
         }
         if (object.identity !== undefined && object.identity !== null) {
             message.identity = object.identity;

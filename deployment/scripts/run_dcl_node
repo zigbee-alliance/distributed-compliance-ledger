@@ -508,7 +508,7 @@ elif [[ "$NODE_TYPE" == "$NT_VALIDATOR" ]]; then
 
     echo -e "\nNext steps:"
     echo -e "\n\t1. If you have an approved NodeAdmin account please run the following command to make the node a validator:"
-    echo -e "\t\t'dcld tx validator add-node --pubkey='$VAL_PUBKEY' --name=$NODE_NAME --from=$KEY_NAME'"
+    echo -e "\t\t'dcld tx validator add-node --pubkey='$VAL_PUBKEY' --moniker=$NODE_NAME --from=$KEY_NAME'"
     echo -e "\n\t2. Explore the node external IP and provide it along with validator ID '$VAL_ID'"
     echo -e "\t\t to DCLedger '$CHAIN_ID' network validator administrators"
 

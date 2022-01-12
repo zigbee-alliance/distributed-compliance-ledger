@@ -78,7 +78,7 @@ function add_genesis_accounts {
 function gentx {
     local _node_name="$1"
     local _key_name="$2"
-    echo "$KEYPASSWD" | dcld gentx "$_key_name" --chain-id "$CHAIN_ID" --name "$_node_name"
+    echo "$KEYPASSWD" | dcld gentx "$_key_name" --chain-id "$CHAIN_ID" --moniker "$_node_name"
 }
 
 
