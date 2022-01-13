@@ -76,7 +76,6 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: golangci-lint
-        if: false # TODO issue 99
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.30
