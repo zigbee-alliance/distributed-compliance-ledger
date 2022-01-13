@@ -163,7 +163,7 @@ func TestMsgAddTestingResult_ValidateBasic(t *testing.T) {
 			},
 		},
 		{
-			name: "valid testing result, software version = 0",
+			name: "software version = 0",
 			msg: MsgAddTestingResult{
 				Signer:                sample.AccAddress(),
 				SoftwareVersionString: testconstants.SoftwareVersionString,
@@ -172,6 +172,30 @@ func TestMsgAddTestingResult_ValidateBasic(t *testing.T) {
 				TestDate:              testconstants.CertificationDate.Format(time.RFC3339),
 				TestResult:            testconstants.TestResult,
 				SoftwareVersion:       0,
+			},
+		},
+		{
+			name: "minimal values",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: "1",
+				Pid:                   1,
+				Vid:                   1,
+				TestDate:              testconstants.CertificationDate.Format(time.RFC3339),
+				TestResult:            testconstants.TestResult,
+				SoftwareVersion:       1,
+			},
+		},
+		{
+			name: "maximum values",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: "1",
+				Pid:                   65535,
+				Vid:                   65535,
+				TestDate:              testconstants.CertificationDate.Format(time.RFC3339),
+				TestResult:            testconstants.TestResult,
+				SoftwareVersion:       1,
 			},
 		},
 	}
