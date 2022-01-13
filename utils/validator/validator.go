@@ -112,9 +112,9 @@ func Validate(s interface{}) error {
 		return t
 	})
 
-	errs := vl.Struct(s)
-
-	if errs != nil {
+	//nolint:nestif
+	if errs := vl.Struct(s); errs != nil {
+		//nolint:errorlint
 		for _, e := range errs.(validator.ValidationErrors) {
 			if e.Tag() == "required" || e.Tag() == "required_with" || e.Tag() == "required_if" {
 				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))

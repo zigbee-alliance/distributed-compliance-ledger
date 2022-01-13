@@ -33,15 +33,6 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Signer: (%s)", err)
 	}
 
-	roles := types.FromSlice(msg.Roles)
-	if len(*roles) == 0 {
-		return nil, types.ErrMissingRoles()
-	}
-
-	if err := roles.Validate(); err != nil {
-		return nil, err
-	}
-
 	// check if sender has enough rights to create a validator node
 	if !k.HasRole(ctx, signerAddr, types.Trustee) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,

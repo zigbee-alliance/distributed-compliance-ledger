@@ -17,6 +17,7 @@ package utils
 import (
 	"bufio"
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -191,8 +192,8 @@ func (suite *TestSuite) AssertNotFound(err error) {
 	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
 
 	if suite.Rest {
-		resterr, ok := err.(*RESTError)
-		if !ok {
+		var resterr *RESTError
+		if !errors.As(err, &resterr) {
 			panic("REST error is not RESTError type")
 		}
 		require.Equal(suite.T, resterr.resp.StatusCode, 404)

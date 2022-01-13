@@ -170,7 +170,7 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
-	sv := uint32(tmrand.Uint32())
+	sv := tmrand.Uint32()
 	svs := utils.RandString()
 	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
@@ -256,7 +256,7 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Publish second modelVersion
-	new_sv := uint32(tmrand.Uint32())
+	new_sv := tmrand.Uint32()
 	new_svs := utils.RandString()
 	secondModelVersion := test_model.NewMsgCreateModelVersion(vid, new_pid, new_sv, new_svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{secondModelVersion}, vendorName, vendorAccount)

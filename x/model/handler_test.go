@@ -490,8 +490,8 @@ func queryModelVersion(
 func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 	return &types.MsgCreateModel{
 		Creator:                                  signer.String(),
-		Vid:                                      int32(testconstants.VendorID1),
-		Pid:                                      int32(testconstants.Pid),
+		Vid:                                      testconstants.VendorID1,
+		Pid:                                      testconstants.Pid,
 		DeviceTypeId:                             testconstants.DeviceTypeId,
 		ProductName:                              testconstants.ProductName,
 		ProductLabel:                             testconstants.ProductLabel,
@@ -511,7 +511,7 @@ func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 	return &types.MsgUpdateModel{
 		Creator:                                  signer.String(),
-		Vid:                                      int32(testconstants.VendorID1),
+		Vid:                                      testconstants.VendorID1,
 		Pid:                                      testconstants.Pid,
 		ProductName:                              testconstants.ProductName + "-updated",
 		ProductLabel:                             testconstants.ProductLabel + "-updated",
@@ -528,7 +528,7 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 func NewMsgCreateModelVersion(signer sdk.AccAddress) *types.MsgCreateModelVersion {
 	return &types.MsgCreateModelVersion{
 		Creator:                      signer.String(),
-		Vid:                          int32(testconstants.VendorID1),
+		Vid:                          testconstants.VendorID1,
 		Pid:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionString:        testconstants.SoftwareVersionString,
@@ -548,7 +548,7 @@ func NewMsgCreateModelVersion(signer sdk.AccAddress) *types.MsgCreateModelVersio
 func NewMsgUpdateModelVersion(signer sdk.AccAddress) *types.MsgUpdateModelVersion {
 	return &types.MsgUpdateModelVersion{
 		Creator:                      signer.String(),
-		Vid:                          int32(testconstants.VendorID1),
+		Vid:                          testconstants.VendorID1,
 		Pid:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionValid:         !testconstants.SoftwareVersionValid,

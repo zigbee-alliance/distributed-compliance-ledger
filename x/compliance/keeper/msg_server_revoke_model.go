@@ -58,25 +58,24 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 			// 	return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid)
 			// }
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		} else {
-			// if state changes on `revoked` check that revocation_date is after certification_date
-			newDate, err := time.Parse(time.RFC3339, msg.RevocationDate)
-			if err != nil {
-				return nil, types.NewErrInvalidTestDateFormat(msg.RevocationDate)
-			}
-			oldDate, err := time.Parse(time.RFC3339, complianceInfo.Date)
-			if err != nil {
-				return nil, types.NewErrInvalidTestDateFormat(complianceInfo.Date)
-			}
-			if newDate.Before(oldDate) {
-				return nil, types.NewErrInconsistentDates(
-					fmt.Sprintf("The `revocation_date`:%v must be after the `certification_date`:%v to "+
-						"revoke model", msg.RevocationDate, complianceInfo.Date),
-				)
-			}
-
-			complianceInfo.SetRevokedStatus(msg.RevocationDate, msg.Reason)
 		}
+		// if state changes on `revoked` check that revocation_date is after certification_date
+		newDate, err := time.Parse(time.RFC3339, msg.RevocationDate)
+		if err != nil {
+			return nil, types.NewErrInvalidTestDateFormat(msg.RevocationDate)
+		}
+		oldDate, err := time.Parse(time.RFC3339, complianceInfo.Date)
+		if err != nil {
+			return nil, types.NewErrInvalidTestDateFormat(complianceInfo.Date)
+		}
+		if newDate.Before(oldDate) {
+			return nil, types.NewErrInconsistentDates(
+				fmt.Sprintf("The `revocation_date`:%v must be after the `certification_date`:%v to "+
+					"revoke model", msg.RevocationDate, complianceInfo.Date),
+			)
+		}
+
+		complianceInfo.SetRevokedStatus(msg.RevocationDate, msg.Reason)
 
 		// update certified/revoked index
 		certifiedModel := types.CertifiedModel{
