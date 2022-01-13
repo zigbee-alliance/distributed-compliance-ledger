@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// CertifiedModelKeyPrefix is the prefix to retrieve all CertifiedModel
+	// CertifiedModelKeyPrefix is the prefix to retrieve all CertifiedModel.
 	CertifiedModelKeyPrefix = "CertifiedModel/value/"
 )
 
-// CertifiedModelKey returns the store key to retrieve a CertifiedModel from the index fields
+// CertifiedModelKey returns the store key to retrieve a CertifiedModel from the index fields.
 func CertifiedModelKey(
 	vid int32,
 	pid int32,

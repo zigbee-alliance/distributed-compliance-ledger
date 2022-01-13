@@ -10,8 +10,8 @@ message Description {
   option (gogoproto.equal)            = true;
   option (gogoproto.goproto_stringer) = false;
 
-  // name.
-  string name = 1; 
+  // a human-readable name for the validator.
+  string moniker = 1; 
   // optional identity signature.
   string identity = 2; 
   // optional website link.

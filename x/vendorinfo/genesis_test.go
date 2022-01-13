@@ -21,8 +21,9 @@ func TestGenesis(t *testing.T) {
 		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
+	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
 
-	k, ctx := keepertest.VendorinfoKeeper(t)
+	k, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
 	vendorinfo.InitGenesis(ctx, *k, genesisState)
 	got := vendorinfo.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)

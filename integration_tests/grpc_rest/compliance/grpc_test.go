@@ -15,8 +15,6 @@
 package compliance_test
 
 import (
-
-	//"net/http".
 	"testing"
 
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"

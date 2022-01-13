@@ -479,7 +479,7 @@ func PKIDemo(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		jackName,

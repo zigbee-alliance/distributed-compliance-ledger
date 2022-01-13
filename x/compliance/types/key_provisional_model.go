@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// ProvisionalModelKeyPrefix is the prefix to retrieve all ProvisionalModel
+	// ProvisionalModelKeyPrefix is the prefix to retrieve all ProvisionalModel.
 	ProvisionalModelKeyPrefix = "ProvisionalModel/value/"
 )
 
-// ProvisionalModelKey returns the store key to retrieve a ProvisionalModel from the index fields
+// ProvisionalModelKey returns the store key to retrieve a ProvisionalModel from the index fields.
 func ProvisionalModelKey(
 	vid int32,
 	pid int32,

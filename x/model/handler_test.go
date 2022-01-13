@@ -47,7 +47,7 @@ func (m *DclauthKeeperMock) HasRole(
 func (m *DclauthKeeperMock) HasVendorID(
 	ctx sdk.Context,
 	addr sdk.AccAddress,
-	vid uint64,
+	vid int32,
 ) bool {
 	args := m.Called(ctx, addr, vid)
 	return args.Bool(0)
@@ -65,13 +65,13 @@ type TestSetup struct {
 	Handler       sdk.Handler
 	// Querier     sdk.Querier
 	Vendor   sdk.AccAddress
-	VendorID uint64
+	VendorID int32
 }
 
 func (setup *TestSetup) AddAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
-	vendorID uint64,
+	vendorID int32,
 ) {
 	dclauthKeeper := setup.DclauthKeeper
 
@@ -89,7 +89,7 @@ func Setup(t *testing.T) *TestSetup {
 	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper)
 
 	vendor := GenerateAccAddress()
-	vendorID := uint64(testconstants.VendorID1)
+	vendorID := testconstants.VendorID1
 
 	setup := &TestSetup{
 		T:             t,
@@ -180,7 +180,7 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModel := NewMsgUpdateModel(anotherVendor)
@@ -236,7 +236,7 @@ func TestHandler_AddModelByVendorWithAnotherVendorId(t *testing.T) {
 	setup := Setup(t)
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// add new model
 	model := NewMsgCreateModel(anotherVendor)
@@ -431,7 +431,7 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(anotherVendor)
@@ -450,7 +450,6 @@ func queryModel(
 	vid int32,
 	pid int32,
 ) (*types.Model, error) {
-
 	req := &types.QueryGetModelRequest{
 		Vid: vid,
 		Pid: pid,
@@ -472,7 +471,6 @@ func queryModelVersion(
 	pid int32,
 	softwareVersion uint32,
 ) (*types.ModelVersion, error) {
-
 	req := &types.QueryGetModelVersionRequest{
 		Vid:             vid,
 		Pid:             pid,
@@ -492,8 +490,8 @@ func queryModelVersion(
 func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 	return &types.MsgCreateModel{
 		Creator:                                  signer.String(),
-		Vid:                                      int32(testconstants.VendorID1),
-		Pid:                                      int32(testconstants.Pid),
+		Vid:                                      testconstants.VendorID1,
+		Pid:                                      testconstants.Pid,
 		DeviceTypeId:                             testconstants.DeviceTypeId,
 		ProductName:                              testconstants.ProductName,
 		ProductLabel:                             testconstants.ProductLabel,
@@ -513,7 +511,7 @@ func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 	return &types.MsgUpdateModel{
 		Creator:                                  signer.String(),
-		Vid:                                      int32(testconstants.VendorID1),
+		Vid:                                      testconstants.VendorID1,
 		Pid:                                      testconstants.Pid,
 		ProductName:                              testconstants.ProductName + "-updated",
 		ProductLabel:                             testconstants.ProductLabel + "-updated",
@@ -530,7 +528,7 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 func NewMsgCreateModelVersion(signer sdk.AccAddress) *types.MsgCreateModelVersion {
 	return &types.MsgCreateModelVersion{
 		Creator:                      signer.String(),
-		Vid:                          int32(testconstants.VendorID1),
+		Vid:                          testconstants.VendorID1,
 		Pid:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionString:        testconstants.SoftwareVersionString,
@@ -550,7 +548,7 @@ func NewMsgCreateModelVersion(signer sdk.AccAddress) *types.MsgCreateModelVersio
 func NewMsgUpdateModelVersion(signer sdk.AccAddress) *types.MsgUpdateModelVersion {
 	return &types.MsgUpdateModelVersion{
 		Creator:                      signer.String(),
-		Vid:                          int32(testconstants.VendorID1),
+		Vid:                          testconstants.VendorID1,
 		Pid:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionValid:         !testconstants.SoftwareVersionValid,

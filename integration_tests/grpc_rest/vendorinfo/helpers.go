@@ -16,7 +16,6 @@ import (
 )
 
 func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreateVendorInfo {
-
 	return &vendorinfotypes.MsgCreateVendorInfo{
 		Creator:              signer,
 		VendorID:             vid,
@@ -28,7 +27,6 @@ func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreate
 }
 
 func NewMsgUpdateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgUpdateVendorInfo {
-
 	return &vendorinfotypes.MsgUpdateVendorInfo{
 		Creator:              signer,
 		VendorID:             vid,
@@ -45,7 +43,6 @@ func AddVendorInfo(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg.Creator = suite.GetAddress(signerName).String()
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -54,7 +51,6 @@ func GetVendorInfo(
 	suite *utils.TestSuite,
 	vid int32,
 ) (*vendorinfotypes.VendorInfo, error) {
-
 	var res vendorinfotypes.VendorInfo
 
 	if suite.Rest {
@@ -131,7 +127,7 @@ func VendorInfoDemo(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -181,7 +177,7 @@ func AddVendorInfoByNonVendor(suite *utils.TestSuite) {
 		suite,
 		testHouseName,
 		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -218,7 +214,7 @@ func AddVendorInfoByDifferentVendor(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid+1),
+		vid+1,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -253,7 +249,7 @@ func AddVendorInfoTwice(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,

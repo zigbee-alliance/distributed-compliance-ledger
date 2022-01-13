@@ -1357,7 +1357,6 @@ func queryProposedCertificate(
 	subject string,
 	subjectKeyId string,
 ) (*types.ProposedCertificate, error) {
-
 	// query proposed certificate
 	req := &types.QueryGetProposedCertificateRequest{
 		Subject:      subject,
@@ -1375,7 +1374,6 @@ func queryProposedCertificate(
 }
 
 func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificates, error) {
-
 	// query all certificates
 	req := &types.QueryAllApprovedCertificatesRequest{}
 
@@ -1394,7 +1392,6 @@ func querySingleApprovedCertificate(
 	subject string,
 	subjectKeyId string,
 ) (*types.Certificate, error) {
-
 	certificates, err := queryApprovedCertificates(setup, subject, subjectKeyId)
 	if err != nil {
 		return nil, err
@@ -1412,7 +1409,6 @@ func queryApprovedCertificates(
 	subject string,
 	subjectKeyId string,
 ) (*types.ApprovedCertificates, error) {
-
 	// query certificate
 	req := &types.QueryGetApprovedCertificatesRequest{
 		Subject:      subject,
@@ -1430,7 +1426,6 @@ func queryApprovedCertificates(
 }
 
 func queryAllProposedCertificateRevocations(setup *TestSetup) ([]types.ProposedCertificateRevocation, error) {
-
 	// query all proposed certificate revocations
 	req := &types.QueryAllProposedCertificateRevocationRequest{}
 
@@ -1449,7 +1444,6 @@ func queryProposedCertificateRevocation(
 	subject string,
 	subjectKeyId string,
 ) (*types.ProposedCertificateRevocation, error) {
-
 	// query proposed certificate revocation
 	req := &types.QueryGetProposedCertificateRevocationRequest{
 		Subject:      subject,
@@ -1467,7 +1461,6 @@ func queryProposedCertificateRevocation(
 }
 
 func queryAllRevokedCertificates(setup *TestSetup) ([]types.RevokedCertificates, error) {
-
 	// query all revoked certificates
 	req := &types.QueryAllRevokedCertificatesRequest{}
 
@@ -1486,7 +1479,6 @@ func querySingleRevokedCertificate(
 	subject string,
 	subjectKeyId string,
 ) (*types.Certificate, error) {
-
 	certificates, err := queryRevokedCertificates(setup, subject, subjectKeyId)
 	if err != nil {
 		return nil, err
@@ -1504,7 +1496,6 @@ func queryRevokedCertificates(
 	subject string,
 	subjectKeyId string,
 ) (*types.RevokedCertificates, error) {
-
 	// query revoked certificate
 	req := &types.QueryGetRevokedCertificatesRequest{
 		Subject:      subject,
@@ -1526,7 +1517,6 @@ func queryChildCertificates(
 	issuer string,
 	authorityKeyId string,
 ) (*types.ChildCertificates, error) {
-
 	// query certificate
 	req := &types.QueryGetChildCertificatesRequest{
 		Issuer:         issuer,

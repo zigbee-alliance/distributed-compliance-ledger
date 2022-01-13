@@ -73,7 +73,7 @@ func (v Validator) GetOwner() sdk.ValAddress {
 	return addr
 }
 
-func (v Validator) GetName() string { return v.Description.Name }
+func (v Validator) GetMoniker() string { return v.Description.Moniker }
 
 func (v Validator) IsJailed() bool { return v.Jailed }
 
@@ -172,9 +172,9 @@ func (v Validator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 // ============= Description of Validator ================
 
 // NewDescription returns a new Description with the provided values.
-func NewDescription(name, identity, website, details string) Description {
+func NewDescription(moniker string, identity, website, details string) Description {
 	return Description{
-		Name:     name,
+		Moniker:  moniker,
 		Identity: identity,
 		Website:  website,
 		Details:  details,
@@ -190,13 +190,13 @@ const (
 
 // Ensure the length of a validator's description.
 func (d Description) Validate() error {
-	if len(d.Name) == 0 {
-		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid Description Name: it cannot be empty")
+	if len(d.Moniker) == 0 {
+		return sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "Invalid Description Moniker: it cannot be empty")
 	}
 
-	if len(d.Name) > MaxNameLength {
+	if len(d.Moniker) > MaxNameLength {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest,
-			"Invalid Description Name: received string of length %v, max is %v", len(d.Name), MaxNameLength,
+			"Invalid Description Moniker: received string of length %v, max is %v", len(d.Moniker), MaxNameLength,
 		)
 	}
 

@@ -11,6 +11,7 @@ package keeper_test
 // )
 
 // func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
-// 	k, ctx := keepertest.VendorinfoKeeper(t)
+// 	dclauthKeeper := &DclauthKeeperMock{}
+// 	k, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
 // 	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
 // }

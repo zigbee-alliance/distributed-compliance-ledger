@@ -20,7 +20,7 @@ func NewMsgProposeAddAccount(
 	pubKey cryptotypes.PubKey, //nolint:interfacer
 	roles AccountRoles,
 	// roles []string,
-	vendorID uint64,
+	vendorID int32,
 ) (*MsgProposeAddAccount, error) {
 	var pkAny *codectypes.Any
 	if pubKey != nil {
@@ -102,16 +102,17 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "account address and pubkey address do not match")
 	}
 
-	roles := FromSlice(msg.Roles)
-
-	if len(*roles) == 0 {
+	if len(msg.Roles) == 0 {
 		return ErrMissingRoles()
 	}
 
-	if err := roles.Validate(); err != nil {
-		return err
+	for _, role := range msg.Roles {
+		if err := role.Validate(); err != nil {
+			return err
+		}
 	}
 
+	// can not create Vendor with vid=0 (reserved)
 	if msg.HasRole(Vendor) && msg.VendorID <= 0 {
 		return ErrMissingVendorIDForVendorAccount()
 	}

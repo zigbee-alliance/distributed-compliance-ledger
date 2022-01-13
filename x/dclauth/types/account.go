@@ -54,27 +54,6 @@ func (role AccountRole) Validate() error {
 
 type AccountRoles []AccountRole
 
-// Validate checks for errors on the account roles.
-func (roles AccountRoles) Validate() error {
-	for _, role := range roles {
-		if err := role.Validate(); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-// TODO: think about better way.
-func FromSlice(roles []AccountRole) *AccountRoles {
-	var res AccountRoles
-	for _, role := range roles {
-		res = append(res, role)
-	}
-
-	return &res
-}
-
 /*
 	Account
 */
@@ -83,11 +62,11 @@ type DCLAccountI interface {
 	authtypes.AccountI
 
 	GetRoles() []AccountRole
-	GetVendorID() uint64
+	GetVendorID() int32
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID uint64) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID int32) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
@@ -102,10 +81,10 @@ func (acc Account) Validate() error {
 		return err
 	}
 
-	roles := FromSlice(acc.Roles)
-
-	if err := roles.Validate(); err != nil {
-		return err
+	for _, role := range acc.Roles {
+		if err := role.Validate(); err != nil {
+			return err
+		}
 	}
 
 	// If creating an account with Vendor Role, we need to have a associated VendorID
@@ -120,7 +99,7 @@ func (acc Account) GetRoles() []AccountRole {
 	return acc.Roles
 }
 
-func (acc Account) GetVendorID() uint64 {
+func (acc Account) GetVendorID() int32 {
 	return acc.VendorID
 }
 

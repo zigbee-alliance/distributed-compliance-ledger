@@ -87,8 +87,8 @@ func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKey
 		k.cdc.MustUnmarshal(childCertificatesBytes, &childCertificates)
 	}
 
-	for _, existingСertId := range childCertificates.CertIds {
-		if *existingСertId == certId {
+	for _, existingCertId := range childCertificates.CertIds {
+		if *existingCertId == certId {
 			return
 		}
 	}

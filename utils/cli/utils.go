@@ -39,7 +39,6 @@ func IsNotFound(err error) bool {
 }
 
 func AddTxFlagsToCmd(cmd *cobra.Command) {
-
 	flags.AddTxFlagsToCmd(cmd)
 
 	// TODO there might be a better way how to filter that
@@ -50,10 +49,9 @@ func AddTxFlagsToCmd(cmd *cobra.Command) {
 		flags.FlagGasAdjustment,
 		flags.FlagGas,
 		flags.FlagFeeAccount,
-		flags.FlagDryRun,
+		flags.FlagDryRun, // TODO that flag might be actually useful but relates to gas
 	}
 	for _, f := range hiddenFlags {
-		cmd.Flags().MarkHidden(f)
+		_ = cmd.Flags().MarkHidden(f)
 	}
-
 }

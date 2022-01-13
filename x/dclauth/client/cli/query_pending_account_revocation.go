@@ -73,7 +73,6 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 			}
 
 			return clientCtx.PrintProto(res)
-
 		},
 	}
 

@@ -78,7 +78,7 @@ function add_genesis_accounts {
 function gentx {
     local _node_name="$1"
     local _key_name="$2"
-    echo "$KEYPASSWD" | dcld gentx "$_key_name" --chain-id "$CHAIN_ID" --name "$_node_name"
+    echo "$KEYPASSWD" | dcld gentx "$_key_name" --chain-id "$CHAIN_ID" --moniker "$_node_name"
 }
 
 
@@ -158,12 +158,19 @@ if [[ -d "$LOCALNET_DIR/observer0" ]]; then
     sed -i $SED_EXT "s/persistent_peers = \"\"/persistent_peers = \"$peers\"/g" "$LOCALNET_DIR/observer0/config/config.toml"
 fi
 
-# Make RPC endpoint available externally
 for node_name in node0 node1 node2 node3 observer0; do
     if [[ -d "$LOCALNET_DIR/${node_name}" ]]; then
+        # Make RPC endpoints available externally
         sed -i $SED_EXT 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
-        sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
+
+        # sets proper moniker
+        sed -i $SED_EXT "s/moniker = .*/moniker = \"$node_name\"/g" "$LOCALNET_DIR/${node_name}/config/config.toml"
+
+        # enables RPC and prometheus endpoints
         # FIXME issue 99: not good code
         sed -i $SED_EXT '0,/^enable = false/{s~enable = false~enable = true~}' "$LOCALNET_DIR/${node_name}/config/app.toml"
+
+        # enables prometheus endpoints
+        sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
     fi
 done

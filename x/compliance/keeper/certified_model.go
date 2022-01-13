@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// SetCertifiedModel set a specific certifiedModel in the store from its index
+// SetCertifiedModel set a specific certifiedModel in the store from its index.
 func (k Keeper) SetCertifiedModel(ctx sdk.Context, certifiedModel types.CertifiedModel) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 	b := k.cdc.MustMarshal(&certifiedModel)
@@ -18,7 +18,7 @@ func (k Keeper) SetCertifiedModel(ctx sdk.Context, certifiedModel types.Certifie
 	), b)
 }
 
-// GetCertifiedModel returns a certifiedModel from its index
+// GetCertifiedModel returns a certifiedModel from its index.
 func (k Keeper) GetCertifiedModel(
 	ctx sdk.Context,
 	vid int32,
@@ -43,7 +43,7 @@ func (k Keeper) GetCertifiedModel(
 	return val, true
 }
 
-// RemoveCertifiedModel removes a certifiedModel from the store
+// RemoveCertifiedModel removes a certifiedModel from the store.
 func (k Keeper) RemoveCertifiedModel(
 	ctx sdk.Context,
 	vid int32,
@@ -61,7 +61,7 @@ func (k Keeper) RemoveCertifiedModel(
 	))
 }
 
-// GetAllCertifiedModel returns all certifiedModel
+// GetAllCertifiedModel returns all certifiedModel.
 func (k Keeper) GetAllCertifiedModel(ctx sdk.Context) (list []types.CertifiedModel) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

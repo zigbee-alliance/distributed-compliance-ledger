@@ -13,7 +13,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNRevokedModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.RevokedModel {
@@ -46,6 +46,7 @@ func TestRevokedModelGet(t *testing.T) {
 		)
 	}
 }
+
 func TestRevokedModelRemove(t *testing.T) {
 	keeper, ctx := keepertest.ComplianceKeeper(t)
 	items := createNRevokedModel(keeper, ctx, 10)

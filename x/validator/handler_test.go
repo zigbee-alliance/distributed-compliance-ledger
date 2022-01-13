@@ -18,8 +18,7 @@ package validator
 import (
 	"testing"
 
-	// cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
-
+	// cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types".
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
@@ -70,7 +69,7 @@ func TestHandler_CreateValidator(t *testing.T) {
 	msgCreateValidator, err := types.NewMsgCreateValidator(
 		valAddr,
 		testconstants.ValidatorPubKey1,
-		&types.Description{Name: testconstants.ProductName},
+		&types.Description{Moniker: testconstants.ProductName},
 	)
 	require.NoError(t, err)
 	result, err := setup.Handler(setup.Ctx, msgCreateValidator)
@@ -100,7 +99,7 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	msgCreateValidator, err := types.NewMsgCreateValidator(
 		sdk.ValAddress(testconstants.Address1),
 		testconstants.ValidatorPubKey1,
-		&types.Description{Name: testconstants.ProductName},
+		&types.Description{Moniker: testconstants.ProductName},
 	)
 	require.NoError(t, err)
 
@@ -123,7 +122,7 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	msgCreateValidator, err := types.NewMsgCreateValidator(
 		sdk.ValAddress(testconstants.Address1),
 		testconstants.ValidatorPubKey1,
-		&types.Description{Name: testconstants.ProductName},
+		&types.Description{Moniker: testconstants.ProductName},
 	)
 	require.NoError(t, err)
 	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
@@ -138,7 +137,7 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	msgCreateValidator, err = types.NewMsgCreateValidator(
 		sdk.ValAddress(testconstants.Address2),
 		testconstants.ValidatorPubKey1,
-		&types.Description{Name: testconstants.ProductName},
+		&types.Description{Moniker: testconstants.ProductName},
 	)
 	require.NoError(t, err)
 	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
@@ -152,7 +151,7 @@ func TestHandler_CreateValidator_TwiceForSameValidatorOwner(t *testing.T) {
 	msgCreateValidator, err := types.NewMsgCreateValidator(
 		sdk.ValAddress(testconstants.Address1),
 		testconstants.ValidatorPubKey1,
-		&types.Description{Name: testconstants.ProductName},
+		&types.Description{Moniker: testconstants.ProductName},
 	)
 	require.NoError(t, err)
 	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
@@ -162,7 +161,7 @@ func TestHandler_CreateValidator_TwiceForSameValidatorOwner(t *testing.T) {
 	msgCreateValidator2, err := types.NewMsgCreateValidator(
 		sdk.ValAddress(testconstants.Address1),
 		testconstants.ValidatorPubKey2,
-		&types.Description{Name: testconstants.ProductName},
+		&types.Description{Moniker: testconstants.ProductName},
 	)
 	require.NoError(t, err)
 	_, err = setup.Handler(setup.Ctx, msgCreateValidator2)

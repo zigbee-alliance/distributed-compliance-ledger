@@ -43,6 +43,7 @@ the address will be looked up in the local Keybase.
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
+			//nolint:staticcheck
 			depCdc := clientCtx.JSONCodec
 			cdc := depCdc.(codec.Codec)
 
@@ -52,7 +53,7 @@ the address will be looked up in the local Keybase.
 			config.SetRoot(clientCtx.HomeDir)
 
 			addr, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
-			//if err != nil {
+			// if err != nil {
 			//	return err
 			//}
 			// TODO migration of keyring was not released yet in cosmos (in v.0.44.4)
@@ -98,9 +99,9 @@ the address will be looked up in the local Keybase.
 
 			ba := authtypes.NewBaseAccount(addr, pk, 0, 0)
 
-			var vendorID uint64 = 0
+			var vendorID int32 = 0
 			if viper.GetString(FlagVID) != "" {
-				vendorID, err = cast.ToUint64E(viper.GetString(FlagVID))
+				vendorID, err = cast.ToInt32E(viper.GetString(FlagVID))
 				if err != nil {
 					return err
 				}

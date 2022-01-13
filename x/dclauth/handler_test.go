@@ -31,11 +31,11 @@ import (
 )
 
 type TestSetup struct {
-	//Cdc     *amino.Codec
+	// Cdc     *amino.Codec
 	Ctx     sdk.Context
 	Keeper  keeper.Keeper
 	Handler sdk.Handler
-	//Querier sdk.Querier
+	// Querier sdk.Querier
 }
 
 func Setup(t *testing.T) TestSetup {
@@ -623,7 +623,7 @@ func storeTrustee(setup TestSetup) sdk.AccAddress {
 	return storeAccountWithVendorID(setup, types.Trustee, 0)
 }
 
-func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID uint64) sdk.AccAddress {
+func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID int32) sdk.AccAddress {
 	_, pubKey, address := testdata.KeyTestPubAddr()
 	ba := authtypes.NewBaseAccount(address, pubKey, 0, 0)
 	account := types.NewAccount(ba, types.AccountRoles{role}, vendorID)
