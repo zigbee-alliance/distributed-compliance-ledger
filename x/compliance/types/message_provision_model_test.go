@@ -117,7 +117,6 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 	positive_tests := []struct {
 		name string
 		msg  MsgCertifyModel
-		err  error
 	}{
 		{
 			name: "valid address",

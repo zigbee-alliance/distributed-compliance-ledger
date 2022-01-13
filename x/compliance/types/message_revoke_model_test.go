@@ -117,7 +117,6 @@ func TestMsgRevokeModel_ValidateBasic(t *testing.T) {
 	positive_tests := []struct {
 		name string
 		msg  MsgRevokeModel
-		err  error
 	}{
 		{
 			name: "valid address",
