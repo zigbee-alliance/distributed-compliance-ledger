@@ -5,37 +5,12 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
-
-type DclauthKeeperMock struct {
-	mock.Mock
-}
-
-func (m *DclauthKeeperMock) HasRole(
-	ctx sdk.Context,
-	addr sdk.AccAddress,
-	roleToCheck dclauthtypes.AccountRole,
-) bool {
-	args := m.Called(ctx, addr, roleToCheck)
-	return args.Bool(0)
-}
-
-func (m *DclauthKeeperMock) HasVendorID(
-	ctx sdk.Context,
-	addr sdk.AccAddress,
-	vid int32,
-) bool {
-	args := m.Called(ctx, addr, vid)
-	return args.Bool(0)
-}
-
-var _ types.DclauthKeeper = &DclauthKeeperMock{}
 
 // Prevent strconv unused error.
 var _ = strconv.IntSize
@@ -51,7 +26,7 @@ func createNVendorInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Ve
 }
 
 func TestVendorInfoGet(t *testing.T) {
-	dclauthKeeper := &DclauthKeeperMock{}
+	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
 	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
 	items := createNVendorInfo(keeper, ctx, 10)
 	for _, item := range items {
@@ -64,7 +39,7 @@ func TestVendorInfoGet(t *testing.T) {
 }
 
 func TestVendorInfoRemove(t *testing.T) {
-	dclauthKeeper := &DclauthKeeperMock{}
+	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
 	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
 	items := createNVendorInfo(keeper, ctx, 10)
 	for _, item := range items {
@@ -79,7 +54,7 @@ func TestVendorInfoRemove(t *testing.T) {
 }
 
 func TestVendorInfoGetAll(t *testing.T) {
-	dclauthKeeper := &DclauthKeeperMock{}
+	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
 	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
 	items := createNVendorInfo(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllVendorInfo(ctx))
