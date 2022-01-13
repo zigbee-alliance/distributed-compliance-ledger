@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// RevokedModelKeyPrefix is the prefix to retrieve all RevokedModel
+	// RevokedModelKeyPrefix is the prefix to retrieve all RevokedModel.
 	RevokedModelKeyPrefix = "RevokedModel/value/"
 )
 
-// RevokedModelKey returns the store key to retrieve a RevokedModel from the index fields
+// RevokedModelKey returns the store key to retrieve a RevokedModel from the index fields.
 func RevokedModelKey(
 	vid int32,
 	pid int32,

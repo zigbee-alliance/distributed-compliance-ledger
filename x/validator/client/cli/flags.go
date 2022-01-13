@@ -20,11 +20,6 @@ const (
 	FlagGenesisFormat = "genesis-format"
 )
 
-// common flagsets to add to various functions.
-var (
-	fsValidator = flag.NewFlagSet("", flag.ContinueOnError)
-)
-
 // FlagSetPublicKey Returns the flagset for Public Key related operations.
 func FlagSetPublicKey() *flag.FlagSet {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)

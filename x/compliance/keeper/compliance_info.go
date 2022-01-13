@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// SetComplianceInfo set a specific complianceInfo in the store from its index
+// SetComplianceInfo set a specific complianceInfo in the store from its index.
 func (k Keeper) SetComplianceInfo(ctx sdk.Context, complianceInfo types.ComplianceInfo) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	b := k.cdc.MustMarshal(&complianceInfo)
@@ -18,7 +18,7 @@ func (k Keeper) SetComplianceInfo(ctx sdk.Context, complianceInfo types.Complian
 	), b)
 }
 
-// GetComplianceInfo returns a complianceInfo from its index
+// GetComplianceInfo returns a complianceInfo from its index.
 func (k Keeper) GetComplianceInfo(
 	ctx sdk.Context,
 	vid int32,
@@ -43,7 +43,7 @@ func (k Keeper) GetComplianceInfo(
 	return val, true
 }
 
-// RemoveComplianceInfo removes a complianceInfo from the store
+// RemoveComplianceInfo removes a complianceInfo from the store.
 func (k Keeper) RemoveComplianceInfo(
 	ctx sdk.Context,
 	vid int32,
@@ -61,7 +61,7 @@ func (k Keeper) RemoveComplianceInfo(
 	))
 }
 
-// GetAllComplianceInfo returns all complianceInfo
+// GetAllComplianceInfo returns all complianceInfo.
 func (k Keeper) GetAllComplianceInfo(ctx sdk.Context) (list []types.ComplianceInfo) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

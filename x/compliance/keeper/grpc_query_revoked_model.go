@@ -38,7 +38,6 @@ func (k Keeper) RevokedModelAll(c context.Context, req *types.QueryAllRevokedMod
 			return true, nil
 		},
 	)
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

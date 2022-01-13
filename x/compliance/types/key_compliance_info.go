@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// ComplianceInfoKeyPrefix is the prefix to retrieve all ComplianceInfo
+	// ComplianceInfoKeyPrefix is the prefix to retrieve all ComplianceInfo.
 	ComplianceInfoKeyPrefix = "ComplianceInfo/value/"
 )
 
-// ComplianceInfoKey returns the store key to retrieve a ComplianceInfo from the index fields
+// ComplianceInfoKey returns the store key to retrieve a ComplianceInfo from the index fields.
 func ComplianceInfoKey(
 	vid int32,
 	pid int32,

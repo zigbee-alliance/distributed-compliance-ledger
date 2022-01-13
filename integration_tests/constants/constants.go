@@ -33,7 +33,7 @@ func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
 
 var (
 	// default context
-	// TODO issue 99: design test context better
+	// TODO issue 99: design test context better.
 	defEncConfig = simapp.MakeTestEncodingConfig()
 
 	// Base constants.

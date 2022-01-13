@@ -15,7 +15,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set all the validator
 	for _, elem := range genState.ValidatorList {
 		k.SetValidator(ctx, elem)
-		k.SetValidatorByConsAddr(ctx, elem)
+		_ = k.SetValidatorByConsAddr(ctx, elem)
 	}
 	// Set all the lastValidatorPower
 	for _, elem := range genState.LastValidatorPowerList {

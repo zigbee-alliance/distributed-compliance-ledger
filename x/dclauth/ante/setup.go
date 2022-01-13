@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// Sets Infinite Gas Meter instead of default one in SetUpContextDecorator
+// Sets Infinite Gas Meter instead of default one in SetUpContextDecorator.
 type InfiniteGasSetUpContextDecorator struct{}
 
 func NewInfiniteGasSetUpContextDecorator() InfiniteGasSetUpContextDecorator {

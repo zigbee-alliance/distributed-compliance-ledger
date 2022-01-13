@@ -21,20 +21,19 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/golang/protobuf/proto"
-	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-
 	clienttx "github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
-	"github.com/cosmos/cosmos-sdk/types/tx"
-
-	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/tx"
 
+	//nolint:staticcheck
+	"github.com/golang/protobuf/proto"
+	"github.com/stretchr/testify/require"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"google.golang.org/grpc"
 )
 
 // NOTE
@@ -62,7 +61,6 @@ func (suite *TestSuite) GetGRPCConn() *grpc.ClientConn {
 }
 
 func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
-
 	inBuf := bufio.NewReader(os.Stdin)
 
 	// TODO issue 99: pass as an arg
@@ -116,7 +114,8 @@ func (suite *TestSuite) BuildTx(
 		msgs,
 		signer,
 	)
-	account.SetSequence(account.GetSequence() + 1)
+	require.NoError(suite.T, err)
+	err = account.SetSequence(account.GetSequence() + 1)
 	require.NoError(suite.T, err)
 
 	// Generated Protobuf-encoded bytes.
