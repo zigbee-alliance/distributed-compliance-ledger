@@ -99,6 +99,42 @@ func TestMsgAddTestingResult_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldUpperBoundViolated,
 		},
+		{
+			name: "test date not set",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				TestDate:              "",
+				TestResult:            testconstants.TestResult,
+			},
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "test result not set",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				TestDate:              testconstants.CertificationDate.Format(time.RFC3339),
+				TestResult:            "",
+			},
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "test date is not RFC3339",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				TestDate:              testconstants.CertificationDate.Format(time.RFC1123),
+				TestResult:            testconstants.TestResult,
+			},
+			err: ErrInvalidTestDateFormat,
+		},
 	}
 
 	positive_tests := []struct {
