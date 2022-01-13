@@ -74,7 +74,7 @@ func NewErrInappropriateCertificateType(e interface{}) error {
 		e)
 }
 
-func NewErrCodeInvalidCertificate(e interface{}) error {
+func NewErrInvalidCertificate(e interface{}) error {
 	return sdkerrors.Wrapf(ErrInvalidCertificate, "%v",
 		e)
 }

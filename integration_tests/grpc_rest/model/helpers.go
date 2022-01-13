@@ -172,8 +172,6 @@ func GetModel(
 	var res modeltypes.Model
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryGetModelResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%v/%v", vid, pid), &resp)
 		if err != nil {
@@ -209,8 +207,6 @@ func GetModelVersion(
 	var res modeltypes.ModelVersion
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryGetModelVersionResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/model/versions/%v/%v/%v", vid, pid, softwareVersion), &resp)
 		if err != nil {
@@ -238,8 +234,6 @@ func GetModelVersion(
 
 func GetModels(suite *utils.TestSuite) (res []modeltypes.Model, err error) {
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryAllModelResponse
 		err := suite.QueryREST("/dcl/model/models", &resp)
 		if err != nil {
@@ -273,8 +267,6 @@ func GetVendorModels(
 	var res modeltypes.VendorProducts
 
 	if suite.Rest {
-		// TODO issue 99: explore the way how to get the endpoint from proto-
-		//      instead of the hard coded value (the same for all rest queries)
 		var resp modeltypes.QueryGetVendorProductsResponse
 		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%v", vid), &resp)
 		if err != nil {
@@ -321,7 +313,7 @@ func ModelDemo(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -407,7 +399,7 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 		suite,
 		testHouseName,
 		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -445,7 +437,7 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid+1),
+		vid+1,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -481,7 +473,7 @@ func AddModelTwice(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -515,15 +507,15 @@ func GetModelForUnknown(suite *utils.TestSuite) {
 }
 
 func GetModelForInvalidVidPid(suite *utils.TestSuite) {
-	// zero vid
-	_, err := GetModel(suite, 0, int32(tmrand.Uint16()))
+	// negative vid
+	_, err := GetModel(suite, -1, int32(tmrand.Uint16()))
 	require.Error(suite.T, err)
 	// FIXME: Consider adding validation for queries.
 	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
 	suite.AssertNotFound(err)
 
-	// zero pid
-	_, err = GetModel(suite, int32(tmrand.Uint16()), 0)
+	// negative pid
+	_, err = GetModel(suite, int32(tmrand.Uint16()), -1)
 	require.Error(suite.T, err)
 	// FIXME: Consider adding validation for queries.
 	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))

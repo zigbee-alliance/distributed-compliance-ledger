@@ -64,14 +64,21 @@ check_response_and_report "$result" "key not found" raw
 test_divider
 
 echo "Add model with invalid VID/PID"
-i="0" 
+i="-1" 
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Vid is a required field" raw
+check_response_and_report "$result" "Vid must not be less than 1" raw
 
 result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
-check_response_and_report "$result" "Pid is a required field" raw
+check_response_and_report "$result" "Pid must not be less than 1" raw
 
-i="65536" 
+i="0" 
+result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Vid must not be less than 1" raw
+
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$i --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "Pid must not be less than 1" raw
+
+i="65536"
 result=$(echo "test1234" | dcld tx model add-model --vid=$i --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from $vendor_account --yes 2>&1) || true
 check_response_and_report "$result" "Vid must not be greater than 65535" raw
 

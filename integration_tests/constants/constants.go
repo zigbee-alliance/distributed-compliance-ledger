@@ -96,16 +96,16 @@ var (
 
 	// Testing Result.
 	TestResult = "http://test.result.com"
-	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
+	TestDate   = "2020-02-02T02:00:00Z"
 
 	//
-	Address1, _        = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
-	Address2, _        = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
-	Address3, _        = sdk.AccAddressFromBech32("cosmos12r9vsus5js32pvnayt33zhcd4y9wcqcly45gr9")
-	VendorID1   uint64 = 1000
-	VendorID2   uint64 = 2000
-	VendorID3   uint64 = 3000
-	PubKey1            = strToPubKey(
+	Address1, _       = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
+	Address2, _       = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
+	Address3, _       = sdk.AccAddressFromBech32("cosmos12r9vsus5js32pvnayt33zhcd4y9wcqcly45gr9")
+	VendorID1   int32 = 1000
+	VendorID2   int32 = 2000
+	VendorID3   int32 = 3000
+	PubKey1           = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aw1XXHQ8i6JVNKsFQ9eQArJVt2GXEO0EBFsQL6XJ5BxY"}`,
 		defEncConfig.Marshaler,
 	)

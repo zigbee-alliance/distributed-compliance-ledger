@@ -47,7 +47,7 @@ func (m *DclauthKeeperMock) HasRole(
 func (m *DclauthKeeperMock) HasVendorID(
 	ctx sdk.Context,
 	addr sdk.AccAddress,
-	vid uint64,
+	vid int32,
 ) bool {
 	args := m.Called(ctx, addr, vid)
 	return args.Bool(0)
@@ -65,31 +65,33 @@ type TestSetup struct {
 	Handler       sdk.Handler
 	// Querier     sdk.Querier
 	Vendor   sdk.AccAddress
-	VendorID uint64
+	VendorID int32
 }
 
 func (setup *TestSetup) AddAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
-	vendorID uint64,
+	vendorID int32,
 ) {
-	for _, role := range roles {
-		setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, role).Return(true)
-	}
-	setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
+	dclauthKeeper := setup.DclauthKeeper
 
-	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, vendorID).Return(true)
-	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, mock.Anything).Return(false)
+	for _, role := range roles {
+		dclauthKeeper.On("HasRole", mock.Anything, accAddress, role).Return(true)
+	}
+	dclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
+
+	dclauthKeeper.On("HasVendorID", mock.Anything, accAddress, vendorID).Return(true)
+	dclauthKeeper.On("HasVendorID", mock.Anything, accAddress, mock.Anything).Return(false)
 }
 
-func Setup(t *testing.T) TestSetup {
+func Setup(t *testing.T) *TestSetup {
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper)
 
 	vendor := GenerateAccAddress()
-	vendorID := uint64(testconstants.VendorID1)
+	vendorID := testconstants.VendorID1
 
-	setup := TestSetup{
+	setup := &TestSetup{
 		T:             t,
 		Ctx:           ctx,
 		Wctx:          sdk.WrapSDKContext(ctx),
@@ -178,7 +180,7 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModel := NewMsgUpdateModel(anotherVendor)
@@ -234,7 +236,7 @@ func TestHandler_AddModelByVendorWithAnotherVendorId(t *testing.T) {
 	setup := Setup(t)
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// add new model
 	model := NewMsgCreateModel(anotherVendor)
@@ -429,7 +431,7 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
 	msgUpdateModelVersion := NewMsgUpdateModelVersion(anotherVendor)
@@ -444,7 +446,7 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 }
 
 func queryModel(
-	setup TestSetup,
+	setup *TestSetup,
 	vid int32,
 	pid int32,
 ) (*types.Model, error) {
@@ -465,7 +467,7 @@ func queryModel(
 }
 
 func queryModelVersion(
-	setup TestSetup,
+	setup *TestSetup,
 	vid int32,
 	pid int32,
 	softwareVersion uint32,

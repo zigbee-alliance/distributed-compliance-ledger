@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 	tmos "github.com/tendermint/tendermint/libs/os"
 	tmtypes "github.com/tendermint/tendermint/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 	validatorcli "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/client/cli"
@@ -43,7 +44,7 @@ file.
 
 Example:
 $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=test-chain-1 \
-    --name="myvalidator" \
+    --moniker="myvalidator" \
     --details="..." \
     --website="..."
 `, version.AppName,
@@ -99,7 +100,7 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 			}
 
 			moniker := config.Moniker
-			if m, _ := cmd.Flags().GetString(validatorcli.FlagName); m != "" {
+			if m, _ := cmd.Flags().GetString(validatorcli.FlagMoniker); m != "" {
 				moniker = m
 			}
 
@@ -179,7 +180,7 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 	cmd.Flags().String(flags.FlagOutputDocument, "", "Write the genesis transaction JSON document to the given file instead of the default location")
 	cmd.Flags().String(flags.FlagChainID, "", "The network chain ID")
 	cmd.Flags().AddFlagSet(fsCreateValidator)
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

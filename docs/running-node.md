@@ -9,8 +9,7 @@ This document describes in how to:
 
 *   Common release artifacts:
     *   Binary artifacts (part of the release):
-        *   dcld: The binary used for running a node.
-        *   dclcli: The binary that allows users to interact with the network of nodes.
+        *   dcld: The binary used for both running a node and interacting with it.
     *   The service configuration file `dcld.service`
         (either part of the release or [deployment](../deployment) folder).
 *   Additional generated data (for validators and observers):
@@ -57,8 +56,8 @@ Required if a host has been already used in another DCLedger setup.
 
 ```bash
 $ sudo systemctl stop dcld 
-$ sudo rm -f "$(which dcld)" "$(which dclcli)"
-$ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
+$ sudo rm -f "$(which dcld)"
+$ rm -rf "$HOME/.dcl" 
 ```
 
 </p>
@@ -66,7 +65,7 @@ $ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
 
 ### Get the artifacts
 
-*   download `dclcli`, `dcld` and `dcld.service` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
+*   download `dcld` and `dcld.service` from GitHub [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
 *   Get setup scripts either from [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases) or
     from [repository](../deployment/scripts) if you need latest development version.
 *   (for validator and observer) Get the running DCLedegr network data:
@@ -79,7 +78,6 @@ $ rm -rf "$HOME/.dcld" "$HOME/.dclcli"
 
 ```bash
 # release artifacts
-curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dclcli
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld.service
 
@@ -101,7 +99,7 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 
 ### Setup DCL binaries
 
-*   put `dlcd` and `dclcli` binaries in a folder listed in `$PATH` (e.g. `/usr/bin/`)
+*   put `dlcd` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
 *   set a proper owner and executable permissions
 
 <details>
@@ -109,11 +107,10 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 <p>
 
 ```bash
-$ sudo cp -f ./dclcli ./dcld -t /usr/bin
-$ sudo chown ubuntu /usr/bin/dclcli /usr/bin/dcld
-$ sudo chmod u+x /usr/bin/dclcli /usr/bin/dcld
+$ sudo cp -f ./dcld -t /usr/bin
+$ sudo chown ubuntu /usr/bin/dcld
+$ sudo chmod u+x /usr/bin/dcld
 $ dcld version
-$ dclcli version
 ```
 
 </p>
@@ -140,7 +137,7 @@ $ sudo ufw allow 26657/tcp
 
 This part describes how to configure a genesis node - a starting point of any new network.
 
-The following steps automates a set of instructions that you can find in [Running Genesis Node](running-genesis-node.md) document.
+The following steps automates a set of instructions that you can find in [Running Genesis Node](advanced/running-genesis-node.md) document.
 
 **Note** This part is not required for all validator owners: it is performed only once for the initial (genesis) node of a DCLedger network.
 If you are not going to become a genesis node admin you may jump to [Validator Node](#validator-node).
@@ -152,7 +149,7 @@ Every network (e.g. `test-net`, `main-net` etc.) must have a unique chain ID.
 ### Create keys for a node admin and a trustee genesis accounts
 
 ```bash
-dclcli keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
+dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
 ```
 
 *Notes*
@@ -180,21 +177,21 @@ This command:
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
     *   current user is in sudoers list
-*   if it's not acceptable for your case please consult a less automated guide [Running Genesis Node](running-genesis-node.md)
+*   if it's not acceptable for your case please consult a less automated guide [Running Genesis Node](advanced/running-genesis-node.md)
 *   you may likely want to note the summary that this script prints, in particular: node's address, public key and ID.
 
 ## Validator Node
 
 This part describes how to configure a validator node and add it to the existing network.
 
-The following steps automates a set of instructions that you can find in [Running Validator Node](running-validator-node.md) document
+The following steps automates a set of instructions that you can find in [Running Validator Node](advanced/running-validator-node.md) document
 
 ### Create a NodeAdmin account
 
 Run the following to create a key:
 
 ```bash
-dclcli keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
+dcld keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
 ```
 
 And provide the output address and a public key to the network trustees.
@@ -216,7 +213,7 @@ $ ./run_dcl_node -c <chain-id> <node-name>
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
     *   current user is in sudoers list
-*   if it's not acceptable for your case please consult a less automated guide [Running Validator Node](running-validator-node.md)
+*   if it's not acceptable for your case please consult a less automated guide [Running Validator Node](advanced/running-validator-node.md)
 
 This command:
 
@@ -230,23 +227,22 @@ an account with `NodeAdmin` role. And **wait** until:
 
 *   Account is created
 *   The node completed a catch-up:
-    *   `dclcli status --node <ip:port>` returns `false` for `catching_up` field
+    *   `dcld status --node tcp://<ip:port>` returns `false` for `catching_up` field
 
 ### Make the node a validator
 
 ```bash
-$ dclcli tx validator add-node \
-    --validator-address=<validator address> --validator-pubkey=<validator pubkey> \
-    --name=<node name> --from=<key name>
+$ dcld tx validator add-node --pubkey=<validator pubkey> \
+    --moniker=<node name> --from=<key name>
 ```
 
-If the transaction has been successfully written you would find `"success": true` in the output JSON.
+If the transaction has been successfully written you would find `"code": 0` in the output JSON.
 
 ### Notify other validator admins
 
 Provide the node's `ID`, `IP` and a peer port (by default `26656`) to other validator admins.
 
-*Note* Node `ID` can be found either in the output of the `run_dcl_node` script or using `dclcli status` command.
+*Note* Node `ID` can be found either in the output of the `run_dcl_node` script or using `dcld status` command.
 
 ### (Optional) Create a key for a new trustee
 
@@ -258,7 +254,7 @@ The procedure is similar to [NodeAdmin account creation](#create-a-nodeadmin-acc
 
 This part describes how to configure an observer node and add it to the existing network.
 
-The following command automates a set of instructions that you can find in [Running Observer Node](running-observer-node.md) document
+The following command automates a set of instructions that you can find in [Running Observer Node](advanced/running-observer-node.md) document
 
 Run
 
@@ -271,7 +267,7 @@ $ ./run_dcl_node -t observer -c <chain-id> <node-name>
 *   the script assumes that:
     *   current user is going to be used for `dcld` service to run as
     *   current user is in sudoers list
-*   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](running-observer-node.md)
+*   if it's not acceptable for your case please consult a less automated guide [Running Observer Node](advanced/running-observer-node.md)
 
 ### Observer Peers
 
@@ -282,18 +278,18 @@ As a general guidance you may consider to use only the peers you own and/or trus
 ## Deployment Verification
 
 *   Check the account:
-    *   `dclcli query auth account --address=<address>`
+    *   `dcld query auth account --address=<address>`
 *   Check the node is running properly:
-    *   `dclcli status --node <ip:port>`
+    *   `dcld status --node tcp://<ip:port>`
     *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcld/config/config.toml`
     *   Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 *   Get the list of nodes participating in the consensus for the last block:
-    *   `dclcli tendermint-validator-set`.
-    *   You can pass the additional value to get the result for a specific height: `dclcli tendermint-validator-set 100`.
+    *   `dcld query tendermint-validator-set`.
+    *   You can pass the additional value to get the result for a specific height: `dcld query tendermint-validator-set 100`.
 
 ## Validator Node Maintenance
 
-*   `persistent_peers` field in `$HOME/.dcld/config/config.toml` should include the latest version of the validators list
+*   `persistent_peers` field in `$HOME/.dcl/config/config.toml` should include the latest version of the validators list
 
     *   you can use [update_peers](../deployment/scripts/update_peers)
 

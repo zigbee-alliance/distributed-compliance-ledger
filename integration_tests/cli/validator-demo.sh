@@ -57,11 +57,6 @@ docker exec $container /bin/sh -c "
   dcld config keyring-backend test &&
   dcld config broadcast-mode block"
 
-# TODO issue 99: check the replacement for the setting
-#  dcld config indent true &&
-#  dcld config trust-node false &&
-
-
 test_divider
 
 echo "$account Prepare Node configuration files"
@@ -99,9 +94,9 @@ echo "$result"
 echo "$account Add Node \"$node_name\" to validator set"
 
 ! read -r -d '' _script << EOF
-    set -eu; echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --name="$node_name" --from="$account" --yes
+    set -eu; echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes
 EOF
-result="$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --name="$node_name" --from="$account" --yes")"
+result="$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -115,7 +110,7 @@ test_divider
 
 echo "Check node \"$node_name\" is in the validator set"
 result=$(dcld query validator all-nodes)
-check_response "$result" "\"name\": \"$node_name\""
+check_response "$result" "\"moniker\": \"$node_name\""
 #check_response "$result" "\"validator_address\": \"$vaddress\""
 check_response "$result" "\"pubKey\":$vpubkey" raw
 echo "$result"

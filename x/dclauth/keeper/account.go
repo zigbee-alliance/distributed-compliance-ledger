@@ -128,7 +128,7 @@ func (k Keeper) HasRole(ctx sdk.Context, addr sdk.AccAddress, roleToCheck types.
 }
 
 // Check if account has vendorID association.
-func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid uint64) bool {
+func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid int32) bool {
 	account, found := k.GetAccountO(ctx, addr)
 
 	if !found {
@@ -166,8 +166,12 @@ func (k Keeper) GetModuleAddress(moduleName string) sdk.AccAddress {
 	return nil
 }
 
-// just a stub to have AccountKeeper.GetParams API filled.
 func (k Keeper) GetParams(ctx sdk.Context) (params authtypes.Params) {
-	params = authtypes.DefaultParams()
-	return
+	return authtypes.Params{
+		MaxMemoCharacters:      types.DclMaxMemoCharacters,
+		TxSigLimit:             types.DclTxSigLimit,
+		TxSizeCostPerByte:      types.DclTxSizeCostPerByte,
+		SigVerifyCostED25519:   types.DclSigVerifyCostED25519,
+		SigVerifyCostSecp256k1: types.DclSigVerifyCostSecp256k1,
+	}
 }

@@ -5,33 +5,44 @@ If you are interested in how to build and run the project locally, please look a
 Please note, that the only officially supported platform now is Linux.
 It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
+**Please note, that there were breaking changes in DCL 0.6 (migration to the latest Cosmos SDK), so 
+the current master and DCL releases 0.6+ are not compatible with pools and Test Nets running DCL 0.5.** 
+
 ## Overview
 DC Ledger is a public permissioned Ledger which can be used for two main use cases:
- - ZB compliance certification of device models
+ - ZB/Matter compliance certification of device models
  - Public key infrastructure (PKI)
  
 More information about use cases can be found in [DC Ledger Overview](docs/ZB_Ledger_overview.pdf) and [Use Case Diagrams](docs/use_cases).
 
 DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](https://cosmos.network/sdk).
 
-#### Main Components
-The ledger consists of
- - A network of Tendermint-based validator nodes maintaining the ledger.
-  Every validator node runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
- - The client to be used for interactions with the network of nodes (sending write and read requests).
- The following clients are supported: 
-    - CLI to communicate with the network of nodes (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)).
-    The CLI is based on the Cosmos SDK. See [CLI Usage](#cli-usage) section for details.
-    - REST API which can be deployed as a server. The server can communicate with the nodes
-     (as a [light client](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)). 
-    The REST API is based on the Cosmos SDK. See [REST Usage](#rest-usage) section for details.
-    - Tendermint's Light Client can be used for a direct communication on API level. 
-    There are currently no DC Ledger specific API libraries for various platforms and languages, 
+### Main Components
+
+ - **Pool of Nodes**
+   - A network of Tendermint-based validator nodes (Validators and Observers) maintaining the ledger.
+   - Every validator node (`dcld` binary) runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
+   - See the proposed deployment in [deployment](docs/deployment.png).
+ - **Clients** for interactions with the pool of nodes (sending write and read requests).
+     - **CLI** 
+       - The same `dcld` binary as a Node
+       - The CLI is based on the Cosmos SDK
+       - See [CLI Usage](#cli-usage) section for details.
+     - **REST**
+       - Exposed by every running node
+       - See https://docs.cosmos.network/master/core/grpc_rest.html
+       - See [transactions](docs/transactions.md) for a full list of endpoints.
+     - **gRPC**.
+       - A client code can be generated for all popular languages from the proto files [proto](proto), see https://grpc.io/docs/languages/.
+       - See https://docs.cosmos.network/master/core/grpc_rest.html
+     - **Light Client**
+       - Tendermint's Light Client can be used for a direct communication on API level.
+       - There are currently no DC Ledger specific API libraries for various platforms and languages, 
     but they may be provided in future.
-    These libraries can be based on the following Light Client implementations: 
-        - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2?tab=doc)
-        - [Rust Light Client implementation](https://docs.rs/tendermint/0.13.0/tendermint/lite/index.html)  
- - Public UI
+       - These libraries can be based on the following Light Client implementations: 
+            - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2)
+            - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)  
+ - **Public UI** (Outdated)
     - https://dcl.dev.dsr-corporation.com
     - based on the REST API
     - can be used to browse the ledger
@@ -40,26 +51,26 @@ The ledger consists of
     - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
     - source code and documentation are located in [dcl-ui](/dcl-ui) directory
 
-#### Public Permissioned Ledger
+### Public Permissioned Ledger
 DC Ledger is a public permissioned ledger in the following sense:
  - Anyone can read from the ledger (that's why it's public). See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
--  Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
-In order to send write transactions to the ledger you need: 
-      - Have a private/public key pair
-      - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
-          - The Account stores the public part of the key
-          - The Account has an associated role. The role is used for authorization policies.
-      - Sign every transaction by the private key.
+ - Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
  - PoA (proof of authority) approach is used for adding new validator nodes to the network 
  (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
   [Running Node Instructions](docs/running-validator-node.md).
 
+In order to send write transactions to the ledger you need: 
+   - Have a private/public key pair
+   - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
+       - The Account stores the public part of the key
+       - The Account has an associated role. The role is used for authorization policies.
+   - Sign every transaction by the private key.
 
 
 ## How To
 
 ### CLI Usage
-A full list of all CLI commands can be found there: [cli-help.md](docs/cli-help.md).
+A full list of all CLI commands can be found there: [transactions.md](docs/transactions.md).
 
 Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
 
@@ -69,10 +80,7 @@ an Account created on the Ledger with an appropriate role (see [how-to.md](docs/
 Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
 
 ### REST Usage
-A REST API server is a CLI run in a REST mode: 
-`dclcli rest-server --chain-id <chain_id>`.
- 
-Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
+Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html. 
 
 A list of all REST API calls can be found in [transactions.md](docs/transactions.md).
 
@@ -105,14 +113,16 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - publish X509 certificates    
     - revoke X509 certificates
 - [Vendor](docs/how-to.md#vendor-instructions) 
+    - publish vendor info 
     - publish device model info
+    - publish device model version
     - publish X509 certificates
     - revoke X509 certificates    
 - [Test House](docs/how-to.md#test-house-instructions) 
     - publish compliance test results
     - publish X509 certificates
     - revoke X509 root certificates    
-- [ZB Certification Center](docs/how-to.md#certification-center-instructions)
+- [Certification Center](docs/how-to.md#certification-center-instructions)
     - certify or revoke certification of device models
     - publish X509 certificates
     - revoke X509 certificates    
@@ -121,42 +131,43 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - publish X509 certificates
     - revoke X509 certificates    
 
-### Deploy a network of validator nodes 
+### Run a local pool of nodes in Docker 
+See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](README-DEV.md). 
+
+### Deploy a persistent pool of nodes 
+A recommended way for deployment and client connection: [diagram](docs/deployment.png)
+
 One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks. 
 
 - If you want to deploy your own network for debug purposes,
 you can use the provided Ansible Playbook: [ansible/readme.md](deployment/ansible/README.md).
 - If you want to join an existing network (either a custom or persistent) as a validator node,
-please follow the [Running Node](docs/running-node.md) or a more detailed [Running a Validator Node](docs/running-validator-node.md) instructions.
+please follow the [Running Node](docs/running-node.md) or a more detailed [Running a Validator Node](docs/advanced/running-validator-node.md) instructions.
 - If you want to join an existing network  as an observer node,
-please follow the [Running Node](docs/running-node.md) or a more detailed [Running an Observer Node](docs/running-observer-node.md) instructions.
+please follow the [Running Node](docs/running-node.md) or a more detailed [Running an Observer Node](docs/advanced/running-observer-node.md) instructions.
 - If you want to deploy your own persistent network,
 you will need to create a genesis node and a genesis file first as described in
-[Running Node](docs/running-node.md) or a more detailed [Running a Genesis Validator Node](docs/running-genesis-node.md).
+[Running Node](docs/running-node.md) or a more detailed [Running a Genesis Validator Node](docs/advanced/running-genesis-node.md).
 Please note, that these instructions describe the case when the genesis block consists of a single node only. 
 This is done just for simplicity, and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
 
-A recommended way for deployment and client connection: [diagram](docs/deployment.png)
-
 ## Useful Links 
 - [Quick Start](docs/quickStartGuide.adoc)
+- [List of Transactions, Queries, CLI command, REST API](docs/transactions.md)
+- [How To Guide](docs/how-to.md)
 - [Use Case Diagrams](docs/use_cases)
     - [PKI](docs/use_cases/use_cases_pki.png)
     - [Device on-ledger certification](docs/use_cases/use_cases_device_on_ledger_certification.png)
     - [Device off-ledger certification](docs/use_cases/use_cases_device_off_ledger_certification.png)
     - [Auth](docs/use_cases/use_cases_txn_auth.png)
     - [Validators](docs/use_cases/use_cases_add_validator_node.png)
-- [DC Ledger Overview](docs/DCL-Overview.pdf)
-- [DC Ledger Architecture Details](docs/DCL-arch-overview.pdf)
-- [List of Transactions](docs/transactions.md)
-- [How To Guide](docs/how-to.md)
-- [CLI Help](docs/cli-help.md)
-- [Deployment](deployment/ansible/README.md)
-- [Running a Node](docs/running-node.md)
-  - [Running a Genesis Validator Node](docs/running-genesis-node.md)
-  - [Running a Validator Node](docs/running-validator-node.md)
-  - [Running an Observer Node](docs/running-observer-node.md)
+- [DC Ledger Overview](docs/design/DCL-Overview.pdf)
+- [DC Ledger Architecture Details](docs/design/DCL-arch-overview.pdf)
 - [Deployment Pattern](docs/deployment.png)
+- [Running a Node](docs/running-node.md)
+  - [Running a Genesis Validator Node](docs/advanced/running-genesis-node.md)
+  - [Running a Validator Node](docs/advanced/running-validator-node.md)
+  - [Running an Observer Node](docs/advanced/running-observer-node.md)
 - [Tendermint](https://tendermint.com/)
 - [Cosmos SDK](https://cosmos.network/sdk)
      

@@ -12,6 +12,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	flag "github.com/spf13/pflag"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -43,11 +44,11 @@ func CmdCreateValidator() *cobra.Command {
 
 	cmd.Flags().String(FlagIP, "", fmt.Sprintf("The node's public IP. It takes effect only when used in combination with --%s", flags.FlagGenerateOnly))
 	cmd.Flags().String(FlagNodeID, "", "The node's ID")
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 	_ = cmd.MarkFlagRequired(FlagPubKey)
-	_ = cmd.MarkFlagRequired(FlagName)
+	_ = cmd.MarkFlagRequired(FlagMoniker)
 
 	return cmd
 }
@@ -64,12 +65,12 @@ func newBuildCreateValidatorMsg(clientCtx client.Context, txf tx.Factory, fs *fl
 		return txf, nil, err
 	}
 
-	name, _ := fs.GetString(FlagName)
+	moniker, _ := fs.GetString(FlagMoniker)
 	identity, _ := fs.GetString(FlagIdentity)
 	website, _ := fs.GetString(FlagWebsite)
 	details, _ := fs.GetString(FlagDetails)
 	description := types.NewDescription(
-		name,
+		moniker,
 		identity,
 		website,
 		details,
@@ -102,7 +103,7 @@ func CreateValidatorMsgFlagSet(ipDefault string) (fs *flag.FlagSet) {
 	fsCreateValidator := flag.NewFlagSet("", flag.ContinueOnError)
 	fsCreateValidator.String(FlagIP, ipDefault, "The node's public IP")
 	fsCreateValidator.String(FlagNodeID, "", "The node's NodeID")
-	fsCreateValidator.String(FlagName, "", "The validator's (optional) name")
+	fsCreateValidator.String(FlagMoniker, "", "The validator's (optional) moniker")
 	fsCreateValidator.String(FlagWebsite, "", "The validator's (optional) website")
 	fsCreateValidator.String(FlagDetails, "", "The validator's (optional) details")
 	fsCreateValidator.String(FlagIdentity, "", "The (optional) identity signature (ex. UPort or Keybase)")
@@ -114,7 +115,7 @@ func CreateValidatorMsgFlagSet(ipDefault string) (fs *flag.FlagSet) {
 type TxCreateValidatorConfig struct {
 	ChainID string
 	NodeID  string
-	Name    string
+	Moniker string
 
 	PubKey cryptotypes.PubKey
 
@@ -124,7 +125,7 @@ type TxCreateValidatorConfig struct {
 	Identity string
 }
 
-func PrepareConfigForTxCreateValidator(flagSet *flag.FlagSet, name, nodeID, chainID string, valPubKey cryptotypes.PubKey) (TxCreateValidatorConfig, error) {
+func PrepareConfigForTxCreateValidator(flagSet *flag.FlagSet, moniker, nodeID, chainID string, valPubKey cryptotypes.PubKey) (TxCreateValidatorConfig, error) {
 	c := TxCreateValidatorConfig{}
 
 	ip, err := flagSet.GetString(FlagIP)
@@ -160,7 +161,7 @@ func PrepareConfigForTxCreateValidator(flagSet *flag.FlagSet, name, nodeID, chai
 	c.Details = details
 	c.Identity = identity
 	c.ChainID = chainID
-	c.Name = name
+	c.Moniker = moniker
 
 	return c, nil
 }
@@ -169,7 +170,7 @@ func PrepareConfigForTxCreateValidator(flagSet *flag.FlagSet, name, nodeID, chai
 func BuildCreateValidatorMsg(clientCtx client.Context, config TxCreateValidatorConfig, txBldr tx.Factory, generateOnly bool) (tx.Factory, sdk.Msg, error) {
 	valAddr := clientCtx.GetFromAddress()
 	description := types.NewDescription(
-		config.Name,
+		config.Moniker,
 		config.Identity,
 		config.Website,
 		config.Details,

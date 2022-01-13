@@ -13069,8 +13069,8 @@ paths:
                               so protobuf takes care about repeated items in generated code,
                               (but that might be not the final solution)
                     vendorID:
-                      type: string
-                      format: uint64
+                      type: integer
+                      format: int32
               pagination:
                 type: object
                 properties:
@@ -13762,8 +13762,8 @@ paths:
                             so protobuf takes care about repeated items in generated code,
                             (but that might be not the final solution)
                   vendorID:
-                    type: string
-                    format: uint64
+                    type: integer
+                    format: int32
         default:
           description: An unexpected error response.
           schema:
@@ -14180,8 +14180,8 @@ paths:
                                   so protobuf takes care about repeated items in generated code,
                                   (but that might be not the final solution)
                         vendorID:
-                          type: string
-                          format: uint64
+                          type: integer
+                          format: int32
                     approvals:
                       type: array
                       items:
@@ -14679,8 +14679,8 @@ paths:
                                 so protobuf takes care about repeated items in generated code,
                                 (but that might be not the final solution)
                       vendorID:
-                        type: string
-                        format: uint64
+                        type: integer
+                        format: int32
                   approvals:
                     type: array
                     items:
@@ -17329,9 +17329,9 @@ paths:
                       title: description of the validator
                       type: object
                       properties:
-                        name:
+                        moniker:
                           type: string
-                          description: name.
+                          description: a human-readable name for the validator.
                         identity:
                           type: string
                           description: optional identity signature.
@@ -17818,9 +17818,9 @@ paths:
                     title: description of the validator
                     type: object
                     properties:
-                      name:
+                      moniker:
                         type: string
-                        description: name.
+                        description: a human-readable name for the validator.
                       identity:
                         type: string
                         description: optional identity signature.
@@ -18206,58 +18206,6 @@ paths:
           type: string
       tags:
         - Query
-  '/dcl/vendorinfo/vendor/{vendorID}':
-    get:
-      summary: Queries a vendorInfo by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              vendorInfo:
-                type: object
-                properties:
-                  vendorID:
-                    type: integer
-                    format: int32
-                  vendorName:
-                    type: string
-                  companyLegalName:
-                    type: string
-                  companyPrefferedName:
-                    type: string
-                  vendorLandingPageURL:
-                    type: string
-                  creator:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: vendorID
-          in: path
-          required: true
-          type: integer
-          format: int32
-      tags:
-        - Query
   /dcl/vendorinfo/vendors:
     get:
       summary: Queries a list of vendorInfo items.
@@ -18388,6 +18336,58 @@ paths:
           in: query
           required: false
           type: boolean
+      tags:
+        - Query
+  '/dcl/vendorinfo/vendors/{vendorID}':
+    get:
+      summary: Queries a vendorInfo by index.
+      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              vendorInfo:
+                type: object
+                properties:
+                  vendorID:
+                    type: integer
+                    format: int32
+                  vendorName:
+                    type: string
+                  companyLegalName:
+                    type: string
+                  companyPrefferedName:
+                    type: string
+                  vendorLandingPageURL:
+                    type: string
+                  creator:
+                    type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: vendorID
+          in: path
+          required: true
+          type: integer
+          format: int32
       tags:
         - Query
 definitions:
@@ -26497,8 +26497,8 @@ definitions:
                 so protobuf takes care about repeated items in generated code,
                 (but that might be not the final solution)
       vendorID:
-        type: string
-        format: uint64
+        type: integer
+        format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.AccountStat:
     type: object
     properties:
@@ -26717,8 +26717,8 @@ definitions:
                     so protobuf takes care about repeated items in generated code,
                     (but that might be not the final solution)
           vendorID:
-            type: string
-            format: uint64
+            type: integer
+            format: int32
       approvals:
         type: array
         items:
@@ -26942,8 +26942,8 @@ definitions:
                       so protobuf takes care about repeated items in generated code,
                       (but that might be not the final solution)
             vendorID:
-              type: string
-              format: uint64
+              type: integer
+              format: int32
       pagination:
         type: object
         properties:
@@ -27184,8 +27184,8 @@ definitions:
                           so protobuf takes care about repeated items in generated code,
                           (but that might be not the final solution)
                 vendorID:
-                  type: string
-                  format: uint64
+                  type: integer
+                  format: int32
             approvals:
               type: array
               items:
@@ -27458,8 +27458,8 @@ definitions:
                     so protobuf takes care about repeated items in generated code,
                     (but that might be not the final solution)
           vendorID:
-            type: string
-            format: uint64
+            type: integer
+            format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse:
     type: object
     properties:
@@ -27680,8 +27680,8 @@ definitions:
                         so protobuf takes care about repeated items in generated code,
                         (but that might be not the final solution)
               vendorID:
-                type: string
-                format: uint64
+                type: integer
+                format: int32
           approvals:
             type: array
             items:
@@ -28592,9 +28592,9 @@ definitions:
   zigbeealliance.distributedcomplianceledger.validator.Description:
     type: object
     properties:
-      name:
+      moniker:
         type: string
-        description: name.
+        description: a human-readable name for the validator.
       identity:
         type: string
         description: optional identity signature.
@@ -28667,9 +28667,9 @@ definitions:
               title: description of the validator
               type: object
               properties:
-                name:
+                moniker:
                   type: string
-                  description: name.
+                  description: a human-readable name for the validator.
                 identity:
                   type: string
                   description: optional identity signature.
@@ -28906,9 +28906,9 @@ definitions:
             title: description of the validator
             type: object
             properties:
-              name:
+              moniker:
                 type: string
-                description: name.
+                description: a human-readable name for the validator.
               identity:
                 type: string
                 description: optional identity signature.
@@ -29102,9 +29102,9 @@ definitions:
         title: description of the validator
         type: object
         properties:
-          name:
+          moniker:
             type: string
-            description: name.
+            description: a human-readable name for the validator.
           identity:
             type: string
             description: optional identity signature.

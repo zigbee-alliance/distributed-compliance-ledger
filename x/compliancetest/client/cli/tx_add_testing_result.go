@@ -77,8 +77,9 @@ func CmdAddTestingResult() *cobra.Command {
 	_ = cmd.MarkFlagRequired(FlagSoftwareVersionString)
 	_ = cmd.MarkFlagRequired(FlagTestResult)
 	_ = cmd.MarkFlagRequired(FlagTestDate)
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }

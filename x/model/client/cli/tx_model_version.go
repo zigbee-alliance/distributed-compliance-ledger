@@ -5,6 +5,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -98,7 +99,7 @@ SoftwareVersion for which this image can be applied`)
 		`URL that contains product specific web page that contains 
 release notes for the device model.`)
 
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
@@ -170,7 +171,7 @@ func CmdUpdateModelVersion() *cobra.Command {
 	cmd.Flags().StringVar(&releaseNotesUrl, FlagReleaseNotesUrl, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)
 
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)

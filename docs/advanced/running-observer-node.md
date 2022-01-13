@@ -32,9 +32,7 @@ The latest release can be found at [DCL Releases](https://github.com/zigbee-alli
 
 The following components will be needed:
 
-* Binary artifacts (part of the release):
-    * dcld: The binary used for running a node.
-    * dclcli: The binary that allow users to interact with the network of nodes.
+* dcld (part of the release): The binary used for running a node and CLI.
 * The service configuration file `dcld.service` 
 (either part of the release or [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment) folder).    
 * Genesis transactions file: `genesis.json`
@@ -46,26 +44,23 @@ and contains the genesis and persistent_peers files.
 
 ### Deployment steps
 
-1. Put `dcld` and `dclcli` binaries to `/usr/bin/` and configure permissions.
+1. Put `dcld` binary to `/usr/bin/` and configure permissions.
 
 
-2. Configure dclcli:
-    * `dclcli config chain-id testnet`
-    * `dclcli config output json` - Output format (text/json).
-    * `dclcli config indent true` - Add indent to JSON response.
-    * `dclcli config trust-node false` - Verify proofs for node responses.
-
+2. Configure CLI:
+    * `dcld config chain-id testnet`
+    * `dcld config output json` - Output format (text/json).
 
 3. Initialize the observer node and create the necessary config files:
     * Init Node: `dcld init <node name> --chain-id testnet`.
-    * Put `genesis.json` into dcld's config directory (usually `$HOME/.dcld/config/`).
+    * Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
         * Use `deployment/persistent_chains/testnet/genesis.json` if you want to connect to the persistent Test Net
-    * Open `$HOME/.dcld/config/config.toml` file in your favorite text editor:
+    * Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
         * Tell node how to connect to the network:
             * Set the value for the `persistent_peers` field as the content of `persistent_peers.txt` file.
             * Use `deployment/persistent_chains/testnet/persistent_peers.txt` if you want to connect to the persistent Test Net.
         * Make your node public (this step is only needed for Ubuntu):
-            * Open `$HOME/.dcld/config/config.toml`
+            * Open `$HOME/.dcl/config/config.toml`
             * Find the line under `# TCP or UNIX socket address for the RPC server to listen on`
             * Change it to: `laddr = "tcp://0.0.0.0:26657"`
         * Optionally change other setting.
@@ -89,7 +84,7 @@ and contains the genesis and persistent_peers files.
 
 5. Check the observer node is running and getting all the transactions:
 
-    * Get the node status: `dclcli status --node localhost:26657`.
+    * Get the node status: `dcld status --node tcp://localhost:26657`.
     * Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
        Expected output format: 
         ```json

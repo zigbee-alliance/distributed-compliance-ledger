@@ -66,7 +66,7 @@ func GenAppStateFromConfig(cdc codec.JSONCodec, txEncodingConfig client.TxEncodi
 
 // CollectTxs processes and validates application's genesis Txs and returns
 // the list of appGenTxs, and persistent peers required to generate genesis.json.
-func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, name, genTxsDir string,
+func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, moniker string, genTxsDir string,
 	genDoc tmtypes.GenesisDoc, genAccIterator dclauthtypes.GenesisAccountsIterator,
 ) (appGenTxs []sdk.Tx, persistentPeers string, err error) {
 	// prepare a map of all accounts in genesis state to then validate
@@ -150,7 +150,7 @@ func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, name, genTxsDi
 		}
 
 		// exclude itself from persistent peers
-		if msg.Description.Name != name {
+		if msg.Description.Moniker != moniker {
 			addressesIPs = append(addressesIPs, nodeAddrIP)
 		}
 	}

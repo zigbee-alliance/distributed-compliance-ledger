@@ -32,7 +32,7 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
 
 
 2. Run unit tests
-    ```
+    ```bash
     make test
     ```
 
@@ -42,20 +42,45 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
     REST integration tests need to have a backend running (CLI in REST mode).
 
     The following script will start all necessary things and run the tests:
+    ```bash
+    ./integration_tests/run-all.sh
     ```
-    ./integration_tests/ci/run-all.sh
+
+    If you want to run a particular test you may:
+
+    ```bash
+    ./integration_tests/start-pool.sh
+   
+    bash <path-to-shell-script>  # to run a cli test
+    # OR
+    go test <path-to-go-test-file> # to run REST or gRPC go test
+    ```
+   
+4. Run deployment test
+    
+    The deployment test verifies deployment steps described in [docs/running-node.md](./docs/running-node.md).
+
+    ```bash
+    ./integration_tests/deploy/test_deploy.sh
     ```
 
 
 ## Run local pool
-The easiest way to run a local pool is to start it in Docker:
+The easiest way to run a local pool is to start it in Docker.
 
-    make install
+Validator nodes only (no Observers):
+```bash
+make install
+make localnet_init
+make localnet_start
+```
 
-    # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
-    make localnet_init
-
-    make localnet_start
+Validator and Observer nodes:
+```bash
+make install
+DCL_OBSERVERS=1 make localnet_init
+make localnet_start
+```    
 
 This will start a local pool of 4 validator nodes in Docker. The nodes will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26663` correspondingly.
 
@@ -65,16 +90,23 @@ This will start a local pool of 4 validator nodes in Docker. The nodes will expo
 
  Then you can start the network again with the existing data using `make localnet_start`
 
-If you need to start a new clean network then do the following steps prior to executing `make localnet_start`:
-  - Remove `.dclcli` and `.dcld` directories from your user home directory (`~`)
-  - Remove `.localnet` directory from the root directory of the cloned project
-  - Initialize the new network data using `make localnet_init` 
-## Run CLI
+If you need to start a new clean network then run `make localnet_rebuild` prior to executing `make localnet_start`.
+It will remove `.dcl` directories from your user home directory (`~`), remove `.localnet` directory from the root directory of the cloned project,
+and initialize a new network data using `make localnet_init`.
+
+## CLI
 Start a local pool as described above, and then just execute
 ```
-dclcli
+dcld
 ```
-Have a look at [How To](docs/how-to.md) and [CLI Help](docs/cli-help.md) for instructions how to configure and use the CLI.
+Have a look at [How To](docs/how-to.md) and [transactions](docs/transactions.md) for instructions how to configure and use the CLI.
+
+## REST
+Start a local pool as described above.
+
+Every node exposes a REST API at `http://<node-host>:1317` (see https://docs.cosmos.network/master/core/grpc_rest.html).
+
+Have a look at [transactions](docs/transactions.md) for a full list of REST endpoints.
 
 ## Remote Debugging local pool 
 If you want to remotely debug the node running in docker in order to inspect and step thru the code, modify the following lines in the `docker-compose.yml`. Comment out the default `dcld start` command with the `dlv` as shown below (delve is the go remote debugger) 
@@ -112,6 +144,49 @@ Please take into account the following when sending a PR:
     - make sure there is a license header in all the files
 
 
+## How To Add a new Module
+- Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
+- Follow the [README.md](scripts/starport/README.md).
+- Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
+  (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
+- Adjust the generated code
+  - correct REST endpoint: `/dcl` instead of `/zigbee-alliance/distributedcomplianceledger` in `proto/<module>/query.proto`
+  - add message validation as annotations (`validate` tags) in `proto/<module>/tx.proto`
+  - add `(cosmos_proto.scalar) = "cosmos.AddressString"` annotation for all fields with address/account type (such as `signer` or `owner`).
+  - fix types if needed in `proto/<module>/<entity>.proto` files
+    - Note1: `unit64` will be returned as string if the output is a JSON format. So, it's better to use `uint64` only when it's really `uint64`. 
+    - Note2: for `uint16` type: use `int32` during starport scaffolding, and add custom validation (annotations above) to check the lower and upper bounds.
+    - Note3: for `uint32` type: use `int32` during starport scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
+  - build proto (for example `starport chain build`). Fix compilation errors if any.
+  - **Note**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
+    `allow_colon_final_segments=true` should be used as a workaround.
+    So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
+    It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
+- Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
+- Improve `NotFound` error processing:
+    - replace `status.Error(codes.InvalidArgument, "not found")` to `status.Error(codes.NotFound, "not found")` in every generated `grpc_query_xxx.go` to return 404 error in REST.
+    - Add the following to every `cli/query_xxx.go` to not throw an error and help for not found entities in CLI
+    ``` 
+     if cli.IsNotFound(err) {
+         return clientCtx.PrintString(cli.NotFoundOutput)
+     }
+     if err != nil {
+         return err
+     }
+    ```
+- Implement business logic in `msg_server_xxx.go`
+- Add unit tests (see other modules for reference)
+- Add CLI-based integration tests to `integration_tests/cli/<module>` (see other modules for reference)
+- Add gRPC/REST-based integration tests to `integration_tests/grpc_rest/<module>` (see other modules for reference)
+
+## How To Make Changes in Data Model for Existing Modules
+- **Never change `.pb` files manually**. Do the changes in `.proto` files.
+- Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
+- **Note**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
+  `allow_colon_final_segments=true` should be used as a workaround.
+  So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
+  It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
+
 ## Other
-For more details, please have a look at [Cosmos SDK tutorial](https://github.com/cosmos/sdk-tutorials/blob/master/nameservice/tutorial).
-Use __dcld__, __dclcli__ instead of __nameserviced__, __nameservicecli__.
+For more details, please have a look at [Cosmos SDK tutorial](https://tutorials.cosmos.network/).
+

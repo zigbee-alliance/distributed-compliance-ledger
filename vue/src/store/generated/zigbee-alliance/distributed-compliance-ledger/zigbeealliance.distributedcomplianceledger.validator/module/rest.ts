@@ -197,8 +197,8 @@ export interface V1Beta1PageResponse {
 }
 
 export interface ValidatorDescription {
-  /** name. */
-  name?: string;
+  /** a human-readable name for the validator. */
+  moniker?: string;
 
   /** optional identity signature. */
   identity?: string;

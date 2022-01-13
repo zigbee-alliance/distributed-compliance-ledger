@@ -122,7 +122,7 @@ echo "$result"
 
 test_divider
 
-echo "Get Revoked Model with VID: ${vid} PID: ${pid} SV: ${sv} before compliance record was created"
+echo "Get Provisional Model with VID: ${vid} PID: ${pid} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"

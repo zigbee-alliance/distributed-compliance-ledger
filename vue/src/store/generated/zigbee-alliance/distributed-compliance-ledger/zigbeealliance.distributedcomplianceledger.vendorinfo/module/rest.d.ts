@@ -152,15 +152,6 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
-     * @name QueryVendorInfo
-     * @summary Queries a vendorInfo by index.
-     * @request GET:/dcl/vendorinfo/vendor/{vendorID}
-     */
-    queryVendorInfo: (vendorID: number, params?: RequestParams) => Promise<HttpResponse<VendorinfoQueryGetVendorInfoResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
      * @name QueryVendorInfoAll
      * @summary Queries a list of vendorInfo items.
      * @request GET:/dcl/vendorinfo/vendors
@@ -172,5 +163,14 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
         "pagination.countTotal"?: boolean;
         "pagination.reverse"?: boolean;
     }, params?: RequestParams) => Promise<HttpResponse<VendorinfoQueryAllVendorInfoResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryVendorInfo
+     * @summary Queries a vendorInfo by index.
+     * @request GET:/dcl/vendorinfo/vendors/{vendorID}
+     */
+    queryVendorInfo: (vendorID: number, params?: RequestParams) => Promise<HttpResponse<VendorinfoQueryGetVendorInfoResponse, RpcStatus>>;
 }
 export {};

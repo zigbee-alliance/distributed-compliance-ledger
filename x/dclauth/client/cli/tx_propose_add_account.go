@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -49,9 +50,9 @@ func CmdProposeAddAccount() *cobra.Command {
 				}
 			}
 
-			var argVendorID uint64
+			var argVendorID int32
 			if viper.GetString(FlagVID) != "" {
-				argVendorID, err = cast.ToUint64E(viper.GetString(FlagVID))
+				argVendorID, err = cast.ToInt32E(viper.GetString(FlagVID))
 				if err != nil {
 					return err
 				}
@@ -78,15 +79,15 @@ func CmdProposeAddAccount() *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
-	cmd.Flags().String(FlagPubKey, "", "The validator's Protobuf JSON encoded public key")
+	cmd.Flags().String(FlagPubKey, "", "The account's Protobuf JSON encoded public key")
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
 			types.Roles))
 	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account. Required only for Vendor Roles")
 
-	flags.AddTxFlagsToCmd(cmd)
+	cli.AddTxFlagsToCmd(cmd)
 
-	_ = cmd.MarkFlagRequired(flags.FlagFrom) // XXX issue 99: was absent in legacy code ???
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
 	_ = cmd.MarkFlagRequired(FlagAddress)
 	_ = cmd.MarkFlagRequired(FlagPubKey)
 

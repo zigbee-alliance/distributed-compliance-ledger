@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/spf13/cobra"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -34,4 +36,23 @@ func IsNotFound(err error) bool {
 		return false
 	}
 	return s.Code() == codes.NotFound
+}
+
+func AddTxFlagsToCmd(cmd *cobra.Command) {
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	// TODO there might be a better way how to filter that
+	hiddenFlags := []string{
+		flags.FlagFees,
+		flags.FlagFeeAccount,
+		flags.FlagGasPrices,
+		flags.FlagGasAdjustment,
+		flags.FlagGas,
+		flags.FlagFeeAccount,
+		flags.FlagDryRun, // TODO that flag might be actually useful but relates to gas
+	}
+	for _, f := range hiddenFlags {
+		cmd.Flags().MarkHidden(f)
+	}
 }
