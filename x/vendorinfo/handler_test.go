@@ -130,7 +130,6 @@ func queryVendorInfo(
 	setup TestSetup,
 	vid int32,
 ) (*types.VendorInfo, error) {
-
 	req := &types.QueryGetVendorInfoRequest{
 		VendorID: vid,
 	}

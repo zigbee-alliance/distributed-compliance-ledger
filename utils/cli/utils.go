@@ -39,7 +39,6 @@ func IsNotFound(err error) bool {
 }
 
 func AddTxFlagsToCmd(cmd *cobra.Command) {
-
 	flags.AddTxFlagsToCmd(cmd)
 
 	// TODO there might be a better way how to filter that

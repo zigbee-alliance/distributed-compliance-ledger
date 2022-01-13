@@ -35,7 +35,7 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 	anteDecorators := []sdk.AnteDecorator{
 		// gas is not needed in DCL
 		NewInfiniteGasSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
-		//authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
+		// authante.NewSetUpContextDecorator(), // outermost AnteDecorator. SetUpContext must be called first
 
 		authante.NewRejectExtensionOptionsDecorator(),
 		authante.NewValidateBasicDecorator(),
@@ -43,13 +43,13 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		authante.NewValidateMemoDecorator(options.AccountKeeper),
 
 		// gas is not needed in DCL
-		//authante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
+		// authante.NewConsumeGasForTxSizeDecorator(options.AccountKeeper),
 
 		authante.NewSetPubKeyDecorator(options.AccountKeeper), // SetPubKeyDecorator must be called before all signature verification decorators
 		authante.NewValidateSigCountDecorator(options.AccountKeeper),
 
 		// gas is not needed in DCL
-		//authante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
+		// authante.NewSigGasConsumeDecorator(options.AccountKeeper, sigGasConsumer),
 
 		authante.NewSigVerificationDecorator(options.AccountKeeper, options.SignModeHandler),
 		authante.NewIncrementSequenceDecorator(options.AccountKeeper),

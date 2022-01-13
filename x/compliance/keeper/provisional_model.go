@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// SetProvisionalModel set a specific provisionalModel in the store from its index
+// SetProvisionalModel set a specific provisionalModel in the store from its index.
 func (k Keeper) SetProvisionalModel(ctx sdk.Context, provisionalModel types.ProvisionalModel) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProvisionalModelKeyPrefix))
 	b := k.cdc.MustMarshal(&provisionalModel)
@@ -18,7 +18,7 @@ func (k Keeper) SetProvisionalModel(ctx sdk.Context, provisionalModel types.Prov
 	), b)
 }
 
-// GetProvisionalModel returns a provisionalModel from its index
+// GetProvisionalModel returns a provisionalModel from its index.
 func (k Keeper) GetProvisionalModel(
 	ctx sdk.Context,
 	vid int32,
@@ -43,7 +43,7 @@ func (k Keeper) GetProvisionalModel(
 	return val, true
 }
 
-// RemoveProvisionalModel removes a provisionalModel from the store
+// RemoveProvisionalModel removes a provisionalModel from the store.
 func (k Keeper) RemoveProvisionalModel(
 	ctx sdk.Context,
 	vid int32,
@@ -61,7 +61,7 @@ func (k Keeper) RemoveProvisionalModel(
 	))
 }
 
-// GetAllProvisionalModel returns all provisionalModel
+// GetAllProvisionalModel returns all provisionalModel.
 func (k Keeper) GetAllProvisionalModel(ctx sdk.Context) (list []types.ProvisionalModel) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProvisionalModelKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
