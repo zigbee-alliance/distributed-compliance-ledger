@@ -11,7 +11,7 @@ on:
 jobs:
 
   build:
-    name: Build  # TODO remove (requires repo settings update)
+    name: Build
     runs-on: ubuntu-latest
     steps:
 
@@ -19,7 +19,7 @@ jobs:
         run: true
 
   unit:
-    name: Unit tests  # TODO remove (requires repo settings update)
+    name: Unit tests
     runs-on: ubuntu-latest
     steps:
 
@@ -44,7 +44,7 @@ jobs:
         run: make test
 
   integration:
-    name: Integration tests  # remove (requires repo settings update)
+    name: Integration tests
     runs-on: ubuntu-latest
     steps:
 
@@ -69,7 +69,7 @@ jobs:
         run: bash integration_tests/run-all.sh
 
   lint:
-    name: Lint  # TODO remove (requires repo settings update)
+    name: Lint
     runs-on: ubuntu-latest
     steps:
 
@@ -83,24 +83,20 @@ jobs:
           args: --timeout 5m0s
 
   license:
-    name: License  # TODO remove (requires repo settings update)
+    name: License
     runs-on: ubuntu-latest
     steps:
 
       - name: Set up Go 1.x
-        if: false # TODO issue 99
         uses: actions/setup-go@v2
         with:
           go-version: ^1.13
 
       - name: Get google/addlicense
-        if: false # TODO issue 99
         run: go get -u github.com/google/addlicense
 
       - name: Check out code into the Go module directory
-        if: false # TODO issue 99
         uses: actions/checkout@v2
 
       - name: Check license
-        if: false # TODO issue 99
         run: make license-check
