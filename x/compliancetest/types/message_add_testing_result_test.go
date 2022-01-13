@@ -105,17 +105,18 @@ func TestMsgAddTestingResult_ValidateBasic(t *testing.T) {
 		name string
 		msg  MsgAddTestingResult
 		err  error
-	}{{
-		name: "valid address",
-		msg: MsgAddTestingResult{
-			Signer:                sample.AccAddress(),
-			SoftwareVersionString: testconstants.SoftwareVersionString,
-			Pid:                   1,
-			Vid:                   1,
-			TestDate:              testconstants.CertificationDate.Format(time.RFC3339),
-			TestResult:            testconstants.TestResult,
+	}{
+		{
+			name: "valid address",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				TestDate:              testconstants.CertificationDate.Format(time.RFC3339),
+				TestResult:            testconstants.TestResult,
+			},
 		},
-	},
 	}
 
 	for _, tt := range negative_tests {
