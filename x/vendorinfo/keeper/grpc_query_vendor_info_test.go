@@ -1,6 +1,5 @@
 package keeper_test
 
-/* TODO issue 99
 import (
 	"strconv"
 	"testing"
@@ -18,7 +17,8 @@ import (
 var _ = strconv.IntSize
 
 func TestVendorInfoQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.VendorinfoKeeper(t)
+	dclauthKeeper := &DclauthKeeperMock{}
+	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNVendorInfo(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -65,7 +65,8 @@ func TestVendorInfoQuerySingle(t *testing.T) {
 }
 
 func TestVendorInfoQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.VendorinfoKeeper(t)
+	dclauthKeeper := &DclauthKeeperMock{}
+	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNVendorInfo(keeper, ctx, 5)
 
@@ -109,4 +110,3 @@ func TestVendorInfoQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/
