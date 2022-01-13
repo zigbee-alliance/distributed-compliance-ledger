@@ -28,4 +28,5 @@ var (
 	ErrFieldNotValid           = sdkerrors.Register(Codespace, 902, "field not valid")
 	ErrFieldLowerBoundViolated = sdkerrors.Register(Codespace, 903, "field lower bound violated")
 	ErrFieldUpperBoundViolated = sdkerrors.Register(Codespace, 904, "field upper bound violated")
+	ErrFieldMinLengthExceeded  = sdkerrors.Register(Codespace, 905, "field min length not reached")
 )
