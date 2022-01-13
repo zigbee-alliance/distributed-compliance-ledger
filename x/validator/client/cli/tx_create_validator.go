@@ -44,7 +44,7 @@ func CmdCreateValidator() *cobra.Command {
 
 			txf := tx.NewFactoryCLI(clientCtx, cmd.Flags()).
 				WithTxConfig(clientCtx.TxConfig).WithAccountRetriever(clientCtx.AccountRetriever)
-			txf, msg, err := newBuildCreateValidatorMsg(clientCtx, txf, cmd.Flags())
+			_, msg, err := newBuildCreateValidatorMsg(clientCtx, txf, cmd.Flags())
 			if err != nil {
 				return err
 			}

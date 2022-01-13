@@ -26,7 +26,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNComplianceInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ComplianceInfo {
@@ -59,6 +59,7 @@ func TestComplianceInfoGet(t *testing.T) {
 		)
 	}
 }
+
 func TestComplianceInfoRemove(t *testing.T) {
 	keeper, ctx := keepertest.ComplianceKeeper(t)
 	items := createNComplianceInfo(keeper, ctx, 10)

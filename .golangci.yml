@@ -1,9 +1,9 @@
 linters:
-  enable-all: true
-  disable:
-    - golint
-    - unparam
-    - gochecknoinits
-    - gochecknoglobals
-    - gomnd
-    - nolintlint
+ # enable-all: true
+ disable:
+   - golint
+   - unparam
+   - gochecknoinits
+   - gochecknoglobals
+   - gomnd
+   - nolintlint

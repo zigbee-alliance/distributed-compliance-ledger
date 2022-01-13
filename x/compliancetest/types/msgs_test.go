@@ -65,7 +65,6 @@ func newMsgAddTestingResult(
 	softwareVersionString string,
 	signer sdk.AccAddress,
 ) *MsgAddTestingResult {
-
 	return &MsgAddTestingResult{
 		Signer:                signer.String(),
 		Vid:                   vid,

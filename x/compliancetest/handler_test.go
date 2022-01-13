@@ -307,7 +307,6 @@ func queryTestingResults(
 	pid int32,
 	softwareVersion uint32,
 ) (*types.TestingResults, error) {
-
 	req := &types.QueryGetTestingResultsRequest{
 		Vid:             vid,
 		Pid:             pid,
@@ -331,7 +330,6 @@ func NewMsgAddTestingResult(
 	softwareVersionString string,
 	signer sdk.AccAddress,
 ) *types.MsgAddTestingResult {
-
 	return &types.MsgAddTestingResult{
 		Signer:                signer.String(),
 		Vid:                   vid,
@@ -359,7 +357,6 @@ func NewModelVersion(
 	softwareVersion uint32,
 	softwareVersionString string,
 ) *modeltypes.ModelVersion {
-
 	return &modeltypes.ModelVersion{
 		Vid:                          vid,
 		Pid:                          pid,

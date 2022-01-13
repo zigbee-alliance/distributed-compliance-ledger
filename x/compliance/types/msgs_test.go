@@ -137,7 +137,6 @@ func newMsgCertifyModel(
 	softwareVersionString string,
 	signer sdk.AccAddress,
 ) *MsgCertifyModel {
-
 	return &MsgCertifyModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
@@ -158,7 +157,6 @@ func newMsgRevokeModel(
 	softwareVersionString string,
 	signer sdk.AccAddress,
 ) *MsgRevokeModel {
-
 	return &MsgRevokeModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
@@ -179,7 +177,6 @@ func newMsgProvisionModel(
 	softwareVersionString string,
 	signer sdk.AccAddress,
 ) *MsgProvisionModel {
-
 	return &MsgProvisionModel{
 		Signer:                signer.String(),
 		Vid:                   vid,

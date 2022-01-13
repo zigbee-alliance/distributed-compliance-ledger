@@ -49,7 +49,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-//TODO issue 99: these getters were initially created
+// TODO issue 99: these getters were initially created
 //		for tests needs: to link dependent keepers,
 //		need to explore the alternatives
 func (k Keeper) StoreKey() sdk.StoreKey {

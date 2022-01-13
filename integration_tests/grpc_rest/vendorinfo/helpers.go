@@ -30,7 +30,6 @@ import (
 )
 
 func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreateVendorInfo {
-
 	return &vendorinfotypes.MsgCreateVendorInfo{
 		Creator:              signer,
 		VendorID:             vid,
@@ -42,7 +41,6 @@ func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreate
 }
 
 func NewMsgUpdateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgUpdateVendorInfo {
-
 	return &vendorinfotypes.MsgUpdateVendorInfo{
 		Creator:              signer,
 		VendorID:             vid,
@@ -59,7 +57,6 @@ func AddVendorInfo(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg.Creator = suite.GetAddress(signerName).String()
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -68,7 +65,6 @@ func GetVendorInfo(
 	suite *utils.TestSuite,
 	vid int32,
 ) (*vendorinfotypes.VendorInfo, error) {
-
 	var res vendorinfotypes.VendorInfo
 
 	if suite.Rest {

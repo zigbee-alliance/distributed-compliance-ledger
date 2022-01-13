@@ -26,7 +26,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	// Set all the account
 	for _, elem := range genState.AccountList {
 		// TODO issue 99: error processing
-		elem.SetAccountNumber(k.GetNextAccountNumber(ctx))
+		_ = elem.SetAccountNumber(k.GetNextAccountNumber(ctx))
 		k.SetAccountO(ctx, elem)
 	}
 	// Set all the pendingAccount

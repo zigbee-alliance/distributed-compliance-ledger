@@ -450,7 +450,6 @@ func queryModel(
 	vid int32,
 	pid int32,
 ) (*types.Model, error) {
-
 	req := &types.QueryGetModelRequest{
 		Vid: vid,
 		Pid: pid,
@@ -472,7 +471,6 @@ func queryModelVersion(
 	pid int32,
 	softwareVersion uint32,
 ) (*types.ModelVersion, error) {
-
 	req := &types.QueryGetModelVersionRequest{
 		Vid:             vid,
 		Pid:             pid,

@@ -31,11 +31,11 @@ import (
 )
 
 type TestSetup struct {
-	//Cdc     *amino.Codec
+	// Cdc     *amino.Codec
 	Ctx     sdk.Context
 	Keeper  keeper.Keeper
 	Handler sdk.Handler
-	//Querier sdk.Querier
+	// Querier sdk.Querier
 }
 
 func Setup(t *testing.T) TestSetup {

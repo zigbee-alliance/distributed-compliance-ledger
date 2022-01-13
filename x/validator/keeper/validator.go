@@ -15,8 +15,6 @@
 package keeper
 
 import (
-	"fmt"
-
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -57,14 +55,14 @@ func (k Keeper) GetValidator(
 	return val, true
 }
 
-func (k Keeper) mustGetValidator(ctx sdk.Context, owner sdk.ValAddress) types.Validator {
-	validator, found := k.GetValidator(ctx, owner)
-	if !found {
-		panic(fmt.Sprintf("validator record not found for address: %X\n", owner))
-	}
+// func (k Keeper) mustGetValidator(ctx sdk.Context, owner sdk.ValAddress) types.Validator {
+// 	validator, found := k.GetValidator(ctx, owner)
+// 	if !found {
+// 		panic(fmt.Sprintf("validator record not found for address: %X\n", owner))
+// 	}
 
-	return validator
-}
+// 	return validator
+// }
 
 // RemoveValidator removes a validator from the store.
 func (k Keeper) RemoveValidator(
@@ -127,14 +125,14 @@ func (k Keeper) GetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress
 	return k.GetValidator(ctx, owner)
 }
 
-func (k Keeper) mustGetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress) types.Validator {
-	validator, found := k.GetValidatorByConsAddr(ctx, consAddr)
-	if !found {
-		panic(fmt.Errorf("validator with consensus-Address %s not found", consAddr))
-	}
+// func (k Keeper) mustGetValidatorByConsAddr(ctx sdk.Context, consAddr sdk.ConsAddress) types.Validator {
+// 	validator, found := k.GetValidatorByConsAddr(ctx, consAddr)
+// 	if !found {
+// 		panic(fmt.Errorf("validator with consensus-Address %s not found", consAddr))
+// 	}
 
-	return validator
-}
+// 	return validator
+// }
 
 // GetAllValidator returns all validator.
 func (k Keeper) GetAllValidator(ctx sdk.Context) (list []types.Validator) {
