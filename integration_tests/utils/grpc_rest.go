@@ -17,6 +17,7 @@ package utils
 import (
 	"bufio"
 	"context"
+	"errors"
 	"os"
 	"path/filepath"
 	"testing"
@@ -28,6 +29,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx"
+
+	//nolint:staticcheck
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/require"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -112,7 +115,8 @@ func (suite *TestSuite) BuildTx(
 		msgs,
 		signer,
 	)
-	account.SetSequence(account.GetSequence() + 1)
+	require.NoError(suite.T, err)
+	err = account.SetSequence(account.GetSequence() + 1)
 	require.NoError(suite.T, err)
 
 	// Generated Protobuf-encoded bytes.
@@ -188,8 +192,8 @@ func (suite *TestSuite) AssertNotFound(err error) {
 	require.Contains(suite.T, err.Error(), "rpc error: code = NotFound desc = not found")
 
 	if suite.Rest {
-		resterr, ok := err.(*RESTError)
-		if !ok {
+		var resterr *RESTError
+		if !errors.As(err, &resterr) {
 			panic("REST error is not RESTError type")
 		}
 		require.Equal(suite.T, resterr.resp.StatusCode, 404)

@@ -27,10 +27,10 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrLogic, "account keeper is required for ante builder")
 	}
 
-	sigGasConsumer := options.SigGasConsumer
-	if sigGasConsumer == nil {
-		sigGasConsumer = DefaultSigVerificationGasConsumer
-	}
+	// sigGasConsumer := options.SigGasConsumer
+	// if sigGasConsumer == nil {
+	// 	sigGasConsumer = DefaultSigVerificationGasConsumer
+	// }
 
 	anteDecorators := []sdk.AnteDecorator{
 		// gas is not needed in DCL

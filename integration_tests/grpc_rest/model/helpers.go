@@ -484,7 +484,7 @@ func GetModelForUnknown(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 	suite.AssertNotFound(err)
 
-	_, err = GetModelVersion(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()), uint32(tmrand.Uint32()))
+	_, err = GetModelVersion(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()), tmrand.Uint32())
 	require.Error(suite.T, err)
 	suite.AssertNotFound(err)
 

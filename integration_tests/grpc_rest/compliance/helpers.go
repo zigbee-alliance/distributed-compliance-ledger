@@ -402,7 +402,7 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Publish modelVersion
-	sv := uint32(tmrand.Uint32())
+	sv := tmrand.Uint32()
 	svs := utils.RandString()
 	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
@@ -586,7 +586,7 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendorAccount)
 
 	pid := int32(tmrand.Uint16())
-	sv := uint32(tmrand.Uint32())
+	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
 	// Revoke non-existent model
@@ -767,7 +767,7 @@ func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
 	require.NotNil(suite.T, vendorAccount)
 
 	pid := int32(tmrand.Uint16())
-	sv := uint32(tmrand.Uint32())
+	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
 	// Provision non-existent model

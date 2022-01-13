@@ -58,7 +58,10 @@ func (k msgServer) ApproveAddAccount(
 		// TODO issue 99: create a separate instance of BaseAccount with
 		//		AccountNumber and Sequence set to zero
 		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.VendorID)
-		account.SetAccountNumber(k.GetNextAccountNumber(ctx))
+		err = account.SetAccountNumber(k.GetNextAccountNumber(ctx))
+		if err != nil {
+			return nil, err
+		}
 		k.SetAccountO(ctx, *account)
 
 		// delete pending account record
