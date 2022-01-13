@@ -33,3 +33,5 @@ linters:
    - gocognit
    - godox
    - gomoddirectives
+   - maligned
+   - gci
