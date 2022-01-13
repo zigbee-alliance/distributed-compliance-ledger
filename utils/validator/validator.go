@@ -134,7 +134,7 @@ func Validate(s interface{}) error {
 			}
 
 			if e.Tag() == "min" {
-				return sdkerrors.Wrap(ErrFieldMinLengthExceeded, e.Translate(trans))
+				return sdkerrors.Wrap(ErrFieldMinLengthNotReached, e.Translate(trans))
 			}
 
 			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "gtecsfield" {
