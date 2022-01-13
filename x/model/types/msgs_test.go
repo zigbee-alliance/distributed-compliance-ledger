@@ -16,17 +16,17 @@ func TestValidateMsgCreateModel(t *testing.T) {
 
 		{true, newMsgCreateModel(testconstants.Signer, 1, 1)},
 		{true, newMsgCreateModel(testconstants.Signer, 65535, 65535)},
-		// zero PID/VID - OK
-		{true, newMsgCreateModel(testconstants.Signer, 0, 0)},
 
-		// negative VID - not OK
+		// zero PID/VID - not OK
+		{false, newMsgCreateModel(testconstants.Signer, 0, 1)},
+		{false, newMsgCreateModel(testconstants.Signer, 1, 0)},
+
+		// negative VID/PID - not OK
 		{false, newMsgCreateModel(testconstants.Signer, -1, 1)},
-		// negative PID - not OK
 		{false, newMsgCreateModel(testconstants.Signer, 1, -1)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgCreateModel(testconstants.Signer, 65535+1, 1)},
-		// too large PID - not OK
 		{false, newMsgCreateModel(testconstants.Signer, 1, 65535+1)},
 	}
 
@@ -49,17 +49,17 @@ func TestValidateMsgUpdateModel(t *testing.T) {
 
 		{true, newMsgUpdateModel(testconstants.Signer, 1, 1)},
 		{true, newMsgUpdateModel(testconstants.Signer, 65535, 65535)},
-		// zero PID/VID - OK
-		{true, newMsgUpdateModel(testconstants.Signer, 0, 0)},
 
-		// negative VID - not OK
+		// zero PID/VID - not OK
+		{false, newMsgUpdateModel(testconstants.Signer, 0, 1)},
+		{false, newMsgUpdateModel(testconstants.Signer, 1, 0)},
+
+		// negative VID/PID - not OK
 		{false, newMsgUpdateModel(testconstants.Signer, -1, 1)},
-		// negative PID - not OK
 		{false, newMsgUpdateModel(testconstants.Signer, 1, -1)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgUpdateModel(testconstants.Signer, 65535+1, 1)},
-		// too large PID - not OK
 		{false, newMsgUpdateModel(testconstants.Signer, 1, 65535+1)},
 	}
 
@@ -82,17 +82,20 @@ func TestValidateMsgCreateModelVersion(t *testing.T) {
 
 		{true, newMsgCreateModelVersion(testconstants.Signer, 1, 1, 1)},
 		{true, newMsgCreateModelVersion(testconstants.Signer, 65535, 65535, 1)},
-		// zero PID/VID/SV - OK
-		{true, newMsgCreateModelVersion(testconstants.Signer, 0, 0, 0)},
 
-		// negative VID - not OK
+		// zero SV - OK
+		{true, newMsgCreateModelVersion(testconstants.Signer, 1, 1, 0)},
+
+		// zero PID/VID - not OK
+		{false, newMsgCreateModelVersion(testconstants.Signer, 0, 1, 1)},
+		{false, newMsgCreateModelVersion(testconstants.Signer, 1, 0, 1)},
+
+		// negative VID/PID - not OK
 		{false, newMsgCreateModelVersion(testconstants.Signer, -1, 1, 1)},
-		// negative PID - not OK
 		{false, newMsgCreateModelVersion(testconstants.Signer, 1, -1, 1)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgCreateModelVersion(testconstants.Signer, 65535+1, 1, 1)},
-		// too large PID - not OK
 		{false, newMsgCreateModelVersion(testconstants.Signer, 1, 65535+1, 1)},
 	}
 
@@ -115,17 +118,20 @@ func TestValidateMsgUpdateModelVersion(t *testing.T) {
 
 		{true, newMsgUpdateModelVersion(testconstants.Signer, 1, 1, 1)},
 		{true, newMsgUpdateModelVersion(testconstants.Signer, 65535, 65535, 1)},
-		// zero PID/VID/SV - OK
-		{true, newMsgUpdateModelVersion(testconstants.Signer, 0, 0, 0)},
 
-		// negative VID - not OK
+		// zero SV - OK
+		{true, newMsgUpdateModelVersion(testconstants.Signer, 1, 1, 0)},
+
+		// zero PID/VID - not OK
+		{false, newMsgUpdateModelVersion(testconstants.Signer, 0, 1, 1)},
+		{false, newMsgUpdateModelVersion(testconstants.Signer, 1, 0, 1)},
+
+		// negative VID/PID - not OK
 		{false, newMsgUpdateModelVersion(testconstants.Signer, -1, 1, 1)},
-		// negative PID - not OK
 		{false, newMsgUpdateModelVersion(testconstants.Signer, 1, -1, 1)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgUpdateModelVersion(testconstants.Signer, 65535+1, 1, 1)},
-		// too large PID - not OK
 		{false, newMsgUpdateModelVersion(testconstants.Signer, 1, 65535+1, 1)},
 	}
 

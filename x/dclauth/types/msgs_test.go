@@ -60,9 +60,9 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 		msg   *MsgProposeAddAccount
 	}{
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			AccountRoles{}, 0)}, // no roles provided
+			AccountRoles{}, 1)}, // no roles provided
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			AccountRoles{NodeAdmin}, 0)},
+			AccountRoles{NodeAdmin}, 1)},
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
 
@@ -73,6 +73,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 		// negative VID - error
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, -1)},
+
 		// too large VID - error
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, 65535+1)},
@@ -80,13 +81,13 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, nil, testconstants.PubKey1,
-			AccountRoles{NodeAdmin}, 0)},
+			AccountRoles{NodeAdmin}, 1)},
 		//{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, "",
-		//	AccountRoles{}, 0)},
+		//	AccountRoles{}, 1)},
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-			AccountRoles{"Wrong Role"}, 0)},
+			AccountRoles{"Wrong Role"}, 1)},
 		{false, NewMsgProposeAddAccountWrapper(t, nil, testconstants.Address1, testconstants.PubKey1,
-			AccountRoles{NodeAdmin}, 0)},
+			AccountRoles{NodeAdmin}, 1)},
 	}
 
 	for _, tc := range cases {

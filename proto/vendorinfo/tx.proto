@@ -17,7 +17,7 @@ service Msg {
 
 message MsgCreateVendorInfo {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vendorID = 2 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 vendorID = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 
   string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32\""];
   string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64\""];
@@ -28,7 +28,7 @@ message MsgCreateVendorInfoResponse {}
 
 message MsgUpdateVendorInfo {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vendorID = 2 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 vendorID = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 
   string vendorName = 3 [(gogoproto.moretags) = "validate:\"required,min=2,max=32\""];
   string companyLegalName = 4 [(gogoproto.moretags) = "validate:\"required,min=2,max=64\""];

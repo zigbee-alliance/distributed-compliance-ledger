@@ -22,8 +22,8 @@ service Msg {
 
 message MsgCreateModel {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 
   int32 device_type_id = 4 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string product_name = 5 [(gogoproto.moretags) = "validate:\"required,max=128\""];
@@ -43,8 +43,8 @@ message MsgCreateModelResponse {}
 
 message MsgUpdateModel {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 
   string product_name = 4 [(gogoproto.moretags) = "validate:\"max=128\""];
   string product_label = 5 [(gogoproto.moretags) = "validate:\"max=256\""];
@@ -60,15 +60,15 @@ message MsgUpdateModelResponse {}
 
 message MsgDeleteModel {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
 }
 message MsgDeleteModelResponse {}
 
 message MsgCreateModelVersion {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 software_version = 4;
 
   string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
@@ -87,8 +87,8 @@ message MsgCreateModelVersionResponse {}
 
 message MsgUpdateModelVersion {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
+  int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 software_version = 4;
 
   bool software_version_valid = 5;

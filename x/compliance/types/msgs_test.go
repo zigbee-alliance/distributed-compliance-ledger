@@ -16,17 +16,20 @@ func TestValidateMsgCertifyModel(t *testing.T) {
 
 		{true, newMsgCertifyModel(1, 1, 1, "1", testconstants.Signer)},
 		{true, newMsgCertifyModel(65535, 65535, 1, "1", testconstants.Signer)},
-		// zero PID/VID/SV - OK
-		{true, newMsgCertifyModel(0, 0, 0, "1", testconstants.Signer)},
 
-		// negative VID - not OK
+		// zero SV - OK
+		{true, newMsgCertifyModel(1, 1, 0, "1", testconstants.Signer)},
+
+		// zero PID/VID - not OK
+		{false, newMsgCertifyModel(0, 1, 1, "1", testconstants.Signer)},
+		{false, newMsgCertifyModel(1, 0, 1, "1", testconstants.Signer)},
+
+		// negative VID/PID - not OK
 		{false, newMsgCertifyModel(-1, 1, 1, "1", testconstants.Signer)},
-		// negative PID - not OK
 		{false, newMsgCertifyModel(1, -1, 1, "1", testconstants.Signer)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgCertifyModel(65535+1, 1, 1, "1", testconstants.Signer)},
-		// too large PID - not OK
 		{false, newMsgCertifyModel(1, 65535+1, 1, "1", testconstants.Signer)},
 	}
 
@@ -49,17 +52,20 @@ func TestValidateMsgRevokeModel(t *testing.T) {
 
 		{true, newMsgRevokeModel(1, 1, 1, "1", testconstants.Signer)},
 		{true, newMsgRevokeModel(65535, 65535, 1, "1", testconstants.Signer)},
-		// zero PID/VID/SV - OK
-		{true, newMsgRevokeModel(0, 0, 0, "1", testconstants.Signer)},
 
-		// negative VID - not OK
+		// zero SV - OK
+		{true, newMsgRevokeModel(1, 1, 0, "1", testconstants.Signer)},
+
+		// zero PID/VID - not OK
+		{false, newMsgRevokeModel(0, 1, 1, "1", testconstants.Signer)},
+		{false, newMsgRevokeModel(1, 0, 1, "1", testconstants.Signer)},
+
+		// negative VID/PID - not OK
 		{false, newMsgRevokeModel(-1, 1, 1, "1", testconstants.Signer)},
-		// negative PID - not OK
 		{false, newMsgRevokeModel(1, -1, 1, "1", testconstants.Signer)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgRevokeModel(65535+1, 1, 1, "1", testconstants.Signer)},
-		// too large PID - not OK
 		{false, newMsgRevokeModel(1, 65535+1, 1, "1", testconstants.Signer)},
 	}
 
@@ -82,17 +88,20 @@ func TestValidateMsgProvisionModel(t *testing.T) {
 
 		{true, newMsgProvisionModel(1, 1, 1, "1", testconstants.Signer)},
 		{true, newMsgProvisionModel(65535, 65535, 1, "1", testconstants.Signer)},
-		// zero PID/VID/SV - OK
-		{true, newMsgProvisionModel(0, 0, 0, "1", testconstants.Signer)},
 
-		// negative VID - not OK
+		// zero SV - OK
+		{true, newMsgProvisionModel(1, 1, 0, "1", testconstants.Signer)},
+
+		// zero PID/VID - not OK
+		{false, newMsgProvisionModel(1, 0, 1, "1", testconstants.Signer)},
+		{false, newMsgProvisionModel(0, 1, 1, "1", testconstants.Signer)},
+
+		// negative VID/PID - not OK
 		{false, newMsgProvisionModel(-1, 1, 1, "1", testconstants.Signer)},
-		// negative PID - not OK
 		{false, newMsgProvisionModel(1, -1, 1, "1", testconstants.Signer)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgProvisionModel(65535+1, 1, 1, "1", testconstants.Signer)},
-		// too large PID - not OK
 		{false, newMsgProvisionModel(1, 65535+1, 1, "1", testconstants.Signer)},
 	}
 

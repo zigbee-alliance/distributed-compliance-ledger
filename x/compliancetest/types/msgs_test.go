@@ -16,17 +16,20 @@ func TestValidateMsgAddTestingResul(t *testing.T) {
 
 		{true, newMsgAddTestingResult(1, 1, 1, "1", testconstants.Signer)},
 		{true, newMsgAddTestingResult(65535, 65535, 1, "1", testconstants.Signer)},
-		// zero PID/VID/SV - OK
-		{true, newMsgAddTestingResult(0, 0, 0, "1", testconstants.Signer)},
 
-		// negative VID - not OK
+		// zero SV - OK
+		{true, newMsgAddTestingResult(1, 1, 0, "1", testconstants.Signer)},
+
+		// zero PID/VID - not OK
+		{false, newMsgAddTestingResult(1, 0, 1, "1", testconstants.Signer)},
+		{false, newMsgAddTestingResult(0, 1, 1, "1", testconstants.Signer)},
+
+		// negative VID/PID - not OK
 		{false, newMsgAddTestingResult(-1, 1, 1, "1", testconstants.Signer)},
-		// negative PID - not OK
 		{false, newMsgAddTestingResult(1, -1, 1, "1", testconstants.Signer)},
 
-		// too large VID - not OK
+		// too large VID/PID - not OK
 		{false, newMsgAddTestingResult(65535+1, 1, 1, "1", testconstants.Signer)},
-		// too large PID - not OK
 		{false, newMsgAddTestingResult(1, 65535+1, 1, "1", testconstants.Signer)},
 	}
 
