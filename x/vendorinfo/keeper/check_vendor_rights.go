@@ -9,7 +9,7 @@ import (
 )
 
 func checkAddVendorRights(ctx sdk.Context, k Keeper, signer sdk.AccAddress, vid int32) error {
-	// sender must have Vendor role and VendorID to update a vendorinfo
+	// sender must have Vendor role and VendorID to add a new vendorinfo
 	if !k.dclauthKeeper.HasRole(ctx, signer, dclauthtypes.Vendor) {
 		return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("MsgAddVendorInfo transaction should be "+
 			"signed by an account with the %s role", dclauthtypes.Vendor))
