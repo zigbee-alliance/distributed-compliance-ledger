@@ -66,9 +66,13 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
 
-		// zero VID - error - can not create Vendor with vid=0 (reserved)
+		// zero VID with Vendor role - error - can not create Vendor with vid=0 (reserved)
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{Vendor, NodeAdmin}, 0)},
+
+		// zero VID without Vendor role - no error
+		{true, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
+			AccountRoles{NodeAdmin}, 0)},
 
 		// negative VID - error
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
