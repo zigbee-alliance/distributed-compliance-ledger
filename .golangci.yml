@@ -1,5 +1,5 @@
 linters:
- # enable-all: true
+ enable-all: true
  disable:
    - golint
    - unparam
@@ -7,3 +7,29 @@ linters:
    - gochecknoglobals
    - gomnd
    - nolintlint
+   - dupl
+   - varnamelen
+   - tagliatelle
+   - wrapcheck
+   - thelper
+   - testpackage
+   - paralleltest
+   - ireturn
+   - nlreturn
+   - goerr113
+   - exhaustivestruct
+   - wsl
+   - forcetypeassert
+   - exhaustive
+   - scopelint
+   - revive
+   - lll
+   - interfacer
+   - gosec
+   - funlen
+   - stylecheck
+   - cyclop
+   - forbidigo
+   - gocognit
+   - godox
+   - gomoddirectives

@@ -37,8 +37,8 @@ func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certId types.Certifi
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
 
 	// Check if the root cert is already there
-	for _, existingСertId := range rootCertificates.Certs {
-		if *existingСertId == certId {
+	for _, existingCertId := range rootCertificates.Certs {
+		if *existingCertId == certId {
 			return
 		}
 	}

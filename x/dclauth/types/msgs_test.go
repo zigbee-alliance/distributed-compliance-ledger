@@ -86,7 +86,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1)},
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, nil, testconstants.PubKey1,
 			AccountRoles{NodeAdmin}, 1)},
-		//{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, "",
+		// {false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, "",
 		//	AccountRoles{}, 1)},
 		{false, NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 			AccountRoles{"Wrong Role"}, 1)},
@@ -150,7 +150,7 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 
 func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address2)
-
+	//nolint:goconst
 	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

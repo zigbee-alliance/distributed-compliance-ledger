@@ -53,7 +53,7 @@ the address will be looked up in the local Keybase.
 			config.SetRoot(clientCtx.HomeDir)
 
 			addr, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
-			//if err != nil {
+			// if err != nil {
 			//	return err
 			//}
 			// TODO migration of keyring was not released yet in cosmos (in v.0.44.4)
