@@ -39,10 +39,6 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 
 		// check if certification is already revoked
 		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeRevoked {
-			// TODO: do we allow re-revocation (date update) by the same signer?
-			// if complianceInfo.Owner != msg.Signer {
-			// 	return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid)
-			// }
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		} else {
 			// if state changes on `revoked` check that revocation_date is after certification_date

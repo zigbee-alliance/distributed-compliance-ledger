@@ -15,8 +15,6 @@
 package testconstants
 
 import (
-	"time"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -88,8 +86,8 @@ var (
 	Owner                                             = Address1
 
 	// Compliance.
-	CertificationDate = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	RevocationDate    = time.Date(2020, 3, 3, 3, 30, 0, 0, time.UTC)
+	CertificationDate = "2020-01-01T00:00:00Z"
+	RevocationDate    = "2020-03-03T03:30:00Z"
 	Reason            = "Some Reason"
 	RevocationReason  = "Some Reason"
 	CertificationType = "zigbee"

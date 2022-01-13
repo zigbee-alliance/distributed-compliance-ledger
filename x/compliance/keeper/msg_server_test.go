@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"context"
 	"testing"
@@ -14,3 +15,4 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 	k, ctx := keepertest.ComplianceKeeper(t)
 	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
 }
+*/

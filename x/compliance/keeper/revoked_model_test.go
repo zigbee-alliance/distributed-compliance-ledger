@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -73,3 +74,4 @@ func TestRevokedModelGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllRevokedModel(ctx)),
 	)
 }
+*/
