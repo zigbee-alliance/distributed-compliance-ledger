@@ -63,8 +63,8 @@ func CmdAddTestingResult() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagVid, "", "Model vendor ID")
-	cmd.Flags().String(FlagPid, "", "Model product ID")
+	cmd.Flags().String(FlagVid, "", "Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().String(FlagPid, "", "Model product ID (positive non-zero uint16)")
 	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
 	cmd.Flags().String(FlagSoftwareVersionString, "", "Model software version string")
 	cmd.Flags().StringP(FlagTestResult, FlagTestResultShortcut, "",

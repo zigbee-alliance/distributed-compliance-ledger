@@ -53,9 +53,9 @@ func CmdRevokeModel() *cobra.Command {
 		},
 	}
 	cmd.Flags().Int32Var(&vid, FlagVID, 0,
-		"Model vendor ID")
+		"Model vendor ID (positive non-zero uint16)")
 	cmd.Flags().Int32Var(&pid, FlagPID, 0,
-		"Model product ID")
+		"Model product ID (positive non-zero uint16)")
 	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
 		"Software Version of model (uint32)")
 	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "",
