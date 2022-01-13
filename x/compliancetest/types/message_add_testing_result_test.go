@@ -104,7 +104,6 @@ func TestMsgAddTestingResult_ValidateBasic(t *testing.T) {
 	positive_tests := []struct {
 		name string
 		msg  MsgAddTestingResult
-		err  error
 	}{
 		{
 			name: "valid address",
