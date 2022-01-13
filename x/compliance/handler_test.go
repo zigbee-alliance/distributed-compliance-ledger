@@ -122,7 +122,6 @@ func (setup *TestSetup) SetNoModelVersionForKey(
 }
 
 func (setup *TestSetup) AddTestingResults(vid int32, pid int32, softwareVersion uint32, softwareVersionString string) {
-
 	testingResults := NewTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	setup.CompliancetestKeeper.On(
