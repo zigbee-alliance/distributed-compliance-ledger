@@ -313,7 +313,7 @@ func ModelDemo(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -399,7 +399,7 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 		suite,
 		testHouseName,
 		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -437,7 +437,7 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid+1),
+		vid+1,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -473,7 +473,7 @@ func AddModelTwice(suite *utils.TestSuite) {
 		suite,
 		vendorName,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
-		uint64(vid),
+		vid,
 		aliceName,
 		aliceAccount,
 		bobName,
@@ -507,15 +507,15 @@ func GetModelForUnknown(suite *utils.TestSuite) {
 }
 
 func GetModelForInvalidVidPid(suite *utils.TestSuite) {
-	// zero vid
-	_, err := GetModel(suite, 0, int32(tmrand.Uint16()))
+	// negative vid
+	_, err := GetModel(suite, -1, int32(tmrand.Uint16()))
 	require.Error(suite.T, err)
 	// FIXME: Consider adding validation for queries.
 	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
 	suite.AssertNotFound(err)
 
-	// zero pid
-	_, err = GetModel(suite, int32(tmrand.Uint16()), 0)
+	// negative pid
+	_, err = GetModel(suite, int32(tmrand.Uint16()), -1)
 	require.Error(suite.T, err)
 	// FIXME: Consider adding validation for queries.
 	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))

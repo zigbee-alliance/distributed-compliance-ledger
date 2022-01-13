@@ -47,7 +47,7 @@ package vendorinfo
 // func (m *DclauthKeeperMock) HasVendorID(
 // 	ctx sdk.Context,
 // 	addr sdk.AccAddress,
-// 	vid uint64,
+// 	vid int32,
 // ) bool {
 // 	args := m.Called(ctx, addr, vid)
 // 	return args.Bool(0)

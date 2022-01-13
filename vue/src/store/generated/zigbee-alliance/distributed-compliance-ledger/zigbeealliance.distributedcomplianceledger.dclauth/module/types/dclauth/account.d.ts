@@ -1,5 +1,5 @@
-import { Writer, Reader } from 'protobufjs/minimal';
 import { BaseAccount } from '../cosmos/auth/v1beta1/auth';
+import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 export interface Account {
     baseAccount: BaseAccount | undefined;

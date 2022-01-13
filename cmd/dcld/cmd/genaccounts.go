@@ -98,9 +98,9 @@ the address will be looked up in the local Keybase.
 
 			ba := authtypes.NewBaseAccount(addr, pk, 0, 0)
 
-			var vendorID uint64 = 0
+			var vendorID int32 = 0
 			if viper.GetString(FlagVID) != "" {
-				vendorID, err = cast.ToUint64E(viper.GetString(FlagVID))
+				vendorID, err = cast.ToInt32E(viper.GetString(FlagVID))
 				if err != nil {
 					return err
 				}

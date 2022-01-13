@@ -6,8 +6,8 @@ export interface DclauthAccount {
      */
     baseAccount?: V1Beta1BaseAccount;
     roles?: string[];
-    /** @format uint64 */
-    vendorID?: string;
+    /** @format int32 */
+    vendorID?: number;
 }
 export interface DclauthAccountStat {
     /** @format uint64 */

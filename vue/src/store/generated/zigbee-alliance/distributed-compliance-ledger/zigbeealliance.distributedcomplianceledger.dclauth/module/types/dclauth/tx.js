@@ -1,6 +1,5 @@
 /* eslint-disable */
-import { Reader, util, configure, Writer } from 'protobufjs/minimal';
-import * as Long from 'long';
+import { Reader, Writer } from 'protobufjs/minimal';
 import { Any } from '../google/protobuf/any';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
 const baseMsgProposeAddAccount = { signer: '', address: '', roles: '', vendorID: 0 };
@@ -19,7 +18,7 @@ export const MsgProposeAddAccount = {
             writer.uint32(34).string(v);
         }
         if (message.vendorID !== 0) {
-            writer.uint32(40).uint64(message.vendorID);
+            writer.uint32(40).int32(message.vendorID);
         }
         return writer;
     },
@@ -44,7 +43,7 @@ export const MsgProposeAddAccount = {
                     message.roles.push(reader.string());
                     break;
                 case 5:
-                    message.vendorID = longToNumber(reader.uint64());
+                    message.vendorID = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -498,25 +497,4 @@ export class MsgClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Msg', 'ApproveRevokeAccount', data);
         return promise.then((data) => MsgApproveRevokeAccountResponse.decode(new Reader(data)));
     }
-}
-var globalThis = (() => {
-    if (typeof globalThis !== 'undefined')
-        return globalThis;
-    if (typeof self !== 'undefined')
-        return self;
-    if (typeof window !== 'undefined')
-        return window;
-    if (typeof global !== 'undefined')
-        return global;
-    throw 'Unable to locate global object';
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
 }

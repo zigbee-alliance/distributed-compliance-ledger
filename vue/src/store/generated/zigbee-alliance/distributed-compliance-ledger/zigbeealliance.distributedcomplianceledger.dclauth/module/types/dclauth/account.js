@@ -1,7 +1,6 @@
 /* eslint-disable */
-import * as Long from 'long';
-import { util, configure, Writer, Reader } from 'protobufjs/minimal';
 import { BaseAccount } from '../cosmos/auth/v1beta1/auth';
+import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
 const baseAccount = { roles: '', vendorID: 0 };
 export const Account = {
@@ -13,7 +12,7 @@ export const Account = {
             writer.uint32(18).string(v);
         }
         if (message.vendorID !== 0) {
-            writer.uint32(24).uint64(message.vendorID);
+            writer.uint32(24).int32(message.vendorID);
         }
         return writer;
     },
@@ -32,7 +31,7 @@ export const Account = {
                     message.roles.push(reader.string());
                     break;
                 case 3:
-                    message.vendorID = longToNumber(reader.uint64());
+                    message.vendorID = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -98,24 +97,3 @@ export const Account = {
         return message;
     }
 };
-var globalThis = (() => {
-    if (typeof globalThis !== 'undefined')
-        return globalThis;
-    if (typeof self !== 'undefined')
-        return self;
-    if (typeof window !== 'undefined')
-        return window;
-    if (typeof global !== 'undefined')
-        return global;
-    throw 'Unable to locate global object';
-})();
-function longToNumber(long) {
-    if (long.gt(Number.MAX_SAFE_INTEGER)) {
-        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
-    }
-    return long.toNumber();
-}
-if (util.Long !== Long) {
-    util.Long = Long;
-    configure();
-}

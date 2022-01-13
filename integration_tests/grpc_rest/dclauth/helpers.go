@@ -220,7 +220,7 @@ func ProposeAddAccount(
 	accAddr sdk.AccAddress,
 	accKey cryptotypes.PubKey,
 	roles dclauthtypes.AccountRoles,
-	vendorID uint64,
+	vendorID int32,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
@@ -277,7 +277,7 @@ func CreateAccount(
 	suite *utils.TestSuite,
 	accountName string,
 	roles dclauthtypes.AccountRoles,
-	vendorId uint64,
+	vendorId int32,
 	proposerName string,
 	proposerAccount *dclauthtypes.Account,
 	approverName string,
@@ -391,7 +391,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
-		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, uint64(vid),
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, vid,
 		jackName, jackAccount,
 	)
 	require.NoError(suite.T, err)

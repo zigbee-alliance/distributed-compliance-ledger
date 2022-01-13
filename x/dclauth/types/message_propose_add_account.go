@@ -20,7 +20,7 @@ func NewMsgProposeAddAccount(
 	pubKey cryptotypes.PubKey, //nolint:interfacer
 	roles AccountRoles,
 	// roles []string,
-	vendorID uint64,
+	vendorID int32,
 ) (*MsgProposeAddAccount, error) {
 	var pkAny *codectypes.Any
 	if pubKey != nil {
@@ -112,6 +112,7 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 		return err
 	}
 
+	// can not create Vendor with vid=0 (reserved)
 	if msg.HasRole(Vendor) && msg.VendorID <= 0 {
 		return ErrMissingVendorIDForVendorAccount()
 	}
