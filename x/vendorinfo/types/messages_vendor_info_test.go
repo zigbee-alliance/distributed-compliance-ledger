@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
@@ -33,6 +34,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
+			err: validator.ErrFieldLowerBoundViolated,
 		},
 		{
 			name: "vid is 0",
@@ -42,6 +44,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
+			err: validator.ErrFieldLowerBoundViolated,
 		},
 		{
 			name: "vid is bigger than 65535",
@@ -51,6 +54,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
+			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
 			name: "vendor name len < 2",
@@ -60,6 +64,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:       "a",
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "vendor name len > 32",
@@ -69,6 +74,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
 			name: "company legal name len < 2",
@@ -78,6 +84,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: "a",
 			},
+			err: validator.ErrFieldMinLengthNotReached,
 		},
 		{
 			name: "company legal name len > 64",
@@ -87,6 +94,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
 			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
 			name: "company preffered name len > 64",
@@ -97,6 +105,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				CompanyPrefferedName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
 			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
 			name: "vendor landing page URL is not URL",
@@ -107,6 +116,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				VendorLandingPageURL: "ABC",
 			},
+			err: validator.ErrFieldNotValid,
 		},
 		{
 			name: "vendor landing page URL len > 256",
@@ -117,13 +127,13 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				VendorLandingPageURL: "https://www.example.com/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
 			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 	}
 
 	positive_tests := []struct {
 		name string
 		msg  MsgCreateVendorInfo
-		err  error
 	}{
 		{
 			name: "valid address",
@@ -146,6 +156,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			require.Error(t, err)
+			require.ErrorIs(t, err, tt.err)
 		})
 	}
 }
