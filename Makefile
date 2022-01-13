@@ -17,9 +17,10 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 OUTPUT_DIR ?= build
 
 LICENSE_TYPE = "apache"
-COPYRIGHT_YEAR = "2020"
+COPYRIGHT_YEAR = "2022"
 COPYRIGHT_HOLDER = "DSR Corporation"
-LICENSED_FILES = $(shell find . -type f -not -path '*/.*' -not -name '*.md' -not -name 'requirements.txt')
+# LICENSED_FILES = $(shell find . -type f -not -path '*/.*' -not -name '*.md' -not -name 'requirements.txt')
+LICENSED_FILES = $(shell find . -type f -name '*.go' -not -name '*.pb.*')
 
 MK_TEST = "Makefile.test"
 LOCALNET_TARGETS = image localnet_init localnet_start localnet_stop localnet_clean localnet_export localnet_reset localnet_rebuild
@@ -48,7 +49,7 @@ license:
 	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} ${LICENSED_FILES}
 
 license-check:
-	addlicense -l ${LICENSE_TYPE} -y ${COPYRIGHT_YEAR} -c ${COPYRIGHT_HOLDER} -check ${LICENSED_FILES}
+	addlicense -l ${LICENSE_TYPE} -check ${LICENSED_FILES}
 
 clean:
 	rm -rf $(OUTPUT_DIR)

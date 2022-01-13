@@ -1,3 +1,5 @@
+#!/bin/bash
+
 source integration_tests/cli/common.sh
 
 LOCALNET_DIR=".localnet"
