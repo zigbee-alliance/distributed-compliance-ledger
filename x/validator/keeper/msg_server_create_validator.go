@@ -68,7 +68,10 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	}
 
 	k.SetValidator(ctx, validator)
-	k.SetValidatorByConsAddr(ctx, validator)
+	err = k.SetValidatorByConsAddr(ctx, validator)
+	if err != nil {
+		return nil, err
+	}
 
 	// TODO issue 99: val after-hooks if needed
 	// ...

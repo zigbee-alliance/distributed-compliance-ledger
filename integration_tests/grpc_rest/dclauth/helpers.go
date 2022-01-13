@@ -311,7 +311,6 @@ func CreateAccount(
 }
 
 func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreateModel {
-
 	return &modeltypes.MsgCreateModel{
 		Creator:                                  signer,
 		Vid:                                      vid,

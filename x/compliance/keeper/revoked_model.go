@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-// SetRevokedModel set a specific revokedModel in the store from its index
+// SetRevokedModel set a specific revokedModel in the store from its index.
 func (k Keeper) SetRevokedModel(ctx sdk.Context, revokedModel types.RevokedModel) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedModelKeyPrefix))
 	b := k.cdc.MustMarshal(&revokedModel)
@@ -18,7 +18,7 @@ func (k Keeper) SetRevokedModel(ctx sdk.Context, revokedModel types.RevokedModel
 	), b)
 }
 
-// GetRevokedModel returns a revokedModel from its index
+// GetRevokedModel returns a revokedModel from its index.
 func (k Keeper) GetRevokedModel(
 	ctx sdk.Context,
 	vid int32,
@@ -43,7 +43,7 @@ func (k Keeper) GetRevokedModel(
 	return val, true
 }
 
-// RemoveRevokedModel removes a revokedModel from the store
+// RemoveRevokedModel removes a revokedModel from the store.
 func (k Keeper) RemoveRevokedModel(
 	ctx sdk.Context,
 	vid int32,
@@ -61,7 +61,7 @@ func (k Keeper) RemoveRevokedModel(
 	))
 }
 
-// GetAllRevokedModel returns all revokedModel
+// GetAllRevokedModel returns all revokedModel.
 func (k Keeper) GetAllRevokedModel(ctx sdk.Context) (list []types.RevokedModel) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedModelKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

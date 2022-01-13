@@ -20,9 +20,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-var (
-	PoolIsFull = sdkerrors.Register(ModuleName, 601, "maximum number of active nodes reached")
-)
+var PoolIsFull = sdkerrors.Register(ModuleName, 601, "maximum number of active nodes reached")
 
 func ErrPoolIsFull() error {
 	return sdkerrors.Wrapf(PoolIsFull,

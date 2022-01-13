@@ -31,7 +31,6 @@ func (k Keeper) ComplianceInfoAll(c context.Context, req *types.QueryAllComplian
 		complianceInfos = append(complianceInfos, complianceInfo)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

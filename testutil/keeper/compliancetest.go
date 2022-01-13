@@ -21,7 +21,6 @@ func CompliancetestKeeper(
 	dclauthKeeper types.DclauthKeeper,
 	modelKeeper types.ModelKeeper,
 ) (*keeper.Keeper, sdk.Context) {
-
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 

@@ -22,13 +22,11 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
-
-	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
-
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 //nolint:godox
@@ -40,7 +38,6 @@ import (
 */
 
 func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreateModel {
-
 	return &modeltypes.MsgCreateModel{
 		Creator:                                  signer,
 		Vid:                                      vid,
@@ -62,7 +59,6 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 }
 
 func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdateModel {
-
 	return &modeltypes.MsgUpdateModel{
 		Creator:                    signer,
 		Vid:                        vid,
@@ -82,7 +78,6 @@ func NewMsgCreateModelVersion(
 	softwareVersionString string,
 	signer string,
 ) *modeltypes.MsgCreateModelVersion {
-
 	return &modeltypes.MsgCreateModelVersion{
 		Creator:                      signer,
 		Vid:                          vid,
@@ -108,7 +103,6 @@ func NewMsgUpdateModelVersion(
 	softwareVersion uint32,
 	signer string,
 ) *modeltypes.MsgUpdateModelVersion {
-
 	return &modeltypes.MsgUpdateModelVersion{
 		Creator:         signer,
 		Vid:             vid,
@@ -125,7 +119,6 @@ func AddModel(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg.Creator = suite.GetAddress(signerName).String()
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -136,7 +129,6 @@ func AddModelVersion(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg.Creator = suite.GetAddress(signerName).String()
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -147,7 +139,6 @@ func UpdateModel(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg.Creator = suite.GetAddress(signerName).String()
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -158,7 +149,6 @@ func UpdateModelVersion(
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
-
 	msg.Creator = suite.GetAddress(signerName).String()
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -168,7 +158,6 @@ func GetModel(
 	vid int32,
 	pid int32,
 ) (*modeltypes.Model, error) {
-
 	var res modeltypes.Model
 
 	if suite.Rest {
@@ -203,7 +192,6 @@ func GetModelVersion(
 	pid int32,
 	softwareVersion uint32,
 ) (*modeltypes.ModelVersion, error) {
-
 	var res modeltypes.ModelVersion
 
 	if suite.Rest {
@@ -263,7 +251,6 @@ func GetVendorModels(
 	suite *utils.TestSuite,
 	vid int32,
 ) (*modeltypes.VendorProducts, error) {
-
 	var res modeltypes.VendorProducts
 
 	if suite.Rest {
@@ -497,7 +484,7 @@ func GetModelForUnknown(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 	suite.AssertNotFound(err)
 
-	_, err = GetModelVersion(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()), uint32(tmrand.Uint32()))
+	_, err = GetModelVersion(suite, int32(tmrand.Uint16()), int32(tmrand.Uint16()), tmrand.Uint32())
 	require.Error(suite.T, err)
 	suite.AssertNotFound(err)
 
