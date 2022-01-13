@@ -19,7 +19,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgCreateVendorInfo{
 				Creator:          "invalid_address",
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
@@ -56,7 +56,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor name len < 2",
 			msg: MsgCreateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       "a",
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
@@ -65,7 +65,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor name len > 32",
 			msg: MsgCreateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
@@ -74,7 +74,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "company legal name len < 2",
 			msg: MsgCreateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: "a",
 			},
@@ -83,7 +83,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "company legal name len > 64",
 			msg: MsgCreateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
 			},
@@ -92,7 +92,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "company preffered name len > 64",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
-				VendorID:             int32(testconstants.VendorID1),
+				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				CompanyPrefferedName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
@@ -102,7 +102,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor landing page URL is not URL",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
-				VendorID:             int32(testconstants.VendorID1),
+				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				VendorLandingPageURL: "ABC",
@@ -112,7 +112,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor landing page URL len > 256",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
-				VendorID:             int32(testconstants.VendorID1),
+				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				VendorLandingPageURL: "https://www.example.com/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
@@ -129,7 +129,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgCreateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
@@ -160,7 +160,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgUpdateVendorInfo{
 				Creator:          "invalid_address",
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
@@ -197,7 +197,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor name len < 2",
 			msg: MsgUpdateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       "a",
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
@@ -206,7 +206,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor name len > 32",
 			msg: MsgUpdateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},
@@ -215,7 +215,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "company legal name len < 2",
 			msg: MsgUpdateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: "a",
 			},
@@ -224,7 +224,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "company legal name len > 64",
 			msg: MsgUpdateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
 			},
@@ -233,7 +233,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "company preffered name len > 64",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
-				VendorID:             int32(testconstants.VendorID1),
+				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				CompanyPrefferedName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
@@ -243,7 +243,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor landing page URL is not URL",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
-				VendorID:             int32(testconstants.VendorID1),
+				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				VendorLandingPageURL: "ABC",
@@ -253,7 +253,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "vendor landing page URL len > 256",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
-				VendorID:             int32(testconstants.VendorID1),
+				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				VendorLandingPageURL: "https://www.example.com/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
@@ -270,7 +270,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			name: "valid address",
 			msg: MsgCreateVendorInfo{
 				Creator:          sample.AccAddress(),
-				VendorID:         int32(testconstants.VendorID1),
+				VendorID:         testconstants.VendorID1,
 				VendorName:       testconstants.VendorName,
 				CompanyLegalName: testconstants.CompanyLegalName,
 			},

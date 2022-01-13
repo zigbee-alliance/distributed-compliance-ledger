@@ -87,7 +87,7 @@ func Setup(t *testing.T) TestSetup {
 	keeper, ctx := testkeeper.VendorinfoKeeper(t, dclauthKeeper)
 
 	vendor := GenerateAccAddress()
-	vendorID := int32(testconstants.VendorID1)
+	vendorID := testconstants.VendorID1
 
 	setup := TestSetup{
 		T:             t,
@@ -199,7 +199,7 @@ func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, int32(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing vendorinfo by vendor with another VendorID
 	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(anotherVendor)
@@ -255,7 +255,7 @@ func TestHandler_AddVendorInfoByVendorWithAnotherVendorId(t *testing.T) {
 	setup := Setup(t)
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, int32(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// add new vendorinfo
 	vendorinfo := NewMsgCreateVendorInfo(anotherVendor)
@@ -267,7 +267,7 @@ func TestHandler_AddVendorInfoByVendorWithAnotherVendorId(t *testing.T) {
 func NewMsgCreateVendorInfo(signer sdk.AccAddress) *types.MsgCreateVendorInfo {
 	return &types.MsgCreateVendorInfo{
 		Creator:              signer.String(),
-		VendorID:             int32(testconstants.VendorID1),
+		VendorID:             testconstants.VendorID1,
 		CompanyLegalName:     testconstants.CompanyLegalName,
 		CompanyPrefferedName: testconstants.CompanyPreferredName,
 		VendorName:           testconstants.VendorName,
@@ -278,7 +278,7 @@ func NewMsgCreateVendorInfo(signer sdk.AccAddress) *types.MsgCreateVendorInfo {
 func NewMsgUpdateVendorInfo(signer sdk.AccAddress) *types.MsgUpdateVendorInfo {
 	return &types.MsgUpdateVendorInfo{
 		Creator:              signer.String(),
-		VendorID:             int32(testconstants.VendorID1),
+		VendorID:             testconstants.VendorID1,
 		CompanyLegalName:     testconstants.CompanyLegalName + "/updated",
 		CompanyPrefferedName: testconstants.CompanyPreferredName + "/updated",
 		VendorName:           testconstants.VendorName + "/updated",
