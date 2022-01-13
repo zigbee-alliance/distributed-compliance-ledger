@@ -118,17 +118,18 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 		name string
 		msg  MsgCertifyModel
 		err  error
-	}{{
-		name: "valid address",
-		msg: MsgCertifyModel{
-			Signer:                sample.AccAddress(),
-			SoftwareVersionString: testconstants.SoftwareVersionString,
-			Pid:                   1,
-			Vid:                   1,
-			CertificationDate:     testconstants.CertificationDate.Format(time.RFC3339),
-			CertificationType:     testconstants.CertificationType,
+	}{
+		{
+			name: "valid address",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate.Format(time.RFC3339),
+				CertificationType:     testconstants.CertificationType,
+			},
 		},
-	},
 	}
 
 	for _, tt := range negative_tests {

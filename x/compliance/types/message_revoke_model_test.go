@@ -118,17 +118,18 @@ func TestMsgRevokeModel_ValidateBasic(t *testing.T) {
 		name string
 		msg  MsgRevokeModel
 		err  error
-	}{{
-		name: "valid address",
-		msg: MsgRevokeModel{
-			Signer:                sample.AccAddress(),
-			SoftwareVersionString: testconstants.SoftwareVersionString,
-			Pid:                   1,
-			Vid:                   1,
-			RevocationDate:        testconstants.CertificationDate.Format(time.RFC3339),
-			CertificationType:     testconstants.CertificationType,
+	}{
+		{
+			name: "valid address",
+			msg: MsgRevokeModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				Pid:                   1,
+				Vid:                   1,
+				RevocationDate:        testconstants.CertificationDate.Format(time.RFC3339),
+				CertificationType:     testconstants.CertificationType,
+			},
 		},
-	},
 	}
 
 	for _, tt := range negative_tests {
