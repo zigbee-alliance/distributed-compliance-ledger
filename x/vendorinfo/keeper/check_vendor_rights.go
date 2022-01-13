@@ -9,7 +9,7 @@ import (
 )
 
 func checkAddVendorRights(ctx sdk.Context, k Keeper, signer sdk.AccAddress, vid int32) error {
-	// sender must have Vendor role and VendorID to add new model
+	// sender must have Vendor role and VendorID to add a new vendorinfo
 	if !k.dclauthKeeper.HasRole(ctx, signer, dclauthtypes.Vendor) {
 		return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("MsgAddVendorInfo transaction should be "+
 			"signed by an account with the %s role", dclauthtypes.Vendor))
@@ -25,9 +25,15 @@ func checkAddVendorRights(ctx sdk.Context, k Keeper, signer sdk.AccAddress, vid 
 }
 
 func checkUpdateVendorRights(ctx sdk.Context, k Keeper, signer sdk.AccAddress, vid int32) error {
+	// sender must have Vendor role and VendorID to update a vendorinfo
+	if !k.dclauthKeeper.HasRole(ctx, signer, dclauthtypes.Vendor) {
+		return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("MsgUpdateVendorInfo transaction should be "+
+			"signed by an account with the %s role", dclauthtypes.Vendor))
+	}
+
 	// Checks if the the msg creator is the same as the current owner
 	if !k.dclauthKeeper.HasVendorID(ctx, signer, vid) {
-		return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("MsgAddVendorInfo transaction should be "+
+		return sdkerrors.Wrap(sdkerrors.ErrUnauthorized, fmt.Sprintf("MsgUpdateVendorInfo transaction should be "+
 			"signed by a vendor account associated with the vendorID %v ", vid))
 	}
 
