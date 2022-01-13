@@ -65,13 +65,13 @@ type TestSetup struct {
 	Handler       sdk.Handler
 	// Querier     sdk.Querier
 	Vendor   sdk.AccAddress
-	VendorID uint64
+	VendorID int32
 }
 
 func (setup *TestSetup) AddAccount(
 	accAddress sdk.AccAddress,
 	roles []dclauthtypes.AccountRole,
-	vendorID uint64,
+	vendorID int32,
 ) {
 	for _, role := range roles {
 		setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, role).Return(true)
@@ -87,7 +87,7 @@ func Setup(t *testing.T) TestSetup {
 	keeper, ctx := testkeeper.VendorinfoKeeper(t, dclauthKeeper)
 
 	vendor := GenerateAccAddress()
-	vendorID := uint64(testconstants.VendorID1)
+	vendorID := int32(testconstants.VendorID1)
 
 	setup := TestSetup{
 		T:             t,
@@ -200,7 +200,7 @@ func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
 	}
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, int32(testconstants.VendorID2))
 
 	// update existing vendorinfo by vendor with another VendorID
 	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(anotherVendor)
@@ -256,7 +256,7 @@ func TestHandler_AddVendorInfoByVendorWithAnotherVendorId(t *testing.T) {
 	setup := Setup(t)
 
 	anotherVendor := GenerateAccAddress()
-	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, int32(testconstants.VendorID2))
 
 	// add new vendorinfo
 	vendorinfo := NewMsgCreateVendorInfo(anotherVendor)
