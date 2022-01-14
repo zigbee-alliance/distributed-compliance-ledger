@@ -133,7 +133,7 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, testHouseAccount)
 
 	// Register second TestHouse account
 	secondTestHouse := utils.RandString()
@@ -147,7 +147,7 @@ func ComplianceTestDemo(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, secondTestHouseAccount)
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())

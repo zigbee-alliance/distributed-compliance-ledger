@@ -224,7 +224,7 @@ echo "$result"
 
 test_divider
 
-echo "Certify revoked Model with VID: $vid PID: $pid from the past"
+echo "Certify Model with VID: $vid PID: $pid2 for Matter"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --certificationType="$certification_type_matter" --certificationDate="$certification_date" --reason "$certification_reason" --from $zb_account --yes)
@@ -244,6 +244,11 @@ test_divider
 pid3=$RANDOM
 sv3=$RANDOM
 svs3=$RANDOM
+
+echo "Add Model and a New Model Version with VID: $vid PID: $pid3 SV: $sv3"
+create_model_and_version $vid $pid3 $sv3 $svs3 $vendor_account
+
+test_divider
 
 echo "Revoke Certification for uncertificate Model with VID: $vid PID: $pid3"
 revocation_date="2021-02-02T02:20:20Z"
