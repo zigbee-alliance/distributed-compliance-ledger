@@ -236,6 +236,32 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
 			},
 		},
+		{
+			name: "minimal pid, vid values",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: "1",
+				Pid:                   1,
+				Vid:                   1,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SoftwareVersion:       0,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+			},
+		},
+		{
+			name: "max pid, vid values",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				SoftwareVersionString: "1",
+				Pid:                   65535,
+				Vid:                   65535,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				SoftwareVersion:       0,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+			},
+		},
 	}
 
 	for _, tt := range negative_tests {
