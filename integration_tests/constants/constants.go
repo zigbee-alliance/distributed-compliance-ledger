@@ -15,14 +15,25 @@
 package testconstants
 
 import (
-	"time"
-
+	"github.com/cosmos/cosmos-sdk/codec"
+	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/tendermint/tendermint/crypto"
-	"github.com/tendermint/tendermint/crypto/secp256k1"
 )
 
+func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
+	var pk cryptotypes.PubKey
+	if err := cdc.UnmarshalInterfaceJSON([]byte(pkStr), &pk); err != nil {
+		panic(err)
+	}
+	return pk
+}
+
 var (
+	// default context
+	// TODO issue 99: design test context better.
+	defEncConfig = simapp.MakeTestEncodingConfig()
+
 	// Base constants.
 	JackAccount  = "jack"
 	AliceAccount = "alice"
@@ -34,13 +45,13 @@ var (
 	EmptyString  = ""
 
 	// Model Info.
-	VID                                        uint16 = 1
+	Vid                                        int32  = 1
 	VendorName                                        = "Vendor Name"
 	CompanyLegalName                                  = "Legal Company Name"
 	CompanyPreferredName                              = "Company Preferred Name"
-	VendorLandingPageURL                              = "https://www.example.com"
-	PID                                        uint16 = 22
-	DeviceTypeID                               uint16 = 12345
+	VendorLandingPageUrl                              = "https://www.example.com"
+	Pid                                        int32  = 22
+	DeviceTypeId                               int32  = 12345
 	Version                                           = "1.0"
 	ProductName                                       = "Device Name"
 	ProductLabel                                      = "Product Label and/or Product Description"
@@ -49,25 +60,25 @@ var (
 	SoftwareVersionString                             = "1.0"
 	HardwareVersion                            uint32 = 21
 	HardwareVersionString                             = "2.1"
-	CDVersionNumber                            uint16 = 312
+	CdVersionNumber                            int32  = 312
 	FirmwareDigests                                   = "Firmware Digest String"
 	Revoked                                           = false
 	SoftwareVersionValid                              = true
-	OtaURL                                            = "https://ota.firmware.com"
+	OtaUrl                                            = "https://ota.firmware.com"
 	OtaFileSize                                uint64 = 12345678
 	OtaChecksum                                       = "2fd4e1c67a2d28fced849ee1bb76e7391b93eb12" //nolint:lll
-	OtaChecksumType                            uint16 = 1
+	OtaChecksumType                            int32  = 1
 	OtaBlob                                           = "OTABlob Text"
-	CommissioningCustomFlow                    uint8  = 1
-	CommissioningCustomFlowURL                        = "https://sampleflowurl.dclmodel"
+	CommissioningCustomFlow                    int32  = 1
+	CommissioningCustomFlowUrl                        = "https://sampleflowurl.dclmodel"
 	CommissioningModeInitialStepsHint          uint32 = 2
 	CommissioningModeInitialStepsInstruction          = "commissioningModeInitialStepsInstruction details"
 	CommissioningModeSecondaryStepsHint        uint32 = 3
 	CommissioningModeSecondaryStepsInstruction        = "commissioningModeSecondaryStepsInstruction steps"
-	ReleaseNotesURL                                   = "https://url.releasenotes.dclmodel"
-	UserManualURL                                     = "https://url.usermanual.dclmodel"
-	SupportURL                                        = "https://url.supporturl.dclmodel"
-	ProductURL                                        = "https://url.producturl.dclmodel"
+	ReleaseNotesUrl                                   = "https://url.releasenotes.dclmodel"
+	UserManualUrl                                     = "https://url.usermanual.dclmodel"
+	SupportUrl                                        = "https://url.supporturl.dclmodel"
+	ProductUrl                                        = "https://url.producturl.dclmodel"
 	ChipBlob                                          = "Chip Blob Text"
 	VendorBlob                                        = "Vendor Blob Text"
 	MinApplicableSoftwareVersion               uint32 = 1
@@ -75,37 +86,49 @@ var (
 	Owner                                             = Address1
 
 	// Compliance.
-	CertificationDate = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	RevocationDate    = time.Date(2020, 3, 3, 3, 30, 0, 0, time.UTC)
+	CertificationDate = "2020-01-01T00:00:00Z"
+	RevocationDate    = "2020-03-03T03:30:00Z"
 	Reason            = "Some Reason"
 	RevocationReason  = "Some Reason"
 	CertificationType = "zigbee"
 
 	// Testing Result.
 	TestResult = "http://test.result.com"
-	TestDate   = time.Date(2020, 2, 2, 2, 0, 0, 0, time.UTC)
+	TestDate   = "2020-02-02T02:00:00Z"
 
 	//
-	Address1, _              = sdk.AccAddressFromBech32("cosmos1p72j8mgkf39qjzcmr283w8l8y9qv30qpj056uz")
-	Address2, _              = sdk.AccAddressFromBech32("cosmos1j8x9urmqs7p44va5p4cu29z6fc3g0cx2c2vxx2")
-	Address3, _              = sdk.AccAddressFromBech32("cosmos1j7tc5f4f54fd8hns42nsavzhadr0gchddz6vfl")
-	VendorID1         uint16 = 1000
-	VendorID2         uint16 = 2000
-	VendorID3         uint16 = 3000
-	Pubkey1Str               = "cosmospub1addwnpepq28rlfval9n8khmgqz55mlfwn4rlh0jk80k9n7fvtu4g4u37qtvry76ww9h"
-	PubKey1, _               = sdk.GetAccPubKeyBech32(Pubkey1Str)
-	PubKey2Str               = "cosmospub1addwnpepq086aynq08ey3nyhdvd3nma5fqyh00yuqtwzz06g6juqaqclcpqvcft9yng"
-	PubKey2, _               = sdk.GetAccPubKeyBech32(PubKey2Str)
-	PubKey3Str               = "cosmospub1addwnpepqwsq3gh4k5xat4n6s0e3murz4xgmwu9jv9wl0zwhp709f2eyn5ljv8z60zn"
-	PubKey3, _               = sdk.GetAccPubKeyBech32(PubKey3Str)
-	Signer                   = Address1
-	ValidatorPubKey1         = "cosmosvalconspub1zcjduepqdmmjdfyvh2mrwl8p8wkwp23kh8lvjrd9u45snxqz6te6y6lwk6gqts45r3"
-	ValidatorPubKey2         = "cosmosvalconspub1zcjduepqdtar5ynhrhc78mymwg5sqksdnfafqyqu6sar3gg745u6dsw32krscaqv8u"
-	ValidatorAddress1        = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey1).Address())
-	ValidatorAddress2        = sdk.ConsAddress(sdk.MustGetConsPubKeyBech32(ValidatorPubKey2).Address())
-	ValidHTTPSURL            = "https://valid.url.com"
-	ValidHTTPURL             = "http://valid.url.com"
-	NotAValidURL             = "not a valid url"
+	Address1, _       = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
+	Address2, _       = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
+	Address3, _       = sdk.AccAddressFromBech32("cosmos12r9vsus5js32pvnayt33zhcd4y9wcqcly45gr9")
+	VendorID1   int32 = 1000
+	VendorID2   int32 = 2000
+	VendorID3   int32 = 3000
+	PubKey1           = strToPubKey(
+		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aw1XXHQ8i6JVNKsFQ9eQArJVt2GXEO0EBFsQL6XJ5BxY"}`,
+		defEncConfig.Marshaler,
+	)
+	PubKey2 = strToPubKey(
+		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"}`,
+		defEncConfig.Marshaler,
+	)
+	PubKey3 = strToPubKey(
+		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A0GnKr6hItYE1A7dzoxNSMwMZuu1zauOLWAqJWen1RzF"}`,
+		defEncConfig.Marshaler,
+	)
+	Signer           = Address1
+	ValidatorPubKey1 = strToPubKey(
+		`{"@type":"/cosmos.crypto.ed25519.PubKey","key":"1e+1/jHGaJi0b2zgCN46eelKCYpKiuTgPN18mL3fzx8="}`,
+		defEncConfig.Marshaler,
+	)
+	ValidatorPubKey2 = strToPubKey(
+		`{"@type":"/cosmos.crypto.ed25519.PubKey","key":"NB8hcdxKYDCaPWR67OiUXUSltZfYYOWYryPDUdbWRlA="}`,
+		defEncConfig.Marshaler,
+	)
+	ValidatorAddress1 = "cosmosvalcons1uks7yvlwqsfyp730w6da64g5fw20d9ynh00k53"
+	ValidatorAddress2 = "cosmosvalcons12tg2p3rjsaczddufmsjjrw9nvhg8wkc4hcz3zw"
+	ValidHTTPSURL     = "https://valid.url.com"
+	ValidHTTPURL      = "http://valid.url.com"
+	NotAValidURL      = "not a valid url"
 )
 
 /*
@@ -174,12 +197,3 @@ zj0EAwIDSQAwRgIhAPq8sXrMDueq9XplZBcbS/3VlTakULzdOlo7PzquUdDnAiEA
 	LeafSubjectKeyID   = "30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
 	LeafSerialNumber   = "143290473708569835418599774898811724528308722063"
 )
-
-func TestAddress() (sdk.AccAddress, crypto.PubKey, string) {
-	key := secp256k1.GenPrivKey()
-	pub := key.PubKey()
-	addr := sdk.AccAddress(pub.Address())
-	pubStr := sdk.MustBech32ifyAccPub(pub)
-
-	return addr, pub, pubStr
-}

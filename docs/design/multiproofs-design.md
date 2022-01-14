@@ -1,5 +1,14 @@
 # Multiproofs design
 
+**Multi-proofs are currently not supported in Cosmos SDK and hence DCL.**
+
+**Moreover, even common single proofs are currently not supported in the default CLI
+based on Cosmos SDK without a light client proxy (see [#6563](https://github.com/cosmos/cosmos-sdk/issues/6563))**
+
+**Taking into account proposed deployment configuration (see [deployment](../deployment.png)), 
+where all queries are done to either owned or fully trusted nodes (usually observers), there is no real need
+for state proofs (including multi-proofs).**
+
 ## How queries in Cosmos work
 
 - Client (CIL or rest) makes a `QueryStore` or `QueryWithData`  call to CosmosSDK.

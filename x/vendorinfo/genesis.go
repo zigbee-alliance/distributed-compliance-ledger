@@ -1,65 +1,27 @@
-// Copyright 2020 DSR Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package vendorinfo
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
 
-type GenesisState struct {
-	VendorInfoRecords []VendorInfo `json:"vendor_info_records"`
-}
-
-func NewGenesisState() GenesisState {
-	return GenesisState{VendorInfoRecords: []VendorInfo{}}
-}
-
-//nolint:cognit
-func ValidateGenesis(data GenesisState) error {
-	for _, record := range data.VendorInfoRecords {
-		err := validator.ValidateAdd(record)
-		if err != nil {
-			return err
-		}
+// InitGenesis initializes the capability module's state from a provided genesis
+// state.
+func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
+	// Set all the vendorInfo
+	for _, elem := range genState.VendorInfoList {
+		k.SetVendorInfo(ctx, elem)
 	}
-	return nil
+	// this line is used by starport scaffolding # genesis/module/init
 }
 
-func DefaultGenesisState() GenesisState {
-	return NewGenesisState()
-}
+// ExportGenesis returns the capability module's exported genesis.
+func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
+	genesis := types.DefaultGenesis()
 
-func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-	for _, record := range data.VendorInfoRecords {
-		keeper.SetVendorInfo(ctx, record)
-	}
+	genesis.VendorInfoList = k.GetAllVendorInfo(ctx)
+	// this line is used by starport scaffolding # genesis/module/export
 
-	return []abci.ValidatorUpdate{}
-}
-
-func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	var records []VendorInfo
-
-	k.IterateVendorInfos(ctx, func(model types.VendorInfo) (stop bool) {
-		records = append(records, model)
-
-		return false
-	})
-
-	return GenesisState{VendorInfoRecords: records}
+	return genesis
 }

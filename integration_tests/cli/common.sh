@@ -15,7 +15,14 @@
 
 set -euo pipefail
 
+# common constants
+node_p2p_port=26670
+node_client_port=26671
+chain_id="dclchain"
+node0conn="tcp://192.167.10.2:26657"
+docker_network="distributed-compliance-ledger_localnet"
 passphrase="test1234"
+LOCALNET_DIR=".localnet"
 
 # RED=`tput setaf 1`
 # GREEN=`tput setaf 2`
@@ -24,8 +31,12 @@ GREEN=""
 RED=""
 RESET=""
 
+check_env() {
+    jq --version || (echo "jq tool is not found" && exit 1)
+}
+
 random_string() {
-  local __resultvar=$1
+  local __resultvar="$1"
   local length=${2:-6} # Default is 6
   # Newer mac might have shasum instead of sha1sum
   if  command -v shasum &> /dev/null
@@ -36,91 +47,123 @@ random_string() {
   fi
 }
 
+DEF_OUTPUT_MODE=json
+
+
+# json: pretty (indented) json
+# raw or otherwise: raw
+_check_response() {
+    local _result="$1"
+    local _expected_string="$2"
+    local _mode="${3:-$DEF_OUTPUT_MODE}"
+
+    if [[ "$_mode" == "json" ]]; then
+        if [[ -n "$(echo "$_result" | jq | grep "$_expected_string" 2>/dev/null)" ]]; then
+            echo true
+            return
+        fi
+    else
+        if [[ -n "$(echo "$_result" | grep "$_expected_string" 2>/dev/null)" ]]; then
+            echo true
+            return
+        fi
+    fi
+
+    echo false
+}
+
 check_response() {
-  result=$1
-  expected_string=$2
-  if [[ $result != *$expected_string* ]]; then
-    echo "${GREEN}ERROR:${RESET} command failed. The expected string: $expected_string not found in the result: $result"
-    exit 1
-  fi
+    local _result="$1"
+    local _expected_string="$2"
+    local _mode="${3:-$DEF_OUTPUT_MODE}"
+
+    if [[ "$(_check_response "$_result" "$_expected_string" "$_mode")" != true ]]; then
+        echo "${GREEN}ERROR:${RESET} command failed. The expected string: '$_expected_string' not found in the result: $_result"
+        exit 1
+    fi
 }
 
 check_response_and_report() {
-  result=$1
-  expected_string=$2
-  check_response "$result" "$expected_string"
-  echo "${GREEN}SUCCESS: ${RESET} Result contains expected substring: $expected_string"
+    local _result="$1"
+    local _expected_string="$2"
+    local _mode="${3:-$DEF_OUTPUT_MODE}"
+
+    check_response "$_result" "$_expected_string" "$_mode"
+    echo "${GREEN}SUCCESS: ${RESET} Result contains expected substring: '$_expected_string'"
 }
 
 response_does_not_contain() {
-  result=$1
-  unexpected_string=$2
-  if [[ $result == *$unexpected_string* ]];then
-    echo "ERROR: command failed. The unexpected string: $unexpected_string found in the result: $result"
-    exit 1
-  fi
-  echo "${GREEN}SUCCESS: ${RESET}Result does not contain unexpected substring: $unexpected_string"
+    local _result="$1"
+    local _unexpected_string="$2"
+    local _mode="${3:-$DEF_OUTPUT_MODE}"
+
+    if [[ "$(_check_response "$_result" "$_unexpected_string" "$_mode")" == true ]]; then
+        echo "ERROR: command failed. The unexpected string: '$_unexpected_string' found in the result: $_result"
+        exit 1
+    fi
+
+    echo "${GREEN}SUCCESS: ${RESET}Result does not contain unexpected substring: '$_unexpected_string'"
 }
 
 create_new_account(){
-  local  __resultvar=$1
+  local __resultvar="$1"
   random_string name
   eval $__resultvar="'$name'"
 
-  roles=$2
+  local roles="$2"
 
   echo "Account name: $name"
 
   echo "Generate key for $name"
-  echo $passphrase | dclcli keys add "$name"
+  (echo $passphrase; echo $passphrase) | dcld keys add "$name"
 
-  address=$(dclcli keys show $name -a)
-  pubkey=$(dclcli keys show $name -p)
+  address=$(echo $passphrase | dcld keys show $name -a)
+  pubkey=$(echo $passphrase | dcld keys show $name -p)
 
   echo "Jack proposes account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
-  check_response "$result" "\"success\": true"
+  result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=$roles --from jack --yes)
+  check_response "$result" "\"code\": 0"
   echo "$result"
 
   echo "Alice approves account for \"$name\" with roles: \"$roles\""
-  result=$(echo $passphrase | dclcli tx auth approve-add-account --address="$address" --from alice --yes)
-  check_response "$result" "\"success\": true"
+  result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
+  check_response "$result" "\"code\": 0"
   echo "$result"
 }
 
 create_new_vendor_account(){
 
-  _name=$1
-  _vid=$2
+  local _name="$1"
+  local _vid="$2"
 
-  echo $passphrase | dclcli keys add "$_name"
-  address=$(dclcli keys show $_name -a)
-  pubkey=$(dclcli keys show $_name -p)
+  echo $passphrase | dcld keys add "$_name"
+  address=$(echo $passphrase | dcld keys show $_name -a)
+  pubkey=$(echo $passphrase | dcld keys show $_name -p)
 
   test_divider
 
   echo "Jack proposes account for \"$_name\" with Vendor role"
-  result=$(echo $passphrase | dclcli tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
-  check_response "$result" "\"success\": true"
+  result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
+  check_response "$result" "\"code\": 0"
 
   test_divider
 
   echo "Alice approves account for \"$_name\" with Vendor role"
-  result=$(echo $passphrase | dclcli tx auth approve-add-account --address="$address" --from alice --yes)
-  check_response "$result" "\"success\": true"
+  result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
+  check_response "$result" "\"code\": 0"
 
 }
 
 create_model_and_version() {
-  _vid=$1
-  _pid=$2
-  _softwareVersion=$3
-  _softwareVersionString=$4
-  _user_address=$5
-  result=$(echo 'test1234' | dclcli tx model add-model --vid=$_vid --pid=$_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$_user_address --yes)
-  check_response "$result" "\"success\": true"
-  result=$(echo 'test1234' | dclcli tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$_vid --pid=$_pid --softwareVersion=$_softwareVersion --softwareVersionString=$_softwareVersionString --from=$_user_address --yes)
-  check_response "$result" "\"success\": true"
+  local _vid="$1"
+  local _pid="$2"
+  local _softwareVersion="$3"
+  local _softwareVersionString="$4"
+  local _user_address="$5"
+  result=$(echo "$passphrase" | dcld tx model add-model --vid=$_vid --pid=$_pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$_user_address --yes)
+  check_response "$result" "\"code\": 0"
+  result=$(echo "$passphrase" | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$_vid --pid=$_pid --softwareVersion=$_softwareVersion --softwareVersionString=$_softwareVersionString --from=$_user_address --yes)
+  check_response "$result" "\"code\": 0"
 }
 
 test_divider() {
@@ -129,3 +172,37 @@ test_divider() {
   echo ""
 }
 
+wait_for_height() {
+  local target_height=${1:-1} # Default is 1
+  local wait_time=${2:-10}    # In seconds, default - 10
+
+  local _output=${DETAILED_OUTPUT_TARGET:-/dev/stdout}
+
+  local waited=0
+  local wait_interval=1
+
+  while true; do
+    sleep "${wait_interval}"
+    waited=$((waited + wait_interval))
+
+    current_height="$(dcld status | jq | grep latest_block_height | awk -F'"' '{print $4}')"
+
+    if [[ -z "$current_height" ]]; then
+      echo "No height found in status" &>${_output}
+      exit 1
+    fi
+
+    if ((current_height >= target_height)); then
+      echo "Height $target_height is reached in $waited seconds" &>${_output}
+      break
+    fi
+
+    if ((waited > wait_time)); then
+      echo "Height $target_height is not reached in $wait_time seconds" &>${_output}
+      exit 1
+    fi
+
+    echo "Waiting for height: $target_height... Current height: $current_height, " \
+      "wait time: $waited, time limit: $wait_time." &>${_output}
+  done
+}

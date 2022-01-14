@@ -1,90 +1,42 @@
-// Copyright 2020 DSR Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package compliance
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/internal/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
 
-type GenesisState struct {
-	ComplianceInfoRecords []ComplianceInfo `json:"compliance_model_records"`
-}
-
-func NewGenesisState() GenesisState {
-	return GenesisState{ComplianceInfoRecords: []ComplianceInfo{}}
-}
-
-func ValidateGenesis(data GenesisState) error {
-	for _, record := range data.ComplianceInfoRecords {
-		if record.VID == 0 {
-			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid CertifiedModelRecord: value: %d. "+
-					"Error: Invalid VID: it cannot be 0", record.VID))
-		}
-
-		if record.PID == 0 {
-			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid CertifiedModelRecord: value: %d. "+
-					"Error: Invalid PID: it cannot be 0", record.PID))
-		}
-
-		if record.SoftwareVersionCertificationStatus > types.CodeRevoked {
-			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid CertifiedModelRecord: value: %d."+
-					" Error: Invalid SoftwareVersionCertificationStatus: It should be either 0,1,2 or 3", record.PID))
-		}
-
-		if record.Date.IsZero() {
-			return sdk.ErrUnknownRequest("Invalid Date: it cannot be empty")
-		}
-
-		if record.CertificationType != "" && IsValidCertificationType(record.CertificationType) {
-			return sdk.ErrUnknownRequest(
-				fmt.Sprintf("Invalid CertifiedModelRecord: value: %v."+
-					" Error: Invalid CertificationType: "+
-					"unknown type; supported types: [%s]", record.CertificationType, types.ZigbeeCertificationType))
-		}
+// InitGenesis initializes the capability module's state from a provided genesis
+// state.
+func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) {
+	// Set all the complianceInfo
+	for _, elem := range genState.ComplianceInfoList {
+		k.SetComplianceInfo(ctx, elem)
 	}
-
-	return nil
-}
-
-func DefaultGenesisState() GenesisState {
-	return NewGenesisState()
-}
-
-func InitGenesis(ctx sdk.Context, keeper Keeper, data GenesisState) []abci.ValidatorUpdate {
-	for _, record := range data.ComplianceInfoRecords {
-		keeper.SetComplianceInfo(ctx, record)
+	// Set all the certifiedModel
+	for _, elem := range genState.CertifiedModelList {
+		k.SetCertifiedModel(ctx, elem)
 	}
-
-	return []abci.ValidatorUpdate{}
+	// Set all the revokedModel
+	for _, elem := range genState.RevokedModelList {
+		k.SetRevokedModel(ctx, elem)
+	}
+	// Set all the provisionalModel
+	for _, elem := range genState.ProvisionalModelList {
+		k.SetProvisionalModel(ctx, elem)
+	}
+	// this line is used by starport scaffolding # genesis/module/init
 }
 
-func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	var records []ComplianceInfo
+// ExportGenesis returns the capability module's exported genesis.
+func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
+	genesis := types.DefaultGenesis()
 
-	k.IterateComplianceInfos(ctx, "", func(deviceCompliance types.ComplianceInfo) (stop bool) {
-		records = append(records, deviceCompliance)
+	genesis.ComplianceInfoList = k.GetAllComplianceInfo(ctx)
+	genesis.CertifiedModelList = k.GetAllCertifiedModel(ctx)
+	genesis.RevokedModelList = k.GetAllRevokedModel(ctx)
+	genesis.ProvisionalModelList = k.GetAllProvisionalModel(ctx)
+	// this line is used by starport scaffolding # genesis/module/export
 
-		return false
-	})
-
-	return GenesisState{ComplianceInfoRecords: records}
+	return genesis
 }

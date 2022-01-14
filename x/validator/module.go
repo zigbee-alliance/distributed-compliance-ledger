@@ -1,149 +1,167 @@
-// Copyright 2020 DSR Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package validator
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/gorilla/mux"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/auth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/client/cli"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/client/rest"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-// type check to ensure the interface is properly implemented.
 var (
 	_ module.AppModule      = AppModule{}
 	_ module.AppModuleBasic = AppModuleBasic{}
 )
 
-// app module Basics object.
-type AppModuleBasic struct{}
+// ----------------------------------------------------------------------------
+// AppModuleBasic
+// ----------------------------------------------------------------------------
 
-func (a AppModuleBasic) Name() string {
-	return ModuleName
+// AppModuleBasic implements the AppModuleBasic interface for the validator module.
+type AppModuleBasic struct {
+	cdc codec.BinaryCodec
 }
 
-func (a AppModuleBasic) RegisterCodec(cdc *codec.Codec) {
-	RegisterCodec(cdc)
+func NewAppModuleBasic(cdc codec.BinaryCodec) AppModuleBasic {
+	return AppModuleBasic{cdc: cdc}
 }
 
-func (a AppModuleBasic) DefaultGenesis() json.RawMessage {
-	return ModuleCdc.MustMarshalJSON(DefaultGenesisState())
+// Name returns the validator module's name.
+func (AppModuleBasic) Name() string {
+	return types.ModuleName
 }
 
-func (a AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
-	var data GenesisState
+func (AppModuleBasic) RegisterCodec(cdc *codec.LegacyAmino) {
+	types.RegisterCodec(cdc)
+}
 
-	err := ModuleCdc.UnmarshalJSON(bz, &data)
-	if err != nil {
-		return err
+func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
+	types.RegisterCodec(cdc)
+}
+
+// RegisterInterfaces registers the module's interface types.
+func (a AppModuleBasic) RegisterInterfaces(reg cdctypes.InterfaceRegistry) {
+	types.RegisterInterfaces(reg)
+}
+
+// DefaultGenesis returns the validator module's default genesis state.
+func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
+	return cdc.MustMarshalJSON(types.DefaultGenesis())
+}
+
+// ValidateGenesis performs genesis state validation for the validator module.
+func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncodingConfig, bz json.RawMessage) error {
+	var genState types.GenesisState
+	if err := cdc.UnmarshalJSON(bz, &genState); err != nil {
+		return fmt.Errorf("failed to unmarshal %s genesis state: %w", types.ModuleName, err)
 	}
-	// Once json successfully marshalled, passes along to genesis.go
-	return ValidateGenesis(data)
+	return genState.Validate()
 }
 
-// Register rest routes.
-func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
-	rest.RegisterRoutes(ctx, rtr, StoreKey)
+// RegisterRESTRoutes registers the validator module's REST service handlers.
+func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Router) {
+	// rest.RegisterHandlers(clientCtx, rtr) // FIXME issue 99: verify
 }
 
-// Get the root query command of this module.
-func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetQueryCmd(StoreKey, cdc)
+// RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
+func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
+	_ = types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
 }
 
-// Get the root tx command of this module.
-func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetTxCmd(StoreKey, cdc)
+// GetTxCmd returns the validator module's root tx command.
+func (a AppModuleBasic) GetTxCmd() *cobra.Command {
+	return cli.GetTxCmd()
 }
 
-//____________________________________________________________________________
+// GetQueryCmd returns the validator module's root query command.
+func (AppModuleBasic) GetQueryCmd() *cobra.Command {
+	return cli.GetQueryCmd(types.StoreKey)
+}
 
-// AppModule implements an application module for the validator module.
+// ----------------------------------------------------------------------------
+// AppModule
+// ----------------------------------------------------------------------------
+
+// AppModule implements the AppModule interface for the validator module.
 type AppModule struct {
 	AppModuleBasic
-	keeper     Keeper
-	authKeeper auth.Keeper
+
+	keeper keeper.Keeper
 }
 
-// NewAppModule creates a new AppModule object.
-func NewAppModule(keeper Keeper, authKeeper auth.Keeper) AppModule {
+func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
 	return AppModule{
-		AppModuleBasic: AppModuleBasic{},
+		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
-		authKeeper:     authKeeper,
 	}
 }
 
 // Name returns the validator module's name.
-func (AppModule) Name() string {
-	return ModuleName
+func (am AppModule) Name() string {
+	return am.AppModuleBasic.Name()
 }
 
-// RegisterInvariants registers the module invariants.
-func (am AppModule) RegisterInvariants(sdk.InvariantRegistry) {}
-
-// Route returns the message routing key for the module.
-func (AppModule) Route() string {
-	return RouterKey
+// Route returns the validator module's message routing key.
+func (am AppModule) Route() sdk.Route {
+	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
 }
 
-// NewHandler returns an sdk.Handler for the module.
-func (am AppModule) NewHandler() sdk.Handler {
-	return NewHandler(am.keeper, am.authKeeper)
+// QuerierRoute returns the validator module's query routing key.
+func (AppModule) QuerierRoute() string { return types.QuerierRoute }
+
+// LegacyQuerierHandler returns the validator module's Querier.
+func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
+	return nil
 }
 
-// QuerierRoute returns the module's querier route name.
-func (AppModule) QuerierRoute() string {
-	return RouterKey
+// RegisterServices registers a GRPC query service to respond to the
+// module-specific GRPC queries.
+func (am AppModule) RegisterServices(cfg module.Configurator) {
+	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
 }
 
-// NewQuerierHandler returns the validator module sdk.Querier.
-func (am AppModule) NewQuerierHandler() sdk.Querier {
-	return NewQuerier(am.keeper)
+// RegisterInvariants registers the validator module's invariants.
+func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+
+// InitGenesis performs the validator module's genesis initialization It returns
+// no validator updates.
+func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.RawMessage) []abci.ValidatorUpdate {
+	var genState types.GenesisState
+	// Initialize global index to index in genesis state
+	cdc.MustUnmarshalJSON(gs, &genState)
+
+	InitGenesis(ctx, am.keeper, genState)
+
+	return []abci.ValidatorUpdate{}
 }
 
-// InitGenesis performs genesis initialization for the module. It returns no validator updates.
-func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
-	var genesisState GenesisState
-
-	ModuleCdc.MustUnmarshalJSON(data, &genesisState)
-
-	return InitGenesis(ctx, am.keeper, genesisState)
+// ExportGenesis returns the validator module's exported genesis state as raw JSON bytes.
+func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
+	genState := ExportGenesis(ctx, am.keeper)
+	return cdc.MustMarshalJSON(genState)
 }
 
-// ExportGenesis returns the exported genesis state as raw bytes for the module.
-func (am AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
-	gs := ExportGenesis(ctx, am.keeper)
+// ConsensusVersion implements ConsensusVersion.
+func (AppModule) ConsensusVersion() uint64 { return 2 }
 
-	return ModuleCdc.MustMarshalJSON(gs)
-}
-
-// BeginBlock returns the begin blocker for the module.
+// BeginBlock executes all ABCI BeginBlock logic respective to the validator module.
 func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
-	am.keeper.BeginBlocker(ctx, req)
+	BeginBlocker(ctx, req, am.keeper)
 }
 
-// EndBlock returns the end blocker for the module. It returns no validator updates.
+// EndBlock executes all ABCI EndBlock logic respective to the validator module.
 func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	return am.keeper.BlockValidatorUpdates(ctx)
+	return EndBlocker(ctx, am.keeper)
 }

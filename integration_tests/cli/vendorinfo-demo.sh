@@ -28,19 +28,43 @@ create_new_vendor_account $second_vendor_account $vid2
 
 test_divider
 
+# Query non existent
+echo "Query non existant vendorinfo"
+result=$(dcld query vendorinfo vendor --vid=$vid)
+check_response "$result" "Not Found"
+echo "$result"
+
+test_divider
+
+echo "Request all vendor info must be empty"
+result=$(dcld query vendorinfo all-vendors)
+check_response "$result" "\[\]"
+echo "$result"
+
+test_divider
+
 # Create a vendor info record
 echo "Create VendorInfo Record for VID: $vid"
 companyLegalName="XYZ IOT Devices Inc"
 vendorName="XYZ Devices"
-result=$(echo "test1234" | dclcli tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
 # Query vendor info record
 echo "Verify if VendorInfo Record for VID: $vid is present or not"
-result=$(dclcli query vendorinfo vendor --vid=$vid)
+result=$(dcld query vendorinfo vendor --vid=$vid)
+check_response "$result" "\"vendorID\": $vid"
+check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
+check_response "$result" "\"vendorName\": \"$vendorName\""
+echo "$result"
+
+test_divider
+
+echo "Request all vendor info"
+result=$(dcld query vendorinfo all-vendors)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""
@@ -52,15 +76,15 @@ test_divider
 echo "Update vendor info record for VID: $vid"
 companyLegalName="ABC Subsidiary Corporation"
 vendorLandingPageURL="https://www.w3.org/"
-result=$(echo "test1234" | dclcli tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorLandingPageURL=$vendorLandingPageURL --vendorName="$vendorName" --from=$vendor_account --yes)
-check_response "$result" "\"success\": true"
+result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorLandingPageURL=$vendorLandingPageURL --vendorName="$vendorName" --from=$vendor_account --yes)
+check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
 # Query updated vendor info record
 echo "Verify if VendorInfo Record for VID: $vid is updated or not"
-result=$(dclcli query vendorinfo vendor --vid=$vid)
+result=$(dcld query vendorinfo vendor --vid=$vid)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""
@@ -71,15 +95,15 @@ test_divider
 
 # Create a vendor info record from a vendor account belonging to another vendor_account
 vid1=$RANDOM
-result=$(echo "test1234" | dclcli tx vendorinfo add-vendor --vid=$vid1 --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx vendorinfo add-vendor --vid=$vid1 --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$vendor_account --yes 2>&1) || true
 echo "$result"
-check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorID $vid1"
+check_response_and_report "$result" "transaction should be signed by a vendor account associated with the vendorID $vid1"
 
 test_divider
 
 # Update a vendor info record from a vendor account belonging to another vendor_account
-result=$(echo "test1234" | dclcli tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$second_vendor_account --yes 2>&1) || true
+result=$(echo "test1234" | dcld tx vendorinfo update-vendor --vid=$vid --companyLegalName="$companyLegalName" --vendorName="$vendorName" --from=$second_vendor_account --yes 2>&1) || true
 echo "$result"
-check_response_and_report "$result" "transaction should be signed by an vendor account associated with the vendorID $vid"
+check_response_and_report "$result" "transaction should be signed by a vendor account associated with the vendorID $vid"
 
 test_divider

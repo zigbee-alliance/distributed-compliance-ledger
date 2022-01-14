@@ -1,0 +1,105 @@
+name: Go
+#name: verify TODO rename (requires repo settings update)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, issue-99-cosmos-upgrade-v0.44 ]
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    name: Build  # TODO remove (requires repo settings update)
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Build
+        run: true
+
+  unit:
+    name: Unit tests  # TODO remove (requires repo settings update)
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Run units
+        run: make test
+
+  integration:
+    name: Integration tests  # remove (requires repo settings update)
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Run integration tests
+        run: bash integration_tests/run-all.sh
+
+  lint:
+    name: Lint  # TODO remove (requires repo settings update)
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.43
+          args: --timeout 5m0s
+
+  license:
+    name: License  # TODO remove (requires repo settings update)
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Set up Go 1.x
+        if: false # TODO issue 99
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+
+      - name: Get google/addlicense
+        if: false # TODO issue 99
+        run: go get -u github.com/google/addlicense
+
+      - name: Check out code into the Go module directory
+        if: false # TODO issue 99
+        uses: actions/checkout@v2
+
+      - name: Check license
+        if: false # TODO issue 99
+        run: make license-check

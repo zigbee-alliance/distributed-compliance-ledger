@@ -15,7 +15,8 @@
 
 DEBUG="${DEBUG:-}"
 
-NODE_IP="${1:-0.0.0.0:26657}"
+NODE_HOST="${1:-0.0.0.0}"
+NODE_PORT="${2:-26657}"
 
 set -eu
 set -o pipefail
@@ -25,12 +26,12 @@ export PATH="$PATH:/usr/bin"
 echo "Checking the node 'sync_info.latest_block_height' value is not increasing..."
 
 echo "sync_info.latest_block_height Try 1"
-check1="$(dclcli status --node "$NODE_IP" | grep latest_block_height)"
+check1="$(dcld status --node "tcp://$NODE_HOST:$NODE_PORT" | grep latest_block_height)"
 
 echo "sync_info.latest_block_height Try 2"
 # TODO it should depend on empty block creation setting value
 sleep 6
-check2="$(dclcli status --node "$NODE_IP" | grep latest_block_height)"
+check2="$(dcld status --node "tcp://$NODE_HOST:$NODE_PORT" | grep latest_block_height)"
 
 if [[ "$check1" == "$check2" ]]; then
     echo "Error: sync_info.latest_block_height value is not increasing..."
@@ -39,6 +40,6 @@ fi
 
 # TODO improve
 echo "Checking the node is participating in consensus..."
-dclcli tendermint-validator-set | grep -q address
+dcld query tendermint-validator-set | grep -q address
 
 echo "Passed"

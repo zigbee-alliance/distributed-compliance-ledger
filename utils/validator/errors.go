@@ -15,12 +15,18 @@
 package validator
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 const (
-	Codespace                  sdk.CodespaceType = "Validation"
-	CodeRequiredFieldMissing   sdk.CodeType      = 900
-	CodeFieldMaxLengthExceeded sdk.CodeType      = 901
-	CodeFieldNotValid          sdk.CodeType      = 902
+	Codespace = "validation"
+)
+
+var (
+	ErrRequiredFieldMissing     = sdkerrors.Register(Codespace, 900, "required field missing")
+	ErrFieldMaxLengthExceeded   = sdkerrors.Register(Codespace, 901, "field max length exceeded")
+	ErrFieldNotValid            = sdkerrors.Register(Codespace, 902, "field not valid")
+	ErrFieldLowerBoundViolated  = sdkerrors.Register(Codespace, 903, "field lower bound violated")
+	ErrFieldUpperBoundViolated  = sdkerrors.Register(Codespace, 904, "field upper bound violated")
+	ErrFieldMinLengthNotReached = sdkerrors.Register(Codespace, 905, "field min length not reached")
 )
