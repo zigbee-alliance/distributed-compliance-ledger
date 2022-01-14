@@ -33,13 +33,17 @@ create_new_account zb_account "CertificationCenter"
 echo "Create other CertificationCenter account"
 create_new_account second_zb_account "CertificationCenter"
 
+certification_type="zigbee"
+certification_type_matter="matter"
+
 # Body
 
 pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
-certification_type="zigbee"
-certification_type_matter="matter"
+
+echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
+create_model_and_version $vid $pid $sv $svs $vendor_account
 
 test_divider
 
@@ -191,20 +195,6 @@ result=$(dcld query compliance all-provisional-models)
 check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
-create_model_and_version $vid $pid $sv $svs $vendor_account
-
-test_divider
-
-echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
-testing_result="http://first.place.com"
-test_date="2020-11-24T10:00:00Z"
-result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
-check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider

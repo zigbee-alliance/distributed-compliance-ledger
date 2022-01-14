@@ -353,13 +353,12 @@ Gets all Model Software Versions for the given `vid` and `pid` combination.
 #### ADD_TEST_RESULT
 **Status: Implemented**
 
-Submits result of a compliance testing for the given device (`vid`, `pid`, `softwareVersion` and `softwareVersionString`).
+Submits result of a compliance testing for the given Model Version (`vid`, `pid`, `softwareVersion` and `softwareVersionString`).
 The test result can be a blob of data or a reference (URL) to an external storage.
 
-The corresponding Model Info must be present on ledger.
+The corresponding Model Version must be present on ledger.
 
-Multiple test results (potentially from different test houses) can be added for the same device type. 
-
+Multiple test results (potentially from different test houses) can be added for the same Model Version.
 
 The test result is immutable and can not be deleted or removed after submitting. 
 Another test result can be submitted instead.
@@ -408,17 +407,20 @@ Gets all test results.
 #### CERTIFY_MODEL
 **Status: Implemented**
 
-Attests compliance of the Model to the ZB or Matter standard.
+Attests compliance of the Model Version to the ZB or Matter standard.
 
 `REVOKE_MODEL_CERTIFICATION` should be used for revoking (disabling) the compliance.
-It's possible to call `CERTIFY_MODEL` for revoked models to enable them back. 
+It's possible to call `CERTIFY_MODEL` for revoked model versions to enable them back. 
 
-The corresponding Model Info and test results must be present on ledger.
+The corresponding Model Version must be present on the ledger.
 
 It must be called for every compliant device for use cases where compliance 
 is tracked on ledger.
-It can be used by use cases where only revocation is tracked on the ledger to remove a Model
+For such use cases the corresponding test results must be present on the ledger.
+
+It can be used for use cases where only revocation is tracked on the ledger to remove a Model Version
 from the revocation list.
+For such use cases the corresponding test results are not required to be on the ledger.
  
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -439,10 +441,9 @@ from the revocation list.
 #### REVOKE_MODEL_CERTIFICATION
 **Status: Implemented**
 
-Revoke compliance of the Model to the ZB or Matter standard.
+Revoke compliance of the Model Version to the ZB or Matter standard.
 
-The corresponding Model Info and test results are not required to be on the ledger 
-to be used in cases where revocation only is tracked on the ledger.
+The corresponding Model Version must be present on the ledger. The corresponding test results are not required to be on the ledger.
 
 It can be used in cases where every compliance result 
 is written on the ledger (`CERTIFY_MODEL` was called), or
@@ -467,9 +468,9 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 #### PROVISION_MODEL
 **Status: Implemented**
 
-Sets provisional state for the Model.
+Sets provisional state for the Model Version.
 
-The corresponding Model Info and test results are not required to be on the ledger.
+The corresponding Model Version and test results are not required to be on the ledger.
 
 Can not be set if there is already a certification record on the ledger (certified or revoked).
  
@@ -494,13 +495,13 @@ Can not be set if there is already a certification record on the ledger (certifi
 #### GET_CERTIFIED_MODEL
 **Status: Implemented**
 
-Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and `certificationType`) is compliant to `certificationType` standards. 
+Gets a structure containing the Model Version / Certification Type key (`vid`, `pid`, `softwareVersion`, `certificationType`) and a flag (`value`) indicating whether the given Model Version is compliant to `certificationType` standard. 
 
 This is the aggregation of compliance and
 revocation information for every vid/pid/softwareVersion/certificationType. It should be used in cases where compliance 
 is tracked on the ledger.
 
-This function responds with `NotFound` (404 code) if compliance information is not found in store.
+This function responds with `NotFound` (404 code) if Model Version was never certified earlier.
 
 This function returns `true` if compliance information is found on ledger and it's in `certified` state. 
 
@@ -520,12 +521,12 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 #### GET_REVOKED_MODEL
 **Status: Implemented**
 
-Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`) is revoked. 
+Gets a structure containing the Model Version / Certification Type key (`vid`, `pid`, `softwareVersion`, `certificationType`) and a flag (`value`) indicating whether the given Model Version is revoked for `certificationType` standard. 
 
 It contains information about revocation only, so it should be used in cases
  where only revocation is tracked on the ledger.
 
-This function responds with `NotFound` (404 code) if compliance information is not found in store.
+This function responds with `NotFound` (404 code) if Model Version was never certified or revoked earlier.
 
 This function returns `true` if compliance information is found on ledger and it's in `revoked` state. 
 
@@ -544,9 +545,9 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 #### GET_PROVISIONAL_MODEL
 **Status: Implemented**
 
-Gets a boolean if the given Model (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`) is in provisional state. 
+Gets a structure containing the Model Version / Certification Type key (`vid`, `pid`, `softwareVersion`, `certificationType`) and a flag (`value`) indicating whether the given Model Version is in provisional state for `certificationType` standard. 
 
-This function responds with `NotFound` (404 code) if compliance information is not found in store.
+This function responds with `NotFound` (404 code) if Model Version was never provisioned or certified earlier.
 
 This function returns `true` if compliance information is found on the ledger and it's in `provisional` state. 
 
@@ -565,10 +566,10 @@ You can use `GET_COMPLICE_INFO` method to get the whole compliance information.
 #### GET_COMPLIANCE_INFO
 **Status: Implemented**
 
-Gets compliance information associated with the Model (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`).
+Gets compliance information associated with the Model Version and Certification Type (identified by the `vid`, `pid`, `softwareVersion` and `certification_type`).
 
-It can be used instead of GET_CERTIFIED_MODEL / GET_REVOKED_MODEL methods 
- to get the whole compliance information without additional state check.
+It can be used instead of GET_CERTIFIED_MODEL / GET_REVOKED_MODEL / GET_PROVISIONAL_MODEL methods 
+to get the whole compliance information without additional state check.
 
 This function responds with `NotFound` (404 code) if compliance information is not found in store.
  

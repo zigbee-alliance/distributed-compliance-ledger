@@ -379,7 +379,7 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, testHouseAccount)
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
@@ -393,7 +393,7 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, certCenterAccount)
 
 	// Publish model info
 	pid := int32(tmrand.Uint16())
@@ -569,7 +569,7 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, testHouseAccount)
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
@@ -583,13 +583,22 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, certCenterAccount)
 
+	// Publish model info
 	pid := int32(tmrand.Uint16())
+	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Publish modelVersion
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
+	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
 
-	// Revoke non-existent model
+	// Revoke non-certified model
 	revocReason := "some reason 3"
 	revocDate := "2020-03-01T00:00:01Z"
 	revocModelMsg := compliancetypes.MsgRevokeModel{
@@ -610,7 +619,7 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 	require.Error(suite.T, err)
 	require.True(suite.T, compliancetypes.ErrAlreadyRevoked.Is(err))
 
-	// Check non-existent model is revoked
+	// Check non-certified model is revoked
 	complianceInfo, _ := GetComplianceInfo(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, complianceInfo.CertificationType)
 	require.Equal(suite.T, uint32(3), complianceInfo.SoftwareVersionCertificationStatus)
@@ -635,29 +644,6 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllRevokedModels)+1, len(revokedModels))
 	provisionalModels, _ := GetAllProvisionalModels(suite)
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
-
-	// Publish model info
-	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish modelVersion
-	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish testing result
-	testingResultMsg := compliancetesttypes.MsgAddTestingResult{
-		Vid:                   vid,
-		Pid:                   pid,
-		SoftwareVersion:       sv,
-		SoftwareVersionString: svs,
-		TestResult:            "some test results 1",
-		TestDate:              "2020-01-01T00:00:00Z",
-		Signer:                testHouseAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&testingResultMsg}, testHouse, testHouseAccount)
-	require.NoError(suite.T, err)
 
 	// Certify model
 	certReason := "some reason 4"
@@ -750,7 +736,7 @@ func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, testHouseAccount)
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
@@ -764,7 +750,7 @@ func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
 		jackName,
 		jackAccount,
 	)
-	require.NotNil(suite.T, vendorAccount)
+	require.NotNil(suite.T, certCenterAccount)
 
 	pid := int32(tmrand.Uint16())
 	sv := tmrand.Uint32()

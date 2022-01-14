@@ -352,6 +352,36 @@ func TestHandler_CertifyModelTwice(t *testing.T) {
 	}
 }
 
+func TestHandler_CertifyModelTwiceByDifferentAccounts(t *testing.T) {
+	setup := Setup(t)
+
+	// add model version
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+
+	// add testing results
+	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
+
+	for _, certificationType := range setup.CertificationTypes {
+		// certify model
+		certifyModelMsg := NewMsgCertifyModel(
+			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+		_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+		require.NoError(t, err)
+
+		// create another certification center account
+		accAddress := GenerateAccAddress()
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter})
+
+		// try to certify model again from new account
+		secondCertifyModelMsg := NewMsgCertifyModel(
+			vid, pid, softwareVersion, softwareVersionString, certificationType, accAddress)
+		_, err = setup.Handler(setup.Ctx, secondCertifyModelMsg)
+		require.Error(t, err)
+		require.True(t, types.ErrAlreadyCertified.Is(err))
+	}
+}
+
 func TestHandler_CertifyDifferentModels(t *testing.T) {
 	setup := Setup(t)
 
@@ -386,8 +416,9 @@ func TestHandler_RevokeModel(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
+	// Set absence of testing results
+	// (Testing results are not needed for off-ledger certification approach)
+	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
@@ -458,6 +489,14 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 	setup := Setup(t)
 
+	// add model version
+	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
+		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
+
+	// Set absence of testing results
+	// (Testing results are not needed for off-ledger certification approach)
+	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
+
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
 		dclauthtypes.TestHouse,
@@ -467,15 +506,10 @@ func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 		accAddress := GenerateAccAddress()
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role})
 
-		// try to certify model
+		// try to revoke model
 		for _, certificationType := range setup.CertificationTypes {
 			revokeModelMsg := NewMsgRevokeModel(
-				testconstants.Vid,
-				testconstants.Pid,
-				testconstants.SoftwareVersion,
-				testconstants.SoftwareVersionString,
-				certificationType, accAddress,
-			)
+				vid, pid, softwareVersion, softwareVersionString, certificationType, accAddress)
 			_, err := setup.Handler(setup.Ctx, revokeModelMsg)
 			require.Error(t, err)
 			require.True(t, sdkerrors.ErrUnauthorized.Is(err))
@@ -490,8 +524,9 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
+	// Set absence of testing results
+	// (Testing results are not needed for off-ledger certification approach)
+	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
@@ -518,8 +553,9 @@ func TestHandler_RevokeDifferentModels(t *testing.T) {
 		vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 			int32(i), int32(i), uint32(i), fmt.Sprint(i))
 
-		// add testing results
-		setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
+		// Set absence of testing results
+		// (Testing results are not needed for off-ledger certification approach)
+		setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 		for _, certificationType := range setup.CertificationTypes {
 			// revoke model
@@ -580,8 +616,9 @@ func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
+	// Set absence of testing results
+	// (Testing results are not needed for off-ledger certification approach)
+	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
@@ -591,7 +628,7 @@ func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *
 		_, err := setup.Handler(setup.Ctx, revokeModelMsg)
 		require.NoError(t, err)
 
-		// certify model
+		// try to cancel model revocation
 		certifyModelMsg := NewMsgCertifyModel(
 			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
 		certifyModelMsg.CertificationDate = certificationDate
@@ -601,7 +638,7 @@ func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *
 	}
 }
 
-func TestHandler_CertifyRevokedModel(t *testing.T) {
+func TestHandler_CertifyRevokedModelThatWasCertifiedEarlier(t *testing.T) {
 	setup := Setup(t)
 
 	// add model version
@@ -625,13 +662,6 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 		_, err = setup.Handler(setup.Ctx, revokeModelMsg)
 		require.NoError(t, err)
 
-		// query revoked model info
-		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
-
-		// check
-		checkRevokedModelInfo(t, revokeModelMsg, receivedComplianceInfo)
-		require.Equal(t, 1, len(receivedComplianceInfo.History))
-
 		// certify model again
 		secondCertifyModelMsg := NewMsgCertifyModel(
 			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
@@ -640,7 +670,7 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 		require.NoError(t, err)
 
 		// query certified model info
-		receivedComplianceInfo, _ = queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
 
 		// check
 		checkCertifiedModelInfo(t, secondCertifyModelMsg, receivedComplianceInfo)
@@ -662,75 +692,48 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	}
 }
 
-func TestHandler_CertifyRevokedModelForTrackRevocationStrategy(t *testing.T) {
-	setup := Setup(t)
-
-	for _, certificationType := range setup.CertificationTypes {
-		// revoke non-existent model
-		revokeModelMsg := NewMsgRevokeModel(
-			testconstants.Vid,
-			testconstants.Pid,
-			testconstants.SoftwareVersion,
-			testconstants.SoftwareVersionString,
-			certificationType,
-			setup.CertificationCenter,
-		)
-		revocationTime := time.Now().UTC()
-		revokeModelMsg.RevocationDate = revocationTime.Format(time.RFC3339)
-		_, err := setup.Handler(setup.Ctx, revokeModelMsg)
-		require.NoError(t, err)
-
-		receivedComplianceInfo, _ := queryComplianceInfo(
-			setup,
-			testconstants.Vid,
-			testconstants.Pid,
-			testconstants.SoftwareVersion,
-			certificationType,
-		)
-		checkRevokedModelInfo(t, revokeModelMsg, receivedComplianceInfo)
-
-		// cancel model revocation
-		certifyModelMsg := NewMsgCertifyModel(
-			testconstants.Vid,
-			testconstants.Pid,
-			testconstants.SoftwareVersion,
-			testconstants.SoftwareVersionString,
-			certificationType,
-			setup.CertificationCenter,
-		)
-		certifyModelMsg.CertificationDate = revocationTime.AddDate(0, 0, 1).Format(time.RFC3339)
-		_, err = setup.Handler(setup.Ctx, certifyModelMsg)
-		require.NoError(t, err)
-	}
-}
-
-func TestHandler_CheckCertificationDone(t *testing.T) {
+func TestHandler_CertifyRevokedModel(t *testing.T) {
 	setup := Setup(t)
 
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
+	// Set absence of testing results
+	// (Testing results are not needed for off-ledger certification approach)
+	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
-		// certify model
-		certifyModelMsg := NewMsgCertifyModel(
+		// revoke model
+		revokeModelMsg := NewMsgRevokeModel(
 			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
-		_, err := setup.Handler(setup.Ctx, certifyModelMsg)
+		_, err := setup.Handler(setup.Ctx, revokeModelMsg)
 		require.NoError(t, err)
 
-		// create another certification center account
-		accAddress := GenerateAccAddress()
-		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter})
+		// cancel model revocation
+		certifyModelMsg := NewMsgCertifyModel(
+			vid, pid, softwareVersion, softwareVersionString, certificationType, setup.CertificationCenter)
+		certifyModelMsg.CertificationDate = time.Now().UTC().Format(time.RFC3339)
+		_, err = setup.Handler(setup.Ctx, certifyModelMsg)
+		require.NoError(t, err)
 
-		// try to certify model again from new account
-		secondCertifyModelMsg := NewMsgCertifyModel(
-			vid, pid, softwareVersion, softwareVersionString, certificationType, accAddress)
-		_, err = setup.Handler(setup.Ctx, secondCertifyModelMsg)
-		require.Error(t, err)
-		require.True(t, types.ErrAlreadyCertified.Is(err))
+		// query certified model info
+		receivedComplianceInfo, _ := queryComplianceInfo(setup, vid, pid, softwareVersion, certificationType)
+
+		// check
+		checkCertifiedModelInfo(t, certifyModelMsg, receivedComplianceInfo)
+		require.Equal(t, 1, len(receivedComplianceInfo.History))
+
+		require.Equal(t, types.CodeRevoked, receivedComplianceInfo.History[0].SoftwareVersionCertificationStatus)
+		require.Equal(t, revokeModelMsg.RevocationDate, receivedComplianceInfo.History[0].Date)
+
+		// query certified model
+		certifiedModel, _ := queryCertifiedModel(setup, vid, pid, softwareVersion, certificationType)
+		require.True(t, certifiedModel.Value)
+
+		// query revoked model
+		revokedModel, _ := queryRevokedModel(setup, vid, pid, softwareVersion, certificationType)
+		require.False(t, revokedModel.Value)
 	}
 }
 
