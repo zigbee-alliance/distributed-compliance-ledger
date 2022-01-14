@@ -19,7 +19,7 @@ func TestProcessMalicious_HandleJailUnjail(t *testing.T) {
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
@@ -51,7 +51,7 @@ func TestProcessMalicious_HandleDoubleSign(t *testing.T) {
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
@@ -90,7 +90,7 @@ func TestProcessMalicious_HandleDoubleSign_ForOutdated(t *testing.T) {
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
@@ -137,7 +137,7 @@ func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedBlock(t *testing.T) {
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
@@ -181,7 +181,7 @@ func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedAge(t *testing.T) {
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())

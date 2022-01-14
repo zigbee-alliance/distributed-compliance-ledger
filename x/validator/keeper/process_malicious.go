@@ -84,5 +84,4 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 	if !validator.IsJailed() {
 		k.Jail(ctx, validator, reason)
 	}
-
 }

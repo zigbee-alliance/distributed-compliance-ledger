@@ -21,7 +21,7 @@ func TestValidatorSetChange_ApplyAndReturnValidatorSetUpdates_ForAddedNewValidat
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// ensure last validator power is zero
 	lastValPower, _ := setup.ValidatorKeeper.GetLastValidatorPower(setup.Ctx, validator.GetOwner())
@@ -74,7 +74,7 @@ func TestValidatorSetChange_ApplyAndReturnValidatorSetUpdates_ForJailedValidator
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 	setup.ValidatorKeeper.SetLastValidatorPower(setup.Ctx, types.NewLastValidatorPower(validator.GetOwner()))
 
 	// jail validator
@@ -102,7 +102,7 @@ func TestValidatorSetChange_ApplyAndReturnValidatorSetUpdates_ForJailedAndUnjail
 	// create validator
 	validator := testkeeper.DefaultValidator()
 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 	setup.ValidatorKeeper.SetLastValidatorPower(setup.Ctx, types.NewLastValidatorPower(validator.GetOwner()))
 
 	// jail validator

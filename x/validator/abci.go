@@ -42,7 +42,6 @@ func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) 
 	// while > 1/3 nodes must be DoS to prevent the pool from writing.
 
 	// That's why we don't implement/call/copy HandleValidatorSignature (downtime slashing) logic in DCL.
-
 }
 
 // Called every block, update validator set.
