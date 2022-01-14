@@ -35,3 +35,4 @@ linters:
    - gomoddirectives
    - maligned
    - gci
+   - whitespace

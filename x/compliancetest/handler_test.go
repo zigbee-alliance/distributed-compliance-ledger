@@ -93,9 +93,7 @@ func (setup *TestSetup) SetNoModelVersionForKey(
 	pid int32,
 	softwareVersion uint32,
 ) {
-	modelKeeper := setup.ModelKeeper
-
-	modelKeeper.On(
+	setup.ModelKeeper.On(
 		"GetModelVersion",
 		mock.Anything, vid, pid, softwareVersion,
 	).Return(modeltypes.ModelVersion{}, false)

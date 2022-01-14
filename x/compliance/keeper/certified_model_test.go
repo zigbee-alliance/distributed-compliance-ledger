@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -74,3 +75,4 @@ func TestCertifiedModelGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllCertifiedModel(ctx)),
 	)
 }
+*/

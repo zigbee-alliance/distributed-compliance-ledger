@@ -41,10 +41,6 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 
 		// check if certification is already done
 		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeCertified {
-			// TODO: do we allow re-certification (date update) by the same signer?
-			// if complianceInfo.Owner != msg.Signer {
-			// 	return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid)
-			// }
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		} else {
 			// if state changes on `certified` check that certification_date is after revocation_date
