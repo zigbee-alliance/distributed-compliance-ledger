@@ -70,9 +70,9 @@ func CmdCreateModel() *cobra.Command {
 	}
 
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,
-		"Model vendor ID")
+		"Model vendor ID (positive non-zero uint16)")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
-		"Model product ID")
+		"Model product ID (positive non-zero uint16)")
 	cmd.Flags().Int32Var(&deviceTypeId, FlagDeviceTypeId, 0,
 		"Model category ID")
 	cmd.Flags().StringVarP(&productName, FlagProductName, FlagProductNameShortcut, "",
@@ -183,9 +183,9 @@ func CmdUpdateModel() *cobra.Command {
 	}
 
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,
-		"Model vendor ID")
+		"Model vendor ID (positive non-zero uint16)")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
-		"Model product ID")
+		"Model product ID (positive non-zero uint16)")
 	cmd.Flags().StringVarP(&productName, FlagProductName, FlagProductNameShortcut, "",
 		"Model name")
 	cmd.Flags().StringVarP(&productLabel, FlagProductLabel, FlagProductLabelShortcut, "",
@@ -248,8 +248,8 @@ func CmdDeleteModel() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Model vendor ID")
-	cmd.Flags().Int32Var(&pid, FlagPid, 0, "Model product ID")
+	cmd.Flags().Int32Var(&vid, FlagVid, 0, "Model vendor ID (positive non-zero uint16)")
+	cmd.Flags().Int32Var(&pid, FlagPid, 0, "Model product ID (positive non-zero uint16)")
 
 	cli.AddTxFlagsToCmd(cmd)
 
