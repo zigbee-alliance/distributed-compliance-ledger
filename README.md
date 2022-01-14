@@ -35,8 +35,8 @@ DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](htt
      - **gRPC**.
        - A client code can be generated for all popular languages from the proto files [proto](proto), see https://grpc.io/docs/languages/.
        - See https://docs.cosmos.network/master/core/grpc_rest.html
-     - **Light Client**
-       - Tendermint's Light Client can be used for a direct communication on API level.
+     - **Tendermint RPC and Light Client**
+       - Tendermint's Light Client can be used for a direct communication with [Tendermint RPC](https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc).
        - There are currently no DC Ledger specific API libraries for various platforms and languages, 
     but they may be provided in future.
        - These libraries can be based on the following Light Client implementations: 

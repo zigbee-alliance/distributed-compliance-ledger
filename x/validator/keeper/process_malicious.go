@@ -11,11 +11,6 @@ import (
 
 // jail a validator.
 func (k Keeper) Jail(ctx sdk.Context, validator types.Validator, reason string) {
-	if validator.Jailed {
-		k.Logger(ctx).Error(fmt.Sprintf("Cannot jail already jailed validator, validator: %v\n", validator))
-		return
-	}
-
 	validator.Power = types.ZeroPower
 	validator.Jailed = true
 	validator.JailedReason = reason
@@ -25,11 +20,6 @@ func (k Keeper) Jail(ctx sdk.Context, validator types.Validator, reason string) 
 
 // unjail a validator.
 func (k Keeper) Unjail(ctx sdk.Context, validator types.Validator) {
-	if !validator.Jailed {
-		k.Logger(ctx).Error(fmt.Sprintf("Cannot unjail already unjailed validator, validator: %v\n", validator))
-		return
-	}
-
 	validator.Power = types.Power
 	validator.Jailed = false
 	validator.JailedReason = ""
