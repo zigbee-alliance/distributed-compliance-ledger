@@ -30,6 +30,17 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		)
 	}
 
+	// The corresponding Model Version must be present on ledger.
+	modelVersion, found := k.modelKeeper.GetModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+	if !found {
+		return nil, modeltypes.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
+	}
+
+	// check if softwareVersionString matches with what is stored for the given version
+	if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
+		return nil, types.NewErrModelVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
+	}
+
 	complianceInfo, found := k.GetComplianceInfo(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 	// nolint:nestif
 	if found {
@@ -63,17 +74,6 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		}
 	} else {
 		// Compliance is tracked on ledger. There is no compliance record yet.
-
-		// The corresponding Model Info and Version must be present on ledger.
-		modelVersion, found := k.modelKeeper.GetModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
-		if !found {
-			return nil, modeltypes.NewErrModelVersionDoesNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
-		}
-
-		// check if softwareVersionString matches with what is stored for the given version
-		if modelVersion.SoftwareVersionString != msg.SoftwareVersionString {
-			return nil, types.NewErrModelVersionStringDoesNotMatch(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.SoftwareVersionString)
-		}
 
 		// The corresponding test results must be present on ledger.
 		_, found = k.compliancetestKeeper.GetTestingResults(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
