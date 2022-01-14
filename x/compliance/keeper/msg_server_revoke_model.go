@@ -44,16 +44,14 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 	// nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
-		// 1) Only revocation is tracked on the ledger. We want to re-revoke.
-		// The corresponding Model Info and test results are not required to be on the ledger.
-		// 2) Compliance is tracked on ledger. We want to revoke certified compliance.
-		// `Else` branch in CertifyModel was passed on first certification. So Model Info and test results exist on the ledger.
+		// 1) We want to re-revoke compliance which is already in revoked state now -> Error.
+		// 2) We want to revoke certified or provisioned compliance.
 
-		// check if certification is already revoked
+		// check if compliance is already in revoked state
 		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeRevoked {
 			return nil, types.NewErrAlreadyRevoked(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
-		// if state changes on `revoked` check that revocation_date is after certification_date
+		// if state changes on `revoked` check that revocation date is after certification/provisional date
 		newDate, err := time.Parse(time.RFC3339, msg.RevocationDate)
 		if err != nil {
 			return nil, types.NewErrInvalidTestDateFormat(msg.RevocationDate)
@@ -71,7 +69,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 
 		complianceInfo.SetRevokedStatus(msg.RevocationDate, msg.Reason)
 
-		// update certified/revoked index
+		// update certified and provisional index
 		certifiedModel := types.CertifiedModel{
 			Vid:               msg.Vid,
 			Pid:               msg.Pid,
@@ -89,8 +87,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		}
 		k.SetProvisionalModel(ctx, provisionalModel)
 	} else {
-		// Only revocation is tracked on the ledger. There is no compliance record yet.
-		// The corresponding Model Info and test results are not required to be on the ledger.
+		// There is no compliance record yet. So only revocation will be tracked on ledger.
 
 		complianceInfo = types.ComplianceInfo{
 			Vid:                                msg.Vid,
@@ -110,7 +107,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
 
-	// update certified/revoked index
+	// update revoked index
 	revokedModel := types.RevokedModel{
 		Vid:               msg.Vid,
 		Pid:               msg.Pid,

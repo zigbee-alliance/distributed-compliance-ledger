@@ -45,35 +45,46 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	// nolint:nestif
 	if found {
 		// Compliance record already exist. Cases:
-		// 1) Only revocation is tracked on the ledger. We want to certify revoked compliance.
-		// The corresponding Model Info and test results are not required to be on the ledger.
-		// 2) Compliance is tracked on ledger. We want to certify revoked compliance.
-		// `Else` branch was passed on first certification. So Model Info and test results exist on the ledger.
+		// 1) We want to re-certify compliance which is already certified now -> Error.
+		// 2) We want to certify provisioned compliance. So no revocations were done earlier and thus certification
+		// will be tracked on ledger. So we have to ensure that there are tesing results at first.
+		// 3) We want to certify revoked compliance. Either earlier certification was done before revocation
+		// and thus the corresponding test results are already on the ledger, or only revocation is tracked on the ledger
+		// and so the test results are not required to be present.
 
-		// check if certification is already done
+		// check if compliance is already in certified state
 		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeCertified {
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
-		} else {
-			// if state changes on `certified` check that certification_date is after revocation_date
-			newDate, err := time.Parse(time.RFC3339, msg.CertificationDate)
-			if err != nil {
-				return nil, types.NewErrInvalidTestDateFormat(msg.CertificationDate)
-			}
-			oldDate, err := time.Parse(time.RFC3339, complianceInfo.Date)
-			if err != nil {
-				return nil, types.NewErrInvalidTestDateFormat(complianceInfo.Date)
-			}
-			if newDate.Before(oldDate) {
-				return nil, types.NewErrInconsistentDates(
-					fmt.Sprintf("The `certification_date`:%v must be after the current `date`:%v to "+
-						"certify model", msg.CertificationDate, complianceInfo.Date),
-				)
-			}
-
-			complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason)
 		}
+
+		// check if compliance record is present because of provisioning
+		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeProvisional {
+			// The corresponding test results must be present on ledger in this case.
+			_, found = k.compliancetestKeeper.GetTestingResults(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+			if !found {
+				return nil, compliancetesttypes.NewErrTestingResultsDoNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
+			}
+		}
+
+		// if state changes on `certified` check that certification date is after provisional/revocation date
+		newDate, err := time.Parse(time.RFC3339, msg.CertificationDate)
+		if err != nil {
+			return nil, types.NewErrInvalidTestDateFormat(msg.CertificationDate)
+		}
+		oldDate, err := time.Parse(time.RFC3339, complianceInfo.Date)
+		if err != nil {
+			return nil, types.NewErrInvalidTestDateFormat(complianceInfo.Date)
+		}
+		if newDate.Before(oldDate) {
+			return nil, types.NewErrInconsistentDates(
+				fmt.Sprintf("The `certification_date`:%v must be after the current `date`:%v to "+
+					"certify model", msg.CertificationDate, complianceInfo.Date),
+			)
+		}
+
+		complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason)
 	} else {
-		// Compliance is tracked on ledger. There is no compliance record yet.
+		// There is no compliance record yet. So certification will be tracked on ledger.
 
 		// The corresponding test results must be present on ledger.
 		_, found = k.compliancetestKeeper.GetTestingResults(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
@@ -99,7 +110,7 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 	// store compliance info
 	k.SetComplianceInfo(ctx, complianceInfo)
 
-	// update certified/revoked index
+	// update certified, revoked and provisional index
 	certifiedModel := types.CertifiedModel{
 		Vid:               msg.Vid,
 		Pid:               msg.Pid,
