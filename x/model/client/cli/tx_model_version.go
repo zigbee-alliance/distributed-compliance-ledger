@@ -60,9 +60,9 @@ func CmdCreateModelVersion() *cobra.Command {
 		},
 	}
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,
-		"Model vendor ID")
+		"Model vendor ID (positive non-zero uint16)")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
-		"Model product ID")
+		"Model product ID (positive non-zero uint16)")
 	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
 		"Software Version of model (uint32)")
 	cmd.Flags().StringVar(&softwareVersionString, FlagSoftwareVersionString, "",
@@ -153,9 +153,9 @@ func CmdUpdateModelVersion() *cobra.Command {
 	}
 
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,
-		"Model vendor ID")
+		"Model vendor ID (positive non-zero uint16)")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
-		"Model product ID")
+		"Model product ID (positive non-zero uint16)")
 	cmd.Flags().Uint32VarP(&softwareVersion, FlagSoftwareVersion, FlagSoftwareVersionShortcut, 0,
 		"Software Version of model (uint32)")
 	// by default the Software Version is valid, unless --softwareVersionValid is passed by user explicitly

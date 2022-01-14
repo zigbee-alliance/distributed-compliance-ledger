@@ -13,6 +13,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	dclauthkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -47,4 +48,50 @@ func ValidatorKeeper(t testing.TB, dclauthK *dclauthkeeper.Keeper) (*keeper.Keep
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 	return k, ctx
+}
+
+func DefaultValidator() types.Validator {
+	v, _ := types.NewValidator(
+		sdk.ValAddress(testconstants.Address1),
+		testconstants.PubKey1,
+		types.Description{Moniker: testconstants.ProductName},
+	)
+	return v
+}
+
+type TestSetup struct {
+	Ctx             sdk.Context
+	ValidatorKeeper keeper.Keeper
+	DclauthKeeper   dclauthkeeper.Keeper
+}
+
+func Setup(t *testing.T) TestSetup {
+	dclauthK, _ := DclauthKeeper(t)
+	k, ctx := ValidatorKeeper(t, dclauthK)
+
+	setup := TestSetup{
+		Ctx:             ctx,
+		ValidatorKeeper: *k,
+		DclauthKeeper:   *dclauthK,
+	}
+
+	return setup
+}
+
+func StoreTwoValidators(setup TestSetup) (types.Validator, types.Validator) {
+	validator1, _ := types.NewValidator(
+		sdk.ValAddress(testconstants.ValidatorAddress1),
+		testconstants.ValidatorPubKey1,
+		types.Description{Moniker: "Validator 1"},
+	)
+	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator1)
+
+	validator2, _ := types.NewValidator(
+		sdk.ValAddress(testconstants.ValidatorAddress2),
+		testconstants.ValidatorPubKey2,
+		types.Description{Moniker: "Validator 2"},
+	)
+	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator2)
+
+	return validator1, validator2
 }
