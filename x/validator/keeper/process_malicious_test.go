@@ -4,84 +4,59 @@ import (
 	"testing"
 	"time"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-	dclauthkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-type TestSetup struct {
-	Ctx             sdk.Context
-	ValidatorKeeper keeper.Keeper
-	DclauthKeeper   dclauthkeeper.Keeper
-	Validator       types.Validator
-}
-
-func DefaultValidator() types.Validator {
-	v, _ := types.NewValidator(
-		sdk.ValAddress(testconstants.Address1),
-		testconstants.PubKey1,
-		types.Description{Moniker: testconstants.ProductName},
-	)
-	return v
-}
-
-func Setup(t *testing.T) TestSetup {
-	dclauthK, _ := testkeeper.DclauthKeeper(t)
-	k, ctx := testkeeper.ValidatorKeeper(t, dclauthK)
+func TestProcessMalicious_HandleJailUnjail(t *testing.T) {
+	setup := testkeeper.Setup(t)
 
 	// create validator
-	validator := DefaultValidator()
-
-	k.SetValidator(ctx, validator)
-	k.SetValidatorByConsAddr(ctx, validator)
+	validator := testkeeper.DefaultValidator()
+	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
 	// check it is not slashed
-	receivedValidator, _ := k.GetValidator(ctx, validator.GetOwner())
+	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
 	require.False(t, receivedValidator.Jailed)
 	require.Equal(t, types.Power, receivedValidator.Power)
 
-	setup := TestSetup{
-		Ctx:             ctx,
-		ValidatorKeeper: *k,
-		DclauthKeeper:   *dclauthK,
-		Validator:       validator,
-	}
-
-	return setup
-}
-
-func TestValidatorStateChange_HandleJailUnjail(t *testing.T) {
-	setup := Setup(t)
-
 	// Jail/Slash
-	setup.ValidatorKeeper.Jail(setup.Ctx, setup.Validator, "some reason")
+	setup.ValidatorKeeper.Jail(setup.Ctx, validator, "some reason")
 
 	// check validator is slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, setup.Validator.GetOwner())
+	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
 	require.True(t, receivedValidator.Jailed)
 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
 	require.Equal(t, "some reason", receivedValidator.JailedReason)
 
 	// Unjail/unslash
-	setup.ValidatorKeeper.Unjail(setup.Ctx, setup.Validator)
+	setup.ValidatorKeeper.Unjail(setup.Ctx, validator)
 
 	// check validator is not slashed
-	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, setup.Validator.GetOwner())
+	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
 	require.False(t, receivedValidator.Jailed)
 	require.Equal(t, types.Power, receivedValidator.Power)
 	require.Equal(t, "", receivedValidator.JailedReason)
 }
 
-func TestValidatorStateChange_HandleDoubleSign(t *testing.T) {
-	setup := Setup(t)
+func TestProcessMalicious_HandleDoubleSign(t *testing.T) {
+	setup := testkeeper.Setup(t)
+
+	// create validator
+	validator := testkeeper.DefaultValidator()
+	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+
+	// check it is not slashed
+	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+	require.False(t, receivedValidator.Jailed)
+	require.Equal(t, types.Power, receivedValidator.Power)
 
 	timestamp := time.Now().UTC()
 
@@ -89,7 +64,7 @@ func TestValidatorStateChange_HandleDoubleSign(t *testing.T) {
 	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
 		Time: timestamp.Add(time.Second * time.Duration(5)),
 	})
-	validatorConsAddr, _ := setup.Validator.GetConsAddr()
+	validatorConsAddr, _ := validator.GetConsAddr()
 	evidence := evidencetypes.Equivocation{
 		Height:           1,
 		Time:             timestamp,
@@ -100,7 +75,7 @@ func TestValidatorStateChange_HandleDoubleSign(t *testing.T) {
 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
 
 	// check validator is slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, setup.Validator.GetOwner())
+	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
 	require.True(t, receivedValidator.Jailed)
 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
 
@@ -109,8 +84,18 @@ func TestValidatorStateChange_HandleDoubleSign(t *testing.T) {
 	require.Equal(t, slashingtypes.EventTypeSlash, events[0].Type)
 }
 
-func TestValidatorStateChange_HandleDoubleSign_ForOutdated(t *testing.T) {
-	setup := Setup(t)
+func TestProcessMalicious_HandleDoubleSign_ForOutdated(t *testing.T) {
+	setup := testkeeper.Setup(t)
+
+	// create validator
+	validator := testkeeper.DefaultValidator()
+	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+
+	// check it is not slashed
+	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+	require.False(t, receivedValidator.Jailed)
+	require.Equal(t, types.Power, receivedValidator.Power)
 
 	timestamp := time.Now().UTC()
 	initialHeight := int64(1)
@@ -130,7 +115,7 @@ func TestValidatorStateChange_HandleDoubleSign_ForOutdated(t *testing.T) {
 		Height: maxNumBlocks + initialHeight + 1,
 	})
 
-	validatorConsAddr, _ := setup.Validator.GetConsAddr()
+	validatorConsAddr, _ := validator.GetConsAddr()
 	evidence := evidencetypes.Equivocation{
 		Height:           initialHeight,
 		Time:             timestamp,
@@ -141,13 +126,23 @@ func TestValidatorStateChange_HandleDoubleSign_ForOutdated(t *testing.T) {
 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
 
 	// check validator is not slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, setup.Validator.GetOwner())
+	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
 	require.False(t, receivedValidator.Jailed)
 	require.Equal(t, types.Power, receivedValidator.Power)
 }
 
-func TestValidatorStateChange_HandleDoubleSign_ForNotOutdatedBlock(t *testing.T) {
-	setup := Setup(t)
+func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedBlock(t *testing.T) {
+	setup := testkeeper.Setup(t)
+
+	// create validator
+	validator := testkeeper.DefaultValidator()
+	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+
+	// check it is not slashed
+	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+	require.False(t, receivedValidator.Jailed)
+	require.Equal(t, types.Power, receivedValidator.Power)
 
 	timestamp := time.Now().UTC()
 	initialHeight := int64(1)
@@ -164,7 +159,7 @@ func TestValidatorStateChange_HandleDoubleSign_ForNotOutdatedBlock(t *testing.T)
 		Time: timestamp.Add(maxEvidenceAge + 2*time.Second),
 	})
 
-	validatorConsAddr, _ := setup.Validator.GetConsAddr()
+	validatorConsAddr, _ := validator.GetConsAddr()
 	evidence := evidencetypes.Equivocation{
 		Height:           initialHeight,
 		Time:             timestamp,
@@ -175,13 +170,23 @@ func TestValidatorStateChange_HandleDoubleSign_ForNotOutdatedBlock(t *testing.T)
 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
 
 	// check validator is slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, setup.Validator.GetOwner())
+	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
 	require.True(t, receivedValidator.Jailed)
 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
 }
 
-func TestValidatorStateChange_HandleDoubleSign_ForNotOutdatedAge(t *testing.T) {
-	setup := Setup(t)
+func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedAge(t *testing.T) {
+	setup := testkeeper.Setup(t)
+
+	// create validator
+	validator := testkeeper.DefaultValidator()
+	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+	setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+
+	// check it is not slashed
+	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+	require.False(t, receivedValidator.Jailed)
+	require.Equal(t, types.Power, receivedValidator.Power)
 
 	timestamp := time.Now().UTC()
 	initialHeight := int64(1)
@@ -198,7 +203,7 @@ func TestValidatorStateChange_HandleDoubleSign_ForNotOutdatedAge(t *testing.T) {
 		Height: maxNumBlocks + initialHeight + 1,
 	})
 
-	validatorConsAddr, _ := setup.Validator.GetConsAddr()
+	validatorConsAddr, _ := validator.GetConsAddr()
 	evidence := evidencetypes.Equivocation{
 		Height:           initialHeight,
 		Time:             timestamp,
@@ -209,7 +214,7 @@ func TestValidatorStateChange_HandleDoubleSign_ForNotOutdatedAge(t *testing.T) {
 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
 
 	// check validator is slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, setup.Validator.GetOwner())
+	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
 	require.True(t, receivedValidator.Jailed)
 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
 }
