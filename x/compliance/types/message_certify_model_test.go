@@ -165,6 +165,20 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			},
 			err: ErrInvalidTestDateFormat,
 		},
+		{
+			name: "invalid certification type",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     "invalid certification type",
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+			},
+			err: ErrInvalidCertificationType,
+		},
 	}
 
 	positive_tests := []struct {
