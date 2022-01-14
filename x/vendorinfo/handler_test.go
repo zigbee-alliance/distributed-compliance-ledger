@@ -15,280 +15,254 @@
 // //nolint:testpackage,lll
 package vendorinfo
 
-// import (
-// 	"context"
-// 	"testing"
+import (
+	"context"
+	"testing"
 
-// 	"github.com/cosmos/cosmos-sdk/testutil/testdata"
-// 	sdk "github.com/cosmos/cosmos-sdk/types"
-// 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-// 	"github.com/stretchr/testify/mock"
-// 	"github.com/stretchr/testify/require"
-// 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-// 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-// 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
-// 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/keeper"
-// 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
-// )
+	"github.com/cosmos/cosmos-sdk/testutil/testdata"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
+)
 
-// type DclauthKeeperMock struct {
-// 	mock.Mock
-// }
+type TestSetup struct {
+	T *testing.T
+	// Cdc         *amino.Codec
+	Ctx           sdk.Context
+	Wctx          context.Context
+	Keeper        *keeper.Keeper
+	DclauthKeeper *DclauthKeeperMock
+	Handler       sdk.Handler
+	// Querier     sdk.Querier
+	Vendor   sdk.AccAddress
+	VendorID int32
+}
 
-// func (m *DclauthKeeperMock) HasRole(
-// 	ctx sdk.Context,
-// 	addr sdk.AccAddress,
-// 	roleToCheck dclauthtypes.AccountRole,
-// ) bool {
-// 	args := m.Called(ctx, addr, roleToCheck)
-// 	return args.Bool(0)
-// }
+func (setup *TestSetup) AddAccount(
+	accAddress sdk.AccAddress,
+	roles []dclauthtypes.AccountRole,
+	vendorID int32,
+) {
+	for _, role := range roles {
+		setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, role).Return(true)
+	}
+	setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
 
-// func (m *DclauthKeeperMock) HasVendorID(
-// 	ctx sdk.Context,
-// 	addr sdk.AccAddress,
-// 	vid int32,
-// ) bool {
-// 	args := m.Called(ctx, addr, vid)
-// 	return args.Bool(0)
-// }
+	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, vendorID).Return(true)
+	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, mock.Anything).Return(false)
+}
 
-// var _ types.DclauthKeeper = &DclauthKeeperMock{}
+func Setup(t *testing.T) TestSetup {
+	dclauthKeeper := &DclauthKeeperMock{}
+	keeper, ctx := testkeeper.VendorinfoKeeper(t, dclauthKeeper)
 
-// type TestSetup struct {
-// 	T *testing.T
-// 	// Cdc         *amino.Codec
-// 	Ctx           sdk.Context
-// 	Wctx          context.Context
-// 	Keeper        *keeper.Keeper
-// 	DclauthKeeper *DclauthKeeperMock
-// 	Handler       sdk.Handler
-// 	// Querier     sdk.Querier
-// 	Vendor   sdk.AccAddress
-// 	VendorID uint64
-// }
+	vendor := GenerateAccAddress()
+	vendorID := testconstants.VendorID1
 
-// func (setup *TestSetup) AddAccount(
-// 	accAddress sdk.AccAddress,
-// 	roles []dclauthtypes.AccountRole,
-// 	vendorID uint64,
-// ) {
-// 	for _, role := range roles {
-// 		setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, role).Return(true)
-// 	}
-// 	setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
+	setup := TestSetup{
+		T:             t,
+		Ctx:           ctx,
+		Wctx:          sdk.WrapSDKContext(ctx),
+		Keeper:        keeper,
+		DclauthKeeper: dclauthKeeper,
+		Handler:       NewHandler(*keeper),
+		Vendor:        vendor,
+		VendorID:      vendorID,
+	}
 
-// 	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, vendorID).Return(true)
-// 	setup.DclauthKeeper.On("HasVendorID", mock.Anything, accAddress, mock.Anything).Return(false)
-// }
+	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vendorID)
 
-// func Setup(t *testing.T) TestSetup {
-// 	dclauthKeeper := &DclauthKeeperMock{}
-// 	keeper, ctx := testkeeper.VendorinfoKeeper(t)
+	return setup
+}
 
-// 	vendor := GenerateAccAddress()
-// 	vendorID := uint64(testconstants.VendorID1)
+func TestHandler_AddVendorInfo(t *testing.T) {
+	setup := Setup(t)
 
-// 	setup := TestSetup{
-// 		T:             t,
-// 		Ctx:           ctx,
-// 		Wctx:          sdk.WrapSDKContext(ctx),
-// 		Keeper:        keeper,
-// 		DclauthKeeper: dclauthKeeper,
-// 		Handler:       NewHandler(*keeper),
-// 		Vendor:        vendor,
-// 		VendorID:      vendorID,
-// 	}
+	// add new vendorinfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
 
-// 	setup.AddAccount(vendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, vendorID)
+	// query vendorinfo
+	receivedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
 
-// 	return setup
-// }
+	// check
+	require.Equal(t, msgCreateVendorInfo.VendorID, receivedVendorInfo.VendorID)
+	require.Equal(t, msgCreateVendorInfo.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
+	require.Equal(t, msgCreateVendorInfo.CompanyPrefferedName, receivedVendorInfo.CompanyPrefferedName)
+	require.Equal(t, msgCreateVendorInfo.Creator, receivedVendorInfo.Creator)
+	require.Equal(t, msgCreateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
+	require.Equal(t, msgCreateVendorInfo.VendorName, receivedVendorInfo.VendorName)
+}
 
-// func TestHandler_AddVendorInfo(t *testing.T) {
-// 	setup := Setup(t)
+func queryVendorInfo(
+	setup TestSetup,
+	vid int32,
+) (*types.VendorInfo, error) {
+	req := &types.QueryGetVendorInfoRequest{
+		VendorID: vid,
+	}
 
-// 	// add new vendorinfo
-// 	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
-// 	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
-// 	require.NoError(t, err)
+	resp, err := setup.Keeper.VendorInfo(setup.Wctx, req)
+	if err != nil {
+		require.Nil(setup.T, resp)
+		return nil, err
+	}
 
-// 	// query vendorinfo
-// 	receivedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
-// 	require.NoError(t, err)
+	require.NotNil(setup.T, resp)
+	return &resp.VendorInfo, nil
+}
 
-// 	// check
-// 	require.Equal(t, msgCreateVendorInfo.VendorID, receivedVendorInfo.VendorID)
-// 	require.Equal(t, msgCreateVendorInfo.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
-// 	require.Equal(t, msgCreateVendorInfo.CompanyPrefferedName, receivedVendorInfo.CompanyPrefferedName)
-// 	require.Equal(t, msgCreateVendorInfo.Creator, receivedVendorInfo.Creator)
-// 	require.Equal(t, msgCreateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
-// 	require.Equal(t, msgCreateVendorInfo.VendorName, receivedVendorInfo.VendorName)
-// }
+func TestHandler_UpdateVendorInfo(t *testing.T) {
+	setup := Setup(t)
 
-// func queryVendorInfo(
-// 	setup TestSetup,
-// 	vid int32,
-// ) (*types.VendorInfo, error) {
+	// try update not present vendorinfo
+	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	println(err.Error())
+	require.Error(t, err)
 
-// 	req := &types.QueryGetVendorInfoRequest{
-// 		VendorID: vid,
-// 	}
+	// add new vendorinfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
 
-// 	resp, err := setup.Keeper.VendorInfo(setup.Wctx, req)
-// 	if err != nil {
-// 		require.Nil(setup.T, resp)
-// 		return nil, err
-// 	}
+	// update existing vendorinfo
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
 
-// 	require.NotNil(setup.T, resp)
-// 	return &resp.VendorInfo, nil
-// }
+	// query updated vendorinfo
+	receivedVendorInfo, err := queryVendorInfo(setup, msgUpdateVendorInfo.VendorID)
+	require.NoError(t, err)
 
-// func TestHandler_UpdateVendorInfo(t *testing.T) {
-// 	setup := Setup(t)
+	// check
+	require.Equal(t, msgUpdateVendorInfo.VendorID, receivedVendorInfo.VendorID)
+	require.Equal(t, msgUpdateVendorInfo.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
+	require.Equal(t, msgUpdateVendorInfo.CompanyPrefferedName, receivedVendorInfo.CompanyPrefferedName)
+	require.Equal(t, msgUpdateVendorInfo.Creator, receivedVendorInfo.Creator)
+	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
+	require.Equal(t, msgUpdateVendorInfo.VendorName, receivedVendorInfo.VendorName)
+}
 
-// 	// try update not present vendorinfo
-// 	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(setup.Vendor)
-// 	_, err := setup.Handler(setup.Ctx, msgUpdateVendorInfo)
-// 	require.Error(t, err)
-// 	require.True(t, types.CodeVendorDoesNotExist.Is(err))
+func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
+	setup := Setup(t)
 
-// 	// add new vendorinfo
-// 	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
-// 	_, err = setup.Handler(setup.Ctx, msgCreateVendorInfo)
-// 	require.NoError(t, err)
+	// add new vendorinfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
 
-// 	// update existing vendorinfo
-// 	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
-// 	require.NoError(t, err)
+	for _, role := range []dclauthtypes.AccountRole{
+		dclauthtypes.TestHouse,
+		dclauthtypes.CertificationCenter,
+		dclauthtypes.Trustee,
+		dclauthtypes.NodeAdmin,
+	} {
+		accAddress := GenerateAccAddress()
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
 
-// 	// query updated vendorinfo
-// 	receivedVendorInfo, err := queryVendorInfo(setup, msgUpdateVendorInfo.VendorID)
-// 	require.NoError(t, err)
+		// update existing vendorinfo by user without Vendor role
+		msgUpdateVendorInfo := NewMsgUpdateVendorInfo(accAddress)
+		_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+		require.Error(t, err)
+	}
 
-// 	// check
-// 	require.Equal(t, msgUpdateVendorInfo.VendorID, receivedVendorInfo.VendorID)
-// 	require.Equal(t, msgUpdateVendorInfo.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
-// 	require.Equal(t, msgUpdateVendorInfo.CompanyPrefferedName, receivedVendorInfo.CompanyPrefferedName)
-// 	require.Equal(t, msgUpdateVendorInfo.Creator, receivedVendorInfo.Creator)
-// 	require.Equal(t, msgUpdateVendorInfo.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
-// 	require.Equal(t, msgUpdateVendorInfo.VendorName, receivedVendorInfo.VendorName)
-// }
+	anotherVendor := GenerateAccAddress()
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
-// func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
-// 	setup := Setup(t)
+	// update existing vendorinfo by vendor with another VendorID
+	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(anotherVendor)
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 
-// 	// add new vendorinfo
-// 	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
-// 	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
-// 	require.NoError(t, err)
+	// update existing vendorinfo by owner
+	msgUpdateVendorInfo = NewMsgUpdateVendorInfo(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
+	require.NoError(t, err)
+}
 
-// 	for _, role := range []dclauthtypes.AccountRole{
-// 		dclauthtypes.TestHouse,
-// 		dclauthtypes.CertificationCenter,
-// 		dclauthtypes.Trustee,
-// 		dclauthtypes.NodeAdmin,
-// 	} {
-// 		accAddress := GenerateAccAddress()
-// 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
+func TestHandler_AddVendorInfoWithEmptyOptionalFields(t *testing.T) {
+	setup := Setup(t)
 
-// 		// update existing vendorinfo by user without Vendor role
-// 		msgUpdateVendorInfo := NewMsgUpdateVendorInfo(accAddress)
-// 		_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
-// 		require.Error(t, err)
-// 		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
-// 	}
+	// add new msgCreateVendorInfo
+	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
+	msgCreateVendorInfo.CompanyPrefferedName = "" // Set empty CID
 
-// 	anotherVendor := GenerateAccAddress()
-// 	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
+	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
+	require.NoError(t, err)
 
-// 	// update existing vendorinfo by vendor with another VendorID
-// 	msgUpdateVendorInfo := NewMsgUpdateVendorInfo(anotherVendor)
-// 	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
-// 	require.Error(t, err)
-// 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+	// query vendorinfo
+	receivedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
+	require.NoError(t, err)
 
-// 	// update existing vendorinfo by owner
-// 	msgUpdateVendorInfo = NewMsgUpdateVendorInfo(setup.Vendor)
-// 	_, err = setup.Handler(setup.Ctx, msgUpdateVendorInfo)
-// 	require.NoError(t, err)
-// }
+	// check
+	require.Equal(t, "", receivedVendorInfo.CompanyPrefferedName)
+}
 
-// func TestHandler_AddVendorInfoWithEmptyOptionalFields(t *testing.T) {
-// 	setup := Setup(t)
+func TestHandler_AddVendorInfoByNonVendor(t *testing.T) {
+	setup := Setup(t)
 
-// 	// add new msgCreateVendorInfo
-// 	msgCreateVendorInfo := NewMsgCreateVendorInfo(setup.Vendor)
-// 	msgCreateVendorInfo.CompanyPrefferedName = "" // Set empty CID
+	for _, role := range []dclauthtypes.AccountRole{
+		dclauthtypes.TestHouse,
+		dclauthtypes.CertificationCenter,
+		dclauthtypes.Trustee,
+		dclauthtypes.NodeAdmin,
+	} {
+		accAddress := GenerateAccAddress()
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
 
-// 	_, err := setup.Handler(setup.Ctx, msgCreateVendorInfo)
-// 	require.NoError(t, err)
+		// add new vendorinfo
+		vendorinfo := NewMsgCreateVendorInfo(accAddress)
+		_, err := setup.Handler(setup.Ctx, vendorinfo)
+		require.Error(t, err)
+		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+	}
+}
 
-// 	// query vendorinfo
-// 	receivedVendorInfo, err := queryVendorInfo(setup, msgCreateVendorInfo.VendorID)
-// 	require.NoError(t, err)
+func TestHandler_AddVendorInfoByVendorWithAnotherVendorId(t *testing.T) {
+	setup := Setup(t)
 
-// 	// check
-// 	require.Equal(t, "", receivedVendorInfo.CompanyPrefferedName)
-// }
+	anotherVendor := GenerateAccAddress()
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
-// func TestHandler_AddVendorInfoByNonVendor(t *testing.T) {
-// 	setup := Setup(t)
+	// add new vendorinfo
+	vendorinfo := NewMsgCreateVendorInfo(anotherVendor)
+	_, err := setup.Handler(setup.Ctx, vendorinfo)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+}
 
-// 	for _, role := range []dclauthtypes.AccountRole{
-// 		dclauthtypes.TestHouse,
-// 		dclauthtypes.CertificationCenter,
-// 		dclauthtypes.Trustee,
-// 		dclauthtypes.NodeAdmin,
-// 	} {
-// 		accAddress := GenerateAccAddress()
-// 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
+func NewMsgCreateVendorInfo(signer sdk.AccAddress) *types.MsgCreateVendorInfo {
+	return &types.MsgCreateVendorInfo{
+		Creator:              signer.String(),
+		VendorID:             testconstants.VendorID1,
+		CompanyLegalName:     testconstants.CompanyLegalName,
+		CompanyPrefferedName: testconstants.CompanyPreferredName,
+		VendorName:           testconstants.VendorName,
+		VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+	}
+}
 
-// 		// add new vendorinfo
-// 		vendorinfo := NewMsgCreateVendorInfo(accAddress)
-// 		_, err := setup.Handler(setup.Ctx, vendorinfo)
-// 		require.Error(t, err)
-// 		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
-// 	}
-// }
+func NewMsgUpdateVendorInfo(signer sdk.AccAddress) *types.MsgUpdateVendorInfo {
+	return &types.MsgUpdateVendorInfo{
+		Creator:              signer.String(),
+		VendorID:             testconstants.VendorID1,
+		CompanyLegalName:     testconstants.CompanyLegalName + "/updated",
+		CompanyPrefferedName: testconstants.CompanyPreferredName + "/updated",
+		VendorName:           testconstants.VendorName + "/updated",
+		VendorLandingPageURL: testconstants.VendorLandingPageUrl + "/updated",
+	}
+}
 
-// func TestHandler_AddVendorInfoByVendorWithAnotherVendorId(t *testing.T) {
-// 	setup := Setup(t)
-
-// 	anotherVendor := GenerateAccAddress()
-// 	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, uint64(testconstants.VendorID2))
-
-// 	// add new vendorinfo
-// 	vendorinfo := NewMsgCreateVendorInfo(anotherVendor)
-// 	_, err := setup.Handler(setup.Ctx, vendorinfo)
-// 	require.Error(t, err)
-// 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
-// }
-
-// func NewMsgCreateVendorInfo(signer sdk.AccAddress) *types.MsgCreateVendorInfo {
-// 	return &types.MsgCreateVendorInfo{
-// 		Creator:              signer.String(),
-// 		VendorID:             int32(testconstants.VendorID1),
-// 		CompanyLegalName:     testconstants.CompanyLegalName,
-// 		CompanyPrefferedName: testconstants.CompanyPreferredName,
-// 		VendorName:           testconstants.VendorName,
-// 		VendorLandingPageURL: testconstants.VendorLandingPageUrl,
-// 	}
-// }
-
-// func NewMsgUpdateVendorInfo(signer sdk.AccAddress) *types.MsgUpdateVendorInfo {
-// 	return &types.MsgUpdateVendorInfo{
-// 		Creator:              signer.String(),
-// 		VendorID:             int32(testconstants.VendorID1),
-// 		CompanyLegalName:     testconstants.CompanyLegalName + "/updated",
-// 		CompanyPrefferedName: testconstants.CompanyPreferredName + "/updated",
-// 		VendorName:           testconstants.VendorName + "/updated",
-// 		VendorLandingPageURL: testconstants.VendorLandingPageUrl + "/updated",
-// 	}
-// }
-
-// func GenerateAccAddress() sdk.AccAddress {
-// 	_, _, accAddress := testdata.KeyTestPubAddr()
-// 	return accAddress
-// }
+func GenerateAccAddress() sdk.AccAddress {
+	_, _, accAddress := testdata.KeyTestPubAddr()
+	return accAddress
+}

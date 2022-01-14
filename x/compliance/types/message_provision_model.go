@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -54,6 +56,15 @@ func (msg *MsgProvisionModel) ValidateBasic() error {
 	err = validator.Validate(msg)
 	if err != nil {
 		return err
+	}
+
+	_, err = time.Parse(time.RFC3339, msg.ProvisionalDate)
+	if err != nil {
+		return NewErrInvalidTestDateFormat(msg.ProvisionalDate)
+	}
+
+	if !IsValidCertificationType(msg.CertificationType) {
+		return NewErrInvalidCertificationType(msg.CertificationType, CertificationTypesList)
 	}
 
 	return nil

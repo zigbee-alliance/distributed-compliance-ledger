@@ -90,6 +90,15 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	// Please note that we use `min` tag for fields of `string` type only
+	vl.RegisterTranslation("min", trans, func(ut ut.Translator) error {
+		return ut.Add("min", "minimum length for {0} allowed is {1}", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("min", fe.Field(), fe.Param())
+
+		return t
+	})
+
 	vl.RegisterTranslation("url", trans, func(ut ut.Translator) error {
 		return ut.Add("url", "Field {0} : {1} is not a valid url", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -122,6 +131,10 @@ func Validate(s interface{}) error {
 
 			if e.Tag() == "max" {
 				return sdkerrors.Wrap(ErrFieldMaxLengthExceeded, e.Translate(trans))
+			}
+
+			if e.Tag() == "min" {
+				return sdkerrors.Wrap(ErrFieldMinLengthNotReached, e.Translate(trans))
 			}
 
 			if e.Tag() == "url" || e.Tag() == "startsnotwith" || e.Tag() == "gtecsfield" {
