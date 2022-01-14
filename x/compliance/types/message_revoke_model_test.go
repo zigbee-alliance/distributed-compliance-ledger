@@ -176,6 +176,20 @@ func TestMsgRevokeModel_ValidateBasic(t *testing.T) {
 			},
 			err: ErrInvalidTestDateFormat,
 		},
+		{
+			name: "invalid certification type",
+			msg: MsgRevokeModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				RevocationDate:        testconstants.CertificationDate,
+				CertificationType:     "invalid certification type",
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+			},
+			err: ErrInvalidCertificationType,
+		},
 	}
 
 	positive_tests := []struct {

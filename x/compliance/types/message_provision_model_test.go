@@ -163,6 +163,20 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
+			name: "invalid certification type",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				ProvisionalDate:       testconstants.CertificationDate,
+				CertificationType:     "invalid certification type",
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+			},
+			err: ErrInvalidCertificationType,
+		},
+		{
 			name: "provisional date is not RFC3339",
 			msg: MsgProvisionModel{
 				Signer:                sample.AccAddress(),
