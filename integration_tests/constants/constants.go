@@ -86,6 +86,7 @@ var (
 	Owner                                             = Address1
 
 	// Compliance.
+	ProvisionalDate   = "2019-12-12T00:00:00Z"
 	CertificationDate = "2020-01-01T00:00:00Z"
 	RevocationDate    = "2020-03-03T03:30:00Z"
 	Reason            = "Some Reason"
