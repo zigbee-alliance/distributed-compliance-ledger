@@ -293,6 +293,13 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			msg:  validMsgCreateModel(),
 		},
 		{
+			name: "Creator is valid address",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.Creator = sample.AccAddress()
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
 			name: "Vid == 1",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Vid = 1
@@ -374,6 +381,14 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = 1
 				msg.CommissioningCustomFlowUrl = ""
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "CommissioningCustomFlowUrl is set when CommissioningCustomFlow == 2",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissioningCustomFlow = 2
+				msg.CommissioningCustomFlowUrl = "https://sampleflowurl.dclmodel"
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -689,6 +704,13 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			msg:  validMsgUpdateModel(),
 		},
 		{
+			name: "Creator is valid address",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.Creator = sample.AccAddress()
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
 			name: "Vid == 1",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Vid = 1
@@ -945,7 +967,7 @@ func TestMsgDeleteModel_ValidateBasic(t *testing.T) {
 		msg  *MsgDeleteModel
 	}{
 		{
-			name: "valid address",
+			name: "Creator is valid address",
 			msg: &MsgDeleteModel{
 				Creator: sample.AccAddress(),
 				Vid:     testconstants.Vid,
