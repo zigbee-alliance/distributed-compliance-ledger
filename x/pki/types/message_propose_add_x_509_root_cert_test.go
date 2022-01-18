@@ -1,16 +1,17 @@
 package types
 
-/* TODO issue 99
 import (
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
-	tests := []struct {
+	negative_tests := []struct {
 		name string
 		msg  MsgProposeAddX509RootCert
 		err  error
@@ -19,24 +20,45 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgProposeAddX509RootCert{
 				Signer: "invalid_address",
+				Cert:   testconstants.RootCertPem,
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		}, {
-			name: "valid address",
+		},
+		{
+			name: "empty certificate",
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
+				Cert:   "",
+			},
+			err: validator.ErrRequiredFieldMissing,
+		},
+	}
+
+	positive_tests := []struct {
+		name string
+		msg  MsgProposeAddX509RootCert
+	}{
+		{
+			name: "valid propose add x509cert msg",
+			msg: MsgProposeAddX509RootCert{
+				Signer: sample.AccAddress(),
+				Cert:   testconstants.RootCertPem,
 			},
 		},
 	}
-	for _, tt := range tests {
+
+	for _, tt := range negative_tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
-			if tt.err != nil {
-				require.ErrorIs(t, err, tt.err)
-				return
-			}
+			require.Error(t, err)
+			require.ErrorIs(t, err, tt.err)
+		})
+	}
+
+	for _, tt := range positive_tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
 			require.NoError(t, err)
 		})
 	}
 }
-*/
