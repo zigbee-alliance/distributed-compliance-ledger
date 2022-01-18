@@ -11,6 +11,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
+//nolint:goconst
 func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 	negativeTests := []struct {
 		name string
