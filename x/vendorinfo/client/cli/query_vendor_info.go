@@ -29,6 +29,9 @@ func CmdListVendorInfo() *cobra.Command {
 			}
 
 			res, err := queryClient.VendorInfoAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -53,21 +56,8 @@ func CmdShowVendorInfo() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			// node, err := clientCtx.GetNode()
-			// if err != nil {
-			// 	return err
-			// }
-			// status, err := node.Status(context.Background())
-			// if err != nil {
-			// 	return err
-			// }
-			// height := status.SyncInfo.LatestBlockHeight - 1
-			// clientCtx = clientCtx.WithHeight(height)
-			// println(clientCtx.Height)
-
 			key := append(types.KeyPrefix(types.VendorInfoKeyPrefix), types.VendorInfoKey(vid)...)
 			resBytes, _, err := clientCtx.QueryStore(key, types.StoreKey)
-
 			if err != nil {
 				return err
 			}
@@ -78,22 +68,6 @@ func CmdShowVendorInfo() *cobra.Command {
 			var res types.VendorInfo
 			clientCtx.Codec.MustUnmarshal(resBytes, &res)
 			return clientCtx.PrintProto(&res)
-
-			// queryClient := types.NewQueryClient(clientCtx)
-
-			// params := &types.QueryGetVendorInfoRequest{
-			// 	VendorID: vid,
-			// }
-
-			// res, err := queryClient.VendorInfo(context.Background(), params)
-			// if cli.IsNotFound(err) {
-			// 	return clientCtx.PrintString(cli.NotFoundOutput)
-			// }
-			// if err != nil {
-			// 	return err
-			// }
-
-			// return clientCtx.PrintProto(res)
 		},
 	}
 
