@@ -530,7 +530,7 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	// check that min version has been updated
+	// check that max version has been updated
 	require.Equal(t, uint32(5), receivedModelVersion.MinApplicableSoftwareVersion)
 	require.Equal(t, uint32(5), receivedModelVersion.MaxApplicableSoftwareVersion)
 }

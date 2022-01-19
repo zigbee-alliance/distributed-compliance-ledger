@@ -197,7 +197,18 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "MinApplicableSoftwareVersion > MaxApplicableSoftwareVersion",
+			name: "MinApplicableSoftwareVersion > MaxApplicableSoftwareVersion " +
+				"and MaxApplicableSoftwareVersion == 0",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.MinApplicableSoftwareVersion = 1
+				msg.MaxApplicableSoftwareVersion = 0
+				return msg
+			}(validMsgCreateModelVersion()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "MinApplicableSoftwareVersion > MaxApplicableSoftwareVersion " +
+				"and MaxApplicableSoftwareVersion > 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 8
 				msg.MaxApplicableSoftwareVersion = 7
@@ -271,6 +282,20 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Pid = 65535
+				return msg
+			}(validMsgCreateModelVersion()),
+		},
+		{
+			name: "SoftwareVersion == 0",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.SoftwareVersion = 0
+				return msg
+			}(validMsgCreateModelVersion()),
+		},
+		{
+			name: "SoftwareVersion > 0",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.SoftwareVersion = 1
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -393,7 +418,24 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: "MinApplicableSoftwareVersion < MaxApplicableSoftwareVersion",
+			name: "MinApplicableSoftwareVersion == 0 and MaxApplicableSoftwareVersion == 0",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.MinApplicableSoftwareVersion = 0
+				msg.MaxApplicableSoftwareVersion = 0
+				return msg
+			}(validMsgCreateModelVersion()),
+		},
+		{
+			name: "MinApplicableSoftwareVersion == 0 and MaxApplicableSoftwareVersion > 0",
+			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
+				msg.MinApplicableSoftwareVersion = 0
+				msg.MaxApplicableSoftwareVersion = 1
+				return msg
+			}(validMsgCreateModelVersion()),
+		},
+		{
+			name: "MinApplicableSoftwareVersion > 0, MaxApplicableSoftwareVersion > 0 " +
+				"and MinApplicableSoftwareVersion < MaxApplicableSoftwareVersion",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 5
 				msg.MaxApplicableSoftwareVersion = 10
@@ -401,7 +443,8 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModelVersion()),
 		},
 		{
-			name: "MinApplicableSoftwareVersion == MaxApplicableSoftwareVersion",
+			name: "MinApplicableSoftwareVersion > 0, MaxApplicableSoftwareVersion > 0 " +
+				"and MinApplicableSoftwareVersion == MaxApplicableSoftwareVersion",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 7
 				msg.MaxApplicableSoftwareVersion = 7
@@ -610,6 +653,20 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 65535",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Pid = 65535
+				return msg
+			}(validMsgUpdateModelVersion()),
+		},
+		{
+			name: "SoftwareVersion == 0",
+			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
+				msg.SoftwareVersion = 0
+				return msg
+			}(validMsgUpdateModelVersion()),
+		},
+		{
+			name: "SoftwareVersion > 0",
+			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
+				msg.SoftwareVersion = 1
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},

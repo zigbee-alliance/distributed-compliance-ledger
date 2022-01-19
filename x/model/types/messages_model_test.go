@@ -401,6 +401,20 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
+			name: "CommissioningModeInitialStepsHint == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissioningModeInitialStepsHint = 0
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "CommissioningModeInitialStepsHint > 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissioningModeInitialStepsHint = 1
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
 			name: "CommissioningModeInitialStepsInstruction is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeInitialStepsInstruction = ""
@@ -411,6 +425,20 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction length == 1024",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeInitialStepsInstruction = tmrand.Str(1024)
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "CommissioningModeSecondaryStepsHint == 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissioningModeSecondaryStepsHint = 0
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "CommissioningModeSecondaryStepsHint > 0",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.CommissioningModeSecondaryStepsHint = 1
 				return msg
 			}(validMsgCreateModel()),
 		},
