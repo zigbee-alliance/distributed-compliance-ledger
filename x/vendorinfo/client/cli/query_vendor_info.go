@@ -53,21 +53,47 @@ func CmdShowVendorInfo() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			// node, err := clientCtx.GetNode()
+			// if err != nil {
+			// 	return err
+			// }
+			// status, err := node.Status(context.Background())
+			// if err != nil {
+			// 	return err
+			// }
+			// height := status.SyncInfo.LatestBlockHeight - 1
+			// clientCtx = clientCtx.WithHeight(height)
+			// println(clientCtx.Height)
 
-			params := &types.QueryGetVendorInfoRequest{
-				VendorID: vid,
-			}
+			key := append(types.KeyPrefix(types.VendorInfoKeyPrefix), types.VendorInfoKey(vid)...)
+			resBytes, _, err := clientCtx.QueryStore(key, types.StoreKey)
 
-			res, err := queryClient.VendorInfo(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
 			if err != nil {
 				return err
 			}
+			if resBytes == nil {
+				return clientCtx.PrintString(cli.NotFoundOutput)
+			}
 
-			return clientCtx.PrintProto(res)
+			var res types.VendorInfo
+			clientCtx.Codec.MustUnmarshal(resBytes, &res)
+			return clientCtx.PrintProto(&res)
+
+			// queryClient := types.NewQueryClient(clientCtx)
+
+			// params := &types.QueryGetVendorInfoRequest{
+			// 	VendorID: vid,
+			// }
+
+			// res, err := queryClient.VendorInfo(context.Background(), params)
+			// if cli.IsNotFound(err) {
+			// 	return clientCtx.PrintString(cli.NotFoundOutput)
+			// }
+			// if err != nil {
+			// 	return err
+			// }
+
+			// return clientCtx.PrintProto(res)
 		},
 	}
 

@@ -212,6 +212,7 @@ func initRootCmd(
 	for _, cmd := range options.addSubCmds {
 		rootCmd.AddCommand(cmd)
 	}
+	rootCmd.AddCommand(LightCmd)
 }
 
 // queryCommand returns the sub-command to send queries to the app.
