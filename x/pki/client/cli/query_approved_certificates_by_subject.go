@@ -9,9 +9,7 @@ import (
 )
 
 func CmdShowApprovedCertificatesBySubject() *cobra.Command {
-	var (
-		subject string
-	)
+	var subject string
 
 	cmd := &cobra.Command{
 		Use:   "all-subject-x509-certs",

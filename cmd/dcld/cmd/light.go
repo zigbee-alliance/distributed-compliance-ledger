@@ -28,7 +28,7 @@ import (
 
 // mostly copied from https://github.com/tendermint/tendermint/blob/master/cmd/tendermint/commands/light.go
 
-// LightCmd represents the base command when called without any subcommands
+// LightCmd represents the base command when called without any subcommands.
 var LightCmd = &cobra.Command{
 	Use:   "light [chainID]",
 	Short: "Run a light client proxy server, verifying Tendermint rpc",
@@ -71,7 +71,7 @@ var (
 	trustLevelStr  string
 
 	logLevel string
-	// logFormat string
+	// logFormat string.
 
 	primaryKey   = []byte("primary")
 	witnessesKey = []byte("witnesses")
@@ -211,7 +211,7 @@ func runProxy(cmd *cobra.Command, args []string) error {
 	}()
 
 	logger.Info("Starting proxy...", "laddr", listenAddr)
-	if err := p.ListenAndServe(); err != http.ErrServerClosed {
+	if err := p.ListenAndServe(); errors.Is(err, http.ErrServerClosed) {
 		// Error starting or closing listener:
 		logger.Error("proxy ListenAndServe", "err", err)
 	}
