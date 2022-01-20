@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -23,10 +24,28 @@ import (
 	lproxy "github.com/tendermint/tendermint/light/proxy"
 	lrpc "github.com/tendermint/tendermint/light/rpc"
 	dbs "github.com/tendermint/tendermint/light/store/db"
+	rpchttp "github.com/tendermint/tendermint/rpc/client/http"
 	rpcserver "github.com/tendermint/tendermint/rpc/jsonrpc/server"
 )
 
 // mostly copied from https://github.com/tendermint/tendermint/blob/master/cmd/tendermint/commands/light.go
+
+const (
+	FlagListenAddr   = "laddr"
+	FlagPrimary      = "primary"
+	FlagPrimaryShort = "p"
+	FlagWitness      = "witnesses"
+	FlagWitnessShort = "w"
+	FlagHeight       = "height"
+	FlagHash         = "hash"
+	FlagDir          = "dir"
+	FlagDirShort     = "d"
+	FlagLogLevel     = "log-level"
+	FlagSeq          = "sequential"
+	FlagTrustLevel   = "trust-level"
+	FlagMaxConn      = "max-open-connections"
+	FlagTrustPeriod  = "trusting-period"
+)
 
 // LightCmd represents the base command when called without any subcommands.
 var LightCmd = &cobra.Command{
@@ -52,7 +71,7 @@ for applications built w/ Cosmos SDK).
 `,
 	RunE: runProxy,
 	Args: cobra.ExactArgs(1),
-	Example: `light cosmoshub-3 -p http://52.57.29.196:26657 -w http://public-seed-node.cosmoshub.certus.one:26657
+	Example: `dcld light dcltestnet -p http://52.57.29.196:26657 -w http://public-seed-node.cosmoshub.certus.one:26657
 	--height 962118 --hash 28B97BE9F6DE51AC69F70E0B7BFD7E5C9CD1A595B7DC31AFF27C50D4948020CD`,
 }
 
@@ -78,29 +97,29 @@ var (
 )
 
 func init() {
-	LightCmd.Flags().StringVar(&listenAddr, "laddr", "tcp://localhost:8888",
+	LightCmd.Flags().StringVar(&listenAddr, FlagListenAddr, "tcp://localhost:8888",
 		"serve the proxy on the given address")
-	LightCmd.Flags().StringVarP(&primaryAddr, "primary", "p", "",
+	LightCmd.Flags().StringVarP(&primaryAddr, FlagPrimary, FlagPrimaryShort, "",
 		"connect to a Tendermint node at this address")
-	LightCmd.Flags().StringVarP(&witnessAddrsJoined, "witnesses", "w", "",
+	LightCmd.Flags().StringVarP(&witnessAddrsJoined, FlagWitness, FlagWitnessShort, "",
 		"tendermint nodes to cross-check the primary node, comma-separated")
-	LightCmd.Flags().StringVarP(&dir, "dir", "d", os.ExpandEnv(filepath.Join("$HOME", ".tendermint-light")),
+	LightCmd.Flags().StringVarP(&dir, FlagDir, FlagDirShort, os.ExpandEnv(filepath.Join("$HOME", ".tendermint-light")),
 		"specify the directory")
 	LightCmd.Flags().IntVar(
 		&maxOpenConnections,
-		"max-open-connections",
+		FlagMaxConn,
 		900,
 		"maximum number of simultaneous connections (including WebSocket).")
-	LightCmd.Flags().DurationVar(&trustingPeriod, "trusting-period", 168*time.Hour,
+	LightCmd.Flags().DurationVar(&trustingPeriod, FlagTrustPeriod, 168*time.Hour,
 		"trusting period that headers can be verified within. Should be significantly less than the unbonding period")
-	LightCmd.Flags().Int64Var(&trustedHeight, "height", 1, "Trusted header's height")
-	LightCmd.Flags().BytesHexVar(&trustedHash, "hash", []byte{}, "Trusted header's hash")
-	LightCmd.Flags().StringVar(&logLevel, "log-level", "info", "The logging level (debug|info|warn|error|fatal)")
+	LightCmd.Flags().Int64Var(&trustedHeight, FlagHeight, 0, "Trusted header's height")
+	LightCmd.Flags().BytesHexVar(&trustedHash, FlagHash, []byte{}, "Trusted header's hash")
+	LightCmd.Flags().StringVar(&logLevel, FlagLogLevel, "info", "The logging level (debug|info|warn|error|fatal)")
 	// LightCmd.Flags().StringVar(&logFormat, "log-format", log.LogFormatPlain, "The logging format (text|json)")
-	LightCmd.Flags().StringVar(&trustLevelStr, "trust-level", "1/3",
+	LightCmd.Flags().StringVar(&trustLevelStr, FlagTrustLevel, "1/3",
 		"trust level. Must be between 1/3 and 3/3",
 	)
-	LightCmd.Flags().BoolVar(&sequential, "sequential", false,
+	LightCmd.Flags().BoolVar(&sequential, FlagSeq, false,
 		"sequential verification. Verify all headers sequentially as opposed to using skipping verification",
 	)
 }
@@ -158,6 +177,22 @@ func runProxy(cmd *cobra.Command, args []string) error {
 		options = append(options, light.SequentialVerification())
 	} else {
 		options = append(options, light.SkippingVerification(trustLevel))
+	}
+
+	// should set either both hash and height, or none of them
+	if trustedHeight == 0 && len(trustedHash) > 0 {
+		return fmt.Errorf("hash is set but height is not (--%s) ", FlagHeight)
+	}
+	if trustedHeight != 0 && len(trustedHash) == 0 {
+		return fmt.Errorf("height is set but hash is not (--%s) ", FlagHash)
+	}
+
+	// if trusted height and hash are not set, try toget it from primaries and witness
+	if trustedHeight == 0 && len(trustedHash) == 0 {
+		trustedHeight, trustedHash, err = getTrustedHeightAndHash(primaryAddr, witnessesAddrs)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Initiate the light client. If the trusted store already has blocks in it, this
@@ -242,4 +277,54 @@ func saveProviders(db dbm.DB, primaryAddr, witnessesAddrs string) error {
 		return fmt.Errorf("failed to save witness providers: %w", err)
 	}
 	return nil
+}
+
+func getTrustedHeightAndHash(primaryAddr string, witnessesAddrs []string) (int64, []byte, error) {
+	config := rpcserver.DefaultConfig()
+
+	// get height and hash from the primary
+	primaryRpcClient, err := rpchttp.NewWithTimeout(primaryAddr, "/websocket", uint(config.WriteTimeout.Seconds()))
+	if err != nil {
+		return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
+	}
+
+	res, err := primaryRpcClient.Commit(context.Background(), nil)
+	if err != nil {
+		return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
+	}
+	primaryHeight := res.SignedHeader.Header.Height
+	primaryHash := res.SignedHeader.Commit.BlockID.Hash
+
+	time.Sleep(2 * time.Second) // sleep to make sure a new block is commited on all nodes
+
+	// check that the hash for the given height is the same on all witnesses
+	for _, witnessesAddr := range witnessesAddrs {
+		witnessRpcClient, err := rpchttp.NewWithTimeout(witnessesAddr, "/websocket", uint(config.WriteTimeout.Seconds()))
+		if err != nil {
+			return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
+		}
+
+		res, err := witnessRpcClient.Commit(context.Background(), &primaryHeight)
+		if err != nil {
+			return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
+		}
+		h := res.SignedHeader.Header.Height
+		hash := res.SignedHeader.Commit.BlockID.Hash
+
+		if h != primaryHeight {
+			return 0, []byte{}, fmt.Errorf(
+				"not able to obtain trusted height and hash: primary height %d is not equal to witness height %d",
+				primaryHeight, h,
+			)
+		}
+		if !bytes.Equal(hash, primaryHash) {
+			return 0, []byte{}, fmt.Errorf(
+				"not able to obtain trusted height and hash: primary hash %s is not equal to witness hash %s atr height %d",
+				primaryHash, hash, primaryHeight,
+			)
+		}
+	}
+
+	return primaryHeight, primaryHash, nil
+
 }

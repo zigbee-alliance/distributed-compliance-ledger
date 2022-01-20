@@ -77,7 +77,7 @@ It can be a proxy for CLI or direct requests from code done via Tendermint RPC.
 Please note, that CLI can use a Light Client proxy only for single-value query requests.
 A Full Node (Validator or Observer) should be used for multi-value query requests and write requests.
 
-See [Run Light Client Proxy](docs/run-light-client-proxy.md) for details how to run it. 
+See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how to run it. 
 
 ### REST
 - Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html.
