@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"context"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
@@ -18,26 +16,15 @@ func CmdShowVendorProducts() *cobra.Command {
 		Short: "Query the list of Models for the given Vendor",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			params := &types.QueryGetVendorProductsRequest{
-				Vid: vid,
-			}
-
-			res, err := queryClient.VendorProducts(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			var res types.VendorProducts
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.VendorProductsKeyPrefix,
+				types.VendorProductsKey(vid),
+				&res,
+			)
 		},
 	}
 

@@ -53,10 +53,13 @@ func CmdCreateModelVersion() *cobra.Command {
 				maxApplicableSoftwareVersion,
 				releaseNotesUrl,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			return err
 		},
 	}
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,
@@ -145,10 +148,13 @@ func CmdUpdateModelVersion() *cobra.Command {
 				maxApplicableSoftwareVersion,
 				releaseNotesUrl,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			return err
 		},
 	}
 

@@ -31,6 +31,9 @@ func CmdListLastValidatorPower() *cobra.Command {
 			}
 
 			res, err := queryClient.LastValidatorPowerAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -53,8 +56,6 @@ func CmdShowLastValidatorPower() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
-
 			addr, err := sdk.ValAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				owner, err2 := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
@@ -64,19 +65,14 @@ func CmdShowLastValidatorPower() *cobra.Command {
 				addr = sdk.ValAddress(owner)
 			}
 
-			params := &types.QueryGetLastValidatorPowerRequest{
-				Owner: addr.String(),
-			}
-
-			res, err := queryClient.LastValidatorPower(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			var res types.LastValidatorPower
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.LastValidatorPowerKeyPrefix,
+				types.LastValidatorPowerKey(addr),
+				&res,
+			)
 		},
 	}
 

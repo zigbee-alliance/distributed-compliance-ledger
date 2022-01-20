@@ -8,16 +8,16 @@ import (
 
 // SetRevokedRootCertificates set revokedRootCertificates in the store.
 func (k Keeper) SetRevokedRootCertificates(ctx sdk.Context, revokedRootCertificates types.RevokedRootCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedRootCertificatesKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedRootCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&revokedRootCertificates)
-	store.Set([]byte{0}, b)
+	store.Set(types.RevokedRootCertificatesKey, b)
 }
 
 // GetRevokedRootCertificates returns revokedRootCertificates.
 func (k Keeper) GetRevokedRootCertificates(ctx sdk.Context) (val types.RevokedRootCertificates, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedRootCertificatesKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedRootCertificatesKeyPrefix))
 
-	b := store.Get([]byte{0})
+	b := store.Get(types.RevokedRootCertificatesKey)
 	if b == nil {
 		return val, false
 	}
@@ -28,8 +28,8 @@ func (k Keeper) GetRevokedRootCertificates(ctx sdk.Context) (val types.RevokedRo
 
 // RemoveRevokedRootCertificates removes revokedRootCertificates from the store.
 func (k Keeper) RemoveRevokedRootCertificates(ctx sdk.Context) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedRootCertificatesKey))
-	store.Delete([]byte{0})
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedRootCertificatesKeyPrefix))
+	store.Delete(types.RevokedRootCertificatesKey)
 }
 
 // Add revoked root certificate to the list.

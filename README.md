@@ -17,41 +17,6 @@ More information about use cases can be found in [DC Ledger Overview](docs/ZB_Le
 
 DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](https://cosmos.network/sdk).
 
-### Main Components
-
- - **Pool of Nodes**
-   - A network of Tendermint-based validator nodes (Validators and Observers) maintaining the ledger.
-   - Every validator node (`dcld` binary) runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
-   - See the proposed deployment in [deployment](docs/deployment.png).
- - **Clients** for interactions with the pool of nodes (sending write and read requests).
-     - **CLI** 
-       - The same `dcld` binary as a Node
-       - The CLI is based on the Cosmos SDK
-       - See [CLI Usage](#cli-usage) section for details.
-     - **REST**
-       - Exposed by every running node
-       - See https://docs.cosmos.network/master/core/grpc_rest.html
-       - See [transactions](docs/transactions.md) for a full list of endpoints.
-     - **gRPC**.
-       - A client code can be generated for all popular languages from the proto files [proto](proto), see https://grpc.io/docs/languages/.
-       - See https://docs.cosmos.network/master/core/grpc_rest.html
-     - **Tendermint RPC and Light Client**
-       - Tendermint's Light Client can be used for a direct communication with [Tendermint RPC](https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc).
-       - There are currently no DC Ledger specific API libraries for various platforms and languages, 
-    but they may be provided in future.
-       - These libraries can be based on the following Light Client implementations: 
-            - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2)
-            - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)  
- - **Public UI** (Outdated)
-    - https://dcl.dev.dsr-corporation.com
-    - based on the REST API
-    - can be used to browse the ledger
-        - please note that it doesn't show all the accounts on the ledger
-        - it shows only the default (demo) accounts created on the UI server
-    - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
-    - source code and documentation are located in [dcl-ui](/dcl-ui) directory
-
-### Public Permissioned Ledger
 DC Ledger is a public permissioned ledger in the following sense:
  - Anyone can read from the ledger (that's why it's public). See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
  - Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
@@ -66,32 +31,80 @@ In order to send write transactions to the ledger you need:
        - The Account has an associated role. The role is used for authorization policies.
    - Sign every transaction by the private key.
 
+## Main Components
+
+### Pool of Nodes
+- A network of Tendermint-based validator nodes (Validators and Observers) maintaining the ledger.
+- Every validator node (`dcld` binary) runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
+- See the proposed deployment in [deployment](docs/deployment.png).
+
+### Clients
+For interactions with the pool of nodes (sending write and read requests).
+
+Every client must be connected to a Node (either Observer or Validator).
+
+If there is no trusted node for connection, a [Light Client Proxy](#light-client-proxy) can be used. 
+A Light Client Proxy can be connected to multiple nodes and will verify the state proofs for every single value query request. 
+
+- [CLI](#cli)  
+- [REST](#rest)
+- [gRPC](#grpc)
+- [Tendermint RPC and Light Client](#tendermint-rpc-and-light-client)
+
+### Public UI (Outdated, doesn't work with DCL 0.6+)
+- based on the REST API
+- can be used to browse the ledger
+    - please note that it doesn't show all the accounts on the ledger
+    - it shows only the default (demo) accounts created on the UI server
+- **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
+- source code and documentation are located in [dcl-ui](/dcl-ui) directory
+
 
 ## How To
 
-### CLI Usage
-A full list of all CLI commands can be found there: [transactions.md](docs/transactions.md).
+### CLI
+- The same `dcld` binary as a Node
+- A full list of all CLI commands can be found there: [transactions.md](docs/transactions.md).
+- CLI can be used for write and read requests.
+- Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
+- If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](#light-client-proxy) can be used.
 
-Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
+### Light Client Proxy
+Should be used if there are no trusted Observer or Validator nodes to connect.
 
-If write requests to the Ledger needs to be sent, please make sure that you have
-an Account created on the Ledger with an appropriate role (see [how-to.md](docs/how-to.md#getting-account)).
+It can be a proxy for CLI or direct requests from code done via Tendermint RPC.
 
-Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
+Please note, that CLI can use a Light Client proxy only for single-value query requests.
+A Full Node (Validator or Observer) should be used for multi-value query requests and write requests.
 
-### REST Usage
-Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html. 
+See [Run Light Client Proxy](docs/run-light-client-proxy.md) for details how to run it. 
 
-A list of all REST API calls can be found in [transactions.md](docs/transactions.md).
+### REST
+- Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html.
+- See [transactions](docs/transactions.md) for a full list of endpoints.
+- REST HTTP(S) queries can be directly used for read requests.
+  See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
+- REST HTTP(S) queries can be directly used to broadcast generated and signed transaction.
+- Generation and signing of transactions need to be done in code or via CLI.
+  See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger).
+- There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.
 
-Details on how a REST API can be used for write and read requests can be found in
-[How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger)
-and [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
+### gRPC
+- Any running node exposes a REST API at port `9090`. See https://docs.cosmos.network/master/core/grpc_rest.html.
+- A client code can be generated for all popular languages from the proto files [proto](proto), see https://grpc.io/docs/languages/.
+- The generated client code can be used for read and write requests, i.e. generation and signing of transactions
+  See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
+- There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only
 
-If write requests to the Ledger needs to be sent, please make sure that you have
-an Account created on the Ledger with an appropriate role (see [how-to.md](docs/how-to.md#getting-account)).
-
-Sending read requests to the Ledger doesn't require an Account (Ledger is public for reads).
+### Tendermint RPC and Light Client
+  - Tendermint RPC is exposed by every running node  at port `26657`. See https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc.
+  - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
+    So, if Light Client API is used, then it's possible to communicate with non-trusted nodes. 
+  - There are currently no DC Ledger specific API libraries for various platforms and languages, 
+but they may be provided in the future.
+  - The following libraries can be used as light clients: 
+       - [Golang Light Client implementation](https://pkg.go.dev/github.com/tendermint/tendermint/lite2)
+       - [Rust Light Client implementation](https://docs.rs/tendermint-light-client/0.23.3/tendermint_light_client/)  
 
 ### Instructions
 After the CLI or REST API is configured and Account with an appropriate role is created,
