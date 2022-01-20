@@ -41,11 +41,6 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		return nil, types.NewErrModelVersionAlreadyExists(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	// check if maxApllicableSoftwareVersion is less then minApplicableSoftwareVersion
-	if msg.MaxApplicableSoftwareVersion < msg.MinApplicableSoftwareVersion {
-		return nil, types.NewErrMaxSVLessThanMinSV(msg.MinApplicableSoftwareVersion, msg.MaxApplicableSoftwareVersion)
-	}
-
 	modelVersion := types.ModelVersion{
 		Creator:                      msg.Creator,
 		Vid:                          msg.Vid,
@@ -99,6 +94,18 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 	// as otaFileSize, otaChecksum and otaChecksumType are non mutable fields
 	if msg.OtaUrl != "" && modelVersion.OtaUrl == "" {
 		return nil, types.NewErrOtaURLCannotBeSet(msg.Vid, msg.Pid, msg.SoftwareVersion)
+	}
+
+	if msg.MinApplicableSoftwareVersion != 0 && msg.MaxApplicableSoftwareVersion == 0 &&
+		msg.MinApplicableSoftwareVersion > modelVersion.MaxApplicableSoftwareVersion {
+
+		return nil, types.NewErrMaxSVLessThanMinSV(msg.MinApplicableSoftwareVersion, modelVersion.MaxApplicableSoftwareVersion)
+	}
+
+	if msg.MinApplicableSoftwareVersion == 0 && msg.MaxApplicableSoftwareVersion != 0 &&
+		msg.MaxApplicableSoftwareVersion < modelVersion.MinApplicableSoftwareVersion {
+
+		return nil, types.NewErrMaxSVLessThanMinSV(modelVersion.MinApplicableSoftwareVersion, msg.MaxApplicableSoftwareVersion)
 	}
 
 	// update existing model version value only if corresponding value in MsgUpdate is not empty

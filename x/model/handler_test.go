@@ -401,6 +401,140 @@ func TestHandler_PartiallyUpdateModelVersion(t *testing.T) {
 	require.Equal(t, msgCreateModelVersion.MaxApplicableSoftwareVersion, receivedModelVersion.MaxApplicableSoftwareVersion)
 }
 
+func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor)
+	msgCreateModelVersion.MinApplicableSoftwareVersion = 5
+	msgCreateModelVersion.MaxApplicableSoftwareVersion = 10
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// try to update only min version to a value greater than stored max version
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.MinApplicableSoftwareVersion = 11
+	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.Error(t, err)
+	require.True(t, types.ErrMaxSVLessThanMinSV.Is(err))
+
+	// try to update only min version to a value less than stored max version
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.MinApplicableSoftwareVersion = 7
+	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query updated model version
+	receivedModelVersion, err := queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that min version has been updated
+	require.Equal(t, uint32(7), receivedModelVersion.MinApplicableSoftwareVersion)
+	require.Equal(t, uint32(10), receivedModelVersion.MaxApplicableSoftwareVersion)
+
+	// try to update only min version to a value equal to stored max version
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.MinApplicableSoftwareVersion = 10
+	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 0
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query updated model version
+	receivedModelVersion, err = queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that min version has been updated
+	require.Equal(t, uint32(10), receivedModelVersion.MinApplicableSoftwareVersion)
+	require.Equal(t, uint32(10), receivedModelVersion.MaxApplicableSoftwareVersion)
+}
+
+func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// add new model version
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor)
+	msgCreateModelVersion.MinApplicableSoftwareVersion = 5
+	msgCreateModelVersion.MaxApplicableSoftwareVersion = 10
+	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
+	require.NoError(t, err)
+
+	// try to update only max version to a value less than stored min version
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
+	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 4
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.Error(t, err)
+	require.True(t, types.ErrMaxSVLessThanMinSV.Is(err))
+
+	// try to update only max version to a value greater than stored min version
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
+	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 7
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query updated model version
+	receivedModelVersion, err := queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that max version has been updated
+	require.Equal(t, uint32(5), receivedModelVersion.MinApplicableSoftwareVersion)
+	require.Equal(t, uint32(7), receivedModelVersion.MaxApplicableSoftwareVersion)
+
+	// try to update only max version to a value equal to stored min version
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+	msgUpdateModelVersion.MinApplicableSoftwareVersion = 0
+	msgUpdateModelVersion.MaxApplicableSoftwareVersion = 5
+
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	// query updated model version
+	receivedModelVersion, err = queryModelVersion(
+		setup,
+		msgUpdateModelVersion.Vid,
+		msgUpdateModelVersion.Pid,
+		msgUpdateModelVersion.SoftwareVersion,
+	)
+	require.NoError(t, err)
+
+	// check that max version has been updated
+	require.Equal(t, uint32(5), receivedModelVersion.MinApplicableSoftwareVersion)
+	require.Equal(t, uint32(5), receivedModelVersion.MaxApplicableSoftwareVersion)
+}
+
 func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 	setup := Setup(t)
 
