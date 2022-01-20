@@ -45,6 +45,7 @@ const (
 	FlagTrustLevel   = "trust-level"
 	FlagMaxConn      = "max-open-connections"
 	FlagTrustPeriod  = "trusting-period"
+	FlagStartTimeout = "start-timeout"
 )
 
 // LightCmd represents the base command when called without any subcommands.
@@ -94,10 +95,12 @@ var (
 
 	primaryKey   = []byte("primary")
 	witnessesKey = []byte("witnesses")
+
+	startTimeout int64
 )
 
 func init() {
-	LightCmd.Flags().StringVar(&listenAddr, FlagListenAddr, "tcp://localhost:8888",
+	LightCmd.Flags().StringVar(&listenAddr, FlagListenAddr, "tcp://0.0.0.0:8888",
 		"serve the proxy on the given address")
 	LightCmd.Flags().StringVarP(&primaryAddr, FlagPrimary, FlagPrimaryShort, "",
 		"connect to a Tendermint node at this address")
@@ -122,9 +125,13 @@ func init() {
 	LightCmd.Flags().BoolVar(&sequential, FlagSeq, false,
 		"sequential verification. Verify all headers sequentially as opposed to using skipping verification",
 	)
+	LightCmd.Flags().Int64Var(&startTimeout, FlagStartTimeout, 0,
+		"How many seconds to wait before staring the light client proxy. Mostly for test purposes when light client is started at the same time as the pool.")
 }
 
 func runProxy(cmd *cobra.Command, args []string) error {
+	time.Sleep(time.Duration(startTimeout) * time.Second)
+
 	logger := log.NewTMLogger(log.NewSyncWriter(os.Stdout))
 	var option log.Option
 	if logLevel == "info" {
