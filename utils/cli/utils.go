@@ -22,6 +22,12 @@ const (
 func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string, key []byte, res codec.ProtoMarshaler) error {
 	key = append([]byte(keyPrefix), key...)
 	resBytes, _, err := clientCtx.QueryStore(key, storeName)
+	if IsEmptySubtreeRpcError(err) {
+		// TODO: if no write requests has been sent for a module, an attempt to query a non-existent result will
+		// cause an error: verify absence proof: could not calculate root for proof: Nonexistence proof has empty Left and Right proof: invalid proof
+		// interpret as Not Found for now
+		return clientCtx.PrintString(NotFoundOutput)
+	}
 	if err != nil {
 		return err
 	}
@@ -36,6 +42,12 @@ func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string
 func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix string, key []byte, res codec.ProtoMarshaler) error {
 	key = append([]byte(keyPrefix), key...)
 	resBytes, _, err := clientCtx.QueryStore(key, storeName)
+	if IsEmptySubtreeRpcError(err) {
+		// TODO: if no write requests has been sent for a module, an attempt to query a non-existent result will
+		// cause an error: verify absence proof: could not calculate root for proof: Nonexistence proof has empty Left and Right proof: invalid proof
+		// interpret as Not Found for now
+		return clientCtx.PrintString(NotFoundOutput)
+	}
 	if err != nil {
 		return err
 	}
@@ -79,6 +91,17 @@ func IsWriteInsteadReadRpcError(err error) bool {
 		return false
 	}
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "err response code: 22")
+}
+
+func IsEmptySubtreeRpcError(err error) bool {
+	if err == nil {
+		return false
+	}
+	var rpcerror *rpctypes.RPCError
+	if !errors.As(err, &rpcerror) {
+		return false
+	}
+	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "Nonexistence proof has empty Left and Right proof")
 }
 
 func AddTxFlagsToCmd(cmd *cobra.Command) {
