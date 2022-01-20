@@ -30,7 +30,7 @@ func CmdListVendorInfo() *cobra.Command {
 
 			res, err := queryClient.VendorInfoAll(context.Background(), params)
 			if cli.IsKeyNotFoundRpcError(err) {
-				return clientCtx.PrintString(cli.LightClientForListQueries)
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {
 				return err
@@ -55,19 +55,14 @@ func CmdShowVendorInfo() *cobra.Command {
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-
-			key := append(types.KeyPrefix(types.VendorInfoKeyPrefix), types.VendorInfoKey(vid)...)
-			resBytes, _, err := clientCtx.QueryStore(key, types.StoreKey)
-			if err != nil {
-				return err
-			}
-			if resBytes == nil {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-
 			var res types.VendorInfo
-			clientCtx.Codec.MustUnmarshal(resBytes, &res)
-			return clientCtx.PrintProto(&res)
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.VendorInfoKeyPrefix,
+				types.VendorInfoKey(vid),
+				&res,
+			)
 		},
 	}
 

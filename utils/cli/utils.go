@@ -6,17 +6,32 @@ import (
 	"os"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/spf13/cobra"
 	rpctypes "github.com/tendermint/tendermint/rpc/jsonrpc/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 const (
-	NotFoundOutput            = "\"Not Found\"\n"
-	LightClientForListQueries = "\"List queries don't work with a Light Client Proxy. Please connect to a Full Node client you trust if you need to use list queries.\"\n"
+	NotFoundOutput                   = "\"Not Found\"\n"
+	LightClientProxyForListQueries   = "\"List queries don't work with a Light Client Proxy. Please connect to a Full Node you trust if you need to use list queries.\"\n"
+	LightClientProxyForWriteRequests = "\"Write requests don't work with a Light Client Proxy. Please connect to a Full Node (Validator or Observer) instead.\"\n"
 )
+
+func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string, key []byte, res codec.ProtoMarshaler) error {
+	key = append([]byte(keyPrefix), key...)
+	resBytes, _, err := clientCtx.QueryStore(key, storeName)
+	if err != nil {
+		return err
+	}
+	if resBytes == nil {
+		return clientCtx.PrintString(NotFoundOutput)
+	}
+
+	clientCtx.Codec.MustUnmarshal(resBytes, res)
+	return clientCtx.PrintProto(res)
+}
 
 func ReadFromFile(target string) (string, error) {
 	if _, err := os.Stat(target); err == nil { // check whether it is a path
@@ -31,16 +46,6 @@ func ReadFromFile(target string) (string, error) {
 	}
 }
 
-func IsNotFound(err error) bool {
-	if err == nil {
-		return false
-	}
-	s, ok := status.FromError(err)
-	if !ok {
-		return false
-	}
-	return s.Code() == codes.NotFound
-}
 func IsKeyNotFoundRpcError(err error) bool {
 	if err == nil {
 		return false
@@ -50,6 +55,17 @@ func IsKeyNotFoundRpcError(err error) bool {
 		return false
 	}
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "empty key")
+}
+
+func IsWriteInsteadReadRpcError(err error) bool {
+	if err == nil {
+		return false
+	}
+	var rpcerror *rpctypes.RPCError
+	if !errors.As(err, &rpcerror) {
+		return false
+	}
+	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "err response code: 22")
 }
 
 func AddTxFlagsToCmd(cmd *cobra.Command) {

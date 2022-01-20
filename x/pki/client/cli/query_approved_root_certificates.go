@@ -1,11 +1,10 @@
 package cli
 
 import (
-	"context"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
@@ -16,17 +15,14 @@ func CmdShowApprovedRootCertificates() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			params := &types.QueryGetApprovedRootCertificatesRequest{}
-
-			res, err := queryClient.ApprovedRootCertificates(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			var res types.ApprovedRootCertificates
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ApprovedRootCertificatesKeyPrefix,
+				types.ApprovedRootCertificatesKey,
+				&res,
+			)
 		},
 	}
 

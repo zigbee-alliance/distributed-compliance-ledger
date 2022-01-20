@@ -6,7 +6,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
@@ -30,6 +29,9 @@ func CmdListProposedCertificate() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedCertificateAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -45,37 +47,30 @@ func CmdListProposedCertificate() *cobra.Command {
 }
 
 func CmdShowProposedCertificate() *cobra.Command {
+	var (
+		subject      string
+		subjectKeyID string
+	)
+
 	cmd := &cobra.Command{
 		Use:   "proposed-x509-root-cert",
 		Short: "Gets a proposed but not approved root certificate with the given combination of subject and subject-key-id",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			subject := viper.GetString(FlagSubject)
-			subjectKeyID := viper.GetString(FlagSubjectKeyID)
-
-			params := &types.QueryGetProposedCertificateRequest{
-				Subject:      subject,
-				SubjectKeyId: subjectKeyID,
-			}
-
-			res, err := queryClient.ProposedCertificate(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			var res types.ProposedCertificate
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ProposedCertificateKeyPrefix,
+				types.ProposedCertificateKey(subject, subjectKeyID),
+				&res,
+			)
 		},
 	}
 
-	cmd.Flags().StringP(FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
-	cmd.Flags().StringP(FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
+	cmd.Flags().StringVarP(&subject, FlagSubject, FlagSubjectShortcut, "", "Certificate's subject")
+	cmd.Flags().StringVarP(&subjectKeyID, FlagSubjectKeyID, FlagSubjectKeyIDShortcut, "", "Certificate's subject key id (hex)")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagSubject)

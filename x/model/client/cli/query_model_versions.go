@@ -1,11 +1,10 @@
 package cli
 
 import (
-	"context"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
@@ -20,24 +19,15 @@ func CmdShowModelVersions() *cobra.Command {
 		Short: "Query the list of all versions for a given Device Model",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			params := &types.QueryGetModelVersionsRequest{
-				Vid: vid,
-				Pid: pid,
-			}
-
-			res, err := queryClient.ModelVersions(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			var res types.ModelVersions
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ModelVersionsKeyPrefix,
+				types.ModelVersionsKey(vid, pid),
+				&res,
+			)
 		},
 	}
 

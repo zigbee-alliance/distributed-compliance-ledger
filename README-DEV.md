@@ -163,18 +163,11 @@ Please take into account the following when sending a PR:
     So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
 - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
+- Implement business logic in `msg_server_xxx.go`
 - Improve `NotFound` error processing:
     - replace `status.Error(codes.InvalidArgument, "not found")` to `status.Error(codes.NotFound, "not found")` in every generated `grpc_query_xxx.go` to return 404 error in REST.
-    - Add the following to every `cli/query_xxx.go` to not throw an error and help for not found entities in CLI
-    ``` 
-     if cli.IsNotFound(err) {
-         return clientCtx.PrintString(cli.NotFoundOutput)
-     }
-     if err != nil {
-         return err
-     }
-    ```
-- Implement business logic in `msg_server_xxx.go`
+- Support state proof for single value queries in CLI:
+    - use `cli.QueryWithProof` instead of cosmos queries that doesn't support state proofs
 - Add unit tests (see other modules for reference)
 - Add CLI-based integration tests to `integration_tests/cli/<module>` (see other modules for reference)
 - Add gRPC/REST-based integration tests to `integration_tests/grpc_rest/<module>` (see other modules for reference)

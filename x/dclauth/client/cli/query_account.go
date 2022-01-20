@@ -31,6 +31,9 @@ func CmdListAccount() *cobra.Command {
 			}
 
 			res, err := queryClient.AccountAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -53,26 +56,19 @@ func CmdShowAccount() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
-
 			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
 
-			params := &types.QueryGetAccountRequest{
-				Address: argAddress.String(),
-			}
-
-			res, err := queryClient.Account(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			var res types.Account
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.AccountKeyPrefix,
+				types.AccountKey(argAddress),
+				&res,
+			)
 		},
 	}
 
