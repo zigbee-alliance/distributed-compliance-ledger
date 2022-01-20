@@ -16,7 +16,7 @@ func CmdShowApprovedRootCertificates() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			var res types.ApprovedRootCertificates
-			return cli.QueryWithProof(
+			return cli.QueryWithProofList(
 				clientCtx,
 				types.StoreKey,
 				types.ApprovedRootCertificatesKeyPrefix,

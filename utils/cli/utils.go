@@ -33,6 +33,19 @@ func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string
 	return clientCtx.PrintProto(res)
 }
 
+func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix string, key []byte, res codec.ProtoMarshaler) error {
+	key = append([]byte(keyPrefix), key...)
+	resBytes, _, err := clientCtx.QueryStore(key, storeName)
+	if err != nil {
+		return err
+	}
+	// return default (empty) list if not found
+	if resBytes != nil {
+		clientCtx.Codec.MustUnmarshal(resBytes, res)
+	}
+	return clientCtx.PrintProto(res)
+}
+
 func ReadFromFile(target string) (string, error) {
 	if _, err := os.Stat(target); err == nil { // check whether it is a path
 		bytes, err := ioutil.ReadFile(target)
