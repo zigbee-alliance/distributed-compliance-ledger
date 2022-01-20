@@ -29,6 +29,9 @@ func CmdListTestingResults() *cobra.Command {
 			}
 
 			res, err := queryClient.TestingResultsAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -56,24 +59,14 @@ func CmdShowTestingResults() *cobra.Command {
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			params := &types.QueryGetTestingResultsRequest{
-				Vid:             vid,
-				Pid:             pid,
-				SoftwareVersion: softwareVersion,
-			}
-
-			res, err := queryClient.TestingResults(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			var res types.TestingResults
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.TestingResultsKeyPrefix,
+				types.TestingResultsKey(vid, pid, softwareVersion),
+				&res,
+			)
 		},
 	}
 	cmd.Flags().Int32Var(&vid, FlagVid, 0,

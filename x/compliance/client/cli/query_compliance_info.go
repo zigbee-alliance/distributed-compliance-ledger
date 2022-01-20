@@ -5,9 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
 )
@@ -31,6 +29,9 @@ func CmdListComplianceInfo() *cobra.Command {
 			}
 
 			res, err := queryClient.ComplianceInfoAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -46,52 +47,34 @@ func CmdListComplianceInfo() *cobra.Command {
 }
 
 func CmdShowComplianceInfo() *cobra.Command {
+	var (
+		vid               int32
+		pid               int32
+		softwareVersion   uint32
+		certificationType string
+	)
+
 	cmd := &cobra.Command{
 		Use:   "compliance-info",
 		Short: "Query compliance info for Model (identified by the `vid`, `pid`, 'softwareVersion' and `certification_type`)",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			argVid, err := cast.ToInt32E(viper.GetString(FlagVID))
-			if err != nil {
-				return err
-			}
-			argPid, err := cast.ToInt32E(viper.GetString(FlagPID))
-			if err != nil {
-				return err
-			}
-			argSoftwareVersion, err := cast.ToUint32E(viper.GetString(FlagSoftwareVersion))
-			if err != nil {
-				return err
-			}
-			argCertificationType := viper.GetString(FlagCertificationType)
-
-			params := &types.QueryGetComplianceInfoRequest{
-				Vid:               argVid,
-				Pid:               argPid,
-				SoftwareVersion:   argSoftwareVersion,
-				CertificationType: argCertificationType,
-			}
-
-			res, err := queryClient.ComplianceInfo(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			var res types.ComplianceInfo
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ComplianceInfoKeyPrefix,
+				types.ComplianceInfoKey(vid, pid, softwareVersion, certificationType),
+				&res,
+			)
 		},
 	}
 
-	cmd.Flags().String(FlagVID, "", "Model vendor ID")
-	cmd.Flags().String(FlagPID, "", "Model product ID")
-	cmd.Flags().String(FlagSoftwareVersion, "", "Model software version")
-	cmd.Flags().StringP(FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
+	cmd.Flags().Int32Var(&vid, FlagVID, 0, "Model vendor ID")
+	cmd.Flags().Int32Var(&pid, FlagPID, 0, "Model product ID")
+	cmd.Flags().Uint32Var(&softwareVersion, FlagSoftwareVersion, 0, "Model software version")
+	cmd.Flags().StringVarP(&certificationType, FlagCertificationType, FlagCertificationTypeShortcut, "", TextCertificationType)
 
 	_ = cmd.MarkFlagRequired(FlagVID)
 	_ = cmd.MarkFlagRequired(FlagPID)

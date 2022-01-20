@@ -35,7 +35,11 @@ func CmdCreateValidator() *cobra.Command {
 				return err
 			}
 
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
+			}
+			return err
 		},
 	}
 

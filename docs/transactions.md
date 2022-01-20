@@ -34,7 +34,6 @@ an Account or sign the request.
        - Fetch `account number` and `sequence` by CLI 1:  `dcld query auth account --address <address>`
        - Sign transaction by CLI 2: `dcld tx sign txn.json --from <from> --account-number <int> --sequence <int> --gas "auto" --offline --output-document txn.json`
        - Broadcat transaction by CLI 1: `dcld tx broadcast txn.json`
-
 - gRPC:
     - Generate a client code from the proto files [proto](../proto) for the client language (see https://grpc.io/docs/languages/)   
     - Build, sign, and broadcast the message (transaction). 
