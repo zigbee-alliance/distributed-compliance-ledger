@@ -1,6 +1,5 @@
 package keeper_test
 
-/* TODO issue 99
 import (
 	"strconv"
 	"testing"
@@ -19,7 +18,8 @@ import (
 var _ = strconv.IntSize
 
 func TestTestingResultsQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.CompliancetestKeeper(t)
+	setup := keepertest.Setup(t)
+	keeper, ctx := keepertest.CompliancetestKeeper(t, setup.DclauthKeeper, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNTestingResults(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -76,7 +76,8 @@ func TestTestingResultsQuerySingle(t *testing.T) {
 }
 
 func TestTestingResultsQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.CompliancetestKeeper(t)
+	setup := keepertest.Setup(t)
+	keeper, ctx := keepertest.CompliancetestKeeper(t, setup.DclauthKeeper, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNTestingResults(keeper, ctx, 5)
 
@@ -130,4 +131,3 @@ func TestTestingResultsQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

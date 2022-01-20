@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -30,7 +29,8 @@ func createNRevokedModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.
 }
 
 func TestRevokedModelGet(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	setup := keepertest.Setup(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
 	items := createNRevokedModel(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetRevokedModel(ctx,
@@ -48,7 +48,8 @@ func TestRevokedModelGet(t *testing.T) {
 }
 
 func TestRevokedModelRemove(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	setup := keepertest.Setup(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
 	items := createNRevokedModel(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRevokedModel(ctx,
@@ -68,11 +69,11 @@ func TestRevokedModelRemove(t *testing.T) {
 }
 
 func TestRevokedModelGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	setup := keepertest.Setup(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
 	items := createNRevokedModel(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllRevokedModel(ctx)),
 	)
 }
-*/
