@@ -150,7 +150,7 @@ Please take into account the following when sending a PR:
 - Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
 - Adjust the generated code
-  - correct REST endpoint: `/dcl` instead of `/zigbee-alliance/distributedcomplianceledger` in `proto/<module>/query.proto`
+  - correct REST endpoints: `/dcl` instead of `/zigbee-alliance/distributedcomplianceledger` in `proto/<module>/query.proto`
   - add message validation as annotations (`validate` tags) in `proto/<module>/tx.proto`
   - add `(cosmos_proto.scalar) = "cosmos.AddressString"` annotation for all fields with address/account type (such as `signer` or `owner`).
   - fix types if needed in `proto/<module>/<entity>.proto` files
@@ -168,6 +168,8 @@ Please take into account the following when sending a PR:
     - replace `status.Error(codes.InvalidArgument, "not found")` to `status.Error(codes.NotFound, "not found")` in every generated `grpc_query_xxx.go` to return 404 error in REST.
 - Support state proof for single value queries in CLI:
     - use `cli.QueryWithProof` instead of cosmos queries that doesn't support state proofs
+    - add proper handling for list queries and write requests when used with a light client proxy 
+      (see `IsWriteInsteadReadRpcError` and `IsKeyNotFoundRpcError`)
 - Add unit tests (see other modules for reference)
 - Add CLI-based integration tests to `integration_tests/cli/<module>` (see other modules for reference)
 - Add gRPC/REST-based integration tests to `integration_tests/grpc_rest/<module>` (see other modules for reference)
