@@ -1,6 +1,5 @@
 package cli_test
 
-/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -28,9 +27,9 @@ func networkWithModelVersionObjects(t *testing.T, n int) (*network.Network, []ty
 
 	for i := 0; i < n; i++ {
 		modelVersion := types.ModelVersion{
-			Vid:             int32(i),
-			Pid:             int32(i),
-			SoftwareVersion: uint32(i),
+			Vid:             int32(i + 1),
+			Pid:             int32(i + 1),
+			SoftwareVersion: uint32(i + 1),
 		}
 		nullify.Fill(&modelVersion)
 		state.ModelVersionList = append(state.ModelVersionList, modelVersion)
@@ -54,9 +53,9 @@ func TestShowModelVersion(t *testing.T) {
 		idPid             int32
 		idSoftwareVersion uint32
 
-		args []string
-		err  error
-		obj  types.ModelVersion
+		common []string
+		err    error
+		obj    types.ModelVersion
 	}{
 		{
 			desc:              "found",
@@ -64,8 +63,8 @@ func TestShowModelVersion(t *testing.T) {
 			idPid:             objs[0].Pid,
 			idSoftwareVersion: objs[0].SoftwareVersion,
 
-			args: common,
-			obj:  objs[0],
+			common: common,
+			obj:    objs[0],
 		},
 		{
 			desc:              "not found",
@@ -73,18 +72,18 @@ func TestShowModelVersion(t *testing.T) {
 			idPid:             100000,
 			idSoftwareVersion: 100000,
 
-			args: common,
-			err:  status.Error(codes.NotFound, "not found"),
+			common: common,
+			err:    status.Error(codes.NotFound, "not found"),
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
-				strconv.Itoa(int(tc.idSoftwareVersion)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
+				fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersion, tc.idSoftwareVersion),
 			}
-			args = append(args, tc.args...)
+			args = append(args, tc.common...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowModelVersion(), args)
 			if tc.err != nil {
 				stat, ok := status.FromError(tc.err)
@@ -92,15 +91,13 @@ func TestShowModelVersion(t *testing.T) {
 				require.ErrorIs(t, stat.Err(), tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetModelVersionResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.ModelVersion)
+				var modelVersion types.ModelVersion
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &modelVersion))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.ModelVersion),
+					nullify.Fill(&modelVersion),
 				)
 			}
 		})
 	}
 }
-*/

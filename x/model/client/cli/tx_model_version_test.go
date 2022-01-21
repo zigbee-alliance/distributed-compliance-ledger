@@ -1,144 +1,177 @@
 package cli_test
 
-/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testcli "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
+func networkWithPreconditions(t *testing.T) *network.Network {
+	t.Helper()
+	cfg := network.DefaultConfig()
+	state := types.GenesisState{}
+	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
+
+	model := types.Model{
+		Vid: testconstants.Vid,
+		Pid: testconstants.Pid,
+	}
+	nullify.Fill(&model)
+	state.ModelList = append(state.ModelList, model)
+
+	buf, err := cfg.Codec.MarshalJSON(&state)
+	require.NoError(t, err)
+	cfg.GenesisState[types.ModuleName] = buf
+	return network.New(t, cfg)
+}
+
 func TestCreateModelVersion(t *testing.T) {
-	net := network.New(t)
+	net := networkWithPreconditions(t)
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{"xyz", "111", "xyz", "false", "xyz", "111", "xyz", "111", "111", "111", "xyz"}
+	fields := []string{
+		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionString, testconstants.SoftwareVersionString),
+		fmt.Sprintf("--%s=%v", cli.FlagCdVersionNumber, testconstants.CdVersionNumber),
+		fmt.Sprintf("--%s=%v", cli.FlagFirmwareDigests, testconstants.FirmwareDigests),
+		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, testconstants.SoftwareVersionValid),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaUrl, testconstants.OtaUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaFileSize, testconstants.OtaFileSize),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksum, testconstants.OtaChecksum),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksumType, testconstants.OtaChecksumType),
+		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion),
+		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion),
+		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesUrl, testconstants.ReleaseNotesUrl),
+	}
+	common := []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+	}
+
 	for _, tc := range []struct {
 		desc              string
 		idVid             int32
 		idPid             int32
-		idSoftwareVersion uint64
+		idSoftwareVersion uint32
 
-		args []string
-		err  error
-		code uint32
+		err error
 	}{
 		{
-			idVid:             0,
-			idPid:             0,
-			idSoftwareVersion: 0,
-
-			desc: "valid",
-			args: []string{
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(net.Config.BondDenom, sdk.NewInt(10))).String()),
-			},
+			desc:              "valid",
+			idVid:             testconstants.Vid,
+			idPid:             testconstants.Pid,
+			idSoftwareVersion: testconstants.SoftwareVersion,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
-				strconv.Itoa(int(tc.idSoftwareVersion)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
+				fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersion, tc.idSoftwareVersion),
 			}
 			args = append(args, fields...)
-			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModelVersion(), args)
+			args = append(args, common...)
+			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModelVersion(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp sdk.TxResponse
-				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.Equal(t, tc.code, resp.Code)
 			}
 		})
 	}
 }
 
 func TestUpdateModelVersion(t *testing.T) {
-	net := network.New(t)
+	net := networkWithPreconditions(t)
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{"xyz", "111", "xyz", "false", "xyz", "111", "xyz", "111", "111", "111", "xyz"}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(net.Config.BondDenom, sdk.NewInt(10))).String()),
 	}
+
 	args := []string{
-		"0",
-		"0",
-		"0",
+		fmt.Sprintf("--%s=%v", cli.FlagVid, testconstants.Vid),
+		fmt.Sprintf("--%s=%v", cli.FlagPid, testconstants.Pid),
+		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersion, testconstants.SoftwareVersion),
+		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionString, testconstants.SoftwareVersionString),
+		fmt.Sprintf("--%s=%v", cli.FlagCdVersionNumber, testconstants.CdVersionNumber),
+		fmt.Sprintf("--%s=%v", cli.FlagFirmwareDigests, testconstants.FirmwareDigests),
+		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, testconstants.SoftwareVersionValid),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaUrl, testconstants.OtaUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaFileSize, testconstants.OtaFileSize),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksum, testconstants.OtaChecksum),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksumType, testconstants.OtaChecksumType),
+		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion),
+		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion),
+		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesUrl, testconstants.ReleaseNotesUrl),
 	}
-	args = append(args, fields...)
 	args = append(args, common...)
-	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModelVersion(), args)
+	_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModelVersion(), args)
 	require.NoError(t, err)
+
+	fields := []string{
+		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, !testconstants.SoftwareVersionValid),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaUrl, testconstants.OtaUrl+"/updated"),
+		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion+1),
+		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion+1),
+		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesUrl, testconstants.ReleaseNotesUrl+"/updated"),
+	}
 
 	for _, tc := range []struct {
 		desc              string
 		idVid             int32
 		idPid             int32
-		idSoftwareVersion uint64
+		idSoftwareVersion uint32
 
-		args []string
-		code uint32
-		err  error
+		err error
 	}{
 		{
 			desc:              "valid",
-			idVid:             0,
-			idPid:             0,
-			idSoftwareVersion: 0,
-
-			args: common,
+			idVid:             testconstants.Vid,
+			idPid:             testconstants.Pid,
+			idSoftwareVersion: testconstants.SoftwareVersion,
 		},
 		{
-			desc:              "key not found",
-			idVid:             100000,
-			idPid:             100000,
-			idSoftwareVersion: 100000,
+			desc:              "model version does not exist",
+			idVid:             testconstants.Vid,
+			idPid:             testconstants.Pid + 1,
+			idSoftwareVersion: testconstants.SoftwareVersion + 1,
 
-			args: common,
-			code: sdkerrors.ErrKeyNotFound.ABCICode(),
+			err: types.ErrModelVersionDoesNotExist,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
-				strconv.Itoa(int(tc.idSoftwareVersion)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
+				fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersion, tc.idSoftwareVersion),
 			}
 			args = append(args, fields...)
-			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdUpdateModelVersion(), args)
+			args = append(args, common...)
+			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdUpdateModelVersion(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp sdk.TxResponse
-				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.Equal(t, tc.code, resp.Code)
 			}
 		})
 	}
 }
-*/
