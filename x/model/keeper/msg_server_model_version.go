@@ -69,6 +69,10 @@ func (k msgServer) CreateModelVersion(goCtx context.Context, msg *types.MsgCreat
 		ctx,
 		modelVersion,
 	)
+
+	// add model version to a list of all model versions for this vid/pid
+	k.AddModelVersion(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
+
 	return &types.MsgCreateModelVersionResponse{}, nil
 }
 
