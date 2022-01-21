@@ -34,6 +34,9 @@ func CmdListValidator() *cobra.Command {
 			}
 
 			res, err := queryClient.ValidatorAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -54,11 +57,7 @@ func CmdShowValidator() *cobra.Command {
 		Short: "shows a Validator",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-			queryClient := types.NewQueryClient(clientCtx)
+			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			addr, err := sdk.ValAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
@@ -69,19 +68,14 @@ func CmdShowValidator() *cobra.Command {
 				addr = sdk.ValAddress(owner)
 			}
 
-			params := &types.QueryGetValidatorRequest{
-				Owner: addr.String(),
-			}
-
-			res, err := queryClient.Validator(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			var res types.Validator
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ValidatorKeyPrefix,
+				types.ValidatorKey(addr),
+				&res,
+			)
 		},
 	}
 

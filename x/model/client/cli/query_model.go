@@ -33,6 +33,9 @@ func CmdListModel() *cobra.Command {
 			}
 
 			res, err := queryClient.ModelAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -58,27 +61,15 @@ func CmdShowModel() *cobra.Command {
 		Short: "Query Model by combination of Vendor ID and Product ID",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			clientCtx, err := client.GetClientQueryContext(cmd)
-			if err != nil {
-				return err
-			}
-
-			queryClient := types.NewQueryClient(clientCtx)
-
-			params := &types.QueryGetModelRequest{
-				Vid: vid,
-				Pid: pid,
-			}
-
-			res, err := queryClient.Model(context.Background(), params)
-			if cli.IsNotFound(err) {
-				return clientCtx.PrintString(cli.NotFoundOutput)
-			}
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			clientCtx := client.GetClientContextFromCmd(cmd)
+			var res types.Model
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ModelKeyPrefix,
+				types.ModelKey(vid, pid),
+				&res,
+			)
 		},
 	}
 

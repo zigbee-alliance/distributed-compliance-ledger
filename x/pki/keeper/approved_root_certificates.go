@@ -8,16 +8,16 @@ import (
 
 // SetApprovedRootCertificates set approvedRootCertificates in the store.
 func (k Keeper) SetApprovedRootCertificates(ctx sdk.Context, approvedRootCertificates types.ApprovedRootCertificates) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedRootCertificates)
-	store.Set([]byte{0}, b)
+	store.Set(types.ApprovedRootCertificatesKey, b)
 }
 
 // GetApprovedRootCertificates returns approvedRootCertificates.
 func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.ApprovedRootCertificates, found bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKeyPrefix))
 
-	b := store.Get([]byte{0})
+	b := store.Get(types.ApprovedRootCertificatesKey)
 	if b == nil {
 		return val, false
 	}
@@ -28,8 +28,8 @@ func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.Approved
 
 // RemoveApprovedRootCertificates removes approvedRootCertificates from the store.
 func (k Keeper) RemoveApprovedRootCertificates(ctx sdk.Context) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKey))
-	store.Delete([]byte{0})
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedRootCertificatesKeyPrefix))
+	store.Delete(types.ApprovedRootCertificatesKey)
 }
 
 // Add root certificate to the list.

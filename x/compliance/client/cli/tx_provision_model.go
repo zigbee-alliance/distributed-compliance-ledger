@@ -46,10 +46,13 @@ func CmdProvisionModel() *cobra.Command {
 				certificationType,
 				reason,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			return err
 		},
 	}
 

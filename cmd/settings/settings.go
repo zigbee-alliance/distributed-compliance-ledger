@@ -24,6 +24,5 @@ const (
 	DefaultBroadcastMode = flags.BroadcastBlock
 )
 
-// PruningStrategy of the application: Store every state. Keep last two states.
-// FIXME issue 9 review the arguments and especially the 3rd one (a new one).
-var PruningStrategy = types.NewPruningOptions(2, 1, 1)
+// PruningStrategy of the application: Store every 100th state. Keep last 100 states. Do pruning at every 10th height.
+var PruningStrategy = types.NewPruningOptions(100, 100, 10)
