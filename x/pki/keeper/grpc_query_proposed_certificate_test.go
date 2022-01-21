@@ -1,6 +1,5 @@
 package keeper_test
 
-/* TODO issue 99
 import (
 	"strconv"
 	"testing"
@@ -19,7 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestProposedCertificateQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProposedCertificate(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -73,7 +72,7 @@ func TestProposedCertificateQuerySingle(t *testing.T) {
 }
 
 func TestProposedCertificateQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProposedCertificate(keeper, ctx, 5)
 
@@ -127,4 +126,3 @@ func TestProposedCertificateQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -28,7 +27,7 @@ func createNChildCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []t
 }
 
 func TestChildCertificatesGet(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNChildCertificates(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetChildCertificates(ctx,
@@ -44,7 +43,7 @@ func TestChildCertificatesGet(t *testing.T) {
 }
 
 func TestChildCertificatesRemove(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNChildCertificates(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveChildCertificates(ctx,
@@ -60,11 +59,10 @@ func TestChildCertificatesRemove(t *testing.T) {
 }
 
 func TestChildCertificatesGetAll(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNChildCertificates(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllChildCertificates(ctx)),
 	)
 }
-*/

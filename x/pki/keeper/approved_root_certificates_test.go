@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"testing"
 
@@ -19,7 +18,7 @@ func createTestApprovedRootCertificates(keeper *keeper.Keeper, ctx sdk.Context) 
 }
 
 func TestApprovedRootCertificatesGet(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	item := createTestApprovedRootCertificates(keeper, ctx)
 	rst, found := keeper.GetApprovedRootCertificates(ctx)
 	require.True(t, found)
@@ -30,10 +29,9 @@ func TestApprovedRootCertificatesGet(t *testing.T) {
 }
 
 func TestApprovedRootCertificatesRemove(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	createTestApprovedRootCertificates(keeper, ctx)
 	keeper.RemoveApprovedRootCertificates(ctx)
 	_, found := keeper.GetApprovedRootCertificates(ctx)
 	require.False(t, found)
 }
-*/

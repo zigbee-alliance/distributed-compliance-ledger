@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"testing"
 
@@ -14,7 +13,7 @@ import (
 )
 
 func TestApprovedRootCertificatesQuery(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	item := createTestApprovedRootCertificates(keeper, ctx)
 	for _, tc := range []struct {
@@ -47,4 +46,3 @@ func TestApprovedRootCertificatesQuery(t *testing.T) {
 		})
 	}
 }
-*/
