@@ -29,7 +29,7 @@ create_new_vendor_account $second_vendor_account $vid2
 test_divider
 
 # Query non existent
-echo "Query non existant vendorinfo"
+echo "Query non existent vendorinfo"
 result=$(dcld query vendorinfo vendor --vid=$vid)
 check_response "$result" "Not Found"
 echo "$result"

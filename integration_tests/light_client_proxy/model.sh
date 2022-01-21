@@ -14,28 +14,28 @@ vid=$RANDOM
 pid=$RANDOM
 sv=$RANDOM
 
-echo "Query non existant model"
+echo "Query non existent model"
 result=$(execute_with_retry "dcld query model get-model --vid=$vid --pid=$pid")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant Vendor Models"
+echo "Query non existent Vendor Models"
 result=$(execute_with_retry "dcld query model vendor-models --vid=$vid")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant model version"
+echo "Query non existent model version"
 result=$(execute_with_retry "dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant model versions"
+echo "Query non existent model versions"
 result=$(execute_with_retry "dcld query model all-model-versions --vid=$vid --pid=$pid")
 echo "$result"
 check_response "$result" "Not Found"
@@ -149,28 +149,28 @@ vid=$RANDOM
 pid=$RANDOM
 sv=$RANDOM
 
-echo "Query non existant model"
+echo "Query non existent model"
 result=$(execute_with_retry "dcld query model get-model --vid=$vid --pid=$pid")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant model version"
+echo "Query non existent model version"
 result=$(execute_with_retry "dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant Vendor Models"
+echo "Query non existent Vendor Models"
 result=$(execute_with_retry "dcld query model vendor-models --vid=$vid")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant model versions"
+echo "Query non existent model versions"
 result=$(execute_with_retry "dcld query model all-model-versions --vid=$vid --pid=$pid")
 echo "$result"
 check_response "$result" "Not Found"

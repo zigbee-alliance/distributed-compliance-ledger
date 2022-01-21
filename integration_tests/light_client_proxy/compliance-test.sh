@@ -15,7 +15,7 @@ pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
 
-echo "Query non existant compliancetest"
+echo "Query non existent compliancetest"
 result=$(execute_with_retry "dcld query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv")
 echo "$result"
 check_response "$result" "Not Found"
@@ -110,7 +110,7 @@ pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
 
-echo "Query non existant compliancetest"
+echo "Query non existent compliancetest"
 result=$(execute_with_retry "dcld query compliancetest test-result --vid=$vid --pid=$pid --softwareVersion=$sv")
 echo "$result"
 check_response "$result" "Not Found"

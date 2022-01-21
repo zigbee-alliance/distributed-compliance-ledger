@@ -15,28 +15,28 @@ pid=$RANDOM
 sv=$RANDOM
 svs=$RANDOM
 
-echo "Query non existant complianceinfo"
+echo "Query non existent complianceinfo"
 result=$(execute_with_retry "dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant certified"
+echo "Query non existent certified"
 result=$(execute_with_retry "dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant revoked"
+echo "Query non existent revoked"
 result=$(execute_with_retry "dcld query compliance revoked-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant provision"
+echo "Query non existent provision"
 result=$(execute_with_retry "dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"
@@ -191,28 +191,28 @@ sv=$RANDOM
 svs=$RANDOM
 
 
-echo "Query non existant complianceinfo"
+echo "Query non existent complianceinfo"
 result=$(execute_with_retry "dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant certified"
+echo "Query non existent certified"
 result=$(execute_with_retry "dcld query compliance certified-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant revoked"
+echo "Query non existent revoked"
 result=$(execute_with_retry "dcld query compliance revoked-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant provision"
+echo "Query non existent provision"
 result=$(execute_with_retry "dcld query compliance provisional-model --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType="zigbee"")
 echo "$result"
 check_response "$result" "Not Found"

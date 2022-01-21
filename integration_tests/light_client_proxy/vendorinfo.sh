@@ -12,7 +12,7 @@ sleep 10
 
 vid=$RANDOM
 
-echo "Query non existant vendorinfo"
+echo "Query non existent vendorinfo"
 result=$(execute_with_retry "dcld query vendorinfo vendor --vid=$vid")
 echo "$result"
 check_response "$result" "Not Found"
@@ -86,7 +86,7 @@ test_divider
 
 vid=$RANDOM
 
-echo "Query non existant vendorinfo"
+echo "Query non existent vendorinfo"
 result=$(execute_with_retry "dcld query vendorinfo vendor --vid=$vid")
 echo "$result"
 check_response "$result" "Not Found"

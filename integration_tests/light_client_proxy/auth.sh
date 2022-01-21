@@ -21,21 +21,21 @@ test_divider
 dcld config node tcp://localhost:26620
 sleep 10
 
-echo "Query non existant account"
+echo "Query non existent account"
 result=$(execute_with_retry "dcld query auth account --address=$user_address")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant proposed account"
+echo "Query non existent proposed account"
 result=$(execute_with_retry "dcld query auth proposed-account --address=$user_address")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant proposed account to revoke"
+echo "Query non existent proposed account to revoke"
 result=$(execute_with_retry "dcld query auth proposed-account-to-revoke --address=$user_address")
 echo "$result"
 check_response "$result" "Not Found"
@@ -116,21 +116,21 @@ echo "check non-existent values when entry added via light client"
 
 test_divider
 
-echo "Query non existant account"
+echo "Query non existent account"
 result=$(execute_with_retry "dcld query auth account --address=$user_address2")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant proposed account"
+echo "Query non existent proposed account"
 result=$(execute_with_retry "dcld query auth proposed-account --address=$user_address2")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant proposed account to revoke"
+echo "Query non existent proposed account to revoke"
 result=$(execute_with_retry "dcld query auth proposed-account-to-revoke --address=$user_address2")
 echo "$result"
 check_response "$result" "Not Found"

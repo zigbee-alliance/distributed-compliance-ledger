@@ -302,7 +302,7 @@ func getTrustedHeightAndHash(primaryAddr string, witnessesAddrs []string) (int64
 	primaryHeight := res.SignedHeader.Header.Height
 	primaryHash := res.SignedHeader.Commit.BlockID.Hash
 
-	time.Sleep(2 * time.Second) // sleep to make sure a new block is commited on all nodes
+	time.Sleep(2 * time.Second) // sleep to make sure a new block is committed on all nodes
 
 	// check that the hash for the given height is the same on all witnesses
 	for _, witnessesAddr := range witnessesAddrs {
@@ -333,5 +333,4 @@ func getTrustedHeightAndHash(primaryAddr string, witnessesAddrs []string) (int64
 	}
 
 	return primaryHeight, primaryHash, nil
-
 }

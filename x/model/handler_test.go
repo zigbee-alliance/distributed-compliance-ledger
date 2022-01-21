@@ -498,7 +498,7 @@ func TestHandler_UpdateOnlyMinApplicableSoftwareVersion(t *testing.T) {
 	require.NoError(t, err)
 
 	// add new model version
-	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor)
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
 	msgCreateModelVersion.MinApplicableSoftwareVersion = 5
 	msgCreateModelVersion.MaxApplicableSoftwareVersion = 10
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
@@ -565,7 +565,7 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	require.NoError(t, err)
 
 	// add new model version
-	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor)
+	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor, testconstants.SoftwareVersion)
 	msgCreateModelVersion.MinApplicableSoftwareVersion = 5
 	msgCreateModelVersion.MaxApplicableSoftwareVersion = 10
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)

@@ -26,14 +26,14 @@ dcld config node tcp://localhost:26620
 sleep 10
 
 
-echo "Query non existant cert"
+echo "Query non existent cert"
 result=$(execute_with_retry "dcld query pki x509-cert --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant revoked cert"
+echo "Query non existent revoked cert"
 result=$(execute_with_retry "dcld query pki revoked-x509-cert --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
@@ -41,42 +41,42 @@ check_response "$result" "Not Found"
 test_divider
 
 
-echo "Query non existant proposed root cert"
+echo "Query non existent proposed root cert"
 result=$(execute_with_retry "dcld query pki proposed-x509-root-cert --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant cert by subject"
+echo "Query non existent cert by subject"
 result=$(execute_with_retry "dcld query pki all-subject-x509-certs --subject=$root_cert_subject")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant all root certs"
+echo "Query non existent all root certs"
 result=$(execute_with_retry "dcld query pki all-x509-root-certs")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant all revoked root certs"
+echo "Query non existent all revoked root certs"
 result=$(execute_with_retry "dcld query pki all-revoked-x509-root-certs")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant proposed revoked cert"
+echo "Query non existent proposed revoked cert"
 result=$(execute_with_retry "dcld query pki proposed-x509-root-cert-to-revoke --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant child certs"
+echo "Query non existent child certs"
 result=$(execute_with_retry "dcld query pki all-child-x509-certs --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
@@ -197,7 +197,7 @@ test_divider
 dcld config node tcp://localhost:26620
 sleep 5
 
-echo "Query existant cert"
+echo "Query existent cert"
 result=$(execute_with_retry "dcld query pki x509-cert --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$root_cert_subject\""
@@ -206,7 +206,7 @@ check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
 
 test_divider
 
-echo "Query existant revoked cert"
+echo "Query existent revoked cert"
 result=$(execute_with_retry "dcld query pki revoked-x509-cert --subject=$leaf_cert_subject --subject-key-id=$leaf_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
@@ -215,7 +215,7 @@ check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
 test_divider
 
 
-echo "Query existant cert by subject"
+echo "Query existent cert by subject"
 result=$(execute_with_retry "dcld query pki all-subject-x509-certs --subject=$root_cert_subject")
 echo "$result"
 check_response "$result" "\"$root_cert_subject\""
@@ -223,14 +223,14 @@ check_response "$result" "\"$root_cert_subject_key_id\""
 
 test_divider
 
-echo "Query existant all root certs"
+echo "Query existent all root certs"
 result=$(execute_with_retry "dcld query pki all-x509-root-certs")
 echo "$result"
 check_response "$result" "\"$root_cert_subject\""
 check_response "$result" "\"$root_cert_subject_key_id\""
 test_divider
 
-echo "Query existant proposed revoked cert"
+echo "Query existent proposed revoked cert"
 result=$(execute_with_retry "dcld query pki proposed-x509-root-cert-to-revoke --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$root_cert_subject\""
@@ -238,7 +238,7 @@ check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 
 test_divider
 
-echo "Query existant child certs"
+echo "Query existent child certs"
 result=$(execute_with_retry "dcld query pki all-child-x509-certs --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -253,49 +253,49 @@ echo "check non-existent values when entry added via light client"
 
 test_divider
 
-echo "Query non existant cert"
+echo "Query non existent cert"
 result=$(execute_with_retry "dcld query pki x509-cert --subject=$unknown_cert_subj --subject-key-id=$unknown_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant proposed cert"
+echo "Query non existent proposed cert"
 result=$(execute_with_retry "dcld query pki proposed-x509-root-cert --subject=$unknown_cert_subj --subject-key-id=$unknown_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant revoked cert"
+echo "Query non existent revoked cert"
 result=$(execute_with_retry "dcld query pki revoked-x509-cert --subject=$unknown_cert_subj --subject-key-id=$unknown_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant cert by subject"
+echo "Query non existent cert by subject"
 result=$(execute_with_retry "dcld query pki all-subject-x509-certs --subject=$unknown_cert_subj")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant all revoked root certs"
+echo "Query non existent all revoked root certs"
 result=$(execute_with_retry "dcld query pki all-revoked-x509-root-certs")
 echo "$result"
 check_response "$result" "\[\]"
 
 test_divider
 
-echo "Query non existant proposed revoked cert"
+echo "Query non existent proposed revoked cert"
 result=$(execute_with_retry "dcld query pki proposed-x509-root-cert-to-revoke --subject=$unknown_cert_subj --subject-key-id=$unknown_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
 
 test_divider
 
-echo "Query non existant child certs"
+echo "Query non existent child certs"
 result=$(execute_with_retry "dcld query pki all-child-x509-certs --subject=$unknown_cert_subj --subject-key-id=$unknown_cert_subject_key_id")
 echo "$result"
 check_response "$result" "Not Found"
