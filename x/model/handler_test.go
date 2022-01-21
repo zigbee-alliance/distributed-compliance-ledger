@@ -19,16 +19,18 @@ import (
 	"context"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/testdata"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type DclauthKeeperMock struct {
@@ -88,7 +90,7 @@ func Setup(t *testing.T) *TestSetup {
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper)
 
-	vendor := GenerateAccAddress()
+	vendor := testdata.GenerateAccAddress()
 	vendorID := testconstants.VendorID1
 
 	setup := &TestSetup{
@@ -155,7 +157,7 @@ func TestHandler_UpdateModel(t *testing.T) {
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
 }
 
-func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
+func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	setup := Setup(t)
 
 	// add new model
@@ -169,7 +171,7 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
 	} {
-		accAddress := GenerateAccAddress()
+		accAddress := testdata.GenerateAccAddress()
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
 
 		// update existing model by user without Vendor role
@@ -179,7 +181,7 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 	}
 
-	anotherVendor := GenerateAccAddress()
+	anotherVendor := testdata.GenerateAccAddress()
 	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
@@ -190,6 +192,15 @@ func TestHandler_OnlyOwnerCanUpdateModel(t *testing.T) {
 
 	// update existing model by owner
 	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	require.NoError(t, err)
+
+	vendorWithSameVid := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+
+	// update existing model by vendor with the same VendorID as owner's one
+	msgUpdateModel = NewMsgUpdateModel(vendorWithSameVid)
+	msgUpdateModel.ProductLabel += "-updated-once-more"
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 }
@@ -221,7 +232,7 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
 	} {
-		accAddress := GenerateAccAddress()
+		accAddress := testdata.GenerateAccAddress()
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
 
 		// add new model
@@ -235,7 +246,7 @@ func TestHandler_AddModelByNonVendor(t *testing.T) {
 func TestHandler_AddModelByVendorWithAnotherVendorId(t *testing.T) {
 	setup := Setup(t)
 
-	anotherVendor := GenerateAccAddress()
+	anotherVendor := testdata.GenerateAccAddress()
 	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// add new model
@@ -270,6 +281,82 @@ func TestHandler_PartiallyUpdateModel(t *testing.T) {
 	// CommissioningModeInitialStepsInstruction,CommissioningModeSecondaryStepsInstruction,UserManualUrl,SupportUrl,SupportUrl
 	require.Equal(t, msgAddModel.ProductName, receivedModel.ProductName)
 	require.Equal(t, msgUpdateModel.ProductLabel, receivedModel.ProductLabel)
+}
+
+func TestHandler_DeleteModel(t *testing.T) {
+	setup := Setup(t)
+
+	// try delete not present model
+	msgDeleteModel := NewMsgDeleteModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgDeleteModel)
+	require.Error(t, err)
+	require.True(t, types.ErrModelDoesNotExist.Is(err))
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// delete existing model
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// query deleted model
+	_, err = queryModel(setup, msgDeleteModel.Vid, msgDeleteModel.Pid)
+	require.Error(t, err)
+	require.Equal(t, codes.NotFound, status.Code(err))
+}
+
+func TestHandler_OnlyOwnerAndVendorWithSameVidCanDeleteModel(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	for _, role := range []dclauthtypes.AccountRole{
+		dclauthtypes.TestHouse,
+		dclauthtypes.CertificationCenter,
+		dclauthtypes.Trustee,
+		dclauthtypes.NodeAdmin,
+	} {
+		accAddress := testdata.GenerateAccAddress()
+		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
+
+		// delete existing model by user without Vendor role
+		msgDeleteModel := NewMsgDeleteModel(accAddress)
+		_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+		require.Error(t, err)
+		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+	}
+
+	anotherVendor := testdata.GenerateAccAddress()
+	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
+
+	// delete existing model by vendor with another VendorID
+	msgDeleteModel := NewMsgDeleteModel(anotherVendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.Error(t, err)
+	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+
+	// delete existing model by owner
+	msgDeleteModel = NewMsgDeleteModel(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
+
+	// add new model
+	msgCreateModel = NewMsgCreateModel(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	vendorWithSameVid := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+
+	// delete existing model by vendor with the same VendorID as owner's one
+	msgDeleteModel = NewMsgDeleteModel(vendorWithSameVid)
+	_, err = setup.Handler(setup.Ctx, msgDeleteModel)
+	require.NoError(t, err)
 }
 
 // ----------------------------------------------------------------------------
@@ -313,13 +400,18 @@ func TestHandler_UpdateModelVersion(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, msgCreateModel)
 	require.NoError(t, err)
 
+	// try update not present model version
+	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.Error(t, err)
+	require.True(t, types.ErrModelVersionDoesNotExist.Is(err))
+
 	// add new model version
 	msgCreateModelVersion := NewMsgCreateModelVersion(setup.Vendor)
 	_, err = setup.Handler(setup.Ctx, msgCreateModelVersion)
 	require.NoError(t, err)
 
 	// update existing model version
-	msgUpdateModelVersion := NewMsgUpdateModelVersion(setup.Vendor)
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.NoError(t, err)
 
@@ -535,7 +627,7 @@ func TestHandler_UpdateOnlyMaxApplicableSoftwareVersion(t *testing.T) {
 	require.Equal(t, uint32(5), receivedModelVersion.MaxApplicableSoftwareVersion)
 }
 
-func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
+func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModelVersion(t *testing.T) {
 	setup := Setup(t)
 
 	// add new model
@@ -554,7 +646,7 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
 	} {
-		accAddress := GenerateAccAddress()
+		accAddress := testdata.GenerateAccAddress()
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role}, setup.VendorID)
 
 		// update existing model version by user without Vendor role
@@ -564,7 +656,7 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 		require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 	}
 
-	anotherVendor := GenerateAccAddress()
+	anotherVendor := testdata.GenerateAccAddress()
 	setup.AddAccount(anotherVendor, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testconstants.VendorID2)
 
 	// update existing model by vendor with another VendorID
@@ -575,6 +667,15 @@ func TestHandler_OnlyOwnerCanUpdateModelVersion(t *testing.T) {
 
 	// update existing model version by owner
 	msgUpdateModelVersion = NewMsgUpdateModelVersion(setup.Vendor)
+	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
+	require.NoError(t, err)
+
+	vendorWithSameVid := testdata.GenerateAccAddress()
+	setup.AddAccount(vendorWithSameVid, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, setup.VendorID)
+
+	// update existing model by vendor with the same VendorID as owner's one
+	msgUpdateModelVersion = NewMsgUpdateModelVersion(vendorWithSameVid)
+	msgUpdateModelVersion.ReleaseNotesUrl += "/updated-once-more"
 	_, err = setup.Handler(setup.Ctx, msgUpdateModelVersion)
 	require.NoError(t, err)
 }
@@ -659,6 +760,14 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 	}
 }
 
+func NewMsgDeleteModel(signer sdk.AccAddress) *types.MsgDeleteModel {
+	return &types.MsgDeleteModel{
+		Creator: signer.String(),
+		Vid:     testconstants.VendorID1,
+		Pid:     testconstants.Pid,
+	}
+}
+
 func NewMsgCreateModelVersion(signer sdk.AccAddress) *types.MsgCreateModelVersion {
 	return &types.MsgCreateModelVersion{
 		Creator:                      signer.String(),
@@ -691,9 +800,4 @@ func NewMsgUpdateModelVersion(signer sdk.AccAddress) *types.MsgUpdateModelVersio
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion + 1,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl + "/updated",
 	}
-}
-
-func GenerateAccAddress() sdk.AccAddress {
-	_, _, accAddress := testdata.KeyTestPubAddr()
-	return accAddress
 }

@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"context"
 	"testing"
@@ -12,7 +11,6 @@ import (
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
-	k, ctx := keepertest.ModelKeeper(t)
+	k, ctx := keepertest.ModelKeeper(t, nil)
 	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
 }
-*/

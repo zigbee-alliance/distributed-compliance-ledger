@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -28,7 +27,7 @@ func createNModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Model {
 }
 
 func TestModelGet(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t)
+	keeper, ctx := keepertest.ModelKeeper(t, nil)
 	items := createNModel(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetModel(ctx,
@@ -44,7 +43,7 @@ func TestModelGet(t *testing.T) {
 }
 
 func TestModelRemove(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t)
+	keeper, ctx := keepertest.ModelKeeper(t, nil)
 	items := createNModel(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveModel(ctx,
@@ -60,11 +59,10 @@ func TestModelRemove(t *testing.T) {
 }
 
 func TestModelGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t)
+	keeper, ctx := keepertest.ModelKeeper(t, nil)
 	items := createNModel(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllModel(ctx)),
 	)
 }
-*/

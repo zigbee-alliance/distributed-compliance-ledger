@@ -1,6 +1,5 @@
 package cli_test
 
-/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -53,34 +52,34 @@ func TestShowModel(t *testing.T) {
 		idVid int32
 		idPid int32
 
-		args []string
-		err  error
-		obj  types.Model
+		common []string
+		err    error
+		obj    types.Model
 	}{
 		{
 			desc:  "found",
 			idVid: objs[0].Vid,
 			idPid: objs[0].Pid,
 
-			args: common,
-			obj:  objs[0],
+			common: common,
+			obj:    objs[0],
 		},
 		{
 			desc:  "not found",
 			idVid: 100000,
 			idPid: 100000,
 
-			args: common,
-			err:  status.Error(codes.NotFound, "not found"),
+			common: common,
+			err:    status.Error(codes.NotFound, "not found"),
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
+				fmt.Sprintf("--%s=%d", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%d", cli.FlagPid, tc.idPid),
 			}
-			args = append(args, tc.args...)
+			args = append(args, tc.common...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowModel(), args)
 			if tc.err != nil {
 				stat, ok := status.FromError(tc.err)
@@ -165,4 +164,3 @@ func TestListModel(t *testing.T) {
 		)
 	})
 }
-*/

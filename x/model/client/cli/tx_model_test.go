@@ -1,18 +1,17 @@
 package cli_test
 
-/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
 	"testing"
 
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	testcli "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
 // Prevent strconv unused error.
@@ -23,45 +22,53 @@ func TestCreateModel(t *testing.T) {
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{"111", "xyz", "xyz", "xyz", "111", "xyz", "111", "xyz", "111", "xyz", "xyz", "xyz", "xyz"}
+	fields := []string{
+		fmt.Sprintf("--%s=%v", cli.FlagDeviceTypeId, testconstants.DeviceTypeId),
+		fmt.Sprintf("--%s=%v", cli.FlagProductName, testconstants.ProductName),
+		fmt.Sprintf("--%s=%v", cli.FlagProductLabel, testconstants.ProductLabel),
+		fmt.Sprintf("--%s=%v", cli.FlagPartNumber, testconstants.PartNumber),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningCustomFlow, testconstants.CommissioningCustomFlow),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningCustomFlowUrl, testconstants.CommissioningCustomFlowUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeInitialStepsHint, testconstants.CommissioningModeInitialStepsHint),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeInitialStepsInstruction, testconstants.CommissioningModeInitialStepsInstruction),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeSecondaryStepsHint, testconstants.CommissioningModeSecondaryStepsHint),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeSecondaryStepsInstruction, testconstants.CommissioningModeSecondaryStepsInstruction),
+		fmt.Sprintf("--%s=%v", cli.FlagUserManualUrl, testconstants.UserManualUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagSupportUrl, testconstants.SupportUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagProductUrl, testconstants.ProductUrl),
+	}
+	common := []string{
+		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
+		fmt.Sprintf("--%s", flags.FlagSkipConfirmation),
+		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
+	}
+
 	for _, tc := range []struct {
 		desc  string
 		idVid int32
 		idPid int32
 
-		args []string
-		err  error
-		code uint32
+		err error
 	}{
 		{
-			idVid: 0,
-			idPid: 0,
-
-			desc: "valid",
-			args: []string{
-				fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
-				fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
-				fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-				fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(net.Config.BondDenom, sdk.NewInt(10))).String()),
-			},
+			desc:  "valid",
+			idVid: testconstants.Vid,
+			idPid: testconstants.Pid,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
 			args = append(args, fields...)
-			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModel(), args)
+			args = append(args, common...)
+			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModel(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp sdk.TxResponse
-				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.Equal(t, tc.code, resp.Code)
 			}
 		})
 	}
@@ -72,63 +79,78 @@ func TestUpdateModel(t *testing.T) {
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{"111", "xyz", "xyz", "xyz", "111", "xyz", "111", "xyz", "111", "xyz", "xyz", "xyz", "xyz"}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(net.Config.BondDenom, sdk.NewInt(10))).String()),
 	}
+
 	args := []string{
-		"0",
-		"0",
+		fmt.Sprintf("--%s=%v", cli.FlagVid, testconstants.Vid),
+		fmt.Sprintf("--%s=%v", cli.FlagPid, testconstants.Pid),
+		fmt.Sprintf("--%s=%v", cli.FlagDeviceTypeId, testconstants.DeviceTypeId),
+		fmt.Sprintf("--%s=%v", cli.FlagProductName, testconstants.ProductName),
+		fmt.Sprintf("--%s=%v", cli.FlagProductLabel, testconstants.ProductLabel),
+		fmt.Sprintf("--%s=%v", cli.FlagPartNumber, testconstants.PartNumber),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningCustomFlow, testconstants.CommissioningCustomFlow),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningCustomFlowUrl, testconstants.CommissioningCustomFlowUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeInitialStepsHint, testconstants.CommissioningModeInitialStepsHint),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeInitialStepsInstruction, testconstants.CommissioningModeInitialStepsInstruction),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeSecondaryStepsHint, testconstants.CommissioningModeSecondaryStepsHint),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeSecondaryStepsInstruction, testconstants.CommissioningModeSecondaryStepsInstruction),
+		fmt.Sprintf("--%s=%v", cli.FlagUserManualUrl, testconstants.UserManualUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagSupportUrl, testconstants.SupportUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagProductUrl, testconstants.ProductUrl),
 	}
-	args = append(args, fields...)
 	args = append(args, common...)
-	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModel(), args)
+	_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModel(), args)
 	require.NoError(t, err)
+
+	fields := []string{
+		fmt.Sprintf("--%s=%v", cli.FlagProductName, testconstants.ProductName) + "-updated",
+		fmt.Sprintf("--%s=%v", cli.FlagProductLabel, testconstants.ProductLabel) + "-updated",
+		fmt.Sprintf("--%s=%v", cli.FlagPartNumber, testconstants.PartNumber) + "-updated",
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningCustomFlowUrl, testconstants.CommissioningCustomFlowUrl) + "/updated",
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeInitialStepsInstruction, testconstants.CommissioningModeInitialStepsInstruction) + "-updated",
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeSecondaryStepsInstruction, testconstants.CommissioningModeSecondaryStepsInstruction) + "-updated",
+		fmt.Sprintf("--%s=%v", cli.FlagUserManualUrl, testconstants.UserManualUrl) + "/updated",
+		fmt.Sprintf("--%s=%v", cli.FlagSupportUrl, testconstants.SupportUrl) + "/updated",
+		fmt.Sprintf("--%s=%v", cli.FlagProductUrl, testconstants.ProductUrl) + "/updated",
+	}
 
 	for _, tc := range []struct {
 		desc  string
 		idVid int32
 		idPid int32
 
-		args []string
-		code uint32
-		err  error
+		err error
 	}{
 		{
 			desc:  "valid",
-			idVid: 0,
-			idPid: 0,
-
-			args: common,
+			idVid: testconstants.Vid,
+			idPid: testconstants.Pid,
 		},
 		{
-			desc:  "key not found",
-			idVid: 100000,
-			idPid: 100000,
+			desc:  "model does not exist",
+			idVid: testconstants.Vid,
+			idPid: testconstants.Pid + 1,
 
-			args: common,
-			code: sdkerrors.ErrKeyNotFound.ABCICode(),
+			err: types.ErrModelDoesNotExist,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
 			args = append(args, fields...)
-			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdUpdateModel(), args)
+			args = append(args, common...)
+			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdUpdateModel(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp sdk.TxResponse
-				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.Equal(t, tc.code, resp.Code)
 			}
 		})
 	}
@@ -140,20 +162,31 @@ func TestDeleteModel(t *testing.T) {
 	val := net.Validators[0]
 	ctx := val.ClientCtx
 
-	fields := []string{"111", "xyz", "xyz", "xyz", "111", "xyz", "111", "xyz", "111", "xyz", "xyz", "xyz", "xyz"}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
 		fmt.Sprintf("--%s=true", flags.FlagSkipConfirmation),
 		fmt.Sprintf("--%s=%s", flags.FlagBroadcastMode, flags.BroadcastBlock),
-		fmt.Sprintf("--%s=%s", flags.FlagFees, sdk.NewCoins(sdk.NewCoin(net.Config.BondDenom, sdk.NewInt(10))).String()),
 	}
+
 	args := []string{
-		"0",
-		"0",
+		fmt.Sprintf("--%s=%v", cli.FlagVid, testconstants.Vid),
+		fmt.Sprintf("--%s=%v", cli.FlagPid, testconstants.Pid),
+		fmt.Sprintf("--%s=%v", cli.FlagDeviceTypeId, testconstants.DeviceTypeId),
+		fmt.Sprintf("--%s=%v", cli.FlagProductName, testconstants.ProductName),
+		fmt.Sprintf("--%s=%v", cli.FlagProductLabel, testconstants.ProductLabel),
+		fmt.Sprintf("--%s=%v", cli.FlagPartNumber, testconstants.PartNumber),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningCustomFlow, testconstants.CommissioningCustomFlow),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningCustomFlowUrl, testconstants.CommissioningCustomFlowUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeInitialStepsHint, testconstants.CommissioningModeInitialStepsHint),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeInitialStepsInstruction, testconstants.CommissioningModeInitialStepsInstruction),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeSecondaryStepsHint, testconstants.CommissioningModeSecondaryStepsHint),
+		fmt.Sprintf("--%s=%v", cli.FlagCommissioningModeSecondaryStepsInstruction, testconstants.CommissioningModeSecondaryStepsInstruction),
+		fmt.Sprintf("--%s=%v", cli.FlagUserManualUrl, testconstants.UserManualUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagSupportUrl, testconstants.SupportUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagProductUrl, testconstants.ProductUrl),
 	}
-	args = append(args, fields...)
 	args = append(args, common...)
-	_, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdCreateModel(), args)
+	_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModel(), args)
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -161,43 +194,34 @@ func TestDeleteModel(t *testing.T) {
 		idVid int32
 		idPid int32
 
-		args []string
-		code uint32
-		err  error
+		err error
 	}{
 		{
 			desc:  "valid",
-			idVid: 0,
-			idPid: 0,
-
-			args: common,
+			idVid: testconstants.Vid,
+			idPid: testconstants.Pid,
 		},
 		{
-			desc:  "key not found",
-			idVid: 100000,
-			idPid: 100000,
+			desc:  "model does not exist",
+			idVid: testconstants.Vid,
+			idPid: testconstants.Pid + 1,
 
-			args: common,
-			code: sdkerrors.ErrKeyNotFound.ABCICode(),
+			err: types.ErrModelDoesNotExist,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
-			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdDeleteModel(), args)
+			args = append(args, common...)
+			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdDeleteModel(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp sdk.TxResponse
-				require.NoError(t, ctx.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.Equal(t, tc.code, resp.Code)
 			}
 		})
 	}
 }
-*/
