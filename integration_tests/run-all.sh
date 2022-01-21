@@ -41,6 +41,9 @@ log() {
   echo "${LOG_PREFIX}$1"
 }
 
+  # patch configs properly by having all values >= 1 sec, otherwise headers may start having time from the future and light client verification will fail
+  # if we patch config to have new blocks created in less than 1 sec, the min time in a time header is still 1 sec.
+  # So, new blocks started to be from the future.
 patch_consensus_config() {
   local NODE_CONFIGS="$(find "$LOCALNET_DIR" -type f -name "config.toml" -wholename "*node*")"
 
@@ -120,9 +123,6 @@ done
 CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
 
 for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-  # patch configs properly by having all values >= 1 sec, otherwise headers may start having time from the future and light client verification will fail
-  # if we patch config to have new blocks created in less than 1 sec, the min time in a time header is still 1 sec.
-  # So, new blocks started to be from the future.
   init_pool 
 
   log "*****************************************************************************************"
