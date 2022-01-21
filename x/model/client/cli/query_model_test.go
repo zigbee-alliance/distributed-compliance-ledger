@@ -87,12 +87,11 @@ func TestShowModel(t *testing.T) {
 				require.ErrorIs(t, stat.Err(), tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetModelResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.Model)
+				var model types.Model
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &model))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.Model),
+					nullify.Fill(&model),
 				)
 			}
 		})
