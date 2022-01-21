@@ -28,8 +28,8 @@ func networkWithModelObjects(t *testing.T, n int) (*network.Network, []types.Mod
 
 	for i := 0; i < n; i++ {
 		model := types.Model{
-			Vid: int32(i),
-			Pid: int32(i),
+			Vid: int32(i + 1),
+			Pid: int32(i + 1),
 		}
 		nullify.Fill(&model)
 		state.ModelList = append(state.ModelList, model)
@@ -76,8 +76,8 @@ func TestShowModel(t *testing.T) {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				fmt.Sprintf("--%s=%d", cli.FlagVid, tc.idVid),
-				fmt.Sprintf("--%s=%d", cli.FlagPid, tc.idPid),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
 			args = append(args, tc.common...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowModel(), args)
