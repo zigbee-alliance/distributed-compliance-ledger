@@ -22,6 +22,7 @@ func createNProvisionalModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []ty
 		items[i].Pid = int32(i)
 		items[i].SoftwareVersion = uint32(i)
 		items[i].CertificationType = strconv.Itoa(i)
+		items[i].Value = true
 
 		keeper.SetProvisionalModel(ctx, items[i])
 	}
