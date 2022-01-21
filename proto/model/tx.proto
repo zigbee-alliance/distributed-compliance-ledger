@@ -79,7 +79,7 @@ message MsgCreateModelVersion {
   uint64 ota_file_size = 10 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl\""];
   string ota_checksum = 11 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl,max=64\""];
   int32 ota_checksum_type = 12 [(gogoproto.moretags) = "validate:\"required_with=OtaUrl,gte=0,lte=65535\""];
-  uint32 min_applicable_software_version = 13 [(gogoproto.moretags) = "validate:\"required_with=MaxApplicableSoftwareVersion\""];
+  uint32 min_applicable_software_version = 13;
   uint32 max_applicable_software_version = 14 [(gogoproto.moretags) = "validate:\"gtecsfield=MinApplicableSoftwareVersion\""];
   string release_notes_url = 15 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
 }
@@ -93,8 +93,8 @@ message MsgUpdateModelVersion {
 
   bool software_version_valid = 5;
   string ota_url = 6 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
-  uint32 min_applicable_software_version = 7 [(gogoproto.moretags) = "validate:\"required_with=MaxApplicableSoftwareVersion\""];
-  uint32 max_applicable_software_version = 8 [(gogoproto.moretags) = "validate:\"required_with=MinApplicableSoftwareVersion,omitempty,gtecsfield=MinApplicableSoftwareVersion\""];
+  uint32 min_applicable_software_version = 7;
+  uint32 max_applicable_software_version = 8 [(gogoproto.moretags) = "validate:\"omitempty,gtecsfield=MinApplicableSoftwareVersion\""];
   string release_notes_url = 9 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
 }
 message MsgUpdateModelVersionResponse {}
