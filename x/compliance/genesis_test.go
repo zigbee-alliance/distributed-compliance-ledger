@@ -69,9 +69,8 @@ func TestGenesis(t *testing.T) {
 		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
-	setup := compliance.Setup(t)
 
-	k, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, setup.ModelKeeper, setup.CompliancetestKeeper)
+	k, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	compliance.InitGenesis(ctx, *k, genesisState)
 	got := compliance.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)

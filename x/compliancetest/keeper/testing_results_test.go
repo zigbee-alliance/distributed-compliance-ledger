@@ -63,8 +63,7 @@ func TestTestingResultsRemove(t *testing.T) {
 }
 
 func TestTestingResultsGetAll(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.CompliancetestKeeper(t, setup.DclauthKeeper, nil)
+	keeper, ctx := keepertest.CompliancetestKeeper(t, nil, nil)
 	items := createNTestingResults(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
