@@ -18,8 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestComplianceInfoQuerySingle(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNComplianceInfo(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -79,8 +78,7 @@ func TestComplianceInfoQuerySingle(t *testing.T) {
 }
 
 func TestComplianceInfoQueryPaginated(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNComplianceInfo(keeper, ctx, 5)
 

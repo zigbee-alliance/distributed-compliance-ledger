@@ -28,8 +28,7 @@ func createNTestingResults(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 }
 
 func TestTestingResultsGet(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.CompliancetestKeeper(t, setup.DclauthKeeper, nil)
+	keeper, ctx := keepertest.CompliancetestKeeper(t, nil, nil)
 	items := createNTestingResults(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetTestingResults(ctx,
@@ -46,8 +45,7 @@ func TestTestingResultsGet(t *testing.T) {
 }
 
 func TestTestingResultsRemove(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.CompliancetestKeeper(t, setup.DclauthKeeper, nil)
+	keeper, ctx := keepertest.CompliancetestKeeper(t, nil, nil)
 	items := createNTestingResults(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveTestingResults(ctx,

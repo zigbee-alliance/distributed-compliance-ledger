@@ -30,8 +30,7 @@ func createNProvisionalModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []ty
 }
 
 func TestProvisionalModelGet(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	items := createNProvisionalModel(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetProvisionalModel(ctx,
@@ -49,8 +48,7 @@ func TestProvisionalModelGet(t *testing.T) {
 }
 
 func TestProvisionalModelRemove(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	items := createNProvisionalModel(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveProvisionalModel(ctx,
@@ -70,8 +68,7 @@ func TestProvisionalModelRemove(t *testing.T) {
 }
 
 func TestProvisionalModelGetAll(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	items := createNProvisionalModel(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

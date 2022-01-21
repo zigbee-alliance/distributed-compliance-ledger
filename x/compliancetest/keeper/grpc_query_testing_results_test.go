@@ -18,8 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestTestingResultsQuerySingle(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.CompliancetestKeeper(t, setup.DclauthKeeper, nil)
+	keeper, ctx := keepertest.CompliancetestKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNTestingResults(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -76,8 +75,7 @@ func TestTestingResultsQuerySingle(t *testing.T) {
 }
 
 func TestTestingResultsQueryPaginated(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.CompliancetestKeeper(t, setup.DclauthKeeper, nil)
+	keeper, ctx := keepertest.CompliancetestKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNTestingResults(keeper, ctx, 5)
 

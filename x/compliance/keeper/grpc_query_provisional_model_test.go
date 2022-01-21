@@ -18,8 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestProvisionalModelQuerySingle(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProvisionalModel(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -79,8 +78,7 @@ func TestProvisionalModelQuerySingle(t *testing.T) {
 }
 
 func TestProvisionalModelQueryPaginated(t *testing.T) {
-	setup := keepertest.Setup(t)
-	keeper, ctx := keepertest.ComplianceKeeper(t, setup.DclauthKeeper, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProvisionalModel(keeper, ctx, 5)
 
