@@ -11,10 +11,9 @@ import (
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // Prevent strconv unused error.
@@ -53,8 +52,7 @@ func TestShowModel(t *testing.T) {
 		idPid int32
 
 		common []string
-		err    error
-		obj    types.Model
+		obj    *types.Model
 	}{
 		{
 			desc:  "found",
@@ -62,7 +60,7 @@ func TestShowModel(t *testing.T) {
 			idPid: objs[0].Pid,
 
 			common: common,
-			obj:    objs[0],
+			obj:    &objs[0],
 		},
 		{
 			desc:  "not found",
@@ -70,7 +68,7 @@ func TestShowModel(t *testing.T) {
 			idPid: 100000,
 
 			common: common,
-			err:    status.Error(codes.NotFound, "not found"),
+			obj:    nil,
 		},
 	} {
 		tc := tc
@@ -81,12 +79,10 @@ func TestShowModel(t *testing.T) {
 			}
 			args = append(args, tc.common...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowModel(), args)
-			if tc.err != nil {
-				stat, ok := status.FromError(tc.err)
-				require.True(t, ok)
-				require.ErrorIs(t, stat.Err(), tc.err)
+			require.NoError(t, err)
+			if tc.obj == nil {
+				require.Equal(t, cliutils.NotFoundOutput, out.String())
 			} else {
-				require.NoError(t, err)
 				var model types.Model
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &model))
 				require.Equal(t,

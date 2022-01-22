@@ -11,13 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func ExecTestCLICmd(t *testing.T, clientCtx client.Context, cmd *cobra.Command, args []string) (*sdk.TxResponse, error) {
+func ExecTestCLITxCmd(t *testing.T, clientCtx client.Context, cmd *cobra.Command, args []string) (*sdk.TxResponse, error) {
 	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
 	require.NoError(t, err)
-
-	if err != nil {
-		return nil, err
-	}
 
 	var resp sdk.TxResponse
 	err = clientCtx.Codec.UnmarshalJSON(out.Bytes(), &resp)

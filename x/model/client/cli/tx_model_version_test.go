@@ -85,7 +85,7 @@ func TestCreateModelVersion(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModelVersion(), args)
+			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModelVersion(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -123,7 +123,7 @@ func TestUpdateModelVersion(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesUrl, testconstants.ReleaseNotesUrl),
 	}
 	args = append(args, common...)
-	_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModelVersion(), args)
+	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModelVersion(), args)
 	require.NoError(t, err)
 
 	fields := []string{
@@ -166,7 +166,7 @@ func TestUpdateModelVersion(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdUpdateModelVersion(), args)
+			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdUpdateModelVersion(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {

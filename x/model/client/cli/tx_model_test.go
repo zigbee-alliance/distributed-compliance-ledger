@@ -64,7 +64,7 @@ func TestCreateModel(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModel(), args)
+			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -103,7 +103,7 @@ func TestUpdateModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagProductUrl, testconstants.ProductUrl),
 	}
 	args = append(args, common...)
-	_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModel(), args)
+	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
 	require.NoError(t, err)
 
 	fields := []string{
@@ -146,7 +146,7 @@ func TestUpdateModel(t *testing.T) {
 			}
 			args = append(args, fields...)
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdUpdateModel(), args)
+			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdUpdateModel(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
@@ -186,7 +186,7 @@ func TestDeleteModel(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagProductUrl, testconstants.ProductUrl),
 	}
 	args = append(args, common...)
-	_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdCreateModel(), args)
+	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModel(), args)
 	require.NoError(t, err)
 
 	for _, tc := range []struct {
@@ -216,7 +216,7 @@ func TestDeleteModel(t *testing.T) {
 				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
 			args = append(args, common...)
-			_, err := testcli.ExecTestCLICmd(t, ctx, cli.CmdDeleteModel(), args)
+			_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdDeleteModel(), args)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
