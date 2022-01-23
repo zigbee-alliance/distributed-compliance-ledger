@@ -102,14 +102,14 @@ func DefaultConfig() Config {
 	}
 }
 
-// package-wide network lock to only allow one test network at a time
+// package-wide network lock to only allow one test network at a time.
 var lock = new(sync.Mutex)
 
 // AppConstructor defines a function which accepts a network configuration and
 // creates an ABCI Application to provide to Tendermint.
 type AppConstructor = func(val Validator) servertypes.Application
 
-// NewAppConstructor returns a new simapp AppConstructor
+// NewAppConstructor returns a new simapp AppConstructor.
 func NewAppConstructor(encodingCfg params.EncodingConfig) AppConstructor {
 	return func(val Validator) servertypes.Application {
 		return simapp.NewSimApp(
@@ -278,8 +278,8 @@ func newNetwork(t *testing.T, cfg Config) *Network {
 		clientDir := filepath.Join(network.BaseDir, nodeDirName, "simcli")
 		gentxsDir := filepath.Join(network.BaseDir, "gentxs")
 
-		require.NoError(t, os.MkdirAll(filepath.Join(nodeDir, "config"), 0755))
-		require.NoError(t, os.MkdirAll(clientDir, 0755))
+		require.NoError(t, os.MkdirAll(filepath.Join(nodeDir, "config"), 0o755))
+		require.NoError(t, os.MkdirAll(clientDir, 0o755))
 
 		tmCfg.SetRoot(nodeDir)
 		tmCfg.Moniker = nodeDirName
