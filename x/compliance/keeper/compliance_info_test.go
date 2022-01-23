@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -30,7 +29,7 @@ func createNComplianceInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 }
 
 func TestComplianceInfoGet(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	items := createNComplianceInfo(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetComplianceInfo(ctx,
@@ -48,7 +47,7 @@ func TestComplianceInfoGet(t *testing.T) {
 }
 
 func TestComplianceInfoRemove(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	items := createNComplianceInfo(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveComplianceInfo(ctx,
@@ -68,11 +67,10 @@ func TestComplianceInfoRemove(t *testing.T) {
 }
 
 func TestComplianceInfoGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	items := createNComplianceInfo(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllComplianceInfo(ctx)),
 	)
 }
-*/

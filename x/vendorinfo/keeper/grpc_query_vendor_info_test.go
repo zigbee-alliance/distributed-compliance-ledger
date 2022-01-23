@@ -8,7 +8,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -18,8 +17,7 @@ import (
 var _ = strconv.IntSize
 
 func TestVendorInfoQuerySingle(t *testing.T) {
-	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
-	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
+	keeper, ctx := keepertest.VendorinfoKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNVendorInfo(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -66,8 +64,7 @@ func TestVendorInfoQuerySingle(t *testing.T) {
 }
 
 func TestVendorInfoQueryPaginated(t *testing.T) {
-	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
-	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
+	keeper, ctx := keepertest.VendorinfoKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNVendorInfo(keeper, ctx, 5)
 
