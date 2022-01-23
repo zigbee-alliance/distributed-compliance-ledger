@@ -10,6 +10,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
+//nolint:deadcode,unused
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 	k, ctx := keepertest.ModelKeeper(t, nil)
 	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
