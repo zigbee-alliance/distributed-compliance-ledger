@@ -206,3 +206,18 @@ wait_for_height() {
       "wait time: $waited, time limit: $wait_time." &>${_output}
   done
 }
+
+execute_with_retry() {
+  local _command=${1}
+
+  local _result=$($_command)
+  # echo "$_result"
+
+  if [[ "$(_check_response "$_result" "EOF" "raw")" == true ]]; then
+    #echo "EOF detected, re-trying"
+    _result=$($_command)
+    # echo "$_result"
+  fi
+
+  echo "$_result"
+}
