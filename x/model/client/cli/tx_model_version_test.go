@@ -175,3 +175,6 @@ func TestUpdateModelVersion(t *testing.T) {
 		})
 	}
 }
+
+// TODO: Add negative tests for absence of required parameters and
+// for presence of unexpected parameters (including positional ones).

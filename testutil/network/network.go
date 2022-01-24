@@ -32,7 +32,6 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	"github.com/cosmos/cosmos-sdk/x/genutil"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/spm/cosmoscmd"
 	tmcfg "github.com/tendermint/tendermint/config"
@@ -46,6 +45,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 	validatortypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 	"google.golang.org/grpc"
 )
@@ -101,6 +101,12 @@ func DefaultConfig() Config {
 		KeyringOptions:  []keyring.Option{},
 	}
 }
+
+// **********************************************************************************************
+// The code below has been copied from cosmos-sdk@v0.44.5/testutil/network/network.go and adapted
+// to use dclgenutil, dclauth and validator modules instead of genutil, auth and staking modules
+// and not to use bank module.
+// **********************************************************************************************
 
 // package-wide network lock to only allow one test network at a time.
 var lock = new(sync.Mutex)
@@ -295,7 +301,7 @@ func newNetwork(t *testing.T, cfg Config) *Network {
 		tmCfg.P2P.AddrBookStrict = false
 		tmCfg.P2P.AllowDuplicateIP = true
 
-		nodeID, pubKey, err := genutil.InitializeNodeValidatorFiles(tmCfg)
+		nodeID, pubKey, err := dclgenutil.InitializeNodeValidatorFiles(tmCfg)
 		require.NoError(t, err)
 		nodeIDs[i] = nodeID
 		valPubKeys[i] = pubKey

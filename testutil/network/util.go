@@ -21,6 +21,12 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 )
 
+// **************************************************************************************
+// The code in this file has been copied from cosmos-sdk@v0.44.5/testutil/network/util.go
+// and adapted to use dclgenutil and dclauth modules instead of genutil and auth modules
+// and not to use bank module.
+// **************************************************************************************
+
 func startInProcess(cfg Config, val *Validator) error {
 	logger := val.Ctx.Logger
 	tmCfg := val.Ctx.Config
