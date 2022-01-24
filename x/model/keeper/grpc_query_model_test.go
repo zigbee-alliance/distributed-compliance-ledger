@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -19,7 +18,7 @@ import (
 var _ = strconv.IntSize
 
 func TestModelQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t)
+	keeper, ctx := keepertest.ModelKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNModel(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -73,7 +72,7 @@ func TestModelQuerySingle(t *testing.T) {
 }
 
 func TestModelQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t)
+	keeper, ctx := keepertest.ModelKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNModel(keeper, ctx, 5)
 
@@ -127,4 +126,3 @@ func TestModelQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/

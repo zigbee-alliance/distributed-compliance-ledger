@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -18,7 +17,7 @@ import (
 var _ = strconv.IntSize
 
 func TestModelVersionQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ModelKeeper(t)
+	keeper, ctx := keepertest.ModelKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNModelVersion(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -73,4 +72,3 @@ func TestModelVersionQuerySingle(t *testing.T) {
 		})
 	}
 }
-*/

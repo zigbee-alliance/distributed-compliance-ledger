@@ -1,6 +1,5 @@
 package cli_test
 
-/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -11,10 +10,9 @@ import (
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // Prevent strconv unused error.
@@ -28,8 +26,8 @@ func networkWithModelVersionsObjects(t *testing.T, n int) (*network.Network, []t
 
 	for i := 0; i < n; i++ {
 		modelVersions := types.ModelVersions{
-			Vid: int32(i),
-			Pid: int32(i),
+			Vid: int32(i + 1),
+			Pid: int32(i + 1),
 		}
 		nullify.Fill(&modelVersions)
 		state.ModelVersionsList = append(state.ModelVersionsList, modelVersions)
@@ -52,50 +50,48 @@ func TestShowModelVersions(t *testing.T) {
 		idVid int32
 		idPid int32
 
-		args []string
-		err  error
-		obj  types.ModelVersions
+		common []string
+		obj    *types.ModelVersions
 	}{
 		{
 			desc:  "found",
 			idVid: objs[0].Vid,
 			idPid: objs[0].Pid,
 
-			args: common,
-			obj:  objs[0],
+			common: common,
+			obj:    &objs[0],
 		},
 		{
 			desc:  "not found",
 			idVid: 100000,
 			idPid: 100000,
 
-			args: common,
-			err:  status.Error(codes.NotFound, "not found"),
+			common: common,
+			obj:    nil,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
-				strconv.Itoa(int(tc.idPid)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
+				fmt.Sprintf("--%s=%v", cli.FlagPid, tc.idPid),
 			}
-			args = append(args, tc.args...)
+			args = append(args, tc.common...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowModelVersions(), args)
-			if tc.err != nil {
-				stat, ok := status.FromError(tc.err)
-				require.True(t, ok)
-				require.ErrorIs(t, stat.Err(), tc.err)
+			if tc.obj == nil {
+				require.Equal(t, cliutils.NotFoundOutput, out.String())
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetModelVersionsResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.ModelVersions)
+				var modelVersions types.ModelVersions
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &modelVersions))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.ModelVersions),
+					nullify.Fill(&modelVersions),
 				)
 			}
 		})
 	}
 }
-*/
+
+// TODO: Add negative tests for absence of required parameters and
+// for presence of unexpected parameters (including positional ones).
