@@ -28,14 +28,14 @@ test_divider
 
 # Body
 
-echo "Query non existant model"
+echo "Query non existent model"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "Not Found"
 echo "$result"
 
 test_divider
 
-echo "Query non existant Vendor Models"
+echo "Query non existent Vendor Models"
 result=$(dcld query model vendor-models --vid=$vid)
 check_response "$result" "Not Found"
 echo "$result"

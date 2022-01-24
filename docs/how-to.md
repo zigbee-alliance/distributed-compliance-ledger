@@ -65,7 +65,7 @@ In order to connect the CLI to a DC Ledger Network (Chain), the following parame
     * Please look at [Observer Nodes](../deployment/persistent_chains/testnet/nodes.md) for a list of Observer nodes for the current `testnet`.
     * If you don't have any trusted nodes (Observers or Validators) for connection,
       consider running a Light Client Proxy Server and connecting a CLI to it. 
-      See [Run Light Client Proxy](docs/run-light-client-proxy.md).
+      See [Run Light Client Proxy](running-light-client-proxy.md).
 
 ## Getting Account
 Ledger is public for read which means that anyone can read from the Ledger without a need to have 

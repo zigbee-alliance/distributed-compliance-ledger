@@ -15,7 +15,6 @@
 //nolint:testpackage
 package x509
 
-/**
 import (
 	"testing"
 
@@ -66,4 +65,3 @@ func Test_VerifyRootCertificate(t *testing.T) {
 	err := certificate.Verify(certificate)
 	require.Nil(t, err)
 }
-*/

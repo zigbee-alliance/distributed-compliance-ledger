@@ -41,23 +41,31 @@ log() {
   echo "${LOG_PREFIX}$1"
 }
 
+  # patch configs properly by having all values >= 1 sec, otherwise headers may start having time from the future and light client verification will fail
+  # if we patch config to have new blocks created in less than 1 sec, the min time in a time header is still 1 sec.
+  # So, new blocks started to be from the future.
 patch_consensus_config() {
   local NODE_CONFIGS="$(find "$LOCALNET_DIR" -type f -name "config.toml" -wholename "*node*")"
 
   for NODE_CONFIG in ${NODE_CONFIGS}; do
-    sed -i $SED_EXT 's/timeout_propose = "3s"/timeout_propose = "500ms"/g' "${NODE_CONFIG}"
-    sed -i $SED_EXT 's/timeout_prevote = "1s"/timeout_prevote = "500ms"/g' "${NODE_CONFIG}"
-    sed -i $SED_EXT 's/timeout_precommit = "1s"/timeout_precommit = "500ms"/g' "${NODE_CONFIG}"
-    sed -i $SED_EXT 's/timeout_commit = "5s"/timeout_commit = "500ms"/g' "${NODE_CONFIG}"
+    sed -i $SED_EXT 's/timeout_propose = "3s"/timeout_propose = "1s"/g' "${NODE_CONFIG}"
+    #sed -i $SED_EXT 's/timeout_prevote = "1s"/timeout_prevote = "1s"/g' "${NODE_CONFIG}"
+    #sed -i $SED_EXT 's/timeout_precommit = "1s"/timeout_precommit = "1s"/g' "${NODE_CONFIG}"
+    sed -i $SED_EXT 's/timeout_commit = "5s"/timeout_commit = "1s"/g' "${NODE_CONFIG}"
   done
 }
 
 init_pool() {
+  local _patch_config="${1:-yes}";
   log "Setting up pool"
 
   log "-> Generating network configuration" >${DETAILED_OUTPUT_TARGET}
   make localnet_init &>${DETAILED_OUTPUT_TARGET}
-  patch_consensus_config
+
+  if [ "$_patch_config" = "yes" ];
+  then
+    patch_consensus_config
+  fi;
 
   log "-> Running pool" >${DETAILED_OUTPUT_TARGET}
   make localnet_start &>${DETAILED_OUTPUT_TARGET}
@@ -96,6 +104,26 @@ CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "co
 
 for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
   init_pool
+
+   log "*****************************************************************************************"
+   log "Running $CLI_SHELL_TEST"
+   log "*****************************************************************************************"
+
+   if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+     log "$CLI_SHELL_TEST finished successfully"
+   else
+     log "$CLI_SHELL_TEST failed"
+     exit 1
+   fi
+
+   cleanup_pool
+done
+
+# Light Client Proxy Cli shell tests
+CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+
+for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+  init_pool 
 
   log "*****************************************************************************************"
   log "Running $CLI_SHELL_TEST"

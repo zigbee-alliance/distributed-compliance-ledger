@@ -174,3 +174,28 @@ for node_name in node0 node1 node2 node3 observer0; do
         sed -i $SED_EXT 's/prometheus = false/prometheus = true/g' "$LOCALNET_DIR/${node_name}/config/config.toml"
     fi
 done
+
+# Init Light CLient Proxy if needed DCL_LIGHT_CLIENT_PROXY=1
+# DCL_LIGHT_CLIENT_PROXY="${DCL_LIGHT_CLIENT_PROXY:-}"
+DCL_LIGHT_CLIENT_PROXY=1
+
+function init_light_client_proxy {
+    local _node_name="$1"
+
+    rm -rf "$DCL_DIR"
+
+    dcld config chain-id "$CHAIN_ID"
+    dcld config node "tcp://localhost:26657"
+    dcld config broadcast-mode block
+    dcld config keyring-backend test
+    dcld config broadcast-mode block
+
+    cp -R "$LOCALNET_DIR"/client/* "$DCL_DIR"
+
+    cp -r "$DCL_DIR"/* "$LOCALNET_DIR/$_node_name"
+}
+
+if [[ -n "$DCL_LIGHT_CLIENT_PROXY" ]]; then
+    mkdir "$LOCALNET_DIR/lightclient0"
+    init_light_client_proxy lightclient0
+fi
