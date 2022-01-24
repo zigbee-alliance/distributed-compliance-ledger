@@ -16,8 +16,8 @@ leaf_cert_serial_number="143290473708569835418599774898811724528308722063"
 unknown_cert_subj="O=unknown-ca,ST=some-state,C=AU"
 unknown_cert_subject_key_id="68:99:E:76:36:53:D0:7F:B0:89:71:A3:F4:73:79:9:30:E6:2B:DB"
 
-# 1. check non-existent values when no entry added via light client
-echo "check non-existent values when no entry added via light client"
+# 1. check non-existent values via light client when no entry added
+echo "check non-existent values via light client when no entry added"
 
 test_divider
 
@@ -247,9 +247,9 @@ check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_i
 test_divider
 
 
-# 5. check non-existent values when entry added via light client
+# 5. check non-existent values via light client when entry added
 
-echo "check non-existent values when entry added via light client"
+echo "check non-existent values via light client when entry added"
 
 test_divider
 

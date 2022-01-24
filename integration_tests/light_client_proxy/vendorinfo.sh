@@ -1,8 +1,8 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-# 1. check non-existent values when no entry added via light client
-echo "check non-existent values when no entry added via light client"
+# 1. check non-existent values via light client when no entry added
+echo "check non-existent values via light client when no entry added"
 
 test_divider
 
@@ -78,9 +78,9 @@ check_response "$result" "\"vendorName\": \"$vendorName\""
 test_divider
 
 
-# 5. check non-existent values when entry added via light client
+# 5. check non-existent values via light client when entry added
 
-echo "check non-existent values when entry added via light client"
+echo "check non-existent values via light client when entry added"
 
 test_divider
 

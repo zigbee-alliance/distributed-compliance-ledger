@@ -12,8 +12,8 @@ cmd="(echo $passphrase; echo $passphrase) | dcld keys add $user2"
 result="$(bash -c "$cmd")"
 user_address2=$(echo $passphrase | dcld keys show $user2 -a)
 
-# 1. check non-existent values when no entry added via light client
-echo "check non-existent values when no entry added via light client"
+# 1. check non-existent values via light client when no entry added
+echo "check non-existent values via light client when no entry added"
 
 test_divider
 
@@ -110,9 +110,9 @@ check_response "$result" "\"address\": \"$user_address\""
 test_divider
 
 
-# 5. check non-existent values when entry added via light client
+# 5. check non-existent values via light client when entry added
 
-echo "check non-existent values when entry added via light client"
+echo "check non-existent values via light client when entry added"
 
 test_divider
 

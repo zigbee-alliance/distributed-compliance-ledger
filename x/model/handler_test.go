@@ -767,12 +767,12 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 	}
 }
 
-func NewMsgCreateModelVersion(signer sdk.AccAddress, sv uint32) *types.MsgCreateModelVersion {
+func NewMsgCreateModelVersion(signer sdk.AccAddress, softwareVersion uint32) *types.MsgCreateModelVersion {
 	return &types.MsgCreateModelVersion{
 		Creator:                      signer.String(),
 		Vid:                          testconstants.VendorID1,
 		Pid:                          testconstants.Pid,
-		SoftwareVersion:              sv,
+		SoftwareVersion:              softwareVersion,
 		SoftwareVersionString:        testconstants.SoftwareVersionString,
 		CdVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,

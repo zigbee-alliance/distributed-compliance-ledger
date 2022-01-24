@@ -126,7 +126,7 @@ func init() {
 		"sequential verification. Verify all headers sequentially as opposed to using skipping verification",
 	)
 	LightCmd.Flags().Int64Var(&startTimeout, FlagStartTimeout, 0,
-		"How many seconds to wait before staring the light client proxy. Mostly for test purposes when light client is started at the same time as the pool.")
+		"How many seconds to wait before starting the light client proxy. Mostly for test purposes when light client is started at the same time as the pool.")
 }
 
 func runProxy(cmd *cobra.Command, args []string) error {
@@ -194,7 +194,7 @@ func runProxy(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("height is set but hash is not (--%s) ", FlagHash)
 	}
 
-	// if trusted height and hash are not set, try toget it from primaries and witness
+	// if trusted height and hash are not set, try to get it from primaries and witness
 	if trustedHeight == 0 && len(trustedHash) == 0 {
 		trustedHeight, trustedHash, err = getTrustedHeightAndHash(primaryAddr, witnessesAddrs)
 		if err != nil {
