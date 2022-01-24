@@ -1,6 +1,5 @@
 package keeper_test
 
-/* TODO issue 99
 import (
 	"strconv"
 	"testing"
@@ -18,7 +17,7 @@ import (
 var _ = strconv.IntSize
 
 func TestChildCertificatesQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNChildCertificates(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -70,4 +69,3 @@ func TestChildCertificatesQuerySingle(t *testing.T) {
 		})
 	}
 }
-*/

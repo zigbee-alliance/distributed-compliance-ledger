@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -28,7 +27,7 @@ func createNProposedCertificateRevocation(keeper *keeper.Keeper, ctx sdk.Context
 }
 
 func TestProposedCertificateRevocationGet(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNProposedCertificateRevocation(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetProposedCertificateRevocation(ctx,
@@ -44,7 +43,7 @@ func TestProposedCertificateRevocationGet(t *testing.T) {
 }
 
 func TestProposedCertificateRevocationRemove(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNProposedCertificateRevocation(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveProposedCertificateRevocation(ctx,
@@ -60,11 +59,10 @@ func TestProposedCertificateRevocationRemove(t *testing.T) {
 }
 
 func TestProposedCertificateRevocationGetAll(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNProposedCertificateRevocation(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllProposedCertificateRevocation(ctx)),
 	)
 }
-*/
