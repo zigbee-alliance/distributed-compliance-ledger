@@ -1,10 +1,10 @@
 package pki_test
 
-/* TODO issue 99
 import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
@@ -73,10 +73,20 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		ApprovedRootCertificates: &types.ApprovedRootCertificates{
-			Certs: []*types.CertificateIdentifier{},
+			Certs: []*types.CertificateIdentifier{
+				{
+					Subject:      testconstants.IntermediateSubject,
+					SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+				},
+			},
 		},
 		RevokedRootCertificates: &types.RevokedRootCertificates{
-			Certs: []*types.CertificateIdentifier{},
+			Certs: []*types.CertificateIdentifier{
+				{
+					Subject:      testconstants.IntermediateSubject,
+					SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+				},
+			},
 		},
 		ApprovedCertificatesBySubjectList: []types.ApprovedCertificatesBySubject{
 			{
@@ -89,7 +99,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.PkiKeeper(t)
+	k, ctx := keepertest.PkiKeeper(t, nil)
 	pki.InitGenesis(ctx, *k, genesisState)
 	got := pki.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
@@ -105,4 +115,3 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.ApprovedCertificatesBySubjectList, got.ApprovedCertificatesBySubjectList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
-*/
