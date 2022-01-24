@@ -46,7 +46,6 @@ test_divider
 echo "Query Device Model Version with VID: $vid PID: $pid SV: $sv"
 result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv)
 echo "$result"
-
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"software_version\": $sv"
@@ -58,9 +57,31 @@ check_response "$result" "\"max_applicable_software_version\": 10"
 
 test_divider
 
-# Query non existant model version 
+# Query all model versions
+echo "Query all model versions with VID: $vid PID: $pid "
+result=$(dcld query model all-model-versions --vid=$vid --pid=$pid)
+echo "$result"
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"software_versions\""
+check_response "$result" "$sv"
+
+test_divider
+
+
+
+# Query non existent model version
 echo "Query Device Model Version with VID: $vid PID: $pid SV: 123456"
 result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=123456)
+check_response "$result" "Not Found"
+
+test_divider
+
+# Query non existent model versions
+vid1=$RANDOM
+pid1=$RANDOM
+echo "Query all Device Model Versions with VID: $vid1 PID: $pid1"
+result=$(dcld query model all-model-versions --vid=$vid1 --pid=$pid1)
 check_response "$result" "Not Found"
 
 test_divider
@@ -86,6 +107,28 @@ check_response "$result" "\"min_applicable_software_version\": 2"
 check_response "$result" "\"max_applicable_software_version\": 10"
 
 test_divider
+
+# Add second model version
+sv2=$RANDOM
+echo "Create a Second Device Model Version with VID: $vid PID: $pid SV: $sv2"
+result=$(echo 'test1234' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv2 --softwareVersionString=1 --from=$vendor_account --yes)
+echo "$result"
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+# Query all model versions
+echo "Query all model versions with VID: $vid PID: $pid "
+result=$(dcld query model all-model-versions --vid=$vid --pid=$pid)
+echo "$result"
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"pid\": $pid"
+check_response "$result" "\"software_versions\""
+check_response "$result" "$sv"
+check_response "$result" "$sv2"
+
+test_divider
+
 
 # Create model version with vid belonging to another vendor
 echo "Create a Device Model Version with VID: $vid PID: $pid SV: $sv from a different vendor account"

@@ -92,6 +92,8 @@ services:
     ports:
       - "26664-26665:26656-26657"
       - "26654:26660"
+      - "26644:1317"
+      - "26634:9090"
       # uncomment following line if starting in debug mode
       # - "2345:2345"
     volumes:
@@ -100,6 +102,26 @@ services:
       localnet:
         ipv4_address: 192.167.10.6
     command: dcld start
+
+  lightclient0:
+    image: dcledger
+    build: .
+    # profiles:
+    #   - lightclients
+    container_name: lightclient0
+    ports:
+      - "26666-26667:26656-26657"
+      - "26755:26660"
+      - "26620:8888"
+      # uncomment following line if starting in debug mode
+      # - "2345:2345"
+    volumes:
+      - ./.localnet/lightclient0:/var/lib/dcl/.dcl:Z
+    networks:
+      localnet:
+        ipv4_address: 192.167.10.7
+    command: dcld light dclchain -p tcp://192.167.10.2:26657 -w tcp://192.167.10.3:26657,tcp://192.167.10.4:26657 --start-timeout=10 --log-level=debug
+
     # Please use the following as the entry point if you want to start this node in debug mode for easy debugging
     # command: dlv --listen=:2345 --headless=true --log=true --log-output=debugger,debuglineerr,gdbwire,lldbout,rpc --accept-multiclient --api-version=2 exec /usr/bin/dcld start
 
