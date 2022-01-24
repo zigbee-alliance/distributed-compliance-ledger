@@ -7,7 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 	keepertest "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/vendorinfo/types"
 )
@@ -26,8 +25,7 @@ func createNVendorInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Ve
 }
 
 func TestVendorInfoGet(t *testing.T) {
-	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
-	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
+	keeper, ctx := keepertest.VendorinfoKeeper(t, nil)
 	items := createNVendorInfo(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetVendorInfo(ctx,
@@ -39,8 +37,7 @@ func TestVendorInfoGet(t *testing.T) {
 }
 
 func TestVendorInfoRemove(t *testing.T) {
-	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
-	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
+	keeper, ctx := keepertest.VendorinfoKeeper(t, nil)
 	items := createNVendorInfo(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveVendorInfo(ctx,
@@ -54,8 +51,7 @@ func TestVendorInfoRemove(t *testing.T) {
 }
 
 func TestVendorInfoGetAll(t *testing.T) {
-	dclauthKeeper := &vendorinfo.DclauthKeeperMock{}
-	keeper, ctx := keepertest.VendorinfoKeeper(t, dclauthKeeper)
+	keeper, ctx := keepertest.VendorinfoKeeper(t, nil)
 	items := createNVendorInfo(keeper, ctx, 10)
 	require.ElementsMatch(t, items, keeper.GetAllVendorInfo(ctx))
 }

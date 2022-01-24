@@ -1,6 +1,5 @@
 package keeper_test
 
-/* TODO issue 99
 import (
 	"strconv"
 	"testing"
@@ -15,11 +14,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func TestProvisionalModelQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProvisionalModel(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -79,7 +78,7 @@ func TestProvisionalModelQuerySingle(t *testing.T) {
 }
 
 func TestProvisionalModelQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProvisionalModel(keeper, ctx, 5)
 
@@ -133,4 +132,3 @@ func TestProvisionalModelQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "invalid request"))
 	})
 }
-*/
