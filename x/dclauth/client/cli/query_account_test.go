@@ -1,6 +1,6 @@
 package cli_test
 
-/*
+/* TODO issue #197
 import (
 	"fmt"
 	"strconv"
