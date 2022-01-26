@@ -20,11 +20,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	authrest "github.com/cosmos/cosmos-sdk/x/auth/client/rest"
 	authtx "github.com/cosmos/cosmos-sdk/x/auth/tx"
-
-	// capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types".
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/cosmos/cosmos-sdk/x/upgrade"
+	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/tendermint/spm/cosmoscmd"
 	"github.com/tendermint/spm/openapiconsole"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -106,7 +107,9 @@ var (
 			slashing.AppModuleBasic{},
 			feegrantmodule.AppModuleBasic{},
 			ibc.AppModuleBasic{},
-			upgrade.AppModuleBasic{},
+		*/
+		upgrade.AppModuleBasic{},
+		/*
 			evidence.AppModuleBasic{},
 			transfer.AppModuleBasic{},
 			vesting.AppModuleBasic{},
@@ -179,9 +182,9 @@ type App struct {
 		DistrKeeper      distrkeeper.Keeper
 		GovKeeper        govkeeper.Keeper
 		CrisisKeeper     crisiskeeper.Keeper
-		UpgradeKeeper    upgradekeeper.Keeper
 	*/
-	ParamsKeeper paramskeeper.Keeper
+	UpgradeKeeper upgradekeeper.Keeper
+	ParamsKeeper  paramskeeper.Keeper
 	/*
 		IBCKeeper        *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 		EvidenceKeeper   evidencekeeper.Keeper
@@ -236,11 +239,12 @@ func New(
 
 	keys := sdk.NewKVStoreKeys(
 		paramstypes.StoreKey,
+		upgradetypes.StoreKey,
 		/*
 			capabilitytypes.StoreKey,
 			authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 			minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
-			govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
+			govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, feegrant.StoreKey,
 			evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		*/
 		dclauthmoduletypes.StoreKey,
@@ -307,8 +311,9 @@ func New(
 		)
 
 		app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
-		app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
-
+	*/
+	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
+	/*
 		// register the staking hooks
 		// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 		app.StakingKeeper = *stakingKeeper.SetHooks(
@@ -458,13 +463,13 @@ func New(
 			slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 			distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 			staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
-			upgrade.NewAppModule(app.UpgradeKeeper),
 			evidence.NewAppModule(app.EvidenceKeeper),
 			ibc.NewAppModule(app.IBCKeeper),
 			params.NewAppModule(app.ParamsKeeper),
 			transferModule,
 		*/
 		params.NewAppModule(app.ParamsKeeper),
+		upgrade.NewAppModule(app.UpgradeKeeper),
 		dclauthModule,
 		validatorModule,
 		dclgenutilModule,
@@ -484,16 +489,28 @@ func New(
 		// TODO [issue 99] verify the order
 		validatormoduletypes.ModuleName,
 	)
-	/*
-		app.mm.SetOrderBeginBlockers(
-			upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
-			evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+	app.mm.SetOrderBeginBlockers(
+		upgradetypes.ModuleName,
+		/*
+			capabilitytypes.ModuleName,
+			minttypes.ModuleName,
+			distrtypes.ModuleName,
+			slashingtypes.ModuleName,
+			evidencetypes.ModuleName,
+			stakingtypes.ModuleName,
+			ibchost.ModuleName,
 			feegrant.ModuleName,
-		)
+		*/
+	)
 
-		app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
-	*/
-	app.mm.SetOrderEndBlockers(validatormoduletypes.ModuleName)
+	app.mm.SetOrderEndBlockers(
+		/*
+			crisistypes.ModuleName,
+			govtypes.ModuleName,
+			stakingtypes.ModuleName,
+		*/
+		validatormoduletypes.ModuleName,
+	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
@@ -589,7 +606,7 @@ func (app *App) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.Res
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
 	}
-	// app.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
+	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
 	return app.mm.InitGenesis(ctx, app.appCodec, genesisState)
 }
 
