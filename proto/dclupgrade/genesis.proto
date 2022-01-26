@@ -1,0 +1,14 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.dclupgrade;
+
+import "gogoproto/gogo.proto";
+import "dclupgrade/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
+
+// GenesisState defines the dclupgrade module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}
