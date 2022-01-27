@@ -1,6 +1,8 @@
 syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.dclupgrade;
 
+import "gogoproto/gogo.proto";
+import "cosmos/upgrade/v1beta1/upgrade.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
@@ -13,7 +15,7 @@ service Msg {
 
 message MsgProposeUpgrade {
   string creator = 1;
-  string plan = 2;
+  cosmos.upgrade.v1beta1.Plan plan = 2 [(gogoproto.nullable) = false];
 }
 
 message MsgProposeUpgradeResponse {

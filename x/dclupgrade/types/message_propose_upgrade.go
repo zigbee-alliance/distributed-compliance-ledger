@@ -3,13 +3,14 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
 
 const TypeMsgProposeUpgrade = "propose_upgrade"
 
 var _ sdk.Msg = &MsgProposeUpgrade{}
 
-func NewMsgProposeUpgrade(creator string, plan string) *MsgProposeUpgrade {
+func NewMsgProposeUpgrade(creator string, plan upgradetypes.Plan) *MsgProposeUpgrade {
 	return &MsgProposeUpgrade{
 		Creator: creator,
 		Plan:    plan,
@@ -42,5 +43,11 @@ func (msg *MsgProposeUpgrade) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	err = msg.Plan.ValidateBasic()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
