@@ -5,6 +5,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -89,23 +90,11 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "vendor name len < 2",
+			name: "vendor name len > 128",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
-				VendorName:           "a",
-				CompanyLegalName:     testconstants.CompanyLegalName,
-				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
-			},
-			err: validator.ErrFieldMinLengthNotReached,
-		},
-		{
-			name: "vendor name len > 32",
-			msg: MsgCreateVendorInfo{
-				Creator:              sample.AccAddress(),
-				VendorID:             testconstants.VendorID1,
-				VendorName:           "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+				VendorName:           tmrand.Str(129),
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
 				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
@@ -113,37 +102,25 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "company legal name len < 2",
+			name: "company legal name len > 256",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
-				CompanyLegalName:     "a",
-				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
-			},
-			err: validator.ErrFieldMinLengthNotReached,
-		},
-		{
-			name: "company legal name len > 64",
-			msg: MsgCreateVendorInfo{
-				Creator:              sample.AccAddress(),
-				VendorID:             testconstants.VendorID1,
-				VendorName:           testconstants.VendorName,
-				CompanyLegalName:     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
+				CompanyLegalName:     tmrand.Str(257),
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
 				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "company preffered name len > 64",
+			name: "company preffered name len > 256",
 			msg: MsgCreateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
-				CompanyPrefferedName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
+				CompanyPrefferedName: tmrand.Str(257),
 				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -285,23 +262,11 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
-			name: "vendor name len < 2",
+			name: "vendor name len > 128",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
-				VendorName:           "a",
-				CompanyLegalName:     testconstants.CompanyLegalName,
-				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
-			},
-			err: validator.ErrFieldMinLengthNotReached,
-		},
-		{
-			name: "vendor name len > 32",
-			msg: MsgUpdateVendorInfo{
-				Creator:              sample.AccAddress(),
-				VendorID:             testconstants.VendorID1,
-				VendorName:           "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+				VendorName:           tmrand.Str(129),
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
 				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
@@ -309,37 +274,25 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "company legal name len < 2",
+			name: "company legal name len > 256",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
-				CompanyLegalName:     "a",
-				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
-			},
-			err: validator.ErrFieldMinLengthNotReached,
-		},
-		{
-			name: "company legal name len > 64",
-			msg: MsgUpdateVendorInfo{
-				Creator:              sample.AccAddress(),
-				VendorID:             testconstants.VendorID1,
-				VendorName:           testconstants.VendorName,
-				CompanyLegalName:     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
+				CompanyLegalName:     tmrand.Str(257),
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
 				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "company preffered name len > 64",
+			name: "company preffered name len > 256",
 			msg: MsgUpdateVendorInfo{
 				Creator:              sample.AccAddress(),
 				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
-				CompanyPrefferedName: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789123",
+				CompanyPrefferedName: tmrand.Str(257),
 				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -382,6 +335,16 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
+				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+			},
+		},
+		{
+			name: "valid create vendorinfo message",
+			msg: MsgUpdateVendorInfo{
+				Creator:              sample.AccAddress(),
+				VendorID:             testconstants.VendorID1,
+				VendorName:           testconstants.VendorName,
+				CompanyLegalName:     testconstants.CompanyLegalName,
 				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
 			},
 		},
