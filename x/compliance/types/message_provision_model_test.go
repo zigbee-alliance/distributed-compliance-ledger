@@ -190,6 +190,20 @@ func TestMsgProvisionModel_ValidateBasic(t *testing.T) {
 			},
 			err: ErrInvalidTestDateFormat,
 		},
+		{
+			name: "software version string len > 10",
+			msg: MsgProvisionModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: "1.000000000000",
+				ProvisionalDate:       testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positive_tests := []struct {

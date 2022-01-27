@@ -5,6 +5,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -31,6 +32,14 @@ func TestMsgAddX509Cert_ValidateBasic(t *testing.T) {
 				Cert:   "",
 			},
 			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "cert len > 3500000",
+			msg: MsgAddX509Cert{
+				Signer: sample.AccAddress(),
+				Cert:   testconstants.RootCertPem + tmrand.Str(3500001-len(testconstants.RootCertPem)),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 	}
 
