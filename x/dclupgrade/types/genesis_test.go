@@ -24,10 +24,14 @@ func TestGenesisState_Validate(t *testing.T) {
 
 				ProposedUpgradeList: []types.ProposedUpgrade{
 					{
-						Name: "0",
+						Plan: types.Plan{
+							Name: "0",
+						},
 					},
 					{
-						Name: "1",
+						Plan: types.Plan{
+							Name: "1",
+						},
 					},
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
@@ -39,10 +43,14 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				ProposedUpgradeList: []types.ProposedUpgrade{
 					{
-						Name: "0",
+						Plan: types.Plan{
+							Name: "0",
+						},
 					},
 					{
-						Name: "0",
+						Plan: types.Plan{
+							Name: "0",
+						},
 					},
 				},
 			},

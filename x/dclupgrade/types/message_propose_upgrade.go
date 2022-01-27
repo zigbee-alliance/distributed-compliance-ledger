@@ -3,14 +3,13 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
 
 const TypeMsgProposeUpgrade = "propose_upgrade"
 
 var _ sdk.Msg = &MsgProposeUpgrade{}
 
-func NewMsgProposeUpgrade(creator string, plan upgradetypes.Plan) *MsgProposeUpgrade {
+func NewMsgProposeUpgrade(creator string, plan Plan) *MsgProposeUpgrade {
 	return &MsgProposeUpgrade{
 		Creator: creator,
 		Plan:    plan,

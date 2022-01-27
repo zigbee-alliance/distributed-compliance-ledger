@@ -4,7 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
@@ -27,7 +26,7 @@ func CmdProposeUpgrade() *cobra.Command {
 				return err
 			}
 
-			plan := upgradetypes.Plan{Name: name, Height: upgradeHeight, Info: upgradeInfo}
+			plan := types.Plan{Name: name, Height: upgradeHeight, Info: upgradeInfo}
 
 			msg := types.NewMsgProposeUpgrade(
 				clientCtx.GetFromAddress().String(),

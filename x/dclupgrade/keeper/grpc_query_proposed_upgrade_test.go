@@ -31,14 +31,14 @@ func TestProposedUpgradeQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetProposedUpgradeRequest{
-				Name: msgs[0].Name,
+				Name: msgs[0].Plan.Name,
 			},
 			response: &types.QueryGetProposedUpgradeResponse{ProposedUpgrade: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetProposedUpgradeRequest{
-				Name: msgs[1].Name,
+				Name: msgs[1].Plan.Name,
 			},
 			response: &types.QueryGetProposedUpgradeResponse{ProposedUpgrade: msgs[1]},
 		},

@@ -29,7 +29,9 @@ func networkWithProposedUpgradeObjects(t *testing.T, n int) (*network.Network, [
 
 	for i := 0; i < n; i++ {
 		proposedUpgrade := types.ProposedUpgrade{
-			Name: strconv.Itoa(i),
+			Plan: types.Plan{
+				Name: strconv.Itoa(i),
+			},
 		}
 		nullify.Fill(&proposedUpgrade)
 		state.ProposedUpgradeList = append(state.ProposedUpgradeList, proposedUpgrade)
@@ -57,7 +59,7 @@ func TestShowProposedUpgrade(t *testing.T) {
 	}{
 		{
 			desc:   "found",
-			idName: objs[0].Name,
+			idName: objs[0].Plan.Name,
 
 			args: common,
 			obj:  objs[0],

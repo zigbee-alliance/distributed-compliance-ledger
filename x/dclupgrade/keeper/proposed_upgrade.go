@@ -11,7 +11,7 @@ func (k Keeper) SetProposedUpgrade(ctx sdk.Context, proposedUpgrade types.Propos
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedUpgradeKeyPrefix))
 	b := k.cdc.MustMarshal(&proposedUpgrade)
 	store.Set(types.ProposedUpgradeKey(
-		proposedUpgrade.Name,
+		proposedUpgrade.Plan.Name,
 	), b)
 }
 

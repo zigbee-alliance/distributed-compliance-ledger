@@ -23,7 +23,7 @@ func (gs GenesisState) Validate() error {
 	proposedUpgradeIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.ProposedUpgradeList {
-		index := string(ProposedUpgradeKey(elem.Name))
+		index := string(ProposedUpgradeKey(elem.Plan.Name))
 		if _, ok := proposedUpgradeIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for proposedUpgrade")
 		}

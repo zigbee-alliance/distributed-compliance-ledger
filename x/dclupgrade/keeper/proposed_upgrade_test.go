@@ -18,7 +18,7 @@ var _ = strconv.IntSize
 func createNProposedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ProposedUpgrade {
 	items := make([]types.ProposedUpgrade, n)
 	for i := range items {
-		items[i].Name = strconv.Itoa(i)
+		items[i].Plan.Name = strconv.Itoa(i)
 
 		keeper.SetProposedUpgrade(ctx, items[i])
 	}
@@ -30,7 +30,7 @@ func TestProposedUpgradeGet(t *testing.T) {
 	items := createNProposedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetProposedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -44,10 +44,10 @@ func TestProposedUpgradeRemove(t *testing.T) {
 	items := createNProposedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveProposedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		_, found := keeper.GetProposedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		require.False(t, found)
 	}
