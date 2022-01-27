@@ -19,12 +19,34 @@ func TestGenesisState_Validate(t *testing.T) {
 			valid:    true,
 		},
 		{
-			desc:     "valid genesis state",
+			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
+				ProposedUpgradeList: []types.ProposedUpgrade{
+					{
+						Name: "0",
+					},
+					{
+						Name: "1",
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
+		},
+		{
+			desc: "duplicated proposedUpgrade",
+			genState: &types.GenesisState{
+				ProposedUpgradeList: []types.ProposedUpgrade{
+					{
+						Name: "0",
+					},
+					{
+						Name: "0",
+					},
+				},
+			},
+			valid: false,
 		},
 		// this line is used by starport scaffolding # types/genesis/testcase
 	} {

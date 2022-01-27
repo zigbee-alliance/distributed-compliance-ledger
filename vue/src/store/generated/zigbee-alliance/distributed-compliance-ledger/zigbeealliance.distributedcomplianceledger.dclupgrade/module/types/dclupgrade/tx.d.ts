@@ -1,8 +1,9 @@
 import { Reader, Writer } from 'protobufjs/minimal';
+import { Plan } from '../cosmos/upgrade/v1beta1/upgrade';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclupgrade";
 export interface MsgProposeUpgrade {
     creator: string;
-    plan: string;
+    plan: Plan | undefined;
 }
 export interface MsgProposeUpgradeResponse {
 }

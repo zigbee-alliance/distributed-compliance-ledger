@@ -1,14 +1,15 @@
 /* eslint-disable */
 import { Reader, Writer } from 'protobufjs/minimal';
+import { Plan } from '../cosmos/upgrade/v1beta1/upgrade';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclupgrade';
-const baseMsgProposeUpgrade = { creator: '', plan: '' };
+const baseMsgProposeUpgrade = { creator: '' };
 export const MsgProposeUpgrade = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== '') {
             writer.uint32(10).string(message.creator);
         }
-        if (message.plan !== '') {
-            writer.uint32(18).string(message.plan);
+        if (message.plan !== undefined) {
+            Plan.encode(message.plan, writer.uint32(18).fork()).ldelim();
         }
         return writer;
     },
@@ -23,7 +24,7 @@ export const MsgProposeUpgrade = {
                     message.creator = reader.string();
                     break;
                 case 2:
-                    message.plan = reader.string();
+                    message.plan = Plan.decode(reader, reader.uint32());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -41,17 +42,17 @@ export const MsgProposeUpgrade = {
             message.creator = '';
         }
         if (object.plan !== undefined && object.plan !== null) {
-            message.plan = String(object.plan);
+            message.plan = Plan.fromJSON(object.plan);
         }
         else {
-            message.plan = '';
+            message.plan = undefined;
         }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
-        message.plan !== undefined && (obj.plan = message.plan);
+        message.plan !== undefined && (obj.plan = message.plan ? Plan.toJSON(message.plan) : undefined);
         return obj;
     },
     fromPartial(object) {
@@ -63,10 +64,10 @@ export const MsgProposeUpgrade = {
             message.creator = '';
         }
         if (object.plan !== undefined && object.plan !== null) {
-            message.plan = object.plan;
+            message.plan = Plan.fromPartial(object.plan);
         }
         else {
-            message.plan = '';
+            message.plan = undefined;
         }
         return message;
     }

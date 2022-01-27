@@ -140,6 +140,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryProposedUpgradeAll
+         * @summary Queries a list of ProposedUpgrade items.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade
+         */
+        this.queryProposedUpgradeAll = (query, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProposedUpgrade
+         * @summary Queries a ProposedUpgrade by index.
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}
+         */
+        this.queryProposedUpgrade = (name, params = {}) => this.request({
+            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/${name}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryParams
          * @summary Parameters queries the parameters of the module.
          * @request GET:/zigbeealliance/distributedcomplianceledger/dclupgrade/params
