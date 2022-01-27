@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -145,25 +146,25 @@ func TestMsgAddTestingResult_ValidateBasic(t *testing.T) {
 			err: ErrInvalidTestDateFormat,
 		},
 		{
-			name: "test result len > 256",
+			name: "test result len > 10485760 (10 MB)",
 			msg: MsgAddTestingResult{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
 				Vid:                   1,
 				SoftwareVersionString: testconstants.SoftwareVersionString,
 				TestDate:              testconstants.CertificationDate,
-				TestResult:            "https://sampleflowurl.dclauth/" + tmrand.Str(257-30),
+				TestResult:            "https://sampleflowurl.dclauth/" + tmrand.Str(10485761-30),
 				SoftwareVersion:       testconstants.SoftwareVersion,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "software version len > 10",
+			name: "software version len > 64",
 			msg: MsgAddTestingResult{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
 				Vid:                   1,
-				SoftwareVersionString: "1.00000000000",
+				SoftwareVersionString: fmt.Sprintf("1.%063d", 0),
 				TestDate:              testconstants.CertificationDate,
 				TestResult:            testconstants.TestResult,
 				SoftwareVersion:       testconstants.SoftwareVersion,

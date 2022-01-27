@@ -45,20 +45,20 @@ func TestMsgApproveAddX509RootCert_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "subject len > 50",
+			name: "subject len > 1024 (1 KB)",
 			msg: MsgApproveAddX509RootCert{
 				Signer:       sample.AccAddress(),
-				Subject:      testconstants.RootSubject + tmrand.Str(51-len(testconstants.RootSubject)),
+				Subject:      testconstants.RootSubject + tmrand.Str(1025-len(testconstants.RootSubject)),
 				SubjectKeyId: testconstants.RootSubjectKeyID,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
 		{
-			name: "subject key id len > 150",
+			name: "subject key id len > 256",
 			msg: MsgApproveAddX509RootCert{
 				Signer:       sample.AccAddress(),
 				Subject:      testconstants.RootSubject,
-				SubjectKeyId: testconstants.RootSubjectKeyID + tmrand.Str(151-len(testconstants.RootSubjectKeyID)),
+				SubjectKeyId: testconstants.RootSubjectKeyID + tmrand.Str(257-len(testconstants.RootSubjectKeyID)),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},

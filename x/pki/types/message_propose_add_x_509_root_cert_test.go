@@ -34,10 +34,10 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			err: validator.ErrRequiredFieldMissing,
 		},
 		{
-			name: "cert len > 3500000",
+			name: "cert len > 10485760 (10 MB)",
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
-				Cert:   testconstants.RootCertPem + tmrand.Str(3500001-len(testconstants.RootCertPem)),
+				Cert:   testconstants.RootCertPem + tmrand.Str(10485761-len(testconstants.RootCertPem)),
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},

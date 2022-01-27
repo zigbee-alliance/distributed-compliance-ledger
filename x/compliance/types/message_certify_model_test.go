@@ -1,6 +1,7 @@
 package types
 
 import (
+	fmt "fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -180,12 +181,12 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 			err: ErrInvalidCertificationType,
 		},
 		{
-			name: "software version string len > 10",
+			name: "software version string len > 64",
 			msg: MsgCertifyModel{
 				Signer:                sample.AccAddress(),
 				Pid:                   1,
 				Vid:                   1,
-				SoftwareVersionString: "1.000000000000",
+				SoftwareVersionString: fmt.Sprintf("1.%063d", 0),
 				CertificationDate:     testconstants.CertificationDate,
 				CertificationType:     testconstants.CertificationType,
 				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
