@@ -1,0 +1,36 @@
+---
+# Copyright 2022 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+chain_id: dclchain
+# NOTE: Every host must define their own DCL accounts
+accounts: []
+config_values:
+  - chain-id "{{ chain_id }}"
+  - output json
+  - node "tcp://localhost:26657"
+  - keyring-backend test
+  - broadcast-mode block
+
+dcld:
+  version: 0.6.0
+  user: dcld
+  group: dcld
+  path: /usr/bin/dcld
+
+dcld_checksums:
+  0.6.0: 1ab6b9084fc0444858307f13b708d9f275d548dd2cfb3bc7d8e10d59897d7278
+
+dcld_download_url: "https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v{{ dcld.version }}/dcld"
+dcld_binary_checksum: "sha256:{{ dcld_checksums[dcld.version] }}"

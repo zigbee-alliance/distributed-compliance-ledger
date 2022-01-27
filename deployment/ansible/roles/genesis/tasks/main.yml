@@ -1,0 +1,50 @@
+---
+# Copyright 2022 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: check that genesis file exists
+  stat:
+    path: "{{ dcl_home }}/config/genesis.json"
+  register: genesis_stat
+
+- name: print genesis_stat value
+  debug:
+    var: genesis_stat
+
+- name: init node configuration files
+  become: true
+  shell: "{{ dcld.path }} init {{ ansible_hostname }} --chain-id {{ chain_id }} --home {{ dcl_home }}"
+  when: not genesis_stat.stat.exists
+
+- name: prepare genesis node configuration
+  include_tasks: prepare-genesis.yml
+
+- name: make node public
+  lineinfile:
+    path: "{{ dcl_home }}/config/config.toml"
+    regexp: '^laddr = "tcp://.*:26657"$'
+    line: 'laddr = "tcp://0.0.0.0:26657"'
+
+- name: ensure DCL home file ownership and permissions
+  file:
+    recurse: true
+    path: "{{ dcl_home }}"
+    owner: "{{ dcld.user }}"
+    group: "{{ dcld.group }}"
+
+- name: ensure DCL service is started and enabled
+  service:
+    name: dcld
+    state: started
+    enabled: true

@@ -1,0 +1,49 @@
+---
+# Copyright 2022 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: setup-service | get service status
+  service_facts:
+
+- name: setup-service | enable service ports
+  block:
+    - name: open p2p port
+      community.general.ufw:
+        to_port: '26656'
+        proto: tcp
+        rule: allow
+
+    - name: open RPC port
+      community.general.ufw:
+        to_port: '26657'
+        proto: tcp
+        rule: allow
+  when:
+    - ansible_facts.services["ufw.service"] is defined
+
+- name: setup-service | recreate DCL service
+  become: true
+  template:
+    mode: preserve
+    src: dcld.service.j2
+    dest: /etc/systemd/system/dcld.service
+
+- name: setup-service | download binary
+  get_url:
+    url: "{{ dcld_download_url }}"
+    dest: "{{ dcld.path }}"
+    checksum: "{{ dcld_binary_checksum }}"
+    mode: '0755'
+    force: false
+  become: true
