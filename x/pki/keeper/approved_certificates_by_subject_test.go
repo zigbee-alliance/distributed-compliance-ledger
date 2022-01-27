@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"strconv"
 	"testing"
@@ -27,7 +26,7 @@ func createNApprovedCertificatesBySubject(keeper *keeper.Keeper, ctx sdk.Context
 }
 
 func TestApprovedCertificatesBySubjectGet(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNApprovedCertificatesBySubject(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetApprovedCertificatesBySubject(ctx,
@@ -42,7 +41,7 @@ func TestApprovedCertificatesBySubjectGet(t *testing.T) {
 }
 
 func TestApprovedCertificatesBySubjectRemove(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNApprovedCertificatesBySubject(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveApprovedCertificatesBySubject(ctx,
@@ -56,11 +55,10 @@ func TestApprovedCertificatesBySubjectRemove(t *testing.T) {
 }
 
 func TestApprovedCertificatesBySubjectGetAll(t *testing.T) {
-	keeper, ctx := keepertest.PkiKeeper(t)
+	keeper, ctx := keepertest.PkiKeeper(t, nil)
 	items := createNApprovedCertificatesBySubject(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),
 		nullify.Fill(keeper.GetAllApprovedCertificatesBySubject(ctx)),
 	)
 }
-*/

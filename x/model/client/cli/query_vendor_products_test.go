@@ -1,6 +1,5 @@
 package cli_test
 
-/* TODO issue 99
 import (
 	"fmt"
 	"strconv"
@@ -11,10 +10,9 @@ import (
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // Prevent strconv unused error.
@@ -28,7 +26,7 @@ func networkWithVendorProductsObjects(t *testing.T, n int) (*network.Network, []
 
 	for i := 0; i < n; i++ {
 		vendorProducts := types.VendorProducts{
-			Vid: int32(i),
+			Vid: int32(i + 1),
 		}
 		nullify.Fill(&vendorProducts)
 		state.VendorProductsList = append(state.VendorProductsList, vendorProducts)
@@ -50,47 +48,45 @@ func TestShowVendorProducts(t *testing.T) {
 		desc  string
 		idVid int32
 
-		args []string
-		err  error
-		obj  types.VendorProducts
+		common []string
+		obj    *types.VendorProducts
 	}{
 		{
 			desc:  "found",
 			idVid: objs[0].Vid,
 
-			args: common,
-			obj:  objs[0],
+			common: common,
+			obj:    &objs[0],
 		},
 		{
 			desc:  "not found",
 			idVid: 100000,
 
-			args: common,
-			err:  status.Error(codes.NotFound, "not found"),
+			common: common,
+			obj:    nil,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				strconv.Itoa(int(tc.idVid)),
+				fmt.Sprintf("--%s=%v", cli.FlagVid, tc.idVid),
 			}
-			args = append(args, tc.args...)
+			args = append(args, tc.common...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowVendorProducts(), args)
-			if tc.err != nil {
-				stat, ok := status.FromError(tc.err)
-				require.True(t, ok)
-				require.ErrorIs(t, stat.Err(), tc.err)
+			if tc.obj == nil {
+				require.Equal(t, cliutils.NotFoundOutput, out.String())
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetVendorProductsResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.VendorProducts)
+				var vendorProducts types.VendorProducts
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &vendorProducts))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.VendorProducts),
+					nullify.Fill(&vendorProducts),
 				)
 			}
 		})
 	}
 }
-*/
+
+// TODO: Add negative tests for absence of required parameters and
+// for presence of unexpected parameters (including positional ones).

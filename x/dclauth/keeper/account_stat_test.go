@@ -1,6 +1,5 @@
 package keeper_test
 
-/*
 import (
 	"testing"
 
@@ -29,11 +28,9 @@ func TestAccountStatGet(t *testing.T) {
 	)
 }
 
-func TestAccountStatRemove(t *testing.T) {
+func TestGetNextAccountNumber(t *testing.T) {
 	keeper, ctx := keepertest.DclauthKeeper(t)
-	createTestAccountStat(keeper, ctx)
-	keeper.RemoveAccountStat(ctx)
-	_, found := keeper.GetAccountStat(ctx)
-	require.False(t, found)
+	require.Equal(t, uint64(0), keeper.GetNextAccountNumber(ctx))
+	require.Equal(t, uint64(1), keeper.GetNextAccountNumber(ctx))
+	require.Equal(t, uint64(2), keeper.GetNextAccountNumber(ctx))
 }
-*/
