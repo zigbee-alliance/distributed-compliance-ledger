@@ -1,11 +1,14 @@
 syntax = "proto3";
 package zigbeealliance.distributedcomplianceledger.dclupgrade;
 
+import "gogoproto/gogo.proto";
+import "cosmos/upgrade/v1beta1/upgrade.proto";
+
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
 
 message ProposedUpgrade {
   string name = 1; 
-  string plan = 2; 
+  cosmos.upgrade.v1beta1.Plan plan = 2 [(gogoproto.nullable) = false]; 
   string creator = 3; 
   repeated string approvals = 4; 
   
