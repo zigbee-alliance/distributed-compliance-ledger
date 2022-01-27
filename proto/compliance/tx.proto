@@ -21,10 +21,10 @@ message MsgCertifyModel {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 software_version = 4;
-  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required\""];
+  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=10\""];
   uint32 c_d_version_number = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string certification_date = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required\""];
+  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9;
 }
 
@@ -36,10 +36,10 @@ message MsgRevokeModel {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 software_version = 4;
-  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required\""];
+  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=10\""];
   uint32 c_d_version_number = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];  
   string revocation_date = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required\""];
+  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9;
 }
 
@@ -51,10 +51,10 @@ message MsgProvisionModel {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 software_version = 4;
-  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required\""];
+  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=10\""];
   uint32 c_d_version_number = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
   string provisional_date = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required\""];
+  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9;
 }
 
