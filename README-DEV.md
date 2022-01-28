@@ -153,7 +153,7 @@ Please take into account the following when sending a PR:
 
 ## How To Add a new Module
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-  Consider using the provided [Dockerfile](scripts/starportDockerfile) to use predicatble version of starport. See [README.md](scripts/starport/README.md).
+  Consider using the provided [Dockerfile](scripts/starportDockerfile) to use predictable version of starport. See [README.md](scripts/starport/README.md).
 - Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
 - Adjust the generated code
@@ -185,7 +185,7 @@ Please take into account the following when sending a PR:
 
 ## How To Make Changes in Data Model for Existing Modules
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-  Consider using the provided [Dockerfile](scripts/starportDockerfile) to use predicatble version of starport. See [README.md](scripts/starport/README.md).
+  Consider using the provided [Dockerfile](scripts/starportDockerfile) to use predictable version of starport. See [README.md](scripts/starport/README.md).
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
 - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.

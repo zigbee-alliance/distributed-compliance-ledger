@@ -178,6 +178,7 @@ Please note, that these instructions describe the case when the genesis block co
 This is done just for simplicity, and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
 
 ## Useful Links 
+- [OpenAPI specification](https://zigbee-alliance.github.io/distributed-compliance-ledger/)
 - [Quick Start](docs/quickStartGuide.adoc)
 - [List of Transactions, Queries, CLI command, REST API](docs/transactions.md)
 - [How To Guide](docs/how-to.md)

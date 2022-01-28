@@ -9,8 +9,6 @@ info:
     A REST interface for state queries.
 
     Tendermint RPC endpoints are available here: https://docs.tendermint.com/v0.34/rpc/.
-
-    Service REST endpoints (from cosmos-sdk): [link](https://zigbee-alliance.github.io/distributed-compliance-ledger/?urls.primaryName=Service).
 paths:
   /dcl/compliance/certified-models:
     get:
