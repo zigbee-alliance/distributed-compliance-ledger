@@ -52,18 +52,38 @@ an Account or sign the request.
         ```
 
 ## How to read from the Ledger
+
+No keys/account is needed as the ledger is public for reads.
+
+Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
+
+Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for secure communication with a Node.
+
 - Local CLI
-    - No keys/account is needed as the ledger is public for reads
-    - See `CLI` section for every read request.
+  - See `CLI` section for every read request.
+  - If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](running-light-client-proxy.md) can be used.
 - REST API
-    - No keys/account is needed as the ledger is public for reads
-    - See `REST API` section for every read request.   
+  - Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html.
+  - See `REST API` section for every read request.
+  - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
+  - There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.
+- gRPC
+  - Any running node exposes a REST API at port `9090`. See https://docs.cosmos.network/master/core/grpc_rest.html.
+  - Generate a client code from the proto files [proto](../proto) for the client language (see https://grpc.io/docs/languages/).
+  - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
+  - There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.
+- Tendermint RPC
+  - Tendermint RPC is exposed by every running node  at port `26657`. See https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc.
+  - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
+    So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
+  - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
+
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
     
 ##### Query types     
 - Query single value
-- Query list of values with pagination support
+- Query list of values with pagination support (should be sent to trusted nodes only)
 
 ##### Common pagination parameters         
 - count-total `optional(bool)`:  count total number of records 
@@ -129,6 +149,8 @@ Gets a Vendor Info for the given `vid` (vendor ID).
 **Status: Implemented**
 
 Gets information about all vendors for all VIDs.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -315,6 +337,8 @@ Gets a Model Software Versions for the given `vid`, `pid` and `softwareVersion`.
 
 Gets all Model Infos for all vendors.
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -393,6 +417,8 @@ Gets a test result for the given `vid` (vendor ID), `pid` (product ID) and `soft
 **Status: Implemented**
 
 Gets all test results.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -589,6 +615,8 @@ Gets all compliant Model Versions for all vendors (`vid`s).
 
 This is the aggregation of compliance and
 revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+
+Should be sent to trusted nodes only.
  
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -605,6 +633,8 @@ Gets all revoked Model Versions for all vendors (`vid`s).
 It contains information about revocation only, so it should be used in cases
  where only revocation is tracked on the ledger.
  
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -617,6 +647,7 @@ It contains information about revocation only, so it should be used in cases
 
 Gets all Model Versions in provisional state for all vendors (`vid`s).
 
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -630,6 +661,8 @@ Gets all Model Versions in provisional state for all vendors (`vid`s).
 **Status: Implemented**
 
 Gets all stored compliance information records for all vendors (`vid`s).
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -892,6 +925,8 @@ Gets all certificates (root, intermediate and leaf).
 Revoked certificates are not returned. 
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -905,6 +940,8 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 Gets all revoked certificates (both root and non-root).
    
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -917,6 +954,8 @@ Gets all revoked certificates (both root and non-root).
 
 Gets all proposed but not approved root certificates.
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -928,6 +967,8 @@ Gets all proposed but not approved root certificates.
 **Status: Implemented**
 
 Gets all proposed but not approved root certificates to be revoked.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1053,6 +1094,8 @@ Gets a proposed but not approved accounts to be revoked by its address.
 
 Gets all accounts. Revoked accounts are not returned.
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -1064,6 +1107,8 @@ Gets all accounts. Revoked accounts are not returned.
 **Status: Implemented**
 
 Gets all proposed but not approved accounts.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1077,6 +1122,8 @@ Gets all proposed but not approved accounts.
 **Status: Implemented**
 
 Gets all proposed but not approved accounts to be revoked.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1135,6 +1182,8 @@ Gets the list of all validator nodes from the store.
 
 Note: All stored validator nodes (`active` and `jailed`) will be returned by default.
 In order to get an active validator set use specific command [validator set](#validator-set).
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
