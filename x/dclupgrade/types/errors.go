@@ -8,5 +8,13 @@ import (
 
 // x/dclupgrade module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrProposedUpgradeAlreadyExists = sdkerrors.Register(ModuleName, 1101, "proposed upgrade already exists")
 )
+
+func NewErrProposedUpgradeAlreadyExists(name interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrProposedUpgradeAlreadyExists,
+		"Proposed upgrade with name=%v already exists on the ledger",
+		name,
+	)
+}
