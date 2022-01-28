@@ -211,13 +211,15 @@ execute_with_retry() {
   local _command=${1}
 
   local _result=$($_command)
-  # echo "$_result"
 
-  if [[ "$(_check_response "$_result" "EOF" "raw")" == true ]]; then
-    #echo "EOF detected, re-trying"
-    _result=$($_command)
-    # echo "$_result"
-  fi
+  for i in {1..10}; do
+    if [[ "$(_check_response "$_result" "EOF" "raw")" == true ]]; then
+      #echo "EOF detected, re-trying"
+      _result=$($_command)
+    else
+      break  
+    fi
+  done
 
   echo "$_result"
 }

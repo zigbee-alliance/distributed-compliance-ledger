@@ -41,9 +41,16 @@ It's recommended to develop and deploy the App on Ubuntu 18.04 or Ubuntu 20.04.
     The integration tests are run against a local pool of nodes in Docker.
     REST integration tests need to have a backend running (CLI in REST mode).
 
-    The following script will start all necessary things and run the tests:
+    The following script will start all necessary things and run all the tests:
     ```bash
     ./integration_tests/run-all.sh
+    ```
+    If you want to run a particular group of tests (cli, light, rest), you can
+    ```bash
+    ./integration_tests/run-all.sh cli
+    ./integration_tests/run-all.sh light
+    ./integration_tests/run-all.sh rest
+    ./integration_tests/run-all.sh cli,light
     ```
 
     If you want to run a particular test you may:

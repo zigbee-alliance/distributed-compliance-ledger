@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Possible values: all (default) | cli | light | rest | cli,light | cli,rest | light, rest | cli,light,rest
+TESTS_TO_RUN=${1:-all}
+
 DETAILED_OUTPUT=true
 
 LOCALNET_DIR=".localnet"
@@ -100,65 +103,71 @@ make image &>${DETAILED_OUTPUT_TARGET}
 cleanup_pool
 
 # Cli shell tests
-CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "cli" ]]; then
+  CLI_SHELL_TESTS=$(find integration_tests/cli -type f -name '*.sh' -not -name "common.sh")
 
-for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-  init_pool
+  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+    init_pool
 
-   log "*****************************************************************************************"
-   log "Running $CLI_SHELL_TEST"
-   log "*****************************************************************************************"
+    log "*****************************************************************************************"
+    log "Running $CLI_SHELL_TEST"
+    log "*****************************************************************************************"
 
-   if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-     log "$CLI_SHELL_TEST finished successfully"
-   else
-     log "$CLI_SHELL_TEST failed"
-     exit 1
-   fi
+    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_SHELL_TEST finished successfully"
+    else
+      log "$CLI_SHELL_TEST failed"
+      exit 1
+    fi
 
-   cleanup_pool
-done
+    cleanup_pool
+  done
+fi
 
 # Light Client Proxy Cli shell tests
-CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "light" ]]; then
+  CLI_SHELL_TESTS=$(find integration_tests/light_client_proxy -type f -name '*.sh' -not -name "common.sh")
 
-for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
-  init_pool 
+  for CLI_SHELL_TEST in ${CLI_SHELL_TESTS}; do
+    init_pool 
 
-  log "*****************************************************************************************"
-  log "Running $CLI_SHELL_TEST"
-  log "*****************************************************************************************"
-  
-  if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-    log "$CLI_SHELL_TEST finished successfully"
-  else
-    log "$CLI_SHELL_TEST failed"
-    exit 1
-  fi
+    log "*****************************************************************************************"
+    log "Running $CLI_SHELL_TEST"
+    log "*****************************************************************************************"
+    
+    if bash "$CLI_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$CLI_SHELL_TEST finished successfully"
+    else
+      log "$CLI_SHELL_TEST failed"
+      exit 1
+    fi
 
-  cleanup_pool
-done
+    cleanup_pool
+  done
+fi
 
 # Go rest tests
-GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
+  GO_REST_TESTS="$(find integration_tests/grpc_rest -type f -name '*_test.go')"
 
-for GO_REST_TEST in ${GO_REST_TESTS}; do
-  init_pool
+  for GO_REST_TEST in ${GO_REST_TESTS}; do
+    init_pool
 
-  log "*****************************************************************************************"
-  log "Running $GO_REST_TEST"
-  log "*****************************************************************************************"
+    log "*****************************************************************************************"
+    log "Running $GO_REST_TEST"
+    log "*****************************************************************************************"
 
-  # TODO issue 99: improve, that await helps with the cases of not ready connections to Cosmos endpoints
-  sleep 5
+    # TODO issue 99: improve, that await helps with the cases of not ready connections to Cosmos endpoints
+    sleep 5
 
-  dcld config keyring-backend test
-  if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
-    log "$GO_REST_TEST finished successfully"
-  else
-    log "$GO_REST_TEST failed"
-    exit 1
-  fi
+    dcld config keyring-backend test
+    if go test "$GO_REST_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$GO_REST_TEST finished successfully"
+    else
+      log "$GO_REST_TEST failed"
+      exit 1
+    fi
 
-  cleanup_pool
-done
+    cleanup_pool
+  done
+fi
