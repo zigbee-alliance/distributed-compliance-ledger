@@ -195,6 +195,17 @@ Please take into account the following when sending a PR:
 - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
     Revert the default cosmos modules keeping only DCL ones.   
 
+## Update Cosmos-sdk Version
+Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [cosmos-base-swagger-gen.sh](scripts/cosmos-base-swagger-gen.sh).
+
+## Update Tendermint Version
+Please note, that we depend on the Tendermint fork https://github.com/zigbee-alliance/tendermint/releases/tag/v0.34.140 
+due to hotfixes for https://github.com/tendermint/tendermint/issues/7640 and https://github.com/tendermint/tendermint/issues/7641
+requitred for Light Client Proxy.
+Now that fixes are merged to Tendermint master, so check if we still need to depend on the fork.
+
+Also don't forget to update the link to the Tendermint RPC in [Swagger UI](docs/index.html).
+
 ## Other
 For more details, please have a look at [Cosmos SDK tutorial](https://tutorials.cosmos.network/).
 
