@@ -1,6 +1,5 @@
 package compliancetest_test
 
-/*
 import (
 	"testing"
 
@@ -27,7 +26,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.CompliancetestKeeper(t)
+	k, ctx := keepertest.CompliancetestKeeper(t, nil, nil)
 	compliancetest.InitGenesis(ctx, *k, genesisState)
 	got := compliancetest.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)
@@ -35,4 +34,3 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.TestingResultsList, got.TestingResultsList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }
-*/

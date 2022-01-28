@@ -19,8 +19,8 @@ message MsgAddTestingResult {
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   uint32 software_version = 4;
-  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required\""];
-  string test_result = 6 [(gogoproto.moretags) = "validate:\"required\""];
+  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  string test_result = 6 [(gogoproto.moretags) = "validate:\"required,max=10485760\""];
   string test_date = 7 [(gogoproto.moretags) = "validate:\"required\""];
 }
 

@@ -29,14 +29,6 @@ func (k Keeper) GetAccountStat(ctx sdk.Context) (val types.AccountStat, found bo
 	return val, true
 }
 
-/*
-// RemoveAccountStat removes accountStat from the store
-func (k Keeper) RemoveAccountStat(ctx sdk.Context) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountStatKey))
-	store.Delete([]byte{0})
-}
-*/
-
 func (k Keeper) GetNextAccountNumber(ctx sdk.Context) (accNumber uint64) {
 	accountStat, found := k.GetAccountStat(ctx)
 
