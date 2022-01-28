@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
@@ -50,20 +51,16 @@ func CmdShowProposedUpgrade() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			name := args[0]
+			var res types.ProposedUpgrade
 
-			argName := args[0]
-
-			params := &types.QueryGetProposedUpgradeRequest{
-				Name: argName,
-			}
-
-			res, err := queryClient.ProposedUpgrade(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ProposedUpgradeKeyPrefix,
+				types.ProposedUpgradeKey(name),
+				&res,
+			)
 		},
 	}
 

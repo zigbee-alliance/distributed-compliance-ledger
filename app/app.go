@@ -46,6 +46,9 @@ import (
 	dclauthmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	dclgenutilmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil"
 	dclgenutilmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclgenutil/types"
+	dclupgrademodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade"
+	dclupgrademodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/keeper"
+	dclupgrademoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 	modelmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/model"
 	modelmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/keeper"
 	modelmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
@@ -117,6 +120,7 @@ var (
 		dclauthmodule.AppModuleBasic{},
 		validatormodule.AppModuleBasic{},
 		dclgenutilmodule.AppModuleBasic{},
+		dclupgrademodule.AppModuleBasic{},
 		pkimodule.AppModuleBasic{},
 		vendorinfomodule.AppModuleBasic{},
 		modelmodule.AppModuleBasic{},
@@ -200,6 +204,8 @@ type App struct {
 
 	ValidatorKeeper validatormodulekeeper.Keeper
 
+	DclupgradeKeeper dclupgrademodulekeeper.Keeper
+
 	PkiKeeper pkimodulekeeper.Keeper
 
 	VendorinfoKeeper vendorinfomodulekeeper.Keeper
@@ -244,11 +250,12 @@ func New(
 			capabilitytypes.StoreKey,
 			authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 			minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
-			govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, feegrant.StoreKey,
+			govtypes.StoreKey, ibchost.StoreKey, feegrant.StoreKey,
 			evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		*/
 		dclauthmoduletypes.StoreKey,
 		validatormoduletypes.StoreKey,
+		dclupgrademoduletypes.StoreKey,
 		pkimoduletypes.StoreKey,
 		vendorinfomoduletypes.StoreKey,
 		modelmoduletypes.StoreKey,
@@ -377,6 +384,20 @@ func New(
 		encodingConfig.TxConfig,
 	)
 
+	// TODO [Issue #39]: Get rid of using x/params in x/dclupgrade
+	dclupgradeSubspace, _ := app.ParamsKeeper.GetSubspace(dclupgrademoduletypes.ModuleName)
+
+	app.DclupgradeKeeper = *dclupgrademodulekeeper.NewKeeper(
+		appCodec,
+		keys[dclupgrademoduletypes.StoreKey],
+		keys[dclupgrademoduletypes.MemStoreKey],
+		dclupgradeSubspace,
+
+		app.DclauthKeeper,
+		app.UpgradeKeeper,
+	)
+	dclupgradeModule := dclupgrademodule.NewAppModule(appCodec, app.DclupgradeKeeper)
+
 	app.PkiKeeper = *pkimodulekeeper.NewKeeper(
 		appCodec,
 		keys[pkimoduletypes.StoreKey],
@@ -465,7 +486,6 @@ func New(
 			staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 			evidence.NewAppModule(app.EvidenceKeeper),
 			ibc.NewAppModule(app.IBCKeeper),
-			params.NewAppModule(app.ParamsKeeper),
 			transferModule,
 		*/
 		params.NewAppModule(app.ParamsKeeper),
@@ -473,6 +493,7 @@ func New(
 		dclauthModule,
 		validatorModule,
 		dclgenutilModule,
+		dclupgradeModule,
 		pkiModule,
 		vendorinfoModule,
 		modelModule,
@@ -485,30 +506,23 @@ func New(
 	// there is nothing left over in the validator fee pool, so as to keep the
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
+	/*
+		app.mm.SetOrderBeginBlockers(
+			upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
+			evidencetypes.ModuleName, stakingtypes.ModuleName, ibchost.ModuleName,
+			feegrant.ModuleName,
+		)
+
+		app.mm.SetOrderEndBlockers(crisistypes.ModuleName, govtypes.ModuleName, stakingtypes.ModuleName)
+	*/
+
 	app.mm.SetOrderBeginBlockers(
 		// TODO [issue 99] verify the order
-		validatormoduletypes.ModuleName,
-	)
-	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName,
-		/*
-			capabilitytypes.ModuleName,
-			minttypes.ModuleName,
-			distrtypes.ModuleName,
-			slashingtypes.ModuleName,
-			evidencetypes.ModuleName,
-			stakingtypes.ModuleName,
-			ibchost.ModuleName,
-			feegrant.ModuleName,
-		*/
+		validatormoduletypes.ModuleName,
 	)
 
 	app.mm.SetOrderEndBlockers(
-		/*
-			crisistypes.ModuleName,
-			govtypes.ModuleName,
-			stakingtypes.ModuleName,
-		*/
 		validatormoduletypes.ModuleName,
 	)
 
@@ -537,6 +551,7 @@ func New(
 		dclauthmoduletypes.ModuleName,
 		validatormoduletypes.ModuleName,
 		dclgenutilmoduletypes.ModuleName,
+		dclupgrademoduletypes.ModuleName,
 		pkimoduletypes.ModuleName,
 		vendorinfomoduletypes.ModuleName,
 		modelmoduletypes.ModuleName,
@@ -723,6 +738,7 @@ func GetMaccPerms() map[string][]string {
 func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino, key, tkey sdk.StoreKey) paramskeeper.Keeper {
 	paramsKeeper := paramskeeper.NewKeeper(appCodec, legacyAmino, key, tkey)
 
+	paramsKeeper.Subspace(upgradetypes.ModuleName)
 	/*
 		paramsKeeper.Subspace(authtypes.ModuleName)
 		paramsKeeper.Subspace(banktypes.ModuleName)
@@ -738,6 +754,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(dclauthmoduletypes.ModuleName)
 	paramsKeeper.Subspace(validatormoduletypes.ModuleName)
 	paramsKeeper.Subspace(dclgenutilmoduletypes.ModuleName)
+	paramsKeeper.Subspace(dclupgrademoduletypes.ModuleName)
 	paramsKeeper.Subspace(pkimoduletypes.ModuleName)
 	paramsKeeper.Subspace(vendorinfomoduletypes.ModuleName)
 	paramsKeeper.Subspace(modelmoduletypes.ModuleName)

@@ -50,7 +50,7 @@ func (k Keeper) ProposedUpgrade(c context.Context, req *types.QueryGetProposedUp
 		req.Name,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetProposedUpgradeResponse{ProposedUpgrade: val}, nil
