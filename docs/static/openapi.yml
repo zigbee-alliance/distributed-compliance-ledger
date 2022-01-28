@@ -2,13 +2,13 @@ swagger: '2.0'
 info:
   title: Distributed Compliance Ledger - REST and gRPC Gateway docs
   version: master
+  license:
+    name: Apache 2.0
+    url: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/LICENSE
   description: |
     A REST interface for state queries
 
     Tendermint RPC endpoints are available here: https://docs.tendermint.com/v0.34/rpc/
-  license:
-    name: Apache 2.0
-    url: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/LICENSE
 paths:
   /dcl/compliance/certified-models:
     get:
