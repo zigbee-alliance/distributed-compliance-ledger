@@ -153,7 +153,7 @@ Please take into account the following when sending a PR:
 
 ## How To Add a new Module
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-- Follow the [README.md](scripts/starport/README.md).
+  Consider using the provided [Dockerfile](scripts/starportDockerfile) to use predicatble version of starport. See [README.md](scripts/starport/README.md).
 - Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
 - Adjust the generated code
@@ -165,10 +165,12 @@ Please take into account the following when sending a PR:
     - Note2: for `uint16` type: use `int32` during starport scaffolding, and add custom validation (annotations above) to check the lower and upper bounds.
     - Note3: for `uint32` type: use `int32` during starport scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
   - build proto (for example `starport chain build`). Fix compilation errors if any.
-  - **Note**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
+  - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
     So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
+  - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+    Revert the default cosmos modules keeping only DCL ones.   
 - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
 - Implement business logic in `msg_server_xxx.go`
 - Improve `NotFound` error processing:
@@ -182,12 +184,16 @@ Please take into account the following when sending a PR:
 - Add gRPC/REST-based integration tests to `integration_tests/grpc_rest/<module>` (see other modules for reference)
 
 ## How To Make Changes in Data Model for Existing Modules
+- Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
+  Consider using the provided [Dockerfile](scripts/starportDockerfile) to use predicatble version of starport. See [README.md](scripts/starport/README.md).
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
-- **Note**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
+- **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
   It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
+- **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+    Revert the default cosmos modules keeping only DCL ones.   
 
 ## Other
 For more details, please have a look at [Cosmos SDK tutorial](https://tutorials.cosmos.network/).
