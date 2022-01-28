@@ -39,7 +39,12 @@
     window.onload = function() {
       // Begin Swagger UI call region
       const ui = SwaggerUIBundle({
-        url: "./static/openapi.yml",
+        urls: [
+          {url: "./static/openapi.yml", name: "DCL"},
+          {url: "./static/cosmos-base-openapi.json", name: "Cosmos Base"},
+          {url: "https://github.com/tendermint/tendermint/blob/v0.34.14/rpc/openapi/openapi.yaml", name: "Tendermint RPC"},
+        ],
+        "urls.primaryName": "DCL",
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
