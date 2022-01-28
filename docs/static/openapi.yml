@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
-  title: HTTP API Console
-  name: ''
-  description: ''
+  title: Distributed Compliance Ledger - REST and gRPC Gateway docs
+  description: A REST interface for state queries
+  version: 0.6.0
 paths:
   /dcl/compliance/certified-models:
     get:
