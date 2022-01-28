@@ -207,6 +207,7 @@ wait_for_height() {
   done
 }
 
+# TODO: see https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/203
 execute_with_retry() {
   local _command=${1}
 
