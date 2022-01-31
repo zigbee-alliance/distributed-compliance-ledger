@@ -134,22 +134,18 @@ Once all the four nodes are running, the last node i.e. node03 will be listing o
 
 ## Contributing
 Please take into account the following when sending a PR:
-1) Make sure there is a license header added:
-    - Have a look at `make license` and `make license-check` command in [Makefile](Makefile).
 
-2) Make sure the new functionality has unit tests added
+1) Make sure the new functionality has unit tests added
 
-3) Make sure the new functionality has integration tests added
+2) Make sure the new functionality has integration tests added
     - [CLI-based tests](integration_tests/cli)
-    - [REST-based tests](integration_tests/rest)
+    - [REST-based tests](integration_tests/grpc_rest)
 
-4) There is CI based on GitHub Actions that will do the following for every Pull Request:
+3) There is CI based on GitHub Actions that will do the following for every Pull Request:
     - make sure the app can be built
     - run go linter
     - run unit tests
     - run integratioins test
-    - make sure there is a license header in all the files
-
 
 ## How To Add a new Module
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
