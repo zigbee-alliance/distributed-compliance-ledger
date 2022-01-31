@@ -13,7 +13,7 @@ import (
 func CmdListProposedUpgrade() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list-proposed-upgrade",
-		Short: "list all ProposedUpgrade",
+		Short: "List all proposed upgrades",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -46,7 +46,7 @@ func CmdListProposedUpgrade() *cobra.Command {
 func CmdShowProposedUpgrade() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "show-proposed-upgrade [name]",
-		Short: "shows a ProposedUpgrade",
+		Short: "Show proposed upgrade with given name",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)

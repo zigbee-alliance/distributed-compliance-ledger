@@ -18,7 +18,7 @@ func CmdProposeUpgrade() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "propose-upgrade --name [name] --upgrade-height [height] --upgrade-info [info] [flags]",
-		Short: "Propose Upgrade with given name at given height",
+		Short: "Propose upgrade with given name at given height",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)

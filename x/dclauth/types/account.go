@@ -130,7 +130,6 @@ func NewPendingAccount(acc *Account, approval sdk.AccAddress) *PendingAccount {
 	}
 }
 
-//nolint:interfacer
 func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
 	for _, approval := range acc.Approvals {
@@ -175,7 +174,6 @@ func (revoc PendingAccountRevocation) Validate() error {
 	return nil
 }
 
-//nolint:interfacer
 func (revoc PendingAccountRevocation) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
 	for _, approval := range revoc.Approvals {
