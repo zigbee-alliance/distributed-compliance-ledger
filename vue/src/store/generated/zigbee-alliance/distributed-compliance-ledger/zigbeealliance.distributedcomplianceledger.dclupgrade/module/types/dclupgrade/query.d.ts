@@ -1,16 +1,7 @@
 import { Reader, Writer } from 'protobufjs/minimal';
-import { Params } from '../dclupgrade/params';
 import { ProposedUpgrade } from '../dclupgrade/proposed_upgrade';
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclupgrade";
-/** QueryParamsRequest is request type for the Query/Params RPC method. */
-export interface QueryParamsRequest {
-}
-/** QueryParamsResponse is response type for the Query/Params RPC method. */
-export interface QueryParamsResponse {
-    /** params holds all the parameters of this module. */
-    params: Params | undefined;
-}
 export interface QueryGetProposedUpgradeRequest {
     name: string;
 }
@@ -24,20 +15,6 @@ export interface QueryAllProposedUpgradeResponse {
     proposedUpgrade: ProposedUpgrade[];
     pagination: PageResponse | undefined;
 }
-export declare const QueryParamsRequest: {
-    encode(_: QueryParamsRequest, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryParamsRequest;
-    fromJSON(_: any): QueryParamsRequest;
-    toJSON(_: QueryParamsRequest): unknown;
-    fromPartial(_: DeepPartial<QueryParamsRequest>): QueryParamsRequest;
-};
-export declare const QueryParamsResponse: {
-    encode(message: QueryParamsResponse, writer?: Writer): Writer;
-    decode(input: Reader | Uint8Array, length?: number): QueryParamsResponse;
-    fromJSON(object: any): QueryParamsResponse;
-    toJSON(message: QueryParamsResponse): unknown;
-    fromPartial(object: DeepPartial<QueryParamsResponse>): QueryParamsResponse;
-};
 export declare const QueryGetProposedUpgradeRequest: {
     encode(message: QueryGetProposedUpgradeRequest, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): QueryGetProposedUpgradeRequest;
@@ -68,8 +45,6 @@ export declare const QueryAllProposedUpgradeResponse: {
 };
 /** Query defines the gRPC querier service. */
 export interface Query {
-    /** Parameters queries the parameters of the module. */
-    Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
     /** Queries a ProposedUpgrade by index. */
     ProposedUpgrade(request: QueryGetProposedUpgradeRequest): Promise<QueryGetProposedUpgradeResponse>;
     /** Queries a list of ProposedUpgrade items. */
@@ -78,7 +53,6 @@ export interface Query {
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
-    Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
     ProposedUpgrade(request: QueryGetProposedUpgradeRequest): Promise<QueryGetProposedUpgradeResponse>;
     ProposedUpgradeAll(request: QueryAllProposedUpgradeRequest): Promise<QueryAllProposedUpgradeResponse>;
 }

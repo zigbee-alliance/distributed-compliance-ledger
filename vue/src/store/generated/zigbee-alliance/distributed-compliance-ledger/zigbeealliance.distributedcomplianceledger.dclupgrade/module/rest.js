@@ -165,19 +165,5 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
-        /**
-         * No description
-         *
-         * @tags Query
-         * @name QueryParams
-         * @summary Parameters queries the parameters of the module.
-         * @request GET:/zigbeealliance/distributedcomplianceledger/dclupgrade/params
-         */
-        this.queryParams = (params = {}) => this.request({
-            path: `/zigbeealliance/distributedcomplianceledger/dclupgrade/params`,
-            method: "GET",
-            format: "json",
-            ...params,
-        });
     }
 }

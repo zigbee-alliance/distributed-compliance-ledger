@@ -11,6 +11,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 // Msg defines the Msg service.
 service Msg {
       rpc ProposeUpgrade(MsgProposeUpgrade) returns (MsgProposeUpgradeResponse);
+  rpc ApproveUpgrade(MsgApproveUpgrade) returns (MsgApproveUpgradeResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -20,6 +21,14 @@ message MsgProposeUpgrade {
 }
 
 message MsgProposeUpgradeResponse {
+}
+
+message MsgApproveUpgrade {
+  string creator = 1;
+  string name = 2;
+}
+
+message MsgApproveUpgradeResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

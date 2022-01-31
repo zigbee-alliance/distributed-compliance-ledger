@@ -9,12 +9,16 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgProposeUpgrade{}, "dclupgrade/ProposeUpgrade", nil)
+	cdc.RegisterConcrete(&MsgApproveUpgrade{}, "dclupgrade/ApproveUpgrade", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgProposeUpgrade{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgApproveUpgrade{},
 	)
 	// this line is used by starport scaffolding # 3
 

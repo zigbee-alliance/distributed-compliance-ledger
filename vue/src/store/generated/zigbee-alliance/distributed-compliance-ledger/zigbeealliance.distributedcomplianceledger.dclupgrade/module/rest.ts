@@ -9,16 +9,13 @@
  * ---------------------------------------------------------------
  */
 
+export type DclupgradeMsgApproveUpgradeResponse = object;
+
 export type DclupgradeMsgProposeUpgradeResponse = object;
 
-/**
- * Params defines the parameters for the module.
- */
-export type DclupgradeParams = object;
-
 export interface DclupgradeProposedUpgrade {
-  name?: string;
-  plan?: string;
+  /** Plan specifies information about a planned upgrade and when it should occur. */
+  plan?: V1Beta1Plan;
   creator?: string;
   approvals?: string[];
 }
@@ -40,14 +37,6 @@ export interface DclupgradeQueryAllProposedUpgradeResponse {
 
 export interface DclupgradeQueryGetProposedUpgradeResponse {
   proposedUpgrade?: DclupgradeProposedUpgrade;
-}
-
-/**
- * QueryParamsResponse is response type for the Query/Params RPC method.
- */
-export interface DclupgradeQueryParamsResponse {
-  /** params holds all the parameters of this module. */
-  params?: DclupgradeParams;
 }
 
 /**
@@ -509,22 +498,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryProposedUpgrade = (name: string, params: RequestParams = {}) =>
     this.request<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>({
       path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/${name}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryParams
-   * @summary Parameters queries the parameters of the module.
-   * @request GET:/zigbeealliance/distributedcomplianceledger/dclupgrade/params
-   */
-  queryParams = (params: RequestParams = {}) =>
-    this.request<DclupgradeQueryParamsResponse, RpcStatus>({
-      path: `/zigbeealliance/distributedcomplianceledger/dclupgrade/params`,
       method: "GET",
       format: "json",
       ...params,
