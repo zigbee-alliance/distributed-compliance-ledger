@@ -4,7 +4,6 @@ package zigbeealliance.distributedcomplianceledger.dclupgrade;
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
-import "dclupgrade/params.proto";
 import "dclupgrade/proposed_upgrade.proto";
 // this line is used by starport scaffolding # 1
 
@@ -12,11 +11,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // Query defines the gRPC querier service.
 service Query {
-  // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/zigbeealliance/distributedcomplianceledger/dclupgrade/params";
-  }
-  // Queries a ProposedUpgrade by index.
+	// Queries a ProposedUpgrade by index.
 	rpc ProposedUpgrade(QueryGetProposedUpgradeRequest) returns (QueryGetProposedUpgradeResponse) {
 		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}";
 	}
@@ -27,15 +22,6 @@ service Query {
 	}
 
 // this line is used by starport scaffolding # 2
-}
-
-// QueryParamsRequest is request type for the Query/Params RPC method.
-message QueryParamsRequest {}
-
-// QueryParamsResponse is response type for the Query/Params RPC method.
-message QueryParamsResponse {
-  // params holds all the parameters of this module.
-  Params params = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryGetProposedUpgradeRequest {

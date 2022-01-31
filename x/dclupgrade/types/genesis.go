@@ -12,7 +12,6 @@ func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		ProposedUpgradeList: []ProposedUpgrade{},
 		// this line is used by starport scaffolding # genesis/types/default
-		Params: DefaultParams(),
 	}
 }
 
@@ -31,5 +30,5 @@ func (gs GenesisState) Validate() error {
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 
-	return gs.Params.Validate()
+	return nil
 }

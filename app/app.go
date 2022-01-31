@@ -384,14 +384,10 @@ func New(
 		encodingConfig.TxConfig,
 	)
 
-	// TODO [Issue #39]: Get rid of using x/params in x/dclupgrade
-	dclupgradeSubspace, _ := app.ParamsKeeper.GetSubspace(dclupgrademoduletypes.ModuleName)
-
 	app.DclupgradeKeeper = *dclupgrademodulekeeper.NewKeeper(
 		appCodec,
 		keys[dclupgrademoduletypes.StoreKey],
 		keys[dclupgrademoduletypes.MemStoreKey],
-		dclupgradeSubspace,
 
 		app.DclauthKeeper,
 		app.UpgradeKeeper,
