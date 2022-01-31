@@ -74,7 +74,7 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
   - There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.
 - Tendermint RPC
-  - Tendermint RPC OpenAPI specification can be foun in https://zigbee-alliance.github.io/distributed-compliance-ledger/.
+  - Tendermint RPC OpenAPI specification can be found in https://zigbee-alliance.github.io/distributed-compliance-ledger/.
   - Tendermint RPC is exposed by every running node  at port `26657`. See https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc.
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
