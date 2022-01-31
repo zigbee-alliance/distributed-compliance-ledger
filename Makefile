@@ -9,7 +9,7 @@ DCL_COMMIT := $(shell git log -1 --format='%H')
 endif
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=DcLedger \
-	-X github.com/cosmos/cosmos-sdk/version.ServerName=dcld \
+	-X github.com/cosmos/cosmos-sdk/version.App=dcld \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(DCL_VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(DCL_COMMIT)
 
