@@ -14,9 +14,11 @@ jobs:
     name: verify release
     runs-on: ubuntu-latest
     outputs:
-      current_version: ${{ steps.current_version.outputs.current_version }}
+      version: ${{ steps.current_version.outputs.version }}
       release_info: ${{ steps.release_info.outputs.release_info }}
       asset_bin_url: ${{ steps.release_info.outputs.asset_bin_url }}
+      asset_ubuntu_tgz_url: ${{ steps.release_info.outputs.asset_ubuntu_tgz_url }}
+      asset_macos_tgz_url: ${{ steps.release_info.outputs.asset_macos_tgz_url }}
       upload_url:  ${{ steps.release_info.outputs.upload_url }}
 
     steps:
@@ -32,14 +34,14 @@ jobs:
           version="$(echo "$tag" | sed "s/^v//")"
           echo "$version"
 
-          echo "::set-output name=current_version::$version"
+          echo "::set-output name=version::$version"
         shell: bash
 
       - name: Get release info
         id: release_info
         run: |
           release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
-              | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.current_version }}")')"
+              | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
           echo "::set-output name=release_info::$release_info"
           echo "$release_info"
 
@@ -47,6 +49,16 @@ jobs:
               | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}$")) | .browser_download_url')"
           echo "::set-output name=asset_bin_url::$asset_bin_url"
           echo "$asset_bin_url"
+
+          asset_ubuntu_tgz_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}.ubuntu.tar.gz$")) | .browser_download_url')"
+          echo "::set-output name=asset_ubuntu_tgz_url::$asset_ubuntu_tgz_url"
+          echo "$asset_ubuntu_tgz_url"
+
+          asset_macos_tgz_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}.macos.tar.gz$")) | .browser_download_url')"
+          echo "::set-output name=asset_macos_tgz_url::$asset_macos_tgz_url"
+          echo "$asset_macos_tgz_url"
 
           upload_url="$(echo "$release_info" | jq -r '.upload_url')"
           echo "::set-output name=upload_url::$upload_url"
@@ -57,23 +69,36 @@ jobs:
         if: ${{ !steps.release_info.outputs.release_info }}
         run: exit 1
 
+
   release:
     name: Release
     needs: checks
-    if: ${{ !needs.checks.outputs.asset_bin_url }}
-    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04, macos-11 ]
+        include:
+          - os: ubuntu-20.04
+            asset_bin_needed: ${{ !needs.checks.outputs.asset_bin_url }}
+            asset_tgz_needed: ${{ !needs.checks.outputs.asset_ubuntu_tgz_url }}
+            asset_tgz_name_suffix: .ubuntu.tar.gz
+          - os: macos-11
+            asset_bin_needed: false
+            asset_tgz_needed: ${{ !needs.checks.outputs.asset_macos_tgz_url }}
+            asset_tgz_name_suffix: .macos.tar.gz
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-
       - name: Set up Go 1.x
+        if: ${{ matrix.asset_bin_needed || matrix.asset_tgz_needed }}  # ??? looks no way to filter that on job level
         uses: actions/setup-go@v2
         with:
           go-version: ^1.13
 
       - name: Check out code into the Go module directory
+        if: ${{ matrix.asset_bin_needed || matrix.asset_tgz_needed }}
         uses: actions/checkout@v2
 
       - uses: actions/cache@v2
+        if: ${{ matrix.asset_bin_needed || matrix.asset_tgz_needed }}
         with:
           path: |
             ~/.cache/go-build
@@ -83,11 +108,16 @@ jobs:
             ${{ runner.os }}-go-
 
       - name: build binary
-        run: make build
+        if: ${{ matrix.asset_bin_needed || matrix.asset_tgz_needed }}
+        run: |
+          make build
+          build/${{ env.BIN_NAME }} version
+
+          tar czf build/${{ env.BIN_NAME }}${{ matrix.asset_tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
         shell: bash
 
-      - name: upload to GitHub
-        if: ${{ !needs.checks.outputs.asset_bin_url }}
+      - name: upload to GitHub (binary)
+        if: matrix.asset_bin_needed
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -96,3 +126,14 @@ jobs:
           asset_path: build/${{ env.BIN_NAME }}
           asset_name: ${{ env.BIN_NAME }}
           asset_content_type: application/octet-stream  # TODO check for less generic type
+
+      - name: upload to GitHub (archived binary)
+        if: matrix.asset_tgz_needed
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: build/${{ env.BIN_NAME }}${{ matrix.asset_tgz_name_suffix }}
+          asset_name: ${{ env.BIN_NAME }}${{ matrix.asset_tgz_name_suffix }}
+          asset_content_type: application/x-gtar
