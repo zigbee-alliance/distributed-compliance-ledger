@@ -1,0 +1,98 @@
+name: release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  BIN_NAME: dcld
+
+jobs:
+
+  checks:
+    name: verify release
+    runs-on: ubuntu-latest
+    outputs:
+      current_version: ${{ steps.current_version.outputs.current_version }}
+      release_info: ${{ steps.release_info.outputs.release_info }}
+      asset_bin_url: ${{ steps.release_info.outputs.asset_bin_url }}
+      upload_url:  ${{ steps.release_info.outputs.upload_url }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get current version
+        id: current_version
+        run: |
+          git fetch --all --tags
+
+          tag="$(git describe --tags --exact-match)"
+          echo "$tag"
+          version="$(echo "$tag" | sed "s/^v//")"
+          echo "$version"
+
+          echo "::set-output name=current_version::$version"
+        shell: bash
+
+      - name: Get release info
+        id: release_info
+        run: |
+          release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
+              | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.current_version }}")')"
+          echo "::set-output name=release_info::$release_info"
+          echo "$release_info"
+
+          asset_bin_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}$")) | .browser_download_url')"
+          echo "::set-output name=asset_bin_url::$asset_bin_url"
+          echo "$asset_bin_url"
+
+          upload_url="$(echo "$release_info" | jq -r '.upload_url')"
+          echo "::set-output name=upload_url::$upload_url"
+          echo "$upload_url"
+        shell: bash
+
+      - name: check release published
+        if: ${{ !steps.release_info.outputs.release_info }}
+        run: exit 1
+
+  release:
+    name: Release
+    needs: checks
+    if: ${{ !needs.checks.outputs.asset_bin_url }}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: build binary
+        run: make build
+        shell: bash
+
+      - name: upload to GitHub
+        if: ${{ !needs.checks.outputs.asset_bin_url }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: build/${{ env.BIN_NAME }}
+          asset_name: ${{ env.BIN_NAME }}
+          asset_content_type: application/octet-stream  # TODO check for less generic type
