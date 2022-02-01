@@ -34,16 +34,19 @@ RUN (groupadd -g ${gid} ${TEST_USER_GROUP} || true) \
 
 # Starport
 ARG STARPORT_VERSION
-#ENV STARPORT_VERSION=${STARPORT_VERSION:-0.18.5}
-ENV STARPORT_VERSION=${STARPORT_VERSION:-dev}
-#ENV PATH="${PATH}:/usr/local/bin"
-#RUN curl https://get.starport.network/starport@v${STARPORT_VERSION}! -o /tmp/startport \
-#    && bash /tmp/startport \
-#    && rm /tmp/startport
-RUN curl -L https://github.com/tendermint/starport/archive/refs/heads/develop.zip -o /tmp/starport.zip
-RUN cd /tmp \
-    && unzip starport.zip \
-    && cd starport-develop \
-    && make build \
-    && cp ./dist/starport /usr/local/bin
+ENV STARPORT_VERSION=${STARPORT_VERSION:-0.19.3}
+#ENV STARPORT_VERSION=${STARPORT_VERSION:-dev}
+
+RUN if [ "$STARPORT_VERSION" = "dev" ]; then \
+      curl -L https://github.com/tendermint/starport/archive/refs/heads/develop.zip -o /tmp/starport.zip && \
+      cd /tmp \
+        && unzip starport.zip \
+        && cd starport-develop \
+        && make build \
+        && cp ./dist/starport /usr/local/bin; \
+    else \
+      curl https://get.starport.network/starport@v${STARPORT_VERSION}! -o /tmp/startport \
+      && bash /tmp/startport \
+      && rm /tmp/startport; \
+    fi  
 ENV PATH="${PATH}:/usr/local/bin"

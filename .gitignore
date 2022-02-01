@@ -20,3 +20,5 @@ vendor
 # python
 __pycache__
 config.yml
+
+tmp-swagger-gen

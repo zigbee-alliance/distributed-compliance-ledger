@@ -92,6 +92,7 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 
 ### REST
 - **There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.**
+- OpenAPI specification: https://zigbee-alliance.github.io/distributed-compliance-ledger/.
 - Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html.
 - See [transactions](docs/transactions.md) for a full list of endpoints.
 - REST HTTP(S) queries can be directly used for read requests.
@@ -177,6 +178,7 @@ Please note, that these instructions describe the case when the genesis block co
 This is done just for simplicity, and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
 
 ## Useful Links 
+- [OpenAPI specification](https://zigbee-alliance.github.io/distributed-compliance-ledger/)
 - [Quick Start](docs/quickStartGuide.adoc)
 - [List of Transactions, Queries, CLI command, REST API](docs/transactions.md)
 - [How To Guide](docs/how-to.md)
