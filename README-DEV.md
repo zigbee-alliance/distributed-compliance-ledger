@@ -134,26 +134,22 @@ Once all the four nodes are running, the last node i.e. node03 will be listing o
 
 ## Contributing
 Please take into account the following when sending a PR:
-1) Make sure there is a license header added:
-    - Have a look at `make license` and `make license-check` command in [Makefile](Makefile).
 
-2) Make sure the new functionality has unit tests added
+1) Make sure the new functionality has unit tests added
 
-3) Make sure the new functionality has integration tests added
+2) Make sure the new functionality has integration tests added
     - [CLI-based tests](integration_tests/cli)
-    - [REST-based tests](integration_tests/rest)
+    - [REST-based tests](integration_tests/grpc_rest)
 
-4) There is CI based on GitHub Actions that will do the following for every Pull Request:
+3) There is CI based on GitHub Actions that will do the following for every Pull Request:
     - make sure the app can be built
     - run go linter
     - run unit tests
     - run integratioins test
-    - make sure there is a license header in all the files
-
 
 ## How To Add a new Module
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-- Follow the [README.md](scripts/starport/README.md).
+  Consider using the provided [Dockerfile](scripts/starport/Dockerfile) to have a predictable version of starport. See [README.md](scripts/starport/README.md).
 - Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
 - Adjust the generated code
@@ -165,10 +161,12 @@ Please take into account the following when sending a PR:
     - Note2: for `uint16` type: use `int32` during starport scaffolding, and add custom validation (annotations above) to check the lower and upper bounds.
     - Note3: for `uint32` type: use `int32` during starport scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
   - build proto (for example `starport chain build`). Fix compilation errors if any.
-  - **Note**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
+  - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
     So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
+  - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+    Revert the default cosmos modules keeping only DCL ones.   
 - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
 - Implement business logic in `msg_server_xxx.go`
 - Improve `NotFound` error processing:
@@ -182,12 +180,27 @@ Please take into account the following when sending a PR:
 - Add gRPC/REST-based integration tests to `integration_tests/grpc_rest/<module>` (see other modules for reference)
 
 ## How To Make Changes in Data Model for Existing Modules
+- Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
+  Consider using the provided [Dockerfile](scripts/starport/Dockerfile) to have a predictable version of starport. See [README.md](scripts/starport/README.md).
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
-- **Note**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
+- **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
   It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
+- **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+    Revert the default cosmos modules keeping only DCL ones.   
+
+## Update Cosmos-sdk Version
+Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [cosmos-base-swagger-gen.sh](scripts/cosmos-base-swagger-gen.sh).
+
+## Update Tendermint Version
+Please note, that we depend on the Tendermint fork https://github.com/zigbee-alliance/tendermint/releases/tag/v0.34.140 
+due to hotfixes for https://github.com/tendermint/tendermint/issues/7640 and https://github.com/tendermint/tendermint/issues/7641
+requitred for Light Client Proxy.
+Now that fixes are merged to Tendermint master, so check if we still need to depend on the fork.
+
+Also don't forget to update the link to the Tendermint RPC in [Swagger UI](docs/index.html).
 
 ## Other
 For more details, please have a look at [Cosmos SDK tutorial](https://tutorials.cosmos.network/).
