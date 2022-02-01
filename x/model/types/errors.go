@@ -22,6 +22,7 @@ var (
 	ErrModelVersionAlreadyExists    = sdkerrors.Register(ModuleName, 519, "model version already exists")
 	ErrOtaURLCannotBeSet            = sdkerrors.Register(ModuleName, 520, "OTA URL cannot be set")
 	ErrMaxSVLessThanMinSV           = sdkerrors.Register(ModuleName, 521, "max software version less than min software version")
+	ErrLsfRevisionIsNotHigher       = sdkerrors.Register(ModuleName, 522, "LsfRevision should be greater then existing revision")
 )
 
 func NewErrModelAlreadyExists(vid interface{}, pid interface{}) error {
@@ -107,4 +108,11 @@ func NewErrMaxSVLessThanMinSV(minApplicableSoftwareVersion interface{},
 	return sdkerrors.Wrapf(ErrMaxSVLessThanMinSV,
 		"MaxApplicableSoftwareVersion %v is less than MinApplicableSoftwareVersion %v",
 		maxApplicableSoftwareVersion, minApplicableSoftwareVersion)
+}
+
+func NewErrLsfRevisionIsNotHigher(previousLsfVersion interface{},
+	currentLsfVersion interface{}) error {
+	return sdkerrors.Wrapf(ErrLsfRevisionIsNotHigher,
+		"LsfRevision %v should be greater then existing lsfRevision %v",
+		currentLsfVersion, previousLsfVersion)
 }

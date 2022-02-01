@@ -848,6 +848,8 @@ func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 		UserManualUrl: testconstants.UserManualUrl,
 		SupportUrl:    testconstants.SupportUrl,
 		ProductUrl:    testconstants.ProductUrl,
+		LsfUrl:        testconstants.LsfUrl,
+		LsfRevision:   testconstants.LsfRevision,
 	}
 }
 
@@ -865,6 +867,8 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 		UserManualUrl: testconstants.UserManualUrl + "/updated",
 		SupportUrl:    testconstants.SupportUrl + "/updated",
 		ProductUrl:    testconstants.ProductUrl + "/updated",
+		LsfUrl:        testconstants.LsfUrl + "/updated",
+		LsfRevision:   testconstants.LsfRevision + 1,
 	}
 }
 

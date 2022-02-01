@@ -47,6 +47,8 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		UserManualUrl: msg.UserManualUrl,
 		SupportUrl:    msg.SupportUrl,
 		ProductUrl:    msg.ProductUrl,
+		LsfUrl:        msg.LsfUrl,
+		LsfRevision:   msg.LsfRevision,
 	}
 
 	// store new model
@@ -123,6 +125,15 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 
 	if msg.ProductUrl != "" {
 		model.ProductUrl = msg.ProductUrl
+	}
+
+	if msg.LsfUrl != "" && msg.LsfUrl != model.LsfUrl {
+		// If lsfRevision is less then or equal to current revision return error
+		if msg.LsfRevision <= model.LsfRevision {
+			return nil, types.NewErrLsfRevisionIsNotHigher(msg.LsfRevision, model.LsfRevision)
+		}
+		model.LsfUrl = msg.LsfUrl
+		model.LsfRevision = msg.LsfRevision
 	}
 
 	// store updated model

@@ -186,7 +186,9 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
-  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.
+  - lsfURL: `optional(string)` - URL to the Localized String File of this product.
+  - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available.version of Localized String File
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
@@ -229,6 +231,8 @@ All non-edited fields remain the same.
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - lsfURL: `optional(string)` - URL to the Localized String File of this product.
+  - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available.  
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send: 
     - Vendor account associated with the same vid who has created the model

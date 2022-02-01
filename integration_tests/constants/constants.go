@@ -79,6 +79,8 @@ var (
 	UserManualUrl                                     = "https://url.usermanual.dclmodel"
 	SupportUrl                                        = "https://url.supporturl.dclmodel"
 	ProductUrl                                        = "https://url.producturl.dclmodel"
+	LsfUrl                                            = "https://url.lsfurl.dclmodel"
+	LsfRevision                                int32  = 1
 	ChipBlob                                          = "Chip Blob Text"
 	VendorBlob                                        = "Vendor Blob Text"
 	MinApplicableSoftwareVersion               uint32 = 1

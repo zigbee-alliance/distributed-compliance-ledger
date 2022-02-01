@@ -54,7 +54,7 @@ result=$(echo "test1234" | dcld tx model add-model --vid=$vid_1 --pid=$pid_2 --d
 --partNumber="23.456" --commissioningCustomFlow=1 --commissioningCustomFlowURL="https://customflow.url.info" \
 --commissioningModeInitialStepsHint=1  --commissioningModeInitialStepsInstruction="Initial Instructions" \
 --commissioningModeSecondaryStepsHint=2 --commissioningModeSecondaryStepsInstruction="Secondary Steps Instruction" \
---userManualURL="https://usermanual.url" --productURL="https://product.url.info" --supportURL="https://support.url.info"   --from=$vendor_account_1 --yes)
+--userManualURL="https://usermanual.url" --productURL="https://product.url.info" --lsfURL="https://lsf.url.info" --lsfRevision=1 --supportURL="https://support.url.info"   --from=$vendor_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -77,6 +77,8 @@ check_response_and_report "$result" "\"commissioning_mode_secondary_steps_instru
 check_response_and_report "$result" "\"user_manual_url\": \"https://usermanual.url\""
 check_response_and_report "$result" "\"support_url\": \"https://support.url.info\""
 check_response_and_report "$result" "\"product_url\": \"https://product.url.info\""
+check_response_and_report "$result" "\"lsf_url\": \"https://lsf.url.info\""
+check_response_and_report "$result" "\"lsf_revision\": 1"
 
 
 test_divider
@@ -115,7 +117,7 @@ test_divider
 
 # Update model with mutable fields and make sure they are updated properly
 echo "Update model with mutable fields and make sure they are updated properly VID: $vid_1 PID: $pid_1"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --productName="Updated Product Name" --productLabel="Updated Test Product" --partNumber="2" --from=$vendor_account_1 --yes)
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --productName="Updated Product Name" --productLabel="Updated Test Product" --partNumber="2" --lsfURL="https://lsf.url.info?v=2" --lsfRevision=2 --from=$vendor_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -129,6 +131,8 @@ check_response_and_report "$result" "\"product_name\": \"Updated Product Name\""
 check_response_and_report "$result" "\"part_number\": \"2\""
 check_response_and_report "$result" "\"product_label\": \"Updated Test Product\""
 check_response_and_report "$result" "\"commissioning_custom_flow\": 0" # default value set when this model was created
+check_response_and_report "$result" "\"lsf_url\": \"https://lsf.url.info?v=2\""
+check_response_and_report "$result" "\"lsf_revision\": 2"
 
 test_divider
 # Update model with just one mutable fields and make sure they are updated properly
@@ -154,7 +158,7 @@ result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 
 --partNumber="V3" --commissioningCustomFlowURL="https://updated.url.info" \
 --productLabel="Updated Test Product V3" --commissioningModeInitialStepsInstruction="Instructions updated v3" \
 --commissioningModeSecondaryStepsInstruction="Secondary Instructions v3" --userManualURL="https://userManual.info/v3" \
---supportURL="https://support.url.info/v3" --productURL="https://product.landingpage.url" --from=$vendor_account_1 --yes)
+--supportURL="https://support.url.info/v3" --productURL="https://product.landingpage.url" --lsfURL="https://lsf.url.info?v=3" --lsfRevision=3 --from=$vendor_account_1 --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -173,6 +177,8 @@ check_response_and_report "$result" "\"commissioning_mode_secondary_steps_instru
 check_response_and_report "$result" "\"user_manual_url\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"support_url\": \"https://support.url.info/v3\""
 check_response_and_report "$result" "\"product_url\": \"https://product.landingpage.url\""
+check_response_and_report "$result" "\"lsf_url\": \"https://lsf.url.info?v=3\""
+check_response_and_report "$result" "\"lsf_revision\": 3"
 
 
 test_divider
@@ -197,6 +203,8 @@ check_response_and_report "$result" "\"commissioning_mode_secondary_steps_instru
 check_response_and_report "$result" "\"user_manual_url\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"support_url\": \"https://support.url.info/v3\""
 check_response_and_report "$result" "\"product_url\": \"https://product.landingpage.url\""
+check_response_and_report "$result" "\"lsf_url\": \"https://lsf.url.info?v=3\""
+check_response_and_report "$result" "\"lsf_revision\": 3"
 
 test_divider
 # Update model with just one mutable fields and make sure they are updated properly
@@ -220,7 +228,22 @@ check_response_and_report "$result" "\"commissioning_mode_secondary_steps_instru
 check_response_and_report "$result" "\"user_manual_url\": \"https://userManual.info/v3\""
 check_response_and_report "$result" "\"support_url\": \"https://support.url.info/v3\""
 check_response_and_report "$result" "\"product_url\": \"https://product.landingpage.url\""
+check_response_and_report "$result" "\"lsf_url\": \"https://lsf.url.info?v=3\""
+check_response_and_report "$result" "\"lsf_revision\": 3"
 
+
+test_divider
+
+# Update the model with lsfRevision equal to the existing lsfRevision 
+echo "Update the model with lsfRevision equal to the existing lsfRevision make sure we get error back VID: $vid_1 PID: $pid_1"
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=4" --lsfRevision=3 --from=$vendor_account_1 --yes 2>&1) || true
+check_response_and_report "$result" "LsfRevision should be greater then existing revision" raw
+
+test_divider
+
+echo "Update the model with lsfRevision less then the existing lsfRevision make sure we get error back VID: $vid_1 PID: $pid_1"
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_1 --pid=$pid_1 --lsfURL="https://lsf.url.info?v=4" --lsfRevision=2 --from=$vendor_account_1 --yes 2>&1) || true
+check_response_and_report "$result" "LsfRevision should be greater then existing revision" raw
 
 test_divider
 

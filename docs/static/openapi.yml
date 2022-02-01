@@ -3673,6 +3673,11 @@ paths:
                       type: string
                     productUrl:
                       type: string
+                    lsfUrl:
+                      type: string
+                    lsfRevision:
+                      type: integer
+                      format: int32
                     creator:
                       type: string
               pagination:
@@ -3882,6 +3887,11 @@ paths:
                     type: string
                   productUrl:
                     type: string
+                  lsfUrl:
+                    type: string
+                  lsfRevision:
+                    type: integer
+                    format: int32
                   creator:
                     type: string
         default:
@@ -8830,6 +8840,11 @@ definitions:
         type: string
       productUrl:
         type: string
+      lsfUrl:
+        type: string
+      lsfRevision:
+        type: integer
+        format: int32
       creator:
         type: string
   zigbeealliance.distributedcomplianceledger.model.ModelVersion:
@@ -8951,6 +8966,11 @@ definitions:
               type: string
             productUrl:
               type: string
+            lsfUrl:
+              type: string
+            lsfRevision:
+              type: integer
+              format: int32
             creator:
               type: string
       pagination:
@@ -9020,6 +9040,11 @@ definitions:
             type: string
           productUrl:
             type: string
+          lsfUrl:
+            type: string
+          lsfRevision:
+            type: integer
+            format: int32
           creator:
             type: string
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:

@@ -38,6 +38,8 @@ message MsgCreateModel {
   string user_manual_url = 14 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string support_url = 15 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string product_url = 16 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  string lsf_url = 17 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  int32 lsf_revision = 18 [(gogoproto.moretags) = "validate:\"required_with=LsfUrl,gte=0,lte=65535\""];
 }
 message MsgCreateModelResponse {}
 
@@ -55,6 +57,8 @@ message MsgUpdateModel {
   string user_manual_url = 10 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string support_url = 11 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
   string product_url = 12 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  string lsf_url = 13 [(gogoproto.moretags) = "validate:\"omitempty,url,startsnotwith=http:,max=256\""];
+  int32 lsf_revision = 14 [(gogoproto.moretags) = "validate:\"required_with=LsfUrl,gte=0,lte=65535\""];  
 }
 message MsgUpdateModelResponse {}
 

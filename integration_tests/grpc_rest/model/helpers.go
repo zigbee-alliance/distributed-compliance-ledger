@@ -55,6 +55,8 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		UserManualUrl: testconstants.UserManualUrl,
 		SupportUrl:    testconstants.SupportUrl,
 		ProductUrl:    testconstants.ProductUrl,
+		LsfUrl:        testconstants.LsfUrl,
+		LsfRevision:   testconstants.LsfRevision,
 	}
 }
 
@@ -68,6 +70,8 @@ func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdat
 		UserManualUrl:              testconstants.UserManualUrl + "/new",
 		SupportUrl:                 testconstants.SupportUrl + "/new",
 		ProductUrl:                 testconstants.ProductUrl + "/new",
+		LsfUrl:                     testconstants.LsfUrl + "/new",
+		LsfRevision:                testconstants.LsfRevision + 1,
 	}
 }
 
