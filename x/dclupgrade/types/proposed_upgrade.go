@@ -2,9 +2,9 @@ package types
 
 import sdk "github.com/cosmos/cosmos-sdk/types"
 
-func (acc ProposedUpgrade) HasApprovalFrom(address sdk.AccAddress) bool {
+func (upgrade ProposedUpgrade) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
-	for _, approval := range acc.Approvals {
+	for _, approval := range upgrade.Approvals {
 		if approval == addrStr {
 			return true
 		}

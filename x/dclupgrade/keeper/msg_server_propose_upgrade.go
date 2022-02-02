@@ -33,20 +33,25 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 	// Execute scheduling upgrade in a new context branch (with branched store)
 	// to validate msg.Plan before the proposal proceeds through the approval process.
 	// State is not persisted.
-	cacheCtx, _ := ctx.CacheContext()
+	cacheCtx, writeCache := ctx.CacheContext()
 	err = k.upgradeKeeper.ScheduleUpgrade(cacheCtx, msg.Plan)
 	if err != nil {
 		return nil, err
 	}
 
-	proposedUpgrade := types.ProposedUpgrade{
-		Plan:      msg.Plan,
-		Creator:   msg.Creator,
-		Approvals: []string{msg.Creator},
-	}
+	if k.UpgradeApprovalsCount(ctx) > 1 {
+		proposedUpgrade := types.ProposedUpgrade{
+			Plan:      msg.Plan,
+			Creator:   msg.Creator,
+			Approvals: []string{msg.Creator},
+		}
 
-	// store proposed upgrade
-	k.SetProposedUpgrade(ctx, proposedUpgrade)
+		// store proposed upgrade
+		k.SetProposedUpgrade(ctx, proposedUpgrade)
+	} else {
+		// sufficient approvals count has been reached, so persist cached state (i.e. schedule upgrade)
+		writeCache()
+	}
 
 	return &types.MsgProposeUpgradeResponse{}, nil
 }

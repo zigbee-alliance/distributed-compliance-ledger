@@ -42,7 +42,7 @@ func (k msgServer) ApproveUpgrade(goCtx context.Context, msg *types.MsgApproveUp
 	proposedUpgrade.Approvals = append(proposedUpgrade.Approvals, creatorAddr.String())
 
 	// check if proposed upgrade has enough approvals
-	if len(proposedUpgrade.Approvals) == types.UpgradeApprovals {
+	if len(proposedUpgrade.Approvals) == k.UpgradeApprovalsCount(ctx) {
 		// remove proposed upgrade
 		k.RemoveProposedUpgrade(ctx, proposedUpgrade.Plan.Name)
 
