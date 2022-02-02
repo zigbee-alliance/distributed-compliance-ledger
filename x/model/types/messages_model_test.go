@@ -315,6 +315,30 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 			err: validator.ErrRequiredFieldMissing,
 		},
+		{
+			name: "LsfRevision is present but LsfUrl is missing",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = ""
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "LsfRevision is negative",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfRevision = -1
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "LsfRevision is greater then max uint16",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfRevision = 65536
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {
@@ -531,9 +555,10 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
-			name: "LsfUrl is omitted",
+			name: "LsfUrl is omitted and LsfRevision is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = ""
+				msg.LsfRevision = 0
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -541,6 +566,13 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "LsfRevision is set to 65535",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfRevision = 65535
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -768,6 +800,62 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "LsfUrl is not valid URL",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "not valid URL"
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl starts with http:",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "http://sampleflowurl.dclmodel"
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl length > 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "LsfRevision is missing",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfRevision = 0
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "LsfRevision is present but LsfUrl is missing",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = ""
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrRequiredFieldMissing,
+		},
+		{
+			name: "LsfRevision is negative",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfRevision = -1
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "LsfRevision is greater then max uint16",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfRevision = 65536
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {
@@ -936,6 +1024,29 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "LsfUrl is omitted and LsfRevision is omitted 1",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = ""
+				msg.LsfRevision = 0
+				return msg
+			}(validMsgUpdateModel()),
+		},
+
+		{
+			name: "LsfUrl length == 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "LsfRevision is set to 65535",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfRevision = 65535
 				return msg
 			}(validMsgUpdateModel()),
 		},

@@ -201,6 +201,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	// update existing model by vendor with the same VendorID as owner's one
 	msgUpdateModel = NewMsgUpdateModel(vendorWithSameVid)
 	msgUpdateModel.ProductLabel += "-updated-once-more"
+	msgUpdateModel.LsfRevision += 1
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 }

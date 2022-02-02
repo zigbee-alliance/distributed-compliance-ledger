@@ -127,12 +127,15 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.ProductUrl = msg.ProductUrl
 	}
 
-	if msg.LsfUrl != "" && msg.LsfUrl != model.LsfUrl {
+	if msg.LsfUrl != "" {
+		model.LsfUrl = msg.LsfUrl
+	}
+
+	if msg.LsfRevision > 0 {
 		// If lsfRevision is less then or equal to current revision return error
 		if msg.LsfRevision <= model.LsfRevision {
-			return nil, types.NewErrLsfRevisionIsNotHigher(msg.LsfRevision, model.LsfRevision)
+			return nil, types.NewErrLsfRevisionIsNotHigher(model.LsfRevision, msg.LsfRevision)
 		}
-		model.LsfUrl = msg.LsfUrl
 		model.LsfRevision = msg.LsfRevision
 	}
 

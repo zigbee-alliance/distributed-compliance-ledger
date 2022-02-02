@@ -112,6 +112,18 @@ check_response_and_report "$result" "PartNumber is a required field" raw
 
 test_divider
 
+echo "Add model with LsfVersion but missing LsfURL"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Label" --partNumber="1" --lsfRevision=1 --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "LsfUrl is required if LsfRevision!=0" raw
+
+test_divider
+
+echo "Add model with LsfURL but missing LsfVersion"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="Test Label" --partNumber="1" --lsfURL=https://lsfurl.dcl.info --commissioningCustomFlow=0  --from $vendor_account --yes 2>&1) || true
+check_response_and_report "$result" "LsfRevision is required if LsfUrl is set" raw
+
+test_divider
+
 echo "Add model with empty --from flag"
 result=$(dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from "" --yes 2>&1) || true
 check_response_and_report "$result" "invalid creator address (empty address string is not allowed)" raw
