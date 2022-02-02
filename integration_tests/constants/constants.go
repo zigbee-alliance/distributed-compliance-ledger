@@ -81,6 +81,7 @@ var (
 	ProductUrl                                        = "https://url.producturl.dclmodel"
 	LsfUrl                                            = "https://url.lsfurl.dclmodel"
 	LsfRevision                                int32  = 1
+	EmptyLsfRevision                           int32  = 0
 	ChipBlob                                          = "Chip Blob Text"
 	VendorBlob                                        = "Vendor Blob Text"
 	MinApplicableSoftwareVersion               uint32 = 1

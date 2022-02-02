@@ -32,7 +32,6 @@ func NewMsgCreateModel(
 	supportUrl string,
 	productUrl string,
 	lsfUrl string,
-	lsfRevision int32,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -52,7 +51,6 @@ func NewMsgCreateModel(
 		SupportUrl:    supportUrl,
 		ProductUrl:    productUrl,
 		LsfUrl:        lsfUrl,
-		LsfRevision:   lsfRevision,
 	}
 }
 

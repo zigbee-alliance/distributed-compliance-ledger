@@ -28,7 +28,6 @@ func CmdCreateModel() *cobra.Command {
 		supportUrl                                 string
 		productUrl                                 string
 		lsfUrl                                     string
-		lsfRevision                                int32
 	)
 
 	cmd := &cobra.Command{
@@ -64,7 +63,6 @@ func CmdCreateModel() *cobra.Command {
 				supportUrl,
 				productUrl,
 				lsfUrl,
-				lsfRevision,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -125,8 +123,6 @@ and for these values the commissioningModeSecondaryStepInstruction SHALL be set`
 	cmd.Flags().StringVar(&productUrl, FlagProductUrl, "",
 		"URL that contains product specific web page that contains details for the device model.")
 	cmd.Flags().StringVar(&lsfUrl, FlagLsfUrl, "", "URL to the Localized String File of this product")
-	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
-		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)

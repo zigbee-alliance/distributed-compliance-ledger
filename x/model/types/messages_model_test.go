@@ -307,38 +307,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
-		{
-			name: "LsfRevision is missing",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.LsfRevision = 0
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrRequiredFieldMissing,
-		},
-		{
-			name: "LsfRevision is present but LsfUrl is missing",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.LsfUrl = ""
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrRequiredFieldMissing,
-		},
-		{
-			name: "LsfRevision is negative",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.LsfRevision = -1
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrFieldLowerBoundViolated,
-		},
-		{
-			name: "LsfRevision is greater then max uint16",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.LsfRevision = 65536
-				return msg
-			}(validMsgCreateModel()),
-			err: validator.ErrFieldUpperBoundViolated,
-		},
 	}
 
 	positiveTests := []struct {
@@ -555,10 +523,9 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 		},
 		{
-			name: "LsfUrl is omitted and LsfRevision is omitted",
+			name: "LsfUrl is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = ""
-				msg.LsfRevision = 0
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -566,13 +533,6 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
-				return msg
-			}(validMsgCreateModel()),
-		},
-		{
-			name: "LsfRevision is set to 65535",
-			msg: func(msg *MsgCreateModel) *MsgCreateModel {
-				msg.LsfRevision = 65535
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -823,22 +783,6 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
-		},
-		{
-			name: "LsfRevision is missing",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.LsfRevision = 0
-				return msg
-			}(validMsgUpdateModel()),
-			err: validator.ErrRequiredFieldMissing,
-		},
-		{
-			name: "LsfRevision is present but LsfUrl is missing",
-			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
-				msg.LsfUrl = ""
-				return msg
-			}(validMsgUpdateModel()),
-			err: validator.ErrRequiredFieldMissing,
 		},
 		{
 			name: "LsfRevision is negative",
@@ -1229,7 +1173,6 @@ func validMsgCreateModel() *MsgCreateModel {
 		SupportUrl:    testconstants.SupportUrl,
 		ProductUrl:    testconstants.ProductUrl,
 		LsfUrl:        testconstants.LsfUrl,
-		LsfRevision:   testconstants.LsfRevision,
 	}
 }
 

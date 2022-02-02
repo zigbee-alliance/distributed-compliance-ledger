@@ -188,7 +188,6 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.
   - lsfURL: `optional(string)` - URL to the Localized String File of this product.
-  - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
@@ -203,7 +202,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
 ```
  dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
     --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
-    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string>
+    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string>
     --from=<account>
 ```
 

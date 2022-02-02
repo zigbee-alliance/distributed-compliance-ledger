@@ -48,7 +48,11 @@ func (k msgServer) CreateModel(goCtx context.Context, msg *types.MsgCreateModel)
 		SupportUrl:    msg.SupportUrl,
 		ProductUrl:    msg.ProductUrl,
 		LsfUrl:        msg.LsfUrl,
-		LsfRevision:   msg.LsfRevision,
+	}
+
+	// if LsfUrl is not empty, we set lsfRevision to default value of 1
+	if model.LsfUrl != "" {
+		model.LsfRevision = 1
 	}
 
 	// store new model
@@ -127,16 +131,23 @@ func (k msgServer) UpdateModel(goCtx context.Context, msg *types.MsgUpdateModel)
 		model.ProductUrl = msg.ProductUrl
 	}
 
-	if msg.LsfUrl != "" {
-		model.LsfUrl = msg.LsfUrl
-	}
-
 	if msg.LsfRevision > 0 {
-		// If lsfRevision is less then or equal to current revision return error
-		if msg.LsfRevision <= model.LsfRevision {
-			return nil, types.NewErrLsfRevisionIsNotHigher(model.LsfRevision, msg.LsfRevision)
+		// If lsfRevision is set but no lsfURL is provided or present in model
+		if msg.LsfUrl == "" && model.LsfUrl == "" {
+			return nil, types.NewErrLsfRevisionIsNotAllowed()
+		}
+		if msg.LsfRevision != model.LsfRevision+1 {
+			return nil, types.NewErrLsfRevisionIsNotValid(model.LsfRevision, msg.LsfRevision)
 		}
 		model.LsfRevision = msg.LsfRevision
+	}
+
+	if msg.LsfUrl != "" {
+		model.LsfUrl = msg.LsfUrl
+		// If lsfRevision is not present, we set it to default value of 1
+		if model.LsfRevision == 0 {
+			model.LsfRevision = 1
+		}
 	}
 
 	// store updated model

@@ -206,6 +206,101 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	require.NoError(t, err)
 }
 
+func TestHandler_LsfUpdateValidations(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model without lsfURL
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	msgCreateModel.LsfUrl = ""
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+
+	// check
+	require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
+	require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
+	require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+	require.Equal(t, msgCreateModel.LsfUrl, "")
+	require.Equal(t, testconstants.EmptyLsfRevision, receivedModel.LsfRevision)
+
+	// Update model with lsfRevision, keep the LsfUrl empty
+	msgUpdateModel := NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.LsfRevision = 1
+	msgUpdateModel.LsfUrl = ""
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	// Update fails as LsfUrl is empty
+	require.Error(t, err)
+	require.True(t, types.ErrLsfRevisionIsNotValid.Is(err))
+
+	// Update model with valid LsfUrl, but higher LsfRevision
+	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.LsfUrl = "https://example.com/lsf.json"
+	msgUpdateModel.LsfRevision = 5
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	// Update fails as LsfUrl is empty
+	require.Error(t, err)
+	require.True(t, types.ErrLsfRevisionIsNotValid.Is(err))
+
+	// Update model with valid LsfUrl and LsfRevision set to 1
+	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.LsfUrl = "https://example.com/lsf.json"
+	msgUpdateModel.LsfRevision = testconstants.LsfRevision
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	// Update fails as LsfUrl is empty
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err = queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+	require.Equal(t, msgUpdateModel.LsfUrl, receivedModel.LsfUrl)
+	require.Equal(t, msgUpdateModel.LsfRevision, receivedModel.LsfRevision)
+
+	// Increase LsfRevision by 1
+	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.LsfUrl = ""
+	msgUpdateModel.LsfRevision = testconstants.LsfRevision + 1
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	// Update fails as LsfUrl is empty
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err = queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+	require.Equal(t, "https://example.com/lsf.json", receivedModel.LsfUrl)
+	require.Equal(t, msgUpdateModel.LsfRevision, receivedModel.LsfRevision)
+
+	// Increase LsfRevision by more then 1
+	msgUpdateModel = NewMsgUpdateModel(setup.Vendor)
+	msgUpdateModel.LsfUrl = ""
+	msgUpdateModel.LsfRevision = testconstants.LsfRevision + 3
+	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
+	// Update fails as LsfRevision is not monotonically increased
+	require.Error(t, err)
+}
+
+func TestHandler_LsfAddValidation_DefaultValue(t *testing.T) {
+	setup := Setup(t)
+
+	// add new model without lsfURL
+	msgCreateModel := NewMsgCreateModel(setup.Vendor)
+	_, err := setup.Handler(setup.Ctx, msgCreateModel)
+	require.NoError(t, err)
+
+	// query model
+	receivedModel, err := queryModel(setup, msgCreateModel.Vid, msgCreateModel.Pid)
+	require.NoError(t, err)
+
+	// check
+	require.Equal(t, msgCreateModel.Vid, receivedModel.Vid)
+	require.Equal(t, msgCreateModel.Pid, receivedModel.Pid)
+	require.Equal(t, msgCreateModel.DeviceTypeId, receivedModel.DeviceTypeId)
+	require.Equal(t, msgCreateModel.LsfUrl, receivedModel.LsfUrl)
+	require.Equal(t, testconstants.LsfRevision, receivedModel.LsfRevision)
+}
+
 func TestHandler_AddModelWithEmptyOptionalFields(t *testing.T) {
 	setup := Setup(t)
 
@@ -850,7 +945,6 @@ func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 		SupportUrl:    testconstants.SupportUrl,
 		ProductUrl:    testconstants.ProductUrl,
 		LsfUrl:        testconstants.LsfUrl,
-		LsfRevision:   testconstants.LsfRevision,
 	}
 }
 
