@@ -188,7 +188,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.
   - lsfURL: `optional(string)` - URL to the Localized String File of this product.
-  - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available.version of Localized String File
+  - lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
