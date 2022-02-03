@@ -240,7 +240,7 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	msgUpdateModel.LsfUrl = "https://example.com/lsf.json"
 	msgUpdateModel.LsfRevision = 5
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
-	// Update fails as LsfUrl is empty
+	// Update fails as LsfRevision is not increased monotonically by just 1
 	require.Error(t, err)
 	require.True(t, types.ErrLsfRevisionIsNotValid.Is(err))
 
@@ -249,7 +249,7 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	msgUpdateModel.LsfUrl = "https://example.com/lsf.json"
 	msgUpdateModel.LsfRevision = testconstants.LsfRevision
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
-	// Update fails as LsfUrl is empty
+	// Update succeeds
 	require.NoError(t, err)
 
 	// query model
@@ -263,7 +263,7 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	msgUpdateModel.LsfUrl = ""
 	msgUpdateModel.LsfRevision = testconstants.LsfRevision + 1
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
-	// Update fails as LsfUrl is empty
+	// Update succeeds
 	require.NoError(t, err)
 
 	// query model
@@ -277,8 +277,9 @@ func TestHandler_LsfUpdateValidations(t *testing.T) {
 	msgUpdateModel.LsfUrl = ""
 	msgUpdateModel.LsfRevision = testconstants.LsfRevision + 3
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
-	// Update fails as LsfRevision is not monotonically increased
+	// Update fails as LsfRevision is not increased monotonically by just 1
 	require.Error(t, err)
+	require.True(t, types.ErrLsfRevisionIsNotValid.Is(err))
 }
 
 func TestHandler_LsfAddValidation_DefaultValue(t *testing.T) {
