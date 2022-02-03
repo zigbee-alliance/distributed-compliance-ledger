@@ -19,6 +19,8 @@ export interface Model {
   userManualUrl: string
   supportUrl: string
   productUrl: string
+  lsfUrl: string
+  lsfRevision: number
   creator: string
 }
 
@@ -38,6 +40,8 @@ const baseModel: object = {
   userManualUrl: '',
   supportUrl: '',
   productUrl: '',
+  lsfUrl: '',
+  lsfRevision: 0,
   creator: ''
 }
 
@@ -88,8 +92,14 @@ export const Model = {
     if (message.productUrl !== '') {
       writer.uint32(122).string(message.productUrl)
     }
+    if (message.lsfUrl !== '') {
+      writer.uint32(130).string(message.lsfUrl)
+    }
+    if (message.lsfRevision !== 0) {
+      writer.uint32(136).int32(message.lsfRevision)
+    }
     if (message.creator !== '') {
-      writer.uint32(130).string(message.creator)
+      writer.uint32(146).string(message.creator)
     }
     return writer
   },
@@ -147,6 +157,12 @@ export const Model = {
           message.productUrl = reader.string()
           break
         case 16:
+          message.lsfUrl = reader.string()
+          break
+        case 17:
+          message.lsfRevision = reader.int32()
+          break
+        case 18:
           message.creator = reader.string()
           break
         default:
@@ -234,6 +250,16 @@ export const Model = {
     } else {
       message.productUrl = ''
     }
+    if (object.lsfUrl !== undefined && object.lsfUrl !== null) {
+      message.lsfUrl = String(object.lsfUrl)
+    } else {
+      message.lsfUrl = ''
+    }
+    if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
+      message.lsfRevision = Number(object.lsfRevision)
+    } else {
+      message.lsfRevision = 0
+    }
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator)
     } else {
@@ -261,6 +287,8 @@ export const Model = {
     message.userManualUrl !== undefined && (obj.userManualUrl = message.userManualUrl)
     message.supportUrl !== undefined && (obj.supportUrl = message.supportUrl)
     message.productUrl !== undefined && (obj.productUrl = message.productUrl)
+    message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl)
+    message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision)
     message.creator !== undefined && (obj.creator = message.creator)
     return obj
   },
@@ -341,6 +369,16 @@ export const Model = {
       message.productUrl = object.productUrl
     } else {
       message.productUrl = ''
+    }
+    if (object.lsfUrl !== undefined && object.lsfUrl !== null) {
+      message.lsfUrl = object.lsfUrl
+    } else {
+      message.lsfUrl = ''
+    }
+    if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
+      message.lsfRevision = object.lsfRevision
+    } else {
+      message.lsfRevision = 0
     }
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator

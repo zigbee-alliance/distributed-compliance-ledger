@@ -283,6 +283,30 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "LsfUrl is not valid URL",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = "not valid URL"
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl starts with http:",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = "http://sampleflowurl.dclmodel"
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl length > 256",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+				return msg
+			}(validMsgCreateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positiveTests := []struct {
@@ -495,6 +519,20 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "LsfUrl is omitted",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = ""
+				return msg
+			}(validMsgCreateModel()),
+		},
+		{
+			name: "LsfUrl length == 256",
+			msg: func(msg *MsgCreateModel) *MsgCreateModel {
+				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -722,6 +760,46 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "LsfUrl is not valid URL",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "not valid URL"
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl starts with http:",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "http://sampleflowurl.dclmodel"
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldNotValid,
+		},
+		{
+			name: "LsfUrl length > 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "LsfRevision is negative",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfRevision = -1
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldLowerBoundViolated,
+		},
+		{
+			name: "LsfRevision is greater then max uint16",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfRevision = 65536
+				return msg
+			}(validMsgUpdateModel()),
+			err: validator.ErrFieldUpperBoundViolated,
+		},
 	}
 
 	positiveTests := []struct {
@@ -890,6 +968,29 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "LsfUrl is omitted and LsfRevision is omitted 1",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = ""
+				msg.LsfRevision = 0
+				return msg
+			}(validMsgUpdateModel()),
+		},
+
+		{
+			name: "LsfUrl length == 256",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+				return msg
+			}(validMsgUpdateModel()),
+		},
+		{
+			name: "LsfRevision is set to 65535",
+			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
+				msg.LsfRevision = 65535
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -1071,6 +1172,7 @@ func validMsgCreateModel() *MsgCreateModel {
 		UserManualUrl: testconstants.UserManualUrl,
 		SupportUrl:    testconstants.SupportUrl,
 		ProductUrl:    testconstants.ProductUrl,
+		LsfUrl:        testconstants.LsfUrl,
 	}
 }
 
@@ -1088,5 +1190,7 @@ func validMsgUpdateModel() *MsgUpdateModel {
 		UserManualUrl: testconstants.UserManualUrl + "/updated",
 		SupportUrl:    testconstants.SupportUrl + "/updated",
 		ProductUrl:    testconstants.ProductUrl + "/updated",
+		LsfUrl:        testconstants.LsfUrl + "/updated",
+		LsfRevision:   testconstants.LsfRevision + 1,
 	}
 }
