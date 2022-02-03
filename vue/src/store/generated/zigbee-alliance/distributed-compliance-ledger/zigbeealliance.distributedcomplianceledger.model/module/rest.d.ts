@@ -20,6 +20,9 @@ export interface ModelModel {
     userManualUrl?: string;
     supportUrl?: string;
     productUrl?: string;
+    lsfUrl?: string;
+    /** @format int32 */
+    lsfRevision?: number;
     creator?: string;
 }
 export interface ModelModelVersion {
