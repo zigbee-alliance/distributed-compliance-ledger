@@ -37,7 +37,7 @@ COPY docs/static ./docs/static/
 
 ARG DCL_VERSION
 ARG DCL_COMMIT
-RUN make
+RUN LEDGER_ENABLED=false make
 
 ############################
 # STEP 2 build an image
