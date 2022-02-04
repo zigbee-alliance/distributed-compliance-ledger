@@ -45,4 +45,5 @@ mv "$out_file/apidocs.swagger.json" "$out_file/$DEST_FILE"
 sed -i "s/\"version\": \"version not set\"/\"version\": \"$COSMOS_SDK_VERSION\",\"description\": \"$DESC\"/g" "$out_file/$DEST_FILE"
 
 # clean swagger files
+cd ../..
 rm -rf ./tmp-swagger-gen
