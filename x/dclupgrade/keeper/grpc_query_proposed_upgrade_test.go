@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestProposedUpgradeQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProposedUpgrade(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -70,7 +70,7 @@ func TestProposedUpgradeQuerySingle(t *testing.T) {
 }
 
 func TestProposedUpgradeQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNProposedUpgrade(keeper, ctx, 5)
 
