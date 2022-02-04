@@ -72,7 +72,7 @@ test_deploy_env_build: image test_deploy_image
 	docker run -d --name ${TEST_DEPLOY_NODE} --tmpfs /tmp --tmpfs /run --tmpfs /run/lock \
 		-v /sys/fs/cgroup:/sys/fs/cgroup:ro --network ${LOCALNET_DOCKER_NETWORK} ${TEST_DEPLOY_IMAGE_NAME}
 
-test_deploy_env_clean: localnet_reset
+test_deploy_env_clean:
 	docker rm -f ${TEST_DEPLOY_NODE}
 
 .PHONY: localnet_init localnet_start localnet_stop localnet_clean localnet_export \

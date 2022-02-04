@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Possible values: all (default) | cli | light | rest | cli,light | cli,rest | light, rest | cli,light,rest
+# Possible values: all (default) | cli | light | rest | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
 TESTS_TO_RUN=${1:-all}
 
 DETAILED_OUTPUT=true
@@ -170,4 +170,15 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
 
     cleanup_pool
   done
+fi
+
+# Deploy tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "deploy" ]]; then
+    DEPLOY_SHELL_TEST="./integration_tests/deploy/test_deploy.sh"
+    if bash "$DEPLOY_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$DEPLOY_SHELL_TEST finished successfully"
+    else
+      log "$DEPLOY_SHELL_TEST failed"
+      exit 1
+    fi
 fi

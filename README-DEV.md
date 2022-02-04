@@ -192,7 +192,11 @@ Please take into account the following when sending a PR:
     Revert the default cosmos modules keeping only DCL ones.   
 
 ## Update Cosmos-sdk Version
-Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [cosmos-base-swagger-gen.sh](scripts/cosmos-base-swagger-gen.sh).
+Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [cosmos-base-swagger-gen.sh](scripts/cosmos-base-swagger-gen.sh) from the project root:
+```
+./scripts/cosmos-base-swagger-gen.sh base
+./scripts/cosmos-base-swagger-gen.sh tx
+```
 
 ## Update Tendermint Version
 Please note, that we depend on the Tendermint fork https://github.com/zigbee-alliance/tendermint/releases/tag/v0.34.140 

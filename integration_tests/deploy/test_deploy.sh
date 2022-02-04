@@ -27,6 +27,7 @@ TEST_NODE="test_deploy_node"
 random_string account
 
 cleanup() {
+    make test_deploy_env_clean
     make localnet_clean
 }
 trap cleanup EXIT
@@ -35,7 +36,7 @@ trap cleanup EXIT
 test_divider
 
 echo "Prepare the environment"
-make localnet_rebuild localnet_start
+make build install localnet_rebuild localnet_start
 make test_deploy_env_build
 # ensure that the pool is ready
 wait_for_height 2 20
@@ -71,7 +72,7 @@ docker exec -u "$DCL_USER" "$TEST_NODE" dcld tx validator add-node --pubkey="$vp
 
 echo "Check node \"$TEST_NODE\" is in the validator set"
 result=$(dcld query validator all-nodes)
-check_response "$result" "\"name\": \"$TEST_NODE\""
+check_response "$result" "\"moniker\": \"$TEST_NODE\""
 check_response "$result" "\"pubKey\":$vpubkey" raw
 
 echo "PASSED"
