@@ -31,7 +31,6 @@ func (k Keeper) ProposedUpgradeAll(c context.Context, req *types.QueryAllPropose
 		proposedUpgrades = append(proposedUpgrades, proposedUpgrade)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// SetProposedUpgrade set a specific proposedUpgrade in the store from its index
+// SetProposedUpgrade set a specific proposedUpgrade in the store from its index.
 func (k Keeper) SetProposedUpgrade(ctx sdk.Context, proposedUpgrade types.ProposedUpgrade) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedUpgradeKeyPrefix))
 	b := k.cdc.MustMarshal(&proposedUpgrade)
@@ -15,7 +15,7 @@ func (k Keeper) SetProposedUpgrade(ctx sdk.Context, proposedUpgrade types.Propos
 	), b)
 }
 
-// GetProposedUpgrade returns a proposedUpgrade from its index
+// GetProposedUpgrade returns a proposedUpgrade from its index.
 func (k Keeper) GetProposedUpgrade(
 	ctx sdk.Context,
 	name string,
@@ -34,7 +34,7 @@ func (k Keeper) GetProposedUpgrade(
 	return val, true
 }
 
-// RemoveProposedUpgrade removes a proposedUpgrade from the store
+// RemoveProposedUpgrade removes a proposedUpgrade from the store.
 func (k Keeper) RemoveProposedUpgrade(
 	ctx sdk.Context,
 	name string,
@@ -46,7 +46,7 @@ func (k Keeper) RemoveProposedUpgrade(
 	))
 }
 
-// GetAllProposedUpgrade returns all proposedUpgrade
+// GetAllProposedUpgrade returns all proposedUpgrade.
 func (k Keeper) GetAllProposedUpgrade(ctx sdk.Context) (list []types.ProposedUpgrade) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedUpgradeKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

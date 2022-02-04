@@ -14,7 +14,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// avoid unused import issue
+// avoid unused import issue.
 var (
 	_ = sample.AccAddress
 	_ = dclupgradesimulation.FindAccount
@@ -25,17 +25,17 @@ var (
 
 const (
 	opWeightMsgProposeUpgrade = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgProposeUpgrade int = 100
 
 	opWeightMsgApproveUpgrade = "op_weight_msg_create_chain"
-	// TODO: Determine the simulation weight value
+	// TODO: Determine the simulation weight value.
 	defaultWeightMsgApproveUpgrade int = 100
 
-	// this line is used by starport scaffolding # simapp/module/const
+	// this line is used by starport scaffolding # simapp/module/const.
 )
 
-// GenerateGenesisState creates a randomized GenState of the module
+// GenerateGenesisState creates a randomized GenState of the module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	accs := make([]string, len(simState.Accounts))
 	for i, acc := range simState.Accounts {
@@ -47,18 +47,17 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&dclupgradeGenesis)
 }
 
-// ProposalContents doesn't return any content functions for governance proposals
+// ProposalContents doesn't return any content functions for governance proposals.
 func (AppModule) ProposalContents(_ module.SimulationState) []simtypes.WeightedProposalContent {
 	return nil
 }
 
-// RandomizedParams creates randomized  param changes for the simulator
+// RandomizedParams creates randomized  param changes for the simulator.
 func (am AppModule) RandomizedParams(_ *rand.Rand) []simtypes.ParamChange {
-
 	return []simtypes.ParamChange{}
 }
 
-// RegisterStoreDecoder registers a decoder
+// RegisterStoreDecoder registers a decoder.
 func (am AppModule) RegisterStoreDecoder(_ sdk.StoreDecoderRegistry) {}
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
