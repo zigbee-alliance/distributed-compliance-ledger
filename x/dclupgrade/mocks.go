@@ -21,17 +21,9 @@ func (m *DclauthKeeperMock) HasRole(
 	return args.Bool(0)
 }
 
-func (m *DclauthKeeperMock) HasVendorID(
-	ctx sdk.Context,
-	addr sdk.AccAddress,
-	vid int32,
-) bool {
-	args := m.Called(ctx, addr, vid)
-	return args.Bool(0)
-}
-
 func (m *DclauthKeeperMock) CountAccountsWithRole(ctx sdk.Context, roleToCount dclauthtypes.AccountRole) int {
-	return 5
+	args := m.Called(ctx, roleToCount)
+	return args.Int(0)
 }
 
 type UpgradeKeeperMock struct {
