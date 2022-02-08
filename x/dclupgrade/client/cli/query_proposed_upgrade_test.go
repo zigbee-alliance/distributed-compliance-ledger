@@ -18,7 +18,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func networkWithProposedUpgradeObjects(t *testing.T, n int) (*network.Network, []types.ProposedUpgrade) {

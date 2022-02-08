@@ -6,7 +6,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// x/dclupgrade module sentinel errors
+// x/dclupgrade module sentinel errors.
 var (
 	ErrProposedUpgradeAlreadyExists = sdkerrors.Register(ModuleName, 801, "proposed upgrade already exists")
 	ErrProposedUpgradeDoesNotExist  = sdkerrors.Register(ModuleName, 802, "proposed upgrade does not exist")

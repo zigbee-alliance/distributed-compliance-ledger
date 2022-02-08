@@ -140,8 +140,7 @@ func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, author
 		return
 	}
 
-	childCertificates.CertIds =
-		append(childCertificates.CertIds[:certIDIndex], childCertificates.CertIds[certIDIndex+1:]...)
+	childCertificates.CertIds = append(childCertificates.CertIds[:certIDIndex], childCertificates.CertIds[certIDIndex+1:]...)
 
 	if len(childCertificates.CertIds) > 0 {
 		k.SetChildCertificates(ctx, childCertificates)
