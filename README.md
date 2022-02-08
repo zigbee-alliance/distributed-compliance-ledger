@@ -1,5 +1,8 @@
 # Distributed Compliance Ledger
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Unit Tests](https://github.com/zigbee-alliance/distributed-compliance-ledger/workflows/Go/badge.svg)](https://github.com/zigbee-alliance/distributed-compliance-ledger/actions/workflows/verify.yml)
+
 If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.md)
 
 Please note, that the only officially supported platform now is Linux.
@@ -51,6 +54,11 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
 - [gRPC](#grpc)
 - [Tendermint RPC and Light Client](#tendermint-rpc-and-light-client)
 
+**Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.**
+
+**Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for secure communication with a Node.**
+
+
 ### Public UI (Outdated, doesn't work with DCL 0.6+)
 - based on the REST API
 - can be used to browse the ledger
@@ -67,7 +75,8 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
 - A full list of all CLI commands can be found there: [transactions.md](docs/transactions.md).
 - CLI can be used for write and read requests.
 - Please configure the CLI before using (see [how-to.md](docs/how-to.md#cli-configuration)).
-- If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](#light-client-proxy) can be used.
+- **If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](#light-client-proxy) can be used.**
+
 
 ### Light Client Proxy
 Should be used if there are no trusted Observer or Validator nodes to connect.
@@ -77,9 +86,13 @@ It can be a proxy for CLI or direct requests from code done via Tendermint RPC.
 Please note, that CLI can use a Light Client proxy only for single-value query requests.
 A Full Node (Validator or Observer) should be used for multi-value query requests and write requests.
 
+Please note, that multi-value queries don't have state proofs support and should be sent to trusted node only.
+
 See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how to run it. 
 
 ### REST
+- **There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.**
+- OpenAPI specification: https://zigbee-alliance.github.io/distributed-compliance-ledger/.
 - Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html.
 - See [transactions](docs/transactions.md) for a full list of endpoints.
 - REST HTTP(S) queries can be directly used for read requests.
@@ -87,19 +100,19 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 - REST HTTP(S) queries can be directly used to broadcast generated and signed transaction.
 - Generation and signing of transactions need to be done in code or via CLI.
   See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger).
-- There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.
 
 ### gRPC
+- **There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.**
 - Any running node exposes a REST API at port `9090`. See https://docs.cosmos.network/master/core/grpc_rest.html.
 - A client code can be generated for all popular languages from the proto files [proto](proto), see https://grpc.io/docs/languages/.
 - The generated client code can be used for read and write requests, i.e. generation and signing of transactions
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
-- There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only
 
 ### Tendermint RPC and Light Client
   - Tendermint RPC is exposed by every running node  at port `26657`. See https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc.
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
-    So, if Light Client API is used, then it's possible to communicate with non-trusted nodes. 
+    So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
+  - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
   - There are currently no DC Ledger specific API libraries for various platforms and languages, 
 but they may be provided in the future.
   - The following libraries can be used as light clients: 
@@ -165,6 +178,7 @@ Please note, that these instructions describe the case when the genesis block co
 This is done just for simplicity, and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
 
 ## Useful Links 
+- [OpenAPI specification](https://zigbee-alliance.github.io/distributed-compliance-ledger/)
 - [Quick Start](docs/quickStartGuide.adoc)
 - [List of Transactions, Queries, CLI command, REST API](docs/transactions.md)
 - [How To Guide](docs/how-to.md)

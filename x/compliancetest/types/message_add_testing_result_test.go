@@ -1,10 +1,12 @@
 package types
 
 import (
+	"fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -142,6 +144,32 @@ func TestMsgAddTestingResult_ValidateBasic(t *testing.T) {
 				TestResult:            testconstants.TestResult,
 			},
 			err: ErrInvalidTestDateFormat,
+		},
+		{
+			name: "test result len > 10485760 (10 MB)",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.SoftwareVersionString,
+				TestDate:              testconstants.CertificationDate,
+				TestResult:            "https://sampleflowurl.dclauth/" + tmrand.Str(10485761-30),
+				SoftwareVersion:       testconstants.SoftwareVersion,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "software version len > 64",
+			msg: MsgAddTestingResult{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: fmt.Sprintf("1.%063d", 0),
+				TestDate:              testconstants.CertificationDate,
+				TestResult:            testconstants.TestResult,
+				SoftwareVersion:       testconstants.SoftwareVersion,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 	}
 

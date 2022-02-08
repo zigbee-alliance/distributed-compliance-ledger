@@ -5,6 +5,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 )
 
@@ -18,12 +19,14 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgProposeUpgrade{
 				Creator: "invalid_address",
+				Plan:    testconstants.Plan,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
+				Plan:    testconstants.Plan,
 			},
 		},
 	}

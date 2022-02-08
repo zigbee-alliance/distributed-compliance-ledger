@@ -42,7 +42,7 @@ func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
 		accs[i] = acc.Address.String()
 	}
 	dclupgradeGenesis := types.GenesisState{
-		// this line is used by starport scaffolding # simapp/module/genesisState
+		// this line is used by starport scaffolding # simapp/module/genesisState.
 	}
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(&dclupgradeGenesis)
 }

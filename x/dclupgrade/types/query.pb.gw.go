@@ -260,9 +260,9 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_ProposedUpgrade_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 1, 0, 4, 1, 5, 4}, []string{"zigbee-alliance", "distributedcomplianceledger", "dclupgrade", "proposed_upgrade", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedUpgrade_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "dclupgrade", "proposed-upgrades", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"zigbee-alliance", "distributedcomplianceledger", "dclupgrade", "proposed_upgrade"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "dclupgrade", "proposed-upgrades"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

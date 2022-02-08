@@ -31,7 +31,7 @@ func NewMsgCreateModel(
 	userManualUrl string,
 	supportUrl string,
 	productUrl string,
-
+	lsfUrl string,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
@@ -50,6 +50,7 @@ func NewMsgCreateModel(
 		UserManualUrl: userManualUrl,
 		SupportUrl:    supportUrl,
 		ProductUrl:    productUrl,
+		LsfUrl:        lsfUrl,
 	}
 }
 
@@ -103,6 +104,8 @@ func NewMsgUpdateModel(
 	userManualUrl string,
 	supportUrl string,
 	productUrl string,
+	lsfUrl string,
+	lsfRevision int32,
 
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
@@ -118,6 +121,8 @@ func NewMsgUpdateModel(
 		UserManualUrl: userManualUrl,
 		SupportUrl:    supportUrl,
 		ProductUrl:    productUrl,
+		LsfUrl:        lsfUrl,
+		LsfRevision:   lsfRevision,
 	}
 }
 

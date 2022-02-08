@@ -19,6 +19,8 @@ const (
 	FlagUserManualUrl                              = "userManualURL"
 	FlagSupportUrl                                 = "supportURL"
 	FlagProductUrl                                 = "productURL"
+	FlagLsfUrl                                     = "lsfURL"
+	FlagLsfRevision                                = "lsfRevision"
 
 	// Flags for ModelVersion.
 	FlagSoftwareVersion              = "softwareVersion"

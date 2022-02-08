@@ -16,6 +16,8 @@ export interface Model {
     userManualUrl: string;
     supportUrl: string;
     productUrl: string;
+    lsfUrl: string;
+    lsfRevision: number;
     creator: string;
 }
 export declare const Model: {
