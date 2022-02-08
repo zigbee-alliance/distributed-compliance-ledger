@@ -13,12 +13,12 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 service Query {
 	// Queries a ProposedUpgrade by index.
 	rpc ProposedUpgrade(QueryGetProposedUpgradeRequest) returns (QueryGetProposedUpgradeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}";
+		option (google.api.http).get = "/dcl/dclupgrade/proposed-upgrades/{name}";
 	}
 
 	// Queries a list of ProposedUpgrade items.
 	rpc ProposedUpgradeAll(QueryAllProposedUpgradeRequest) returns (QueryAllProposedUpgradeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade";
+		option (google.api.http).get = "/dcl/dclupgrade/proposed-upgrades";
 	}
 
 // this line is used by starport scaffolding # 2
