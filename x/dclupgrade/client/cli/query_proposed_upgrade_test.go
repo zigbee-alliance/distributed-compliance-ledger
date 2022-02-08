@@ -85,12 +85,11 @@ func TestShowProposedUpgrade(t *testing.T) {
 				require.ErrorIs(t, stat.Err(), tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetProposedUpgradeResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.ProposedUpgrade)
+				var proposedUpgrade types.ProposedUpgrade
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &proposedUpgrade))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.ProposedUpgrade),
+					nullify.Fill(&proposedUpgrade),
 				)
 			}
 		})
