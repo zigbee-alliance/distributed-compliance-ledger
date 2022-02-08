@@ -18,9 +18,7 @@ package dclupgrade
 import (
 	"context"
 	"testing"
-	"time"
 
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -28,7 +26,7 @@ import (
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-	sdktestdata "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/testdata"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/testdata"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
@@ -44,7 +42,6 @@ type TestSetup struct {
 	UpgradeKeeper *UpgradeKeeperMock
 	Handler       sdk.Handler
 	// Querier     sdk.Querier
-	Plan types.Plan
 }
 
 func (setup *TestSetup) AddAccount(
@@ -57,20 +54,11 @@ func (setup *TestSetup) AddAccount(
 	setup.DclauthKeeper.On("HasRole", mock.Anything, accAddress, mock.Anything).Return(false)
 }
 
-func (setup *TestSetup) ScheduleUpgradeBehavior(
-	plan types.Plan,
-	err error,
-) {
-	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, plan).Return(err)
-}
-
 func Setup(t *testing.T) TestSetup {
 	dclauthKeeper := &DclauthKeeperMock{}
 	upgradeKeeper := &UpgradeKeeperMock{}
 	keeper, ctx := testkeeper.DclupgradeKeeper(t, dclauthKeeper, upgradeKeeper)
 
-	trustee := sdktestdata.GenerateAccAddress()
-	plan := testconstants.Plan
 	setup := TestSetup{
 		T:             t,
 		Ctx:           ctx,
@@ -79,20 +67,17 @@ func Setup(t *testing.T) TestSetup {
 		DclauthKeeper: dclauthKeeper,
 		UpgradeKeeper: upgradeKeeper,
 		Handler:       NewHandler(*keeper),
-		Plan:          plan,
 	}
 
-	setup.AddAccount(trustee, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
-	setup.ScheduleUpgradeBehavior(plan, nil)
 	return setup
 }
 
 func TestHandler_ProposedUpgradeExists(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress2 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress3 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
@@ -101,9 +86,12 @@ func TestHandler_ProposedUpgradeExists(t *testing.T) {
 
 	// propose new upgrade
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
+	msgProposeUpgrade.Creator = trusteeAccAddress2.String()
 	// propose the same upgrade
 	_, err = setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.Error(t, err)
@@ -113,9 +101,9 @@ func TestHandler_ProposedUpgradeExists(t *testing.T) {
 func TestHandler_OnlyTrusteeCanProposeUpgrade(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress2 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress3 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
@@ -128,7 +116,7 @@ func TestHandler_OnlyTrusteeCanProposeUpgrade(t *testing.T) {
 		dclauthtypes.Vendor,
 		dclauthtypes.NodeAdmin,
 	} {
-		accAddress := sdktestdata.GenerateAccAddress()
+		accAddress := testdata.GenerateAccAddress()
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role})
 
 		// propose upgrade by user without Trustee role
@@ -139,32 +127,80 @@ func TestHandler_OnlyTrusteeCanProposeUpgrade(t *testing.T) {
 		setup.UpgradeKeeper.AssertNotCalled(t, "ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan)
 	}
 
-	// propose and approve upgrade by Trustees (3 Trustees, >=2/3 approvals needed)
-
 	// propose upgrade by user with Trustee role
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
+}
 
-	// approve upgrade
-	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
-	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+func TestHandler_ProposeUpgradeCacheMultiStore(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
 	setup.UpgradeKeeper.AssertCalled(
 		t,
 		"ScheduleUpgrade",
+		mock.MatchedBy(isContextWithCachedMultiStore),
+		msgProposeUpgrade.Plan,
+	)
+
+	setup.UpgradeKeeper.AssertNotCalled(
+		t,
+		"ScheduleUpgrade",
 		mock.MatchedBy(isContextWithNonCachedMultiStore),
 		msgProposeUpgrade.Plan,
 	)
+
+	// check proposed upgrade for being created
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
 }
+
+// TODO Implement this test
+// func TestHandler_UpgradePlannedOnProposal(t *testing.T) {
+// 	setup := Setup(t)
+
+// 	trusteeAccAddress1 := testdata.GenerateAccAddress()
+// 	trusteeAccAddress2 := testdata.GenerateAccAddress()
+// 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+// 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+
+// 	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(2)
+
+// 	// propose upgrade
+// 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+// 	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+// 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+// 	require.NoError(t, err)
+
+// 	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+// 	require.False(t, isFound)
+// }
 
 func TestHandler_ApproveUpgrade(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress2 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress3 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
@@ -174,6 +210,8 @@ func TestHandler_ApproveUpgrade(t *testing.T) {
 
 	// propose new upgrade
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
@@ -188,14 +226,57 @@ func TestHandler_ApproveUpgrade(t *testing.T) {
 		mock.MatchedBy(isContextWithNonCachedMultiStore),
 		msgProposeUpgrade.Plan,
 	)
+
+	// check proposed upgrade for being deleted
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+}
+
+func TestHandler_ApprovalDoesNotPlanTheUpgrade(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	trusteeAccAddress4 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress4, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(4)
+
+	// propose and approve upgrade by Trustees (3 Trustees, >=2/3 approvals needed)
+
+	// propose new upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// approve upgrade
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	require.NoError(t, err)
+
+	setup.UpgradeKeeper.AssertCalled(
+		t,
+		"ScheduleUpgrade",
+		mock.MatchedBy(isContextWithCachedMultiStore),
+		msgProposeUpgrade.Plan,
+	)
+
+	// check proposed upgrade for not being deleted
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
 }
 
 func TestHandler_OnlyTrusteeCanApproveUpgrade(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress2 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress3 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
@@ -204,6 +285,8 @@ func TestHandler_OnlyTrusteeCanApproveUpgrade(t *testing.T) {
 
 	// propose new upgrade
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
@@ -213,7 +296,7 @@ func TestHandler_OnlyTrusteeCanApproveUpgrade(t *testing.T) {
 		dclauthtypes.Vendor,
 		dclauthtypes.NodeAdmin,
 	} {
-		accAddress := sdktestdata.GenerateAccAddress()
+		accAddress := testdata.GenerateAccAddress()
 		setup.AddAccount(accAddress, []dclauthtypes.AccountRole{role})
 
 		// approve upgrade by user without Trustee role
@@ -234,14 +317,18 @@ func TestHandler_OnlyTrusteeCanApproveUpgrade(t *testing.T) {
 		mock.MatchedBy(isContextWithNonCachedMultiStore),
 		msgProposeUpgrade.Plan,
 	)
+
+	// check proposed upgrade for being deleted
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
 }
 
 func TestHandler_ProposedUpgradeDoesNotExist(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress2 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress3 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
@@ -258,9 +345,9 @@ func TestHandler_ProposedUpgradeDoesNotExist(t *testing.T) {
 func TestHandler_MessageCreatorAlreadyApprovedUpgrade(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress2 := sdktestdata.GenerateAccAddress()
-	trusteeAccAddress3 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
@@ -269,6 +356,8 @@ func TestHandler_MessageCreatorAlreadyApprovedUpgrade(t *testing.T) {
 
 	// propose new upgrade
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
@@ -279,96 +368,69 @@ func TestHandler_MessageCreatorAlreadyApprovedUpgrade(t *testing.T) {
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
 }
 
-func TestHandler_PlanHeightLessBlockHeight(t *testing.T) {
+func TestHandler_ProposeUpgradePlanHeightLessBlockHeight(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(1)
 
-	// propose new upgrade
+	// propose new upgrade with plan height < block height
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
 	msgProposeUpgrade.Plan.Height = 1
 	setup.Ctx = setup.Ctx.WithBlockHeight(100)
-	blockHeight := setup.Ctx.BlockHeight()
 
-	require.Less(t, msgProposeUpgrade.Plan.Height, blockHeight)
-
-	setup.ScheduleUpgradeBehavior(msgProposeUpgrade.Plan, sdkerrors.ErrInvalidRequest)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.Error(t, err, sdkerrors.ErrInvalidRequest)
 }
 
-func TestHandler_TimeIsNotZero(t *testing.T) {
+func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
-	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(1)
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(2)
 
 	// propose new upgrade
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
-	msgProposeUpgrade.Plan.Time = time.Now()
+	msgProposeUpgrade.Plan.Height = 2
+	setup.Ctx = setup.Ctx.WithBlockHeight(1)
 
-	require.False(t, msgProposeUpgrade.Plan.Time.IsZero())
-
-	setup.ScheduleUpgradeBehavior(msgProposeUpgrade.Plan, sdkerrors.ErrInvalidRequest)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
-	require.Error(t, err, sdkerrors.ErrInvalidRequest)
-}
+	require.NoError(t, err)
 
-func TestHandler_UpgradedClientStateNotNil(t *testing.T) {
-	setup := Setup(t)
+	// approve new upgrade with plan height < block height
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
+	setup.Ctx = setup.Ctx.WithBlockHeight(3)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
-	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(1)
-
-	// propose new upgrade
-	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
-	msgProposeUpgrade.Plan.UpgradedClientState = &codectypes.Any{TypeUrl: "123"}
-
-	require.True(t, msgProposeUpgrade.Plan.UpgradedClientState != nil)
-
-	setup.ScheduleUpgradeBehavior(msgProposeUpgrade.Plan, sdkerrors.ErrInvalidRequest)
-	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest)
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
 	require.Error(t, err, sdkerrors.ErrInvalidRequest)
 }
 
 func TestHandler_PlanNameLenIs0(t *testing.T) {
 	setup := Setup(t)
 
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(1)
 
-	// propose new upgrade
+	// propose new upgrade with plan name len = 0
 	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
 	msgProposeUpgrade.Plan.Name = ""
 
-	require.Equal(t, len(msgProposeUpgrade.Plan.Name), 0)
-
-	setup.ScheduleUpgradeBehavior(msgProposeUpgrade.Plan, sdkerrors.ErrInvalidRequest)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest)
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.Error(t, err, sdkerrors.ErrInvalidRequest)
 }
 
-func TestHandler_PlanHeightLessOrEqual0(t *testing.T) {
-	setup := Setup(t)
-
-	trusteeAccAddress1 := sdktestdata.GenerateAccAddress()
-	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
-	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(1)
-
-	// propose new upgrade
-	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
-	msgProposeUpgrade.Plan.Height = -1
-
-	require.LessOrEqual(t, msgProposeUpgrade.Plan.Height, int64(0))
-
-	setup.ScheduleUpgradeBehavior(msgProposeUpgrade.Plan, sdkerrors.ErrInvalidRequest)
-	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
-	require.Error(t, err, sdkerrors.ErrInvalidRequest)
+func isContextWithCachedMultiStore(ctx sdk.Context) bool {
+	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
+	return ok // CacheMultiStore
 }
 
 func isContextWithNonCachedMultiStore(ctx sdk.Context) bool {
