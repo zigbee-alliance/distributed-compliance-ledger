@@ -65,6 +65,14 @@ func Validate(s interface{}) error {
 		return t
 	})
 
+	_ = vl.RegisterTranslation("required_unless", trans, func(ut ut.Translator) error {
+		return ut.Add("required_unless", "{0} is required if {1}", true) // see universal-translator for details
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("required_unless", fe.Field(), strings.Replace(fe.Param(), " ", "!=", 1))
+
+		return t
+	})
+
 	vl.RegisterTranslation("gte", trans, func(ut ut.Translator) error {
 		return ut.Add("gte", "{0} must not be less than {1}", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
@@ -125,7 +133,8 @@ func Validate(s interface{}) error {
 	if errs := vl.Struct(s); errs != nil {
 		//nolint:errorlint
 		for _, e := range errs.(validator.ValidationErrors) {
-			if e.Tag() == "required" || e.Tag() == "required_with" || e.Tag() == "required_if" {
+			if e.Tag() == "required" || e.Tag() == "required_with" ||
+				e.Tag() == "required_if" || e.Tag() == "required_unless" {
 				return sdkerrors.Wrap(ErrRequiredFieldMissing, e.Translate(trans))
 			}
 

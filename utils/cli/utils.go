@@ -25,6 +25,7 @@ func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string
 	key = append([]byte(keyPrefix), key...)
 	resBytes, _, err := clientCtx.QueryStore(key, storeName)
 	// TODO: for some reasons EOF error can be returned sometimes.
+	// See https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/203
 	if isEofError(err) {
 		return clientCtx.PrintString(fmt.Sprintf("Request failed: %s. Please re-try.", err.Error()))
 	}
@@ -49,6 +50,7 @@ func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix st
 	key = append([]byte(keyPrefix), key...)
 	resBytes, _, err := clientCtx.QueryStore(key, storeName)
 	// TODO: for some reasons EOF error can be returned sometimes.
+	// See https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/203
 	if isEofError(err) {
 		return clientCtx.PrintString(fmt.Sprintf("Request failed: %s. Please re-try.", err.Error()))
 	}

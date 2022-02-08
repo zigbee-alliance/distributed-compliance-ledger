@@ -1,0 +1,179 @@
+name: release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  BIN_NAME: dcld
+
+jobs:
+
+  checks:
+    name: verify release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.current_version.outputs.version }}
+      release_info: ${{ steps.release_info.outputs.release_info }}
+      asset_bin_url: ${{ steps.release_info.outputs.asset_bin_url }}
+      asset_ubuntu_tgz_url: ${{ steps.release_info.outputs.asset_ubuntu_tgz_url }}
+      asset_macos_tgz_url: ${{ steps.release_info.outputs.asset_macos_tgz_url }}
+      asset_service_url: ${{ steps.release_info.outputs.asset_service_url }}
+      included: ${{ steps.release_info.outputs.included }}
+      matrix_os: ${{ steps.release_info.outputs.matrix_os }}
+      upload_url:  ${{ steps.release_info.outputs.upload_url }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get current version
+        id: current_version
+        run: |
+          git fetch --all --tags
+
+          tag="$(git describe --tags --exact-match)"
+          echo "$tag"
+          version="$(echo "$tag" | sed "s/^v//")"
+          echo "$version"
+
+          echo "::set-output name=version::$version"
+        shell: bash
+
+      - name: Get release info
+        id: release_info
+        run: |
+          release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
+              | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
+          echo "::set-output name=release_info::$release_info"
+          echo "$release_info"
+
+          asset_bin_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}$")) | .browser_download_url')"
+          echo "::set-output name=asset_bin_url::$asset_bin_url"
+          echo "$asset_bin_url"
+
+          asset_ubuntu_tgz_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}.ubuntu.tar.gz$")) | .browser_download_url')"
+          echo "::set-output name=asset_ubuntu_tgz_url::$asset_ubuntu_tgz_url"
+          echo "$asset_ubuntu_tgz_url"
+
+          asset_service_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}.service$")) | .browser_download_url')"
+          echo "::set-output name=asset_service_url::$asset_service_url"
+          echo "$asset_service_url"
+
+          asset_macos_tgz_url="$(echo "$release_info" \
+              | jq -r '.assets[] | select(.name | match("^${{ env.BIN_NAME }}.macos.tar.gz$")) | .browser_download_url')"
+          echo "::set-output name=asset_macos_tgz_url::$asset_macos_tgz_url"
+          echo "$asset_macos_tgz_url"
+
+          upload_url="$(echo "$release_info" | jq -r '.upload_url')"
+          echo "::set-output name=upload_url::$upload_url"
+          echo "$upload_url"
+
+          # build json string to use later as a job matrix
+          included=()
+          if [[ -z "$asset_bin_url" || -z "$asset_ubuntu_tgz_url" || -z "$asset_service_url" ]]; then
+            # os|bin-url|tgz-url|service-file-url|tgz-suffix
+            included+=("ubuntu-20.04|$asset_bin_url|$asset_ubuntu_tgz_url|$asset_service_url|.ubuntu.tar.gz")
+          fi
+          if [[ -z "$asset_macos_tgz_url" ]]; then
+            # bin and service file are not considered for macos job
+            included+=("macos-11|-||-|.macos.tar.gz")
+          fi
+
+          matrix_os="$(jq -ncR '
+              (input | split(" ")) |
+              [ .[] | split("|") | .[0] ] | if .|length > 0 then . else empty end
+            ' <<<"${included[*]}"
+          )"
+          echo "::set-output name=matrix_os::$matrix_os"
+          echo "$matrix_os"
+
+          if [[ -n "$matrix_os" ]]; then
+            included_json="$(jq -ncR '
+                (input | split(" ")) |
+                [ .[] | split("|") |
+                {"os": .[0], "bin": .[1] | length, "tgz": .[2] | length, "service": .[3] | length, "tgz_name_suffix": .[4]} ]
+              ' <<<"${included[*]}"
+            )"
+            echo "::set-output name=included::$included_json"
+            echo "$included_json"
+          fi
+
+        shell: bash
+
+      - name: check release published
+        if: ${{ !steps.release_info.outputs.release_info }}
+        run: exit 1
+
+
+  release:
+    name: Release
+    needs: checks
+    if: needs.checks.outputs.matrix_os
+    strategy:
+      matrix:
+        os: ${{ fromJson(needs.checks.outputs.matrix_os) }}
+        include: ${{ fromJson(needs.checks.outputs.included) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Go 1.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: ^1.13
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: build binary
+        if: ${{ !matrix.bin || !matrix.tgz }}
+        run: |
+          make build
+          build/${{ env.BIN_NAME }} version
+
+          tar czf build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }} -C build ${{ env.BIN_NAME }}
+        shell: bash
+
+      - name: upload to GitHub (binary)
+        if: ${{ !matrix.bin }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: build/${{ env.BIN_NAME }}
+          asset_name: ${{ env.BIN_NAME }}
+          asset_content_type: application/octet-stream  # TODO check for less generic type
+
+      - name: upload to GitHub (archived binary)
+        if: ${{ !matrix.tgz }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: build/${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }}
+          asset_name: ${{ env.BIN_NAME }}${{ matrix.tgz_name_suffix }}
+          asset_content_type: application/x-gtar
+
+      - name: upload to GitHub (service file)
+        if: ${{ !matrix.service }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.checks.outputs.upload_url }}
+          asset_path: deployment/${{ env.BIN_NAME }}.service
+          asset_name: ${{ env.BIN_NAME }}.service
+          asset_content_type: text/plain

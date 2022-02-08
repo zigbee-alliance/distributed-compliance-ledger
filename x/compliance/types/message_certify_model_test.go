@@ -1,10 +1,12 @@
 package types
 
 import (
+	fmt "fmt"
 	"testing"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -178,6 +180,34 @@ func TestMsgCertifyModel_ValidateBasic(t *testing.T) {
 				Reason:                testconstants.Reason,
 			},
 			err: ErrInvalidCertificationType,
+		},
+		{
+			name: "software version string len > 64",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: fmt.Sprintf("1.%063d", 0),
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                testconstants.Reason,
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
+		{
+			name: "reason len > 102400 (100 KB)",
+			msg: MsgCertifyModel{
+				Signer:                sample.AccAddress(),
+				Pid:                   1,
+				Vid:                   1,
+				SoftwareVersionString: testconstants.TestDate,
+				CertificationDate:     testconstants.CertificationDate,
+				CertificationType:     testconstants.CertificationType,
+				CDVersionNumber:       uint32(testconstants.CdVersionNumber),
+				Reason:                tmrand.Str(102401),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
 		},
 	}
 

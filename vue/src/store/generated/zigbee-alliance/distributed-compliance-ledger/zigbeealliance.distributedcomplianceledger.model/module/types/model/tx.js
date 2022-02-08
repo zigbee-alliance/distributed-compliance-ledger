@@ -18,7 +18,9 @@ const baseMsgCreateModel = {
     commissioningModeSecondaryStepsInstruction: '',
     userManualUrl: '',
     supportUrl: '',
-    productUrl: ''
+    productUrl: '',
+    lsfUrl: '',
+    lsfRevision: 0
 };
 export const MsgCreateModel = {
     encode(message, writer = Writer.create()) {
@@ -69,6 +71,12 @@ export const MsgCreateModel = {
         }
         if (message.productUrl !== '') {
             writer.uint32(130).string(message.productUrl);
+        }
+        if (message.lsfUrl !== '') {
+            writer.uint32(138).string(message.lsfUrl);
+        }
+        if (message.lsfRevision !== 0) {
+            writer.uint32(144).int32(message.lsfRevision);
         }
         return writer;
     },
@@ -126,6 +134,12 @@ export const MsgCreateModel = {
                     break;
                 case 16:
                     message.productUrl = reader.string();
+                    break;
+                case 17:
+                    message.lsfUrl = reader.string();
+                    break;
+                case 18:
+                    message.lsfRevision = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -232,6 +246,18 @@ export const MsgCreateModel = {
         else {
             message.productUrl = '';
         }
+        if (object.lsfUrl !== undefined && object.lsfUrl !== null) {
+            message.lsfUrl = String(object.lsfUrl);
+        }
+        else {
+            message.lsfUrl = '';
+        }
+        if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
+            message.lsfRevision = Number(object.lsfRevision);
+        }
+        else {
+            message.lsfRevision = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -254,6 +280,8 @@ export const MsgCreateModel = {
         message.userManualUrl !== undefined && (obj.userManualUrl = message.userManualUrl);
         message.supportUrl !== undefined && (obj.supportUrl = message.supportUrl);
         message.productUrl !== undefined && (obj.productUrl = message.productUrl);
+        message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl);
+        message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision);
         return obj;
     },
     fromPartial(object) {
@@ -354,6 +382,18 @@ export const MsgCreateModel = {
         else {
             message.productUrl = '';
         }
+        if (object.lsfUrl !== undefined && object.lsfUrl !== null) {
+            message.lsfUrl = object.lsfUrl;
+        }
+        else {
+            message.lsfUrl = '';
+        }
+        if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
+            message.lsfRevision = object.lsfRevision;
+        }
+        else {
+            message.lsfRevision = 0;
+        }
         return message;
     }
 };
@@ -401,7 +441,9 @@ const baseMsgUpdateModel = {
     commissioningModeSecondaryStepsInstruction: '',
     userManualUrl: '',
     supportUrl: '',
-    productUrl: ''
+    productUrl: '',
+    lsfUrl: '',
+    lsfRevision: 0
 };
 export const MsgUpdateModel = {
     encode(message, writer = Writer.create()) {
@@ -440,6 +482,12 @@ export const MsgUpdateModel = {
         }
         if (message.productUrl !== '') {
             writer.uint32(98).string(message.productUrl);
+        }
+        if (message.lsfUrl !== '') {
+            writer.uint32(106).string(message.lsfUrl);
+        }
+        if (message.lsfRevision !== 0) {
+            writer.uint32(112).int32(message.lsfRevision);
         }
         return writer;
     },
@@ -485,6 +533,12 @@ export const MsgUpdateModel = {
                     break;
                 case 12:
                     message.productUrl = reader.string();
+                    break;
+                case 13:
+                    message.lsfUrl = reader.string();
+                    break;
+                case 14:
+                    message.lsfRevision = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -567,6 +621,18 @@ export const MsgUpdateModel = {
         else {
             message.productUrl = '';
         }
+        if (object.lsfUrl !== undefined && object.lsfUrl !== null) {
+            message.lsfUrl = String(object.lsfUrl);
+        }
+        else {
+            message.lsfUrl = '';
+        }
+        if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
+            message.lsfRevision = Number(object.lsfRevision);
+        }
+        else {
+            message.lsfRevision = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -585,6 +651,8 @@ export const MsgUpdateModel = {
         message.userManualUrl !== undefined && (obj.userManualUrl = message.userManualUrl);
         message.supportUrl !== undefined && (obj.supportUrl = message.supportUrl);
         message.productUrl !== undefined && (obj.productUrl = message.productUrl);
+        message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl);
+        message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision);
         return obj;
     },
     fromPartial(object) {
@@ -660,6 +728,18 @@ export const MsgUpdateModel = {
         }
         else {
             message.productUrl = '';
+        }
+        if (object.lsfUrl !== undefined && object.lsfUrl !== null) {
+            message.lsfUrl = object.lsfUrl;
+        }
+        else {
+            message.lsfUrl = '';
+        }
+        if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
+            message.lsfRevision = object.lsfRevision;
+        }
+        else {
+            message.lsfRevision = 0;
         }
         return message;
     }

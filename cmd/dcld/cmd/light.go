@@ -31,21 +31,25 @@ import (
 // mostly copied from https://github.com/tendermint/tendermint/blob/master/cmd/tendermint/commands/light.go
 
 const (
-	FlagListenAddr   = "laddr"
-	FlagPrimary      = "primary"
-	FlagPrimaryShort = "p"
-	FlagWitness      = "witnesses"
-	FlagWitnessShort = "w"
-	FlagHeight       = "height"
-	FlagHash         = "hash"
-	FlagDir          = "dir"
-	FlagDirShort     = "d"
-	FlagLogLevel     = "log-level"
-	FlagSeq          = "sequential"
-	FlagTrustLevel   = "trust-level"
-	FlagMaxConn      = "max-open-connections"
-	FlagTrustPeriod  = "trusting-period"
-	FlagStartTimeout = "start-timeout"
+	FlagListenAddr       = "laddr"
+	FlagPrimary          = "primary"
+	FlagPrimaryShort     = "p"
+	FlagWitness          = "witnesses"
+	FlagWitnessShort     = "w"
+	FlagHeight           = "height"
+	FlagHash             = "hash"
+	FlagDir              = "dir"
+	FlagDirShort         = "d"
+	FlagLogLevel         = "log-level"
+	FlagSeq              = "sequential"
+	FlagTrustLevel       = "trust-level"
+	FlagMaxConn          = "max-open-connections"
+	FlagTrustPeriod      = "trusting-period"
+	FlagStartTimeout     = "start-timeout"
+	FlagTlsCertFile      = "tls-cert-file"
+	FlagTlsCertFileShort = "c"
+	FlagTlsKeyFile       = "tls-key-file"
+	FlagTlsKeyFileShort  = "k"
 )
 
 // LightCmd represents the base command when called without any subcommands.
@@ -97,6 +101,9 @@ var (
 	witnessesKey = []byte("witnesses")
 
 	startTimeout int64
+
+	tlsCertFile string
+	tlsKeyFile  string
 )
 
 func init() {
@@ -127,6 +134,9 @@ func init() {
 	)
 	LightCmd.Flags().Int64Var(&startTimeout, FlagStartTimeout, 0,
 		"How many seconds to wait before starting the light client proxy. Mostly for test purposes when light client is started at the same time as the pool.")
+
+	LightCmd.Flags().StringVarP(&tlsCertFile, FlagTlsCertFile, FlagTlsCertFileShort, "", "Path to the TLS certificate file")
+	LightCmd.Flags().StringVarP(&tlsKeyFile, FlagTlsKeyFile, FlagTlsKeyFileShort, "", "Path to the TLS key file")
 }
 
 func runProxy(cmd *cobra.Command, args []string) error {
@@ -252,8 +262,15 @@ func runProxy(cmd *cobra.Command, args []string) error {
 		p.Listener.Close()
 	}()
 
-	logger.Info("Starting proxy...", "laddr", listenAddr)
-	if err := p.ListenAndServe(); errors.Is(err, http.ErrServerClosed) {
+	if tlsCertFile != "" && tlsKeyFile != "" {
+		logger.Info("Starting Light Client Proxy over TLS/HTTPS...", "laddr", listenAddr)
+		err = p.ListenAndServeTLS(tlsCertFile, tlsKeyFile)
+	} else {
+		logger.Info("Starting Light Client Proxy over HTTP...", "laddr", listenAddr)
+		err = p.ListenAndServe()
+	}
+
+	if errors.Is(err, http.ErrServerClosed) {
 		// Error starting or closing listener:
 		logger.Error("proxy ListenAndServe", "err", err)
 	}

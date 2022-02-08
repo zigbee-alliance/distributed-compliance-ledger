@@ -21,6 +21,8 @@ message Model {
   string user_manual_url = 13; 
   string support_url = 14; 
   string product_url = 15; 
-  string creator = 16 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string lsf_url = 16;
+  int32 lsf_revision = 17;
+  string creator = 18 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 

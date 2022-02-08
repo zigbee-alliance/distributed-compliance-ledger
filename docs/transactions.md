@@ -52,18 +52,40 @@ an Account or sign the request.
         ```
 
 ## How to read from the Ledger
+
+No keys/account is needed as the ledger is public for reads.
+
+Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
+
+Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for secure communication with a Node.
+
 - Local CLI
-    - No keys/account is needed as the ledger is public for reads
-    - See `CLI` section for every read request.
+  - See `CLI` section for every read request.
+  - If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](running-light-client-proxy.md) can be used.
 - REST API
-    - No keys/account is needed as the ledger is public for reads
-    - See `REST API` section for every read request.   
+  - OpenAPI specification: https://zigbee-alliance.github.io/distributed-compliance-ledger/.
+  - Any running node exposes a REST API at port `1317`. See https://docs.cosmos.network/master/core/grpc_rest.html.
+  - See `REST API` section for every read request.
+  - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
+  - There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.
+- gRPC
+  - Any running node exposes a REST API at port `9090`. See https://docs.cosmos.network/master/core/grpc_rest.html.
+  - Generate a client code from the proto files [proto](../proto) for the client language (see https://grpc.io/docs/languages/).
+  - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
+  - There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.
+- Tendermint RPC
+  - Tendermint RPC OpenAPI specification can be found in https://zigbee-alliance.github.io/distributed-compliance-ledger/.
+  - Tendermint RPC is exposed by every running node  at port `26657`. See https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc.
+  - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
+    So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
+  - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
+
 
 `NotFound` (404 code) is returned if an entry is not found on the ledger.
     
 ##### Query types     
 - Query single value
-- Query list of values with pagination support
+- Query list of values with pagination support (should be sent to trusted nodes only)
 
 ##### Common pagination parameters         
 - count-total `optional(bool)`:  count total number of records 
@@ -130,6 +152,8 @@ Gets a Vendor Info for the given `vid` (vendor ID).
 
 Gets information about all vendors for all VIDs.
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -162,7 +186,8 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - commissioningModeSecondaryStepInstruction: `optional(string)` - commissioningModeSecondaryStepInstruction SHALL contain text which relates to specific values of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeSecondaryStepInstruction SHALL be set
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
-  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.
+  - lsfURL: `optional(string)` - URL to the Localized String File of this product.
 - In State:
   - `model/Model/value/<vid>/<pid>`
   - `model/VendorProducts/value/<vid>`
@@ -177,7 +202,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
 ```
  dcld tx model add-model --vid=<uint16> --pid=<uint16> --deviceTypeID=<uint16> --productName=<string> --productLabel=<string or path> --partNumber=<string> 
     --commissioningCustomFlow=<uint8> --commissioningCustomFlowUrl=<string> --commissioningModeInitialStepsHint=<uint32> --commissioningModeInitialStepsInstruction=<string>
-    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string>
+    --commissioningModeSecondaryStepsHint=<uint32> --commissioningModeSecondaryStepsInstruction=<string> --userManualURL=<string> --supportURL=<string> --productURL=<string> --lsfURL=<string>
     --from=<account>
 ```
 
@@ -205,6 +230,8 @@ All non-edited fields remain the same.
   - userManualURL: `optional(string)` - URL that contains product specific web page that contains user manual for the device model.
   - supportURL: `optional(string)` - URL that contains product specific web page that contains support details for the device model.
   - productURL: `optional(string)` - URL that contains product specific web page that contains details for the device model.  
+  - lsfURL: `optional(string)` - URL to the Localized String File of this product.
+- lsfRevision: `optional(uint32)` - LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File.
 - In State: `model/Model/value/<vid>/<pid>`
 - Who can send: 
     - Vendor account associated with the same vid who has created the model
@@ -315,6 +342,8 @@ Gets a Model Software Versions for the given `vid`, `pid` and `softwareVersion`.
 
 Gets all Model Infos for all vendors.
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -393,6 +422,8 @@ Gets a test result for the given `vid` (vendor ID), `pid` (product ID) and `soft
 **Status: Implemented**
 
 Gets all test results.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -589,6 +620,8 @@ Gets all compliant Model Versions for all vendors (`vid`s).
 
 This is the aggregation of compliance and
 revocation information for every vid/pid. It should be used in cases where compliance is tracked on ledger.
+
+Should be sent to trusted nodes only.
  
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -605,6 +638,8 @@ Gets all revoked Model Versions for all vendors (`vid`s).
 It contains information about revocation only, so it should be used in cases
  where only revocation is tracked on the ledger.
  
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -617,6 +652,7 @@ It contains information about revocation only, so it should be used in cases
 
 Gets all Model Versions in provisional state for all vendors (`vid`s).
 
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -630,6 +666,8 @@ Gets all Model Versions in provisional state for all vendors (`vid`s).
 **Status: Implemented**
 
 Gets all stored compliance information records for all vendors (`vid`s).
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -892,6 +930,8 @@ Gets all certificates (root, intermediate and leaf).
 Revoked certificates are not returned. 
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -905,6 +945,8 @@ Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 Gets all revoked certificates (both root and non-root).
    
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -917,6 +959,8 @@ Gets all revoked certificates (both root and non-root).
 
 Gets all proposed but not approved root certificates.
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -928,6 +972,8 @@ Gets all proposed but not approved root certificates.
 **Status: Implemented**
 
 Gets all proposed but not approved root certificates to be revoked.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1053,6 +1099,8 @@ Gets a proposed but not approved accounts to be revoked by its address.
 
 Gets all accounts. Revoked accounts are not returned.
 
+Should be sent to trusted nodes only.
+
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
 - CLI command: 
@@ -1064,6 +1112,8 @@ Gets all accounts. Revoked accounts are not returned.
 **Status: Implemented**
 
 Gets all proposed but not approved accounts.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1077,6 +1127,8 @@ Gets all proposed but not approved accounts.
 **Status: Implemented**
 
 Gets all proposed but not approved accounts to be revoked.
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
@@ -1135,6 +1187,8 @@ Gets the list of all validator nodes from the store.
 
 Note: All stored validator nodes (`active` and `jailed`) will be returned by default.
 In order to get an active validator set use specific command [validator set](#validator-set).
+
+Should be sent to trusted nodes only.
 
 - Parameters:
   - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
