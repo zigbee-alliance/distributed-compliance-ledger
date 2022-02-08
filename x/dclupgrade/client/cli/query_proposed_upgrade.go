@@ -12,10 +12,13 @@ import (
 
 func CmdListProposedUpgrade() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-proposed-upgrade",
-		Short: "List all proposed upgrades",
+		Use:   "all-proposed-upgrades",
+		Short: "Query the list of all proposed upgrades",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -29,6 +32,9 @@ func CmdListProposedUpgrade() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedUpgradeAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -45,8 +51,8 @@ func CmdListProposedUpgrade() *cobra.Command {
 
 func CmdShowProposedUpgrade() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-proposed-upgrade [name]",
-		Short: "Show proposed upgrade with given name",
+		Use:   "get-proposed-upgrade [name]",
+		Short: "Query proposed upgrade by name",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
