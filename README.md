@@ -39,7 +39,26 @@ In order to send write transactions to the ledger you need:
 ### Pool of Nodes
 - A network of Tendermint-based validator nodes (Validators and Observers) maintaining the ledger.
 - Every validator node (`dcld` binary) runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
-- See the proposed deployment in [deployment](docs/deployment.png).
+- See the proposed deployment in [deployment](docs/deployment.png) and [deployment-detailed](docs/deployment-detailed.png).
+
+### Node Types
+- **Full Node**: contains a full replication of data (ledger, state, etc.):
+  - **Validator Node (VN)**: a full node participating in consensus protocol (ordering transactions).
+  - **Sentry Node:** a full nodes that doesn't participate in consensus and wraps the validator node representing it for the rest of the network
+    as one of the ways for DDoS protection. 
+     - **Private Sentry Node:** connected to other Validators or Sentry nodes only; should not be accessed by clients.
+     - **Public Sentry Node:** clients and other nodes can access it; basically the same as an Observer node.
+  - **Observer Node (ON):** a full node that doesn't participate in consensus. Should be used to receive read/write requests from the clients. Technically can be a Public Sentry node. 
+- **Light Client Proxy Node**: doesn't contain a full replication of data. Can be used as a proxy to untrusted Full nodes for single-value query requests sent via CLI or Tendermint RPC. It will verify all state proofs automatically. 
+- **Seed Node**: provides a list of peers which a node can connect to. 
+
+See
+- [Deployment](docs/deployment.png)
+- [Deployment-detailed](docs/deployment-detailed.png).
+- [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
+- https://docs.tendermint.com/master/nodes/
+- https://docs.tendermint.com/master/nodes/validators.html
+- [Run Light Client Proxy](docs/running-light-client-proxy.md)
 
 ### Clients
 For interactions with the pool of nodes (sending write and read requests).
