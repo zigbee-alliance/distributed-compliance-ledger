@@ -161,7 +161,7 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
 See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](README-DEV.md). 
 
 ### Deploy a persistent pool of nodes 
-A recommended way for deployment and client connection: [diagram](docs/deployment.png)
+A recommended way for deployment and client connection: [diagram](docs/deployment.png) and [diagram-detailed](docs/deployment-detailed.png). 
 
 One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks. 
 
@@ -191,6 +191,8 @@ This is done just for simplicity, and nothing prevents you from adding more node
 - [DC Ledger Overview](docs/design/DCL-Overview.pdf)
 - [DC Ledger Architecture Details](docs/design/DCL-arch-overview.pdf)
 - [Deployment Pattern](docs/deployment.png)
+- [Deployment Pattern Detailed](docs/deployment-detailed.png)
+- [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
 - [Running a Node](docs/running-node.md)
   - [Running a Genesis Validator Node](docs/advanced/running-genesis-node.md)
   - [Running a Validator Node](docs/advanced/running-validator-node.md)
