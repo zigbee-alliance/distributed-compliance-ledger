@@ -163,7 +163,7 @@ Please take into account the following when sending a PR:
   - build proto (for example `starport chain build`). Fix compilation errors if any.
   - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
-    So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
+    So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
   - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
     Revert the default cosmos modules keeping only DCL ones.   
@@ -186,7 +186,7 @@ Please take into account the following when sending a PR:
 - Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
 - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
-  So, make sure that `runtime.AssumeColonVerbOpt(true)` in `/x/pki/types/query.pb.gw.go`. 
+  So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
   It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
 - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
     Revert the default cosmos modules keeping only DCL ones.   
