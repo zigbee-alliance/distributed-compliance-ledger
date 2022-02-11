@@ -5,5 +5,4 @@ starport scaffold module dclgenutil --dep dclauth,validator
 starport scaffold module pki --dep dclauth  
 starport scaffold module vendorinfo --dep dclauth  
 starport scaffold module model --dep dclauth  
-starport scaffold module compliancetest --dep dclauth,model  
-starport scaffold module compliance --dep dclauth,model,compliancetest
+starport scaffold module compliance --dep dclauth,model

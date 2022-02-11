@@ -15,7 +15,6 @@ import (
 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-	compliancetesttypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 	"google.golang.org/grpc/codes"
@@ -53,32 +52,15 @@ func (m *ModelKeeperMock) GetModelVersion(
 
 var _ types.ModelKeeper = &ModelKeeperMock{}
 
-type CompliancetestKeeperMock struct {
-	mock.Mock
-}
-
-func (m *CompliancetestKeeperMock) GetTestingResults(
-	ctx sdk.Context,
-	vid int32,
-	pid int32,
-	softwareVersion uint32,
-) (val compliancetesttypes.TestingResults, found bool) {
-	args := m.Called(ctx, vid, pid, softwareVersion)
-	return args.Get(0).(compliancetesttypes.TestingResults), args.Bool(1)
-}
-
-var _ types.CompliancetestKeeper = &CompliancetestKeeperMock{}
-
 type TestSetup struct {
 	T *testing.T
 	// Cdc         *amino.Codec
-	Ctx                  sdk.Context
-	Wctx                 context.Context
-	Keeper               *keeper.Keeper
-	DclauthKeeper        *DclauthKeeperMock
-	ModelKeeper          *ModelKeeperMock
-	CompliancetestKeeper *CompliancetestKeeperMock
-	Handler              sdk.Handler
+	Ctx           sdk.Context
+	Wctx          context.Context
+	Keeper        *keeper.Keeper
+	DclauthKeeper *DclauthKeeperMock
+	ModelKeeper   *ModelKeeperMock
+	Handler       sdk.Handler
 	// Querier     sdk.Querier
 	CertificationCenter sdk.AccAddress
 	CertificationTypes  types.CertificationTypes
@@ -121,47 +103,25 @@ func (setup *TestSetup) SetNoModelVersionForKey(
 	).Return(modeltypes.ModelVersion{}, false)
 }
 
-func (setup *TestSetup) AddTestingResults(vid int32, pid int32, softwareVersion uint32, softwareVersionString string) {
-	testingResults := NewTestingResults(vid, pid, softwareVersion, softwareVersionString)
-
-	setup.CompliancetestKeeper.On(
-		"GetTestingResults",
-		mock.Anything, vid, pid, softwareVersion,
-	).Return(*testingResults, true)
-}
-
-func (setup *TestSetup) SetNoTestingResultsForKey(
-	vid int32,
-	pid int32,
-	softwareVersion uint32,
-) {
-	setup.CompliancetestKeeper.On(
-		"GetTestingResults",
-		mock.Anything, vid, pid, softwareVersion,
-	).Return(compliancetesttypes.TestingResults{}, false)
-}
-
 func Setup(t *testing.T) *TestSetup {
 	dclauthKeeper := &DclauthKeeperMock{}
 	modelKeeper := &ModelKeeperMock{}
-	compliancetestKeeper := &CompliancetestKeeperMock{}
-	keeper, ctx := testkeeper.ComplianceKeeper(t, dclauthKeeper, modelKeeper, compliancetestKeeper)
+	keeper, ctx := testkeeper.ComplianceKeeper(t, dclauthKeeper, modelKeeper)
 
 	certificationCenter := GenerateAccAddress()
 
 	certificationTypes := types.CertificationTypes{types.ZigbeeCertificationType, types.MatterCertificationType}
 
 	setup := &TestSetup{
-		T:                    t,
-		Ctx:                  ctx,
-		Wctx:                 sdk.WrapSDKContext(ctx),
-		Keeper:               keeper,
-		DclauthKeeper:        dclauthKeeper,
-		ModelKeeper:          modelKeeper,
-		CompliancetestKeeper: compliancetestKeeper,
-		Handler:              NewHandler(*keeper),
-		CertificationCenter:  certificationCenter,
-		CertificationTypes:   certificationTypes,
+		T:                   t,
+		Ctx:                 ctx,
+		Wctx:                sdk.WrapSDKContext(ctx),
+		Keeper:              keeper,
+		DclauthKeeper:       dclauthKeeper,
+		ModelKeeper:         modelKeeper,
+		Handler:             NewHandler(*keeper),
+		CertificationCenter: certificationCenter,
+		CertificationTypes:  certificationTypes,
 	}
 
 	setup.AddAccount(certificationCenter, []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter})
@@ -179,9 +139,6 @@ func TestHandler_ProvisionModel(t *testing.T) {
 
 	// set absence of model version
 	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
-
-	// Set absence of testing results
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
@@ -220,12 +177,8 @@ func TestHandler_ProvisionModelByDifferentRoles(t *testing.T) {
 	// set absence of model version
 	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
 
-	// Set absence of testing results
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
 	} {
@@ -254,9 +207,6 @@ func TestHandler_ProvisionModelTwice(t *testing.T) {
 	// set absence of model version
 	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
 
-	// Set absence of testing results
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
 		provisionModelMsg := NewMsgProvisionModel(
@@ -281,9 +231,6 @@ func TestHandler_ProvisionCertifiedModel(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
-
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
 		certifyModelMsg := NewMsgCertifyModel(
@@ -307,10 +254,6 @@ func TestHandler_ProvisionRevokedModel(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
@@ -341,9 +284,6 @@ func TestHandler_ProvisionDifferentModels(t *testing.T) {
 		// set absence of model version
 		setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
 
-		// Set absence of testing results
-		setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 		for _, certificationType := range setup.CertificationTypes {
 			// provision model
 			provisionModelMsg := NewMsgProvisionModel(
@@ -366,9 +306,6 @@ func TestHandler_CertifyModel_Zigbee(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	// certify model
 	certifyModelMsg := NewMsgCertifyModel(
@@ -399,9 +336,6 @@ func TestHandler_CertifyModel_Matter(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
-
 	// certify model
 	certifyModelMsg := NewMsgCertifyModel(
 		vid, pid, softwareVersion, softwareVersionString, types.MatterCertificationType, setup.CertificationCenter)
@@ -430,9 +364,6 @@ func TestHandler_CertifyProvisionedModel(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
@@ -479,12 +410,8 @@ func TestHandler_CertifyModelByDifferentRoles(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
-
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
 	} {
@@ -513,9 +440,6 @@ func TestHandler_CertifyModelForUnknownModel(t *testing.T) {
 	// set absence of model version
 	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
 
-	// set absence of testing results
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	// try to certify model
 	for _, certificationType := range setup.CertificationTypes {
 		certifyModelMsg := NewMsgCertifyModel(
@@ -526,41 +450,12 @@ func TestHandler_CertifyModelForUnknownModel(t *testing.T) {
 	}
 }
 
-func TestHandler_CertifyModelForModelWithoutTestingResults(t *testing.T) {
-	setup := Setup(t)
-
-	// add model version
-	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
-		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// set absence of testing results
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
-	// try to certify model
-	for _, certificationType := range setup.CertificationTypes {
-		certifyModelMsg := NewMsgCertifyModel(
-			vid,
-			pid,
-			softwareVersion,
-			softwareVersionString,
-			certificationType,
-			setup.CertificationCenter,
-		)
-		_, err := setup.Handler(setup.Ctx, certifyModelMsg)
-		require.Error(t, err)
-		require.True(t, compliancetesttypes.ErrTestingResultsDoNotExist.Is(err))
-	}
-}
-
 func TestHandler_CertifyModelWithWrongSoftwareVersionString(t *testing.T) {
 	setup := Setup(t)
 
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	// try to certify model
 	for _, certificationType := range setup.CertificationTypes {
@@ -578,9 +473,6 @@ func TestHandler_CertifyModelTwice(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
@@ -605,9 +497,6 @@ func TestHandler_CertifyModelTwiceByDifferentAccounts(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
@@ -637,9 +526,6 @@ func TestHandler_CertifyDifferentModels(t *testing.T) {
 		vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 			int32(i), int32(i), uint32(i), fmt.Sprint(i))
 
-		// add testing results
-		setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
-
 		for _, certificationType := range setup.CertificationTypes {
 			// certify model
 			certifyModelMsg := NewMsgCertifyModel(
@@ -667,9 +553,6 @@ func TestHandler_CertifyProvisionedModelForCertificationDateBeforeProvisionalDat
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
-
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
 		provisionModelMsg := NewMsgProvisionModel(
@@ -694,10 +577,6 @@ func TestHandler_RevokeModel(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
@@ -731,9 +610,6 @@ func TestHandler_RevokeCertifiedModel(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
@@ -780,10 +656,6 @@ func TestHandler_RevokeProvisionedModel(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
 		provisionModelMsg := NewMsgProvisionModel(
@@ -829,13 +701,8 @@ func TestHandler_RevokeModelByDifferentRoles(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
 	} {
@@ -864,9 +731,6 @@ func TestHandler_RevokeModelForUnknownModel(t *testing.T) {
 	// set absence of model version
 	setup.SetNoModelVersionForKey(vid, pid, softwareVersion)
 
-	// set absence of testing results
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	// try to revoke model
 	for _, certificationType := range setup.CertificationTypes {
 		revokeModelMsg := NewMsgRevokeModel(
@@ -884,10 +748,6 @@ func TestHandler_RevokeModelWithWrongSoftwareVersionString(t *testing.T) {
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	// try to revoke model
 	for _, certificationType := range setup.CertificationTypes {
 		revokeModelMsg := NewMsgRevokeModel(
@@ -904,10 +764,6 @@ func TestHandler_RevokeModelTwice(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
@@ -933,10 +789,6 @@ func TestHandler_RevokeDifferentModels(t *testing.T) {
 		// add model version
 		vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 			int32(i), int32(i), uint32(i), fmt.Sprint(i))
-
-		// Set absence of testing results
-		// (Testing results are not needed for off-ledger certification approach)
-		setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 		for _, certificationType := range setup.CertificationTypes {
 			// revoke model
@@ -964,9 +816,6 @@ func TestHandler_RevokeCertifiedModelForRevocationDateBeforeCertificationDate(t 
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
@@ -997,9 +846,6 @@ func TestHandler_RevokeProvisionedModelForRevocationDateBeforeProvisionalDate(t 
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// Set absence of testing results
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	for _, certificationType := range setup.CertificationTypes {
 		// provision model
 		provisionModelMsg := NewMsgProvisionModel(
@@ -1029,10 +875,6 @@ func TestHandler_CertifyRevokedModelForCertificationDateBeforeRevocationDate(t *
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
 
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
-
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
 		revokeModelMsg := NewMsgRevokeModel(
@@ -1057,9 +899,6 @@ func TestHandler_CertifyRevokedModelThatWasCertifiedEarlier(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// add testing results
-	setup.AddTestingResults(vid, pid, softwareVersion, softwareVersionString)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// certify model
@@ -1115,10 +954,6 @@ func TestHandler_CertifyRevokedModel(t *testing.T) {
 	// add model version
 	vid, pid, softwareVersion, softwareVersionString := setup.AddModelVersion(
 		testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.SoftwareVersionString)
-
-	// Set absence of testing results
-	// (Testing results are not needed for off-ledger certification approach)
-	setup.SetNoTestingResultsForKey(vid, pid, softwareVersion)
 
 	for _, certificationType := range setup.CertificationTypes {
 		// revoke model
@@ -1386,42 +1221,6 @@ func NewModelVersion(
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
 		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl,
 		Creator:                      GenerateAccAddress().String(),
-	}
-}
-
-func NewTestingResults(
-	vid int32,
-	pid int32,
-	softwareVersion uint32,
-	softwareVersionString string,
-) *compliancetesttypes.TestingResults {
-
-	testingResult := NewTestingResult(vid, pid, softwareVersion, softwareVersionString)
-
-	return &compliancetesttypes.TestingResults{
-		Vid:                   vid,
-		Pid:                   pid,
-		SoftwareVersion:       softwareVersion,
-		Results:               []*compliancetesttypes.TestingResult{testingResult},
-		SoftwareVersionString: softwareVersionString,
-	}
-}
-
-func NewTestingResult(
-	vid int32,
-	pid int32,
-	softwareVersion uint32,
-	softwareVersionString string,
-) *compliancetesttypes.TestingResult {
-
-	return &compliancetesttypes.TestingResult{
-		Vid:                   vid,
-		Pid:                   pid,
-		SoftwareVersion:       softwareVersion,
-		SoftwareVersionString: softwareVersionString,
-		Owner:                 GenerateAccAddress().String(),
-		TestResult:            testconstants.TestResult,
-		TestDate:              testconstants.TestDate,
 	}
 }
 

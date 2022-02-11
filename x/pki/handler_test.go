@@ -90,7 +90,6 @@ func TestHandler_ProposeAddX509RootCert_ByNotTrustee(t *testing.T) {
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.NodeAdmin,
 	} {
@@ -354,7 +353,6 @@ func TestHandler_ApproveAddX509RootCert_ByNotTrustee(t *testing.T) {
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.NodeAdmin,
 	} {
@@ -403,7 +401,6 @@ func TestHandler_AddX509Cert(t *testing.T) {
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
@@ -814,7 +811,6 @@ func TestHandler_ProposeRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.NodeAdmin,
 	} {
@@ -1016,7 +1012,6 @@ func TestHandler_ApproveRevokeX509RootCert_ByNotTrustee(t *testing.T) {
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.NodeAdmin,
 	} {
@@ -1156,7 +1151,6 @@ func TestHandler_RevokeX509Cert(t *testing.T) {
 
 	for _, role := range []dclauthtypes.AccountRole{
 		dclauthtypes.Vendor,
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,

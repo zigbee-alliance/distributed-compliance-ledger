@@ -101,11 +101,6 @@ create_new_vendor_account $vendor_account $vid
 
 test_divider
 
-echo "Create TestHouse account"
-create_new_account test_house_account "TestHouse"
-
-test_divider
-
 echo "Create CertificationCenter account"
 create_new_account zb_account "CertificationCenter"
 
@@ -113,13 +108,6 @@ test_divider
 
 echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
 create_model_and_version $vid $pid $sv $svs $vendor_account
-
-test_divider
-
-echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
-result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
-check_response "$result" "\"code\": 0"
-echo "$result"
 
 test_divider
 
