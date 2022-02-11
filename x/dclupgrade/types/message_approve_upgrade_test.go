@@ -25,6 +25,14 @@ func TestMsgApproveUpgrade_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
+			name: "omitted address",
+			msg: MsgApproveUpgrade{
+				Creator: "",
+				Name:    testconstants.Plan.Name,
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		},
+		{
 			name: "Name is not set",
 			msg: MsgApproveUpgrade{
 				Creator: sample.AccAddress(),

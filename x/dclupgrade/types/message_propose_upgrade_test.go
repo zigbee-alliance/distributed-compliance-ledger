@@ -2,7 +2,9 @@ package types
 
 import (
 	"testing"
+	"time"
 
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -30,6 +32,19 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 		Info:   "Some info",
 	}
 
+	planTimeIsNot0 := Plan{
+		Name:   "Some plan name",
+		Height: 1,
+		Info:   "Some info",
+		Time:   time.Now(),
+	}
+	planUpgradedClientStateIsNotNil := Plan{
+		Name:                "Some plan name",
+		Height:              1,
+		Info:                "Some info",
+		UpgradedClientState: &codectypes.Any{TypeUrl: "333"},
+	}
+
 	// positive test constants
 
 	planNormal := testconstants.Plan
@@ -54,7 +69,15 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
-			name: "Plan len 0",
+			name: "omitted address",
+			msg: MsgProposeUpgrade{
+				Creator: "",
+				Plan:    testconstants.Plan,
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		},
+		{
+			name: "Plan name len 0",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
 				Plan:    planNameLen0,
@@ -76,6 +99,22 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 				Plan:    planHeightLess0,
 			},
 			err: sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "Plan time is not zero",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan:    planTimeIsNot0,
+			},
+			err: *sdkerrors.ErrInvalidRequest,
+		},
+		{
+			name: "Plan upgradedClientState is not nil",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan:    planUpgradedClientStateIsNotNil,
+			},
+			err: *sdkerrors.ErrInvalidRequest,
 		},
 	}
 
