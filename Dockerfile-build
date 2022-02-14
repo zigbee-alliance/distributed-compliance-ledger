@@ -15,7 +15,7 @@
 ############################
 # build app
 ############################
-FROM golang:alpine AS builder
+FROM golang:alpine
 
 # git is required for fetching the dependencies,
 # make is required for building,
