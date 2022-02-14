@@ -391,25 +391,21 @@ func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
 
 	// propose new upgrade
-	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress3)
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
 	msgProposeUpgrade.Plan.Height = 2
 	setup.Ctx = setup.Ctx.WithBlockHeight(1)
 
-	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil).Once()
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
-	// create approve messages from trustee1 and trustee2
-	msgApproveUpgrade1 := NewMsgApproveUpgrade(trusteeAccAddress1)
-	msgApproveUpgrade2 := NewMsgApproveUpgrade(trusteeAccAddress2)
+	// create approve message from trustee2
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
 
 	// approve new upgrade with plan height < block height
 	setup.Ctx = setup.Ctx.WithBlockHeight(3)
-	_, _ = setup.Handler(setup.Ctx, msgApproveUpgrade1)
-
-	// error returned because height in plan is less than block height on the approve stage
-	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest)
-	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade2)
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest).Once()
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
 	require.Error(t, err, sdkerrors.ErrInvalidRequest)
 }
 
