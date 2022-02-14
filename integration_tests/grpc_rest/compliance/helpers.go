@@ -26,7 +26,6 @@ import (
 	test_model "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/model"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
 	compliancetypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-	compliancetesttypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -367,20 +366,6 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, vendorAccount)
 
-	// Register new TestHouse account
-	testHouse := utils.RandString()
-	testHouseAccount := test_dclauth.CreateAccount(
-		suite,
-		testHouse,
-		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
-		1,
-		aliceName,
-		aliceAccount,
-		jackName,
-		jackAccount,
-	)
-	require.NotNil(suite.T, testHouseAccount)
-
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
 	certCenterAccount := test_dclauth.CreateAccount(
@@ -417,19 +402,6 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 	_, err = GetProvisionalModel(suite, vid, pid, sv, compliancetypes.ZigbeeCertificationType)
 	suite.AssertNotFound(err)
-
-	// Publish testing result
-	testingResultMsg := compliancetesttypes.MsgAddTestingResult{
-		Vid:                   vid,
-		Pid:                   pid,
-		SoftwareVersion:       sv,
-		SoftwareVersionString: svs,
-		TestResult:            "some test results 1",
-		TestDate:              "2020-01-01T00:00:00Z",
-		Signer:                testHouseAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&testingResultMsg}, testHouse, testHouseAccount)
-	require.NoError(suite.T, err)
 
 	// Certify model
 	certReason := "some reason"
@@ -556,20 +528,6 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 		jackAccount,
 	)
 	require.NotNil(suite.T, vendorAccount)
-
-	// Register new TestHouse account
-	testHouse := utils.RandString()
-	testHouseAccount := test_dclauth.CreateAccount(
-		suite,
-		testHouse,
-		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
-		1,
-		aliceName,
-		aliceAccount,
-		jackName,
-		jackAccount,
-	)
-	require.NotNil(suite.T, testHouseAccount)
 
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
@@ -724,20 +682,6 @@ func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, vendorAccount)
 
-	// Register new TestHouse account
-	testHouse := utils.RandString()
-	testHouseAccount := test_dclauth.CreateAccount(
-		suite,
-		testHouse,
-		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
-		1,
-		aliceName,
-		aliceAccount,
-		jackName,
-		jackAccount,
-	)
-	require.NotNil(suite.T, testHouseAccount)
-
 	// Register new CertificationCenter account
 	certCenter := utils.RandString()
 	certCenterAccount := test_dclauth.CreateAccount(
@@ -811,19 +755,6 @@ func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
 	// Publish modelVersion
 	firstModelVersion := test_model.NewMsgCreateModelVersion(vid, pid, sv, svs, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModelVersion}, vendorName, vendorAccount)
-	require.NoError(suite.T, err)
-
-	// Publish testing result
-	testingResultMsg := compliancetesttypes.MsgAddTestingResult{
-		Vid:                   vid,
-		Pid:                   pid,
-		SoftwareVersion:       sv,
-		SoftwareVersionString: svs,
-		TestResult:            "some test results 1",
-		TestDate:              "2020-01-01T00:00:00Z",
-		Signer:                testHouseAccount.Address,
-	}
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&testingResultMsg}, testHouse, testHouseAccount)
 	require.NoError(suite.T, err)
 
 	// Certify model

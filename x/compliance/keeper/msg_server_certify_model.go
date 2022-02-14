@@ -8,7 +8,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-	compliancetesttypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	modeltypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
@@ -57,15 +56,6 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 			return nil, types.NewErrAlreadyCertified(msg.Vid, msg.Pid, msg.SoftwareVersion, msg.CertificationType)
 		}
 
-		// check if compliance record is present because of provisioning
-		if complianceInfo.SoftwareVersionCertificationStatus == types.CodeProvisional {
-			// The corresponding test results must be present on ledger in this case.
-			_, found = k.compliancetestKeeper.GetTestingResults(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
-			if !found {
-				return nil, compliancetesttypes.NewErrTestingResultsDoNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
-			}
-		}
-
 		// if state changes on `certified` check that certification date is after provisional/revocation date
 		newDate, err := time.Parse(time.RFC3339, msg.CertificationDate)
 		if err != nil {
@@ -85,12 +75,6 @@ func (k msgServer) CertifyModel(goCtx context.Context, msg *types.MsgCertifyMode
 		complianceInfo.SetCertifiedStatus(msg.CertificationDate, msg.Reason)
 	} else {
 		// There is no compliance record yet. So certification will be tracked on ledger.
-
-		// The corresponding test results must be present on ledger.
-		_, found = k.compliancetestKeeper.GetTestingResults(ctx, msg.Vid, msg.Pid, msg.SoftwareVersion)
-		if !found {
-			return nil, compliancetesttypes.NewErrTestingResultsDoNotExist(msg.Vid, msg.Pid, msg.SoftwareVersion)
-		}
 
 		complianceInfo = types.ComplianceInfo{
 			Vid:                                msg.Vid,

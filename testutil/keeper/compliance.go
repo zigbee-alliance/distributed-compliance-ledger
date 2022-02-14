@@ -20,7 +20,6 @@ func ComplianceKeeper(
 	t testing.TB,
 	dclauthKeeper types.DclauthKeeper,
 	modelKeeper types.ModelKeeper,
-	compliancetestKeeper types.CompliancetestKeeper,
 ) (*keeper.Keeper, sdk.Context) {
 
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
@@ -39,7 +38,6 @@ func ComplianceKeeper(
 		memStoreKey,
 		dclauthKeeper,
 		modelKeeper,
-		compliancetestKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

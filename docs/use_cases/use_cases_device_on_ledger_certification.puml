@@ -3,7 +3,6 @@
 hide footbox
 
 actor Vendor as V
-actor "Test House" as T
 actor "Certification Center - CSA or ZB" as C
 actor User as U
 entity Device as D
@@ -12,8 +11,8 @@ database Ledger as L
 note over V, L
 In this case Device Certification is done on Ledger:
 - Device doesn't have any certification when issued
-- Test and Certification results can be added/revoked any time in future
-- Test and Certification results must be added on ledger (as transactions)
+- Certification results can be added/revoked any time in future
+- Certification results must be added on ledger (as transactions)
 - Device's certification needs to be checked on Ledger
 
 The Ledger is also used as a PKI.
@@ -34,20 +33,13 @@ D -> D: generate `privKey` and `pubKey`
 D -> D: X509 Device Cert `DeviceCert(vid,pid,sv)`\nwith `pubKey`, `vid`, `pid`, `sv`
 V -> D: Sign `DeviceCert` by `VendorCert(vid,pid,sv)`
 
-== 3. Test Device Compliance ==
-T -> T: Run compliance tests for the `Model(vid, pid, sv)`
-T -> L: ADD_TEST_RESULT(cid, pid, sv)
-
-== 4.1. Attest Device Compliance ==
-C <- L: GET_TEST_RESULT(vid, pid, sv)`
-C -> C: Check compliance test results
+== 3.1. Attest Device Compliance ==
 C -> L: CERTIFY_MODEL(vid, pid, sv)
 
-
-== 4.2. Revoke Device Compliance (Optional) ==
+== 3.2. Revoke Device Compliance (Optional) ==
 C -> L: REVOKE_MODEL_CERTIFICATION(vid, pid, sv)
 
-== 5. Use Device ==
+== 4. Use Device ==
 U <- D: Get `DeviceCert(vid, pid, sv)`
 U <-> D: Verify proof of privKey possession
 U <-- L: GET_X509_CERT / GET_ALL_X509_ROOT_CERTS\n or GET_ALL_X509_CERTS / GET_ALL_X509_CERTS_SINCE\nor GET_CRL\nupdate cache if needed

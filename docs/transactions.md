@@ -13,7 +13,6 @@ an Account or sign the request.
 - The following roles are supported:
   - `Trustee` - can create and approve accounts, approve root certificates.
   - `Vendor` - can add models that belong to the vendor ID associated with the vendor account.
-  - `TestHouse` - can add testing results for a model.
   - `CertificationCenter` - can certify and revoke models.
   - `NodeAdmin` - can add validator nodes to the network.
 
@@ -375,63 +374,6 @@ Gets all Model Software Versions for the given `vid` and `pid` combination.
     -   `dcld query model all-model-versions --vid=<uint16> --pid=<uint16>`
 - REST API: 
     - GET `/dcl/model/versions/{vid}/{pid}`
-
-## TEST_DEVICE_COMPLIANCE
-
-#### ADD_TEST_RESULT
-**Status: Implemented**
-
-Submits result of a compliance testing for the given Model Version (`vid`, `pid`, `softwareVersion` and `softwareVersionString`).
-The test result can be a blob of data or a reference (URL) to an external storage.
-
-The corresponding Model Version must be present on ledger.
-
-Multiple test results (potentially from different test houses) can be added for the same Model Version.
-
-The test result is immutable and can not be deleted or removed after submitting. 
-Another test result can be submitted instead.
-
-- Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-  - softwareVersionSting: `string` - model software version string 
-  - test_result: `string` - Test result (string or path to file containing data)
-  - test_date: `string` - Date of test result (rfc3339 encoded), for example 2019-10-12T07:20:50.52Z
-- In State: `compliancetest/TestingResults/value/<vid>/<pid>/<softwareVersion>`
-- Who can send: 
-    - TestHouse
-- CLI command: 
-    -   `dcld tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string-or-path> --test-date=<rfc3339 encoded date> --from=<account>`
-
-#### GET_TEST_RESULT
-**Status: Implemented**
-
-Gets a test result for the given `vid` (vendor ID), `pid` (product ID) and `softwareVersion`.
-
-- Parameters:
-  - vid: `uint16` -  model vendor ID (positive non-zero)
-  - pid: `uint16` -  model product ID (positive non-zero)
-  - softwareVersion: `uint32` - model software version
-- CLI command: 
-    -   `dcld query compliancetest test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32>`
-- REST API: 
-    -   GET `/dcl/compliancetest/testing-results/{vid}/{pid}/{softwareVersion}`
-
-#### GET_ALL_TEST_RESULTS
-**Status: Implemented**
-
-Gets all test results.
-
-Should be sent to trusted nodes only.
-
-- Parameters:
-  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
-- CLI command: 
-    -   `dcld query compliancetest all-test-results`
-- REST API: 
-    -   GET `/dcl/compliancetest/testing-results`
-
 ## CERTIFY_DEVICE_COMPLIANCE
 
 #### CERTIFY_MODEL
@@ -442,15 +384,13 @@ Attests compliance of the Model Version to the ZB or Matter standard.
 `REVOKE_MODEL_CERTIFICATION` should be used for revoking (disabling) the compliance.
 It's possible to call `CERTIFY_MODEL` for revoked model versions to enable them back. 
 
-The corresponding Model Version must be present on the ledger.
+The corresponding Model and Model Version must be present on the ledger.
 
 It must be called for every compliant device for use cases where compliance 
 is tracked on ledger.
-For such use cases the corresponding test results must be present on the ledger.
 
 It can be used for use cases where only revocation is tracked on the ledger to remove a Model Version
 from the revocation list.
-For such use cases the corresponding test results are not required to be on the ledger.
  
 - Parameters:
   - vid: `uint16` -  model vendor ID (positive non-zero)
@@ -473,7 +413,7 @@ For such use cases the corresponding test results are not required to be on the 
 
 Revoke compliance of the Model Version to the ZB or Matter standard.
 
-The corresponding Model Version must be present on the ledger. The corresponding test results are not required to be on the ledger.
+The corresponding Model and Model Version are not required to be present on the ledger.
 
 It can be used in cases where every compliance result 
 is written on the ledger (`CERTIFY_MODEL` was called), or
@@ -500,7 +440,7 @@ is written on the ledger (`CERTIFY_MODEL` was called), or
 
 Sets provisional state for the Model Version.
 
-The corresponding Model Version and test results are not required to be on the ledger.
+The corresponding Model and Model Version is required to be present in the ledger.
 
 Can not be set if there is already a certification record on the ledger (certified or revoked).
  

@@ -94,9 +94,6 @@
     "compliance": {
       "compliance_model_records": []
     },
-    "compliancetest": {
-      "testing_result_records": []
-    },
     "pki": {
       "proposed_certificates": [],
       "approved_certificates_records": [],

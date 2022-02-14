@@ -24,9 +24,6 @@ vendor_account=vendor_account_$vid
 echo "Create Vendor account - $vendor_account"
 create_new_vendor_account $vendor_account $vid
 
-echo "Create TestHouse account"
-create_new_account test_house_account "TestHouse"
-
 echo "Create CertificationCenter account"
 create_new_account zb_account "CertificationCenter"
 
@@ -215,15 +212,6 @@ create_model_and_version $vid $pid2 $sv2 $svs2 $vendor_account
 
 test_divider
 
-echo "Add Testing Result for Model VID: $vid PID: $pid2 SV: $sv2"
-testing_result="http://first.place.com"
-test_date="2020-11-24T10:00:00Z"
-result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid2 --softwareVersion=$sv2 --softwareVersionString=$svs2 --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
-check_response "$result" "\"code\": 0"
-echo "$result"
-
-test_divider
-
 echo "Certify Model with VID: $vid PID: $pid2 for Matter"
 certification_date="2021-02-02T02:20:19Z"
 certification_reason="some reason 2"
@@ -269,15 +257,6 @@ test_divider
 
 echo "Add Model and a New Model Version with VID: $vid PID: $pid SV: $sv"
 create_model_and_version $vid $pid $sv $svs $vendor_account
-
-test_divider
-
-echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv"
-testing_result="http://first.place.com"
-test_date="2020-11-24T10:00:00Z"
-result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
-check_response "$result" "\"code\": 0"
-echo "$result"
 
 test_divider
 
