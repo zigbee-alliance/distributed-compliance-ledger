@@ -32,43 +32,59 @@ cleanup() {
 }
 trap cleanup EXIT
 
-
 test_divider
 
 echo "Prepare the environment"
-make build install localnet_rebuild localnet_start
+
+GOPATH=${GOPATH:-${HOME}/go}
+GOBIN=${GOBIN:-${GOPATH}/bin}
+
+# mkdir -p "$GOBIN"
+
+# docker build -f Dockerfile-build -t dcld-build .
+# docker container create --name dcld-build-inst dcld-build
+# docker cp dcld-build-inst:/go/bin/dcld "$GOBIN"/
+# docker rm dcld-build-inst
+
+go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
+
+make install localnet_rebuild localnet_start
 make test_deploy_env_build
 # ensure that the pool is ready
 wait_for_height 2 20
 
-docker cp build/dcld "$TEST_NODE":/usr/bin
+# docker cp node0:/usr/bin/cosmovisor ./
+# rm -f cosmovisor
+
+docker cp "$GOBIN"/cosmovisor "$TEST_NODE":/usr/bin
 docker cp "$LOCALNET_DIR"/genesis.json "$TEST_NODE":"$DCL_USER_HOME"
 docker cp "$LOCALNET_DIR"/persistent_peers.txt "$TEST_NODE":"$DCL_USER_HOME"
+docker cp "$GOBIN"/dcld "$TEST_NODE":"$DCL_USER_HOME"
 docker cp deployment/scripts/run_dcl_node "$TEST_NODE":"$DCL_USER_HOME"
-docker cp deployment/dcld.service "$TEST_NODE":"$DCL_USER_HOME"
+docker cp deployment/cosmovisor.service "$TEST_NODE":"$DCL_USER_HOME"
 
 echo "Configure CLI"
 docker exec -u "$DCL_USER" "$TEST_NODE" /bin/sh -c "
-  dcld config chain-id $chain_id &&
-  dcld config output json &&
-  dcld config keyring-backend test &&
-  dcld config broadcast-mode block"
+  ./dcld config chain-id $chain_id &&
+  ./dcld config output json &&
+  ./dcld config keyring-backend test &&
+  ./dcld config broadcast-mode block"
 
 echo "Configure and start new node"
 docker exec -u "$DCL_USER" "$TEST_NODE" ./run_dcl_node -u $DCL_USER -c $chain_id $TEST_NODE
-docker exec "$TEST_NODE" systemctl status dcld
-vaddress=$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld tendermint show-address)
-vpubkey=$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld tendermint show-validator)
+docker exec "$TEST_NODE" systemctl status cosmovisor
+vaddress=$(docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld tendermint show-address)
+vpubkey=$(docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld tendermint show-validator)
 
 echo "Create and register new NodeAdmin account"
-docker exec -u "$DCL_USER" "$TEST_NODE" dcld keys add "$account"
-address="$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld keys show $account -a)"
-pubkey="$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld keys show $account -p)"
+docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld keys add "$account"
+address="$(docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld keys show $account -a)"
+pubkey="$(docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld keys show $account -p)"
 dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
 dcld tx auth approve-add-account --address="$address" --from alice --yes
 
 echo "$account Add Node \"$TEST_NODE\" to validator set"
-docker exec -u "$DCL_USER" "$TEST_NODE" dcld tx validator add-node --pubkey="$vpubkey" --moniker="$TEST_NODE" --from="$account" --yes
+docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld tx validator add-node --pubkey="$vpubkey" --moniker="$TEST_NODE" --from="$account" --yes
 
 echo "Check node \"$TEST_NODE\" is in the validator set"
 result=$(dcld query validator all-nodes)
