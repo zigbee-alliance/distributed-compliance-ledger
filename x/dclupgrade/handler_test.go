@@ -168,8 +168,11 @@ func TestHandler_ProposeUpgradeWhenSeveralVotesNeeded(t *testing.T) {
 	)
 
 	// check proposed upgrade for being created
-	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	proposedUpgrade, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.True(t, isFound)
+	require.Equal(t, proposedUpgrade.Plan, msgProposeUpgrade.Plan)
+	require.Equal(t, proposedUpgrade.Creator, msgProposeUpgrade.Creator)
+	require.Equal(t, proposedUpgrade.Approvals[0], msgProposeUpgrade.Creator)
 }
 
 // TODO Implement this test
@@ -264,6 +267,8 @@ func TestHandler_UpgradeApprovalWhenMoreVotesNeeded(t *testing.T) {
 
 	// one approval is from propose stage, another is from approve stage
 	require.Equal(t, len(upgrade.Approvals), 2)
+	require.Contains(t, upgrade.Approvals, msgApproveUpgrade.Creator)
+	require.Contains(t, upgrade.Approvals, msgProposeUpgrade.Creator)
 }
 
 func TestHandler_OnlyTrusteeCanApproveUpgrade(t *testing.T) {
@@ -379,12 +384,14 @@ func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 
 	trusteeAccAddress1 := testdata.GenerateAccAddress()
 	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
 	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
 	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
-	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(2)
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
 
 	// propose new upgrade
-	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress3)
 	msgProposeUpgrade.Plan.Height = 2
 	setup.Ctx = setup.Ctx.WithBlockHeight(1)
 
@@ -392,13 +399,17 @@ func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
+	// create approve messages from trustee1 and trustee2
+	msgApproveUpgrade1 := NewMsgApproveUpgrade(trusteeAccAddress1)
+	msgApproveUpgrade2 := NewMsgApproveUpgrade(trusteeAccAddress2)
+
 	// approve new upgrade with plan height < block height
-	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
 	setup.Ctx = setup.Ctx.WithBlockHeight(3)
+	_, _ = setup.Handler(setup.Ctx, msgApproveUpgrade1)
 
 	// error returned because height in plan is less than block height on the approve stage
 	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest)
-	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade2)
 	require.Error(t, err, sdkerrors.ErrInvalidRequest)
 }
 
