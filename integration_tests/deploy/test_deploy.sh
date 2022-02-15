@@ -39,22 +39,18 @@ echo "Prepare the environment"
 GOPATH=${GOPATH:-${HOME}/go}
 GOBIN=${GOBIN:-${GOPATH}/bin}
 
-# mkdir -p "$GOBIN"
+mkdir -p "$GOBIN"
 
-# docker build -f Dockerfile-build -t dcld-build .
-# docker container create --name dcld-build-inst dcld-build
-# docker cp dcld-build-inst:/go/bin/dcld "$GOBIN"/
-# docker rm dcld-build-inst
+docker build -f ./integration_tests/deploy/Dockerfile-build -t dcl-delpoy-build .
+docker container create --name dcl-delpoy-build-inst dcl-delpoy-build
+docker cp dcl-delpoy-build-inst:/go/bin/dcld "$GOBIN"/
+docker cp dcl-delpoy-build-inst:/go/bin/cosmovisor "$GOBIN"/
+docker rm dcl-delpoy-build-inst
 
-go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
-
-make install localnet_rebuild localnet_start
+make localnet_rebuild localnet_start
 make test_deploy_env_build
 # ensure that the pool is ready
 wait_for_height 2 20
-
-# docker cp node0:/usr/bin/cosmovisor ./
-# rm -f cosmovisor
 
 docker cp "$GOBIN"/cosmovisor "$TEST_NODE":/usr/bin
 docker cp "$LOCALNET_DIR"/genesis.json "$TEST_NODE":"$DCL_USER_HOME"
