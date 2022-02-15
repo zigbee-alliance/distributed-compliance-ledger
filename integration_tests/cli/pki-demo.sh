@@ -34,9 +34,9 @@ leaf_cert_serial_number="143290473708569835418599774898811724528308722063"
 trustee_account="jack"
 second_trustee_account="alice"
 
-echo "Create regular account"
-create_new_account user_account "TestHouse"
 
+echo "Create regular account"
+create_new_account user_account "CertificationCenter"
 test_divider
 
 # Body

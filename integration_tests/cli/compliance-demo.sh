@@ -24,11 +24,6 @@ create_new_vendor_account $vendor_account $vid
 
 test_divider
 
-echo "Create TestHouse account"
-create_new_account test_house_account "TestHouse"
-
-test_divider
-
 echo "Create CertificationCenter account"
 create_new_account zb_account "CertificationCenter"
 
@@ -73,23 +68,6 @@ test_divider
 
 echo "Add Model Version with VID: $vid PID: $pid SV: $sv SoftwareVersionString:$svs"
 result=$(echo '$passphrase' | dcld tx model add-model-version --cdVersionNumber=1 --maxApplicableSoftwareVersion=10 --minApplicableSoftwareVersion=1 --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --from=$vendor_account --yes)
-echo $result
-check_response "$result" "\"code\": 0"
-
-test_divider
-
-echo "Certify unknown Test Results with VID: $vid PID: $pid  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
-echo "$result"
-check_response "$result" "\"code\": 201"
-check_response "$result" "No testing results about the model"
-
-test_divider
-
-testing_result="http://first.place.com"
-test_date="2020-11-24T10:00:00Z"
-echo "Add Testing Result for Model VID: $vid PID: $pid SV: $sv SoftwareVersionString:$svs"
-result=$(echo "$passphrase" | dcld tx compliancetest add-test-result --vid=$vid --pid=$pid --softwareVersion=$sv --softwareVersionString=$svs --test-result="$testing_result" --test-date="$test_date" --from $test_house_account --yes)
 echo $result
 check_response "$result" "\"code\": 0"
 
