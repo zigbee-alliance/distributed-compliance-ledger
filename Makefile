@@ -91,7 +91,8 @@ LICENSED_FILES = $(shell find . -type f -not -path '*/.*' -not -name '*.md' -not
 MK_TEST = "Makefile.test"
 LOCALNET_TARGETS = image localnet_init localnet_start localnet_stop localnet_clean localnet_export localnet_reset localnet_rebuild
 TEST_DEPLOY_TARGETS = test_deploy_image test_deploy_env_build test_deploy_env_clean
-TEST_TARGETS= ${LOCALNET_TARGETS} ${TEST_DEPLOY_TARGETS}
+TEST_UPGRADE_TARGETS = localnet_init_test_upgrade
+TEST_TARGETS= ${LOCALNET_TARGETS} ${TEST_DEPLOY_TARGETS} ${TEST_UPGRADE_TARGETS}
 
 all: install
 

@@ -76,6 +76,10 @@ test_deploy_env_build: image test_deploy_image
 test_deploy_env_clean:
 	docker rm -f ${TEST_DEPLOY_NODE}
 
+localnet_init_test_upgrade: localnet_init
+	/bin/bash ./genlocalnetappbins.sh integration_tests/upgrade/Dockerfile-build dcld-upgrade-build upgrades/test-upgrade
+
 .PHONY: localnet_init localnet_start localnet_stop localnet_clean localnet_export \
 		localnet_reset localnet_rebuild \
-		test_deploy_image test_deploy_env_build test_deploy_env_clean
+		test_deploy_image test_deploy_env_build test_deploy_env_clean \
+		localnet_init_test_upgrade
