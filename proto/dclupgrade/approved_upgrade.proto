@@ -1,0 +1,11 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.dclupgrade;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
+
+message ApprovedUpgrade {
+  string name = 1; 
+  repeated string approvals = 2; 
+  
+}
+

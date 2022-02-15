@@ -1,10 +1,12 @@
 import { ProposedUpgrade } from '../dclupgrade/proposed_upgrade';
+import { ApprovedUpgrade } from '../dclupgrade/approved_upgrade';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclupgrade";
 /** GenesisState defines the dclupgrade module's genesis state. */
 export interface GenesisState {
-    /** this line is used by starport scaffolding # genesis/proto/state */
     proposedUpgradeList: ProposedUpgrade[];
+    /** this line is used by starport scaffolding # genesis/proto/state */
+    approvedUpgradeList: ApprovedUpgrade[];
 }
 export declare const GenesisState: {
     encode(message: GenesisState, writer?: Writer): Writer;

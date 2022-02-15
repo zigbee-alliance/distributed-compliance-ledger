@@ -46,6 +46,12 @@ func (k msgServer) ApproveUpgrade(goCtx context.Context, msg *types.MsgApproveUp
 		// remove proposed upgrade
 		k.RemoveProposedUpgrade(ctx, proposedUpgrade.Plan.Name)
 
+		approvedUpgrage := types.ApprovedUpgrade{
+			Name:      proposedUpgrade.Plan.Name,
+			Approvals: proposedUpgrade.Approvals,
+		}
+		k.SetApprovedUpgrade(ctx, approvedUpgrage)
+
 		// schedule upgrade
 		err = k.upgradeKeeper.ScheduleUpgrade(ctx, proposedUpgrade.Plan)
 		if err != nil {
