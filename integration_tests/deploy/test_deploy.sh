@@ -41,11 +41,11 @@ GOBIN=${GOBIN:-${GOPATH}/bin}
 
 mkdir -p "$GOBIN"
 
-docker build -f ./integration_tests/deploy/Dockerfile-build -t dcl-delpoy-build .
-docker container create --name dcl-delpoy-build-inst dcl-delpoy-build
-docker cp dcl-delpoy-build-inst:/go/bin/dcld "$GOBIN"/
-docker cp dcl-delpoy-build-inst:/go/bin/cosmovisor "$GOBIN"/
-docker rm dcl-delpoy-build-inst
+docker build -f ./integration_tests/deploy/Dockerfile-build -t dcl-deploy-build .
+docker container create --name dcl-deploy-build-inst dcl-deploy-build
+docker cp dcl-deploy-build-inst:/go/bin/dcld "$GOBIN"/
+docker cp dcl-deploy-build-inst:/go/bin/cosmovisor "$GOBIN"/
+docker rm dcl-deploy-build-inst
 
 make localnet_rebuild localnet_start
 make test_deploy_env_build
