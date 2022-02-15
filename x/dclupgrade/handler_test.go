@@ -111,7 +111,6 @@ func TestHandler_OnlyTrusteeCanProposeUpgrade(t *testing.T) {
 	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
 
 	for _, role := range []dclauthtypes.AccountRole{
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.Vendor,
 		dclauthtypes.NodeAdmin,
@@ -291,7 +290,6 @@ func TestHandler_OnlyTrusteeCanApproveUpgrade(t *testing.T) {
 	require.NoError(t, err)
 
 	for _, role := range []dclauthtypes.AccountRole{
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.Vendor,
 		dclauthtypes.NodeAdmin,
