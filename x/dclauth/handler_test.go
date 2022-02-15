@@ -95,7 +95,7 @@ func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
 	require.True(t, found)
 	require.Equal(t, address.String(), pendingAccount.Address)
-	require.Equal(t, []string{trustee1.String()}, pendingAccount.Approvals)
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
 
 	// ensure no active account created
 	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
@@ -134,8 +134,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
 	require.True(t, found)
 	require.Equal(t, address.String(), pendingAccount.Address)
-	require.Equal(t, []string{trustee1.String()}, pendingAccount.Approvals)
-
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
 	// ensure no active account created
 	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
@@ -148,7 +147,8 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	pendingAccount, found = setup.Keeper.GetPendingAccount(setup.Ctx, address)
 	require.True(t, found)
 	require.Equal(t, address.String(), pendingAccount.Address)
-	require.Equal(t, []string{trustee1.String(), trustee2.String()}, pendingAccount.Approvals)
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee2))
 
 	// ensure no active account created
 	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
@@ -365,7 +365,7 @@ func TestHandler_RevokeAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	revocation, found := setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
 	require.True(t, found)
 	require.Equal(t, address.String(), revocation.Address)
-	require.Equal(t, []string{trustee1.String()}, revocation.Approvals)
+	require.Equal(t, true, revocation.HasRevocationFrom(trustee1))
 
 	// ensure active account still exists
 	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
@@ -406,7 +406,7 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	revocation, found := setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
 	require.True(t, found)
 	require.Equal(t, address.String(), revocation.Address)
-	require.Equal(t, []string{trustee1.String()}, revocation.Approvals)
+	require.Equal(t, true, revocation.HasRevocationFrom(trustee1))
 
 	// ensure active account still exists
 	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
@@ -420,7 +420,7 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	revocation, found = setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
 	require.True(t, found)
 	require.Equal(t, address.String(), revocation.Address)
-	require.Equal(t, []string{trustee1.String(), trustee2.String()}, revocation.Approvals)
+	require.Equal(t, true, revocation.HasRevocationFrom(trustee2))
 
 	// ensure active account still exists
 	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
@@ -626,7 +626,7 @@ func storeTrustee(setup TestSetup) sdk.AccAddress {
 func storeAccountWithVendorID(setup TestSetup, role types.AccountRole, vendorID int32) sdk.AccAddress {
 	_, pubKey, address := testdata.KeyTestPubAddr()
 	ba := authtypes.NewBaseAccount(address, pubKey, 0, 0)
-	account := types.NewAccount(ba, types.AccountRoles{role}, vendorID)
+	account := types.NewAccount(ba, types.AccountRoles{role}, nil, vendorID)
 	account.AccountNumber = setup.Keeper.GetNextAccountNumber(setup.Ctx)
 	setup.Keeper.SetAccount(setup.Ctx, account)
 

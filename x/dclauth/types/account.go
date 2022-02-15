@@ -16,6 +16,7 @@ package types
 
 import (
 	"encoding/json"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -65,10 +66,11 @@ type DCLAccountI interface {
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID int32) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []Grant, vendorID int32) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
+		Approvals:   approvals,
 		VendorID:    vendorID,
 	}
 }
@@ -123,17 +125,27 @@ func (acc Account) String() string {
 
 // NewPendingAccount creates a new PendingAccount object.
 func NewPendingAccount(acc *Account, approval sdk.AccAddress) *PendingAccount {
-	return &PendingAccount{
-		Account:   acc,
-		Approvals: []string{approval.String()},
+	pendingAccount := &PendingAccount{
+		Account: acc,
 	}
+
+	pendingAccount.Approvals = nil
+	pendingAccount.Approvals = []Grant{
+		{
+			Address: approval.String(),
+			Time:    time.Now().UnixNano(),
+			Info:    "",
+		},
+	}
+
+	return pendingAccount
 }
 
 //nolint:interfacer
 func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
 	for _, approval := range acc.Approvals {
-		if approval == addrStr {
+		if approval.Address == addrStr {
 			return true
 		}
 	}
@@ -146,11 +158,18 @@ func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 */
 
 // NewPendingAccountRevocation creates a new PendingAccountRevocation object.
-func NewPendingAccountRevocation(address sdk.AccAddress, approval sdk.AccAddress) PendingAccountRevocation {
-	return PendingAccountRevocation{
-		Address:   address.String(),
-		Approvals: []string{approval.String()},
+func NewPendingAccountRevocation(address sdk.AccAddress, info string, approval sdk.AccAddress) PendingAccountRevocation {
+	pendingAccountRevocation := PendingAccountRevocation{
+		Address: address.String(),
 	}
+	pendingAccountRevocation.Revocations = []*Grant{
+		{
+			Address: approval.String(),
+			Time:    time.Now().UnixNano(),
+			Info:    info,
+		},
+	}
+	return pendingAccountRevocation
 }
 
 // String implements fmt.Stringer.
@@ -175,10 +194,10 @@ func (revoc PendingAccountRevocation) Validate() error {
 }
 
 //nolint:interfacer
-func (revoc PendingAccountRevocation) HasApprovalFrom(address sdk.AccAddress) bool {
+func (revoc PendingAccountRevocation) HasRevocationFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
-	for _, approval := range revoc.Approvals {
-		if approval == addrStr {
+	for _, revoke := range revoc.Revocations {
+		if revoke.Address == addrStr {
 			return true
 		}
 	}

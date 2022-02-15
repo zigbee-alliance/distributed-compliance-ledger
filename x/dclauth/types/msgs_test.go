@@ -109,8 +109,10 @@ func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address2, testconstants.PubKey2,
 		AccountRoles{}, testconstants.VendorID1)
 
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","pubKey":{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"}` +
-		`,"roles":[],"signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","vendorID":1000}`
+	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"",` +
+		`"pubKey":{"@type":"/cosmos.crypto.secp256k1.PubKey",` +
+		`"key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"},"roles":[],` +
+		`"signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","vendorID":1000}`
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
@@ -151,7 +153,7 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address2)
 	//nolint:goconst
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
+	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -191,7 +193,7 @@ func TestValidateMsgProposeRevokeAccount(t *testing.T) {
 func TestMsgProposeRevokeAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address2)
 
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
+	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -230,6 +232,6 @@ func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 
 func TestMsgApproveRevokeAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address2)
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
+	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
