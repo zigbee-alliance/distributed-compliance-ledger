@@ -281,7 +281,7 @@ As a general guidance you may consider to use only the peers you own and/or trus
     *   `dcld query auth account --address=<address>`
 *   Check the node is running properly:
     *   `dcld status --node tcp://<ip:port>`
-    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcld/config/config.toml`
+    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
     *   Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 *   Get the list of nodes participating in the consensus for the last block:
     *   `dcld query tendermint-validator-set`.

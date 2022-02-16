@@ -16,7 +16,7 @@
 set -eu
 set -o pipefail
 
-CONFIG_FILE="$HOME/.dcld/config/config.toml"
+CONFIG_FILE="$HOME/.dcl/config/config.toml"
 PERSISTENT_PEERS_FILE="${1:-./persistent_peers.txt}"
 PERSISTENT_PEERS="$(cat $PERSISTENT_PEERS_FILE | head -n1)"
 
