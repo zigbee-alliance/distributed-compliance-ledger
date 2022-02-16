@@ -70,7 +70,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		PemCert:      msg.Cert,
 		SerialNumber: x509Certificate.SerialNumber,
 		Owner:        msg.Signer,
-		Approvals:    []string{},
+		Approvals:    []types.Grant{},
 	}
 
 	// if signer has `RootCertificateApprovalRole` append approval
@@ -79,7 +79,12 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 	if k.dclauthKeeper.HasRole(ctx, signerAddr, types.RootCertificateApprovalRole) {
-		proposedCertificate.Approvals = append(proposedCertificate.Approvals, signerAddr.String())
+		grant := types.Grant{
+			Address: signerAddr.String(),
+			Time:    msg.Time,
+			Info:    msg.Info,
+		}
+		proposedCertificate.Approvals = append(proposedCertificate.Approvals, grant)
 	}
 
 	// store proposed certificate

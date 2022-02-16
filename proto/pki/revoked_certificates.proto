@@ -4,11 +4,12 @@ package zigbeealliance.distributedcomplianceledger.pki;
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
 import "pki/certificate.proto";
+import "gogoproto/gogo.proto";
 
 message RevokedCertificates {
   string subject = 1; 
   string subject_key_id = 2; 
   repeated Certificate certs = 3; 
-  
+  repeated bytes revocations = 4 [(gogoproto.customtype) = "Grant"];  
 }
 

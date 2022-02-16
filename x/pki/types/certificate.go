@@ -1,9 +1,7 @@
 package types
 
-import sdk "github.com/cosmos/cosmos-sdk/types"
-
 func NewRootCertificate(pemCert string, subject string, subjectKeyId string,
-	serialNumber string, owner string) Certificate {
+	serialNumber string, owner string, approvals []Grant) Certificate {
 	return Certificate{
 		PemCert:      pemCert,
 		Subject:      subject,
@@ -11,6 +9,7 @@ func NewRootCertificate(pemCert string, subject string, subjectKeyId string,
 		SerialNumber: serialNumber,
 		IsRoot:       true,
 		Owner:        owner,
+		Approvals:    approvals,
 	}
 }
 
@@ -32,20 +31,18 @@ func NewNonRootCertificate(pemCert string, subject string, subjectKeyId string, 
 	}
 }
 
-func (cert ProposedCertificate) HasApprovalFrom(address sdk.AccAddress) bool {
-	addrStr := address.String()
+func (cert ProposedCertificate) HasApprovalFrom(address string) bool {
 	for _, approval := range cert.Approvals {
-		if approval == addrStr {
+		if approval.Address == address {
 			return true
 		}
 	}
 	return false
 }
 
-func (d ProposedCertificateRevocation) HasApprovalFrom(address sdk.Address) bool {
-	addrStr := address.String()
-	for _, approval := range d.Approvals {
-		if approval == addrStr {
+func (d ProposedCertificateRevocation) HasApprovalFrom(address string) bool {
+	for _, revocation := range d.Revocations {
+		if revocation.Address == address {
 			return true
 		}
 	}

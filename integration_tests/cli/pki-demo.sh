@@ -166,8 +166,9 @@ echo "$result"
 
 test_divider
 
-echo "Request all proposed Root certificates"
+echo "Request all proposed Root certificates - There should be no approvals"
 result=$(dcld query pki all-proposed-x509-root-certs)
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
@@ -175,8 +176,9 @@ echo "$result"
 test_divider
 
 
-echo "Request proposed Root certificate"
+echo "Request proposed Root certificate - there should be no Approval"
 result=$(dcld query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -186,6 +188,7 @@ test_divider
 
 echo "Request all approved certificates must be empty"
 result=$(dcld query pki all-x509-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -195,6 +198,7 @@ test_divider
 
 echo "Approved certificate must be empty"
 result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
@@ -205,6 +209,7 @@ test_divider
 
 echo "Request all revoked certificates must be empty"
 result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -214,6 +219,7 @@ echo "$result"
 
 echo "Request all approved root certificates must be empty"
 result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
@@ -222,6 +228,7 @@ test_divider
 
 echo "Request all revoked root certificates must be empty"
 result=$(dcld query pki all-revoked-x509-root-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
@@ -230,6 +237,7 @@ test_divider
 
 echo "Request all certificates by subject must be empty"
 result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
+echo $result | jq
 response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 echo "$result"
@@ -248,8 +256,9 @@ echo "$result"
 
 test_divider
 
-echo "Certificate must be still in Proposed state. Request proposed Root certificate"
+echo "Certificate must be still in Proposed state but with Approval from $trustee_account. Request proposed Root certificate"
 result=$(dcld query pki proposed-x509-root-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -260,6 +269,7 @@ test_divider
 
 echo "Request all approved certificates must be empty"
 result=$(dcld query pki all-x509-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -274,8 +284,9 @@ echo "$result"
 
 test_divider
 
-echo "Certificate must be Approved. Request Root certificate"
+echo "Certificate must be Approved and contain 2 approvals. Request Root certificate"
 result=$(dcld query pki x509-cert --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -285,6 +296,7 @@ test_divider
 
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -292,22 +304,25 @@ echo "$result"
 
 test_divider
 
-echo "Request all approved certificates"
+echo "Request all approved certificates. It should contain one certificate with 2 approvals"
 result=$(dcld query pki all-x509-certs)
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
 test_divider
 
-echo "Request all approved root certificates"
+echo "Request all approved root certificates. It should contain one certificate with 2 approvals"
 result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 echo "$result"
 
 echo "Request all revoked certificates must be empty"
 result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -327,8 +342,9 @@ echo "$result"
 
 test_divider
 
-echo "Request Intermediate certificate"
+echo "Request Intermediate certificate - There are no approvals for Intermidiate Certificates"
 result=$(dcld query pki x509-cert --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$intermediate_cert_serial_number\""
@@ -338,6 +354,7 @@ test_divider
 
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -350,6 +367,7 @@ test_divider
 
 echo "Request all approved certificates"
 result=$(dcld query pki all-x509-certs)
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -360,6 +378,7 @@ test_divider
 
 echo "Request all approved root certificates"
 result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -381,8 +400,9 @@ echo "$result"
 
 test_divider
 
-echo "Request Leaf certificate"
+echo "Request Leaf certificate - There is no approvals on leaf certificate"
 result=$(dcld query pki x509-cert --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
@@ -422,6 +442,7 @@ test_divider
 
 echo "Request all proposed Root certificates must be empty"
 result=$(dcld query pki all-proposed-x509-root-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -436,6 +457,7 @@ test_divider
 
 echo "Request all approved certificates"
 result=$(dcld query pki all-x509-certs)
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -448,6 +470,7 @@ test_divider
 
 echo "Request all approved root certificates"
 result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
@@ -458,8 +481,9 @@ echo "$result"
 
 test_divider
 
-echo "Request all subject certificates"
+echo "Request all subject: $root_cert_subject certificates"
 result=$(dcld query pki all-subject-x509-certs --subject="$root_cert_subject")
+echo $result | jq
 check_response "$result" "\"$root_cert_subject\""
 check_response "$result" "\"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"$intermediate_cert_subject\""
@@ -470,8 +494,9 @@ echo "$result"
 
 test_divider
 
-echo "Request all subject certificates"
+echo "Request all subject:$leaf_cert_subject certificates"
 result=$(dcld query pki all-subject-x509-certs --subject="$leaf_cert_subject")
+echo $result | jq
 response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"$intermediate_cert_subject\""
@@ -482,8 +507,9 @@ echo "$result"
 
 test_divider
 
-echo "Request all subject certificates"
+echo "Request all intermediate_cert_subject:$intermediate_cert_subject certificates"
 result=$(dcld query pki all-subject-x509-certs --subject="$intermediate_cert_subject")
+echo $result | jq
 response_does_not_contain "$result" "\"$root_cert_subject\""
 response_does_not_contain "$result" "\"$root_cert_subject_key_id\""
 check_response "$result" "\"$intermediate_cert_subject\""
@@ -494,8 +520,9 @@ echo "$result"
 
 test_divider
 
-echo "Request all root certificates proposed to revoke"
+echo "Request all root certificates proposed to revoke. There should be nothing in the list"
 result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -509,8 +536,9 @@ echo "$result"
 
 test_divider
 
-echo "Request all revoked certificates"
+echo "Request all revoked certificates. There should be nothing in the list"
 result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serial_number\": \"$root_cert_serial_number\""
@@ -526,6 +554,7 @@ test_divider
 
 echo "Request all child certificates for root"
 result=$(dcld query pki all-child-x509-certs --subject="$root_cert_subject" --subject-key-id="$root_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
@@ -537,6 +566,7 @@ test_divider
 
 echo "Request all child certificates for intermediate"
 result=$(dcld query pki all-child-x509-certs --subject="$intermediate_cert_subject" --subject-key-id="$intermediate_cert_subject_key_id")
+echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
@@ -545,8 +575,9 @@ echo "$result"
 
 test_divider
 
-echo "Request all child certificates for leaf"
+echo "Request all child certificates for leaf. There should be no children"
 result=$(dcld query pki all-child-x509-certs --subject="$leaf_cert_subject" --subject-key-id="$leaf_cert_subject_key_id")
+echo $result | jq
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""

@@ -535,7 +535,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
-	require.Equal(suite.T, []string{jackAccount.Address}, proposedCertificate.Approvals)
+	require.True(suite.T, proposedCertificate.HasApprovalFrom(jackAccount.Address))
 
 	// Alice (Trustee) approve Root certificate
 	secondMsgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
@@ -775,7 +775,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	proposedCertificateRevocation, _ := GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificateRevocation.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
-	require.Equal(suite.T, []string{jackAccount.Address}, proposedCertificateRevocation.Approvals)
+	require.True(suite.T, proposedCertificateRevocation.HasRevocationFrom(jackAccount.Address))
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)

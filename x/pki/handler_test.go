@@ -144,7 +144,7 @@ func TestHandler_ProposeAddX509RootCert_ByTrustee(t *testing.T) {
 	require.Equal(t, testconstants.RootSubject, proposedCertificate.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedCertificate.SubjectKeyId)
 	require.Equal(t, testconstants.RootSerialNumber, proposedCertificate.SerialNumber)
-	require.Equal(t, []string{proposeAddX509RootCert.Signer}, proposedCertificate.Approvals)
+	require.True(t, proposedCertificate.HasApprovalFrom(proposeAddX509RootCert.Signer))
 
 	// check that unique certificate key is registered
 	require.True(t, setup.Keeper.IsUniqueCertificatePresent(
@@ -283,7 +283,7 @@ func TestHandler_ApproveAddX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	// query certificate
 	proposedCertificate, _ := queryProposedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(t, proposeAddX509RootCert.Cert, proposedCertificate.PemCert)
-	require.Equal(t, []string{setup.Trustee.String()}, proposedCertificate.Approvals)
+	require.True(t, proposedCertificate.HasApprovalFrom(setup.Trustee.String()))
 
 	// query approved certificate
 	_, err = querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -590,7 +590,7 @@ func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
 
 	// add invalid root
 	invalidRootCertificate := types.NewRootCertificate(testconstants.StubCertPem,
-		testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, setup.Trustee.String())
+		testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, setup.Trustee.String(), []types.Grant{})
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, invalidRootCertificate)
 
 	// add intermediate x509 certificate
@@ -750,7 +750,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
-	require.Equal(t, []string{setup.Trustee.String()}, proposedRevocation.Approvals)
+	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee.String()))
 
 	// check that approved certificate still exists
 	certificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -786,7 +786,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
-	require.Equal(t, []string{anotherTrustee.String()}, proposedRevocation.Approvals)
+	require.True(t, proposedRevocation.HasRevocationFrom(anotherTrustee.String()))
 
 	// check that approved certificate still exists
 	certificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -935,7 +935,8 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
-	require.Equal(t, []string{setup.Trustee.String(), anotherTrustee.String()}, proposedRevocation.Approvals)
+	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee.String()))
+	require.True(t, proposedRevocation.HasRevocationFrom(anotherTrustee.String()))
 
 	// check that approved certificate still exists
 	certificate, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
@@ -1532,6 +1533,7 @@ func rootCertificate(address sdk.AccAddress) types.Certificate {
 		testconstants.RootSubjectKeyID,
 		testconstants.RootSerialNumber,
 		address.String(),
+		[]types.Grant{},
 	)
 }
 

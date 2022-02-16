@@ -4,8 +4,9 @@ package zigbeealliance.distributedcomplianceledger.pki;
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
 import "pki/certificate_identifier.proto";
+import "gogoproto/gogo.proto";
 
 message RevokedRootCertificates {
   repeated CertificateIdentifier certs = 1; 
-  
+  repeated bytes revocations = 4 [(gogoproto.customtype) = "Grant"];  
 }

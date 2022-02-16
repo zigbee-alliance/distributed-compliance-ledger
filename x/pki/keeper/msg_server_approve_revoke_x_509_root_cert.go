@@ -31,7 +31,7 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 
 	// check if proposed certificate revocation already has approval form signer
-	if revocation.HasApprovalFrom(signerAddr) {
+	if revocation.HasApprovalFrom(signerAddr.String()) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Certificate revocation associated with subject=%v and subjectKeyID=%v combination "+
 				"already has approval from=%v",
@@ -40,10 +40,15 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 
 	// append approval
-	revocation.Approvals = append(revocation.Approvals, signerAddr.String())
+	grant := types.Grant{
+		Address: signerAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
+	revocation.Revocations = append(revocation.Revocations, grant)
 
 	// check if proposed certificate revocation has enough approvals
-	if len(revocation.Approvals) == types.RootCertificateApprovals {
+	if len(revocation.Revocations) == types.RootCertificateApprovals {
 		certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 		if !found {
 			return nil, types.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)

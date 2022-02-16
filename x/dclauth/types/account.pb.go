@@ -29,10 +29,9 @@ type Account struct {
 	// NOTE. we do not user AccountRoles casting here to preserve repeated form
 	//       so protobuf takes care about repeated items in generated code,
 	//       (but that might be not the final solution)
-	Roles []AccountRole `protobuf:"bytes,2,rep,name=roles,proto3,casttype=AccountRole" json:"roles,omitempty"`
-	// repeated Grant approvals = 3 [(gogoproto.embed) = true];
-	Approvals []Grant `protobuf:"bytes,3,rep,name=approvals,proto3,customtype=Grant" json:"approvals,omitempty"`
-	VendorID  int32   `protobuf:"varint,4,opt,name=vendorID,proto3" json:"vendorID,omitempty"`
+	Roles     []AccountRole `protobuf:"bytes,2,rep,name=roles,proto3,casttype=AccountRole" json:"roles,omitempty"`
+	Approvals []Grant       `protobuf:"bytes,3,rep,name=approvals,proto3,customtype=Grant" json:"approvals,omitempty"`
+	VendorID  int32         `protobuf:"varint,4,opt,name=vendorID,proto3" json:"vendorID,omitempty"`
 }
 
 func (m *Account) Reset()      { *m = Account{} }

@@ -31,7 +31,7 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 	}
 
 	// check if proposed certificate already has approval form signer
-	if proposedCertificate.HasApprovalFrom(signerAddr) {
+	if proposedCertificate.HasApprovalFrom(signerAddr.String()) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Certificate associated with subject=%v and subjectKeyID=%v combination "+
 				"already has approval from=%v",
@@ -40,7 +40,12 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 	}
 
 	// append approval
-	proposedCertificate.Approvals = append(proposedCertificate.Approvals, signerAddr.String())
+	grant := types.Grant{
+		Address: signerAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
+	proposedCertificate.Approvals = append(proposedCertificate.Approvals, grant)
 
 	// check if proposed certificate has enough approvals
 	if len(proposedCertificate.Approvals) == types.RootCertificateApprovals {
@@ -51,6 +56,7 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 			proposedCertificate.SubjectKeyId,
 			proposedCertificate.SerialNumber,
 			proposedCertificate.Owner,
+			proposedCertificate.Approvals,
 		)
 
 		// add approved certificate to stored list of certificates with the same Subject/SubjectKeyId combination

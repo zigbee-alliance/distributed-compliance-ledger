@@ -45,10 +45,15 @@ func (k msgServer) ProposeRevokeX509RootCert(goCtx context.Context, msg *types.M
 	}
 
 	// create new proposed certificate revocation with approval from signer
+	grant := types.Grant{
+		Address: msg.Signer,
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
 	revocation := types.ProposedCertificateRevocation{
 		Subject:      msg.Subject,
 		SubjectKeyId: msg.SubjectKeyId,
-		Approvals:    []string{msg.Signer},
+		Revocations:  []types.Grant{grant},
 	}
 
 	// store proposed certificate revocation
