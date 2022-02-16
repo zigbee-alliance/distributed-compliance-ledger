@@ -3,7 +3,7 @@
 hide footbox
 
 actor Vendor as V
-actor "Certification Center / Test House" as CC
+actor "Certification Center" as CC
 actor User as U
 entity Device as D
 database Ledger as L
@@ -22,7 +22,7 @@ note over L
 Setup PKI (see XXX):
 - Root Certificate `RootCert`
 - Vendor Certificate `VendorCert(vid,pid,sv)`
-- Certification Center /TestHouse Certificate `CCTestHouseCert`
+- Certification Center `Certification Center`
 end note
 
 == 1. Setup Model Info ==

@@ -30,13 +30,12 @@ type AccountRole string
 
 const (
 	Vendor              AccountRole = "Vendor"
-	TestHouse           AccountRole = "TestHouse"
 	CertificationCenter AccountRole = "CertificationCenter"
 	Trustee             AccountRole = "Trustee"
 	NodeAdmin           AccountRole = "NodeAdmin"
 )
 
-var Roles = AccountRoles{Vendor, TestHouse, CertificationCenter, Trustee, NodeAdmin}
+var Roles = AccountRoles{Vendor, CertificationCenter, Trustee, NodeAdmin}
 
 func (role AccountRole) Validate() error {
 	for _, r := range Roles {

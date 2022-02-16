@@ -160,7 +160,6 @@ func TestHandler_OnlyOwnerCanUpdateVendorInfo(t *testing.T) {
 	require.NoError(t, err)
 
 	for _, role := range []dclauthtypes.AccountRole{
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,
@@ -211,7 +210,6 @@ func TestHandler_AddVendorInfoByNonVendor(t *testing.T) {
 	setup := Setup(t)
 
 	for _, role := range []dclauthtypes.AccountRole{
-		dclauthtypes.TestHouse,
 		dclauthtypes.CertificationCenter,
 		dclauthtypes.Trustee,
 		dclauthtypes.NodeAdmin,

@@ -35,7 +35,7 @@ func TestGenesis(t *testing.T) {
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
-	k, ctx := keepertest.DclupgradeKeeper(t)
+	k, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	dclupgrade.InitGenesis(ctx, *k, genesisState)
 	got := dclupgrade.ExportGenesis(ctx, *k)
 	require.NotNil(t, got)

@@ -24,9 +24,6 @@ vendor_account=vendor_account_$vid
 echo "Create Vendor account - $vendor_account"
 create_new_vendor_account $vendor_account $vid
 
-echo "Create TestHouse account"
-create_new_account test_house_account "TestHouse"
-
 echo "Create CertificationCenter account"
 create_new_account zb_account "CertificationCenter"
 

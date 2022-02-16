@@ -30,7 +30,7 @@ func createNCertifiedModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 }
 
 func TestCertifiedModelGet(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	items := createNCertifiedModel(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetCertifiedModel(ctx,
@@ -48,7 +48,7 @@ func TestCertifiedModelGet(t *testing.T) {
 }
 
 func TestCertifiedModelRemove(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	items := createNCertifiedModel(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveCertifiedModel(ctx,
@@ -68,7 +68,7 @@ func TestCertifiedModelRemove(t *testing.T) {
 }
 
 func TestCertifiedModelGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil, nil)
+	keeper, ctx := keepertest.ComplianceKeeper(t, nil, nil)
 	items := createNCertifiedModel(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

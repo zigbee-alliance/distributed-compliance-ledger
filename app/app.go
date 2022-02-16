@@ -37,9 +37,6 @@ import (
 	compliancemodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance"
 	compliancemodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/keeper"
 	compliancemoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliance/types"
-	compliancetestmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest"
-	compliancetestmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/keeper"
-	compliancetestmoduletypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/compliancetest/types"
 	dclauthmodule "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/ante"
 	dclauthmodulekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
@@ -124,7 +121,6 @@ var (
 		pkimodule.AppModuleBasic{},
 		vendorinfomodule.AppModuleBasic{},
 		modelmodule.AppModuleBasic{},
-		compliancetestmodule.AppModuleBasic{},
 		compliancemodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
@@ -212,8 +208,6 @@ type App struct {
 
 	ModelKeeper modelmodulekeeper.Keeper
 
-	CompliancetestKeeper compliancetestmodulekeeper.Keeper
-
 	ComplianceKeeper compliancemodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
@@ -259,7 +253,6 @@ func New(
 		pkimoduletypes.StoreKey,
 		vendorinfomoduletypes.StoreKey,
 		modelmoduletypes.StoreKey,
-		compliancetestmoduletypes.StoreKey,
 		compliancemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -421,24 +414,12 @@ func New(
 	)
 	modelModule := modelmodule.NewAppModule(appCodec, app.ModelKeeper)
 
-	app.CompliancetestKeeper = *compliancetestmodulekeeper.NewKeeper(
-		appCodec,
-		keys[compliancetestmoduletypes.StoreKey],
-		keys[compliancetestmoduletypes.MemStoreKey],
-
-		app.DclauthKeeper,
-		app.ModelKeeper,
-	)
-	compliancetestModule := compliancetestmodule.NewAppModule(appCodec, app.CompliancetestKeeper)
-
 	app.ComplianceKeeper = *compliancemodulekeeper.NewKeeper(
 		appCodec,
 		keys[compliancemoduletypes.StoreKey],
 		keys[compliancemoduletypes.MemStoreKey],
-
 		app.DclauthKeeper,
 		app.ModelKeeper,
-		app.CompliancetestKeeper,
 	)
 	complianceModule := compliancemodule.NewAppModule(appCodec, app.ComplianceKeeper)
 
@@ -493,7 +474,6 @@ func New(
 		pkiModule,
 		vendorinfoModule,
 		modelModule,
-		compliancetestModule,
 		complianceModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -551,7 +531,6 @@ func New(
 		pkimoduletypes.ModuleName,
 		vendorinfomoduletypes.ModuleName,
 		modelmoduletypes.ModuleName,
-		compliancetestmoduletypes.ModuleName,
 		compliancemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
@@ -756,7 +735,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(pkimoduletypes.ModuleName)
 	paramsKeeper.Subspace(vendorinfomoduletypes.ModuleName)
 	paramsKeeper.Subspace(modelmoduletypes.ModuleName)
-	paramsKeeper.Subspace(compliancetestmoduletypes.ModuleName)
 	paramsKeeper.Subspace(compliancemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 

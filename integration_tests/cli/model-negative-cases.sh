@@ -19,7 +19,7 @@ source integration_tests/cli/common.sh
 # Preparation of Actors
 
 echo "Create regular account"
-create_new_account test_house_account "TestHouse"
+create_new_account certification_house "CertificationCenter"
 
 vid=$RANDOM
 pid=$RANDOM
@@ -32,7 +32,7 @@ create_new_vendor_account $vendor_account $vid
 # Ledger side errors
 
 echo "Add Model with VID: $vid PID: $pid: Not Vendor"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$test_house_account --yes)
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0 --from=$certification_house --yes)
 check_response_and_report "$result" "\"code\": 4"
 echo "$result"
 

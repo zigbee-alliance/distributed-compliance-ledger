@@ -103,7 +103,7 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	for _, role := range []dclauthtypes.AccountRole{dclauthtypes.TestHouse, dclauthtypes.CertificationCenter, dclauthtypes.Vendor, dclauthtypes.Trustee} {
+	for _, role := range []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter, dclauthtypes.Vendor, dclauthtypes.Trustee} {
 		// create signer account
 		ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 		account := dclauthtypes.NewAccount(ba, dclauthtypes.AccountRoles{role}, testconstants.VendorID1)

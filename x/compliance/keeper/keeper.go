@@ -15,9 +15,8 @@ type (
 		storeKey sdk.StoreKey
 		memKey   sdk.StoreKey
 
-		dclauthKeeper        types.DclauthKeeper
-		modelKeeper          types.ModelKeeper
-		compliancetestKeeper types.CompliancetestKeeper
+		dclauthKeeper types.DclauthKeeper
+		modelKeeper   types.ModelKeeper
 	}
 )
 
@@ -26,14 +25,14 @@ func NewKeeper(
 	storeKey,
 	memKey sdk.StoreKey,
 
-	dclauthKeeper types.DclauthKeeper, modelKeeper types.ModelKeeper, compliancetestKeeper types.CompliancetestKeeper,
+	dclauthKeeper types.DclauthKeeper, modelKeeper types.ModelKeeper,
 ) *Keeper {
 	return &Keeper{
 		cdc:      cdc,
 		storeKey: storeKey,
 		memKey:   memKey,
 
-		dclauthKeeper: dclauthKeeper, modelKeeper: modelKeeper, compliancetestKeeper: compliancetestKeeper,
+		dclauthKeeper: dclauthKeeper, modelKeeper: modelKeeper,
 	}
 }
 
