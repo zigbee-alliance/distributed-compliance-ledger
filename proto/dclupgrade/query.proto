@@ -24,12 +24,12 @@ service Query {
 
 // Queries a ApprovedUpgrade by index.
 	rpc ApprovedUpgrade(QueryGetApprovedUpgradeRequest) returns (QueryGetApprovedUpgradeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade/{name}";
+		option (google.api.http).get = "/dcl/dclupgrade/approved_upgrade/{name}";
 	}
 
 	// Queries a list of ApprovedUpgrade items.
 	rpc ApprovedUpgradeAll(QueryAllApprovedUpgradeRequest) returns (QueryAllApprovedUpgradeResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade";
+		option (google.api.http).get = "/dcl/dclupgrade/approved_upgrade";
 	}
 
 // this line is used by starport scaffolding # 2

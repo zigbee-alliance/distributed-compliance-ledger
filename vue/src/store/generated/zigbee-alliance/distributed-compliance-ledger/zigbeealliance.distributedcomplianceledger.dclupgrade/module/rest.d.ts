@@ -1,6 +1,6 @@
 export interface DclupgradeApprovedUpgrade {
-    name?: string;
-    plan?: string;
+    /** Plan specifies information about a planned upgrade and when it should occur. */
+    plan?: V1Beta1Plan;
     creator?: string;
     approvals?: string[];
 }
@@ -319,6 +319,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryApprovedUpgradeAll
+     * @summary Queries a list of ApprovedUpgrade items.
+     * @request GET:/dcl/dclupgrade/approved_upgrade
+     */
+    queryApprovedUpgradeAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryAllApprovedUpgradeResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryApprovedUpgrade
+     * @summary Queries a ApprovedUpgrade by index.
+     * @request GET:/dcl/dclupgrade/approved_upgrade/{name}
+     */
+    queryApprovedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryProposedUpgradeAll
      * @summary Queries a list of ProposedUpgrade items.
      * @request GET:/dcl/dclupgrade/proposed-upgrades
@@ -339,29 +363,5 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/dclupgrade/proposed-upgrades/{name}
      */
     queryProposedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryApprovedUpgradeAll
-     * @summary Queries a list of ApprovedUpgrade items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade
-     */
-    queryApprovedUpgradeAll: (query?: {
-        "pagination.key"?: string;
-        "pagination.offset"?: string;
-        "pagination.limit"?: string;
-        "pagination.countTotal"?: boolean;
-        "pagination.reverse"?: boolean;
-    }, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryAllApprovedUpgradeResponse, RpcStatus>>;
-    /**
-     * No description
-     *
-     * @tags Query
-     * @name QueryApprovedUpgrade
-     * @summary Queries a ApprovedUpgrade by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade/{name}
-     */
-    queryApprovedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>>;
 }
 export {};

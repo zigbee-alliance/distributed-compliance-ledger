@@ -10,8 +10,8 @@
  */
 
 export interface DclupgradeApprovedUpgrade {
-  name?: string;
-  plan?: string;
+  /** Plan specifies information about a planned upgrade and when it should occur. */
+  plan?: V1Beta1Plan;
   creator?: string;
   approvals?: string[];
 }
@@ -491,6 +491,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryApprovedUpgradeAll
+   * @summary Queries a list of ApprovedUpgrade items.
+   * @request GET:/dcl/dclupgrade/approved_upgrade
+   */
+  queryApprovedUpgradeAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<DclupgradeQueryAllApprovedUpgradeResponse, RpcStatus>({
+      path: `/dcl/dclupgrade/approved_upgrade`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryApprovedUpgrade
+   * @summary Queries a ApprovedUpgrade by index.
+   * @request GET:/dcl/dclupgrade/approved_upgrade/{name}
+   */
+  queryApprovedUpgrade = (name: string, params: RequestParams = {}) =>
+    this.request<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>({
+      path: `/dcl/dclupgrade/approved_upgrade/${name}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryProposedUpgradeAll
    * @summary Queries a list of ProposedUpgrade items.
    * @request GET:/dcl/dclupgrade/proposed-upgrades
@@ -524,48 +566,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryProposedUpgrade = (name: string, params: RequestParams = {}) =>
     this.request<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>({
       path: `/dcl/dclupgrade/proposed-upgrades/${name}`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryApprovedUpgradeAll
-   * @summary Queries a list of ApprovedUpgrade items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade
-   */
-  queryApprovedUpgradeAll = (
-    query?: {
-      "pagination.key"?: string;
-      "pagination.offset"?: string;
-      "pagination.limit"?: string;
-      "pagination.countTotal"?: boolean;
-      "pagination.reverse"?: boolean;
-    },
-    params: RequestParams = {},
-  ) =>
-    this.request<DclupgradeQueryAllApprovedUpgradeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade`,
-      method: "GET",
-      query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryApprovedUpgrade
-   * @summary Queries a ApprovedUpgrade by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade/{name}
-   */
-  queryApprovedUpgrade = (name: string, params: RequestParams = {}) =>
-    this.request<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/approved_upgrade/${name}`,
       method: "GET",
       format: "json",
       ...params,

@@ -29,7 +29,9 @@ func networkWithApprovedUpgradeObjects(t *testing.T, n int) (*network.Network, [
 
 	for i := 0; i < n; i++ {
 		approvedUpgrade := types.ApprovedUpgrade{
-			Name: strconv.Itoa(i),
+			Plan: types.Plan{
+				Name: strconv.Itoa(i),
+			},
 		}
 		nullify.Fill(&approvedUpgrade)
 		state.ApprovedUpgradeList = append(state.ApprovedUpgradeList, approvedUpgrade)
@@ -57,7 +59,7 @@ func TestShowApprovedUpgrade(t *testing.T) {
 	}{
 		{
 			desc:   "found",
-			idName: objs[0].Name,
+			idName: objs[0].Plan.Name,
 
 			args: common,
 			obj:  objs[0],

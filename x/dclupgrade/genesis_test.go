@@ -26,10 +26,14 @@ func TestGenesis(t *testing.T) {
 		},
 		ApprovedUpgradeList: []types.ApprovedUpgrade{
 			{
-				Name: "0",
+				Plan: types.Plan{
+					Name: "0",
+				},
 			},
 			{
-				Name: "1",
+				Plan: types.Plan{
+					Name: "1",
+				},
 			},
 		},
 		// this line is used by starport scaffolding # genesis/test/state

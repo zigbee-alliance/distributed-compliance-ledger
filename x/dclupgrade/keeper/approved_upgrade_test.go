@@ -18,7 +18,7 @@ var _ = strconv.IntSize
 func createNApprovedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ApprovedUpgrade {
 	items := make([]types.ApprovedUpgrade, n)
 	for i := range items {
-		items[i].Name = strconv.Itoa(i)
+		items[i].Plan.Name = strconv.Itoa(i)
 
 		keeper.SetApprovedUpgrade(ctx, items[i])
 	}
@@ -26,11 +26,11 @@ func createNApprovedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []typ
 }
 
 func TestApprovedUpgradeGet(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNApprovedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetApprovedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -40,21 +40,21 @@ func TestApprovedUpgradeGet(t *testing.T) {
 	}
 }
 func TestApprovedUpgradeRemove(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNApprovedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveApprovedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		_, found := keeper.GetApprovedUpgrade(ctx,
-			item.Name,
+			item.Plan.Name,
 		)
 		require.False(t, found)
 	}
 }
 
 func TestApprovedUpgradeGetAll(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNApprovedUpgrade(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

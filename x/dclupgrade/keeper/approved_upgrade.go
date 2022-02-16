@@ -11,7 +11,7 @@ func (k Keeper) SetApprovedUpgrade(ctx sdk.Context, approvedUpgrade types.Approv
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedUpgradeKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedUpgrade)
 	store.Set(types.ApprovedUpgradeKey(
-		approvedUpgrade.Name,
+		approvedUpgrade.Plan.Name,
 	), b)
 }
 

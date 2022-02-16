@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestApprovedUpgradeQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNApprovedUpgrade(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -31,14 +31,14 @@ func TestApprovedUpgradeQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetApprovedUpgradeRequest{
-				Name: msgs[0].Name,
+				Name: msgs[0].Plan.Name,
 			},
 			response: &types.QueryGetApprovedUpgradeResponse{ApprovedUpgrade: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetApprovedUpgradeRequest{
-				Name: msgs[1].Name,
+				Name: msgs[1].Plan.Name,
 			},
 			response: &types.QueryGetApprovedUpgradeResponse{ApprovedUpgrade: msgs[1]},
 		},
@@ -70,7 +70,7 @@ func TestApprovedUpgradeQuerySingle(t *testing.T) {
 }
 
 func TestApprovedUpgradeQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNApprovedUpgrade(keeper, ctx, 5)
 

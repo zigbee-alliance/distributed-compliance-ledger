@@ -1,30 +1,27 @@
 /* eslint-disable */
+import { Plan } from '../cosmos/upgrade/v1beta1/upgrade'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclupgrade'
 
 export interface ApprovedUpgrade {
-  name: string
-  plan: string
+  plan: Plan | undefined
   creator: string
   approvals: string[]
 }
 
-const baseApprovedUpgrade: object = { name: '', plan: '', creator: '', approvals: '' }
+const baseApprovedUpgrade: object = { creator: '', approvals: '' }
 
 export const ApprovedUpgrade = {
   encode(message: ApprovedUpgrade, writer: Writer = Writer.create()): Writer {
-    if (message.name !== '') {
-      writer.uint32(10).string(message.name)
-    }
-    if (message.plan !== '') {
-      writer.uint32(18).string(message.plan)
+    if (message.plan !== undefined) {
+      Plan.encode(message.plan, writer.uint32(10).fork()).ldelim()
     }
     if (message.creator !== '') {
-      writer.uint32(26).string(message.creator)
+      writer.uint32(18).string(message.creator)
     }
     for (const v of message.approvals) {
-      writer.uint32(34).string(v!)
+      writer.uint32(26).string(v!)
     }
     return writer
   },
@@ -38,15 +35,12 @@ export const ApprovedUpgrade = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.name = reader.string()
+          message.plan = Plan.decode(reader, reader.uint32())
           break
         case 2:
-          message.plan = reader.string()
-          break
-        case 3:
           message.creator = reader.string()
           break
-        case 4:
+        case 3:
           message.approvals.push(reader.string())
           break
         default:
@@ -60,15 +54,10 @@ export const ApprovedUpgrade = {
   fromJSON(object: any): ApprovedUpgrade {
     const message = { ...baseApprovedUpgrade } as ApprovedUpgrade
     message.approvals = []
-    if (object.name !== undefined && object.name !== null) {
-      message.name = String(object.name)
-    } else {
-      message.name = ''
-    }
     if (object.plan !== undefined && object.plan !== null) {
-      message.plan = String(object.plan)
+      message.plan = Plan.fromJSON(object.plan)
     } else {
-      message.plan = ''
+      message.plan = undefined
     }
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator)
@@ -85,8 +74,7 @@ export const ApprovedUpgrade = {
 
   toJSON(message: ApprovedUpgrade): unknown {
     const obj: any = {}
-    message.name !== undefined && (obj.name = message.name)
-    message.plan !== undefined && (obj.plan = message.plan)
+    message.plan !== undefined && (obj.plan = message.plan ? Plan.toJSON(message.plan) : undefined)
     message.creator !== undefined && (obj.creator = message.creator)
     if (message.approvals) {
       obj.approvals = message.approvals.map((e) => e)
@@ -99,15 +87,10 @@ export const ApprovedUpgrade = {
   fromPartial(object: DeepPartial<ApprovedUpgrade>): ApprovedUpgrade {
     const message = { ...baseApprovedUpgrade } as ApprovedUpgrade
     message.approvals = []
-    if (object.name !== undefined && object.name !== null) {
-      message.name = object.name
-    } else {
-      message.name = ''
-    }
     if (object.plan !== undefined && object.plan !== null) {
-      message.plan = object.plan
+      message.plan = Plan.fromPartial(object.plan)
     } else {
-      message.plan = ''
+      message.plan = undefined
     }
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator
