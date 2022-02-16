@@ -1,8 +1,7 @@
 
 # TestNet 2.0 Launch Guide
 
-This document is a step-by-step guide for DCL TestNet 2.0 launch ceremony and describes in details the following
-stages:
+This document is a step-by-step guide for DCL TestNet 2.0 launch ceremony. It  describes the following stages in details:
 
 * Pre-Ceremony 
 * Ceremony
@@ -16,14 +15,16 @@ The following steps are expected to be done **before** the ceremony.
 
 1. **Configure VN Node**
 
-   1.1. Ensure a DCL user is in sudoers list (required only for the ceremony):
+   1.1. `Ubuntu 20.04 LTS` is recommended.
+
+   1.2. Ensure a DCL user is in sudoers list (required only for the ceremony):
     *   Note. by default `ubuntu` user is expected as a running user for the DCL service.
         You can use/create another one if it doesn't work for you. In any case you will need to ensure
         that the user can do `sudo`.
 
-   1.2. Login as a DCL user
+   1.3. Login as a DCL user
 
-   1.3. (Optional) Clean up the system
+   1.4. (Optional) Clean up the system
 
     ```bash
     $ sudo systemctl stop dcld
@@ -31,7 +32,7 @@ The following steps are expected to be done **before** the ceremony.
     $ rm -rf "$HOME/.dcl"
     ```
 
-   1.4. Get the release artifacts:
+   1.5. Get the release artifacts:
 
     ```bash
     $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/dcld
@@ -40,7 +41,7 @@ The following steps are expected to be done **before** the ceremony.
     $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/update_peers
     ```
 
-    1.5. Put `dlcd` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`) and set a proper owner and executable permissions. 
+    1.6. Put `dlcd` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`) and set a proper owner and executable permissions. 
     
     ```bash
     $ sudo cp -f ./dcld -t /usr/bin
@@ -50,7 +51,7 @@ The following steps are expected to be done **before** the ceremony.
     $ dcld version
     ```
 
-    1.6. Configure the firewall
+    1.7. Configure the firewall
      * p2p and RPC (by default: `26656` and `26657` respectively) should be available for TCP connections.
        For Ubuntu:
 
@@ -86,7 +87,7 @@ The following steps are expected to be done **before** the ceremony.
     dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
     ```
 
-    **IMPORTANT** keep generated data (especially the mnemonic) securely
+    **IMPORTANT** keep generated data (especially the mnemonic) securely.
     
     4.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
@@ -102,13 +103,13 @@ The following steps are expected to be done **before** the ceremony.
     dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
     ```
 
-    **IMPORTANT** keep generated data (especially the mnemonic) securely
+    **IMPORTANT** keep generated data (especially the mnemonic) securely.
 
     5.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
     `address` and `pubkey` can be found in the `dcld keys show <key-name>` output.
 
-6. **[Optional] Configure ON Node**
+6. **[Optional] Configure ON Nodes**
 
     Do steps 1.1 - 1.6 for all ON Nodes.
     
@@ -130,7 +131,7 @@ The following steps are expected to be done **during** the ceremony.
         8.3. Run genesis VN
 
         ```bash
-        $ ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name <node-admin-key> [--gen-key-name-trustee <trustee-key>] node0
+        ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name <node-admin-key> [--gen-key-name-trustee <trustee-key>] node0
         ```
 
         8.4. Put genesis file to GitHub (`zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json`)
@@ -173,14 +174,12 @@ The following steps are expected to be done **during** the ceremony.
         10.4. Run VN
 
         ```bash
-        $ ./run_dcl_node -c testnet-2.0 <node-name>
+        ./run_dcl_node -c testnet-2.0 <node-name>
         ```
 
-        10.5 Wait until catchup is finished
+        10.5 Wait until catchup is finished: `dcld status` returns `"catching_up": false`
 
-        `dcld status` returns `"catching_up": false`
-
-        10.6. Make a node a validator
+        10.6. Make the node a validator
 
         ```bash
         $ dcld tx validator add-node --pubkey=<validator-pubkey> \
@@ -197,7 +196,7 @@ The following steps are expected to be done **during** the ceremony.
 
         11.3. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 
-        11.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN.
+        11.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN's address.
 
 
     12. **[Optional] Add Trustee account**  
@@ -227,12 +226,18 @@ The following steps can be done **after** the ceremony.
         $ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json
         ```
 
-        13.2. Set persistent peers by update `persistent_peers` field in `$HOME/.dcl/config/config.toml`. The list of persistent peers for an observer is not required to match the one used by the validators. As a general guidance you may consider to use only the peers you own and/or trust.
+        13.2. Set persistent peers by updating `persistent_peers` field in `$HOME/.dcl/config/config.toml`. The list of persistent peers for an observer is not required to match the one used by the validators. As a general guidance you may consider to use only the peers you own and/or trust.
 
         13.3. Init ON
 
         ```bash
-        $ ./run_dcl_node -t observer -c testnet-2.0 <node-name>
+        dcld init "<node-name>" --chain-id "testnet-2.0"
+        ```
+
+        13.4. Run ON
+
+        ```bash
+        ./run_dcl_node -t observer -c testnet-2.0 <node-name>
         ```
 
    14. **ON Deployment Verification**
