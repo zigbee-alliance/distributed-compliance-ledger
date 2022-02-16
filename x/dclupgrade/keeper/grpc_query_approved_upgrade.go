@@ -31,7 +31,6 @@ func (k Keeper) ApprovedUpgradeAll(c context.Context, req *types.QueryAllApprove
 		approvedUpgrades = append(approvedUpgrades, approvedUpgrade)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

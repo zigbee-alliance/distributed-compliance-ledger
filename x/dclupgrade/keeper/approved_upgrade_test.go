@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNApprovedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ApprovedUpgrade {
@@ -39,6 +39,7 @@ func TestApprovedUpgradeGet(t *testing.T) {
 		)
 	}
 }
+
 func TestApprovedUpgradeRemove(t *testing.T) {
 	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNApprovedUpgrade(keeper, ctx, 10)

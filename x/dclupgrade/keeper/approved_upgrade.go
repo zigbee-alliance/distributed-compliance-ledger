@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-// SetApprovedUpgrade set a specific approvedUpgrade in the store from its index
+// SetApprovedUpgrade set a specific approvedUpgrade in the store from its index.
 func (k Keeper) SetApprovedUpgrade(ctx sdk.Context, approvedUpgrade types.ApprovedUpgrade) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedUpgradeKeyPrefix))
 	b := k.cdc.MustMarshal(&approvedUpgrade)
@@ -15,7 +15,7 @@ func (k Keeper) SetApprovedUpgrade(ctx sdk.Context, approvedUpgrade types.Approv
 	), b)
 }
 
-// GetApprovedUpgrade returns a approvedUpgrade from its index
+// GetApprovedUpgrade returns a approvedUpgrade from its index.
 func (k Keeper) GetApprovedUpgrade(
 	ctx sdk.Context,
 	name string,
@@ -34,7 +34,7 @@ func (k Keeper) GetApprovedUpgrade(
 	return val, true
 }
 
-// RemoveApprovedUpgrade removes a approvedUpgrade from the store
+// RemoveApprovedUpgrade removes a approvedUpgrade from the store.
 func (k Keeper) RemoveApprovedUpgrade(
 	ctx sdk.Context,
 	name string,
@@ -46,7 +46,7 @@ func (k Keeper) RemoveApprovedUpgrade(
 	))
 }
 
-// GetAllApprovedUpgrade returns all approvedUpgrade
+// GetAllApprovedUpgrade returns all approvedUpgrade.
 func (k Keeper) GetAllApprovedUpgrade(ctx sdk.Context) (list []types.ApprovedUpgrade) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedUpgradeKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
