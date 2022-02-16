@@ -18,7 +18,6 @@ export interface MsgCreateModel {
     supportUrl: string;
     productUrl: string;
     lsfUrl: string;
-    lsfRevision: number;
 }
 export interface MsgCreateModelResponse {
 }

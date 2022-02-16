@@ -19,8 +19,7 @@ const baseMsgCreateModel = {
     userManualUrl: '',
     supportUrl: '',
     productUrl: '',
-    lsfUrl: '',
-    lsfRevision: 0
+    lsfUrl: ''
 };
 export const MsgCreateModel = {
     encode(message, writer = Writer.create()) {
@@ -74,9 +73,6 @@ export const MsgCreateModel = {
         }
         if (message.lsfUrl !== '') {
             writer.uint32(138).string(message.lsfUrl);
-        }
-        if (message.lsfRevision !== 0) {
-            writer.uint32(144).int32(message.lsfRevision);
         }
         return writer;
     },
@@ -137,9 +133,6 @@ export const MsgCreateModel = {
                     break;
                 case 17:
                     message.lsfUrl = reader.string();
-                    break;
-                case 18:
-                    message.lsfRevision = reader.int32();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -252,12 +245,6 @@ export const MsgCreateModel = {
         else {
             message.lsfUrl = '';
         }
-        if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
-            message.lsfRevision = Number(object.lsfRevision);
-        }
-        else {
-            message.lsfRevision = 0;
-        }
         return message;
     },
     toJSON(message) {
@@ -281,7 +268,6 @@ export const MsgCreateModel = {
         message.supportUrl !== undefined && (obj.supportUrl = message.supportUrl);
         message.productUrl !== undefined && (obj.productUrl = message.productUrl);
         message.lsfUrl !== undefined && (obj.lsfUrl = message.lsfUrl);
-        message.lsfRevision !== undefined && (obj.lsfRevision = message.lsfRevision);
         return obj;
     },
     fromPartial(object) {
@@ -387,12 +373,6 @@ export const MsgCreateModel = {
         }
         else {
             message.lsfUrl = '';
-        }
-        if (object.lsfRevision !== undefined && object.lsfRevision !== null) {
-            message.lsfRevision = object.lsfRevision;
-        }
-        else {
-            message.lsfRevision = 0;
         }
         return message;
     }
