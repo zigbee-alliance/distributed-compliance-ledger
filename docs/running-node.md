@@ -158,10 +158,16 @@ dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
 
 ### Setup a node
 
-Run
+Init node:
 
 ```bash
-$ ./run_dcl_node -t genesis -c <chain-id> --gen-key-name <node-admin-key> [--gen-key-name-trustee <trustee-key>] node0
+dcld init <node-name> --chain-id <chain-id>
+```
+
+Run node:
+
+```bash
+$ ./run_dcl_node -t genesis -c <chain-id> --gen-key-name <node-admin-key> [--gen-key-name-trustee <trustee-key>] <node-name>
 ```
 
 This command:
@@ -202,7 +208,13 @@ And provide the output address and a public key to the network trustees.
 
 ### Setup a node
 
-Run
+Init node:
+
+```bash
+dcld init <node-name> --chain-id <chain-id>
+```
+
+Run node:
 
 ```bash
 $ ./run_dcl_node -c <chain-id> <node-name>
@@ -256,7 +268,13 @@ This part describes how to configure an observer node and add it to the existing
 
 The following command automates a set of instructions that you can find in [Running Observer Node](advanced/running-observer-node.md) document
 
-Run
+Init node:
+
+```bash
+dcld init <node-name> --chain-id <chain-id>
+```
+
+Run node:
 
 ```bash
 $ ./run_dcl_node -t observer -c <chain-id> <node-name>
