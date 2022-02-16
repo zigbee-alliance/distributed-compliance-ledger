@@ -39,14 +39,13 @@ The following steps are expected to be done **before** the ceremony.
     $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/dcld
     $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/dcld.service
     $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/run_dcl_node
-    $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/update_peers
     ```
 
     1.6. Put `dlcd` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`) and set a proper owner and executable permissions.
 
     ```bash
     $ sudo cp -f ./dcld -t /usr/bin
-    $ sudo chown <dcl-user> /usr/bin/dcld
+    $ sudo chown "<dcl-user>" /usr/bin/dcld
     $ sudo chmod u+x /usr/bin/dcld
     # verification
     $ dcld version
@@ -87,14 +86,14 @@ The following steps are expected to be done **before** the ceremony.
     4.2. Generate keys
 
     ```bash
-    dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
+    dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
     ```
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely.
 
     4.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-    `address` and `pubkey` can be found in the `dcld keys show <key-name>` output.
+    `address` and `pubkey` can be found in the `dcld keys show "<key-name>"` output.
 
 5.  **\[Optional] Generate Trustee keys**
 
@@ -103,14 +102,14 @@ The following steps are expected to be done **before** the ceremony.
     5.2. Generate keys
 
     ```bash
-    dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
+    dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
     ```
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely.
 
     5.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-    `address` and `pubkey` can be found in the `dcld keys show <key-name>` output.
+    `address` and `pubkey` can be found in the `dcld keys show "<key-name>"` output.
 
 6.  **\[Optional] Configure ON Nodes**
 
@@ -136,7 +135,7 @@ The following steps are expected to be done **during** the ceremony.
     8.3. Run genesis VN
 
     ```bash
-    ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name <node-admin-key> [--gen-key-name-trustee <trustee-key>] node0
+    ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name "<node-admin-key>" [--gen-key-name-trustee "<trustee-key>"] node0
     ```
 
     8.4. Put genesis file to GitHub (`zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json`)
@@ -150,13 +149,13 @@ The following steps are expected to be done **during** the ceremony.
     9.1. A Trustee proposes a NodeAdmin account
 
     ```bash
-    dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=NodeAdmin --from=<account-name>
+    dcld tx auth propose-add-account --address="<bench32 encoded string>" --pubkey="<protobuf JSON encoded>" --roles=NodeAdmin --from="<account-name>"
     ```
 
     9.2. Trustees approve the NodeAdmin account
 
     ```bash
-    dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account-name>
+    dcld tx auth approve-add-account --address="<bench32 encoded string>" --from="<account-name>"
     ```
 
 10. **Run VN node**
@@ -168,7 +167,7 @@ The following steps are expected to be done **during** the ceremony.
     ```
 
     10.2. Prepare `persistent_peers.txt` file (download or copy-paste into the file
-    in the same directory as \`run_dcl_node).
+    in the same directory as `run_dcl_node`).
 
     10.3. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
 
@@ -179,7 +178,7 @@ The following steps are expected to be done **during** the ceremony.
     10.4. Run VN
 
     ```bash
-    ./run_dcl_node -c testnet-2.0 <node-name>
+    ./run_dcl_node -c testnet-2.0 "<node-name>"
     ```
 
     10.5 Wait until catchup is finished: `dcld status` returns `"catching_up": false`
@@ -187,15 +186,14 @@ The following steps are expected to be done **during** the ceremony.
     10.6. Make the node a validator
 
     ```bash
-    $ dcld tx validator add-node --pubkey=<validator-pubkey> \
-        --moniker=<node-name> --from=<node-admin-key-name>
+    $ dcld tx validator add-node --pubkey="<validator-pubkey>" --moniker="<node-name>" --from="<node-admin-key-name>"
     ```
 
     (once transaction is successfully written you should see `"code": 0` in the JSON output.)
 
 11. **VN Deployment Verification**
 
-    11.1. Check the account presence on the ledger: `dcld query auth account --address=<address>`.
+    11.1. Check the account presence on the ledger: `dcld query auth account --address="<address>"`.
 
     11.2. Check the node service is running: `systemctl status dcld`
 
@@ -208,13 +206,13 @@ The following steps are expected to be done **during** the ceremony.
     12.1. A Trustee proposes Trustee account
 
     ```bash
-    dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=Trustee --from=<account-name>
+    dcld tx auth propose-add-account --address="<bench32 encoded string>" --pubkey="<protobuf JSON encoded>" --roles=Trustee --from="<account-name>"
     ```
 
     12.2. Trustees approve Trustee account
 
     ```bash
-    dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account-name>
+    dcld tx auth approve-add-account --address="<bench32 encoded string>" --from="<account-name>"
     ```
 
 ## IV. Post-Ceremony: For every Observer Node
@@ -242,7 +240,7 @@ The following steps can be done **after** the ceremony.
     13.4. Run ON
 
     ```bash
-    ./run_dcl_node -t observer -c testnet-2.0 <node-name>
+    ./run_dcl_node -t observer -c testnet-2.0 "<node-name>"
     ```
 
 14. **ON Deployment Verification**
@@ -257,6 +255,8 @@ The following steps can be done **after** the ceremony.
     *   update `persistent_peers` field in `$HOME/.dcl/config/config.toml`
 
         ```bash
+        curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/update_peers
+
         # by default path to a file is './persistent_peers.txt'
         ./update_peers [PATH-TO-PEERS-FILE]
         ```
@@ -270,11 +270,11 @@ The following steps can be done **after** the ceremony.
         ```
 *   Useful commands
     *   keys:
-        *   `dcld keys show <name>`: to get address and pubkey for a keyname
+        *   `dcld keys show "<name>"`: to get address and pubkey for a keyname
     *   node status:
         *   `systemctl status dcld`: to get the node service status.
         *   `journalctl -u dcld.service -f`: to see node logs.
-        *   `dcld status [--node tcp://<node host>:<node port>]`: to get the current status.
+        *   `dcld status [--node "tcp://<node host>:<node port>"]`: to get the current status.
         *   `dcld query tendermint-validator-set [height]`: list of nodes participating in consensus
     *   account status:
-        *   `dcld query auth account --address=<address>`: to ensure that account is created and has assigned role
+        *   `dcld query auth account --address="<address>"`: to ensure that account is created and has assigned role
