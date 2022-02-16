@@ -166,7 +166,7 @@ Please take into account the following when sending a PR:
     `allow_colon_final_segments=true` should be used as a workaround.
     So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-  - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+  - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yml`. 
     Revert the default cosmos modules keeping only DCL ones.   
 - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
 - Implement business logic in `msg_server_xxx.go`
@@ -189,7 +189,7 @@ Please take into account the following when sending a PR:
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
   It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-- **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+- **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yml`. 
     Revert the default cosmos modules keeping only DCL ones.   
 
 ## Update Cosmos-sdk Version
