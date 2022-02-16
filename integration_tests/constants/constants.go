@@ -87,6 +87,7 @@ var (
 	MinApplicableSoftwareVersion               uint32 = 1
 	MaxApplicableSoftwareVersion               uint32 = 1000
 	Owner                                             = Address1
+	Info                                              = "Information for Proposal/Approval/Revoke"
 
 	// Compliance.
 	ProvisionalDate   = "2019-12-12T00:00:00Z"

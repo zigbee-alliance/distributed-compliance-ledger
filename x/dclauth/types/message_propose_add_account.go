@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"time"
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -21,6 +22,7 @@ func NewMsgProposeAddAccount(
 	roles AccountRoles,
 	// roles []string,
 	vendorID int32,
+	info string,
 ) (*MsgProposeAddAccount, error) {
 	var pkAny *codectypes.Any
 	if pubKey != nil {
@@ -36,6 +38,8 @@ func NewMsgProposeAddAccount(
 		PubKey:   pkAny,
 		Roles:    roles,
 		VendorID: vendorID,
+		Info:     info,
+		Time:     time.Now().Unix(),
 	}, nil
 }
 

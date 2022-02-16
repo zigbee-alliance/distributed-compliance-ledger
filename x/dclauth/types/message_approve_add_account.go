@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -10,10 +12,12 @@ const TypeMsgApproveAddAccount = "approve_add_account"
 
 var _ sdk.Msg = &MsgApproveAddAccount{}
 
-func NewMsgApproveAddAccount(signer sdk.AccAddress, address sdk.AccAddress) *MsgApproveAddAccount {
+func NewMsgApproveAddAccount(signer sdk.AccAddress, address sdk.AccAddress, info string) *MsgApproveAddAccount {
 	return &MsgApproveAddAccount{
 		Signer:  signer.String(),
 		Address: address.String(),
+		Info:    info,
+		Time:    time.Now().Unix(),
 	}
 }
 

@@ -223,9 +223,10 @@ func ProposeAddAccount(
 	vendorID int32,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
+	info string,
 ) (*sdk.TxResponse, error) {
 	msg, err := dclauthtypes.NewMsgProposeAddAccount(
-		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID)
+		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID, info)
 	require.NoError(suite.T, err)
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
@@ -235,8 +236,9 @@ func ApproveAddAccount(
 	accAddr sdk.AccAddress,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
+	info string,
 ) (*sdk.TxResponse, error) {
-	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signerName), accAddr)
+	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signerName), accAddr, info)
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -245,8 +247,9 @@ func ProposeRevokeAccount(
 	accAddr sdk.AccAddress,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
+	info string,
 ) (*sdk.TxResponse, error) {
-	msg := dclauthtypes.NewMsgProposeRevokeAccount(suite.GetAddress(signerName), accAddr)
+	msg := dclauthtypes.NewMsgProposeRevokeAccount(suite.GetAddress(signerName), accAddr, info)
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -255,8 +258,9 @@ func ApproveRevokeAccount(
 	accAddr sdk.AccAddress,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
+	info string,
 ) (*sdk.TxResponse, error) {
-	msg := dclauthtypes.NewMsgApproveRevokeAccount(suite.GetAddress(signerName), accAddr)
+	msg := dclauthtypes.NewMsgApproveRevokeAccount(suite.GetAddress(signerName), accAddr, info)
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -282,6 +286,7 @@ func CreateAccount(
 	proposerAccount *dclauthtypes.Account,
 	approverName string,
 	approverAccount *dclauthtypes.Account,
+	info string,
 ) *dclauthtypes.Account {
 	accountInfo := CreateAccountInfo(suite, accountName)
 
@@ -293,6 +298,7 @@ func CreateAccount(
 		vendorId,
 		proposerName,
 		proposerAccount,
+		info,
 	)
 	require.NoError(suite.T, err)
 
@@ -301,6 +307,7 @@ func CreateAccount(
 		accountInfo.GetAddress(),
 		approverName,
 		approverAccount,
+		info,
 	)
 	require.NoError(suite.T, err)
 
@@ -393,6 +400,7 @@ func AuthDemo(suite *utils.TestSuite) {
 		testAccAddr, testAccPubKey,
 		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, vid,
 		jackName, jackAccount,
+		testconstants.Info,
 	)
 	require.NoError(suite.T, err)
 
@@ -423,7 +431,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
 
 	// Alice approves new account
-	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount)
+	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
 	// Query all active accounts
@@ -453,7 +461,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 
 	// Alice proposes to revoke new account
-	_, err = ProposeRevokeAccount(suite, testAccAddr, aliceName, aliceAccount)
+	_, err = ProposeRevokeAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
 	// Query all active accounts
@@ -475,7 +483,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testAccAddr.String(), proposedToRevokeAccount.GetAddress())
 
 	// Bob approves to revoke new account
-	_, err = ApproveRevokeAccount(suite, testAccAddr, bobName, bobAccount)
+	_, err = ApproveRevokeAccount(suite, testAccAddr, bobName, bobAccount, testconstants.Info)
 	require.NoError(suite.T, err)
 
 	// Query all active accounts

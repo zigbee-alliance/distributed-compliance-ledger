@@ -5,7 +5,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 import "gogoproto/gogo.proto";
 import "cosmos/auth/v1beta1/auth.proto";
-import "cosmos_proto/cosmos.proto";
+import "dclauth/grant.proto";
 
 
 message Account {
@@ -18,7 +18,9 @@ message Account {
   //       so protobuf takes care about repeated items in generated code,
   //       (but that might be not the final solution)
   repeated string roles = 2 [(gogoproto.casttype) = "AccountRole"]; 
-  int32 vendorID = 3; 
+  // repeated Grant approvals = 3 [(gogoproto.embed) = true];
+  repeated bytes approvals = 3 [(gogoproto.customtype) = "Grant"];
+  int32 vendorID = 4;
   
 }
 

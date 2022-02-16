@@ -3,7 +3,10 @@ package zigbeealliance.distributedcomplianceledger.pki;
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
+
 import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "pki/grant.proto";
 
 message Certificate {
   
@@ -17,4 +20,6 @@ message Certificate {
   string owner = 8 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
   string subject = 9; 
   string subject_key_id = 10; 
+  repeated bytes approvals = 11 [(gogoproto.customtype) = "Grant"];
+  repeated bytes revokes = 12 [(gogoproto.customtype) = "Grant"];
 }

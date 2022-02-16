@@ -484,6 +484,7 @@ func PKIDemo(suite *utils.TestSuite) {
 		aliceAccount,
 		jackName,
 		jackAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, vendorAccount)
 
