@@ -1,0 +1,15 @@
+[Unit]
+Description=DC Ledger service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+User={{ dcld.user }}
+Group={{ dcld.group }}
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart={{ dcld.path }} start --home {{ dcl_home }}
+
+[Install]
+WantedBy=multi-user.target
