@@ -231,6 +231,10 @@ func TestHandler_ApproveUpgrade(t *testing.T) {
 	// check proposed upgrade for being deleted
 	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.False(t, isFound)
+
+	// check upgrade for being added to ApprovedUpgrade store
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
 }
 
 func TestHandler_UpgradeApprovalWhenMoreVotesNeeded(t *testing.T) {
