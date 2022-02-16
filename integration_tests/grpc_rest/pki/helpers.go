@@ -506,8 +506,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Root certificate
-	proposedCertificate, _ :=
-		GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedCertificate, _ := GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
 	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
@@ -532,8 +531,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(certificates))
 
 	// Request proposed Root certificate
-	proposedCertificate, _ =
-		GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
 	require.Equal(suite.T, []string{jackAccount.Address}, proposedCertificate.Approvals)
@@ -773,8 +771,7 @@ func PKIDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 0, len(revokedRootCertificates.Certs))
 
 	// Request Root certificate proposed to revoke
-	proposedCertificateRevocation, _ :=
-		GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedCertificateRevocation, _ := GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificateRevocation.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
 	require.Equal(suite.T, []string{jackAccount.Address}, proposedCertificateRevocation.Approvals)

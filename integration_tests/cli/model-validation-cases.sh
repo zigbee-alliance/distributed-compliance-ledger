@@ -262,7 +262,7 @@ test_divider
 
 # Query the model version 
 echo "Query Device Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"
@@ -284,7 +284,7 @@ test_divider
 
 # Query the updated model version 
 echo "Query the updated model version VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"
@@ -307,7 +307,7 @@ test_divider
 
 # Query the updated model version 
 echo "Query the updated model version VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"
@@ -336,7 +336,7 @@ test_divider
 
 # Query the model version 
 echo "Query Device Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"
@@ -364,7 +364,7 @@ test_divider
 
 # Query the model version 
 echo "Query Updated Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"
@@ -392,7 +392,7 @@ test_divider
 
 # Query the model version 
 echo "Query Updated Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"
@@ -422,7 +422,7 @@ test_divider
 
 # Query the model version 
 echo "Query Updated Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"
@@ -454,7 +454,7 @@ test_divider
 
 # Query the model version 
 echo "Query Device Model Version with VID: $vid_1 PID: $pid_1 SV: $sv_1"
-result=$(dcld query model get-model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
+result=$(dcld query model model-version --vid=$vid_1 --pid=$pid_1 --softwareVersion=$sv_1)
 
 check_response_and_report "$result" "\"vid\": $vid_1"
 check_response_and_report "$result" "\"pid\": $pid_1"

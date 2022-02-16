@@ -1,0 +1,45 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.dclupgrade;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "dclupgrade/proposed_upgrade.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
+
+// Query defines the gRPC querier service.
+service Query {
+	// Queries a ProposedUpgrade by index.
+	rpc ProposedUpgrade(QueryGetProposedUpgradeRequest) returns (QueryGetProposedUpgradeResponse) {
+		option (google.api.http).get = "/dcl/dclupgrade/proposed-upgrades/{name}";
+	}
+
+	// Queries a list of ProposedUpgrade items.
+	rpc ProposedUpgradeAll(QueryAllProposedUpgradeRequest) returns (QueryAllProposedUpgradeResponse) {
+		option (google.api.http).get = "/dcl/dclupgrade/proposed-upgrades";
+	}
+
+// this line is used by starport scaffolding # 2
+}
+
+message QueryGetProposedUpgradeRequest {
+	  string name = 1;
+
+}
+
+message QueryGetProposedUpgradeResponse {
+	ProposedUpgrade proposedUpgrade = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllProposedUpgradeRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllProposedUpgradeResponse {
+	repeated ProposedUpgrade proposedUpgrade = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// this line is used by starport scaffolding # 3

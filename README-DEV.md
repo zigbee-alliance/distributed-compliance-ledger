@@ -153,7 +153,8 @@ Please take into account the following when sending a PR:
 - Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
 - Adjust the generated code
-  - correct REST endpoints: `/dcl` instead of `/zigbee-alliance/distributedcomplianceledger` in `proto/<module>/query.proto`
+  - change the return value of `AppModule.ConsensusVersion` method to 1 in `x/<module>/module.go`
+  - correct REST endpoints: `/dcl` instead of `/zigbee-alliance/distributedcomplianceledger` in `proto/<module>/query.proto` and in entries related to queries of the new module in `docs/static/openapi.yml`
   - add message validation as annotations (`validate` tags) in `proto/<module>/tx.proto`
   - add `(cosmos_proto.scalar) = "cosmos.AddressString"` annotation for all fields with address/account type (such as `signer` or `owner`).
   - fix types if needed in `proto/<module>/<entity>.proto` files
@@ -165,7 +166,7 @@ Please take into account the following when sending a PR:
     `allow_colon_final_segments=true` should be used as a workaround.
     So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-  - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+  - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yml`. 
     Revert the default cosmos modules keeping only DCL ones.   
 - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
 - Implement business logic in `msg_server_xxx.go`
@@ -188,7 +189,7 @@ Please take into account the following when sending a PR:
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
   It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-- **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yaml`. 
+- **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yml`. 
     Revert the default cosmos modules keeping only DCL ones.   
 
 ## Update Cosmos-sdk Version

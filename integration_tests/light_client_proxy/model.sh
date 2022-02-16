@@ -29,7 +29,7 @@ check_response "$result" "Not Found"
 test_divider
 
 echo "Query non existent model version"
-result=$(execute_with_retry "dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
+result=$(execute_with_retry "dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
 echo "$result"
 check_response "$result" "Not Found"
 
@@ -109,7 +109,7 @@ check_response "$result" "\"product_label\": \"$productLabel\""
 test_divider
 
 echo "Query Device Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(execute_with_retry "dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
+result=$(execute_with_retry "dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
@@ -157,7 +157,7 @@ check_response "$result" "Not Found"
 test_divider
 
 echo "Query non existent model version"
-result=$(execute_with_retry "dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
+result=$(execute_with_retry "dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$sv")
 echo "$result"
 check_response "$result" "Not Found"
 

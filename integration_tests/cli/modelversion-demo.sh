@@ -44,7 +44,7 @@ test_divider
 
 # Query the model version 
 echo "Query Device Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv)
+result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$sv)
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
@@ -72,7 +72,7 @@ test_divider
 
 # Query non existent model version
 echo "Query Device Model Version with VID: $vid PID: $pid SV: 123456"
-result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=123456)
+result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=123456)
 check_response "$result" "Not Found"
 
 test_divider
@@ -95,7 +95,7 @@ test_divider
 
 # Query Updated model version
 echo "Query updated Device Model Version with VID: $vid PID: $pid SV: $sv"
-result=$(dcld query model get-model-version --vid=$vid --pid=$pid --softwareVersion=$sv)
+result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=$sv)
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
