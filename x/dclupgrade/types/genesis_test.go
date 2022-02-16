@@ -78,7 +78,7 @@ func TestGenesisState_Validate(t *testing.T) {
 					},
 					{
 						Plan: types.Plan{
-							Name: "1",
+							Name: "0",
 						},
 					},
 				},
