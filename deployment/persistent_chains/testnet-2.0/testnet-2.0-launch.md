@@ -189,15 +189,26 @@ The following steps are expected to be done **during** the ceremony.
 
         (once transaction is successfully written you should see `"code": 0` in the JSON output.)
 
-   11. **[Optional] Add Trustee account**  
+   11. **VN Deployment Verification**
 
-        11.1. A Trustee proposes Trustee account
+        11.1. Check the account presence on the ledger: `dcld query auth account --address=<address>`.
+
+        11.2. Check the node service is running: `systemctl status dcld`
+
+        11.3. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
+
+        11.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN.
+
+
+    12. **[Optional] Add Trustee account**  
+
+        12.1. A Trustee proposes Trustee account
 
         ```bash
         dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=Trustee --from=<account-name>
         ```
 
-        11.2. Trustees approve Trustee account
+        12.2. Trustees approve Trustee account
 
         ```bash
         dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account-name>
@@ -208,24 +219,32 @@ The following steps are expected to be done **during** the ceremony.
 
 The following steps can be done **after** the ceremony.
 
-   12. **Add ON Node**
+   13. **Add ON Node**
 
-        12.1 Download genesis 
+        13.1 Download genesis 
 
         ```bash
         $ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json
         ```
 
-        12.2. Set persistent peers by update `persistent_peers` field in `$HOME/.dcl/config/config.toml`. The list of persistent peers for an observer is not required to match the one used by the validators. As a general guidance you may consider to use only the peers you own and/or trust.
+        13.2. Set persistent peers by update `persistent_peers` field in `$HOME/.dcl/config/config.toml`. The list of persistent peers for an observer is not required to match the one used by the validators. As a general guidance you may consider to use only the peers you own and/or trust.
 
-        12.3. Init ON
+        13.3. Init ON
 
         ```bash
         $ ./run_dcl_node -t observer -c testnet-2.0 <node-name>
         ```
 
-## V. Post-Ceremony: Validator Node Maintenance
-*   on any changes in persistent peers list 
+   14. **ON Deployment Verification**
+
+        14.1. Check the node service is running: `systemctl status dcld`
+
+        14.2. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
+
+
+
+## V. Post-Ceremony: Node Maintenance
+* On any changes in persistent peers list 
     * update `persistent_peers` field in `$HOME/.dcl/config/config.toml`
 
         ```bash
@@ -237,6 +256,15 @@ The following steps can be done **after** the ceremony.
     *  Restart `dcld` service 
 
         ```bash
-        TBD
+        systemctl restart dcld
         ```
-       
+* Useful commands
+  * keys:
+    * `dcld keys show <name>`: to get address and pubkey for a keyname
+  * node status:
+    * `systemctl status dcld`: to get the node service status. 
+    * `journalctl -u dcld.service -f`: to see node logs. 
+    * `dcld status [--node tcp://<node host>:<node port>`]`: to get the current status.
+    * `dcld query tendermint-validator-set [height]`: list of nodes participating in consensus
+  * account status:
+    * `dcld query auth account --address=<address>`: to ensure that account is created and has assigned role
