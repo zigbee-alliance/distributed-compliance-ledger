@@ -16,7 +16,7 @@ func CmdShowModelVersion() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "get-model-version",
+		Use:   "model-version",
 		Short: "Query Model Version by combination of Vendor ID, Product ID and Software Version",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

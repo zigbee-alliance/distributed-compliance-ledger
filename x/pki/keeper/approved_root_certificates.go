@@ -63,8 +63,7 @@ func (k Keeper) RemoveApprovedRootCertificate(ctx sdk.Context, certId types.Cert
 		return
 	}
 
-	rootCertificates.Certs =
-		append(rootCertificates.Certs[:certIDIndex], rootCertificates.Certs[certIDIndex+1:]...)
+	rootCertificates.Certs = append(rootCertificates.Certs[:certIDIndex], rootCertificates.Certs[certIDIndex+1:]...)
 
 	k.SetApprovedRootCertificates(ctx, rootCertificates)
 }

@@ -13,6 +13,7 @@ declare const _default: {
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliance: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerCompliancetest: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclauth: (store: any) => void;
+    ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerDclupgrade: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerModel: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerPki: (store: any) => void;
     ZigbeeAllianceDistributedComplianceLedgerZigbeeallianceDistributedcomplianceledgerValidator: (store: any) => void;
