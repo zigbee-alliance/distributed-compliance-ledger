@@ -94,8 +94,7 @@ func (k Keeper) RemoveApprovedCertificateBySubject(ctx sdk.Context, subject stri
 		return
 	}
 
-	approvedCertificatesBySubject.SubjectKeyIds =
-		append(approvedCertificatesBySubject.SubjectKeyIds[:certIDIndex], approvedCertificatesBySubject.SubjectKeyIds[certIDIndex+1:]...)
+	approvedCertificatesBySubject.SubjectKeyIds = append(approvedCertificatesBySubject.SubjectKeyIds[:certIDIndex], approvedCertificatesBySubject.SubjectKeyIds[certIDIndex+1:]...)
 
 	if len(approvedCertificatesBySubject.SubjectKeyIds) > 0 {
 		k.SetApprovedCertificatesBySubject(ctx, approvedCertificatesBySubject)

@@ -25,5 +25,5 @@ const (
 	DclTxSizeCostPerByte      uint64  = 0 // gas is not needed in DCL
 	DclSigVerifyCostED25519   uint64  = 0 // gas is not needed in DCL
 	DclSigVerifyCostSecp256k1 uint64  = 0 // gas is not needed in DCL
-	AccountApprovalPercent    float64 = 0.66
+	AccountApprovalsPercent   float64 = 0.66
 )

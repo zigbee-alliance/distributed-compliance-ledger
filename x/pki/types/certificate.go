@@ -32,7 +32,6 @@ func NewNonRootCertificate(pemCert string, subject string, subjectKeyId string, 
 	}
 }
 
-//nolint:interfacer
 func (cert ProposedCertificate) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
 	for _, approval := range cert.Approvals {

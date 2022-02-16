@@ -19,6 +19,7 @@ import (
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 )
 
 func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
@@ -99,6 +100,13 @@ var (
 	// Testing Result.
 	TestResult = "http://test.result.com"
 	TestDate   = "2020-02-02T02:00:00Z"
+
+	// Upgrade.
+	Plan = upgradetypes.Plan{
+		Name:   "TestUpgrade",
+		Height: 1337,
+		Info:   "Some upgrade info",
+	}
 
 	//
 	Address1, _       = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")

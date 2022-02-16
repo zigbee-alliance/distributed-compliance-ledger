@@ -1000,7 +1000,6 @@ func queryComplianceInfo(
 	softwareVersion uint32,
 	certificationType string,
 ) (*types.ComplianceInfo, error) {
-
 	req := &types.QueryGetComplianceInfoRequest{
 		Vid:               vid,
 		Pid:               pid,
@@ -1025,7 +1024,6 @@ func queryProvisionalModel(
 	softwareVersion uint32,
 	certificationType string,
 ) (*types.ProvisionalModel, error) {
-
 	req := &types.QueryGetProvisionalModelRequest{
 		Vid:               vid,
 		Pid:               pid,
@@ -1050,7 +1048,6 @@ func queryCertifiedModel(
 	softwareVersion uint32,
 	certificationType string,
 ) (*types.CertifiedModel, error) {
-
 	req := &types.QueryGetCertifiedModelRequest{
 		Vid:               vid,
 		Pid:               pid,
@@ -1075,7 +1072,6 @@ func queryRevokedModel(
 	softwareVersion uint32,
 	certificationType string,
 ) (*types.RevokedModel, error) {
-
 	req := &types.QueryGetRevokedModelRequest{
 		Vid:               vid,
 		Pid:               pid,
@@ -1140,7 +1136,6 @@ func NewMsgProvisionModel(
 	certificationType string,
 	signer sdk.AccAddress,
 ) *types.MsgProvisionModel {
-
 	return &types.MsgProvisionModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
@@ -1162,7 +1157,6 @@ func NewMsgCertifyModel(
 	certificationType string,
 	signer sdk.AccAddress,
 ) *types.MsgCertifyModel {
-
 	return &types.MsgCertifyModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
@@ -1184,7 +1178,6 @@ func NewMsgRevokeModel(
 	certificationType string,
 	signer sdk.AccAddress,
 ) *types.MsgRevokeModel {
-
 	return &types.MsgRevokeModel{
 		Signer:                signer.String(),
 		Vid:                   vid,
@@ -1204,7 +1197,6 @@ func NewModelVersion(
 	softwareVersion uint32,
 	softwareVersionString string,
 ) *modeltypes.ModelVersion {
-
 	return &modeltypes.ModelVersion{
 		Vid:                          vid,
 		Pid:                          pid,
