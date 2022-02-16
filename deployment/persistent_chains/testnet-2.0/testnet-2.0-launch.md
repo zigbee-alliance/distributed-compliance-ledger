@@ -14,7 +14,7 @@ of a node setup logic along with requirements for the hardware and operating sys
 ## I. Pre-Ceremony
 The following steps are expected to be done **before** the ceremony.
 
-1. Configure VN Node
+1. **Configure VN Node**
 
    1.1. Ensure a DCL user is in sudoers list (required only for the ceremony):
     *   Note. by default `ubuntu` user is expected as a running user for the DCL service.
@@ -64,13 +64,23 @@ The following steps are expected to be done **before** the ceremony.
         *   gRPC (default: `9090`)
         *   REST (default: `1317`)
 
-    1.7. Share VN's IP address (in Slack or in a special doc) 
+ 2. **Init VN Node**
+    
+    ```bash
+    dcld init "<node-name>" --chain-id "testnet-2.0"
+    ```
 
- 2. Generate NodeAdmin keys
+ 3. **Share VN info with other Node Admins** (in Slack or in a special doc)
 
-    2.1. Go to VN Node
+    3.1. Share VN's IP address
 
-    2.2. Generate keys
+    3.2. Share VN's `id` (`id` field in `dcld status` command output)
+
+ 4. **Generate NodeAdmin keys**
+
+    4.1. Go to VN Node
+
+    4.2. Generate keys
 
     ```bash
     dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
@@ -78,13 +88,15 @@ The following steps are expected to be done **before** the ceremony.
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely
     
-    2.3. Share generated `address` and `pubkey` (in Slack or in a special doc) 
+    4.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-3. [Optional] Generate Trustee keys
+     `address` and `pubkey` can be found in the `dcld keys show <key-name>` output.
 
-    3.1. Choose a machine where Trustee keys will be hold (it can be either VN Node, or a separate machine with `dcld` binary)
+5. **[Optional] Generate Trustee keys**
 
-    3.2. Generate keys
+    5.1. Choose a machine where Trustee keys will be hold (it can be either VN Node, or a separate machine with `dcld` binary)
+
+    5.2. Generate keys
 
     ```bash
     dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
@@ -92,90 +104,83 @@ The following steps are expected to be done **before** the ceremony.
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely
 
-    3.3. Share generated `address` and `pubkey` (in Slack or in a special doc) 
+    5.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-4. [Optional] Configure ON Node
+    `address` and `pubkey` can be found in the `dcld keys show <key-name>` output.
+
+6. **[Optional] Configure ON Node**
 
     Do steps 1.1 - 1.6 for all ON Nodes.
     
-5. [CSA Only] Create `persistent_peers` file containing, share in Slack/doc
+7. [CSA Only] Create `persistent_peers` file containing `id:ip` pairs for all VNs. Share in Slack/doc.
 
-## II. Ceremony: Genesis Node
+## II. Ceremony: Genesis Node (CSA Only)
 The following steps are expected to be done **during** the ceremony.
 
-   6. [CSA Only] Run genesis node
+   8. **Run genesis node**
 
-        6.1. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
+        8.1. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
 
         ```bash
         TBD
         ```
 
-        6.2. Update persistent peers
+        8.2. Download `persistent_peers` file
         
-        ```bash
-        # by default path to a file is './persistent_peers'
-        ./update_peers [PATH-TO-PEERS-FILE]
-        ```
-        6.3. Init genesis VN
+        8.3. Run genesis VN
 
         ```bash
         $ ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name <node-admin-key> [--gen-key-name-trustee <trustee-key>] node0
         ```
 
-        6.4. Share genesis file (in Slack, doc, or GitHub)
+        8.4. Put genesis file to GitHub (`zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json`)
 
 ## III. Ceremony: For Every Validator Node
 The following steps are expected to be done **during** the ceremony.
 
-   7. Add `NodeAdmin` account
+   9. **Add `NodeAdmin` account**
 
-        7.1. A Trustee proposes a NodeAdmin account
+        9.1. A Trustee proposes a NodeAdmin account
 
         ```bash
         dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=NodeAdmin --from=<account-name>
         ```
 
-        7.2. Trustees approve the NodeAdmin account
+        9.2. Trustees approve the NodeAdmin account
 
         ```bash
         dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account-name>
         ```
 
 
-   8. Add VN node
+   10. **Run VN node**
 
-        8.1. Download genesis 
+        10.1. Download genesis 
 
         ```bash
         $ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json
         ```
 
 
-        8.2. Update persistent peers
+        10.2. Download `persistent_peers` file
 
-        ```bash
-        # by default path to a file is './persistent_peers'
-        ./update_peers [PATH-TO-PEERS-FILE]
-        ```
-
-        8.3. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
+        10.3. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
 
         ```bash
         TBD
         ```
 
-        8.4. Init VN
+        10.4. Run VN
 
         ```bash
         $ ./run_dcl_node -c testnet-2.0 <node-name>
         ```
 
-        8.5 Wait until catchup is finished
+        10.5 Wait until catchup is finished
 
         `dcld status` returns `"catching_up": false`
 
-        8.6. Make a node a validator
+        10.6. Make a node a validator
 
         ```bash
         $ dcld tx validator add-node --pubkey=<validator-pubkey> \
@@ -184,15 +189,15 @@ The following steps are expected to be done **during** the ceremony.
 
         (once transaction is successfully written you should see `"code": 0` in the JSON output.)
 
-   9. [Optional] Add Trustee account  
+   11. **[Optional] Add Trustee account**  
 
-        9.1. A Trustee proposes Trustee account
+        11.1. A Trustee proposes Trustee account
 
         ```bash
         dcld tx auth propose-add-account --address=<bench32 encoded string> --pubkey=<protobuf JSON encoded> --roles=Trustee --from=<account-name>
         ```
 
-        9.2. Trustees approve Trustee account
+        11.2. Trustees approve Trustee account
 
         ```bash
         dcld tx auth approve-add-account --address=<bench32 encoded string> --from=<account-name>
@@ -201,19 +206,19 @@ The following steps are expected to be done **during** the ceremony.
 
 ## IV. Post-Ceremony: For every Observer Node
 
-The following steps are expected to be done **after** the ceremony.
+The following steps can be done **after** the ceremony.
 
-   10. Add ON Node
+   12. **Add ON Node**
 
-        10.1 Download genesis 
+        12.1 Download genesis 
 
         ```bash
         $ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json
         ```
 
-        10.2. Set persistent peers. The list of persistent peers for an observer is not required to match the one used by the validators. As a general guidance you may consider to use only the peers you own and/or trust.
+        12.2. Set persistent peers by update `persistent_peers` field in `$HOME/.dcl/config/config.toml`. The list of persistent peers for an observer is not required to match the one used by the validators. As a general guidance you may consider to use only the peers you own and/or trust.
 
-        10.3. Init ON
+        12.3. Init ON
 
         ```bash
         $ ./run_dcl_node -t observer -c testnet-2.0 <node-name>
@@ -221,7 +226,7 @@ The following steps are expected to be done **after** the ceremony.
 
 ## V. Post-Ceremony: Validator Node Maintenance
 *   on any changes in persistent peers list 
-    * update `persistent_peers` field in `$HOME/.dcl/config/config.toml`cript
+    * update `persistent_peers` field in `$HOME/.dcl/config/config.toml`
 
         ```bash
         # by default path to a file is './persistent_peers'
@@ -234,3 +239,4 @@ The following steps are expected to be done **after** the ceremony.
         ```bash
         TBD
         ```
+       
