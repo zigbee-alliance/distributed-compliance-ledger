@@ -10,13 +10,13 @@ import (
 )
 
 func CmdApproveUpgrade() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "approve-upgrade [name]",
-		Short: "Approve proposed upgrade with given name",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			name := args[0]
+	var name string
 
+	cmd := &cobra.Command{
+		Use:   "approve-upgrade --name [name]",
+		Short: "Approve proposed upgrade with given name",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -36,7 +36,11 @@ func CmdApproveUpgrade() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVar(&name, FlagName, "", "Upgrade name")
+
 	flags.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagName)
 
 	return cmd
 }

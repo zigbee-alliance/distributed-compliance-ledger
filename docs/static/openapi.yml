@@ -3388,7 +3388,7 @@ paths:
           type: string
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade:
+  /dcl/dclupgrade/proposed_upgrade:
     get:
       summary: Queries a list of ProposedUpgrade items.
       operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeProposedUpgradeAll
@@ -3801,7 +3801,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}':
+  '/dcl/dclupgrade/proposed_upgrade/{name}':
     get:
       summary: Queries a ProposedUpgrade by index.
       operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeProposedUpgrade
