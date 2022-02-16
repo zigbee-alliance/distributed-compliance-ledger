@@ -140,7 +140,6 @@ func NewPendingAccount(acc *Account, approval sdk.AccAddress, info string, time 
 	return pendingAccount
 }
 
-//nolint:interfacer
 func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
 	for _, approval := range acc.Approvals {

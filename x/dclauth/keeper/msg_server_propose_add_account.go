@@ -57,7 +57,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	account := types.NewAccount(ba, msg.Roles, nil, msg.VendorID)
 
 	// if more than 1 trustee's approval is needed, create pending account else create an active account.
-	if AccountApprovalsCount(ctx, k.Keeper) > 1 {
+	if k.AccountApprovalsCount(ctx) > 1 {
 		// create and store pending account.
 		account := types.NewPendingAccount(account, signerAddr, msg.Info, msg.Time)
 		k.SetPendingAccount(ctx, *account)

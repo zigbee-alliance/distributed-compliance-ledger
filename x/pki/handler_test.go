@@ -629,8 +629,7 @@ func TestHandler_AddX509Cert_ForTree(t *testing.T) {
 		*rootCertChildren.CertIds[0])
 
 	// query intermediate certificate
-	intermediateCertificate, _ :=
-		querySingleApprovedCertificate(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
+	intermediateCertificate, _ := querySingleApprovedCertificate(setup, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(t, testconstants.IntermediateCertPem, intermediateCertificate.PemCert)
 
 	// check child certificate identifiers of intermediate certificate
@@ -965,8 +964,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.NoError(t, err)
 
 	// get certificate for further comparison
-	certificateBeforeRevocation, _ :=
-		querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	certificateBeforeRevocation, _ := querySingleApprovedCertificate(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.NotNil(t, certificateBeforeRevocation)
 
 	// store second trustee

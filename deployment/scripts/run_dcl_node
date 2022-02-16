@@ -252,7 +252,7 @@ function node_init {
     rm -rf "$DCL_HOME/config/gentx"
     rm -f "$GENESIS_FILE"
 
-    dcld init "$_name" --chain-id "$_chain_id"
+    # dcld init "$_name" --chain-id "$_chain_id"
 }
 
 

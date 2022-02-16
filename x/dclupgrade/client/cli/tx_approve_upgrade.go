@@ -1,0 +1,46 @@
+package cli
+
+import (
+	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
+	"github.com/cosmos/cosmos-sdk/client/tx"
+	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
+)
+
+func CmdApproveUpgrade() *cobra.Command {
+	var name string
+
+	cmd := &cobra.Command{
+		Use:   "approve-upgrade --name [name]",
+		Short: "Approve proposed upgrade with given name",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgApproveUpgrade(
+				clientCtx.GetFromAddress().String(),
+				name,
+			)
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
+			}
+			return err
+		},
+	}
+
+	cmd.Flags().StringVar(&name, FlagName, "", "Upgrade name")
+
+	flags.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagName)
+
+	return cmd
+}
