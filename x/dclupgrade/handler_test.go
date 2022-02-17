@@ -233,8 +233,15 @@ func TestHandler_ApproveUpgrade(t *testing.T) {
 	require.False(t, isFound)
 
 	// check upgrade for being added to ApprovedUpgrade store
-	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	approvedUpgrade, isFound := setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.True(t, isFound)
+
+	// verification of ApprovedUpgrade
+	require.Equal(t, len(approvedUpgrade.Approvals), 2)
+	require.Contains(t, approvedUpgrade.Approvals, msgProposeUpgrade.Creator)
+	require.Contains(t, approvedUpgrade.Approvals, msgApproveUpgrade.Creator)
+	require.Equal(t, approvedUpgrade.Creator, msgProposeUpgrade.Creator)
+	require.Equal(t, approvedUpgrade.Plan, msgProposeUpgrade.Plan)
 }
 
 func TestHandler_UpgradeApprovalWhenMoreVotesNeeded(t *testing.T) {
