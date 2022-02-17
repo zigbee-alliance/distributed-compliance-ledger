@@ -160,7 +160,7 @@ func NewPendingAccountRevocation(address sdk.AccAddress,
 	pendingAccountRevocation := PendingAccountRevocation{
 		Address: address.String(),
 	}
-	pendingAccountRevocation.Revocations = []Grant{
+	pendingAccountRevocation.Approvals = []*Grant{
 		{
 			Address: approval.String(),
 			Time:    time,
@@ -193,8 +193,8 @@ func (revoc PendingAccountRevocation) Validate() error {
 
 func (revoc PendingAccountRevocation) HasRevocationFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
-	for _, revoke := range revoc.Revocations {
-		if revoke.Address == addrStr {
+	for _, approvals := range revoc.Approvals {
+		if approvals.Address == addrStr {
 			return true
 		}
 	}
