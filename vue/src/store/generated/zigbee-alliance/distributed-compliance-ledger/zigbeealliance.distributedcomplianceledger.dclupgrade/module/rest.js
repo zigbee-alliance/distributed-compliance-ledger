@@ -142,10 +142,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryApprovedUpgradeAll
          * @summary Queries a list of ApprovedUpgrade items.
-         * @request GET:/dcl/dclupgrade/approved_upgrade
+         * @request GET:/dcl/dclupgrade/approved_upgrades
          */
         this.queryApprovedUpgradeAll = (query, params = {}) => this.request({
-            path: `/dcl/dclupgrade/approved_upgrade`,
+            path: `/dcl/dclupgrade/approved_upgrades`,
             method: "GET",
             query: query,
             format: "json",
@@ -157,10 +157,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryApprovedUpgrade
          * @summary Queries a ApprovedUpgrade by index.
-         * @request GET:/dcl/dclupgrade/approved_upgrade/{name}
+         * @request GET:/dcl/dclupgrade/approved_upgrades/{name}
          */
         this.queryApprovedUpgrade = (name, params = {}) => this.request({
-            path: `/dcl/dclupgrade/approved_upgrade/${name}`,
+            path: `/dcl/dclupgrade/approved_upgrades/${name}`,
             method: "GET",
             format: "json",
             ...params,

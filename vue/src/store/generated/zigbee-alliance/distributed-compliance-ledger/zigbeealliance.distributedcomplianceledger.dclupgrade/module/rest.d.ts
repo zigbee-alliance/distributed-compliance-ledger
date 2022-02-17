@@ -321,7 +321,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryApprovedUpgradeAll
      * @summary Queries a list of ApprovedUpgrade items.
-     * @request GET:/dcl/dclupgrade/approved_upgrade
+     * @request GET:/dcl/dclupgrade/approved_upgrades
      */
     queryApprovedUpgradeAll: (query?: {
         "pagination.key"?: string;
@@ -336,7 +336,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryApprovedUpgrade
      * @summary Queries a ApprovedUpgrade by index.
-     * @request GET:/dcl/dclupgrade/approved_upgrade/{name}
+     * @request GET:/dcl/dclupgrade/approved_upgrades/{name}
      */
     queryApprovedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>>;
     /**
