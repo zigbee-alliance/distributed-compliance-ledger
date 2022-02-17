@@ -276,7 +276,7 @@ func TestHandler_ApproveAddX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 
 	// approve
 	approveAddX509RootCert := types.NewMsgApproveAddX509RootCert(
-		setup.Trustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.LeafCertPem)
+		setup.Trustee.String(), testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.Info)
 	_, err = setup.Handler(setup.Ctx, approveAddX509RootCert)
 	require.NoError(t, err)
 
