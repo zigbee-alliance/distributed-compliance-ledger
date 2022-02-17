@@ -123,14 +123,18 @@ The following steps are expected to be done **during** the ceremony.
 
 8.  **Run genesis node**
 
-    8.1. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
+    8.1. Prepare `persistent_peers.txt` file (download or copy-paste into the file
+    in the same directory as `run_dcl_node`).
+
+    8.2. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
 
     ```bash
-    TBD
-    ```
+    # fetch the helper script
+    curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/test_peers_conn
 
-    8.2. Prepare `persistent_peers.txt` file (download or copy-paste into the file
-    in the same directory as `run_dcl_node`).
+    # run, by default it expectes persistent_peers.txt in the current directory
+    ./test_peers_conn
+    ```
 
     8.3. Run genesis VN
 
@@ -172,7 +176,11 @@ The following steps are expected to be done **during** the ceremony.
     10.3. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
 
     ```bash
-    TBD
+    # fetch the helper script
+    curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/test_peers_conn
+
+    # run, by default it expectes persistent_peers.txt in the current directory
+    ./test_peers_conn
     ```
 
     10.4. Run VN

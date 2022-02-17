@@ -1,0 +1,130 @@
+#!/bin/bash
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eu
+set -o pipefail
+
+TIMEOUT_DEF=3
+PERSISTENT_PEERS_FILE="${1:-./persistent_peers.txt}"
+
+TIMEOUT="${TIMEOUT:-TIMEOUT_DEF}"
+
+PASSED_RES=PASSED
+FAILED_RES=FAILED
+final_res=true
+NETCAT=""
+CHECK_TOOL=""
+
+function usage {
+  echo "\
+Usage: $0 [persistent-peers-file]
+
+Tests connections to peers from the persistent peers file.
+If the file is not specified './persistent_peers.txt' is used.
+
+The tool assumes that either netcat or telnet is available.
+
+TIMEOUT environment variable may be used to set connections
+timeout (seconds). Default: 3 seconds.
+"
+}
+
+function test_env {
+    set -u
+    local i
+
+    for i in nc netcat ncat; do 
+        if [[ -n "$(which $i)" ]]; then
+            NETCAT="$i"
+            CHECK_TOOL=netcat
+            # echo "NOTE: 'netcat' tool is found"
+            break
+        fi
+    done
+
+    if [[ -z "$NETCAT" ]]; then
+        if [[ -n "$(which telnet)" ]]; then
+            CHECK_TOOL=telnet
+            # echo "NOTE: 'netcat' tool is not found, switching to 'telnet'"
+        else
+            echo "ERROR: neither 'netcat' nor 'telnet' tool is available, please install one and run again"
+            exit 1
+        fi
+    fi
+}
+
+function telnet_check {
+    set -eu
+
+    local _telnet_res="$(timeout "$TIMEOUT" telnet "$1" "$2" 2>&1)"
+
+    if [[ "$_telnet_res" == *"Connected"* ]]; then
+        echo "$PASSED_RES"
+    else
+        echo "$FAILED_RES"
+    fi
+}
+
+function netcat_check {
+    set -u
+
+    "$NETCAT" -w "$TIMEOUT" -z "$1" "$2" 2>&1 >/dev/null
+    if [[ $? -eq 0 ]]; then
+        echo "$PASSED_RES"
+    else
+        echo "$FAILED_RES"
+    fi
+}
+
+
+function check {
+    if [[ "$CHECK_TOOL" == "telnet" ]]; then
+        telnet_check "$@"
+    else
+        netcat_check "$@"
+    fi
+}
+
+if [[ ("${1-}" == "-h" || "${1:-}" == "--help") ]]; then
+    usage
+    exit 0
+fi
+
+if [[ ! -f "$PERSISTENT_PEERS_FILE" ]]; then
+    echo "Error. '$PERSISTENT_PEERS_FILE' file not found"
+    usage
+    exit 1
+fi
+
+test_env
+
+IFS=',' read -a peers <<< "$(cat "$PERSISTENT_PEERS_FILE")"
+
+for peer in "${peers[@]}"
+do
+    IFS=':' read -a _arr <<< "$(echo "$peer" | cut -d @ -f 2)"
+    res="$(check "${_arr[0]}" "${_arr[1]}")"
+    echo "Connection to peer '${_arr[0]}:${_arr[1]}' $res"
+
+    if [[ "$res" == "$FAILED_RES" ]]; then
+        final_res=false
+    fi
+done
+
+if [[ "$final_res" == true ]]; then
+    exit 0
+else
+    exit 1
+fi
