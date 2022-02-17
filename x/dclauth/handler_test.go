@@ -71,11 +71,6 @@ func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 		require.Equal(t, address, account.GetAddress())
 		require.Equal(t, pubKey, account.GetPubKey())
 
-		// check for info field and approvals
-		dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
-		require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
-		require.Equal(t, trustee.String(), dclAccount.Approvals[0].Address)
-
 		// ensure no pending account created
 		require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
 	}
