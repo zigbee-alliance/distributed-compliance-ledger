@@ -26,7 +26,7 @@ func createNProposedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []typ
 }
 
 func TestProposedUpgradeGet(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNProposedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetProposedUpgrade(ctx,
@@ -41,7 +41,7 @@ func TestProposedUpgradeGet(t *testing.T) {
 }
 
 func TestProposedUpgradeRemove(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNProposedUpgrade(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveProposedUpgrade(ctx,
@@ -55,7 +55,7 @@ func TestProposedUpgradeRemove(t *testing.T) {
 }
 
 func TestProposedUpgradeGetAll(t *testing.T) {
-	keeper, ctx := keepertest.DclupgradeKeeper(t)
+	keeper, ctx := keepertest.DclupgradeKeeper(t, nil, nil)
 	items := createNProposedUpgrade(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

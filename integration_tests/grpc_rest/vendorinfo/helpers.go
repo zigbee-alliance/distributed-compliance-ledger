@@ -171,12 +171,12 @@ func AddVendorInfoByNonVendor(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// register new account without Vendor role
-	testHouseName := utils.RandString()
+	nonVendorAccountNamew := utils.RandString()
 	vid := int32(tmrand.Uint16())
-	testHouseAccount := test_dclauth.CreateAccount(
+	nonVendorAccount := test_dclauth.CreateAccount(
 		suite,
-		testHouseName,
-		dclauthtypes.AccountRoles{dclauthtypes.TestHouse},
+		nonVendorAccountNamew,
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
 		vid,
 		aliceName,
 		aliceAccount,
@@ -184,11 +184,11 @@ func AddVendorInfoByNonVendor(suite *utils.TestSuite) {
 		bobAccount,
 	)
 
-	require.NotContains(suite.T, testHouseAccount.Roles, dclauthtypes.Vendor)
+	require.NotContains(suite.T, nonVendorAccount.Roles, dclauthtypes.Vendor)
 
 	// try to add createVendorInfoMsg
-	createVendorInfoMsg := NewMsgCreateVendorInfo(vid, testHouseAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createVendorInfoMsg}, testHouseName, testHouseAccount)
+	createVendorInfoMsg := NewMsgCreateVendorInfo(vid, nonVendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createVendorInfoMsg}, nonVendorAccountNamew, nonVendorAccount)
 	require.Error(suite.T, err)
 	require.True(suite.T, sdkerrors.ErrUnauthorized.Is(err))
 }

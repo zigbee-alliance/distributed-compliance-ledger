@@ -254,7 +254,7 @@ function node_init {
     rm -rf "$DCL_HOME/config/gentx"
     rm -f "$GENESIS_FILE"
 
-    ./dcld init "$_name" --chain-id "$_chain_id"
+    # ./dcld init "$_name" --chain-id "$_chain_id"
 }
 
 
@@ -531,8 +531,8 @@ fi
 # - keys:
 #   dcld keys show <name>: to get address and pubkey for a keyname
 # - node status:
-#   - systemctl status cosmovisor: to get the node service status. 
-#   - journalctl -u cosmovisor.service -f: to see node logs. 
+#   - systemctl status cosmovisor: to get the node service status.
+#   - journalctl -u cosmovisor.service -f: to see node logs.
 #   - dcld status [--node tcp://<node host>:<node port>`]: to get the current status.
 #   - dcld query tendermint-validator-set [height]: list of nodes participating in consensus
 # - account status:

@@ -330,7 +330,6 @@ func newNetwork(t *testing.T, cfg Config) *Network {
 			baseAccount,
 			[]dclauthtypes.AccountRole{
 				dclauthtypes.Vendor,
-				dclauthtypes.TestHouse,
 				dclauthtypes.CertificationCenter,
 				dclauthtypes.Trustee,
 				dclauthtypes.NodeAdmin,

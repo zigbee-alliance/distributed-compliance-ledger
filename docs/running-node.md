@@ -149,7 +149,7 @@ Every network (e.g. `test-net`, `main-net` etc.) must have a unique chain ID.
 ### Create keys for a node admin and a trustee genesis accounts
 
 ```bash
-dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
+dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
 ```
 
 *Notes*
@@ -158,10 +158,16 @@ dcld keys add <key-name> 2>&1 | tee <key-name>.dclkey.data
 
 ### Setup a node
 
-Run
+Init node:
 
 ```bash
-$ ./run_dcl_node -t genesis -c <chain-id> --gen-key-name <node-admin-key> [--gen-key-name-trustee <trustee-key>] node0
+dcld init "<node-name>" --chain-id "<chain-id>"
+```
+
+Run node:
+
+```bash
+$ ./run_dcl_node -t genesis -c "<chain-id>" --gen-key-name "<node-admin-key>" [--gen-key-name-trustee "<trustee-key>"] "<node-name>"
 ```
 
 This command:
@@ -191,7 +197,7 @@ The following steps automates a set of instructions that you can find in [Runnin
 Run the following to create a key:
 
 ```bash
-dcld keys add <key-name> 2>&1 | tee -a <key-name>.dclkey.data
+dcld keys add "<key-name>" 2>&1 | tee -a "<key-name>.dclkey.data"
 ```
 
 And provide the output address and a public key to the network trustees.
@@ -202,10 +208,16 @@ And provide the output address and a public key to the network trustees.
 
 ### Setup a node
 
-Run
+Init node:
 
 ```bash
-$ ./run_dcl_node -c <chain-id> <node-name>
+dcld init "<node-name>" --chain-id "<chain-id>"
+```
+
+Run node:
+
+```bash
+$ ./run_dcl_node -c "<chain-id>" "<node-name>"
 ```
 
 *Notes*
@@ -232,8 +244,7 @@ an account with `NodeAdmin` role. And **wait** until:
 ### Make the node a validator
 
 ```bash
-$ dcld tx validator add-node --pubkey=<validator pubkey> \
-    --moniker=<node name> --from=<key name>
+$ dcld tx validator add-node --pubkey="<validator pubkey>" --moniker="<node name>" --from="<key name>"
 ```
 
 If the transaction has been successfully written you would find `"code": 0` in the output JSON.
@@ -256,10 +267,16 @@ This part describes how to configure an observer node and add it to the existing
 
 The following command automates a set of instructions that you can find in [Running Observer Node](advanced/running-observer-node.md) document
 
-Run
+Init node:
 
 ```bash
-$ ./run_dcl_node -t observer -c <chain-id> <node-name>
+dcld init "<node-name>" --chain-id "<chain-id>"
+```
+
+Run node:
+
+```bash
+$ ./run_dcl_node -t observer -c "<chain-id>" "<node-name>"
 ```
 
 *Notes*
@@ -278,10 +295,10 @@ As a general guidance you may consider to use only the peers you own and/or trus
 ## Deployment Verification
 
 *   Check the account:
-    *   `dcld query auth account --address=<address>`
+    *   `dcld query auth account --address="<address>"`
 *   Check the node is running properly:
     *   `dcld status --node tcp://<ip:port>`
-    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcld/config/config.toml`
+    *   The value of `<ip:port>` matches to `[rpc] laddr` field in `$HOME/.dcl/config/config.toml`
     *   Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 *   Get the list of nodes participating in the consensus for the last block:
     *   `dcld query tendermint-validator-set`.

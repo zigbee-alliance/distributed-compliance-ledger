@@ -170,7 +170,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 func TestHandler_ProposeAddAccount_ByNotTrustee(t *testing.T) {
 	setup := Setup(t)
 
-	for _, role := range []types.AccountRole{types.Vendor, types.TestHouse, types.CertificationCenter, types.NodeAdmin} {
+	for _, role := range []types.AccountRole{types.Vendor, types.CertificationCenter, types.NodeAdmin} {
 		// store signer account
 		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
@@ -250,7 +250,7 @@ func TestHandler_ApproveAddAccount_ByNotTrustee(t *testing.T) {
 	// ensure pending account created
 	require.True(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
 
-	for _, role := range []types.AccountRole{types.Vendor, types.TestHouse, types.CertificationCenter, types.NodeAdmin} {
+	for _, role := range []types.AccountRole{types.Vendor, types.CertificationCenter, types.NodeAdmin} {
 		// store signer account
 		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
@@ -443,7 +443,7 @@ func TestHandler_ProposeRevokeAccount_ByNotTrustee(t *testing.T) {
 	// store account
 	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
 
-	for _, role := range []types.AccountRole{types.Vendor, types.TestHouse, types.CertificationCenter, types.NodeAdmin} {
+	for _, role := range []types.AccountRole{types.Vendor, types.CertificationCenter, types.NodeAdmin} {
 		// store signer account
 		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
@@ -510,7 +510,7 @@ func TestHandler_ApproveRevokeAccount_ByNotTrustee(t *testing.T) {
 	// ensure pending account revocation created
 	require.True(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
 
-	for _, role := range []types.AccountRole{types.Vendor, types.TestHouse, types.CertificationCenter, types.NodeAdmin} {
+	for _, role := range []types.AccountRole{types.Vendor, types.CertificationCenter, types.NodeAdmin} {
 		// store signer account
 		signer := storeAccountWithVendorID(setup, role, testconstants.VendorID1)
 
@@ -578,15 +578,15 @@ func TestHandler_ProposeAddAccount_VendorIDNotRequiredForNonVendorAccounts(t *te
 	// store trustee
 	trustee := storeTrustee(setup)
 	_, pubKey, address := testdata.KeyTestPubAddr()
-	proposeTestHouseAccount, err := types.NewMsgProposeAddAccount(
+	proposeTrusteeAccount, err := types.NewMsgProposeAddAccount(
 		trustee,
 		address,
 		pubKey,
-		types.AccountRoles{types.TestHouse},
+		types.AccountRoles{types.Trustee},
 		0,
 	)
 	require.NoError(t, err)
-	_, err = setup.Handler(setup.Ctx, proposeTestHouseAccount)
+	_, err = setup.Handler(setup.Ctx, proposeTrusteeAccount)
 	require.NoError(t, err)
 
 	_, pubKey, address = testdata.KeyTestPubAddr()
@@ -607,7 +607,7 @@ func TestHandler_ProposeAddAccount_VendorIDRequiredForVendorAccounts(t *testing.
 	// store trustee
 	trustee := storeTrustee(setup)
 	_, pubKey, address := testdata.KeyTestPubAddr()
-	proposeTestHouseAccount, err := types.NewMsgProposeAddAccount(
+	proposeVendorAccount, err := types.NewMsgProposeAddAccount(
 		trustee,
 		address,
 		pubKey,
@@ -615,7 +615,7 @@ func TestHandler_ProposeAddAccount_VendorIDRequiredForVendorAccounts(t *testing.
 		0,
 	)
 	require.NoError(t, err)
-	_, err = setup.Handler(setup.Ctx, proposeTestHouseAccount)
+	_, err = setup.Handler(setup.Ctx, proposeVendorAccount)
 	require.ErrorIs(t, err, types.MissingVendorIDForVendorAccount)
 }
 

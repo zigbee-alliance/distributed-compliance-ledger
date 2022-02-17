@@ -131,7 +131,7 @@ trustee_account="jack"
 second_trustee_account="alice"
 
 echo "Create regular account"
-create_new_account user_account "TestHouse"
+create_new_account user_account "CertificationCenter"
 
 test_divider
 

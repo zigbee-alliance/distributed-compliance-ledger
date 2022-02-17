@@ -28,10 +28,6 @@ the following instructions can be used for every role (see [Use Case Diagrams](u
         - publish device model info
         - publish X509 certificates
         - revoke X509 certificates        
-    - [Test House](#test-house-instructions) 
-        - publish compliance test results
-        - publish X509 certificates
-        - revoke X509 certificates        
     - [Certification Center](#certification-center-instructions)
         - certify or revoke certification of device models
         - publish X509 certificates
@@ -250,27 +246,6 @@ dcld tx model update-model --vid=<uint16> --pid=<uint16> ... --from=<account>
 ```
 dcld tx model update-model-version --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> ... --from=<account>
 ```
-
-## Test House Instructions
-##### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
-This step is needed for off-ledger certification use case only, see [use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png).
-
-The certificate must be signed by a chain of certificates which must be already present on the ledger.
- 
-```
-dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>
-```
-    
-##### 1B. Add a new testing result for the device model with the given VID/PID
-This step is needed for on-ledger certification use case only, see [use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png).
-
-The corresponding model must present on the ledger.
-
-```
-dcld tx compliancetest add-test-result --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string> --test-result=<string-or-path> --test-date=<rfc3339 encoded date> --from=<account>
-```
- 
-   
 ## Certification Center Instructions
 ##### 1A. Publish an intermediate or leaf X509 certificate(s) to be used for signing the Certification blob
 This step is needed for off-ledger certification use case only, see [use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png).
@@ -284,7 +259,7 @@ dcld tx pki add-x509-cert --certificate=<string-or-path> --from=<account>
 ##### 1B. Certify the device model with the given VID/PID
 This step is needed for on-ledger certification use case only, see [use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png).
 
-The corresponding model and the test results must be present on the ledger.
+The corresponding model and the version must be present on the ledger.
 
 ```
 dcld tx compliance certify-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --softwareVersionString=<string>  --certificationType=<matter|zigbee> --certificationDate=<rfc3339 encoded date> --reason=<string> --from=<account>
@@ -295,7 +270,7 @@ This step can be used in either on-ledger certification use case
  ([use_cases_device_on_ledger_certification](use_cases/use_cases_device_on_ledger_certification.png))
   or off-ledger certification use case ([use_cases_device_off_ledger_certification](use_cases/use_cases_device_off_ledger_certification.png)).
  
-The corresponding Model Info and test results are not required to be on the ledger.
+The corresponding Model Info is not required to be on the ledger.
 
 ```
 dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=<uint32> --certificationType=<matter|zigbee> --revocationDate=<rfc3339 encoded date> --reason=<string> --from=<account>

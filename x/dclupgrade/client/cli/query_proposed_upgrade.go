@@ -50,14 +50,15 @@ func CmdListProposedUpgrade() *cobra.Command {
 }
 
 func CmdShowProposedUpgrade() *cobra.Command {
+	var name string
+
 	cmd := &cobra.Command{
-		Use:   "get-proposed-upgrade [name]",
+		Use:   "proposed-upgrade --name [name]",
 		Short: "Query proposed upgrade by name",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			name := args[0]
 			var res types.ProposedUpgrade
 
 			return cli.QueryWithProof(
@@ -69,6 +70,10 @@ func CmdShowProposedUpgrade() *cobra.Command {
 			)
 		},
 	}
+
+	cmd.Flags().StringVar(&name, FlagName, "", "Upgrade name")
+
+	_ = cmd.MarkFlagRequired(FlagName)
 
 	flags.AddQueryFlagsToCmd(cmd)
 
