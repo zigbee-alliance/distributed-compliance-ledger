@@ -4,8 +4,8 @@
 package types
 
 func (cert ProposedCertificateRevocation) HasRevocationFrom(address string) bool {
-	for _, revocation := range cert.Revocations {
-		if revocation.Address == address {
+	for _, approvals := range cert.Approvals {
+		if approvals.Address == address {
 			return true
 		}
 	}

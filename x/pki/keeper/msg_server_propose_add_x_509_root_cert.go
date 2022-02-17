@@ -70,7 +70,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 		PemCert:      msg.Cert,
 		SerialNumber: x509Certificate.SerialNumber,
 		Owner:        msg.Signer,
-		Approvals:    []types.Grant{},
+		Approvals:    []*types.Grant{},
 	}
 
 	// if signer has `RootCertificateApprovalRole` append approval
@@ -84,7 +84,7 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 			Time:    msg.Time,
 			Info:    msg.Info,
 		}
-		proposedCertificate.Approvals = append(proposedCertificate.Approvals, grant)
+		proposedCertificate.Approvals = append(proposedCertificate.Approvals, &grant)
 	}
 
 	// store proposed certificate

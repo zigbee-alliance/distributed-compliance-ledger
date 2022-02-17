@@ -590,7 +590,7 @@ func TestHandler_AddX509Cert_ForFailedCertificateVerification(t *testing.T) {
 
 	// add invalid root
 	invalidRootCertificate := types.NewRootCertificate(testconstants.StubCertPem,
-		testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, setup.Trustee.String(), []types.Grant{})
+		testconstants.RootSubject, testconstants.RootSubjectKeyID, testconstants.RootSerialNumber, setup.Trustee.String(), []*types.Grant{})
 	setup.Keeper.AddApprovedCertificate(setup.Ctx, invalidRootCertificate)
 
 	// add intermediate x509 certificate
@@ -1533,7 +1533,7 @@ func rootCertificate(address sdk.AccAddress) types.Certificate {
 		testconstants.RootSubjectKeyID,
 		testconstants.RootSerialNumber,
 		address.String(),
-		[]types.Grant{},
+		[]*types.Grant{},
 	)
 }
 

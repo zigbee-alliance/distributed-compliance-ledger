@@ -45,10 +45,10 @@ func (k msgServer) ApproveRevokeX509RootCert(goCtx context.Context, msg *types.M
 		Time:    msg.Time,
 		Info:    msg.Info,
 	}
-	revocation.Revocations = append(revocation.Revocations, grant)
+	revocation.Approvals = append(revocation.Approvals, &grant)
 
 	// check if proposed certificate revocation has enough approvals
-	if len(revocation.Revocations) == types.RootCertificateApprovals {
+	if len(revocation.Approvals) == types.RootCertificateApprovals {
 		certificates, found := k.GetApprovedCertificates(ctx, msg.Subject, msg.SubjectKeyId)
 		if !found {
 			return nil, types.NewErrCertificateDoesNotExist(msg.Subject, msg.SubjectKeyId)
