@@ -33,12 +33,12 @@ The following steps are expected to be done **before** the ceremony.
     $ rm -rf "$HOME/.dcl"
     ```
 
-    1.5. Get the release artifacts:
+    1.5. Get the release artifacts (DCL 0.7.0):
 
     ```bash
-    $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/dcld
-    $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/dcld.service
-    $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.6.1/run_dcl_node
+    $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld
+    $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld.service
+    $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/run_dcl_node
     ```
 
     1.6. Put `dlcd` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`) and set a proper owner and executable permissions.
