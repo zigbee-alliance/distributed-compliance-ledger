@@ -275,6 +275,10 @@ func TestHandler_UpgradeApprovalWhenMoreVotesNeeded(t *testing.T) {
 	upgrade, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.True(t, isFound)
 
+	// check upgrade for not being added to ApprovedUpgrade store
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
 	// one approval is from propose stage, another is from approve stage
 	require.Equal(t, len(upgrade.Approvals), 2)
 	require.Contains(t, upgrade.Approvals, msgApproveUpgrade.Creator)
@@ -364,6 +368,10 @@ func TestHandler_MessageCreatorAlreadyApprovedUpgrade(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
 	require.Error(t, err)
 	require.True(t, sdkerrors.ErrUnauthorized.Is(err))
+
+	// check upgrade for not being added to ApprovedUpgrade store
+	_, isFound := setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
 }
 
 func TestHandler_ProposeUpgradePlanHeightLessBlockHeight(t *testing.T) {
@@ -416,6 +424,10 @@ func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(sdkerrors.ErrInvalidRequest).Once()
 	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
 	require.Error(t, err, sdkerrors.ErrInvalidRequest)
+
+	// check upgrade for not being added to ApprovedUpgrade store
+	_, isFound := setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
 }
 
 func isContextWithCachedMultiStore(ctx sdk.Context) bool {
