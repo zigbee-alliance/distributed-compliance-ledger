@@ -71,6 +71,11 @@ func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 		require.Equal(t, address, account.GetAddress())
 		require.Equal(t, pubKey, account.GetPubKey())
 
+		// check for info field and approvals
+		dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
+		require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
+		require.Equal(t, trustee.String(), dclAccount.Approvals[0].Address)
+
 		// ensure no pending account created
 		require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
 	}
@@ -95,6 +100,7 @@ func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
 	require.True(t, found)
 	require.Equal(t, address.String(), pendingAccount.Address)
+	require.Equal(t, testconstants.Info, pendingAccount.Approvals[0].Info)
 	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
 
 	// ensure no active account created
@@ -109,6 +115,13 @@ func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	account := setup.Keeper.GetAccount(setup.Ctx, address)
 	require.Equal(t, address, account.GetAddress())
 	require.Equal(t, pubKey, account.GetPubKey())
+
+	// check for info field and approvals
+	dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[1].Info)
+	require.Equal(t, trustee1.String(), dclAccount.Approvals[0].Address)
+	require.Equal(t, trustee2.String(), dclAccount.Approvals[1].Address)
 
 	// ensure pending account removed
 	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
@@ -139,7 +152,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
 	// trustee2 approves account
-	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info2)
 	_, err = setup.Handler(setup.Ctx, approveAddAccount)
 	require.NoError(t, err)
 
@@ -154,7 +167,7 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
 	// trustee3 approves account
-	approveAddAccount = types.NewMsgApproveAddAccount(trustee3, address, testconstants.Info)
+	approveAddAccount = types.NewMsgApproveAddAccount(trustee3, address, testconstants.Info3)
 	_, err = setup.Handler(setup.Ctx, approveAddAccount)
 	require.NoError(t, err)
 
@@ -162,6 +175,15 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	account := setup.Keeper.GetAccount(setup.Ctx, address)
 	require.Equal(t, address, account.GetAddress())
 	require.Equal(t, pubKey, account.GetPubKey())
+
+	// check for info field and approvals
+	dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
+	require.Equal(t, testconstants.Info2, dclAccount.Approvals[1].Info)
+	require.Equal(t, testconstants.Info3, dclAccount.Approvals[2].Info)
+	require.Equal(t, trustee1.String(), dclAccount.Approvals[0].Address)
+	require.Equal(t, trustee2.String(), dclAccount.Approvals[1].Address)
+	require.Equal(t, trustee3.String(), dclAccount.Approvals[2].Address)
 
 	// ensure pending account removed
 	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
