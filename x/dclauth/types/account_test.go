@@ -67,7 +67,7 @@ func TestNewAccount(t *testing.T) {
 	type args struct {
 		ba        *authtypes.BaseAccount
 		roles     AccountRoles
-		approvals []Grant
+		approvals []*Grant
 		vendorID  int32
 	}
 	tests := []struct {
@@ -80,13 +80,13 @@ func TestNewAccount(t *testing.T) {
 			args: args{
 				ba:        &authtypes.BaseAccount{},
 				roles:     []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
-				approvals: []Grant{},
+				approvals: []*Grant{},
 				vendorID:  1,
 			},
 			want: &Account{
 				BaseAccount: &authtypes.BaseAccount{},
 				Roles:       []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    1,
 			},
 		},
@@ -95,13 +95,13 @@ func TestNewAccount(t *testing.T) {
 			args: args{
 				ba:        &authtypes.BaseAccount{},
 				roles:     []AccountRole{Vendor},
-				approvals: []Grant{},
+				approvals: []*Grant{},
 				vendorID:  2,
 			},
 			want: &Account{
 				BaseAccount: &authtypes.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    2,
 			},
 		},
@@ -120,7 +120,7 @@ func TestAccount_Validate(t *testing.T) {
 	type fields struct {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
-		Approvals   []Grant
+		Approvals   []*Grant
 		VendorID    int32
 	}
 	tests := []struct {
@@ -133,7 +133,7 @@ func TestAccount_Validate(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    1,
 			},
 			wantErr: false,
@@ -143,7 +143,7 @@ func TestAccount_Validate(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{CertificationCenter},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    0,
 			},
 			wantErr: false,
@@ -153,7 +153,7 @@ func TestAccount_Validate(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    0,
 			},
 			wantErr: true,
@@ -179,7 +179,7 @@ func TestAccount_GetRoles(t *testing.T) {
 	type fields struct {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
-		Approvals   []Grant
+		Approvals   []*Grant
 		VendorID    int32
 	}
 	tests := []struct {
@@ -192,7 +192,7 @@ func TestAccount_GetRoles(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    1,
 			},
 			want: []AccountRole{Vendor, Trustee},
@@ -202,7 +202,7 @@ func TestAccount_GetRoles(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    1,
 			},
 			want: []AccountRole{Vendor, Trustee, NodeAdmin},
@@ -227,7 +227,7 @@ func TestAccount_GetVendorID(t *testing.T) {
 	type fields struct {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
-		Approvals   []Grant
+		Approvals   []*Grant
 		VendorID    int32
 	}
 	tests := []struct {
@@ -240,7 +240,7 @@ func TestAccount_GetVendorID(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    45,
 			},
 			want: 45,
@@ -250,7 +250,7 @@ func TestAccount_GetVendorID(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Trustee},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    0,
 			},
 			want: 0,
@@ -276,7 +276,7 @@ func TestAccount_HasRole(t *testing.T) {
 	type fields struct {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
-		Approvals   []Grant
+		Approvals   []*Grant
 		VendorID    int32
 	}
 	type args struct {
@@ -293,7 +293,7 @@ func TestAccount_HasRole(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    1,
 			},
 			args: args{
@@ -306,7 +306,7 @@ func TestAccount_HasRole(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    1,
 			},
 			args: args{
@@ -319,7 +319,7 @@ func TestAccount_HasRole(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
-				Approvals:   []Grant{},
+				Approvals:   []*Grant{},
 				VendorID:    1,
 			},
 			args: args{

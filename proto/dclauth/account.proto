@@ -18,7 +18,7 @@ message Account {
   //       so protobuf takes care about repeated items in generated code,
   //       (but that might be not the final solution)
   repeated string roles = 2 [(gogoproto.casttype) = "AccountRole"]; 
-  repeated bytes approvals = 3 [(gogoproto.customtype) = "Grant"];
+  repeated Grant approvals = 3;
   int32 vendorID = 4;
   
 }

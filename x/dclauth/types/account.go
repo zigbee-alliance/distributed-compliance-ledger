@@ -65,7 +65,7 @@ type DCLAccountI interface {
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []Grant, vendorID int32) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []*Grant, vendorID int32) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
@@ -128,7 +128,7 @@ func NewPendingAccount(acc *Account, approval sdk.AccAddress, info string, time 
 		Account: acc,
 	}
 
-	pendingAccount.Approvals = []Grant{
+	pendingAccount.Approvals = []*Grant{
 		{
 			Address: approval.String(),
 			Time:    time,
