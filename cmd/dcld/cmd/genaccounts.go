@@ -108,7 +108,7 @@ the address will be looked up in the local Keybase.
 			}
 
 			// FIXME issue 99 VendorID
-			genAccount = dclauthtypes.NewAccount(ba, roles, []dclauthtypes.Grant{}, vendorID)
+			genAccount = dclauthtypes.NewAccount(ba, roles, []*dclauthtypes.Grant{}, vendorID)
 
 			if err := genAccount.Validate(); err != nil {
 				return fmt.Errorf("failed to validate new genesis account: %w", err)

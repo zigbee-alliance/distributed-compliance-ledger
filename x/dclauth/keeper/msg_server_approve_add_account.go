@@ -55,7 +55,7 @@ func (k msgServer) ApproveAddAccount(
 		Info:    msg.Info,
 	}
 
-	pendAcc.Approvals = append(pendAcc.Approvals, grant)
+	pendAcc.Approvals = append(pendAcc.Approvals, &grant)
 
 	// check if pending account has enough approvals
 	if len(pendAcc.Approvals) == k.AccountApprovalsCount(ctx) {
