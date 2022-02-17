@@ -128,7 +128,6 @@ func NewPendingAccount(acc *Account, approval sdk.AccAddress, info string, time 
 		Account: acc,
 	}
 
-	pendingAccount.Approvals = nil
 	pendingAccount.Approvals = []Grant{
 		{
 			Address: approval.String(),
