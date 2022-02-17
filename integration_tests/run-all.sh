@@ -60,10 +60,12 @@ patch_consensus_config() {
 
 init_pool() {
   local _patch_config="${1:-yes}";
+  local _localnet_init_target=${2:-localnet_init}
+
   log "Setting up pool"
 
   log "-> Generating network configuration" >${DETAILED_OUTPUT_TARGET}
-  make localnet_init &>${DETAILED_OUTPUT_TARGET}
+  make ${_localnet_init_target} &>${DETAILED_OUTPUT_TARGET}
 
   if [ "$_patch_config" = "yes" ];
   then
@@ -170,6 +172,26 @@ if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "rest" ]]; then
 
     cleanup_pool
   done
+fi
+
+# Upgrade procedure tests
+if [[ $TESTS_TO_RUN =~ "all" || $TESTS_TO_RUN =~ "upgrade" ]]; then
+    UPGRADE_SHELL_TEST="./integration_tests/upgrade/test-upgrade.sh"
+
+    init_pool yes localnet_init_test_upgrade
+
+    log "*****************************************************************************************"
+    log "Running $UPGRADE_SHELL_TEST"
+    log "*****************************************************************************************"
+    
+    if bash "$UPGRADE_SHELL_TEST" &>${DETAILED_OUTPUT_TARGET}; then
+      log "$UPGRADE_SHELL_TEST finished successfully"
+    else
+      log "$UPGRADE_SHELL_TEST failed"
+      exit 1
+    fi
+
+    cleanup_pool
 fi
 
 # Deploy tests

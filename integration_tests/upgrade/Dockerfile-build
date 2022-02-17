@@ -39,7 +39,7 @@ RUN echo -e \
 '// Migrate1to2 migrates from version 1 to 2.\n'\
 'func (m Migrator) Migrate1to2(ctx sdk.Context) error {\n'\
 '	for _, model := range m.keeper.GetAllModel(ctx) {\n'\
-'		model.ProductLabel += "-updated"\n'\
+'		model.ProductLabel += "_UPDATED"\n'\
 '		m.keeper.SetModel(ctx, model)\n'\
 '	}\n'\
 '	return nil\n'\

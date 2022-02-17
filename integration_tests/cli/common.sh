@@ -140,13 +140,9 @@ create_new_vendor_account(){
   address=$(echo $passphrase | dcld keys show $_name -a)
   pubkey=$(echo $passphrase | dcld keys show $_name -p)
 
-  test_divider
-
   echo "Jack proposes account for \"$_name\" with Vendor role"
   result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
   check_response "$result" "\"code\": 0"
-
-  test_divider
 
   echo "Alice approves account for \"$_name\" with Vendor role"
   result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
@@ -172,9 +168,15 @@ test_divider() {
   echo ""
 }
 
+get_height() {
+  local __resultvar="$1"
+  eval $__resultvar="'$(dcld status | jq | grep latest_block_height | awk -F'"' '{print $4}')'"
+}
+
 wait_for_height() {
   local target_height=${1:-1} # Default is 1
   local wait_time=${2:-10}    # In seconds, default - 10
+  local mode=${3:-normal}     # normal or outage-safe
 
   local _output=${DETAILED_OUTPUT_TARGET:-/dev/stdout}
 
@@ -185,14 +187,19 @@ wait_for_height() {
     sleep "${wait_interval}"
     waited=$((waited + wait_interval))
 
-    current_height="$(dcld status | jq | grep latest_block_height | awk -F'"' '{print $4}')"
+    if [[ "$mode" == "outage-safe" ]]; then
+      current_height="$(dcld status 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
 
-    if [[ -z "$current_height" ]]; then
-      echo "No height found in status" &>${_output}
-      exit 1
+    else
+      get_height current_height
+
+      if [[ -z "$current_height" ]]; then
+        echo "No height found in status" &>${_output}
+        exit 1
+      fi
     fi
 
-    if ((current_height >= target_height)); then
+    if [[ -n "$current_height" ]] && ((current_height >= target_height)); then
       echo "Height $target_height is reached in $waited seconds" &>${_output}
       break
     fi
@@ -202,7 +209,7 @@ wait_for_height() {
       exit 1
     fi
 
-    echo "Waiting for height: $target_height... Current height: $current_height, " \
+    echo "Waiting for height: $target_height... Current height: ${current_height:-unavailable}, " \
       "wait time: $waited, time limit: $wait_time." &>${_output}
   done
 }
