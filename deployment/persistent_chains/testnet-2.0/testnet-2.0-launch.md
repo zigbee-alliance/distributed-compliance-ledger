@@ -33,7 +33,7 @@ The following steps are expected to be done **before** the ceremony.
     $ rm -rf "$HOME/.dcl"
     ```
 
-    1.5. Get the release artifacts (DCL V 0.7.0):
+    1.5. Get the release artifacts (DCL 0.7.0):
 
     ```bash
     $ curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld
