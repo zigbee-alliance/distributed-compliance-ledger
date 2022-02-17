@@ -9,11 +9,10 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
@@ -55,42 +54,39 @@ func TestShowApprovedUpgrade(t *testing.T) {
 
 		args []string
 		err  error
-		obj  types.ApprovedUpgrade
+		obj  *types.ApprovedUpgrade
 	}{
 		{
 			desc:   "found",
 			idName: objs[0].Plan.Name,
 
 			args: common,
-			obj:  objs[0],
+			obj:  &objs[0],
 		},
 		{
 			desc:   "not found",
 			idName: strconv.Itoa(100000),
 
 			args: common,
-			err:  status.Error(codes.InvalidArgument, "not found"),
+			obj:  nil,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				tc.idName,
+				fmt.Sprintf("--%s=%v", cli.FlagName, tc.idName),
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowApprovedUpgrade(), args)
-			if tc.err != nil {
-				stat, ok := status.FromError(tc.err)
-				require.True(t, ok)
-				require.ErrorIs(t, stat.Err(), tc.err)
+			require.NoError(t, err)
+			if tc.obj == nil {
+				require.Equal(t, cliutils.NotFoundOutput, out.String())
 			} else {
-				require.NoError(t, err)
-				var resp types.QueryGetApprovedUpgradeResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.ApprovedUpgrade)
+				var approvedUpgrade types.ApprovedUpgrade
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &approvedUpgrade))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.ApprovedUpgrade),
+					nullify.Fill(&approvedUpgrade),
 				)
 			}
 		})

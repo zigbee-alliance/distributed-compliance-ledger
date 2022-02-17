@@ -49,7 +49,7 @@ func (k Keeper) ApprovedUpgrade(c context.Context, req *types.QueryGetApprovedUp
 		req.Name,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetApprovedUpgradeResponse{ApprovedUpgrade: val}, nil

@@ -6,15 +6,19 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
 func CmdListApprovedUpgrade() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-approved-upgrade",
-		Short: "list all ApprovedUpgrade",
+		Use:   "all-approved-upgrades",
+		Short: "Query the list of all approved upgrades",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			clientCtx := client.GetClientContextFromCmd(cmd)
+			clientCtx, err := client.GetClientQueryContext(cmd)
+			if err != nil {
+				return err
+			}
 
 			pageReq, err := client.ReadPageRequest(cmd.Flags())
 			if err != nil {
@@ -28,6 +32,9 @@ func CmdListApprovedUpgrade() *cobra.Command {
 			}
 
 			res, err := queryClient.ApprovedUpgradeAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
@@ -43,29 +50,30 @@ func CmdListApprovedUpgrade() *cobra.Command {
 }
 
 func CmdShowApprovedUpgrade() *cobra.Command {
+	var name string
+
 	cmd := &cobra.Command{
-		Use:   "show-approved-upgrade [name]",
-		Short: "shows a ApprovedUpgrade",
-		Args:  cobra.ExactArgs(1),
+		Use:   "approved-upgrade --name [name]",
+		Short: "Query approved upgrade by name",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			var res types.ApprovedUpgrade
 
-			argName := args[0]
-
-			params := &types.QueryGetApprovedUpgradeRequest{
-				Name: argName,
-			}
-
-			res, err := queryClient.ApprovedUpgrade(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ApprovedUpgradeKeyPrefix,
+				types.ApprovedUpgradeKey(name),
+				&res,
+			)
 		},
 	}
+
+	cmd.Flags().StringVar(&name, FlagName, "", "Upgrade name")
+
+	_ = cmd.MarkFlagRequired(FlagName)
 
 	flags.AddQueryFlagsToCmd(cmd)
 
