@@ -67,7 +67,7 @@ docker exec -u "$DCL_USER" "$TEST_NODE" /bin/sh -c "
   ./dcld config broadcast-mode block"
 
 echo "Configure and start new node"
-docker exec -u "$DCL_USER" "$TEST_NODE" dcld init $TEST_NODE --chain-id  $chain_id
+docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld init $TEST_NODE --chain-id  $chain_id
 docker exec -u "$DCL_USER" "$TEST_NODE" ./run_dcl_node -u $DCL_USER -c $chain_id $TEST_NODE
 docker exec "$TEST_NODE" systemctl status cosmovisor
 vaddress=$(docker exec -u "$DCL_USER" "$TEST_NODE" ./dcld tendermint show-address)
