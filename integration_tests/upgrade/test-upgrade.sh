@@ -55,7 +55,7 @@ check_response "$result" "\"code\": 0"
 test_divider
 
 echo "Approve upgrade $plan_name"
-result=$(echo $passphrase | dcld tx dclupgrade approve-upgrade $plan_name --from $trustee_account_2 --yes)
+result=$(echo $passphrase | dcld tx dclupgrade approve-upgrade --name $plan_name --from $trustee_account_2 --yes)
 echo "$result"
 check_response "$result" "\"code\": 0"
 
