@@ -51,10 +51,10 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 		Info:    msg.Info,
 	}
 	// append approval
-	revoc.Revocations = append(revoc.Revocations, grant)
+	revoc.Approvals = append(revoc.Approvals, &grant)
 
 	// check if pending account revocation has enough approvals
-	if len(revoc.Revocations) == k.AccountApprovalsCount(ctx) {
+	if len(revoc.Approvals) == k.AccountApprovalsCount(ctx) {
 		// delete account record
 		k.RemoveAccount(ctx, accAddr)
 
