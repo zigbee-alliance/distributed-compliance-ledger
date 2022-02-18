@@ -22,7 +22,7 @@ source integration_tests/cli/common.sh
 DCL_USER="dcl"
 DCL_USER_HOME="/var/lib/dcl"
 DCL_DIR="$DCL_USER_HOME/.dcl"
-TEST_NODE="test_deploy_node"
+TEST_NODE="test_deploy_vn"
 
 random_string account
 

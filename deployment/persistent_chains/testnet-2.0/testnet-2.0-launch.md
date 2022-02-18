@@ -78,7 +78,8 @@ The following steps are expected to be done **before** the ceremony.
 
     3.1. Share VN's IP address
 
-    3.2. Share VN's `id` (`node_id` field in `dcld init` command output)
+    3.2. Share VN's `id` (`node_id` field in `dcld init` command output
+         or `id` field in `dcld status` command output in case node is running)
 
 4.  **Generate NodeAdmin keys**
 
@@ -143,8 +144,6 @@ The following steps are expected to be done **during** the ceremony.
     ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name "<node-admin-key>" [--gen-key-name-trustee "<trustee-key>"] "<node-name>"
     ```
 
-    TODO
-
     8.4. Put genesis file to GitHub (`zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json`)
 
 ## III. Ceremony: For Every Validator Node
@@ -165,7 +164,21 @@ The following steps are expected to be done **during** the ceremony.
     dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
     ```
 
-10. **Run VN node**
+10. **[Optional] Add Trustee account**
+
+    12.1. A Trustee proposes Trustee account
+
+    ```bash
+    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=Trustee --from='<account-name>'
+    ```
+
+    12.2. Trustees approve Trustee account
+
+    ```bash
+    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
+    ```
+
+11. **Run VN node**
 
     10.1. Download genesis
 
@@ -202,7 +215,7 @@ The following steps are expected to be done **during** the ceremony.
 
     (once transaction is successfully written you should see `"code": 0` in the JSON output.)
 
-11. **VN Deployment Verification**
+12. **VN Deployment Verification**
 
     11.1. Check the account presence on the ledger: `dcld query auth account --address="<address>"`.
 
@@ -211,20 +224,6 @@ The following steps are expected to be done **during** the ceremony.
     11.3. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 
     11.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN's address.
-
-12. **[Optional] Add Trustee account**
-
-    12.1. A Trustee proposes Trustee account
-
-    ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=Trustee --from='<account-name>'
-    ```
-
-    12.2. Trustees approve Trustee account
-
-    ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
-    ```
 
 ## IV. Post-Ceremony: For every Observer Node
 
@@ -288,4 +287,4 @@ The following steps can be done **after** the ceremony.
         *   `dcld status [--node "tcp://<node host>:<node port>"]`: to get the current status.
         *   `dcld query tendermint-validator-set [height]`: list of nodes participating in consensus
     *   account status:
-    *   `dcld query auth account --address="<address>"`: to ensure that account is created and has assigned role
+        *   `dcld query auth account --address="<address>"`: to ensure that account is created and has assigned role
