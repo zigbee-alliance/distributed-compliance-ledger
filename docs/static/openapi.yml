@@ -5629,7 +5629,7 @@ paths:
           schema:
             type: object
             properties:
-              RevokedRootCertificates:
+              revokedRootCertificates:
                 type: object
                 properties:
                   certs:
@@ -10889,7 +10889,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
-      RevokedRootCertificates:
+      revokedRootCertificates:
         type: object
         properties:
           certs:
