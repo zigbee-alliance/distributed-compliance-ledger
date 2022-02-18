@@ -62,6 +62,16 @@ func TestMsgRevokeX509Cert_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "info len > 4096",
+			msg: MsgRevokeX509Cert{
+				Signer:       sample.AccAddress(),
+				Subject:      testconstants.RootSubject,
+				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Info:         tmrand.Str(4097),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positive_tests := []struct {
@@ -74,6 +84,15 @@ func TestMsgRevokeX509Cert_ValidateBasic(t *testing.T) {
 				Signer:       sample.AccAddress(),
 				Subject:      testconstants.RootSubject,
 				SubjectKeyId: testconstants.RootSubjectKeyID,
+			},
+		},
+		{
+			name: "info field is 4096 characters long",
+			msg: MsgRevokeX509Cert{
+				Signer:       sample.AccAddress(),
+				Subject:      testconstants.RootSubject,
+				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Info:         tmrand.Str(4096),
 			},
 		},
 	}

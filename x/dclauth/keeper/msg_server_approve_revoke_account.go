@@ -38,16 +38,20 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 	revoc, _ := k.GetPendingAccountRevocation(ctx, accAddr)
 
 	// check if pending account revocation already has approval from signer
-	if revoc.HasApprovalFrom(signerAddr) {
+	if revoc.HasRevocationFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Pending account revocation associated with the address=%v already has approval from=%v",
 			msg.Address,
 			msg.Signer,
 		)
 	}
-
+	grant := types.Grant{
+		Address: signerAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
 	// append approval
-	revoc.Approvals = append(revoc.Approvals, signerAddr.String())
+	revoc.Approvals = append(revoc.Approvals, &grant)
 
 	// check if pending account revocation has enough approvals
 	if len(revoc.Approvals) == k.AccountApprovalsCount(ctx) {

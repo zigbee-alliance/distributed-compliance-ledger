@@ -7,4 +7,6 @@ const (
 	FlagRoles        = "roles"
 	FlagVID          = "vid"
 	FlagRolesUsage   = "amount of accounts to take"
+	FlagInfo         = "info"
+	FlagInfoUsage    = "Optional information/notes for approval, proposal or revocation"
 )

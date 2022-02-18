@@ -47,7 +47,7 @@ func Setup(t *testing.T) TestSetup {
 	ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account := dclauthtypes.NewAccount(
 		ba,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, testconstants.VendorID1,
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, testconstants.VendorID1,
 	)
 	dclauthK.SetAccount(ctx, account)
 
@@ -106,7 +106,7 @@ func TestHandler_CreateValidator_ByNotNodeAdmin(t *testing.T) {
 	for _, role := range []dclauthtypes.AccountRole{dclauthtypes.CertificationCenter, dclauthtypes.Vendor, dclauthtypes.Trustee} {
 		// create signer account
 		ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
-		account := dclauthtypes.NewAccount(ba, dclauthtypes.AccountRoles{role}, testconstants.VendorID1)
+		account := dclauthtypes.NewAccount(ba, dclauthtypes.AccountRoles{role}, nil, testconstants.VendorID1)
 		setup.DclauthKeeper.SetAccount(setup.Ctx, account)
 
 		// try to create validator
@@ -131,7 +131,7 @@ func TestHandler_CreateValidator_TwiceForSameValidatorAddress(t *testing.T) {
 	// create validator
 	ba := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
 	account := dclauthtypes.NewAccount(ba,
-		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, testconstants.VendorID2)
+		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, testconstants.VendorID2)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account)
 
 	msgCreateValidator, err = types.NewMsgCreateValidator(

@@ -132,6 +132,7 @@ func VendorInfoDemo(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, vendorAccount)
 
@@ -182,6 +183,7 @@ func AddVendorInfoByNonVendor(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 
 	require.NotContains(suite.T, nonVendorAccount.Roles, dclauthtypes.Vendor)
@@ -219,6 +221,7 @@ func AddVendorInfoByDifferentVendor(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 
 	// try to add createVendorInfoMsg
@@ -254,6 +257,7 @@ func AddVendorInfoTwice(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 
 	// add vendorinfo
