@@ -1,11 +1,14 @@
 /* eslint-disable */
-import { Reader, Writer } from 'protobufjs/minimal'
+import { Reader, util, configure, Writer } from 'protobufjs/minimal'
+import * as Long from 'long'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
 
 export interface MsgProposeAddX509RootCert {
   signer: string
   cert: string
+  info: string
+  time: number
 }
 
 export interface MsgProposeAddX509RootCertResponse {}
@@ -14,6 +17,8 @@ export interface MsgApproveAddX509RootCert {
   signer: string
   subject: string
   subjectKeyId: string
+  info: string
+  time: number
 }
 
 export interface MsgApproveAddX509RootCertResponse {}
@@ -21,6 +26,8 @@ export interface MsgApproveAddX509RootCertResponse {}
 export interface MsgAddX509Cert {
   signer: string
   cert: string
+  info: string
+  time: number
 }
 
 export interface MsgAddX509CertResponse {}
@@ -29,6 +36,8 @@ export interface MsgProposeRevokeX509RootCert {
   signer: string
   subject: string
   subjectKeyId: string
+  info: string
+  time: number
 }
 
 export interface MsgProposeRevokeX509RootCertResponse {}
@@ -37,6 +46,8 @@ export interface MsgApproveRevokeX509RootCert {
   signer: string
   subject: string
   subjectKeyId: string
+  info: string
+  time: number
 }
 
 export interface MsgApproveRevokeX509RootCertResponse {}
@@ -45,11 +56,13 @@ export interface MsgRevokeX509Cert {
   signer: string
   subject: string
   subjectKeyId: string
+  info: string
+  time: number
 }
 
 export interface MsgRevokeX509CertResponse {}
 
-const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '' }
+const baseMsgProposeAddX509RootCert: object = { signer: '', cert: '', info: '', time: 0 }
 
 export const MsgProposeAddX509RootCert = {
   encode(message: MsgProposeAddX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -58,6 +71,12 @@ export const MsgProposeAddX509RootCert = {
     }
     if (message.cert !== '') {
       writer.uint32(18).string(message.cert)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
     }
     return writer
   },
@@ -74,6 +93,12 @@ export const MsgProposeAddX509RootCert = {
           break
         case 2:
           message.cert = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -95,6 +120,16 @@ export const MsgProposeAddX509RootCert = {
     } else {
       message.cert = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -102,6 +137,8 @@ export const MsgProposeAddX509RootCert = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.cert !== undefined && (obj.cert = message.cert)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -116,6 +153,16 @@ export const MsgProposeAddX509RootCert = {
       message.cert = object.cert
     } else {
       message.cert = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -159,7 +206,7 @@ export const MsgProposeAddX509RootCertResponse = {
   }
 }
 
-const baseMsgApproveAddX509RootCert: object = { signer: '', subject: '', subjectKeyId: '' }
+const baseMsgApproveAddX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
 
 export const MsgApproveAddX509RootCert = {
   encode(message: MsgApproveAddX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -171,6 +218,12 @@ export const MsgApproveAddX509RootCert = {
     }
     if (message.subjectKeyId !== '') {
       writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.info !== '') {
+      writer.uint32(34).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(40).int64(message.time)
     }
     return writer
   },
@@ -190,6 +243,12 @@ export const MsgApproveAddX509RootCert = {
           break
         case 3:
           message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.info = reader.string()
+          break
+        case 5:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -216,6 +275,16 @@ export const MsgApproveAddX509RootCert = {
     } else {
       message.subjectKeyId = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -224,6 +293,8 @@ export const MsgApproveAddX509RootCert = {
     message.signer !== undefined && (obj.signer = message.signer)
     message.subject !== undefined && (obj.subject = message.subject)
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -243,6 +314,16 @@ export const MsgApproveAddX509RootCert = {
       message.subjectKeyId = object.subjectKeyId
     } else {
       message.subjectKeyId = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -286,7 +367,7 @@ export const MsgApproveAddX509RootCertResponse = {
   }
 }
 
-const baseMsgAddX509Cert: object = { signer: '', cert: '' }
+const baseMsgAddX509Cert: object = { signer: '', cert: '', info: '', time: 0 }
 
 export const MsgAddX509Cert = {
   encode(message: MsgAddX509Cert, writer: Writer = Writer.create()): Writer {
@@ -295,6 +376,12 @@ export const MsgAddX509Cert = {
     }
     if (message.cert !== '') {
       writer.uint32(18).string(message.cert)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
     }
     return writer
   },
@@ -311,6 +398,12 @@ export const MsgAddX509Cert = {
           break
         case 2:
           message.cert = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -332,6 +425,16 @@ export const MsgAddX509Cert = {
     } else {
       message.cert = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -339,6 +442,8 @@ export const MsgAddX509Cert = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.cert !== undefined && (obj.cert = message.cert)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -353,6 +458,16 @@ export const MsgAddX509Cert = {
       message.cert = object.cert
     } else {
       message.cert = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -396,7 +511,7 @@ export const MsgAddX509CertResponse = {
   }
 }
 
-const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '' }
+const baseMsgProposeRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
 
 export const MsgProposeRevokeX509RootCert = {
   encode(message: MsgProposeRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -408,6 +523,12 @@ export const MsgProposeRevokeX509RootCert = {
     }
     if (message.subjectKeyId !== '') {
       writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.info !== '') {
+      writer.uint32(34).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(40).int64(message.time)
     }
     return writer
   },
@@ -427,6 +548,12 @@ export const MsgProposeRevokeX509RootCert = {
           break
         case 3:
           message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.info = reader.string()
+          break
+        case 5:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -453,6 +580,16 @@ export const MsgProposeRevokeX509RootCert = {
     } else {
       message.subjectKeyId = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -461,6 +598,8 @@ export const MsgProposeRevokeX509RootCert = {
     message.signer !== undefined && (obj.signer = message.signer)
     message.subject !== undefined && (obj.subject = message.subject)
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -480,6 +619,16 @@ export const MsgProposeRevokeX509RootCert = {
       message.subjectKeyId = object.subjectKeyId
     } else {
       message.subjectKeyId = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -523,7 +672,7 @@ export const MsgProposeRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgApproveRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '' }
+const baseMsgApproveRevokeX509RootCert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
 
 export const MsgApproveRevokeX509RootCert = {
   encode(message: MsgApproveRevokeX509RootCert, writer: Writer = Writer.create()): Writer {
@@ -535,6 +684,12 @@ export const MsgApproveRevokeX509RootCert = {
     }
     if (message.subjectKeyId !== '') {
       writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.info !== '') {
+      writer.uint32(42).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(48).int64(message.time)
     }
     return writer
   },
@@ -554,6 +709,12 @@ export const MsgApproveRevokeX509RootCert = {
           break
         case 3:
           message.subjectKeyId = reader.string()
+          break
+        case 5:
+          message.info = reader.string()
+          break
+        case 6:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -580,6 +741,16 @@ export const MsgApproveRevokeX509RootCert = {
     } else {
       message.subjectKeyId = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -588,6 +759,8 @@ export const MsgApproveRevokeX509RootCert = {
     message.signer !== undefined && (obj.signer = message.signer)
     message.subject !== undefined && (obj.subject = message.subject)
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -607,6 +780,16 @@ export const MsgApproveRevokeX509RootCert = {
       message.subjectKeyId = object.subjectKeyId
     } else {
       message.subjectKeyId = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -650,7 +833,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
   }
 }
 
-const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '' }
+const baseMsgRevokeX509Cert: object = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 }
 
 export const MsgRevokeX509Cert = {
   encode(message: MsgRevokeX509Cert, writer: Writer = Writer.create()): Writer {
@@ -662,6 +845,12 @@ export const MsgRevokeX509Cert = {
     }
     if (message.subjectKeyId !== '') {
       writer.uint32(26).string(message.subjectKeyId)
+    }
+    if (message.info !== '') {
+      writer.uint32(34).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(40).int64(message.time)
     }
     return writer
   },
@@ -681,6 +870,12 @@ export const MsgRevokeX509Cert = {
           break
         case 3:
           message.subjectKeyId = reader.string()
+          break
+        case 4:
+          message.info = reader.string()
+          break
+        case 5:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -707,6 +902,16 @@ export const MsgRevokeX509Cert = {
     } else {
       message.subjectKeyId = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -715,6 +920,8 @@ export const MsgRevokeX509Cert = {
     message.signer !== undefined && (obj.signer = message.signer)
     message.subject !== undefined && (obj.subject = message.subject)
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -734,6 +941,16 @@ export const MsgRevokeX509Cert = {
       message.subjectKeyId = object.subjectKeyId
     } else {
       message.subjectKeyId = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -834,6 +1051,16 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>
 }
 
+declare var self: any | undefined
+declare var window: any | undefined
+var globalThis: any = (() => {
+  if (typeof globalThis !== 'undefined') return globalThis
+  if (typeof self !== 'undefined') return self
+  if (typeof window !== 'undefined') return window
+  if (typeof global !== 'undefined') return global
+  throw 'Unable to locate global object'
+})()
+
 type Builtin = Date | Function | Uint8Array | string | number | undefined
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -844,3 +1071,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER')
+  }
+  return long.toNumber()
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any
+  configure()
+}

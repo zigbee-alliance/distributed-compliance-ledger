@@ -1,7 +1,8 @@
 /* eslint-disable */
-import { Reader, Writer } from 'protobufjs/minimal';
+import { Reader, util, configure, Writer } from 'protobufjs/minimal';
+import * as Long from 'long';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
-const baseMsgProposeAddX509RootCert = { signer: '', cert: '' };
+const baseMsgProposeAddX509RootCert = { signer: '', cert: '', info: '', time: 0 };
 export const MsgProposeAddX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -9,6 +10,12 @@ export const MsgProposeAddX509RootCert = {
         }
         if (message.cert !== '') {
             writer.uint32(18).string(message.cert);
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -24,6 +31,12 @@ export const MsgProposeAddX509RootCert = {
                     break;
                 case 2:
                     message.cert = reader.string();
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -46,12 +59,26 @@ export const MsgProposeAddX509RootCert = {
         else {
             message.cert = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
         message.cert !== undefined && (obj.cert = message.cert);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -67,6 +94,18 @@ export const MsgProposeAddX509RootCert = {
         }
         else {
             message.cert = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -103,7 +142,7 @@ export const MsgProposeAddX509RootCertResponse = {
         return message;
     }
 };
-const baseMsgApproveAddX509RootCert = { signer: '', subject: '', subjectKeyId: '' };
+const baseMsgApproveAddX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgApproveAddX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -114,6 +153,12 @@ export const MsgApproveAddX509RootCert = {
         }
         if (message.subjectKeyId !== '') {
             writer.uint32(26).string(message.subjectKeyId);
+        }
+        if (message.info !== '') {
+            writer.uint32(34).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(40).int64(message.time);
         }
         return writer;
     },
@@ -132,6 +177,12 @@ export const MsgApproveAddX509RootCert = {
                     break;
                 case 3:
                     message.subjectKeyId = reader.string();
+                    break;
+                case 4:
+                    message.info = reader.string();
+                    break;
+                case 5:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -160,6 +211,18 @@ export const MsgApproveAddX509RootCert = {
         else {
             message.subjectKeyId = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -167,6 +230,8 @@ export const MsgApproveAddX509RootCert = {
         message.signer !== undefined && (obj.signer = message.signer);
         message.subject !== undefined && (obj.subject = message.subject);
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -188,6 +253,18 @@ export const MsgApproveAddX509RootCert = {
         }
         else {
             message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -224,7 +301,7 @@ export const MsgApproveAddX509RootCertResponse = {
         return message;
     }
 };
-const baseMsgAddX509Cert = { signer: '', cert: '' };
+const baseMsgAddX509Cert = { signer: '', cert: '', info: '', time: 0 };
 export const MsgAddX509Cert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -232,6 +309,12 @@ export const MsgAddX509Cert = {
         }
         if (message.cert !== '') {
             writer.uint32(18).string(message.cert);
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -247,6 +330,12 @@ export const MsgAddX509Cert = {
                     break;
                 case 2:
                     message.cert = reader.string();
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -269,12 +358,26 @@ export const MsgAddX509Cert = {
         else {
             message.cert = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
         message.cert !== undefined && (obj.cert = message.cert);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -290,6 +393,18 @@ export const MsgAddX509Cert = {
         }
         else {
             message.cert = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -326,7 +441,7 @@ export const MsgAddX509CertResponse = {
         return message;
     }
 };
-const baseMsgProposeRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '' };
+const baseMsgProposeRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgProposeRevokeX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -337,6 +452,12 @@ export const MsgProposeRevokeX509RootCert = {
         }
         if (message.subjectKeyId !== '') {
             writer.uint32(26).string(message.subjectKeyId);
+        }
+        if (message.info !== '') {
+            writer.uint32(34).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(40).int64(message.time);
         }
         return writer;
     },
@@ -355,6 +476,12 @@ export const MsgProposeRevokeX509RootCert = {
                     break;
                 case 3:
                     message.subjectKeyId = reader.string();
+                    break;
+                case 4:
+                    message.info = reader.string();
+                    break;
+                case 5:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -383,6 +510,18 @@ export const MsgProposeRevokeX509RootCert = {
         else {
             message.subjectKeyId = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -390,6 +529,8 @@ export const MsgProposeRevokeX509RootCert = {
         message.signer !== undefined && (obj.signer = message.signer);
         message.subject !== undefined && (obj.subject = message.subject);
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -411,6 +552,18 @@ export const MsgProposeRevokeX509RootCert = {
         }
         else {
             message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -447,7 +600,7 @@ export const MsgProposeRevokeX509RootCertResponse = {
         return message;
     }
 };
-const baseMsgApproveRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '' };
+const baseMsgApproveRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgApproveRevokeX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -458,6 +611,12 @@ export const MsgApproveRevokeX509RootCert = {
         }
         if (message.subjectKeyId !== '') {
             writer.uint32(26).string(message.subjectKeyId);
+        }
+        if (message.info !== '') {
+            writer.uint32(42).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(48).int64(message.time);
         }
         return writer;
     },
@@ -476,6 +635,12 @@ export const MsgApproveRevokeX509RootCert = {
                     break;
                 case 3:
                     message.subjectKeyId = reader.string();
+                    break;
+                case 5:
+                    message.info = reader.string();
+                    break;
+                case 6:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -504,6 +669,18 @@ export const MsgApproveRevokeX509RootCert = {
         else {
             message.subjectKeyId = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -511,6 +688,8 @@ export const MsgApproveRevokeX509RootCert = {
         message.signer !== undefined && (obj.signer = message.signer);
         message.subject !== undefined && (obj.subject = message.subject);
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -532,6 +711,18 @@ export const MsgApproveRevokeX509RootCert = {
         }
         else {
             message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -568,7 +759,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
         return message;
     }
 };
-const baseMsgRevokeX509Cert = { signer: '', subject: '', subjectKeyId: '' };
+const baseMsgRevokeX509Cert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgRevokeX509Cert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -579,6 +770,12 @@ export const MsgRevokeX509Cert = {
         }
         if (message.subjectKeyId !== '') {
             writer.uint32(26).string(message.subjectKeyId);
+        }
+        if (message.info !== '') {
+            writer.uint32(34).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(40).int64(message.time);
         }
         return writer;
     },
@@ -597,6 +794,12 @@ export const MsgRevokeX509Cert = {
                     break;
                 case 3:
                     message.subjectKeyId = reader.string();
+                    break;
+                case 4:
+                    message.info = reader.string();
+                    break;
+                case 5:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -625,6 +828,18 @@ export const MsgRevokeX509Cert = {
         else {
             message.subjectKeyId = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -632,6 +847,8 @@ export const MsgRevokeX509Cert = {
         message.signer !== undefined && (obj.signer = message.signer);
         message.subject !== undefined && (obj.subject = message.subject);
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -653,6 +870,18 @@ export const MsgRevokeX509Cert = {
         }
         else {
             message.subjectKeyId = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -723,4 +952,25 @@ export class MsgClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.pki.Msg', 'RevokeX509Cert', data);
         return promise.then((data) => MsgRevokeX509CertResponse.decode(new Reader(data)));
     }
+}
+var globalThis = (() => {
+    if (typeof globalThis !== 'undefined')
+        return globalThis;
+    if (typeof self !== 'undefined')
+        return self;
+    if (typeof window !== 'undefined')
+        return window;
+    if (typeof global !== 'undefined')
+        return global;
+    throw 'Unable to locate global object';
+})();
+function longToNumber(long) {
+    if (long.gt(Number.MAX_SAFE_INTEGER)) {
+        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    }
+    return long.toNumber();
+}
+if (util.Long !== Long) {
+    util.Long = Long;
+    configure();
 }

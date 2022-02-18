@@ -1,8 +1,9 @@
 /* eslint-disable */
-import { Reader, Writer } from 'protobufjs/minimal';
+import { Reader, util, configure, Writer } from 'protobufjs/minimal';
+import * as Long from 'long';
 import { Any } from '../google/protobuf/any';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
-const baseMsgProposeAddAccount = { signer: '', address: '', roles: '', vendorID: 0 };
+const baseMsgProposeAddAccount = { signer: '', address: '', roles: '', vendorID: 0, info: '', time: 0 };
 export const MsgProposeAddAccount = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -19,6 +20,12 @@ export const MsgProposeAddAccount = {
         }
         if (message.vendorID !== 0) {
             writer.uint32(40).int32(message.vendorID);
+        }
+        if (message.info !== '') {
+            writer.uint32(50).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(56).int64(message.time);
         }
         return writer;
     },
@@ -44,6 +51,12 @@ export const MsgProposeAddAccount = {
                     break;
                 case 5:
                     message.vendorID = reader.int32();
+                    break;
+                case 6:
+                    message.info = reader.string();
+                    break;
+                case 7:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -84,6 +97,18 @@ export const MsgProposeAddAccount = {
         else {
             message.vendorID = 0;
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
@@ -98,6 +123,8 @@ export const MsgProposeAddAccount = {
             obj.roles = [];
         }
         message.vendorID !== undefined && (obj.vendorID = message.vendorID);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -131,6 +158,18 @@ export const MsgProposeAddAccount = {
         }
         else {
             message.vendorID = 0;
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -167,7 +206,7 @@ export const MsgProposeAddAccountResponse = {
         return message;
     }
 };
-const baseMsgApproveAddAccount = { signer: '', address: '' };
+const baseMsgApproveAddAccount = { signer: '', address: '', info: '', time: 0 };
 export const MsgApproveAddAccount = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -175,6 +214,12 @@ export const MsgApproveAddAccount = {
         }
         if (message.address !== '') {
             writer.uint32(18).string(message.address);
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -190,6 +235,12 @@ export const MsgApproveAddAccount = {
                     break;
                 case 2:
                     message.address = reader.string();
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -212,12 +263,26 @@ export const MsgApproveAddAccount = {
         else {
             message.address = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
         message.address !== undefined && (obj.address = message.address);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -233,6 +298,18 @@ export const MsgApproveAddAccount = {
         }
         else {
             message.address = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -269,7 +346,7 @@ export const MsgApproveAddAccountResponse = {
         return message;
     }
 };
-const baseMsgProposeRevokeAccount = { signer: '', address: '' };
+const baseMsgProposeRevokeAccount = { signer: '', address: '', info: '', time: 0 };
 export const MsgProposeRevokeAccount = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -277,6 +354,12 @@ export const MsgProposeRevokeAccount = {
         }
         if (message.address !== '') {
             writer.uint32(18).string(message.address);
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -292,6 +375,12 @@ export const MsgProposeRevokeAccount = {
                     break;
                 case 2:
                     message.address = reader.string();
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -314,12 +403,26 @@ export const MsgProposeRevokeAccount = {
         else {
             message.address = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
         message.address !== undefined && (obj.address = message.address);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -335,6 +438,18 @@ export const MsgProposeRevokeAccount = {
         }
         else {
             message.address = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -371,7 +486,7 @@ export const MsgProposeRevokeAccountResponse = {
         return message;
     }
 };
-const baseMsgApproveRevokeAccount = { signer: '', address: '' };
+const baseMsgApproveRevokeAccount = { signer: '', address: '', info: '', time: 0 };
 export const MsgApproveRevokeAccount = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -379,6 +494,12 @@ export const MsgApproveRevokeAccount = {
         }
         if (message.address !== '') {
             writer.uint32(18).string(message.address);
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -394,6 +515,12 @@ export const MsgApproveRevokeAccount = {
                     break;
                 case 2:
                     message.address = reader.string();
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -416,12 +543,26 @@ export const MsgApproveRevokeAccount = {
         else {
             message.address = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.signer !== undefined && (obj.signer = message.signer);
         message.address !== undefined && (obj.address = message.address);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -437,6 +578,18 @@ export const MsgApproveRevokeAccount = {
         }
         else {
             message.address = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -497,4 +650,25 @@ export class MsgClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Msg', 'ApproveRevokeAccount', data);
         return promise.then((data) => MsgApproveRevokeAccountResponse.decode(new Reader(data)));
     }
+}
+var globalThis = (() => {
+    if (typeof globalThis !== 'undefined')
+        return globalThis;
+    if (typeof self !== 'undefined')
+        return self;
+    if (typeof window !== 'undefined')
+        return window;
+    if (typeof global !== 'undefined')
+        return global;
+    throw 'Unable to locate global object';
+})();
+function longToNumber(long) {
+    if (long.gt(Number.MAX_SAFE_INTEGER)) {
+        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    }
+    return long.toNumber();
+}
+if (util.Long !== Long) {
+    util.Long = Long;
+    configure();
 }
