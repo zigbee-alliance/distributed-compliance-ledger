@@ -3,6 +3,8 @@ export declare const protobufPackage = "zigbeealliance.distributedcomplianceledg
 export interface MsgProposeAddX509RootCert {
     signer: string;
     cert: string;
+    info: string;
+    time: number;
 }
 export interface MsgProposeAddX509RootCertResponse {
 }
@@ -10,12 +12,16 @@ export interface MsgApproveAddX509RootCert {
     signer: string;
     subject: string;
     subjectKeyId: string;
+    info: string;
+    time: number;
 }
 export interface MsgApproveAddX509RootCertResponse {
 }
 export interface MsgAddX509Cert {
     signer: string;
     cert: string;
+    info: string;
+    time: number;
 }
 export interface MsgAddX509CertResponse {
 }
@@ -23,6 +29,8 @@ export interface MsgProposeRevokeX509RootCert {
     signer: string;
     subject: string;
     subjectKeyId: string;
+    info: string;
+    time: number;
 }
 export interface MsgProposeRevokeX509RootCertResponse {
 }
@@ -30,6 +38,8 @@ export interface MsgApproveRevokeX509RootCert {
     signer: string;
     subject: string;
     subjectKeyId: string;
+    info: string;
+    time: number;
 }
 export interface MsgApproveRevokeX509RootCertResponse {
 }
@@ -37,6 +47,8 @@ export interface MsgRevokeX509Cert {
     signer: string;
     subject: string;
     subjectKeyId: string;
+    info: string;
+    time: number;
 }
 export interface MsgRevokeX509CertResponse {
 }

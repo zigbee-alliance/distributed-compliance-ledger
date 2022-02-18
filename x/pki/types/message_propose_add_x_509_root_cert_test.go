@@ -61,6 +61,8 @@ func TestMsgProposeAddX509RootCert_ValidateBasic(t *testing.T) {
 			msg: MsgProposeAddX509RootCert{
 				Signer: sample.AccAddress(),
 				Cert:   testconstants.RootCertPem,
+				Info:   testconstants.Info,
+				Time:   12345,
 			},
 		},
 		{

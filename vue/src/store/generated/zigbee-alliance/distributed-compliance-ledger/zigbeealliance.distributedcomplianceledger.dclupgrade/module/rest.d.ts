@@ -299,7 +299,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryProposedUpgradeAll
      * @summary Queries a list of ProposedUpgrade items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade
+     * @request GET:/dcl/dclupgrade/proposed-upgrades
      */
     queryProposedUpgradeAll: (query?: {
         "pagination.key"?: string;
@@ -314,7 +314,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryProposedUpgrade
      * @summary Queries a ProposedUpgrade by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}
+     * @request GET:/dcl/dclupgrade/proposed-upgrades/{name}
      */
     queryProposedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>>;
 }
