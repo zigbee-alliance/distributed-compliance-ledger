@@ -84,6 +84,8 @@ func TestMsgApproveRevokeX509RootCert_ValidateBasic(t *testing.T) {
 				Signer:       sample.AccAddress(),
 				Subject:      testconstants.RootSubject,
 				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Info:         testconstants.Info,
+				Time:         12345,
 			},
 		},
 		{
