@@ -56,7 +56,7 @@ docker exec -u "$DCL_USER" "$TEST_NODE" /bin/sh -c "
 
 echo "Configure and start new node"
 docker exec -u "$DCL_USER" "$TEST_NODE" dcld init $TEST_NODE --chain-id  $chain_id
-docker exec -u "$DCL_USER" "$TEST_NODE" ./run_dcl_node -u $DCL_USER -c $chain_id $TEST_NODE
+docker exec -u "$DCL_USER" "$TEST_NODE" ./run_dcl_node -c $chain_id $TEST_NODE
 docker exec "$TEST_NODE" systemctl status dcld
 vaddress=$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld tendermint show-address)
 vpubkey=$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld tendermint show-validator)
