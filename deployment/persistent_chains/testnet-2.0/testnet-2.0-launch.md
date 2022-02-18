@@ -47,6 +47,7 @@ The following steps are expected to be done **before** the ceremony.
     $ sudo cp -f ./dcld -t /usr/bin
     $ sudo chown "<dcl-user>" /usr/bin/dcld
     $ sudo chmod u+x /usr/bin/dcld
+
     # verification
     $ dcld version
     ```
@@ -77,7 +78,8 @@ The following steps are expected to be done **before** the ceremony.
 
     3.1. Share VN's IP address
 
-    3.2. Share VN's `id` (`id` field in `dcld status` command output)
+    3.2. Share VN's `id` (`node_id` field in `dcld init` command output
+         or `id` field in `dcld status` command output in case node is running)
 
 4.  **Generate NodeAdmin keys**
 
@@ -93,9 +95,9 @@ The following steps are expected to be done **before** the ceremony.
 
     4.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-    `address` and `pubkey` can be found in the `dcld keys show "<key-name>"` output.
+    `address` and `pubkey` can be found in the `dcld keys show --output text "<key-name>"` output.
 
-5.  **\[Optional] Generate Trustee keys**
+5.  **[Optional] Generate Trustee keys**
 
     5.1. Choose a machine where Trustee keys will be hold (it can be either VN Node, or a separate machine with `dcld` binary)
 
@@ -109,13 +111,13 @@ The following steps are expected to be done **before** the ceremony.
 
     5.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-    `address` and `pubkey` can be found in the `dcld keys show "<key-name>"` output.
+    `address` and `pubkey` can be found in the `dcld keys show --output text "<key-name>"` output.
 
-6.  **\[Optional] Configure ON Nodes**
+6.  **[Optional] Configure ON Nodes**
 
     Do steps 1.1 - 1.7 for all ON Nodes.
 
-7.  \[CSA Only] Create `persistent_peers.txt` file containing `<node1-ID>@<node1-IP>:26656,...`  for all VNs. Share in Slack/doc.
+7.  [CSA Only] Create `persistent_peers.txt` file containing `<node1-ID>@<node1-IP>:26656,...`  for all VNs. Share in Slack/doc.
 
 ## II. Ceremony: Genesis Node (CSA Only)
 
@@ -132,14 +134,14 @@ The following steps are expected to be done **during** the ceremony.
     # fetch the helper script
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/test_peers_conn
 
-    # run, by default it expectes persistent_peers.txt in the current directory
+    # run, by default it expects persistent_peers.txt in the current directory
     ./test_peers_conn
     ```
 
     8.3. Run genesis VN
 
     ```bash
-    ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name "<node-admin-key>" [--gen-key-name-trustee "<trustee-key>"] node0
+    ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name "<node-admin-key>" [--gen-key-name-trustee "<trustee-key>"] "<node-name>"
     ```
 
     8.4. Put genesis file to GitHub (`zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json`)
@@ -153,16 +155,30 @@ The following steps are expected to be done **during** the ceremony.
     9.1. A Trustee proposes a NodeAdmin account
 
     ```bash
-    dcld tx auth propose-add-account --address="<bench32 encoded string>" --pubkey="<protobuf JSON encoded>" --roles=NodeAdmin --from="<account-name>"
+    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=NodeAdmin --from='<account-name>'
     ```
 
     9.2. Trustees approve the NodeAdmin account
 
     ```bash
-    dcld tx auth approve-add-account --address="<bench32 encoded string>" --from="<account-name>"
+    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
     ```
 
-10. **Run VN node**
+10. **[Optional] Add Trustee account**
+
+    12.1. A Trustee proposes Trustee account
+
+    ```bash
+    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=Trustee --from='<account-name>'
+    ```
+
+    12.2. Trustees approve Trustee account
+
+    ```bash
+    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
+    ```
+
+11. **Run VN node**
 
     10.1. Download genesis
 
@@ -179,7 +195,7 @@ The following steps are expected to be done **during** the ceremony.
     # fetch the helper script
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/test_peers_conn
 
-    # run, by default it expectes persistent_peers.txt in the current directory
+    # run, by default it expects persistent_peers.txt in the current directory
     ./test_peers_conn
     ```
 
@@ -199,7 +215,7 @@ The following steps are expected to be done **during** the ceremony.
 
     (once transaction is successfully written you should see `"code": 0` in the JSON output.)
 
-11. **VN Deployment Verification**
+12. **VN Deployment Verification**
 
     11.1. Check the account presence on the ledger: `dcld query auth account --address="<address>"`.
 
@@ -208,20 +224,6 @@ The following steps are expected to be done **during** the ceremony.
     11.3. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 
     11.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN's address.
-
-12. **\[Optional] Add Trustee account**
-
-    12.1. A Trustee proposes Trustee account
-
-    ```bash
-    dcld tx auth propose-add-account --address="<bench32 encoded string>" --pubkey="<protobuf JSON encoded>" --roles=Trustee --from="<account-name>"
-    ```
-
-    12.2. Trustees approve Trustee account
-
-    ```bash
-    dcld tx auth approve-add-account --address="<bench32 encoded string>" --from="<account-name>"
-    ```
 
 ## IV. Post-Ceremony: For every Observer Node
 
@@ -278,7 +280,7 @@ The following steps can be done **after** the ceremony.
         ```
 *   Useful commands
     *   keys:
-        *   `dcld keys show "<name>"`: to get address and pubkey for a keyname
+        *   `dcld keys show --output text "<name>"`: to get address and pubkey for a keyname
     *   node status:
         *   `systemctl status dcld`: to get the node service status.
         *   `journalctl -u dcld.service -f`: to see node logs.

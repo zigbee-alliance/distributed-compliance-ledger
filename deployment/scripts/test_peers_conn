@@ -19,13 +19,17 @@ set -o pipefail
 TIMEOUT_DEF=3
 PERSISTENT_PEERS_FILE="${1:-./persistent_peers.txt}"
 
-TIMEOUT="${TIMEOUT:-TIMEOUT_DEF}"
+TIMEOUT="${TIMEOUT:-$TIMEOUT_DEF}"
 
 PASSED_RES=PASSED
+SKIPPED_RES=SKIPPED
 FAILED_RES=FAILED
-final_res=true
 NETCAT=""
+IP_TOOL=ip
+SELF_IPS=""
 CHECK_TOOL=""
+
+final_res=true
 
 function usage {
   echo "\
@@ -62,6 +66,13 @@ function test_env {
             echo "ERROR: neither 'netcat' nor 'telnet' tool is available, please install one and run again"
             exit 1
         fi
+    fi
+
+    if [[ -n "$(which "$IP_TOOL")" ]]; then
+        # TODO may fail for specific cases
+        SELF_IPS="$(ip -br -f inet a | grep -v 127.0.0.1 | awk '{print $NF}' | paste -s)"
+    else
+        echo "WARNING: 'ip' tool is not found, skipping self IP filtering"
     fi
 }
 
@@ -115,7 +126,13 @@ IFS=',' read -a peers <<< "$(cat "$PERSISTENT_PEERS_FILE")"
 for peer in "${peers[@]}"
 do
     IFS=':' read -a _arr <<< "$(echo "$peer" | cut -d @ -f 2)"
-    res="$(check "${_arr[0]}" "${_arr[1]}")"
+
+    if [[ "$SELF_IPS" == *"${_arr[0]}/"* ]]; then
+        res="$SKIPPED_RES"
+    else
+        res="$(check "${_arr[0]}" "${_arr[1]}")"
+    fi
+
     echo "Connection to peer '${_arr[0]}:${_arr[1]}' $res"
 
     if [[ "$res" == "$FAILED_RES" ]]; then
