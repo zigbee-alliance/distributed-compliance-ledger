@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -10,11 +12,13 @@ const TypeMsgRevokeX509Cert = "revoke_x_509_cert"
 
 var _ sdk.Msg = &MsgRevokeX509Cert{}
 
-func NewMsgRevokeX509Cert(signer string, subject string, subjectKeyId string) *MsgRevokeX509Cert {
+func NewMsgRevokeX509Cert(signer string, subject string, subjectKeyId string, info string) *MsgRevokeX509Cert {
 	return &MsgRevokeX509Cert{
 		Signer:       signer,
 		Subject:      subject,
 		SubjectKeyId: subjectKeyId,
+		Info:         info,
+		Time:         time.Now().Unix(),
 	}
 }
 

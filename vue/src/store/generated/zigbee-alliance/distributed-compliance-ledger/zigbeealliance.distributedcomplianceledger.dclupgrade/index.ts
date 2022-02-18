@@ -2,11 +2,10 @@ import { txClient, queryClient, MissingWalletError , registry} from './module'
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex'
 
-import { ApprovedUpgrade } from "./module/types/dclupgrade/approved_upgrade"
 import { ProposedUpgrade } from "./module/types/dclupgrade/proposed_upgrade"
 
 
-export { ApprovedUpgrade, ProposedUpgrade };
+export { ProposedUpgrade };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -46,11 +45,8 @@ const getDefaultState = () => {
 	return {
 				ProposedUpgrade: {},
 				ProposedUpgradeAll: {},
-				ApprovedUpgrade: {},
-				ApprovedUpgradeAll: {},
 				
 				_Structure: {
-						ApprovedUpgrade: getStructure(ApprovedUpgrade.fromPartial({})),
 						ProposedUpgrade: getStructure(ProposedUpgrade.fromPartial({})),
 						
 		},
@@ -91,18 +87,6 @@ export default {
 						(<any> params).query=null
 					}
 			return state.ProposedUpgradeAll[JSON.stringify(params)] ?? {}
-		},
-				getApprovedUpgrade: (state) => (params = { params: {}}) => {
-					if (!(<any> params).query) {
-						(<any> params).query=null
-					}
-			return state.ApprovedUpgrade[JSON.stringify(params)] ?? {}
-		},
-				getApprovedUpgradeAll: (state) => (params = { params: {}}) => {
-					if (!(<any> params).query) {
-						(<any> params).query=null
-					}
-			return state.ApprovedUpgradeAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -181,54 +165,6 @@ export default {
 				return getters['getProposedUpgradeAll']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new SpVuexError('QueryClient:QueryProposedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message)
-				
-			}
-		},
-		
-		
-		
-		
-		 		
-		
-		
-		async QueryApprovedUpgrade({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
-			try {
-				const key = params ?? {};
-				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryApprovedUpgrade( key.name)).data
-				
-					
-				commit('QUERY', { query: 'ApprovedUpgrade', key: { params: {...key}, query}, value })
-				if (subscribe) commit('SUBSCRIBE', { action: 'QueryApprovedUpgrade', payload: { options: { all }, params: {...key},query }})
-				return getters['getApprovedUpgrade']( { params: {...key}, query}) ?? {}
-			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryApprovedUpgrade', 'API Node Unavailable. Could not perform query: ' + e.message)
-				
-			}
-		},
-		
-		
-		
-		
-		 		
-		
-		
-		async QueryApprovedUpgradeAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
-			try {
-				const key = params ?? {};
-				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryApprovedUpgradeAll(query)).data
-				
-					
-				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
-					let next_values=(await queryClient.queryApprovedUpgradeAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
-					value = mergeResults(value, next_values);
-				}
-				commit('QUERY', { query: 'ApprovedUpgradeAll', key: { params: {...key}, query}, value })
-				if (subscribe) commit('SUBSCRIBE', { action: 'QueryApprovedUpgradeAll', payload: { options: { all }, params: {...key},query }})
-				return getters['getApprovedUpgradeAll']( { params: {...key}, query}) ?? {}
-			} catch (e) {
-				throw new SpVuexError('QueryClient:QueryApprovedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

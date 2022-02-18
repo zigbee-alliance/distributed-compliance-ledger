@@ -7,8 +7,7 @@ export declare const protobufPackage = "zigbeealliance.distributedcomplianceledg
  * option (gogoproto.goproto_stringer) = false;
  */
 export interface PendingAccount {
-    address: Account | undefined;
-    approvals: string[];
+    account: Account | undefined;
 }
 export declare const PendingAccount: {
     encode(message: PendingAccount, writer?: Writer): Writer;

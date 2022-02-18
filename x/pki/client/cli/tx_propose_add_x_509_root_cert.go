@@ -29,10 +29,12 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			info := viper.GetString(FlagInfo)
 
 			msg := types.NewMsgProposeAddX509RootCert(
 				clientCtx.GetFromAddress().String(),
 				cert,
+				info,
 			)
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
@@ -45,6 +47,7 @@ func CmdProposeAddX509RootCert() *cobra.Command {
 
 	cmd.Flags().StringP(FlagCertificate, FlagCertificateShortcut, "",
 		"PEM encoded certificate (string or path to file containing data)")
+	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)

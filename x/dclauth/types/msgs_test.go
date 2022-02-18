@@ -16,6 +16,7 @@
 package types
 
 import (
+	fmt "fmt"
 	"testing"
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -36,7 +37,7 @@ func NewMsgProposeAddAccountWrapper(
 	roles AccountRoles,
 	vendorID int32,
 ) *MsgProposeAddAccount {
-	msg, err := NewMsgProposeAddAccount(signer, address, pubKey, roles, vendorID)
+	msg, err := NewMsgProposeAddAccount(signer, address, pubKey, roles, vendorID, testconstants.Info)
 	require.NoError(t, err)
 	return msg
 }
@@ -108,9 +109,9 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 	msg := NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address2, testconstants.PubKey2,
 		AccountRoles{}, testconstants.VendorID1)
-
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","pubKey":{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"}` +
-		`,"roles":[],"signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","vendorID":1000}`
+	transcationTime := msg.Time
+	expected := fmt.Sprintf(`{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"Information for Proposal/Approval/Revoke","pubKey":{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A2wJ7uOEE5Zm04K52czFTXfDj1qF2mholzi1zOJVlKlr"},"roles":[],"signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","time":"%v","vendorID":1000}`,
+		transcationTime)
 
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
@@ -120,7 +121,7 @@ func TestMsgProposeAddAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveAddAccount(t *testing.T) {
-	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1)
+	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1, testconstants.Info)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_add_account")
@@ -132,9 +133,10 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 		valid bool
 		msg   *MsgApproveAddAccount
 	}{
-		{true, NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1)},
-		{false, NewMsgApproveAddAccount(testconstants.Signer, nil)},
-		{false, NewMsgApproveAddAccount(nil, testconstants.Address1)},
+		{true, NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1, testconstants.Info)},
+		{true, NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1, "")},
+		{false, NewMsgApproveAddAccount(testconstants.Signer, nil, testconstants.Info)},
+		{false, NewMsgApproveAddAccount(nil, testconstants.Address1, testconstants.Info)},
 	}
 
 	for _, tc := range cases {
@@ -149,9 +151,11 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 }
 
 func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
-	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address2)
+	msg := NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address2, testconstants.Info)
 	//nolint:goconst
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
+	transcationTime := msg.Time
+	expected := fmt.Sprintf(`{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"Information for Proposal/Approval/Revoke","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","time":"%v"}`,
+		transcationTime)
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -160,7 +164,7 @@ func TestMsgApproveAddAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgProposeRevokeAccount(t *testing.T) {
-	msg := NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1)
+	msg := NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1, testconstants.Info)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "propose_revoke_account")
@@ -172,9 +176,10 @@ func TestValidateMsgProposeRevokeAccount(t *testing.T) {
 		valid bool
 		msg   *MsgProposeRevokeAccount
 	}{
-		{true, NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1)},
-		{false, NewMsgProposeRevokeAccount(testconstants.Signer, nil)},
-		{false, NewMsgProposeRevokeAccount(nil, testconstants.Address1)},
+		{true, NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1, testconstants.Info)},
+		{true, NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address1, "")},
+		{false, NewMsgProposeRevokeAccount(testconstants.Signer, nil, testconstants.Info)},
+		{false, NewMsgProposeRevokeAccount(nil, testconstants.Address1, testconstants.Info)},
 	}
 
 	for _, tc := range cases {
@@ -189,9 +194,10 @@ func TestValidateMsgProposeRevokeAccount(t *testing.T) {
 }
 
 func TestMsgProposeRevokeAccountGetSignBytes(t *testing.T) {
-	msg := NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address2)
-
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
+	msg := NewMsgProposeRevokeAccount(testconstants.Signer, testconstants.Address2, testconstants.Info)
+	transcationTime := msg.Time
+	expected := fmt.Sprintf(`{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"Information for Proposal/Approval/Revoke","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","time":"%v"}`,
+		transcationTime)
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }
 
@@ -200,7 +206,7 @@ func TestMsgProposeRevokeAccountGetSignBytes(t *testing.T) {
 */
 
 func TestNewMsgApproveRevokeAccount(t *testing.T) {
-	msg := NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1)
+	msg := NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1, testconstants.Info)
 
 	require.Equal(t, msg.Route(), RouterKey)
 	require.Equal(t, msg.Type(), "approve_revoke_account")
@@ -212,9 +218,10 @@ func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 		valid bool
 		msg   *MsgApproveRevokeAccount
 	}{
-		{true, NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1)},
-		{false, NewMsgApproveRevokeAccount(testconstants.Signer, nil)},
-		{false, NewMsgApproveRevokeAccount(nil, testconstants.Address1)},
+		{true, NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1, testconstants.Info)},
+		{true, NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1, "")},
+		{false, NewMsgApproveRevokeAccount(testconstants.Signer, nil, testconstants.Info)},
+		{false, NewMsgApproveRevokeAccount(nil, testconstants.Address1, testconstants.Info)},
 	}
 
 	for _, tc := range cases {
@@ -229,7 +236,9 @@ func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 }
 
 func TestMsgApproveRevokeAccountGetSignBytes(t *testing.T) {
-	msg := NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address2)
-	expected := `{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf"}`
+	msg := NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address2, "Sample Information")
+	transcationTime := msg.Time
+	expected := fmt.Sprintf(`{"address":"cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq","info":"Sample Information","signer":"cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf","time":"%v"}`,
+		transcationTime)
 	require.Equal(t, expected, string(msg.GetSignBytes()))
 }

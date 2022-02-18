@@ -31,9 +31,12 @@ func CmdApproveRevokeAccount() *cobra.Command {
 				return err
 			}
 
+			argInfo := viper.GetString(FlagInfo)
+
 			msg := types.NewMsgApproveRevokeAccount(
 				clientCtx.GetFromAddress(),
 				argAddress,
+				argInfo,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -46,6 +49,7 @@ func CmdApproveRevokeAccount() *cobra.Command {
 	}
 
 	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(flags.FlagFrom)

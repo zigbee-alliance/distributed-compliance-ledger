@@ -1,0 +1,15 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.dclauth;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types";
+
+import "gogoproto/gogo.proto";
+
+
+
+message Grant {
+  string address = 1; 
+  int64 time = 2; // number of nanoseconds elapsed since January 1, 1970 UTC
+  string info = 3;
+}
+
