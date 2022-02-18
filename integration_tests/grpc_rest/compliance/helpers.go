@@ -363,6 +363,7 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 		aliceAccount,
 		jackName,
 		jackAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, vendorAccount)
 
@@ -377,6 +378,7 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 		aliceAccount,
 		jackName,
 		jackAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, certCenterAccount)
 
@@ -526,6 +528,7 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 		aliceAccount,
 		jackName,
 		jackAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, vendorAccount)
 
@@ -540,6 +543,7 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 		aliceAccount,
 		jackName,
 		jackAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, certCenterAccount)
 
@@ -679,6 +683,7 @@ func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
 		aliceAccount,
 		jackName,
 		jackAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, vendorAccount)
 
@@ -693,6 +698,7 @@ func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
 		aliceAccount,
 		jackName,
 		jackAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, certCenterAccount)
 

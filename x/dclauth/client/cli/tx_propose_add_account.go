@@ -58,12 +58,15 @@ func CmdProposeAddAccount() *cobra.Command {
 				}
 			}
 
+			argInfo := viper.GetString(FlagInfo)
+
 			msg, err := types.NewMsgProposeAddAccount(
 				clientCtx.GetFromAddress(),
 				argAddress,
 				argPubKey,
 				argRoles,
 				argVendorID,
+				argInfo,
 			)
 			if err != nil {
 				return err
@@ -84,6 +87,7 @@ func CmdProposeAddAccount() *cobra.Command {
 		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",
 			types.Roles))
 	cmd.Flags().String(FlagVID, "", "Vendor ID associated with this account (positive non-zero uint16). Required only for Vendor Roles.")
+	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 
 	cli.AddTxFlagsToCmd(cmd)
 

@@ -11,7 +11,5 @@ message PendingAccount {
   // option (gogoproto.goproto_getters)  = false;
   // option (gogoproto.goproto_stringer) = false;
 
-  Account address = 1 [(gogoproto.embed) = true]; 
-  repeated string approvals = 2; 
-  
+  Account address = 1 [(gogoproto.embed) = true];   
 }

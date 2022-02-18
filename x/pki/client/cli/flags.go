@@ -11,4 +11,6 @@ const (
 	FlagRootSubjectShortcut      = "r"
 	FlagRootSubjectKeyID         = "root-subject-key-id"
 	FlagRootSubjectKeyIDShortcut = "i"
+	FlagInfo                     = "info"
+	FlagInfoUsage                = "Optional information/notes for approval, proposal or revocation"
 )
