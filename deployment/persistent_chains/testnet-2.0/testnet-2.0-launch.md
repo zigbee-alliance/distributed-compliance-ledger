@@ -166,13 +166,13 @@ The following steps are expected to be done **during** the ceremony.
 
 10. **[Optional] Add Trustee account**
 
-    12.1. A Trustee proposes Trustee account
+    10.1. A Trustee proposes Trustee account
 
     ```bash
     dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=Trustee --from='<account-name>'
     ```
 
-    12.2. Trustees approve Trustee account
+    10.2. Trustees approve Trustee account
 
     ```bash
     dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
@@ -180,16 +180,16 @@ The following steps are expected to be done **during** the ceremony.
 
 11. **Run VN node**
 
-    10.1. Download genesis
+    11.1. Download genesis
 
     ```bash
     $ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json
     ```
 
-    10.2. Prepare `persistent_peers.txt` file (download or copy-paste into the file
+    11.2. Prepare `persistent_peers.txt` file (download or copy-paste into the file
     in the same directory as `run_dcl_node`).
 
-    10.3. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
+    11.3. Make sure that all VNs accept incoming connections from this node for the given persistent peers file
 
     ```bash
     # fetch the helper script
@@ -199,15 +199,15 @@ The following steps are expected to be done **during** the ceremony.
     ./test_peers_conn
     ```
 
-    10.4. Run VN
+    11.4. Run VN
 
     ```bash
     ./run_dcl_node -c testnet-2.0 "<node-name>"
     ```
 
-    10.5 Wait until catchup is finished: `dcld status` returns `"catching_up": false`
+    11.5 Wait until catchup is finished: `dcld status` returns `"catching_up": false`
 
-    10.6. Make the node a validator
+    11.6. Make the node a validator
 
     ```bash
     $ dcld tx validator add-node --pubkey="<validator-pubkey>" --moniker="<node-name>" --from="<node-admin-key-name>"
@@ -217,13 +217,13 @@ The following steps are expected to be done **during** the ceremony.
 
 12. **VN Deployment Verification**
 
-    11.1. Check the account presence on the ledger: `dcld query auth account --address="<address>"`.
+    12.1. Check the account presence on the ledger: `dcld query auth account --address="<address>"`.
 
-    11.2. Check the node service is running: `systemctl status dcld`
+    12.2. Check the node service is running: `systemctl status dcld`
 
-    11.3. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
+    12.3. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 
-    11.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN's address.
+    12.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN's address.
 
 ## IV. Post-Ceremony: For every Observer Node
 
