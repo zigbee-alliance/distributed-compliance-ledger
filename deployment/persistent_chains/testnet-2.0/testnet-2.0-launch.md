@@ -88,14 +88,14 @@ The following steps are expected to be done **before** the ceremony.
     4.2. Generate keys
 
     ```bash
-    dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
+    dcld keys add "<admin-account-name>" 2>&1 | tee "<admin-account-name>.dclkey.data"
     ```
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely.
 
     4.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-    `address` and `pubkey` can be found in the `dcld keys show --output text "<key-name>"` output.
+    `address` and `pubkey` can be found in the `dcld keys show --output text "<admin-account-name>"` output.
 
 5.  **[Optional] Generate Trustee keys**
 
@@ -104,14 +104,14 @@ The following steps are expected to be done **before** the ceremony.
     5.2. Generate keys
 
     ```bash
-    dcld keys add "<key-name>" 2>&1 | tee "<key-name>.dclkey.data"
+    dcld keys add "<trustee-account-name>" 2>&1 | tee "<trustee-account-name>.dclkey.data"
     ```
 
     **IMPORTANT** keep generated data (especially the mnemonic) securely.
 
     5.3. Share generated `address` and `pubkey` (in Slack or in a special doc).
 
-    `address` and `pubkey` can be found in the `dcld keys show --output text "<key-name>"` output.
+    `address` and `pubkey` can be found in the `dcld keys show --output text "<trustee-account-name>"` output.
 
 6.  **[Optional] Configure ON Nodes**
 
@@ -141,7 +141,7 @@ The following steps are expected to be done **during** the ceremony.
     8.3. Run genesis VN
 
     ```bash
-    ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name "<node-admin-key>" [--gen-key-name-trustee "<trustee-key>"] "<node-name>"
+    ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name "<admin-account-name>" [--gen-key-name-trustee "<trustee-account-name>"] "<node-name>"
     ```
 
     8.4. Put genesis file to GitHub (`zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json`)
@@ -155,13 +155,13 @@ The following steps are expected to be done **during** the ceremony.
     9.1. A Trustee proposes a NodeAdmin account
 
     ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=NodeAdmin --from='<account-name>'
+    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=NodeAdmin --from='<trustee-account-name>'
     ```
 
     9.2. Trustees approve the NodeAdmin account
 
     ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
+    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<trustee-account-name>'
     ```
 
 10. **[Optional] Add Trustee account**
@@ -169,13 +169,13 @@ The following steps are expected to be done **during** the ceremony.
     10.1. A Trustee proposes Trustee account
 
     ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=Trustee --from='<account-name>'
+    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=Trustee --from='<trustee-account-name>'
     ```
 
     10.2. Trustees approve Trustee account
 
     ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<account-name>'
+    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<trustee-account-name>'
     ```
 
 11. **Run VN node**
@@ -210,7 +210,7 @@ The following steps are expected to be done **during** the ceremony.
     11.6. Make the node a validator
 
     ```bash
-    $ dcld tx validator add-node --pubkey="<validator-pubkey>" --moniker="<node-name>" --from="<node-admin-key-name>"
+    $ dcld tx validator add-node --pubkey="<validator-pubkey>" --moniker="<node-name>" --from="<admin-account-name>"
     ```
 
     (once transaction is successfully written you should see `"code": 0` in the JSON output.)
