@@ -113,7 +113,7 @@ The following steps are expected to be done **before** the ceremony.
 
 6.  **\[Optional] Configure ON Nodes**
 
-    Do steps 1.1 - 1.6 for all ON Nodes.
+    Do steps 1.1 - 1.7 for all ON Nodes.
 
 7.  \[CSA Only] Create `persistent_peers.txt` file containing `<node1-ID>@<node1-IP>:26656,...`  for all VNs. Share in Slack/doc.
 
