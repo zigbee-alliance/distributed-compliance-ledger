@@ -53,9 +53,9 @@ make test_deploy_env_build
 wait_for_height 2 20
 
 docker cp "$GOBIN"/cosmovisor "$TEST_NODE":/usr/bin
+docker cp "$GOBIN"/dcld "$TEST_NODE":"$DCL_USER_HOME"
 docker cp "$LOCALNET_DIR"/genesis.json "$TEST_NODE":"$DCL_USER_HOME"
 docker cp "$LOCALNET_DIR"/persistent_peers.txt "$TEST_NODE":"$DCL_USER_HOME"
-docker cp "$GOBIN"/dcld "$TEST_NODE":"$DCL_USER_HOME"
 docker cp deployment/scripts/run_dcl_node "$TEST_NODE":"$DCL_USER_HOME"
 docker cp deployment/cosmovisor.service "$TEST_NODE":"$DCL_USER_HOME"
 

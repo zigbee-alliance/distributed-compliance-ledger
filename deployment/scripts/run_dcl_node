@@ -482,7 +482,7 @@ config_node "$NODE_NAME" "$NODE_USER" "$SERVICE_FILE" "$PERSISTENT_PEERS"
 echo -e "\tDone."
 echo -e "\nOptionally, edit '$CONFIG_FILE' in order to set different setting (like listen address)"
 
-echo "Locating the genesis app version in $GENESIS_APP_DIR directory"
+echo "Locating the genesis app version to $GENESIS_APP_DIR directory"
 mkdir -p "$GENESIS_APP_DIR"
 cp -f ./dcld "$GENESIS_APP_DIR"/
 
