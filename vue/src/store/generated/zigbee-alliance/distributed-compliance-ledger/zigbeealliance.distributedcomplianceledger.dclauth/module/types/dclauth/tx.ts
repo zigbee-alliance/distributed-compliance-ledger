@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { Reader, Writer } from 'protobufjs/minimal'
+import { Reader, util, configure, Writer } from 'protobufjs/minimal'
+import * as Long from 'long'
 import { Any } from '../google/protobuf/any'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
@@ -10,6 +11,8 @@ export interface MsgProposeAddAccount {
   pubKey: Any | undefined
   roles: string[]
   vendorID: number
+  info: string
+  time: number
 }
 
 export interface MsgProposeAddAccountResponse {}
@@ -17,6 +20,8 @@ export interface MsgProposeAddAccountResponse {}
 export interface MsgApproveAddAccount {
   signer: string
   address: string
+  info: string
+  time: number
 }
 
 export interface MsgApproveAddAccountResponse {}
@@ -24,6 +29,8 @@ export interface MsgApproveAddAccountResponse {}
 export interface MsgProposeRevokeAccount {
   signer: string
   address: string
+  info: string
+  time: number
 }
 
 export interface MsgProposeRevokeAccountResponse {}
@@ -31,11 +38,13 @@ export interface MsgProposeRevokeAccountResponse {}
 export interface MsgApproveRevokeAccount {
   signer: string
   address: string
+  info: string
+  time: number
 }
 
 export interface MsgApproveRevokeAccountResponse {}
 
-const baseMsgProposeAddAccount: object = { signer: '', address: '', roles: '', vendorID: 0 }
+const baseMsgProposeAddAccount: object = { signer: '', address: '', roles: '', vendorID: 0, info: '', time: 0 }
 
 export const MsgProposeAddAccount = {
   encode(message: MsgProposeAddAccount, writer: Writer = Writer.create()): Writer {
@@ -53,6 +62,12 @@ export const MsgProposeAddAccount = {
     }
     if (message.vendorID !== 0) {
       writer.uint32(40).int32(message.vendorID)
+    }
+    if (message.info !== '') {
+      writer.uint32(50).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(56).int64(message.time)
     }
     return writer
   },
@@ -79,6 +94,12 @@ export const MsgProposeAddAccount = {
           break
         case 5:
           message.vendorID = reader.int32()
+          break
+        case 6:
+          message.info = reader.string()
+          break
+        case 7:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -116,6 +137,16 @@ export const MsgProposeAddAccount = {
     } else {
       message.vendorID = 0
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -130,6 +161,8 @@ export const MsgProposeAddAccount = {
       obj.roles = []
     }
     message.vendorID !== undefined && (obj.vendorID = message.vendorID)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -160,6 +193,16 @@ export const MsgProposeAddAccount = {
       message.vendorID = object.vendorID
     } else {
       message.vendorID = 0
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -203,7 +246,7 @@ export const MsgProposeAddAccountResponse = {
   }
 }
 
-const baseMsgApproveAddAccount: object = { signer: '', address: '' }
+const baseMsgApproveAddAccount: object = { signer: '', address: '', info: '', time: 0 }
 
 export const MsgApproveAddAccount = {
   encode(message: MsgApproveAddAccount, writer: Writer = Writer.create()): Writer {
@@ -212,6 +255,12 @@ export const MsgApproveAddAccount = {
     }
     if (message.address !== '') {
       writer.uint32(18).string(message.address)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
     }
     return writer
   },
@@ -228,6 +277,12 @@ export const MsgApproveAddAccount = {
           break
         case 2:
           message.address = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -249,6 +304,16 @@ export const MsgApproveAddAccount = {
     } else {
       message.address = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -256,6 +321,8 @@ export const MsgApproveAddAccount = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.address !== undefined && (obj.address = message.address)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -270,6 +337,16 @@ export const MsgApproveAddAccount = {
       message.address = object.address
     } else {
       message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -313,7 +390,7 @@ export const MsgApproveAddAccountResponse = {
   }
 }
 
-const baseMsgProposeRevokeAccount: object = { signer: '', address: '' }
+const baseMsgProposeRevokeAccount: object = { signer: '', address: '', info: '', time: 0 }
 
 export const MsgProposeRevokeAccount = {
   encode(message: MsgProposeRevokeAccount, writer: Writer = Writer.create()): Writer {
@@ -322,6 +399,12 @@ export const MsgProposeRevokeAccount = {
     }
     if (message.address !== '') {
       writer.uint32(18).string(message.address)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
     }
     return writer
   },
@@ -338,6 +421,12 @@ export const MsgProposeRevokeAccount = {
           break
         case 2:
           message.address = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -359,6 +448,16 @@ export const MsgProposeRevokeAccount = {
     } else {
       message.address = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -366,6 +465,8 @@ export const MsgProposeRevokeAccount = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.address !== undefined && (obj.address = message.address)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -380,6 +481,16 @@ export const MsgProposeRevokeAccount = {
       message.address = object.address
     } else {
       message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -423,7 +534,7 @@ export const MsgProposeRevokeAccountResponse = {
   }
 }
 
-const baseMsgApproveRevokeAccount: object = { signer: '', address: '' }
+const baseMsgApproveRevokeAccount: object = { signer: '', address: '', info: '', time: 0 }
 
 export const MsgApproveRevokeAccount = {
   encode(message: MsgApproveRevokeAccount, writer: Writer = Writer.create()): Writer {
@@ -432,6 +543,12 @@ export const MsgApproveRevokeAccount = {
     }
     if (message.address !== '') {
       writer.uint32(18).string(message.address)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
     }
     return writer
   },
@@ -448,6 +565,12 @@ export const MsgApproveRevokeAccount = {
           break
         case 2:
           message.address = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -469,6 +592,16 @@ export const MsgApproveRevokeAccount = {
     } else {
       message.address = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -476,6 +609,8 @@ export const MsgApproveRevokeAccount = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.address !== undefined && (obj.address = message.address)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -490,6 +625,16 @@ export const MsgApproveRevokeAccount = {
       message.address = object.address
     } else {
       message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }
@@ -576,6 +721,16 @@ interface Rpc {
   request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>
 }
 
+declare var self: any | undefined
+declare var window: any | undefined
+var globalThis: any = (() => {
+  if (typeof globalThis !== 'undefined') return globalThis
+  if (typeof self !== 'undefined') return self
+  if (typeof window !== 'undefined') return window
+  if (typeof global !== 'undefined') return global
+  throw 'Unable to locate global object'
+})()
+
 type Builtin = Date | Function | Uint8Array | string | number | undefined
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -586,3 +741,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER')
+  }
+  return long.toNumber()
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any
+  configure()
+}

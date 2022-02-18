@@ -1,14 +1,15 @@
 /* eslint-disable */
+import { Grant } from '../dclauth/grant'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
 
 export interface PendingAccountRevocation {
   address: string
-  approvals: string[]
+  approvals: Grant[]
 }
 
-const basePendingAccountRevocation: object = { address: '', approvals: '' }
+const basePendingAccountRevocation: object = { address: '' }
 
 export const PendingAccountRevocation = {
   encode(message: PendingAccountRevocation, writer: Writer = Writer.create()): Writer {
@@ -16,7 +17,7 @@ export const PendingAccountRevocation = {
       writer.uint32(10).string(message.address)
     }
     for (const v of message.approvals) {
-      writer.uint32(18).string(v!)
+      Grant.encode(v!, writer.uint32(18).fork()).ldelim()
     }
     return writer
   },
@@ -33,7 +34,7 @@ export const PendingAccountRevocation = {
           message.address = reader.string()
           break
         case 2:
-          message.approvals.push(reader.string())
+          message.approvals.push(Grant.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -53,7 +54,7 @@ export const PendingAccountRevocation = {
     }
     if (object.approvals !== undefined && object.approvals !== null) {
       for (const e of object.approvals) {
-        message.approvals.push(String(e))
+        message.approvals.push(Grant.fromJSON(e))
       }
     }
     return message
@@ -63,7 +64,7 @@ export const PendingAccountRevocation = {
     const obj: any = {}
     message.address !== undefined && (obj.address = message.address)
     if (message.approvals) {
-      obj.approvals = message.approvals.map((e) => e)
+      obj.approvals = message.approvals.map((e) => (e ? Grant.toJSON(e) : undefined))
     } else {
       obj.approvals = []
     }
@@ -80,7 +81,7 @@ export const PendingAccountRevocation = {
     }
     if (object.approvals !== undefined && object.approvals !== null) {
       for (const e of object.approvals) {
-        message.approvals.push(e)
+        message.approvals.push(Grant.fromPartial(e))
       }
     }
     return message

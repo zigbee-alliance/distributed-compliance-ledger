@@ -467,7 +467,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedUpgradeAll
    * @summary Queries a list of ProposedUpgrade items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade
+   * @request GET:/dcl/dclupgrade/proposed-upgrades
    */
   queryProposedUpgradeAll = (
     query?: {
@@ -480,7 +480,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclupgradeQueryAllProposedUpgradeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade`,
+      path: `/dcl/dclupgrade/proposed-upgrades`,
       method: "GET",
       query: query,
       format: "json",
@@ -493,11 +493,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedUpgrade
    * @summary Queries a ProposedUpgrade by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}
+   * @request GET:/dcl/dclupgrade/proposed-upgrades/{name}
    */
   queryProposedUpgrade = (name: string, params: RequestParams = {}) =>
     this.request<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/${name}`,
+      path: `/dcl/dclupgrade/proposed-upgrades/${name}`,
       method: "GET",
       format: "json",
       ...params,

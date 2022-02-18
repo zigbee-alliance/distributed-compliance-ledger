@@ -2001,7 +2001,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    address:
+                    account:
                       type: object
                       properties:
                         baseAccount:
@@ -2508,7 +2508,7 @@ paths:
               pendingAccount:
                 type: object
                 properties:
-                  address:
+                  account:
                     type: object
                     properties:
                       baseAccount:
@@ -8124,7 +8124,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccount:
     type: object
     properties:
-      address:
+      account:
         type: object
         properties:
           baseAccount:
@@ -8613,7 +8613,7 @@ definitions:
         items:
           type: object
           properties:
-            address:
+            account:
               type: object
               properties:
                 baseAccount:
@@ -9139,7 +9139,7 @@ definitions:
       pendingAccount:
         type: object
         properties:
-          address:
+          account:
             type: object
             properties:
               baseAccount:
