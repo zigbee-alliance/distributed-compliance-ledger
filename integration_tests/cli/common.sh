@@ -173,19 +173,24 @@ test_divider() {
 }
 
 wait_for_height() {
-  local target_height=${1:-1} # Default is 1
-  local wait_time=${2:-10}    # In seconds, default - 10
+  local target_height="${1:-1}" # Default is 1
+  local wait_time="${2:-10}"    # In seconds, default - 10
+  local node="${3:-""}"
 
   local _output=${DETAILED_OUTPUT_TARGET:-/dev/stdout}
 
   local waited=0
   local wait_interval=1
 
+  if [[ -n "$node" ]]; then
+      node="--node $node"
+  fi
+
   while true; do
     sleep "${wait_interval}"
     waited=$((waited + wait_interval))
 
-    current_height="$(dcld status | jq | grep latest_block_height | awk -F'"' '{print $4}')"
+    current_height="$(dcld status $node | jq | grep latest_block_height | awk -F'"' '{print $4}')"
 
     if [[ -z "$current_height" ]]; then
       echo "No height found in status" &>${_output}
