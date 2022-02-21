@@ -131,6 +131,7 @@ The following steps are expected to be done **during** the ceremony.
     8.2. Run genesis VN
 
     ```bash
+    chmod u+x run_dcl_node
     ./run_dcl_node -t genesis -c testnet-2.0 --gen-key-name "<admin-account-name>" [--gen-key-name-trustee "<trustee-account-name>"] "<node-name>"
     ```
 
@@ -182,6 +183,7 @@ The following steps are expected to be done **during** the ceremony.
     11.3. Run VN
 
     ```bash
+    chmod u+x run_dcl_node
     ./run_dcl_node -c testnet-2.0 "<node-name>"
     ```
 
@@ -242,6 +244,7 @@ The following steps can be done **after** the ceremony.
     14.4. Run ON
 
     ```bash
+    chmod u+x run_dcl_node
     ./run_dcl_node -t observer -c testnet-2.0 "<node-name>"
     ```
 
