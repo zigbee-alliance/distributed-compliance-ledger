@@ -130,6 +130,9 @@ docker_exec "$GVN_NAME" dcld tx auth propose-add-account --address "$vn_admin_ad
 #dcld tx auth approve-add-account --address="$vn_admin_addr" --from alice --yes
 
 echo "$GVN_NAME: Add Node \"$VN_NAME\" to validator set"
+
+# ensure that the validator node is ready
+wait_for_height 4 30 "tcp://$VN_IP:26657"
 docker_exec "$VN_NAME" dcld tx validator add-node --pubkey="$vn_pubkey" --moniker="$VN_NAME" --from="$vn_admin_name" --yes
 
 echo "Check node \"$VN_NAME\" is in the validator set"
