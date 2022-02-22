@@ -33,7 +33,7 @@ OD -> OD: Proposed upgrade plan\nis approved and scheduled
 note over OD
     Ledger reaches height of scheduled upgrade plan
     for which application does not have upgrade handler
-    (so this application version is old)
+    (hence this application version is old)
 end note
 
 OD -> OD: Dumps data/upgrade-info.json
@@ -59,7 +59,7 @@ C -> ND: Starts `current/bin/dcld`\nsubprocess
 note over ND
     Ledger reaches height of scheduled upgrade plan
     for which application has upgrade handler
-    (so this application version is new)
+    (hence this application version is new)
 end note
 
 ND -> ND: Executes upgrade handler\nwhich performs necessary\nstore migrations
