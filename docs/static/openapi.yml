@@ -5671,7 +5671,7 @@ paths:
           schema:
             type: object
             properties:
-              ApprovedRootCertificates:
+              approvedRootCertificates:
                 type: object
                 properties:
                   certs:

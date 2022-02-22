@@ -173,12 +173,12 @@ message QueryAllRevokedCertificatesResponse {
 message QueryGetApprovedRootCertificatesRequest {}
 
 message QueryGetApprovedRootCertificatesResponse {
-	ApprovedRootCertificates ApprovedRootCertificates = 1 [(gogoproto.nullable) = false];
+	ApprovedRootCertificates approvedRootCertificates = 1 [(gogoproto.nullable) = false];
 }
 message QueryGetRevokedRootCertificatesRequest {}
 
 message QueryGetRevokedRootCertificatesResponse {
-	RevokedRootCertificates RevokedRootCertificates = 1 [(gogoproto.nullable) = false];
+	RevokedRootCertificates revokedRootCertificates = 1 [(gogoproto.nullable) = false];
 }
 message QueryGetApprovedCertificatesBySubjectRequest {
 	  string subject = 1;
