@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Possible values: all (default) | cli | light | rest | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
+# Possible values: all (default) | cli | light | rest | upgrade | deploy | cli,light | cli,rest | light, rest | cli,light,rest | etc.
 TESTS_TO_RUN=${1:-all}
 
 DETAILED_OUTPUT=true
