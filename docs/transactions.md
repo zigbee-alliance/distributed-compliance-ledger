@@ -1210,8 +1210,123 @@ the node will be unjailed and returned to the active validator set.
     - Trustee
 - Number of required approvals: 
     - 2/3 of Trustees
-            
-   
+
+
+## UPGRADE
+
+#### PROPOSE_UPGRADE
+**Status: Implemented**
+
+Proposes an upgrade plan with the given name at the given height.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+    - upgrade-height: `int64` -  upgrade plan height (positive non-zero)
+    - upgrade-info: `optional(string)` - upgrade plan info
+- In State: `dclupgrade/ProposedUpgrade/value/<name>`
+- Who can send: 
+    - Trustee
+- Number of required approvals: 
+    - 2/3 of Trustees
+- CLI command minimal:
+```
+dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --from=<account>
+```
+- CLI command full:
+```
+dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --upgrade-info=<string> --from=<account>
+```
+
+#### APPROVE_UPGRADE
+**Status: Implemented**
+
+Approves the proposed upgrade plan with the given name.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+- In State: `upgrade/0x0`
+- Who can send: 
+    - Trustee
+- Number of required approvals: 
+    - 2/3 of Trustees
+- CLI command:
+```
+dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
+```
+
+#### GET_PROPOSED_UPGRADE
+**Status: Implemented**
+
+Gets the proposed upgrade plan with the given name.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+- CLI command:
+```
+dcld query dclupgrade proposed-upgrade --name=<string>
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/proposed-upgrades/{name}`
+
+#### GET_ALL_PROPOSED_UPGRADES
+**Status: Implemented**
+
+Gets all the proposed upgrade plans.
+
+- Parameters:
+    - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+```
+dcld query dclupgrade all-proposed-upgrades
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/proposed-upgrades`
+
+#### PLAN
+**Status: Implemented**
+
+Gets the currently scheduled upgrade plan, if it exists.
+
+- CLI command:
+```
+dcld query upgrade plan
+```
+- REST API: 
+    -   GET `/cosmos/upgrade/v1beta1/current_plan`
+
+#### APPLIED
+**Status: Implemented**
+
+Returns the header for the block at which the upgrade with the given name was applied, if it was previously executed on the chain. This helps a client determine which binary was valid over a given range of blocks, as well as gives more context to understand past migrations.
+
+- Parameters:
+    - `string` - upgrade name
+- CLI command:
+```
+dcld query upgrade applied <string>
+```
+- REST API: 
+    -   GET `/cosmos/upgrade/v1beta1/applied_plan/{name}`
+
+#### MODULE_VERSIONS
+**Status: Implemented**
+
+Gets a list of module names and their respective consensus versions. Following the command with a specific module name will return only that module's information.
+
+- Parameters:
+    - `optional(string)` - module name
+- CLI command minimal:
+```
+dcld query upgrade module_versions
+```
+- CLI command full:
+```
+dcld query upgrade module_versions <string>
+```
+- REST API: 
+    -   GET `/cosmos/upgrade/v1beta1/module_versions`
+
+
 ## Extensions    
 
 #### Sign

@@ -20,6 +20,8 @@ the following instructions can be used for every role (see [Use Case Diagrams](u
         - approve revocation of X509 root certificates
         - publish X509 certificates
         - revoke X509 certificates        
+        - propose pool upgrade
+        - approve pool upgrade
     - [CA](#ca-instructions)
         - propose X509 root certificates
         - publish X509 certificates     
@@ -155,12 +157,20 @@ dcld tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex 
 dcld tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>
 ```
   
- 
 ##### 8. Approve revocation of an X509 root certificate  
 ```
 dcld tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>
 ```
  
+##### 9. Propose a pool upgrade
+```
+dcld tx dclupgrade propose-upgrade --name=<upgrade name> --upgrade-height=<upgrade height> --from=<account>
+```
+  
+##### 10. Approve a pool upgrade
+```
+dcld tx dclupgrade approve-upgrade --name=<upgrade name> --from=<account>
+```
   
 ## CA instructions
 Currently any role can propose an X509 root certificate, or publish 
@@ -289,7 +299,7 @@ can be found here: [running-node.md](running-node.md).
 * `sed -i "s/persistent_peers = \"\"/<node id>@<node ip>,<node2 id>@<node2 ip>/g" $HOME/.dcl/config/config.toml`
 * `sudo ufw allow 26656/tcp`
 * `sudo ufw allow 26657/tcp`
-* `dcld start`
+* `cosmovisor start`
 * `dcld status`
 * `dcld tx validator add-node --pubkey=(dcld tendermint show-validator) --moniker=<string> --from=<account>`
 * `dcld query validator all-nodes`

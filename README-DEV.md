@@ -115,23 +115,6 @@ Every node exposes a REST API at `http://<node-host>:1317` (see https://docs.cos
 
 Have a look at [transactions](docs/transactions.md) for a full list of REST endpoints.
 
-## Remote Debugging local pool 
-If you want to remotely debug the node running in docker in order to inspect and step thru the code, modify the following lines in the `docker-compose.yml`. Comment out the default `dcld start` command with the `dlv` as shown below (delve is the go remote debugger) 
-```
-    # uncomment following line if starting in debug mode 
-    - "2345:2345"
-
-    # command: dcld start    
-    # Please use the following as the entry point if you want to start this node in debug mode for easy debugging
-    command: dlv --listen=:2345 --headless=true --log=true --log-output=debugger,debuglineerr,gdbwire,lldbout,rpc --accept-multiclient --api-version=2 exec /usr/bin/dcld start
-```
-After making the changes re-initialize and start the localnet
-  - `make localnet_stop` -If your localnet is still up
-  - `make localnet_init` 
-  - `make localnet_start`
-
-Once all the four nodes are running, the last node i.e. node03 will be listing on port `2345` to which you can attach a debug process from any IDE (e.g. Visual Studio) and step thru the code. (p.s. node03 will only start working as validator node once the debugger is attached.). More details about IDE configuration can be found at https://github.com/go-delve/delve/blob/master/Documentation/EditorIntegration.md
-
 ## Contributing
 Please take into account the following when sending a PR:
 

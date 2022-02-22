@@ -32,8 +32,9 @@ The latest release can be found at [DCL Releases](https://github.com/zigbee-alli
 
 The following components will be needed:
 
-* dcld (part of the release): The binary used for running a node and CLI.
-* The service configuration file `dcld.service` 
+* `dcld` (part of the release): The application binary which can be run in node or CLI mode.
+* `cosmovisor` (part of the release): A small process manager that supports an automated process of Cosmos SDK based application upgrade (`dcld` upgrade in our case).
+* The service configuration file `cosmovisor.service` 
 (either part of the release or [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment) folder).    
 * Genesis transactions file: `genesis.json`
 * The list of alive peers: `persistent_peers.txt`. It has the following format: `<node id>@<node ip>,<node2 id>@<node2 ip>,...`.
@@ -44,15 +45,16 @@ and contains the genesis and persistent_peers files.
 
 ### Deployment steps
 
-1. Put `dcld` binary to `/usr/bin/` and configure permissions.
+1. Put `cosmovisor` binary to `/usr/bin/` and configure permissions.
 
+2. Create `$HOME/.dcl/cosmovisor/genesis/bin` directory and copy `dcld` binary to it.
 
-2. Configure CLI:
-    * `dcld config chain-id testnet`
-    * `dcld config output json` - Output format (text/json).
+3. Configure CLI:
+    * `./dcld config chain-id testnet`
+    * `./dcld config output json` - Output format (text/json).
 
-3. Initialize the observer node and create the necessary config files:
-    * Init Node: `dcld init <node name> --chain-id testnet`.
+4. Initialize the observer node and create the necessary config files:
+    * Init Node: `./dcld init <node name> --chain-id testnet`.
     * Put `genesis.json` into dcld's config directory (usually `$HOME/.dcl/config/`).
         * Use `deployment/persistent_chains/testnet/genesis.json` if you want to connect to the persistent Test Net
     * Open `$HOME/.dcl/config/config.toml` file in your favorite text editor:
@@ -67,28 +69,33 @@ and contains the genesis and persistent_peers files.
     * Open `26656` (p2p) and `26657` (RPC) ports (Only needed for Ubuntu). 
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
-    * Edit `dcld.service` (Only needed for Ubuntu).
+    * Edit `cosmovisor.service` (Only needed for Ubuntu).
         * Replace `ubuntu` with a user name you want to start service on behalf
     * Copy service configuration. (Only needed for Ubuntu).
-        * `cp dcld.service /etc/systemd/system/`
+        * `cp cosmovisor.service /etc/systemd/system/`
 
 
-4. Start the local observer node
-   * Enable the service: `sudo systemctl enable dcld`
-   * Start node: `sudo systemctl start dcld`
-   * For testing purpose the node can be started in CLI mode: `dcld start` (instead of two previous `systemctl` commands).
+5. Start the local observer node
+   * Enable the service: `sudo systemctl enable cosmovisor`
+   * Start node: `sudo systemctl start cosmovisor`
+   * For testing purpose the node process can be started directly: `./dcld start` (instead of two previous `systemctl` commands using `cosmovisor` service).
    Service mode is recommended for demo and production environment.
 
-   You should see it trying to get all the blocks from the testnet. (p.s. It can take upto 12+ hrs for all the transactions to be downloaded depending on network speed)
+   * Add the following line to the end of `$HOME/.profile` file:
+      * `export PATH=$PATH:$HOME/.dcl/cosmovisor/current/bin`
+   * Execute the following command to apply the updated PATH immediately:
+      * `source $HOME/.profile`
+
+   You should see the node trying to get all the blocks from the testnet. (p.s. It can take upto 12+ hrs for all the transactions to be downloaded depending on network speed)
 
 
-5. Check the observer node is running and getting all the transactions:
+6. Check the observer node is running and getting all the transactions:
 
     * Get the node status: `dcld status --node tcp://localhost:26657`.
     * Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec). When you see the `catching_up` as `true` that signifies that the node is still downloading all the transactions. Once it has fully synced this will value will turn to `false`
        Expected output format: 
         ```json
-                    {
+            {
               "node_info": {
                 "protocol_version": {
                   "p2p": "7",
@@ -124,4 +131,4 @@ and contains the genesis and persistent_peers files.
             }
         ```
     
-6. Congrats! You are now running an observer node.
+7. Congrats! You are now running an observer node.
