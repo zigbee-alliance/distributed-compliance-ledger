@@ -146,13 +146,13 @@ The following steps are expected to be done **during** the ceremony.
     9.1. A Trustee proposes a NodeAdmin account
 
     ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=NodeAdmin --from='<trustee-account-name>'
+    dcld tx auth propose-add-account --address='<bench32 encoded admin-account-address>' --pubkey='<protobuf JSON encoded admin-account-pubkey>' --roles=NodeAdmin --from='<trustee-account-name>'
     ```
 
     9.2. Trustees approve the NodeAdmin account
 
     ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<trustee-account-name>'
+    dcld tx auth approve-add-account --address='<bench32 encoded admin-account-address>' --from='<trustee-account-name>'
     ```
 
 10. **[Optional] Add Trustee account**
@@ -160,13 +160,13 @@ The following steps are expected to be done **during** the ceremony.
     10.1. A Trustee proposes Trustee account
 
     ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded string>' --pubkey='<protobuf JSON encoded>' --roles=Trustee --from='<trustee-account-name>'
+    dcld tx auth propose-add-account --address='<bench32 encoded trustee-account-address>' --pubkey='<protobuf JSON encoded trustee-account-pubkey>' --roles=Trustee --from='<trustee-account-name>'
     ```
 
     10.2. Trustees approve Trustee account
 
     ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded string>' --from='<trustee-account-name>'
+    dcld tx auth approve-add-account --address='<bench32 encoded trustee-account-address>' --from='<trustee-account-name>'
     ```
 
 11. **Run VN node**
@@ -192,8 +192,12 @@ The following steps are expected to be done **during** the ceremony.
     11.5. Make the node a validator
 
     ```bash
-    $ dcld tx validator add-node --pubkey="<validator-pubkey>" --moniker="<node-name>" --from="<admin-account-name>"
+    $ dcld tx validator add-node --pubkey="<protobuf JSON encoded validator-pubkey>" --moniker="<node-name>" --from="<admin-account-name>"
     ```
+    - `[Note]` Run the following command to get `<protobuf JSON encoded validator-pubkey>`
+        ```bash
+        $ dcld tendermint show-validator
+        ```
 
     (once transaction is successfully written you should see `"code": 0` in the JSON output.)
 
@@ -206,6 +210,10 @@ The following steps are expected to be done **during** the ceremony.
     12.3. Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec).
 
     12.4. Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN's address.
+    - `[Note]` Get VN's address using the following command
+        ```bash
+        dcld tendermint show-address
+        ``` 
 
 ## IV: Post-Ceremony: Validation (For every Validator Node)
 
@@ -215,6 +223,9 @@ The following steps are expected to be done **during** the ceremony.
     ```bash
     # fetch the helper script
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/test_peers_conn
+
+    # give execute permission
+    sudo chmod u+x test_peers_conn
 
     # run, by default it expects persistent_peers.txt in the current directory
     ./test_peers_conn
