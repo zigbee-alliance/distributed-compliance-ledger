@@ -440,9 +440,9 @@ var (
 
 	pattern_Query_ProposedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "dclupgrade", "proposed-upgrades"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ApprovedUpgrade_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "dclupgrade", "approved_upgrades", "name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedUpgrade_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "dclupgrade", "approved-upgrades", "name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ApprovedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "dclupgrade", "approved_upgrades"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ApprovedUpgradeAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "dclupgrade", "approved-upgrades"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
