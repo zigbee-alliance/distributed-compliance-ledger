@@ -37,7 +37,7 @@ note over OD
 end note
 
 group x/upgrade.BeginBlocker
-    OD -> OD: Dumps data/upgrade-info.json
+    OD -> OD: Dumps `data/upgrade-info.json`
     OD -> OD: Panics
 end group
 
