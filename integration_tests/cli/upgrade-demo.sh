@@ -94,7 +94,7 @@ echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 second_propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from alice --yes)
 echo "second propose upgrade response: $second_propose"
-check_response_and_report "$result" "proposed upgrade already exists" raw
+check_response_and_report "$second_propose" "proposed upgrade already exists" raw
 
 test_divider
 
