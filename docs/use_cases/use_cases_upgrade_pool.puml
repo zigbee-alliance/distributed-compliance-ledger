@@ -36,9 +36,10 @@ note over OD
     (hence this application version is old)
 end note
 
-OD -> OD: Dumps data/upgrade-info.json
-
-OD -> OD: Panics
+group x/upgrade.BeginBlocker
+    OD -> OD: Dumps data/upgrade-info.json
+    OD -> OD: Panics
+end group
 
 note over C
     cosmovisor detects that upgrade name
@@ -47,13 +48,9 @@ note over C
 end note
 
 C -> OD: Kills `dcld` subprocess
-
 C -> C: Performes data back-up
-
 C -> C: Switches `current` symbolic link\nto new application version directory
-
 C -> C: Saves `data/upgrade-info.json`\nto `current/upgrade-info.json`
-
 C -> ND: Starts `current/bin/dcld`\nsubprocess
 
 note over ND
@@ -62,10 +59,10 @@ note over ND
     (hence this application version is new)
 end note
 
-ND -> ND: Executes upgrade handler\nwhich performs necessary\nstore migrations
-
-ND -> ND: Clears scheduled upgrade plan
-
-ND -> ND: Marks upgrade name\nas done at current height
+group x/upgrade.BeginBlocker
+    ND -> ND: Executes upgrade handler\nwhich performs necessary\nstore migrations
+    ND -> ND: Clears scheduled upgrade plan
+    ND -> ND: Marks upgrade name\nas done at current height
+end group
 
 @enduml
