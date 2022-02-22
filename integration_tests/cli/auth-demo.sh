@@ -31,6 +31,12 @@ test_divider
 
 user_address=$(echo $passphrase | dcld keys show $user -a)
 user_pubkey=$(echo $passphrase | dcld keys show $user -p)
+
+jack_address=$(echo $passphrase | dcld keys show jack -a)
+alice_address=$(echo $passphrase | dcld keys show alice -a)
+bob_address=$(echo $passphrase | dcld keys show bob -a)
+anna_address=$(echo $passphrase | dcld keys show anna -a)
+
 vid=$RANDOM
 pid=$RANDOM
 
@@ -67,7 +73,7 @@ response_does_not_contain "$result" "\"address\": \"$user_address\""
 test_divider
 
 echo "Jack proposes account for $user"
-result=$(echo $passphrase | dcld tx auth propose-add-account --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid" --from jack --yes)
+result=$(echo $passphrase | dcld tx auth propose-add-account --info="Jack is proposing this account" --address="$user_address" --pubkey="$user_pubkey" --roles="Vendor" --vid="$vid" --from jack --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -82,9 +88,13 @@ echo "Get an account for $user is not found"
 result=$(dcld query auth account --address=$user_address)
 check_response "$result" "Not Found"
 
-echo "Get a proposed account for $user"
+echo "Get a proposed account for $user and confirm that the approval contains Jack's address"
 result=$(dcld query auth proposed-account --address=$user_address)
 check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
+response_does_not_contain "$result"  $alice_address "json"
+
 
 test_divider
 
@@ -101,7 +111,7 @@ check_response "$result" "\[\]"
 test_divider
 
 echo "Alice approves account for \"$user\""
-result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --from alice --yes)
+result=$(echo $passphrase | dcld tx auth approve-add-account --address="$user_address" --info="Alice is approving this account" --from alice --yes)
 check_response "$result" "\"code\": 0"
 
 test_divider
@@ -109,6 +119,16 @@ test_divider
 echo "Get all accounts. $user account in the list because enough approvals received"
 result=$(dcld query auth all-accounts)
 check_response "$result" "\"address\": \"$user_address\""
+
+test_divider
+
+echo "Get $user account and confirm that alice and jack are set as approvers"
+result=$(dcld query auth account --address=$user_address)
+check_response_and_report "$result" $user_address "json"
+check_response_and_report "$result"  $jack_address "json"
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice is approving this account"' "json"
+check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
 
 test_divider
 
@@ -165,7 +185,7 @@ check_response "$result" "\"product_name\": \"$productName\""
 test_divider
 
 echo "Alice proposes to revoke account for $user"
-result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --from alice --yes)
+result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --info="Alice proposes to revoke account" --from alice --yes)
 check_response "$result" "\"code\": 0"
 
 
@@ -189,11 +209,14 @@ echo "Get all proposed accounts to revoke. $user account in the list"
 result=$(dcld query auth all-proposed-accounts-to-revoke)
 check_response "$result" "\"address\": \"$user_address\""
 
+
 test_divider
 
 echo "Get a proposed account to revoke for $user"
 result=$(dcld query auth proposed-account-to-revoke --address="$user_address")
 check_response "$result" "\"address\": \"$user_address\""
+check_response_and_report "$result"  $alice_address "json"
+check_response_and_report "$result"  '"info": "Alice proposes to revoke account"' "json"
 
 test_divider
 

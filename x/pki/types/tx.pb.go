@@ -32,6 +32,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type MsgProposeAddX509RootCert struct {
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
 	Cert   string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
+	Info   string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time   int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
 }
 
 func (m *MsgProposeAddX509RootCert) Reset()         { *m = MsgProposeAddX509RootCert{} }
@@ -81,6 +83,20 @@ func (m *MsgProposeAddX509RootCert) GetCert() string {
 	return ""
 }
 
+func (m *MsgProposeAddX509RootCert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgProposeAddX509RootCert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
 type MsgProposeAddX509RootCertResponse struct {
 }
 
@@ -121,6 +137,8 @@ type MsgApproveAddX509RootCert struct {
 	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
 	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
 	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty" validate:"required,max=256"`
+	Info         string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time         int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
 }
 
 func (m *MsgApproveAddX509RootCert) Reset()         { *m = MsgApproveAddX509RootCert{} }
@@ -177,6 +195,20 @@ func (m *MsgApproveAddX509RootCert) GetSubjectKeyId() string {
 	return ""
 }
 
+func (m *MsgApproveAddX509RootCert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgApproveAddX509RootCert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
 type MsgApproveAddX509RootCertResponse struct {
 }
 
@@ -216,6 +248,8 @@ var xxx_messageInfo_MsgApproveAddX509RootCertResponse proto.InternalMessageInfo
 type MsgAddX509Cert struct {
 	Signer string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
 	Cert   string `protobuf:"bytes,2,opt,name=cert,proto3" json:"cert,omitempty" validate:"required,max=10485760"`
+	Info   string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time   int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
 }
 
 func (m *MsgAddX509Cert) Reset()         { *m = MsgAddX509Cert{} }
@@ -265,6 +299,20 @@ func (m *MsgAddX509Cert) GetCert() string {
 	return ""
 }
 
+func (m *MsgAddX509Cert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgAddX509Cert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
 type MsgAddX509CertResponse struct {
 }
 
@@ -305,6 +353,8 @@ type MsgProposeRevokeX509RootCert struct {
 	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
 	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
 	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty" validate:"required,max=256"`
+	Info         string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time         int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
 }
 
 func (m *MsgProposeRevokeX509RootCert) Reset()         { *m = MsgProposeRevokeX509RootCert{} }
@@ -361,6 +411,20 @@ func (m *MsgProposeRevokeX509RootCert) GetSubjectKeyId() string {
 	return ""
 }
 
+func (m *MsgProposeRevokeX509RootCert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgProposeRevokeX509RootCert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
 type MsgProposeRevokeX509RootCertResponse struct {
 }
 
@@ -401,6 +465,8 @@ type MsgApproveRevokeX509RootCert struct {
 	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
 	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
 	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty" validate:"required,max=256"`
+	Info         string `protobuf:"bytes,5,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time         int64  `protobuf:"varint,6,opt,name=time,proto3" json:"time,omitempty"`
 }
 
 func (m *MsgApproveRevokeX509RootCert) Reset()         { *m = MsgApproveRevokeX509RootCert{} }
@@ -457,6 +523,20 @@ func (m *MsgApproveRevokeX509RootCert) GetSubjectKeyId() string {
 	return ""
 }
 
+func (m *MsgApproveRevokeX509RootCert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgApproveRevokeX509RootCert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
 type MsgApproveRevokeX509RootCertResponse struct {
 }
 
@@ -497,6 +577,8 @@ type MsgRevokeX509Cert struct {
 	Signer       string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty" validate:"required"`
 	Subject      string `protobuf:"bytes,2,opt,name=subject,proto3" json:"subject,omitempty" validate:"required,max=1024"`
 	SubjectKeyId string `protobuf:"bytes,3,opt,name=subject_key_id,json=subjectKeyId,proto3" json:"subject_key_id,omitempty" validate:"required,max=256"`
+	Info         string `protobuf:"bytes,4,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time         int64  `protobuf:"varint,5,opt,name=time,proto3" json:"time,omitempty"`
 }
 
 func (m *MsgRevokeX509Cert) Reset()         { *m = MsgRevokeX509Cert{} }
@@ -553,6 +635,20 @@ func (m *MsgRevokeX509Cert) GetSubjectKeyId() string {
 	return ""
 }
 
+func (m *MsgRevokeX509Cert) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgRevokeX509Cert) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
 type MsgRevokeX509CertResponse struct {
 }
 
@@ -607,44 +703,48 @@ func init() {
 func init() { proto.RegisterFile("pki/tx.proto", fileDescriptor_badfdb2b39855d16) }
 
 var fileDescriptor_badfdb2b39855d16 = []byte{
-	// 592 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x56, 0x4d, 0x6b, 0x13, 0x41,
-	0x18, 0xce, 0x58, 0xa9, 0x3a, 0x96, 0x80, 0x6b, 0x29, 0xc9, 0xb6, 0x6c, 0xe2, 0x5a, 0xc4, 0x83,
-	0xd9, 0x8d, 0xb1, 0xa9, 0xb5, 0xa0, 0x90, 0xfa, 0x45, 0xb0, 0x01, 0x5d, 0x3d, 0x88, 0x07, 0x43,
-	0xb2, 0xf3, 0xb2, 0x8e, 0xf9, 0x98, 0x75, 0x66, 0x13, 0x12, 0x7f, 0x85, 0x20, 0x5e, 0xfb, 0x2b,
-	0x8a, 0x57, 0xaf, 0x1e, 0x8b, 0x27, 0x4f, 0x51, 0x92, 0x83, 0xe0, 0x31, 0xbf, 0x40, 0xba, 0x1f,
-	0x49, 0xd3, 0x76, 0x2b, 0x6e, 0x23, 0x48, 0xbd, 0x6d, 0x26, 0xfb, 0x7c, 0xbd, 0x2f, 0x3c, 0x3b,
-	0x78, 0xce, 0xae, 0x51, 0xdd, 0xe9, 0x68, 0x36, 0x67, 0x0e, 0x93, 0xb4, 0xb7, 0xd4, 0xaa, 0x02,
-	0x54, 0xea, 0x75, 0x5a, 0x69, 0x9a, 0xa0, 0x11, 0x2a, 0x1c, 0x4e, 0xab, 0x2d, 0x07, 0x88, 0xc9,
-	0x1a, 0xb6, 0x77, 0x5a, 0x07, 0x62, 0x01, 0xd7, 0xec, 0x1a, 0x95, 0x93, 0x26, 0x13, 0x0d, 0x26,
-	0xca, 0x2e, 0x5a, 0xf7, 0x7e, 0x78, 0x54, 0xf2, 0xbc, 0xc5, 0x2c, 0xe6, 0x9d, 0xef, 0x3e, 0x79,
-	0xa7, 0xea, 0x16, 0xc2, 0xc9, 0x92, 0xb0, 0x1e, 0x73, 0x66, 0x33, 0x01, 0x05, 0x42, 0x9e, 0xe7,
-	0xb3, 0xb7, 0x0c, 0xc6, 0x9c, 0xbb, 0xc0, 0x1d, 0xe9, 0x21, 0x9e, 0x15, 0xd4, 0x6a, 0x02, 0x4f,
-	0xa0, 0x34, 0xba, 0x7a, 0x6e, 0x43, 0x1f, 0xf6, 0x52, 0x17, 0xdb, 0x95, 0x3a, 0x25, 0x15, 0x07,
-	0xd6, 0x55, 0x0e, 0x6f, 0x5a, 0x94, 0x03, 0x51, 0xbf, 0x6c, 0x67, 0xe6, 0x7d, 0xb1, 0x02, 0x21,
-	0x1c, 0x84, 0x78, 0xea, 0x70, 0xda, 0xb4, 0x0c, 0x1f, 0x2e, 0xad, 0xe1, 0xd3, 0x26, 0x70, 0x27,
-	0x71, 0xca, 0xa5, 0x59, 0x1e, 0xf6, 0x52, 0xe9, 0x83, 0x34, 0xd7, 0x1a, 0x95, 0xce, 0xed, 0xeb,
-	0xd9, 0x95, 0xb5, 0xfc, 0xcd, 0xd5, 0xac, 0x6a, 0xb8, 0x08, 0xf5, 0x32, 0xbe, 0x14, 0xea, 0xcf,
-	0x00, 0x61, 0xb3, 0xa6, 0x00, 0xf5, 0x87, 0x97, 0xa2, 0x60, 0xdb, 0x9c, 0xb5, 0xff, 0x5e, 0x8a,
-	0x75, 0x7c, 0x46, 0xb4, 0xaa, 0xaf, 0xc1, 0x0c, 0x82, 0xa4, 0x87, 0xbd, 0xd4, 0x52, 0x68, 0x90,
-	0xdc, 0x8a, 0x6a, 0x04, 0x00, 0xe9, 0x3e, 0x8e, 0xfb, 0x8f, 0xe5, 0x1a, 0x74, 0xcb, 0x94, 0x24,
-	0x66, 0x5c, 0x8a, 0xd4, 0xb0, 0x97, 0x5a, 0x0c, 0xa1, 0xc8, 0xe5, 0x57, 0x55, 0x63, 0xce, 0x87,
-	0x3d, 0x82, 0x6e, 0x91, 0xf8, 0xe3, 0x38, 0x3c, 0xe8, 0x68, 0x1c, 0xef, 0x11, 0x8e, 0xef, 0xbe,
-	0xe5, 0xfd, 0xfd, 0xaf, 0x6c, 0x32, 0x81, 0x17, 0x26, 0x4d, 0x8d, 0xfc, 0xfe, 0x44, 0x78, 0x69,
-	0xbc, 0x64, 0x03, 0xda, 0xac, 0x06, 0x27, 0x76, 0x83, 0x57, 0xf0, 0xf2, 0x51, 0x59, 0xf7, 0x0f,
-	0xc5, 0x5f, 0xf5, 0x7f, 0x31, 0x94, 0xd0, 0xac, 0xa3, 0xa1, 0x7c, 0x43, 0xf8, 0x42, 0x49, 0x58,
-	0xe3, 0x37, 0x4e, 0xdc, 0x24, 0x16, 0xdd, 0x26, 0x9b, 0x0c, 0x18, 0xc4, 0xcf, 0x6d, 0x9f, 0xc5,
-	0x33, 0x25, 0x61, 0x49, 0x1f, 0x11, 0x5e, 0x08, 0xa9, 0xec, 0xe2, 0x1f, 0x7e, 0x32, 0xb4, 0xd0,
-	0x76, 0x95, 0x9f, 0x4c, 0x8d, 0x2a, 0x08, 0xe0, 0x1a, 0x0f, 0x69, 0xe9, 0x28, 0xc6, 0x0f, 0xa7,
-	0x8a, 0x64, 0xfc, 0xe8, 0x4a, 0x95, 0x3e, 0x20, 0x7c, 0x7e, 0x6f, 0x9f, 0xde, 0x89, 0x22, 0x31,
-	0xc6, 0xcb, 0x0f, 0x8e, 0x87, 0x1f, 0xf9, 0xfa, 0x84, 0x70, 0x32, 0xbc, 0x37, 0x37, 0xa3, 0x6f,
-	0xf0, 0x20, 0x9b, 0xfc, 0x6c, 0x9a, 0x6c, 0x13, 0x09, 0xc2, 0x4b, 0x6e, 0x33, 0xfa, 0x2a, 0xa7,
-	0x94, 0xe0, 0xb7, 0xa5, 0x24, 0x6d, 0x21, 0x1c, 0xdf, 0xd7, 0x48, 0x85, 0x08, 0x42, 0x93, 0x14,
-	0x72, 0xf1, 0xd8, 0x14, 0x81, 0xc1, 0x8d, 0x97, 0x9f, 0xfb, 0x0a, 0xda, 0xe9, 0x2b, 0xe8, 0x7b,
-	0x5f, 0x41, 0xef, 0x06, 0x4a, 0x6c, 0x67, 0xa0, 0xc4, 0xbe, 0x0e, 0x94, 0xd8, 0x8b, 0x7b, 0x16,
-	0x75, 0x5e, 0xb5, 0xaa, 0x9a, 0xc9, 0x1a, 0xba, 0x27, 0x97, 0x09, 0xf4, 0xf4, 0x3d, 0x7a, 0x99,
-	0xb1, 0x60, 0xc6, 0x53, 0xd4, 0x3b, 0xba, 0x7b, 0x51, 0xed, 0xda, 0x20, 0xaa, 0xb3, 0xee, 0x5d,
-	0xf2, 0xc6, 0xaf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd5, 0xae, 0x26, 0x37, 0xbc, 0x0a, 0x00, 0x00,
+	// 653 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x97, 0x4d, 0x6f, 0x12, 0x41,
+	0x18, 0xc7, 0x3b, 0x94, 0x56, 0x1d, 0x1b, 0x12, 0xd7, 0xa6, 0xc2, 0xb6, 0x59, 0x70, 0x6d, 0x4c,
+	0x13, 0x65, 0x17, 0x11, 0xb0, 0x6d, 0xa2, 0x09, 0xf5, 0x2d, 0xc4, 0x92, 0xe8, 0xea, 0xc1, 0x78,
+	0x90, 0xc0, 0xee, 0xb8, 0x8e, 0xbc, 0xcc, 0x3a, 0xb3, 0x10, 0xf0, 0x53, 0x78, 0xf1, 0x6a, 0x3c,
+	0x9a, 0x78, 0x6d, 0xbc, 0x7a, 0xf5, 0xd8, 0x18, 0x0f, 0x9e, 0xd0, 0xc0, 0x37, 0xe0, 0x13, 0x18,
+	0xf6, 0x05, 0x0a, 0x74, 0x6b, 0xd8, 0xe2, 0x45, 0x7b, 0x1b, 0x86, 0xf9, 0xff, 0x9f, 0xe7, 0xf9,
+	0xcd, 0x93, 0x79, 0x00, 0x2e, 0x19, 0x65, 0x2c, 0x9b, 0x4d, 0xc9, 0xa0, 0xc4, 0x24, 0x9c, 0xf4,
+	0x06, 0xeb, 0x25, 0x84, 0x8a, 0x95, 0x0a, 0x2e, 0xd6, 0x54, 0x24, 0x69, 0x98, 0x99, 0x14, 0x97,
+	0xea, 0x26, 0xd2, 0x54, 0x52, 0x35, 0xec, 0xdd, 0x0a, 0xd2, 0x74, 0x44, 0x25, 0xa3, 0x8c, 0xf9,
+	0x88, 0x4a, 0x58, 0x95, 0xb0, 0x82, 0xa5, 0x96, 0xed, 0x0f, 0xb6, 0x15, 0xbf, 0xac, 0x13, 0x9d,
+	0xd8, 0xfb, 0xfd, 0x95, 0xbd, 0x2b, 0xfe, 0x04, 0x30, 0x92, 0x67, 0xfa, 0x43, 0x4a, 0x0c, 0xc2,
+	0x50, 0x56, 0xd3, 0x9e, 0xa6, 0x13, 0x5b, 0x0a, 0x21, 0xe6, 0x6d, 0x44, 0x4d, 0xee, 0x3e, 0x5c,
+	0x64, 0x58, 0xaf, 0x21, 0x1a, 0x06, 0x31, 0xb0, 0x71, 0x66, 0x47, 0xee, 0xb5, 0xa3, 0xe7, 0x1b,
+	0xc5, 0x0a, 0xd6, 0x8a, 0x26, 0xda, 0x16, 0x29, 0x7a, 0x5d, 0xc7, 0x14, 0x69, 0xe2, 0xb7, 0xbd,
+	0xf8, 0xb2, 0x13, 0x2c, 0xab, 0x69, 0x14, 0x31, 0xf6, 0xd8, 0xa4, 0xb8, 0xa6, 0x2b, 0x8e, 0x9c,
+	0xdb, 0x84, 0x41, 0x15, 0x51, 0x33, 0x1c, 0xb0, 0x6c, 0xd6, 0x7b, 0xed, 0x68, 0x6c, 0xd2, 0xe6,
+	0x6a, 0xb5, 0xd8, 0xbc, 0x79, 0x2d, 0x91, 0xda, 0x4c, 0xdf, 0xc8, 0x24, 0x44, 0xc5, 0x52, 0x70,
+	0x57, 0x60, 0x10, 0xd7, 0x5e, 0x90, 0xf0, 0xbc, 0xa5, 0xbc, 0x30, 0x9a, 0x40, 0x5f, 0x90, 0x4a,
+	0x6c, 0x65, 0x44, 0xc5, 0x3a, 0xc4, 0x71, 0x30, 0x68, 0xe2, 0x2a, 0x0a, 0x07, 0x63, 0x60, 0x63,
+	0x5e, 0xb1, 0xd6, 0xe2, 0x25, 0x78, 0xd1, 0xb3, 0x40, 0x05, 0x31, 0x83, 0xd4, 0x18, 0x12, 0x3f,
+	0x06, 0x2c, 0x0c, 0x59, 0xc3, 0xa0, 0xa4, 0xf1, 0xf7, 0x30, 0x6c, 0xc3, 0x53, 0xac, 0x5e, 0x7a,
+	0x85, 0x54, 0x97, 0x44, 0xac, 0xd7, 0x8e, 0xae, 0x79, 0x92, 0x48, 0xa6, 0x44, 0xc5, 0x15, 0x70,
+	0x77, 0x61, 0xc8, 0x59, 0x16, 0xca, 0xa8, 0x55, 0xc0, 0x9a, 0x83, 0x24, 0xda, 0x6b, 0x47, 0x57,
+	0x3d, 0x2c, 0x92, 0xe9, 0x8c, 0xa8, 0x2c, 0x39, 0xb2, 0x07, 0xa8, 0x95, 0xd3, 0x06, 0x3c, 0x83,
+	0xd3, 0xf0, 0x5c, 0x98, 0xe0, 0x79, 0x38, 0xa9, 0x01, 0xcf, 0xef, 0x00, 0x86, 0xfa, 0xa7, 0xec,
+	0xaf, 0xff, 0x99, 0x5e, 0x0a, 0xc3, 0x95, 0xd1, 0xaa, 0x06, 0x05, 0x7f, 0x0a, 0xc0, 0xb5, 0x61,
+	0x9b, 0x29, 0xa8, 0x41, 0xca, 0xe8, 0xa4, 0x87, 0xbc, 0x7a, 0xe8, 0x32, 0x5c, 0x3f, 0x0a, 0xd6,
+	0x38, 0x55, 0xa7, 0xd9, 0xfe, 0x13, 0xaa, 0x0b, 0xd3, 0x50, 0x5d, 0x9c, 0xa0, 0xea, 0x09, 0x6b,
+	0x40, 0xf5, 0x43, 0x00, 0x9e, 0xcb, 0x33, 0x7d, 0x78, 0xe2, 0xa4, 0x41, 0xc7, 0x1b, 0x74, 0xd5,
+	0x1a, 0x07, 0xa3, 0x84, 0x5c, 0x7e, 0xc9, 0xbd, 0xd3, 0x70, 0x3e, 0xcf, 0x74, 0xee, 0x33, 0x80,
+	0x2b, 0x1e, 0x83, 0x33, 0x37, 0xe5, 0xe0, 0x96, 0x3c, 0x47, 0x14, 0xff, 0x68, 0x66, 0x56, 0x6e,
+	0x01, 0x56, 0xe2, 0x1e, 0xa3, 0xce, 0x4f, 0xe2, 0x87, 0x5b, 0xf9, 0x4a, 0xfc, 0xe8, 0xb1, 0xc2,
+	0xbd, 0x03, 0xf0, 0xec, 0xc1, 0x99, 0x72, 0xcb, 0x4f, 0x88, 0xa1, 0x9e, 0xbf, 0x77, 0x3c, 0xfd,
+	0x20, 0xaf, 0x2f, 0x00, 0x46, 0xbc, 0x9f, 0xfe, 0x5d, 0xff, 0x37, 0x38, 0xe9, 0xc6, 0x3f, 0x99,
+	0xa5, 0xdb, 0x48, 0x05, 0xde, 0xcf, 0xec, 0xae, 0xff, 0xab, 0x9c, 0x51, 0x05, 0x7f, 0x7c, 0xd5,
+	0xb8, 0xf7, 0x00, 0x86, 0xc6, 0x9e, 0xb4, 0xac, 0x8f, 0x40, 0xa3, 0x16, 0x7c, 0xee, 0xd8, 0x16,
+	0x6e, 0x82, 0x3b, 0xcf, 0xbf, 0x76, 0x04, 0xb0, 0xdf, 0x11, 0xc0, 0xaf, 0x8e, 0x00, 0xde, 0x76,
+	0x85, 0xb9, 0xfd, 0xae, 0x30, 0xf7, 0xa3, 0x2b, 0xcc, 0x3d, 0xbb, 0xa3, 0x63, 0xf3, 0x65, 0xbd,
+	0x24, 0xa9, 0xa4, 0x2a, 0xdb, 0xe1, 0xe2, 0x6e, 0x3c, 0xf9, 0x40, 0xbc, 0xf8, 0x30, 0x60, 0xdc,
+	0x8e, 0x28, 0x37, 0x65, 0xeb, 0xef, 0x42, 0xcb, 0x40, 0xac, 0xb4, 0x68, 0xfd, 0xa2, 0xbf, 0xfe,
+	0x3b, 0x00, 0x00, 0xff, 0xff, 0x8a, 0xe8, 0xdb, 0x92, 0x42, 0x0c, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -927,6 +1027,18 @@ func (m *MsgProposeAddX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	_ = i
 	var l int
 	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x1a
+	}
 	if len(m.Cert) > 0 {
 		i -= len(m.Cert)
 		copy(dAtA[i:], m.Cert)
@@ -987,6 +1099,18 @@ func (m *MsgApproveAddX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	_ = i
 	var l int
 	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x22
+	}
 	if len(m.SubjectKeyId) > 0 {
 		i -= len(m.SubjectKeyId)
 		copy(dAtA[i:], m.SubjectKeyId)
@@ -1054,6 +1178,18 @@ func (m *MsgAddX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x1a
+	}
 	if len(m.Cert) > 0 {
 		i -= len(m.Cert)
 		copy(dAtA[i:], m.Cert)
@@ -1114,6 +1250,18 @@ func (m *MsgProposeRevokeX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, e
 	_ = i
 	var l int
 	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x22
+	}
 	if len(m.SubjectKeyId) > 0 {
 		i -= len(m.SubjectKeyId)
 		copy(dAtA[i:], m.SubjectKeyId)
@@ -1181,6 +1329,18 @@ func (m *MsgApproveRevokeX509RootCert) MarshalToSizedBuffer(dAtA []byte) (int, e
 	_ = i
 	var l int
 	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x30
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x2a
+	}
 	if len(m.SubjectKeyId) > 0 {
 		i -= len(m.SubjectKeyId)
 		copy(dAtA[i:], m.SubjectKeyId)
@@ -1248,6 +1408,18 @@ func (m *MsgRevokeX509Cert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x22
+	}
 	if len(m.SubjectKeyId) > 0 {
 		i -= len(m.SubjectKeyId)
 		copy(dAtA[i:], m.SubjectKeyId)
@@ -1320,6 +1492,13 @@ func (m *MsgProposeAddX509RootCert) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
 	return n
 }
 
@@ -1350,6 +1529,13 @@ func (m *MsgApproveAddX509RootCert) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
 	return n
 }
 
@@ -1375,6 +1561,13 @@ func (m *MsgAddX509Cert) Size() (n int) {
 	l = len(m.Cert)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
 	}
 	return n
 }
@@ -1406,6 +1599,13 @@ func (m *MsgProposeRevokeX509RootCert) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
 	return n
 }
 
@@ -1436,6 +1636,13 @@ func (m *MsgApproveRevokeX509RootCert) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
 	return n
 }
 
@@ -1465,6 +1672,13 @@ func (m *MsgRevokeX509Cert) Size() (n int) {
 	l = len(m.SubjectKeyId)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
 	}
 	return n
 }
@@ -1577,6 +1791,57 @@ func (m *MsgProposeAddX509RootCert) Unmarshal(dAtA []byte) error {
 			}
 			m.Cert = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -1773,6 +2038,57 @@ func (m *MsgApproveAddX509RootCert) Unmarshal(dAtA []byte) error {
 			}
 			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -1937,6 +2253,57 @@ func (m *MsgAddX509Cert) Unmarshal(dAtA []byte) error {
 			}
 			m.Cert = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -2133,6 +2500,57 @@ func (m *MsgProposeRevokeX509RootCert) Unmarshal(dAtA []byte) error {
 			}
 			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -2329,6 +2747,57 @@ func (m *MsgApproveRevokeX509RootCert) Unmarshal(dAtA []byte) error {
 			}
 			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -2525,6 +2994,57 @@ func (m *MsgRevokeX509Cert) Unmarshal(dAtA []byte) error {
 			}
 			m.SubjectKeyId = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])

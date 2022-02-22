@@ -5,12 +5,13 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
+import "dclauth/grant.proto";
 
 message PendingAccountRevocation {
   option (gogoproto.goproto_stringer) = false;
 
   string address = 1  [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
-  repeated string approvals = 2  [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
+  repeated Grant approvals = 2;
   
 }
 

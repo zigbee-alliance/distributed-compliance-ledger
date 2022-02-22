@@ -17,6 +17,7 @@ export interface DclauthAccount {
    */
   baseAccount?: V1Beta1BaseAccount;
   roles?: string[];
+  approvals?: DclauthGrant[];
 
   /** @format int32 */
   vendorID?: number;
@@ -25,6 +26,14 @@ export interface DclauthAccount {
 export interface DclauthAccountStat {
   /** @format uint64 */
   number?: string;
+}
+
+export interface DclauthGrant {
+  address?: string;
+
+  /** @format int64 */
+  time?: string;
+  info?: string;
 }
 
 export type DclauthMsgApproveAddAccountResponse = object;
@@ -36,13 +45,12 @@ export type DclauthMsgProposeAddAccountResponse = object;
 export type DclauthMsgProposeRevokeAccountResponse = object;
 
 export interface DclauthPendingAccount {
-  address?: DclauthAccount;
-  approvals?: string[];
+  account?: DclauthAccount;
 }
 
 export interface DclauthPendingAccountRevocation {
   address?: string;
-  approvals?: string[];
+  approvals?: DclauthGrant[];
 }
 
 export interface DclauthQueryAllAccountResponse {

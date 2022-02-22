@@ -634,6 +634,8 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
 
 - Parameters:
   - cert: `string` - PEM encoded certificate (string or path to file containing data)
+  - info: `optional(string)` - information/notes for the proposal
+  - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificate/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Any role
@@ -659,6 +661,8 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Parameters:
   - subject: `string`  - proposed certificates's `Subject`
   - subject_key_id: `string`  - proposed certificates's `Subject Key Id`
+  - info: `optional(string)` - information/notes for the approval
+  - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ApprovedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Trustee
@@ -710,6 +714,8 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - Parameters:
   - subject: `string`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
+  - info: `optional(string)` - information/notes for the revocation
+  - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Any role; owner
@@ -729,6 +735,8 @@ then the certificate will be in a pending state until sufficient number of other
 - Parameters:
   - subject: `string`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
+  - info: `optional(string)` - information/notes for the revocation proposal
+  - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/ProposedCertificateRevocation/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Trustee
@@ -748,6 +756,8 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Parameters:
   - subject: `string`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
+  - info: `optional(string)` - information/notes for the revocation approval
+  - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `pki/RevokedCertificates/value/<Certificate's Subject>/<Certificate's Subject Key ID>`
 - Who can send: 
     - Trustee
@@ -941,6 +951,8 @@ will be in a pending state until sufficient number of approvals is received.
     - pub_key: `string` - account's Protobuf JSON encoded public key
     - vid: `optional(uint16)` - vendor id (only needed for vendor role)
     - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`. 
+    - info: `optional(string)` - information/notes for the proposal
+    - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/PendingAccount/value/<address>`
 - Who can send: 
     - Trustee
@@ -956,6 +968,8 @@ The account is not active until sufficient number of Trustees approve it.
 
 - Parameters:
     - address: `string` - account address; Bench32 encoded
+    - info: `optional(string)` - information/notes for the approval
+    - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/Account/value/<address>`
 - Who can send: 
     - Trustee
@@ -975,6 +989,8 @@ will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
     - address: `string` - account address; Bench32 encoded
+    - info: `optional(string)` - information/notes for the revocation proposal
+    - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/Account/value/<address>`
 - Who can send: 
     - Trustee
@@ -990,6 +1006,8 @@ The account is not revoked until sufficient number of Trustees approve it.
 
 - Parameters:
     - address: `string` - account address; Bench32 encoded
+    - info: `optional(string)` - information/notes for the revocation approval
+    - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/Account/value/<address>`
 - Who can send: 
     - Trustee

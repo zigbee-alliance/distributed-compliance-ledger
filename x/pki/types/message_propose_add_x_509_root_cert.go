@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -10,10 +12,12 @@ const TypeMsgProposeAddX509RootCert = "propose_add_x_509_root_cert"
 
 var _ sdk.Msg = &MsgProposeAddX509RootCert{}
 
-func NewMsgProposeAddX509RootCert(signer string, cert string) *MsgProposeAddX509RootCert {
+func NewMsgProposeAddX509RootCert(signer string, cert string, info string) *MsgProposeAddX509RootCert {
 	return &MsgProposeAddX509RootCert{
 		Signer: signer,
 		Cert:   cert,
+		Info:   info,
+		Time:   time.Now().Unix(),
 	}
 }
 
