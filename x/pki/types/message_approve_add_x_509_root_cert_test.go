@@ -62,6 +62,16 @@ func TestMsgApproveAddX509RootCert_ValidateBasic(t *testing.T) {
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
+		{
+			name: "info field length > 4096",
+			msg: MsgApproveAddX509RootCert{
+				Signer:       sample.AccAddress(),
+				Subject:      testconstants.RootSubject,
+				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Info:         tmrand.Str(4097),
+			},
+			err: validator.ErrFieldMaxLengthExceeded,
+		},
 	}
 
 	positive_tests := []struct {
@@ -74,6 +84,26 @@ func TestMsgApproveAddX509RootCert_ValidateBasic(t *testing.T) {
 				Signer:       sample.AccAddress(),
 				Subject:      testconstants.RootSubject,
 				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Info:         testconstants.Info,
+				Time:         12345,
+			},
+		},
+		{
+			name: "info field length = 4096",
+			msg: MsgApproveAddX509RootCert{
+				Signer:       sample.AccAddress(),
+				Subject:      testconstants.RootSubject,
+				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Info:         tmrand.Str(4096),
+			},
+		},
+		{
+			name: "info field is empty",
+			msg: MsgApproveAddX509RootCert{
+				Signer:       sample.AccAddress(),
+				Subject:      testconstants.RootSubject,
+				SubjectKeyId: testconstants.RootSubjectKeyID,
+				Info:         "",
 			},
 		},
 	}

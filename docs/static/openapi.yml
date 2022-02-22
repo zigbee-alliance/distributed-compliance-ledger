@@ -7,7 +7,6 @@ info:
     url: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/LICENSE
   description: |
     A REST interface for state queries.
-
     Tendermint RPC endpoints are available here: https://docs.tendermint.com/v0.34/rpc/.
 paths:
   /dcl/compliance/certified-models:
@@ -1075,6 +1074,18 @@ paths:
                         preserve repeated form
                               so protobuf takes care about repeated items in generated code,
                               (but that might be not the final solution)
+                    approvals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
                     vendorID:
                       type: integer
                       format: int32
@@ -1768,6 +1779,18 @@ paths:
                       repeated form
                             so protobuf takes care about repeated items in generated code,
                             (but that might be not the final solution)
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
                   vendorID:
                     type: integer
                     format: int32
@@ -1978,7 +2001,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    address:
+                    account:
                       type: object
                       properties:
                         baseAccount:
@@ -2186,13 +2209,21 @@ paths:
                             preserve repeated form
                                   so protobuf takes care about repeated items in generated code,
                                   (but that might be not the final solution)
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
                         vendorID:
                           type: integer
                           format: int32
-                    approvals:
-                      type: array
-                      items:
-                        type: string
               pagination:
                 type: object
                 properties:
@@ -2477,7 +2508,7 @@ paths:
               pendingAccount:
                 type: object
                 properties:
-                  address:
+                  account:
                     type: object
                     properties:
                       baseAccount:
@@ -2685,13 +2716,21 @@ paths:
                           preserve repeated form
                                 so protobuf takes care about repeated items in generated code,
                                 (but that might be not the final solution)
+                      approvals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
                       vendorID:
                         type: integer
                         format: int32
-                  approvals:
-                    type: array
-                    items:
-                      type: string
         default:
           description: An unexpected error response.
           schema:
@@ -2905,7 +2944,15 @@ paths:
                     approvals:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -3195,7 +3242,15 @@ paths:
                   approvals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -3388,7 +3443,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/dclupgrade/proposed_upgrade:
+  /dcl/dclupgrade/proposed-upgrades:
     get:
       summary: Queries a list of ProposedUpgrade items.
       operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeProposedUpgradeAll
@@ -3801,7 +3856,7 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/dclupgrade/proposed_upgrade/{name}':
+  '/dcl/dclupgrade/proposed-upgrades/{name}':
     get:
       summary: Queries a ProposedUpgrade by index.
       operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeProposedUpgrade
@@ -4622,6 +4677,18 @@ paths:
                             type: string
                           subjectKeyId:
                             type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
               pagination:
                 type: object
                 properties:
@@ -4813,6 +4880,18 @@ paths:
                           type: string
                         subjectKeyId:
                           type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
         default:
           description: An unexpected error response.
           schema:
@@ -4925,7 +5004,15 @@ paths:
                     approvals:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -5056,7 +5143,15 @@ paths:
                   approvals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -5109,7 +5204,15 @@ paths:
                     approvals:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -5235,7 +5338,15 @@ paths:
                   approvals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -5309,6 +5420,18 @@ paths:
                             type: string
                           subjectKeyId:
                             type: string
+                          approvals:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                address:
+                                  type: string
+                                time:
+                                  type: string
+                                  format: int64
+                                info:
+                                  type: string
               pagination:
                 type: object
                 properties:
@@ -5455,6 +5578,18 @@ paths:
                           type: string
                         subjectKeyId:
                           type: string
+                        approvals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
         default:
           description: An unexpected error response.
           schema:
@@ -7947,6 +8082,18 @@ definitions:
           form
                 so protobuf takes care about repeated items in generated code,
                 (but that might be not the final solution)
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
       vendorID:
         type: integer
         format: int32
@@ -7956,6 +8103,16 @@ definitions:
       number:
         type: string
         format: uint64
+  zigbeealliance.distributedcomplianceledger.dclauth.Grant:
+    type: object
+    properties:
+      address:
+        type: string
+      time:
+        type: string
+        format: int64
+      info:
+        type: string
   zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccountResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccountResponse:
@@ -7967,7 +8124,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccount:
     type: object
     properties:
-      address:
+      account:
         type: object
         properties:
           baseAccount:
@@ -8167,13 +8324,21 @@ definitions:
               repeated form
                     so protobuf takes care about repeated items in generated code,
                     (but that might be not the final solution)
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
           vendorID:
             type: integer
             format: int32
-      approvals:
-        type: array
-        items:
-          type: string
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccountRevocation:
     type: object
     properties:
@@ -8182,7 +8347,15 @@ definitions:
       approvals:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
   zigbeealliance.distributedcomplianceledger.dclauth.QueryAllAccountResponse:
     type: object
     properties:
@@ -8392,6 +8565,18 @@ definitions:
                 repeated form
                       so protobuf takes care about repeated items in generated code,
                       (but that might be not the final solution)
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
             vendorID:
               type: integer
               format: int32
@@ -8428,7 +8613,7 @@ definitions:
         items:
           type: object
           properties:
-            address:
+            account:
               type: object
               properties:
                 baseAccount:
@@ -8634,13 +8819,21 @@ definitions:
                     repeated form
                           so protobuf takes care about repeated items in generated code,
                           (but that might be not the final solution)
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
                 vendorID:
                   type: integer
                   format: int32
-            approvals:
-              type: array
-              items:
-                type: string
       pagination:
         type: object
         properties:
@@ -8679,7 +8872,15 @@ definitions:
             approvals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
@@ -8908,6 +9109,18 @@ definitions:
               repeated form
                     so protobuf takes care about repeated items in generated code,
                     (but that might be not the final solution)
+          approvals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
           vendorID:
             type: integer
             format: int32
@@ -8926,7 +9139,7 @@ definitions:
       pendingAccount:
         type: object
         properties:
-          address:
+          account:
             type: object
             properties:
               baseAccount:
@@ -9130,13 +9343,21 @@ definitions:
                   repeated form
                         so protobuf takes care about repeated items in generated code,
                         (but that might be not the final solution)
+              approvals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
               vendorID:
                 type: integer
                 format: int32
-          approvals:
-            type: array
-            items:
-              type: string
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationResponse:
     type: object
     properties:
@@ -9148,7 +9369,15 @@ definitions:
           approvals:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   cosmos.upgrade.v1beta1.Plan:
     type: object
     properties:
@@ -10058,6 +10287,18 @@ definitions:
               type: string
             subjectKeyId:
               type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
   zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificatesBySubject:
     type: object
     properties:
@@ -10102,6 +10343,18 @@ definitions:
         type: string
       subjectKeyId:
         type: string
+      approvals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
   zigbeealliance.distributedcomplianceledger.pki.CertificateIdentifier:
     type: object
     properties:
@@ -10125,6 +10378,16 @@ definitions:
               type: string
             subjectKeyId:
               type: string
+  zigbeealliance.distributedcomplianceledger.pki.Grant:
+    type: object
+    properties:
+      address:
+        type: string
+      time:
+        type: string
+        format: int64
+      info:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.MsgAddX509CertResponse:
     type: object
   zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCertResponse:
@@ -10153,7 +10416,15 @@ definitions:
       approvals:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificateRevocation:
     type: object
     properties:
@@ -10164,7 +10435,15 @@ definitions:
       approvals:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
     type: object
     properties:
@@ -10202,6 +10481,18 @@ definitions:
                     type: string
                   subjectKeyId:
                     type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
       pagination:
         type: object
         properties:
@@ -10248,7 +10539,15 @@ definitions:
             approvals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
@@ -10289,7 +10588,15 @@ definitions:
             approvals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
@@ -10352,6 +10659,18 @@ definitions:
                     type: string
                   subjectKeyId:
                     type: string
+                  approvals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
       pagination:
         type: object
         properties:
@@ -10424,6 +10743,18 @@ definitions:
                   type: string
                 subjectKeyId:
                   type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
@@ -10477,7 +10808,15 @@ definitions:
           approvals:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse:
     type: object
     properties:
@@ -10491,7 +10830,15 @@ definitions:
           approvals:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedCertificatesResponse:
     type: object
     properties:
@@ -10527,6 +10874,18 @@ definitions:
                   type: string
                 subjectKeyId:
                   type: string
+                approvals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
@@ -10574,6 +10933,18 @@ definitions:
               type: string
             subjectKeyId:
               type: string
+            approvals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
   zigbeealliance.distributedcomplianceledger.pki.RevokedRootCertificates:
     type: object
     properties:

@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -10,10 +12,12 @@ const TypeMsgProposeRevokeAccount = "propose_revoke_account"
 
 var _ sdk.Msg = &MsgProposeRevokeAccount{}
 
-func NewMsgProposeRevokeAccount(signer sdk.AccAddress, address sdk.AccAddress) *MsgProposeRevokeAccount {
+func NewMsgProposeRevokeAccount(signer sdk.AccAddress, address sdk.AccAddress, info string) *MsgProposeRevokeAccount {
 	return &MsgProposeRevokeAccount{
 		Signer:  signer.String(),
 		Address: address.String(),
+		Info:    info,
+		Time:    time.Now().Unix(),
 	}
 }
 

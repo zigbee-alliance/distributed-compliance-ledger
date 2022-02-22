@@ -7,5 +7,4 @@ import "pki/certificate_identifier.proto";
 
 message RevokedRootCertificates {
   repeated CertificateIdentifier certs = 1; 
-  
 }

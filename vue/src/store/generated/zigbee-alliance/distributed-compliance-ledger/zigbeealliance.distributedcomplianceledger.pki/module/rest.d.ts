@@ -21,6 +21,7 @@ export interface PkiCertificate {
     owner?: string;
     subject?: string;
     subjectKeyId?: string;
+    approvals?: PkiGrant[];
 }
 export interface PkiCertificateIdentifier {
     subject?: string;
@@ -30,6 +31,12 @@ export interface PkiChildCertificates {
     issuer?: string;
     authorityKeyId?: string;
     certIds?: PkiCertificateIdentifier[];
+}
+export interface PkiGrant {
+    address?: string;
+    /** @format int64 */
+    time?: string;
+    info?: string;
 }
 export declare type PkiMsgAddX509CertResponse = object;
 export declare type PkiMsgApproveAddX509RootCertResponse = object;
@@ -43,12 +50,12 @@ export interface PkiProposedCertificate {
     pemCert?: string;
     serialNumber?: string;
     owner?: string;
-    approvals?: string[];
+    approvals?: PkiGrant[];
 }
 export interface PkiProposedCertificateRevocation {
     subject?: string;
     subjectKeyId?: string;
-    approvals?: string[];
+    approvals?: PkiGrant[];
 }
 export interface PkiQueryAllApprovedCertificatesResponse {
     approvedCertificates?: PkiApprovedCertificates[];

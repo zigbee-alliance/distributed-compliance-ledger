@@ -7,24 +7,32 @@ export interface MsgProposeAddAccount {
     pubKey: Any | undefined;
     roles: string[];
     vendorID: number;
+    info: string;
+    time: number;
 }
 export interface MsgProposeAddAccountResponse {
 }
 export interface MsgApproveAddAccount {
     signer: string;
     address: string;
+    info: string;
+    time: number;
 }
 export interface MsgApproveAddAccountResponse {
 }
 export interface MsgProposeRevokeAccount {
     signer: string;
     address: string;
+    info: string;
+    time: number;
 }
 export interface MsgProposeRevokeAccountResponse {
 }
 export interface MsgApproveRevokeAccount {
     signer: string;
     address: string;
+    info: string;
+    time: number;
 }
 export interface MsgApproveRevokeAccountResponse {
 }

@@ -49,15 +49,20 @@ func (k msgServer) ApproveAddAccount(
 		)
 	}
 
-	// append approval
-	pendAcc.Approvals = append(pendAcc.Approvals, signerAddr.String())
+	grant := types.Grant{
+		Address: signerAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
+
+	pendAcc.Approvals = append(pendAcc.Approvals, &grant)
 
 	// check if pending account has enough approvals
 	if len(pendAcc.Approvals) == k.AccountApprovalsCount(ctx) {
 		// create approved account, assign account number and store it
 		// TODO issue 99: create a separate instance of BaseAccount with
 		//		AccountNumber and Sequence set to zero
-		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.VendorID)
+		account := types.NewAccount(pendAcc.BaseAccount, pendAcc.Roles, pendAcc.Approvals, pendAcc.VendorID)
 		err = account.SetAccountNumber(k.GetNextAccountNumber(ctx))
 		if err != nil {
 			return nil, err

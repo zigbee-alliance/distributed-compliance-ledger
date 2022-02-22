@@ -1,7 +1,8 @@
 /* eslint-disable */
+import { Grant } from '../pki/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
-const baseProposedCertificateRevocation = { subject: '', subjectKeyId: '', approvals: '' };
+const baseProposedCertificateRevocation = { subject: '', subjectKeyId: '' };
 export const ProposedCertificateRevocation = {
     encode(message, writer = Writer.create()) {
         if (message.subject !== '') {
@@ -11,7 +12,7 @@ export const ProposedCertificateRevocation = {
             writer.uint32(18).string(message.subjectKeyId);
         }
         for (const v of message.approvals) {
-            writer.uint32(26).string(v);
+            Grant.encode(v, writer.uint32(26).fork()).ldelim();
         }
         return writer;
     },
@@ -30,7 +31,7 @@ export const ProposedCertificateRevocation = {
                     message.subjectKeyId = reader.string();
                     break;
                 case 3:
-                    message.approvals.push(reader.string());
+                    message.approvals.push(Grant.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -56,7 +57,7 @@ export const ProposedCertificateRevocation = {
         }
         if (object.approvals !== undefined && object.approvals !== null) {
             for (const e of object.approvals) {
-                message.approvals.push(String(e));
+                message.approvals.push(Grant.fromJSON(e));
             }
         }
         return message;
@@ -66,7 +67,7 @@ export const ProposedCertificateRevocation = {
         message.subject !== undefined && (obj.subject = message.subject);
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
         if (message.approvals) {
-            obj.approvals = message.approvals.map((e) => e);
+            obj.approvals = message.approvals.map((e) => (e ? Grant.toJSON(e) : undefined));
         }
         else {
             obj.approvals = [];
@@ -90,7 +91,7 @@ export const ProposedCertificateRevocation = {
         }
         if (object.approvals !== undefined && object.approvals !== null) {
             for (const e of object.approvals) {
-                message.approvals.push(e);
+                message.approvals.push(Grant.fromPartial(e));
             }
         }
         return message;

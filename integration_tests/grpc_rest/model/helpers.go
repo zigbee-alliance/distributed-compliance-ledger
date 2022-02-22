@@ -308,6 +308,7 @@ func ModelDemo(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 	require.NotNil(suite.T, vendorAccount)
 
@@ -394,6 +395,7 @@ func AddModelByNonVendor(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 
 	require.NotContains(suite.T, nonVendorAccount.Roles, dclauthtypes.Vendor)
@@ -432,6 +434,7 @@ func AddModelByDifferentVendor(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 
 	// try to add createModelMsg
@@ -468,6 +471,7 @@ func AddModelTwice(suite *utils.TestSuite) {
 		aliceAccount,
 		bobName,
 		bobAccount,
+		testconstants.Info,
 	)
 
 	// add model

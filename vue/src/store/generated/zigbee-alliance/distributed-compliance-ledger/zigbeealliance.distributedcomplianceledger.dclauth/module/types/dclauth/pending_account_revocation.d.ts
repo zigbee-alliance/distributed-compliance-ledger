@@ -1,8 +1,9 @@
+import { Grant } from '../dclauth/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 export interface PendingAccountRevocation {
     address: string;
-    approvals: string[];
+    approvals: Grant[];
 }
 export declare const PendingAccountRevocation: {
     encode(message: PendingAccountRevocation, writer?: Writer): Writer;

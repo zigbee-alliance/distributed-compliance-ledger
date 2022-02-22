@@ -20,7 +20,9 @@ clean_network = $(call remove_containers,$(call localnet_containers))
 
 # test deploy vars
 TEST_DEPLOY_IMAGE_NAME = "dcledger_deploy"
-TEST_DEPLOY_NODE = "test_deploy_node"
+TEST_DEPLOY_GVN = "test_deploy_gvn"
+TEST_DEPLOY_VN = "test_deploy_vn"
+TEST_DEPLOY_ON = "test_deploy_on"
 
 image:
 	docker build -t ${IMAGE_NAME} --build-arg TEST_UID=${UID} \
@@ -66,14 +68,13 @@ localnet_rebuild: localnet_clean localnet_init
 
 
 test_deploy_image: integration_tests/deploy/Dockerfile
-	cat $< | docker build -t ${TEST_DEPLOY_IMAGE_NAME} -
+	docker-compose -f integration_tests/deploy/docker-compose.yml build
 
-test_deploy_env_build: image test_deploy_image
-	docker run -d --name ${TEST_DEPLOY_NODE} --tmpfs /tmp --tmpfs /run --tmpfs /run/lock \
-		-v /sys/fs/cgroup:/sys/fs/cgroup:ro --network ${LOCALNET_DOCKER_NETWORK} ${TEST_DEPLOY_IMAGE_NAME}
+test_deploy_env_build: test_deploy_image
+	docker-compose -f integration_tests/deploy/docker-compose.yml up -d
 
 test_deploy_env_clean:
-	docker rm -f ${TEST_DEPLOY_NODE}
+	docker-compose -f integration_tests/deploy/docker-compose.yml down
 
 .PHONY: localnet_init localnet_start localnet_stop localnet_clean localnet_export \
 		localnet_reset localnet_rebuild \

@@ -334,6 +334,7 @@ func newNetwork(t *testing.T, cfg Config) *Network {
 				dclauthtypes.Trustee,
 				dclauthtypes.NodeAdmin,
 			},
+			nil,
 			testconstants.Vid,
 		)
 		genAccounts = append(genAccounts, *account)

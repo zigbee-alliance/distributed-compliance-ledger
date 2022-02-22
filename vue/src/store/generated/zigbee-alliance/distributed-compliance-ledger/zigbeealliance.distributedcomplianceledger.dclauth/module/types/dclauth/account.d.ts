@@ -1,4 +1,5 @@
 import { BaseAccount } from '../cosmos/auth/v1beta1/auth';
+import { Grant } from '../dclauth/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 export interface Account {
@@ -9,6 +10,7 @@ export interface Account {
      *       (but that might be not the final solution)
      */
     roles: string[];
+    approvals: Grant[];
     vendorID: number;
 }
 export declare const Account: {
