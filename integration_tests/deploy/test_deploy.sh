@@ -22,58 +22,122 @@ source integration_tests/cli/common.sh
 DCL_USER="dcl"
 DCL_USER_HOME="/var/lib/dcl"
 DCL_DIR="$DCL_USER_HOME/.dcl"
-TEST_NODE="test_deploy_vn"
+GENESIS_FILE="$DCL_DIR/config/genesis.json"
 
-random_string account
+GVN_NAME="test_deploy_gvn"
+VN_NAME="test_deploy_vn"
+
+CHAIN_ID=dcl_test_deploy
 
 cleanup() {
     make test_deploy_env_clean
-    make localnet_clean
 }
 trap cleanup EXIT
 
 
+function docker_exec {
+    docker exec -u "$DCL_USER" "$@"
+}
+
+
 test_divider
 
-echo "Prepare the environment"
-make build install localnet_rebuild localnet_start
+echo "PROVISIONING"
+make build install
 make test_deploy_env_build
-# ensure that the pool is ready
-wait_for_height 2 20
 
-docker cp build/dcld "$TEST_NODE":/usr/bin
-docker cp "$LOCALNET_DIR"/genesis.json "$TEST_NODE":"$DCL_USER_HOME"
-docker cp "$LOCALNET_DIR"/persistent_peers.txt "$TEST_NODE":"$DCL_USER_HOME"
-docker cp deployment/scripts/run_dcl_node "$TEST_NODE":"$DCL_USER_HOME"
-docker cp deployment/dcld.service "$TEST_NODE":"$DCL_USER_HOME"
+GVN_IP="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $GVN_NAME)"
+VN_IP="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $VN_NAME)"
 
-echo "Configure CLI"
-docker exec -u "$DCL_USER" "$TEST_NODE" /bin/sh -c "
-  dcld config chain-id $chain_id &&
-  dcld config output json &&
-  dcld config keyring-backend test &&
-  dcld config broadcast-mode block"
 
-echo "Configure and start new node"
-docker exec -u "$DCL_USER" "$TEST_NODE" dcld init $TEST_NODE --chain-id  $chain_id
-docker exec -u "$DCL_USER" "$TEST_NODE" ./run_dcl_node -c $chain_id $TEST_NODE
-docker exec "$TEST_NODE" systemctl status dcld
-vaddress=$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld tendermint show-address)
-vpubkey=$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld tendermint show-validator)
+test_divider
 
-echo "Create and register new NodeAdmin account"
-docker exec -u "$DCL_USER" "$TEST_NODE" dcld keys add "$account"
-address="$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld keys show $account -a)"
-pubkey="$(docker exec -u "$DCL_USER" "$TEST_NODE" dcld keys show $account -p)"
-dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
-dcld tx auth approve-add-account --address="$address" --from alice --yes
+echo "CLUSTER NODES PREPARATION"
+for node in "$GVN_NAME" "$VN_NAME"; do
+    # TODO improve: assumes that host is compatible with test deploy containers
+    echo "$node: install binary"
+    docker cp build/dcld "$node":/usr/bin
+    docker_exec "$node" dcld version
 
-echo "$account Add Node \"$TEST_NODE\" to validator set"
-docker exec -u "$DCL_USER" "$TEST_NODE" dcld tx validator add-node --pubkey="$vpubkey" --moniker="$TEST_NODE" --from="$account" --yes
+    # TODO firewall routine (requires ufw installed)
 
-echo "Check node \"$TEST_NODE\" is in the validator set"
-result=$(dcld query validator all-nodes)
-check_response "$result" "\"moniker\": \"$TEST_NODE\""
-check_response "$result" "\"pubKey\":$vpubkey" raw
+    echo "$node: upload release artifacts"
+    docker cp deployment/dcld.service "$node":"$DCL_USER_HOME"
+    docker cp deployment/scripts/run_dcl_node "$node":"$DCL_USER_HOME"
+    docker cp deployment/scripts/test_peers_conn "$node":"$DCL_USER_HOME"
+
+    echo "$node: init"
+    docker_exec "$node" bash -c "dcld init $node --chain-id $CHAIN_ID 2>init.stderr"
+
+    echo "$node: Create NodeAdmin and Trustee keys"
+    docker_exec "$node" dcld config keyring-backend test
+    docker_exec "$node" dcld keys add "${node}_admin"
+    docker_exec "$node" dcld keys add "${node}_tr"
+done
+
+echo "Generating persistent peers list"
+GVN_ID="$(docker_exec "$GVN_NAME" grep -o 'node_id.*$' init.stderr  | awk -F'"' '{print $3}')"
+VN_ID="$(docker_exec "$VN_NAME" grep -o 'node_id.*$' init.stderr  | awk -F'"' '{print $3}')"
+
+PERSISTENT_PEERS="$GVN_ID@$GVN_IP:26656,$VN_ID@$VN_IP:26656"
+
+for node in "$GVN_NAME" "$VN_NAME"; do
+    docker_exec "$node" bash -c "echo '$PERSISTENT_PEERS' >persistent_peers.txt"
+done
+
+
+test_divider
+
+echo "GENESIS NODE RUN"
+docker_exec -e KEYRING_BACKEND=test "$GVN_NAME"  \
+    ./run_dcl_node -t genesis -c "$CHAIN_ID" \
+    --gen-key-name "${GVN_NAME}_admin" --gen-key-name-trustee "${GVN_NAME}_tr" \
+    "$GVN_NAME"
+docker_exec "$GVN_NAME" systemctl status dcld
+
+# we shold be fine with shell limits here
+genesis_data="$(docker_exec "$GVN_NAME" cat "$GENESIS_FILE")"
+
+test_divider
+
+echo "VALIDATOR NODE RUN"
+
+echo "VN: Set genesis data"
+docker_exec "$VN_NAME" bash -c "echo '$genesis_data' >genesis.json"
+
+echo "VN: Verify connections to other nodes"
+docker_exec "$VN_NAME" ./test_peers_conn
+
+echo "VN: run"
+docker_exec -e KEYRING_BACKEND=test "$VN_NAME" ./run_dcl_node -c "$CHAIN_ID" "$VN_NAME"
+docker_exec "$VN_NAME" systemctl status dcld
+
+test_divider
+
+echo "VALIDATOR NODE REGISTRATION"
+
+echo "$GVN_NAME: approve \"$VN_NAME\" to validator set"
+vn_addr=$(docker_exec "$VN_NAME" dcld tendermint show-address)
+vn_pubkey=$(docker_exec "$VN_NAME" dcld tendermint show-validator)
+vn_admin_name="${VN_NAME}_admin"
+vn_admin_addr="$(docker_exec "$VN_NAME" dcld keys show "$vn_admin_name" -a)"
+vn_admin_pubkey="$(docker_exec "$VN_NAME" dcld keys show "$vn_admin_name" -p)"
+
+# ensure that the genesis node is ready
+wait_for_height 2 15 "tcp://$GVN_IP:26657"
+
+docker_exec "$GVN_NAME" dcld tx auth propose-add-account --address "$vn_admin_addr" --pubkey "$vn_admin_pubkey" --roles="NodeAdmin" --from "${GVN_NAME}_tr" --yes
+#dcld tx auth approve-add-account --address="$vn_admin_addr" --from alice --yes
+
+echo "$GVN_NAME: Add Node \"$VN_NAME\" to validator set"
+
+# ensure that the validator node is ready
+wait_for_height 4 30 "tcp://$VN_IP:26657"
+docker_exec "$VN_NAME" dcld tx validator add-node --pubkey="$vn_pubkey" --moniker="$VN_NAME" --from="$vn_admin_name" --yes
+
+echo "Check node \"$VN_NAME\" is in the validator set"
+result=$(docker_exec "$GVN_NAME" dcld query validator all-nodes)
+check_response "$result" "\"moniker\": \"$VN_NAME\""
+check_response "$result" "\"pubKey\":$vn_pubkey" raw
 
 echo "PASSED"

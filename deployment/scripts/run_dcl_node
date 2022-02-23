@@ -47,8 +47,6 @@ PEER=
 PEER_ID=
 PEER_HOSTSPEC="localhost:$CLI_PORT"
 
-
-# ================ FUNCTIONS ============================
 DEF_NODE_TYPE="$NT_VALIDATOR"
 DEF_CHAIN_ID="testnet"
 DEF_NODE_USER="ubuntu"
@@ -63,9 +61,11 @@ NODE_TYPE="$DEF_NODE_TYPE"
 CHAIN_ID="$DEF_CHAIN_ID"
 
 CURR_USER="${USER:-$(whoami 2>/dev/null)}"
-
 NODE_USER="${CURR_USER:-$DEF_NODE_USER}"
 
+KEYRING_BACKEND="${KEYRING_BACKEND:-}"
+
+# ================ FUNCTIONS ============================
 
 function usage {
   echo "\
@@ -226,6 +226,9 @@ function config_cli {
     dcld config chain-id "$_chain_id"
     dcld config output json
     dcld config broadcast-mode block
+    if [[ -n "$KEYRING_BACKEND" ]]; then
+        dcld config keyring-backend "$KEYRING_BACKEND"
+    fi
 
     if [[ -n "$_peer_host" ]]; then
         dcld config node tcp://"$_peer_host"
