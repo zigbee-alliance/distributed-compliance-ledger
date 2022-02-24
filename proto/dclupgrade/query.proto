@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "dclupgrade/proposed_upgrade.proto";
+import "dclupgrade/approved_upgrade.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types";
@@ -19,6 +20,16 @@ service Query {
 	// Queries a list of ProposedUpgrade items.
 	rpc ProposedUpgradeAll(QueryAllProposedUpgradeRequest) returns (QueryAllProposedUpgradeResponse) {
 		option (google.api.http).get = "/dcl/dclupgrade/proposed-upgrades";
+	}
+
+// Queries a ApprovedUpgrade by index.
+	rpc ApprovedUpgrade(QueryGetApprovedUpgradeRequest) returns (QueryGetApprovedUpgradeResponse) {
+		option (google.api.http).get = "/dcl/dclupgrade/approved-upgrades/{name}";
+	}
+
+	// Queries a list of ApprovedUpgrade items.
+	rpc ApprovedUpgradeAll(QueryAllApprovedUpgradeRequest) returns (QueryAllApprovedUpgradeResponse) {
+		option (google.api.http).get = "/dcl/dclupgrade/approved-upgrades";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -39,6 +50,24 @@ message QueryAllProposedUpgradeRequest {
 
 message QueryAllProposedUpgradeResponse {
 	repeated ProposedUpgrade proposedUpgrade = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetApprovedUpgradeRequest {
+	  string name = 1;
+
+}
+
+message QueryGetApprovedUpgradeResponse {
+	ApprovedUpgrade approvedUpgrade = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllApprovedUpgradeRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllApprovedUpgradeResponse {
+	repeated ApprovedUpgrade approvedUpgrade = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
