@@ -109,7 +109,7 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 *   put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
 *   set a proper owner and executable permissions
 *   create `$HOME/.dcl/cosmovisor/genesis/bin` directory for the genesis version of the application binary
-*   copy `dcld` binary to the created directory
+*   copy `dcld` binary to the created directory, but do not remove it from the current working directory (to be able to perform initialization steps below)
 
 <details>
 <summary>Example for ubuntu user (click to expand)</summary>
