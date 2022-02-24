@@ -493,7 +493,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryApprovedUpgradeAll
    * @summary Queries a list of ApprovedUpgrade items.
-   * @request GET:/dcl/dclupgrade/approved_upgrades
+   * @request GET:/dcl/dclupgrade/approved-upgrades
    */
   queryApprovedUpgradeAll = (
     query?: {
@@ -506,7 +506,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclupgradeQueryAllApprovedUpgradeResponse, RpcStatus>({
-      path: `/dcl/dclupgrade/approved_upgrades`,
+      path: `/dcl/dclupgrade/approved-upgrades`,
       method: "GET",
       query: query,
       format: "json",
@@ -519,11 +519,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryApprovedUpgrade
    * @summary Queries a ApprovedUpgrade by index.
-   * @request GET:/dcl/dclupgrade/approved_upgrades/{name}
+   * @request GET:/dcl/dclupgrade/approved-upgrades/{name}
    */
   queryApprovedUpgrade = (name: string, params: RequestParams = {}) =>
     this.request<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>({
-      path: `/dcl/dclupgrade/approved_upgrades/${name}`,
+      path: `/dcl/dclupgrade/approved-upgrades/${name}`,
       method: "GET",
       format: "json",
       ...params,

@@ -53,7 +53,6 @@ func TestShowApprovedUpgrade(t *testing.T) {
 		idName string
 
 		args []string
-		err  error
 		obj  *types.ApprovedUpgrade
 	}{
 		{

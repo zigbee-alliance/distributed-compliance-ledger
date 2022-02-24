@@ -172,6 +172,10 @@ func TestHandler_ProposeUpgradeWhenSeveralVotesNeeded(t *testing.T) {
 	require.Equal(t, proposedUpgrade.Plan, msgProposeUpgrade.Plan)
 	require.Equal(t, proposedUpgrade.Creator, msgProposeUpgrade.Creator)
 	require.Equal(t, proposedUpgrade.Approvals[0], msgProposeUpgrade.Creator)
+
+	// check approved upgrade for not being created
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
 }
 
 // TODO Implement this test
