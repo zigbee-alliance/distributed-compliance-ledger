@@ -14,16 +14,16 @@
    - simulate deployment as close to production as possible
 
 
-## Client Side Metrics
+## Client-side Metrics
 
 *   `response time` (percentiles): the time between client's initial request and the last byte of a validator response
 *   `requests per second (RPS)`: number of requests per second
 *   `transactions per second (TPS)`: number of write requests (txns) per second
-    *   **Note** to measure that on a client side write requests should use `broadcast_tx_commit` requests
+    *   **Note** to measure that on a client-side write requests should use `broadcast_tx_commit` requests
 *   `number of clients`: number of concurrent clients that ledger serves
 *   (optional) `throughtput` (in/out): number of KB per second. Marked as optional since we don't expect much in/out data due to relatively small txns payloads.
 
-## Server Side Metrics
+## Server-side Metrics
 
 ### Tendermint metrics
 
@@ -43,7 +43,7 @@ The following ones makes sense to track:
 
 ### Cosmos SDK metrics
 
-Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/master/core/telemetry.html) package as a server side support for application performance and behavior explorations.
+Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/master/core/telemetry.html) package as a server-side support for application performance and behavior explorations.
 
 The following [metrics](https://docs.cosmos.network/master/core/telemetry.html#supported-metrics) make sense to track:
 

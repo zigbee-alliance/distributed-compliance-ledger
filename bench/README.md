@@ -14,7 +14,7 @@ Run (consider to use virtual environment):
 pip3 install -r bench/requirements.txt
 ```
 
-**Optional** If you need to monitor server side metrics please install [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/).
+**Optional** If you need to monitor server-side metrics please install [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/).
 
 ## Preparation
 
@@ -59,7 +59,7 @@ Here the following (**optional**) inputs are considered:
 prometheus --config.file=bench/prometheus.yml
 ```
 
-And open `http://localhost:9090/` to query and monitor the server side metrics.
+And open `http://localhost:9090/` to query and monitor the server-side metrics.
 
 ### Headless
 

@@ -75,7 +75,7 @@ must have a unique chain ID.
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
     * Edit `dcld.service`
-        * Replace `ubuntu` with a user name you want to start service on behalf
+        * Replace `ubuntu` with a username you want to start service on behalf
     * Copy service configuration.
         * `cp dcld.service /etc/systemd/system/`
     * Make your node public:

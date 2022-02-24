@@ -68,7 +68,7 @@ and contains the genesis and persistent_peers files.
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
     * Edit `dcld.service` (Only needed for Ubuntu).
-        * Replace `ubuntu` with a user name you want to start service on behalf
+        * Replace `ubuntu` with a username you want to start service on behalf
     * Copy service configuration. (Only needed for Ubuntu).
         * `cp dcld.service /etc/systemd/system/`
 
