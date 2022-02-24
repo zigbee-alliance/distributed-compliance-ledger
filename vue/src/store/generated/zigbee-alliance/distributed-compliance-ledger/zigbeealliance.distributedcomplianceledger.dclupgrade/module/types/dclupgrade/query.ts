@@ -2,6 +2,7 @@
 import { Reader, Writer } from 'protobufjs/minimal'
 import { ProposedUpgrade } from '../dclupgrade/proposed_upgrade'
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination'
+import { ApprovedUpgrade } from '../dclupgrade/approved_upgrade'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclupgrade'
 
@@ -19,6 +20,23 @@ export interface QueryAllProposedUpgradeRequest {
 
 export interface QueryAllProposedUpgradeResponse {
   proposedUpgrade: ProposedUpgrade[]
+  pagination: PageResponse | undefined
+}
+
+export interface QueryGetApprovedUpgradeRequest {
+  name: string
+}
+
+export interface QueryGetApprovedUpgradeResponse {
+  approvedUpgrade: ApprovedUpgrade | undefined
+}
+
+export interface QueryAllApprovedUpgradeRequest {
+  pagination: PageRequest | undefined
+}
+
+export interface QueryAllApprovedUpgradeResponse {
+  approvedUpgrade: ApprovedUpgrade[]
   pagination: PageResponse | undefined
 }
 
@@ -266,12 +284,260 @@ export const QueryAllProposedUpgradeResponse = {
   }
 }
 
+const baseQueryGetApprovedUpgradeRequest: object = { name: '' }
+
+export const QueryGetApprovedUpgradeRequest = {
+  encode(message: QueryGetApprovedUpgradeRequest, writer: Writer = Writer.create()): Writer {
+    if (message.name !== '') {
+      writer.uint32(10).string(message.name)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedUpgradeRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetApprovedUpgradeRequest } as QueryGetApprovedUpgradeRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.name = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetApprovedUpgradeRequest {
+    const message = { ...baseQueryGetApprovedUpgradeRequest } as QueryGetApprovedUpgradeRequest
+    if (object.name !== undefined && object.name !== null) {
+      message.name = String(object.name)
+    } else {
+      message.name = ''
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetApprovedUpgradeRequest): unknown {
+    const obj: any = {}
+    message.name !== undefined && (obj.name = message.name)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetApprovedUpgradeRequest>): QueryGetApprovedUpgradeRequest {
+    const message = { ...baseQueryGetApprovedUpgradeRequest } as QueryGetApprovedUpgradeRequest
+    if (object.name !== undefined && object.name !== null) {
+      message.name = object.name
+    } else {
+      message.name = ''
+    }
+    return message
+  }
+}
+
+const baseQueryGetApprovedUpgradeResponse: object = {}
+
+export const QueryGetApprovedUpgradeResponse = {
+  encode(message: QueryGetApprovedUpgradeResponse, writer: Writer = Writer.create()): Writer {
+    if (message.approvedUpgrade !== undefined) {
+      ApprovedUpgrade.encode(message.approvedUpgrade, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedUpgradeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetApprovedUpgradeResponse } as QueryGetApprovedUpgradeResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.approvedUpgrade = ApprovedUpgrade.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetApprovedUpgradeResponse {
+    const message = { ...baseQueryGetApprovedUpgradeResponse } as QueryGetApprovedUpgradeResponse
+    if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+      message.approvedUpgrade = ApprovedUpgrade.fromJSON(object.approvedUpgrade)
+    } else {
+      message.approvedUpgrade = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetApprovedUpgradeResponse): unknown {
+    const obj: any = {}
+    message.approvedUpgrade !== undefined && (obj.approvedUpgrade = message.approvedUpgrade ? ApprovedUpgrade.toJSON(message.approvedUpgrade) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetApprovedUpgradeResponse>): QueryGetApprovedUpgradeResponse {
+    const message = { ...baseQueryGetApprovedUpgradeResponse } as QueryGetApprovedUpgradeResponse
+    if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+      message.approvedUpgrade = ApprovedUpgrade.fromPartial(object.approvedUpgrade)
+    } else {
+      message.approvedUpgrade = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllApprovedUpgradeRequest: object = {}
+
+export const QueryAllApprovedUpgradeRequest = {
+  encode(message: QueryAllApprovedUpgradeRequest, writer: Writer = Writer.create()): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedUpgradeRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllApprovedUpgradeRequest } as QueryAllApprovedUpgradeRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllApprovedUpgradeRequest {
+    const message = { ...baseQueryAllApprovedUpgradeRequest } as QueryAllApprovedUpgradeRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllApprovedUpgradeRequest): unknown {
+    const obj: any = {}
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllApprovedUpgradeRequest>): QueryAllApprovedUpgradeRequest {
+    const message = { ...baseQueryAllApprovedUpgradeRequest } as QueryAllApprovedUpgradeRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllApprovedUpgradeResponse: object = {}
+
+export const QueryAllApprovedUpgradeResponse = {
+  encode(message: QueryAllApprovedUpgradeResponse, writer: Writer = Writer.create()): Writer {
+    for (const v of message.approvedUpgrade) {
+      ApprovedUpgrade.encode(v!, writer.uint32(10).fork()).ldelim()
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedUpgradeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllApprovedUpgradeResponse } as QueryAllApprovedUpgradeResponse
+    message.approvedUpgrade = []
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.approvedUpgrade.push(ApprovedUpgrade.decode(reader, reader.uint32()))
+          break
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllApprovedUpgradeResponse {
+    const message = { ...baseQueryAllApprovedUpgradeResponse } as QueryAllApprovedUpgradeResponse
+    message.approvedUpgrade = []
+    if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+      for (const e of object.approvedUpgrade) {
+        message.approvedUpgrade.push(ApprovedUpgrade.fromJSON(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllApprovedUpgradeResponse): unknown {
+    const obj: any = {}
+    if (message.approvedUpgrade) {
+      obj.approvedUpgrade = message.approvedUpgrade.map((e) => (e ? ApprovedUpgrade.toJSON(e) : undefined))
+    } else {
+      obj.approvedUpgrade = []
+    }
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllApprovedUpgradeResponse>): QueryAllApprovedUpgradeResponse {
+    const message = { ...baseQueryAllApprovedUpgradeResponse } as QueryAllApprovedUpgradeResponse
+    message.approvedUpgrade = []
+    if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+      for (const e of object.approvedUpgrade) {
+        message.approvedUpgrade.push(ApprovedUpgrade.fromPartial(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ProposedUpgrade by index. */
   ProposedUpgrade(request: QueryGetProposedUpgradeRequest): Promise<QueryGetProposedUpgradeResponse>
   /** Queries a list of ProposedUpgrade items. */
   ProposedUpgradeAll(request: QueryAllProposedUpgradeRequest): Promise<QueryAllProposedUpgradeResponse>
+  /** Queries a ApprovedUpgrade by index. */
+  ApprovedUpgrade(request: QueryGetApprovedUpgradeRequest): Promise<QueryGetApprovedUpgradeResponse>
+  /** Queries a list of ApprovedUpgrade items. */
+  ApprovedUpgradeAll(request: QueryAllApprovedUpgradeRequest): Promise<QueryAllApprovedUpgradeResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -289,6 +555,18 @@ export class QueryClientImpl implements Query {
     const data = QueryAllProposedUpgradeRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Query', 'ProposedUpgradeAll', data)
     return promise.then((data) => QueryAllProposedUpgradeResponse.decode(new Reader(data)))
+  }
+
+  ApprovedUpgrade(request: QueryGetApprovedUpgradeRequest): Promise<QueryGetApprovedUpgradeResponse> {
+    const data = QueryGetApprovedUpgradeRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Query', 'ApprovedUpgrade', data)
+    return promise.then((data) => QueryGetApprovedUpgradeResponse.decode(new Reader(data)))
+  }
+
+  ApprovedUpgradeAll(request: QueryAllApprovedUpgradeRequest): Promise<QueryAllApprovedUpgradeResponse> {
+    const data = QueryAllApprovedUpgradeRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Query', 'ApprovedUpgradeAll', data)
+    return promise.then((data) => QueryAllApprovedUpgradeResponse.decode(new Reader(data)))
   }
 }
 

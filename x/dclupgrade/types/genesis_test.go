@@ -33,6 +33,18 @@ func TestGenesisState_Validate(t *testing.T) {
 						},
 					},
 				},
+				ApprovedUpgradeList: []types.ApprovedUpgrade{
+					{
+						Plan: types.Plan{
+							Name: "0",
+						},
+					},
+					{
+						Plan: types.Plan{
+							Name: "1",
+						},
+					},
+				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -41,6 +53,24 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated proposedUpgrade",
 			genState: &types.GenesisState{
 				ProposedUpgradeList: []types.ProposedUpgrade{
+					{
+						Plan: types.Plan{
+							Name: "0",
+						},
+					},
+					{
+						Plan: types.Plan{
+							Name: "0",
+						},
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "duplicated approvedUpgrade",
+			genState: &types.GenesisState{
+				ApprovedUpgradeList: []types.ApprovedUpgrade{
 					{
 						Plan: types.Plan{
 							Name: "0",

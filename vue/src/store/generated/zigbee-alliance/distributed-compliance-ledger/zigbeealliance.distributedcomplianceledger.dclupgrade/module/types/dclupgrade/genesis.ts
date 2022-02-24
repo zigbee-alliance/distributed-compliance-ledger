@@ -1,13 +1,15 @@
 /* eslint-disable */
 import { ProposedUpgrade } from '../dclupgrade/proposed_upgrade'
+import { ApprovedUpgrade } from '../dclupgrade/approved_upgrade'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclupgrade'
 
 /** GenesisState defines the dclupgrade module's genesis state. */
 export interface GenesisState {
-  /** this line is used by starport scaffolding # genesis/proto/state */
   proposedUpgradeList: ProposedUpgrade[]
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  approvedUpgradeList: ApprovedUpgrade[]
 }
 
 const baseGenesisState: object = {}
@@ -17,6 +19,9 @@ export const GenesisState = {
     for (const v of message.proposedUpgradeList) {
       ProposedUpgrade.encode(v!, writer.uint32(10).fork()).ldelim()
     }
+    for (const v of message.approvedUpgradeList) {
+      ApprovedUpgrade.encode(v!, writer.uint32(18).fork()).ldelim()
+    }
     return writer
   },
 
@@ -25,11 +30,15 @@ export const GenesisState = {
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseGenesisState } as GenesisState
     message.proposedUpgradeList = []
+    message.approvedUpgradeList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
           message.proposedUpgradeList.push(ProposedUpgrade.decode(reader, reader.uint32()))
+          break
+        case 2:
+          message.approvedUpgradeList.push(ApprovedUpgrade.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -42,9 +51,15 @@ export const GenesisState = {
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState
     message.proposedUpgradeList = []
+    message.approvedUpgradeList = []
     if (object.proposedUpgradeList !== undefined && object.proposedUpgradeList !== null) {
       for (const e of object.proposedUpgradeList) {
         message.proposedUpgradeList.push(ProposedUpgrade.fromJSON(e))
+      }
+    }
+    if (object.approvedUpgradeList !== undefined && object.approvedUpgradeList !== null) {
+      for (const e of object.approvedUpgradeList) {
+        message.approvedUpgradeList.push(ApprovedUpgrade.fromJSON(e))
       }
     }
     return message
@@ -57,15 +72,26 @@ export const GenesisState = {
     } else {
       obj.proposedUpgradeList = []
     }
+    if (message.approvedUpgradeList) {
+      obj.approvedUpgradeList = message.approvedUpgradeList.map((e) => (e ? ApprovedUpgrade.toJSON(e) : undefined))
+    } else {
+      obj.approvedUpgradeList = []
+    }
     return obj
   },
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState
     message.proposedUpgradeList = []
+    message.approvedUpgradeList = []
     if (object.proposedUpgradeList !== undefined && object.proposedUpgradeList !== null) {
       for (const e of object.proposedUpgradeList) {
         message.proposedUpgradeList.push(ProposedUpgrade.fromPartial(e))
+      }
+    }
+    if (object.approvedUpgradeList !== undefined && object.approvedUpgradeList !== null) {
+      for (const e of object.approvedUpgradeList) {
+        message.approvedUpgradeList.push(ApprovedUpgrade.fromPartial(e))
       }
     }
     return message
