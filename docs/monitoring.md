@@ -31,4 +31,4 @@ Run
 prometheus --config.file=prometheus.yml
 ```
 
-And open <http://localhost:9090/> to query and monitor the server side metrics.
+And open `http://localhost:9090/` to query and monitor the server side metrics.

@@ -59,7 +59,7 @@ Here the following (**optional**) inputs are considered:
 prometheus --config.file=bench/prometheus.yml
 ```
 
-And open <http://localhost:9090/> to query and monitor the server side metrics.
+And open `http://localhost:9090/` to query and monitor the server side metrics.
 
 ### Headless
 
@@ -73,7 +73,7 @@ locust --headless
 locust
 ```
 
-Then you can open <http://localhost:8089/> and launch the tests from the browser.
+Then you can open `http://localhost:8089/` and launch the tests from the browser.
 
 ### Configuration
 

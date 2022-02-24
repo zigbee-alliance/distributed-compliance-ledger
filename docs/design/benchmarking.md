@@ -122,7 +122,7 @@ As long as DCledger based on Cosmos SDK and Tendermint which provide standard HT
 *   tests can be configured using simple python scripts (version control, CI/CD), in comparison:
     *   JS based configuration for [K6](https://k6.io/) will likely require more efforts
     *   [jMeter](https://jmeter.apache.org/) configuration is mostly about UI but not coding
-*   [distributed testing](https://docs.locust.io/en/stable/running-locust-distributed.html) with results aggregation is supported (if we decide to use it)
+*   [distributed testing](http://docs.locust.io/en/stable/running-distributed.html) with results aggregation is supported (if we decide to use it)
 *   there are some [concerns](https://k6.io/blog/comparing-best-open-source-load-testing-tools/) regarding its performance and accuracy but the current vision is that it should be acceptable for our case
 
 ## Testing Environment Provisioning Automation
