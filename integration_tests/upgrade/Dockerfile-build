@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-############################
-# build upgraded app
-############################
+################################################################################
+# Builds the upgraded dcld application for upgrade procedure test needs.
+# The resulting image is used only for getting the build artifact from
+# a container based on it. Containers based on this image are never run.
+################################################################################
 FROM dcld-build
 
 WORKDIR /go/src/dc-ledger

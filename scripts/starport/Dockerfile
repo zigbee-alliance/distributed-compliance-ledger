@@ -1,3 +1,8 @@
+################################################################################
+# Image of a machine with installed Starport being used for scaffolding
+# new modules, entitites and messages.
+################################################################################
+
 FROM ubuntu:latest
 
 RUN apt-get update && apt-get install -y \

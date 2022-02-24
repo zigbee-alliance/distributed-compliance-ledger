@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-############################
-# build app
-############################
+################################################################################
+# Builds dcld and cosmovisor applications for further use on the machine
+# where the new node will be deployed.
+# The resulting image is used only for getting the build artifacts from
+# a container based on it. Containers based on this image are never run.
+################################################################################
 FROM golang:bullseye
 
 WORKDIR /go/src/dc-ledger

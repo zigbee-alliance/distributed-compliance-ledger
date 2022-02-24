@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+################################################################################
+# Image of a node in DCL pool.
+################################################################################
+
 ############################
 # STEP 1 build cosmovisor
 ############################
