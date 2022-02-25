@@ -25,6 +25,27 @@ propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-heig
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
 
+echo "Create Trustee account"
+create_new_account trustee_account "Trustee"
+random_string upgrade_name
+propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from $trustee_account --yes)
+echo "propose upgrade response: $propose"
+check_response "$propose" "\"code\": 0"
+
+approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
+echo "approve upgrade response: $approve"
+check_response "$approve" "\"code\": 0"
+
+proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
+check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
+check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$upgrade_height\""
+check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
+
+approved_dclupgrade_query=$(dcld query dclupgrade approved-upgrade --name=$upgrade_name)
+echo "dclupgrade approved upgrade query: $approved_dclupgrade_query"
+check_response "$approved_dclupgrade_query" "Not Found"
+
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from bob --yes)
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
@@ -59,33 +80,6 @@ check_response_and_report "$approve" "unauthorized" raw
 
 
 test_divider
-
-
-echo "upgrade more approvals needed"
-echo "Create Trustee account"
-create_new_account trustee_account "Trustee"
-random_string upgrade_name
-propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from $trustee_account --yes)
-echo "propose upgrade response: $propose"
-check_response "$propose" "\"code\": 0"
-
-approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
-echo "approve upgrade response: $approve"
-check_response "$approve" "\"code\": 0"
-
-proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
-echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
-check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
-check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$upgrade_height\""
-check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
-
-approved_dclupgrade_query=$(dcld query dclupgrade approved-upgrade --name=$upgrade_name)
-echo "dclupgrade approved upgrade query: $approved_dclupgrade_query"
-check_response "$approved_dclupgrade_query" "Not Found"
-
-
-test_divider
-
 
 echo "cannot approve upgrade twice"
 random_string upgrade_name
