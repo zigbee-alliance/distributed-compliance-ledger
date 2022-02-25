@@ -81,6 +81,7 @@ check_response_and_report "$approve" "unauthorized" raw
 
 test_divider
 
+
 echo "cannot approve upgrade twice"
 random_string upgrade_name
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from alice --yes)
