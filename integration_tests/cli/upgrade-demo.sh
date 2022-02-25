@@ -20,17 +20,18 @@ upgrade_height=$(($RANDOM + 10000000))
 random_string upgrade_info
 
 echo "propose and approve upgrade"
-random_string upgrade_name
-propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from alice --yes)
-echo "propose upgrade response: $propose"
-check_response "$propose" "\"code\": 0"
-
 echo "Create Trustee account"
 create_new_account trustee_account "Trustee"
 random_string upgrade_name
 propose=$(dcld tx dclupgrade propose-upgrade --name=$upgrade_name --upgrade-height=$upgrade_height --upgrade-info=$upgrade_info --from $trustee_account --yes)
 echo "propose upgrade response: $propose"
 check_response "$propose" "\"code\": 0"
+
+proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
+check_response_and_report "$proposed_dclupgrade_query" "\"name\": \"$upgrade_name\""
+check_response_and_report "$proposed_dclupgrade_query" "\"height\": \"$upgrade_height\""
+check_response_and_report "$proposed_dclupgrade_query" "\"info\": \"$upgrade_info\""
 
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from alice --yes)
 echo "approve upgrade response: $approve"
@@ -50,19 +51,19 @@ approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from bob --y
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
 
-proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
-echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
-check_response "$proposed_dclupgrade_query" "Not Found" raw
-
-approved_dclupgrade_query=$(dcld query dclupgrade approved-upgrade --name=$upgrade_name)
-echo "dclupgrade approved upgrade query: $approved_dclupgrade_query"
-check_response "$approved_dclupgrade_query" "\"name\": \"$upgrade_name\""
-
 plan_query=$(dcld query upgrade plan)
 echo "plan query: $plan_query"
 check_response_and_report "$plan_query" "\"name\": \"$upgrade_name\""
 check_response_and_report "$plan_query" "\"height\": \"$upgrade_height\""
 check_response_and_report "$plan_query" "\"info\": \"$upgrade_info\""
+
+approved_dclupgrade_query=$(dcld query dclupgrade approved-upgrade --name=$upgrade_name)
+echo "dclupgrade approved upgrade query: $approved_dclupgrade_query"
+check_response "$approved_dclupgrade_query" "\"name\": \"$upgrade_name\""
+
+proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
+echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
+check_response "$proposed_dclupgrade_query" "Not Found" raw
 
 
 test_divider
