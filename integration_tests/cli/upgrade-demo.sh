@@ -47,6 +47,9 @@ approved_dclupgrade_query=$(dcld query dclupgrade approved-upgrade --name=$upgra
 echo "dclupgrade approved upgrade query: $approved_dclupgrade_query"
 check_response "$approved_dclupgrade_query" "Not Found"
 
+plan_query=$(dcld query upgrade plan 2>&1) || true
+check_response "$plan_query" "no upgrade scheduled" raw
+
 approve=$(dcld tx dclupgrade approve-upgrade --name=$upgrade_name --from bob --yes)
 echo "approve upgrade response: $approve"
 check_response "$approve" "\"code\": 0"
@@ -60,6 +63,8 @@ check_response_and_report "$plan_query" "\"info\": \"$upgrade_info\""
 approved_dclupgrade_query=$(dcld query dclupgrade approved-upgrade --name=$upgrade_name)
 echo "dclupgrade approved upgrade query: $approved_dclupgrade_query"
 check_response "$approved_dclupgrade_query" "\"name\": \"$upgrade_name\""
+check_response "$approved_dclupgrade_query" "\"height\": \"$upgrade_height\""
+check_response "$approved_dclupgrade_query" "\"info\": \"$upgrade_info\""
 
 proposed_dclupgrade_query=$(dcld query dclupgrade proposed-upgrade --name=$upgrade_name)
 echo "dclupgrade proposed upgrade query: $proposed_dclupgrade_query"
