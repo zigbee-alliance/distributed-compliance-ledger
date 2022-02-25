@@ -256,7 +256,6 @@ func ProposeUpgradeByNonTrustee(suite *utils.TestSuite) {
 		bobAccount,
 		testconstants.Info,
 	)
-
 	require.NotContains(suite.T, nonTrusteeAccount.Roles, dclupgradetypes.UpgradeApprovalRole)
 
 	// try to add proposeUpgradeMsg
@@ -293,7 +292,6 @@ func ApproveUpgradeByNonTrustee(suite *utils.TestSuite) {
 		bobAccount,
 		testconstants.Info,
 	)
-
 	require.NotContains(suite.T, nonTrusteeAccount.Roles, dclupgradetypes.UpgradeApprovalRole)
 
 	// propose upgrade
@@ -331,16 +329,4 @@ func ProposeUpgradeTwice(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.Error(suite.T, err)
 	require.ErrorIs(suite.T, dclupgradetypes.ErrProposedUpgradeAlreadyExists, err)
-}
-
-func GetNotProposedUpgrade(suite *utils.TestSuite) {
-	_, err := GetProposedUpgrade(suite, "123")
-	require.Error(suite.T, err)
-	suite.AssertNotFound(err)
-}
-
-func GetNotApprovedUpgrade(suite *utils.TestSuite) {
-	_, err := GetProposedUpgrade(suite, "123")
-	require.Error(suite.T, err)
-	suite.AssertNotFound(err)
 }
