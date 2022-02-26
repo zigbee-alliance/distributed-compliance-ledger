@@ -39,7 +39,13 @@ func (k msgServer) ApproveUpgrade(goCtx context.Context, msg *types.MsgApproveUp
 	}
 
 	// append approval
-	proposedUpgrade.Approvals = append(proposedUpgrade.Approvals, creatorAddr.String())
+	grant := types.Grant{
+		Address: creatorAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
+
+	proposedUpgrade.Approvals = append(proposedUpgrade.Approvals, &grant)
 
 	// check if proposed upgrade has enough approvals
 	if len(proposedUpgrade.Approvals) == k.UpgradeApprovalsCount(ctx) {

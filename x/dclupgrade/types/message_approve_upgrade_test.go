@@ -20,7 +20,9 @@ func TestMsgApproveUpgrade_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgApproveUpgrade{
 				Creator: "invalid_address",
-				Name:    testconstants.Plan.Name,
+				Name:    testconstants.UpgradePlanName,
+				Info:    testconstants.Info,
+				Time:    testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -28,15 +30,19 @@ func TestMsgApproveUpgrade_ValidateBasic(t *testing.T) {
 			name: "omitted address",
 			msg: MsgApproveUpgrade{
 				Creator: "",
-				Name:    testconstants.Plan.Name,
+				Name:    testconstants.UpgradePlanName,
+				Info:    testconstants.Info,
+				Time:    testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
-			name: "Name is not set",
+			name: "name is not set",
 			msg: MsgApproveUpgrade{
 				Creator: sample.AccAddress(),
 				Name:    "",
+				Info:    testconstants.Info,
+				Time:    testconstants.Time,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -47,10 +53,21 @@ func TestMsgApproveUpgrade_ValidateBasic(t *testing.T) {
 		msg  MsgApproveUpgrade
 	}{
 		{
-			name: "valid msg approve upgrade message",
+			name: "valid MsgApproveUpgrade message",
 			msg: MsgApproveUpgrade{
 				Creator: sample.AccAddress(),
-				Name:    "Test plan example",
+				Name:    testconstants.UpgradePlanName,
+				Info:    testconstants.Info,
+				Time:    testconstants.Time,
+			},
+		},
+		{
+			name: "info is not set",
+			msg: MsgApproveUpgrade{
+				Creator: sample.AccAddress(),
+				Name:    testconstants.UpgradePlanName,
+				Info:    "",
+				Time:    testconstants.Time,
 			},
 		},
 	}

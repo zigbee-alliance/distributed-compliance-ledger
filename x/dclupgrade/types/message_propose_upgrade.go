@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -10,10 +12,12 @@ const TypeMsgProposeUpgrade = "propose_upgrade"
 
 var _ sdk.Msg = &MsgProposeUpgrade{}
 
-func NewMsgProposeUpgrade(creator string, plan Plan) *MsgProposeUpgrade {
+func NewMsgProposeUpgrade(creator string, plan Plan, info string) *MsgProposeUpgrade {
 	return &MsgProposeUpgrade{
 		Creator: creator,
 		Plan:    plan,
+		Info:    info,
+		Time:    time.Now().Unix(),
 	}
 }
 
