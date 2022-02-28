@@ -176,7 +176,7 @@ class DCLReadUser(HttpUser):
 
     @task
     def getAllModels(self):
-        self.client.get(self.rest_host + "/dcl/model/models")
+        self.client.get(self.rest_host + "/dcl/model/models", name="get-all-models")
     
     def on_start(self):
         # Get REST endpoint
