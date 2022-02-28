@@ -48,3 +48,12 @@ func (d ProposedCertificateRevocation) HasApprovalFrom(address string) bool {
 	}
 	return false
 }
+
+func (cert Certificate) HasApprovalFrom(address string) bool {
+	for _, approval := range cert.Approvals {
+		if approval.Address == address {
+			return true
+		}
+	}
+	return false
+}
