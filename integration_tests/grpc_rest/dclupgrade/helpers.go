@@ -8,6 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/require"
+	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	test_dclauth "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/grpc_rest/dclauth"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/utils"
@@ -197,13 +198,13 @@ func DCLUpgradeDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, proposeUpgradeMsg.Plan, proposedUpgrade.Plan)
 
 	// Get all proposed upgrades
-	_, err = GetProposedUpgrades(suite)
+	proposedUpgrades, err := GetProposedUpgrades(suite)
 	require.NoError(suite.T, err)
+	require.Contains(suite.T, proposedUpgrades, *proposedUpgrade)
 
-	// Get all approved upgrades
-	approvedUpgrades, err := GetApprovedUpgrades(suite)
-	require.NoError(suite.T, err)
-	require.NotContains(suite.T, approvedUpgrades, proposedUpgrade)
+	// Get approved upgrade
+	_, err = GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
+	suite.AssertNotFound(err)
 
 	// another trustee approves upgrade
 	approveUpgradeMsg := NewMsgApproveUpgrade(bobAccount.Address, proposeUpgradeMsg.Plan.Name)
@@ -217,12 +218,12 @@ func DCLUpgradeDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, proposeUpgradeMsg.Plan, approvedUpgrade.Plan)
 
 	// Get all proposed upgrades
-	proposedUpgrades, err := GetProposedUpgrades(suite)
+	proposedUpgrades, err = GetProposedUpgrades(suite)
 	require.NoError(suite.T, err)
-	require.NotContains(suite.T, proposedUpgrades, proposedUpgrade)
+	require.NotContains(suite.T, proposedUpgrades, *proposedUpgrade)
 
 	// Get all approved upgrades
-	approvedUpgrades, err = GetApprovedUpgrades(suite)
+	approvedUpgrades, err := GetApprovedUpgrades(suite)
 	require.NoError(suite.T, err)
 	require.Contains(suite.T, approvedUpgrades, *approvedUpgrade)
 }
@@ -243,26 +244,31 @@ func ProposeUpgradeByNonTrustee(suite *utils.TestSuite) {
 	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
-	// register new account without Trustee role
-	nonTrusteeAccountName := utils.RandString()
-	nonTrusteeAccount := test_dclauth.CreateAccount(
-		suite,
-		nonTrusteeAccountName,
-		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
-		1,
-		aliceName,
-		aliceAccount,
-		bobName,
-		bobAccount,
-		testconstants.Info,
-	)
-	require.NotContains(suite.T, nonTrusteeAccount.Roles, dclupgradetypes.UpgradeApprovalRole)
+	for _, role := range []dclauthtypes.AccountRole{
+		dclauthtypes.CertificationCenter,
+		dclauthtypes.Vendor,
+		dclauthtypes.NodeAdmin,
+	} {
+		// register new account without Trustee role
+		nonTrusteeAccountName := utils.RandString()
+		nonTrusteeAccount := test_dclauth.CreateAccount(
+			suite,
+			nonTrusteeAccountName,
+			dclauthtypes.AccountRoles{role},
+			int32(tmrand.Uint16()+1),
+			aliceName,
+			aliceAccount,
+			bobName,
+			bobAccount,
+			testconstants.Info,
+		)
 
-	// try to add proposeUpgradeMsg
-	proposeUpgradeMsg := NewMsgProposeUpgrade(nonTrusteeAccount.Address, utils.RandString(), 100000, utils.RandString())
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, nonTrusteeAccountName, nonTrusteeAccount)
-	require.Error(suite.T, err)
-	require.ErrorIs(suite.T, sdkerrors.ErrUnauthorized, err)
+		// try to add proposeUpgradeMsg
+		proposeUpgradeMsg := NewMsgProposeUpgrade(nonTrusteeAccount.Address, utils.RandString(), 100000, utils.RandString())
+		_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, nonTrusteeAccountName, nonTrusteeAccount)
+		require.Error(suite.T, err)
+		require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
+	}
 }
 
 func ApproveUpgradeByNonTrustee(suite *utils.TestSuite) {
@@ -279,45 +285,44 @@ func ApproveUpgradeByNonTrustee(suite *utils.TestSuite) {
 	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
-	// register new account without Trustee role
-	nonTrusteeAccountName := utils.RandString()
-	nonTrusteeAccount := test_dclauth.CreateAccount(
-		suite,
-		nonTrusteeAccountName,
-		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter},
-		1,
-		aliceName,
-		aliceAccount,
-		bobName,
-		bobAccount,
-		testconstants.Info,
-	)
-	require.NotContains(suite.T, nonTrusteeAccount.Roles, dclupgradetypes.UpgradeApprovalRole)
-
 	// propose upgrade
 	proposeUpgradeMsg := NewMsgProposeUpgrade(aliceAccount.Address, utils.RandString(), 100000, utils.RandString())
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
 
-	// try to approve upgrade
-	approveUpgradeMsg := NewMsgApproveUpgrade(nonTrusteeAccount.Address, proposeUpgradeMsg.Plan.Name)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{approveUpgradeMsg}, nonTrusteeAccountName, nonTrusteeAccount)
-	require.Error(suite.T, err)
-	require.ErrorIs(suite.T, sdkerrors.ErrUnauthorized, err)
+	for _, role := range []dclauthtypes.AccountRole{
+		dclauthtypes.CertificationCenter,
+		dclauthtypes.Vendor,
+		dclauthtypes.NodeAdmin,
+	} {
+		// register new account without Trustee role
+		nonTrusteeAccountName := utils.RandString()
+		nonTrusteeAccount := test_dclauth.CreateAccount(
+			suite,
+			nonTrusteeAccountName,
+			dclauthtypes.AccountRoles{role},
+			int32(tmrand.Uint16()+1),
+			aliceName,
+			aliceAccount,
+			bobName,
+			bobAccount,
+			testconstants.Info,
+		)
+
+		// try to approve upgrade
+		approveUpgradeMsg := NewMsgApproveUpgrade(nonTrusteeAccount.Address, proposeUpgradeMsg.Plan.Name)
+		_, err = suite.BuildAndBroadcastTx([]sdk.Msg{approveUpgradeMsg}, nonTrusteeAccountName, nonTrusteeAccount)
+		require.Error(suite.T, err)
+		require.ErrorIs(suite.T, err, sdkerrors.ErrUnauthorized)
+	}
 }
 
 func ProposeUpgradeTwice(suite *utils.TestSuite) {
-	// Alice and Bob are predefined Trustees
+	// Alice is a predefined Trustee
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
 	require.NoError(suite.T, err)
 	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
-	require.NoError(suite.T, err)
-
-	bobName := testconstants.BobAccount
-	bobKeyInfo, err := suite.Kr.Key(bobName)
-	require.NoError(suite.T, err)
-	_, err = test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
 	// trustee proposes upgrade
@@ -328,5 +333,5 @@ func ProposeUpgradeTwice(suite *utils.TestSuite) {
 	// trustee proposes the same upgrade
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{proposeUpgradeMsg}, aliceName, aliceAccount)
 	require.Error(suite.T, err)
-	require.ErrorIs(suite.T, dclupgradetypes.ErrProposedUpgradeAlreadyExists, err)
+	require.ErrorIs(suite.T, err, dclupgradetypes.ErrProposedUpgradeAlreadyExists)
 }
