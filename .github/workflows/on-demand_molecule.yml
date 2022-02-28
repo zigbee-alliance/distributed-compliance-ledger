@@ -1,0 +1,50 @@
+---
+# Copyright 2022 Samsung Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Check All Molecule tests
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - deployment/test-requirements.txt
+      - deployment/ansible/roles/**
+  pull_request:
+    branches:
+      - master
+    paths:
+      - deployment/test-requirements.txt
+      - deployment/ansible/roles/**
+
+jobs:
+  check-molecule:
+    name: Check Ansible Molecule role tests
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [bootstrap]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: install dependencies
+        run: pip install -r deployment/test-requirements.txt
+      - name: Run molecule tests
+        run: |
+          cd deployment/ansible/roles/${{ matrix.role }}/
+          molecule --debug test
