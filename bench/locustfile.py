@@ -116,9 +116,10 @@ class DCLWriteUser(HttpUser):
     username = None
     txns = None
     host = ""
+    weight = 1
     # DEFAULT_TARGET_HOST
 
-    #@task
+    @task
     def add_model(self):
         logger.debug(f"{self.username}: {len(self.txns or [])} txns remain")
         if self.txns:
@@ -152,8 +153,6 @@ class DCLWriteUser(HttpUser):
                 users_done[self.username] = True
             time.sleep(1)
 
-    
-
     def on_start(self):
         global txns
         if len(txns):
@@ -173,14 +172,15 @@ class DCLWriteUser(HttpUser):
 
 class DCLReadUser(HttpUser):
     rest_host = ""
+    weight = 1
 
     @task
-    def example(self):
+    def getAllModels(self):
         self.client.get(self.rest_host + "/dcl/model/models")
     
     def on_start(self):
         # Get REST endpoint
-            if dcl_rest_hosts:
-                self.rest_host = random.choice(dcl_rest_hosts)
-            else:
-                self.rest_host = DEFAULT_REST_HOST
+        if dcl_rest_hosts:
+            self.rest_host = random.choice(dcl_rest_hosts)
+        else:
+            self.rest_host = DEFAULT_REST_HOST
