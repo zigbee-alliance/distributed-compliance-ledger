@@ -22,9 +22,11 @@ from locust import HttpUser, task, events, LoadTestShape
 # import locust_plugins
 
 DEFAULT_TARGET_HOST = "http://localhost:26657"
+DEFAULT_REST_HOST = "http://localhost:26640"
 
 txns = []
 dcl_hosts = []
+dcl_rest_hosts = []
 users_done = {}
 
 logger = logging.getLogger('dclbench')
@@ -107,9 +109,10 @@ class DCLUser(HttpUser):
     username = None
     txns = None
     host = ""
+    rest_host = ""
     # DEFAULT_TARGET_HOST
 
-    @task
+    #@task
     def add_model(self):
         logger.debug(f"{self.username}: {len(self.txns or [])} txns remain")
         if self.txns:
