@@ -68,6 +68,9 @@ def _(environment, **kw):
     if environment.parsed_options.dcl_hosts:
         dcl_hosts.extend(environment.parsed_options.dcl_hosts.split(","))
 
+    if environment.parsed_options.dcl_rest_hosts:
+        dcl_rest_hosts.extend(environment.parsed_options.dcl_rest_hosts.split(","))
+
     _txns = yaml.safe_load(
         Path(environment.parsed_options.dcl_txn_file).read_text())
 
@@ -109,11 +112,10 @@ class DCLTestShape(LoadTestShape):
             )
 
 
-class DCLUser(HttpUser):
+class DCLWriteUser(HttpUser):
     username = None
     txns = None
     host = ""
-    rest_host = ""
     # DEFAULT_TARGET_HOST
 
     #@task
@@ -150,10 +152,14 @@ class DCLUser(HttpUser):
                 users_done[self.username] = True
             time.sleep(1)
 
+    
+
     def on_start(self):
         global txns
         if len(txns):
             self.username, self.txns = txns.pop(0)
+
+            # Get RPC endpoint
             if dcl_hosts:
                 self.host = random.choice(dcl_hosts)
             else:
@@ -161,5 +167,20 @@ class DCLUser(HttpUser):
             logger.info(
                 f"{self.username}: started, num txns {len(self.txns)},"
                 f" target host {self.host}")
+        
         else:
             logger.warning("unexpected user: no more data")
+
+class DCLReadUser(HttpUser):
+    rest_host = ""
+
+    @task
+    def example(self):
+        self.client.get(self.rest_host + "/dcl/model/models")
+    
+    def on_start(self):
+        # Get REST endpoint
+            if dcl_rest_hosts:
+                self.rest_host = random.choice(dcl_rest_hosts)
+            else:
+                self.rest_host = DEFAULT_REST_HOST
