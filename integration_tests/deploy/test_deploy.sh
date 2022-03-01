@@ -135,7 +135,7 @@ vn_admin_addr="$(docker_exec "$VN_NAME" ./dcld keys show "$vn_admin_name" -a)"
 vn_admin_pubkey="$(docker_exec "$VN_NAME" ./dcld keys show "$vn_admin_name" -p)"
 
 # ensure that the genesis node is ready
-wait_for_height 2 15 "tcp://$GVN_IP:26657"
+wait_for_height 2 15 normal "tcp://$GVN_IP:26657"
 
 docker_exec "$GVN_NAME" ./dcld tx auth propose-add-account --address "$vn_admin_addr" --pubkey "$vn_admin_pubkey" --roles="NodeAdmin" --from "${GVN_NAME}_tr" --yes
 #dcld tx auth approve-add-account --address="$vn_admin_addr" --from alice --yes
@@ -143,7 +143,7 @@ docker_exec "$GVN_NAME" ./dcld tx auth propose-add-account --address "$vn_admin_
 echo "$GVN_NAME: Add Node \"$VN_NAME\" to validator set"
 
 # ensure that the validator node is ready
-wait_for_height 4 30 "tcp://$VN_IP:26657"
+wait_for_height 4 30 normal "tcp://$VN_IP:26657"
 docker_exec "$VN_NAME" ./dcld tx validator add-node --pubkey="$vn_pubkey" --moniker="$VN_NAME" --from="$vn_admin_name" --yes
 
 echo "Check node \"$VN_NAME\" is in the validator set"
