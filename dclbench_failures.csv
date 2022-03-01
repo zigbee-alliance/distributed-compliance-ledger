@@ -1,1 +1,7 @@
 Method,Name,Error,Occurrences
+POST,write-txn,"{""code"": 9, ""data"": """", ""log"": ""account cosmos1rj92vvmax8p2thyhy3cr0nx40rf392w09y293n does not exist: unknown address"", ""codespace"": ""sdk""}",16
+POST,write-txn,"{""code"": 9, ""data"": """", ""log"": ""account cosmos173xg6zw96rd5lnq5dw6d0gxqqkcqyvd9x05u06 does not exist: unknown address"", ""codespace"": ""sdk""}",13
+GET,get-model,404 Client Error: Not Found for url: get-model,118
+POST,write-txn,"{""code"": 9, ""data"": """", ""log"": ""account cosmos1tjw3my06da5ld98uj6syysjfj0rdp2n55vcvc2 does not exist: unknown address"", ""codespace"": ""sdk""}",18
+POST,write-txn,"{""code"": 9, ""data"": """", ""log"": ""account cosmos12lxq0yrgscdmycj602fslp94chqn6x5kx48ahv does not exist: unknown address"", ""codespace"": ""sdk""}",18
+POST,write-txn,"{""code"": 9, ""data"": """", ""log"": ""account cosmos10nqqjplvpqv2ft6t07p62nrlzc75v2q93t6qkn does not exist: unknown address"", ""codespace"": ""sdk""}",16

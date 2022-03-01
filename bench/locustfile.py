@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from ast import List
 import yaml
 import json
 import time
 import random
 import logging
+import os
 from pathlib import Path
 from locust import HttpUser, task, events, LoadTestShape
 # import locust_plugins
@@ -24,13 +26,14 @@ from locust import HttpUser, task, events, LoadTestShape
 DEFAULT_TARGET_HOST = "http://localhost:26657"
 DEFAULT_REST_HOST = "http://localhost:26640"
 
+DCLCLI = "dcld"
+
 txns = []
 dcl_hosts = []
 dcl_rest_hosts = []
 users_done = {}
 
 logger = logging.getLogger('dclbench')
-
 
 @events.init_command_line_parser.add_listener
 def init_paraser(parser):
@@ -73,7 +76,7 @@ def _(environment, **kw):
 
     _txns = yaml.safe_load(
         Path(environment.parsed_options.dcl_txn_file).read_text())
-
+ 
     # user only necessary number of users
     txns.extend(list(_txns.items())[:environment.parsed_options.dcl_users])
 
@@ -174,9 +177,13 @@ class DCLReadUser(HttpUser):
     rest_host = ""
     weight = 1
 
+    #@task
+    #def getAllModels(self):
+        #self.client.get(self.rest_host + "/dcl/model/models", name="get-all-models")
+
     @task
-    def getAllModels(self):
-        self.client.get(self.rest_host + "/dcl/model/models", name="get-all-models")
+    def getModel(self):
+        pass
     
     def on_start(self):
         # Get REST endpoint

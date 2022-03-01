@@ -260,7 +260,7 @@ def generate_txns_to_file():
 def main():
     
     # Generate and write txns to file
-    #generate_txns_to_file()
+    generate_txns_to_file()
     
     # Add a new Vendor account
     add_vendor_account(VENDOR_NAME)
