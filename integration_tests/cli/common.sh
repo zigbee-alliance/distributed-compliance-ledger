@@ -196,10 +196,10 @@ wait_for_height() {
       current_height="$(dcld status $node 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
 
     else
-      get_height current_height
+      current_height="$(dcld status $node | jq | grep latest_block_height | awk -F'"' '{print $4}')"
 
       if [[ -z "$current_height" ]]; then
-        echo "No height found in status" &>${_output}
+        echo "No height found in status"
         exit 1
       fi
     fi
@@ -210,7 +210,7 @@ wait_for_height() {
     fi
 
     if ((waited > wait_time)); then
-      echo "Height $target_height is not reached in $wait_time seconds" &>${_output}
+      echo "Height $target_height is not reached in $wait_time seconds"
       exit 1
     fi
 
