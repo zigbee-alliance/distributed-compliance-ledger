@@ -1,6 +1,7 @@
 import { Reader, Writer } from 'protobufjs/minimal';
 import { ProposedUpgrade } from '../dclupgrade/proposed_upgrade';
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
+import { ApprovedUpgrade } from '../dclupgrade/approved_upgrade';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclupgrade";
 export interface QueryGetProposedUpgradeRequest {
     name: string;
@@ -13,6 +14,19 @@ export interface QueryAllProposedUpgradeRequest {
 }
 export interface QueryAllProposedUpgradeResponse {
     proposedUpgrade: ProposedUpgrade[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetApprovedUpgradeRequest {
+    name: string;
+}
+export interface QueryGetApprovedUpgradeResponse {
+    approvedUpgrade: ApprovedUpgrade | undefined;
+}
+export interface QueryAllApprovedUpgradeRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllApprovedUpgradeResponse {
+    approvedUpgrade: ApprovedUpgrade[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetProposedUpgradeRequest: {
@@ -43,18 +57,52 @@ export declare const QueryAllProposedUpgradeResponse: {
     toJSON(message: QueryAllProposedUpgradeResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllProposedUpgradeResponse>): QueryAllProposedUpgradeResponse;
 };
+export declare const QueryGetApprovedUpgradeRequest: {
+    encode(message: QueryGetApprovedUpgradeRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedUpgradeRequest;
+    fromJSON(object: any): QueryGetApprovedUpgradeRequest;
+    toJSON(message: QueryGetApprovedUpgradeRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetApprovedUpgradeRequest>): QueryGetApprovedUpgradeRequest;
+};
+export declare const QueryGetApprovedUpgradeResponse: {
+    encode(message: QueryGetApprovedUpgradeResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetApprovedUpgradeResponse;
+    fromJSON(object: any): QueryGetApprovedUpgradeResponse;
+    toJSON(message: QueryGetApprovedUpgradeResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetApprovedUpgradeResponse>): QueryGetApprovedUpgradeResponse;
+};
+export declare const QueryAllApprovedUpgradeRequest: {
+    encode(message: QueryAllApprovedUpgradeRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedUpgradeRequest;
+    fromJSON(object: any): QueryAllApprovedUpgradeRequest;
+    toJSON(message: QueryAllApprovedUpgradeRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllApprovedUpgradeRequest>): QueryAllApprovedUpgradeRequest;
+};
+export declare const QueryAllApprovedUpgradeResponse: {
+    encode(message: QueryAllApprovedUpgradeResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllApprovedUpgradeResponse;
+    fromJSON(object: any): QueryAllApprovedUpgradeResponse;
+    toJSON(message: QueryAllApprovedUpgradeResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllApprovedUpgradeResponse>): QueryAllApprovedUpgradeResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a ProposedUpgrade by index. */
     ProposedUpgrade(request: QueryGetProposedUpgradeRequest): Promise<QueryGetProposedUpgradeResponse>;
     /** Queries a list of ProposedUpgrade items. */
     ProposedUpgradeAll(request: QueryAllProposedUpgradeRequest): Promise<QueryAllProposedUpgradeResponse>;
+    /** Queries a ApprovedUpgrade by index. */
+    ApprovedUpgrade(request: QueryGetApprovedUpgradeRequest): Promise<QueryGetApprovedUpgradeResponse>;
+    /** Queries a list of ApprovedUpgrade items. */
+    ApprovedUpgradeAll(request: QueryAllApprovedUpgradeRequest): Promise<QueryAllApprovedUpgradeResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
     constructor(rpc: Rpc);
     ProposedUpgrade(request: QueryGetProposedUpgradeRequest): Promise<QueryGetProposedUpgradeResponse>;
     ProposedUpgradeAll(request: QueryAllProposedUpgradeRequest): Promise<QueryAllProposedUpgradeResponse>;
+    ApprovedUpgrade(request: QueryGetApprovedUpgradeRequest): Promise<QueryGetApprovedUpgradeResponse>;
+    ApprovedUpgradeAll(request: QueryAllApprovedUpgradeRequest): Promise<QueryAllApprovedUpgradeResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

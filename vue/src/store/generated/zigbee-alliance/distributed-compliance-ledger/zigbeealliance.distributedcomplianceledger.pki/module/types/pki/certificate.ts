@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { Grant } from '../pki/grant'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki'
@@ -14,6 +15,7 @@ export interface Certificate {
   owner: string
   subject: string
   subjectKeyId: string
+  approvals: Grant[]
 }
 
 const baseCertificate: object = {
@@ -61,6 +63,9 @@ export const Certificate = {
     if (message.subjectKeyId !== '') {
       writer.uint32(82).string(message.subjectKeyId)
     }
+    for (const v of message.approvals) {
+      Grant.encode(v!, writer.uint32(90).fork()).ldelim()
+    }
     return writer
   },
 
@@ -68,6 +73,7 @@ export const Certificate = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input
     let end = length === undefined ? reader.len : reader.pos + length
     const message = { ...baseCertificate } as Certificate
+    message.approvals = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -101,6 +107,9 @@ export const Certificate = {
         case 10:
           message.subjectKeyId = reader.string()
           break
+        case 11:
+          message.approvals.push(Grant.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -111,6 +120,7 @@ export const Certificate = {
 
   fromJSON(object: any): Certificate {
     const message = { ...baseCertificate } as Certificate
+    message.approvals = []
     if (object.pemCert !== undefined && object.pemCert !== null) {
       message.pemCert = String(object.pemCert)
     } else {
@@ -161,6 +171,11 @@ export const Certificate = {
     } else {
       message.subjectKeyId = ''
     }
+    if (object.approvals !== undefined && object.approvals !== null) {
+      for (const e of object.approvals) {
+        message.approvals.push(Grant.fromJSON(e))
+      }
+    }
     return message
   },
 
@@ -176,11 +191,17 @@ export const Certificate = {
     message.owner !== undefined && (obj.owner = message.owner)
     message.subject !== undefined && (obj.subject = message.subject)
     message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId)
+    if (message.approvals) {
+      obj.approvals = message.approvals.map((e) => (e ? Grant.toJSON(e) : undefined))
+    } else {
+      obj.approvals = []
+    }
     return obj
   },
 
   fromPartial(object: DeepPartial<Certificate>): Certificate {
     const message = { ...baseCertificate } as Certificate
+    message.approvals = []
     if (object.pemCert !== undefined && object.pemCert !== null) {
       message.pemCert = object.pemCert
     } else {
@@ -230,6 +251,11 @@ export const Certificate = {
       message.subjectKeyId = object.subjectKeyId
     } else {
       message.subjectKeyId = ''
+    }
+    if (object.approvals !== undefined && object.approvals !== null) {
+      for (const e of object.approvals) {
+        message.approvals.push(Grant.fromPartial(e))
+      }
     }
     return message
   }

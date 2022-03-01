@@ -174,21 +174,26 @@ get_height() {
 }
 
 wait_for_height() {
-  local target_height=${1:-1} # Default is 1
-  local wait_time=${2:-10}    # In seconds, default - 10
-  local mode=${3:-normal}     # normal or outage-safe
+  local target_height="${1:-1}" # Default is 1
+  local wait_time="${2:-10}"    # In seconds, default - 10
+  local mode="${3:-normal}"     # normal or outage-safe
+  local node="${4:-""}"
 
   local _output=${DETAILED_OUTPUT_TARGET:-/dev/stdout}
 
   local waited=0
   local wait_interval=1
 
+  if [[ -n "$node" ]]; then
+      node="--node $node"
+  fi
+
   while true; do
     sleep "${wait_interval}"
     waited=$((waited + wait_interval))
 
     if [[ "$mode" == "outage-safe" ]]; then
-      current_height="$(dcld status 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
+      current_height="$(dcld status $node 2>/dev/null | jq | grep latest_block_height | awk -F'"' '{print $4}')" || true
 
     else
       get_height current_height

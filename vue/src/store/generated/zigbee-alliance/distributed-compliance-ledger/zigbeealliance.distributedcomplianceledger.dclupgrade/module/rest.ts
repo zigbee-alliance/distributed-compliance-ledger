@@ -9,6 +9,13 @@
  * ---------------------------------------------------------------
  */
 
+export interface DclupgradeApprovedUpgrade {
+  /** Plan specifies information about a planned upgrade and when it should occur. */
+  plan?: V1Beta1Plan;
+  creator?: string;
+  approvals?: string[];
+}
+
 export type DclupgradeMsgApproveUpgradeResponse = object;
 
 export type DclupgradeMsgProposeUpgradeResponse = object;
@@ -18,6 +25,21 @@ export interface DclupgradeProposedUpgrade {
   plan?: V1Beta1Plan;
   creator?: string;
   approvals?: string[];
+}
+
+export interface DclupgradeQueryAllApprovedUpgradeResponse {
+  approvedUpgrade?: DclupgradeApprovedUpgrade[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
 }
 
 export interface DclupgradeQueryAllProposedUpgradeResponse {
@@ -33,6 +55,10 @@ export interface DclupgradeQueryAllProposedUpgradeResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface DclupgradeQueryGetApprovedUpgradeResponse {
+  approvedUpgrade?: DclupgradeApprovedUpgrade;
 }
 
 export interface DclupgradeQueryGetProposedUpgradeResponse {
@@ -457,7 +483,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title dclupgrade/genesis.proto
+ * @title dclupgrade/approved_upgrade.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -465,9 +491,51 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
+   * @name QueryApprovedUpgradeAll
+   * @summary Queries a list of ApprovedUpgrade items.
+   * @request GET:/dcl/dclupgrade/approved-upgrades
+   */
+  queryApprovedUpgradeAll = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.countTotal"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<DclupgradeQueryAllApprovedUpgradeResponse, RpcStatus>({
+      path: `/dcl/dclupgrade/approved-upgrades`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryApprovedUpgrade
+   * @summary Queries a ApprovedUpgrade by index.
+   * @request GET:/dcl/dclupgrade/approved-upgrades/{name}
+   */
+  queryApprovedUpgrade = (name: string, params: RequestParams = {}) =>
+    this.request<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>({
+      path: `/dcl/dclupgrade/approved-upgrades/${name}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
    * @name QueryProposedUpgradeAll
    * @summary Queries a list of ProposedUpgrade items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade
+   * @request GET:/dcl/dclupgrade/proposed-upgrades
    */
   queryProposedUpgradeAll = (
     query?: {
@@ -480,7 +548,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclupgradeQueryAllProposedUpgradeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade`,
+      path: `/dcl/dclupgrade/proposed-upgrades`,
       method: "GET",
       query: query,
       format: "json",
@@ -493,11 +561,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedUpgrade
    * @summary Queries a ProposedUpgrade by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}
+   * @request GET:/dcl/dclupgrade/proposed-upgrades/{name}
    */
   queryProposedUpgrade = (name: string, params: RequestParams = {}) =>
     this.request<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/${name}`,
+      path: `/dcl/dclupgrade/proposed-upgrades/${name}`,
       method: "GET",
       format: "json",
       ...params,

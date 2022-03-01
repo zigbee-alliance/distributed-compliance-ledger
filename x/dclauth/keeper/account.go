@@ -29,7 +29,7 @@ func (k Keeper) SetAccount(ctx sdk.Context, account authtypes.AccountI) {
 		dclAcc.GetAddress(), dclAcc.GetPubKey(),
 		dclAcc.GetAccountNumber(), dclAcc.GetSequence(),
 	)
-	dclAccO := types.NewAccount(ba, dclAcc.GetRoles(), dclAcc.GetVendorID())
+	dclAccO := types.NewAccount(ba, dclAcc.GetRoles(), dclAcc.GetApprovals(), dclAcc.GetVendorID())
 
 	k.SetAccountO(ctx, *dclAccO)
 }

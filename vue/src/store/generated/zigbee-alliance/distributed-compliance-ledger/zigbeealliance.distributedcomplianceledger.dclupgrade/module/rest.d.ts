@@ -1,3 +1,9 @@
+export interface DclupgradeApprovedUpgrade {
+    /** Plan specifies information about a planned upgrade and when it should occur. */
+    plan?: V1Beta1Plan;
+    creator?: string;
+    approvals?: string[];
+}
 export declare type DclupgradeMsgApproveUpgradeResponse = object;
 export declare type DclupgradeMsgProposeUpgradeResponse = object;
 export interface DclupgradeProposedUpgrade {
@@ -5,6 +11,19 @@ export interface DclupgradeProposedUpgrade {
     plan?: V1Beta1Plan;
     creator?: string;
     approvals?: string[];
+}
+export interface DclupgradeQueryAllApprovedUpgradeResponse {
+    approvedUpgrade?: DclupgradeApprovedUpgrade[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
 }
 export interface DclupgradeQueryAllProposedUpgradeResponse {
     proposedUpgrade?: DclupgradeProposedUpgrade[];
@@ -18,6 +37,9 @@ export interface DclupgradeQueryAllProposedUpgradeResponse {
      *  }
      */
     pagination?: V1Beta1PageResponse;
+}
+export interface DclupgradeQueryGetApprovedUpgradeResponse {
+    approvedUpgrade?: DclupgradeApprovedUpgrade;
 }
 export interface DclupgradeQueryGetProposedUpgradeResponse {
     proposedUpgrade?: DclupgradeProposedUpgrade;
@@ -289,7 +311,7 @@ export declare class HttpClient<SecurityDataType = unknown> {
     request: <T = any, E = any>({ body, secure, path, type, query, format, baseUrl, cancelToken, ...params }: FullRequestParams) => Promise<HttpResponse<T, E>>;
 }
 /**
- * @title dclupgrade/genesis.proto
+ * @title dclupgrade/approved_upgrade.proto
  * @version version not set
  */
 export declare class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -297,9 +319,33 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryApprovedUpgradeAll
+     * @summary Queries a list of ApprovedUpgrade items.
+     * @request GET:/dcl/dclupgrade/approved-upgrades
+     */
+    queryApprovedUpgradeAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryAllApprovedUpgradeResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryApprovedUpgrade
+     * @summary Queries a ApprovedUpgrade by index.
+     * @request GET:/dcl/dclupgrade/approved-upgrades/{name}
+     */
+    queryApprovedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetApprovedUpgradeResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryProposedUpgradeAll
      * @summary Queries a list of ProposedUpgrade items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade
+     * @request GET:/dcl/dclupgrade/proposed-upgrades
      */
     queryProposedUpgradeAll: (query?: {
         "pagination.key"?: string;
@@ -314,7 +360,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryProposedUpgrade
      * @summary Queries a ProposedUpgrade by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}
+     * @request GET:/dcl/dclupgrade/proposed-upgrades/{name}
      */
     queryProposedUpgrade: (name: string, params?: RequestParams) => Promise<HttpResponse<DclupgradeQueryGetProposedUpgradeResponse, RpcStatus>>;
 }

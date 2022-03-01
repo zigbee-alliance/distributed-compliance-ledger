@@ -62,13 +62,15 @@ type DCLAccountI interface {
 
 	GetRoles() []AccountRole
 	GetVendorID() int32
+	GetApprovals() []*Grant
 }
 
 // NewAccount creates a new Account object.
-func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, vendorID int32) *Account {
+func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []*Grant, vendorID int32) *Account {
 	return &Account{
 		BaseAccount: ba,
 		Roles:       roles,
+		Approvals:   approvals,
 		VendorID:    vendorID,
 	}
 }
@@ -98,6 +100,10 @@ func (acc Account) GetRoles() []AccountRole {
 	return acc.Roles
 }
 
+func (acc Account) GetApprovals() []*Grant {
+	return acc.Approvals
+}
+
 func (acc Account) GetVendorID() int32 {
 	return acc.VendorID
 }
@@ -122,17 +128,26 @@ func (acc Account) String() string {
 */
 
 // NewPendingAccount creates a new PendingAccount object.
-func NewPendingAccount(acc *Account, approval sdk.AccAddress) *PendingAccount {
-	return &PendingAccount{
-		Account:   acc,
-		Approvals: []string{approval.String()},
+func NewPendingAccount(acc *Account, approval sdk.AccAddress, info string, time int64) *PendingAccount {
+	pendingAccount := &PendingAccount{
+		Account: acc,
 	}
+
+	pendingAccount.Approvals = []*Grant{
+		{
+			Address: approval.String(),
+			Time:    time,
+			Info:    info,
+		},
+	}
+
+	return pendingAccount
 }
 
 func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
 	for _, approval := range acc.Approvals {
-		if approval == addrStr {
+		if approval.Address == addrStr {
 			return true
 		}
 	}
@@ -145,11 +160,19 @@ func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 */
 
 // NewPendingAccountRevocation creates a new PendingAccountRevocation object.
-func NewPendingAccountRevocation(address sdk.AccAddress, approval sdk.AccAddress) PendingAccountRevocation {
-	return PendingAccountRevocation{
-		Address:   address.String(),
-		Approvals: []string{approval.String()},
+func NewPendingAccountRevocation(address sdk.AccAddress,
+	info string, time int64, approval sdk.AccAddress) PendingAccountRevocation {
+	pendingAccountRevocation := PendingAccountRevocation{
+		Address: address.String(),
 	}
+	pendingAccountRevocation.Approvals = []*Grant{
+		{
+			Address: approval.String(),
+			Time:    time,
+			Info:    info,
+		},
+	}
+	return pendingAccountRevocation
 }
 
 // String implements fmt.Stringer.
@@ -173,10 +196,10 @@ func (revoc PendingAccountRevocation) Validate() error {
 	return nil
 }
 
-func (revoc PendingAccountRevocation) HasApprovalFrom(address sdk.AccAddress) bool {
+func (revoc PendingAccountRevocation) HasRevocationFrom(address sdk.AccAddress) bool {
 	addrStr := address.String()
-	for _, approval := range revoc.Approvals {
-		if approval == addrStr {
+	for _, approvals := range revoc.Approvals {
+		if approvals.Address == addrStr {
 			return true
 		}
 	}

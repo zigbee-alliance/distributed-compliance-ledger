@@ -214,47 +214,241 @@ func (m *QueryAllProposedUpgradeResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
+type QueryGetApprovedUpgradeRequest struct {
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+}
+
+func (m *QueryGetApprovedUpgradeRequest) Reset()         { *m = QueryGetApprovedUpgradeRequest{} }
+func (m *QueryGetApprovedUpgradeRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryGetApprovedUpgradeRequest) ProtoMessage()    {}
+func (*QueryGetApprovedUpgradeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_24d33970bdf865fd, []int{4}
+}
+func (m *QueryGetApprovedUpgradeRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetApprovedUpgradeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetApprovedUpgradeRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetApprovedUpgradeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetApprovedUpgradeRequest.Merge(m, src)
+}
+func (m *QueryGetApprovedUpgradeRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetApprovedUpgradeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetApprovedUpgradeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetApprovedUpgradeRequest proto.InternalMessageInfo
+
+func (m *QueryGetApprovedUpgradeRequest) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+type QueryGetApprovedUpgradeResponse struct {
+	ApprovedUpgrade ApprovedUpgrade `protobuf:"bytes,1,opt,name=approvedUpgrade,proto3" json:"approvedUpgrade"`
+}
+
+func (m *QueryGetApprovedUpgradeResponse) Reset()         { *m = QueryGetApprovedUpgradeResponse{} }
+func (m *QueryGetApprovedUpgradeResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryGetApprovedUpgradeResponse) ProtoMessage()    {}
+func (*QueryGetApprovedUpgradeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_24d33970bdf865fd, []int{5}
+}
+func (m *QueryGetApprovedUpgradeResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryGetApprovedUpgradeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryGetApprovedUpgradeResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryGetApprovedUpgradeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryGetApprovedUpgradeResponse.Merge(m, src)
+}
+func (m *QueryGetApprovedUpgradeResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryGetApprovedUpgradeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryGetApprovedUpgradeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryGetApprovedUpgradeResponse proto.InternalMessageInfo
+
+func (m *QueryGetApprovedUpgradeResponse) GetApprovedUpgrade() ApprovedUpgrade {
+	if m != nil {
+		return m.ApprovedUpgrade
+	}
+	return ApprovedUpgrade{}
+}
+
+type QueryAllApprovedUpgradeRequest struct {
+	Pagination *query.PageRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllApprovedUpgradeRequest) Reset()         { *m = QueryAllApprovedUpgradeRequest{} }
+func (m *QueryAllApprovedUpgradeRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryAllApprovedUpgradeRequest) ProtoMessage()    {}
+func (*QueryAllApprovedUpgradeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_24d33970bdf865fd, []int{6}
+}
+func (m *QueryAllApprovedUpgradeRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllApprovedUpgradeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllApprovedUpgradeRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllApprovedUpgradeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllApprovedUpgradeRequest.Merge(m, src)
+}
+func (m *QueryAllApprovedUpgradeRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllApprovedUpgradeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllApprovedUpgradeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllApprovedUpgradeRequest proto.InternalMessageInfo
+
+func (m *QueryAllApprovedUpgradeRequest) GetPagination() *query.PageRequest {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
+type QueryAllApprovedUpgradeResponse struct {
+	ApprovedUpgrade []ApprovedUpgrade   `protobuf:"bytes,1,rep,name=approvedUpgrade,proto3" json:"approvedUpgrade"`
+	Pagination      *query.PageResponse `protobuf:"bytes,2,opt,name=pagination,proto3" json:"pagination,omitempty"`
+}
+
+func (m *QueryAllApprovedUpgradeResponse) Reset()         { *m = QueryAllApprovedUpgradeResponse{} }
+func (m *QueryAllApprovedUpgradeResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryAllApprovedUpgradeResponse) ProtoMessage()    {}
+func (*QueryAllApprovedUpgradeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_24d33970bdf865fd, []int{7}
+}
+func (m *QueryAllApprovedUpgradeResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryAllApprovedUpgradeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryAllApprovedUpgradeResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryAllApprovedUpgradeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryAllApprovedUpgradeResponse.Merge(m, src)
+}
+func (m *QueryAllApprovedUpgradeResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryAllApprovedUpgradeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryAllApprovedUpgradeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryAllApprovedUpgradeResponse proto.InternalMessageInfo
+
+func (m *QueryAllApprovedUpgradeResponse) GetApprovedUpgrade() []ApprovedUpgrade {
+	if m != nil {
+		return m.ApprovedUpgrade
+	}
+	return nil
+}
+
+func (m *QueryAllApprovedUpgradeResponse) GetPagination() *query.PageResponse {
+	if m != nil {
+		return m.Pagination
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryGetProposedUpgradeRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetProposedUpgradeRequest")
 	proto.RegisterType((*QueryGetProposedUpgradeResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetProposedUpgradeResponse")
 	proto.RegisterType((*QueryAllProposedUpgradeRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllProposedUpgradeRequest")
 	proto.RegisterType((*QueryAllProposedUpgradeResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllProposedUpgradeResponse")
+	proto.RegisterType((*QueryGetApprovedUpgradeRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetApprovedUpgradeRequest")
+	proto.RegisterType((*QueryGetApprovedUpgradeResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetApprovedUpgradeResponse")
+	proto.RegisterType((*QueryAllApprovedUpgradeRequest)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllApprovedUpgradeRequest")
+	proto.RegisterType((*QueryAllApprovedUpgradeResponse)(nil), "zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllApprovedUpgradeResponse")
 }
 
 func init() { proto.RegisterFile("dclupgrade/query.proto", fileDescriptor_24d33970bdf865fd) }
 
 var fileDescriptor_24d33970bdf865fd = []byte{
-	// 476 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x94, 0x41, 0x6b, 0x14, 0x31,
-	0x14, 0xc7, 0x37, 0x6d, 0x15, 0x8c, 0x87, 0x42, 0x10, 0x91, 0x45, 0xa6, 0x76, 0x04, 0xad, 0x85,
-	0x4d, 0x6c, 0xd5, 0x0f, 0xd0, 0x1e, 0xda, 0x83, 0x97, 0xba, 0x50, 0x0f, 0x5e, 0x24, 0x33, 0xf3,
-	0x48, 0x03, 0xd9, 0x49, 0x3a, 0xc9, 0x14, 0xab, 0x78, 0xf1, 0x13, 0x08, 0x9e, 0xfc, 0x46, 0x3d,
-	0x16, 0xbc, 0x78, 0x12, 0xd9, 0xf5, 0xaa, 0x07, 0x3f, 0x81, 0x6c, 0x92, 0x65, 0xa7, 0x4b, 0xa7,
-	0x85, 0xae, 0xbd, 0x85, 0xe4, 0xbd, 0xff, 0xfb, 0xff, 0xfe, 0xfb, 0x76, 0xf0, 0xdd, 0x22, 0x57,
-	0xb5, 0x11, 0x15, 0x2f, 0x80, 0x1d, 0xd6, 0x50, 0x1d, 0x53, 0x53, 0x69, 0xa7, 0xc9, 0x8b, 0xf7,
-	0x52, 0x64, 0x00, 0x5c, 0x29, 0xc9, 0xcb, 0x1c, 0x68, 0x21, 0xad, 0xab, 0x64, 0x56, 0x3b, 0x28,
-	0x72, 0x3d, 0x30, 0xe1, 0x56, 0x41, 0x21, 0xa0, 0xa2, 0x53, 0x89, 0xee, 0x1d, 0xa1, 0x85, 0xf6,
-	0x0a, 0x6c, 0x7c, 0x0a, 0x62, 0xdd, 0xfb, 0x42, 0x6b, 0xa1, 0x80, 0x71, 0x23, 0x19, 0x2f, 0x4b,
-	0xed, 0xb8, 0x93, 0xba, 0xb4, 0xf1, 0x75, 0x3d, 0xd7, 0x76, 0xa0, 0x2d, 0xcb, 0xb8, 0x8d, 0x1e,
-	0xd8, 0xd1, 0x46, 0x06, 0x8e, 0x6f, 0x30, 0xc3, 0x85, 0x2c, 0x7d, 0x71, 0xac, 0x5d, 0x6d, 0xd8,
-	0x35, 0x95, 0x36, 0xda, 0x42, 0xf1, 0x36, 0x5e, 0x84, 0x92, 0xf4, 0x39, 0x4e, 0x5e, 0x8d, 0x45,
-	0x76, 0xc1, 0xed, 0xc5, 0x8a, 0xfd, 0x50, 0xd0, 0x87, 0xc3, 0x1a, 0xac, 0x23, 0x04, 0x2f, 0x95,
-	0x7c, 0x00, 0xf7, 0xd0, 0x03, 0xb4, 0x76, 0xab, 0xef, 0xcf, 0xe9, 0x57, 0x84, 0x57, 0x5a, 0xdb,
-	0xac, 0xd1, 0xa5, 0x05, 0x72, 0x84, 0x97, 0xcd, 0xd9, 0x27, 0x2f, 0x71, 0x7b, 0x73, 0x87, 0x5e,
-	0x29, 0x2d, 0x3a, 0x33, 0x68, 0x7b, 0xe9, 0xe4, 0xc7, 0x4a, 0xa7, 0x3f, 0x3b, 0x24, 0x3d, 0x88,
-	0x44, 0x5b, 0x4a, 0xb5, 0x10, 0xed, 0x60, 0x3c, 0x8d, 0x2a, 0x9a, 0x7a, 0x44, 0x43, 0xae, 0x74,
-	0x9c, 0x2b, 0x0d, 0xbf, 0x6d, 0xcc, 0x95, 0xee, 0x71, 0x31, 0xe9, 0xed, 0x37, 0x3a, 0xd3, 0xe1,
-	0x24, 0x85, 0xf3, 0x46, 0x5d, 0x94, 0xc2, 0xe2, 0xb5, 0xa7, 0x40, 0x76, 0xcf, 0x30, 0x2e, 0x78,
-	0xc6, 0xc7, 0x97, 0x32, 0x06, 0xd3, 0x4d, 0xc8, 0xcd, 0xdf, 0x8b, 0xf8, 0x86, 0x87, 0x24, 0x7f,
-	0x11, 0x5e, 0x9e, 0x99, 0x4e, 0xf6, 0xaf, 0x48, 0x71, 0xf1, 0xce, 0x75, 0x5f, 0xff, 0x6f, 0xd9,
-	0x00, 0x96, 0x3e, 0xfd, 0xf4, 0xed, 0xd7, 0x97, 0x85, 0x75, 0xb2, 0xc6, 0x8a, 0x5c, 0xb1, 0x73,
-	0xfe, 0x1d, 0xbd, 0x78, 0x61, 0xd9, 0x87, 0xf1, 0xa2, 0x7f, 0x24, 0x7f, 0x10, 0x26, 0x33, 0x6a,
-	0x5b, 0x4a, 0xcd, 0xc7, 0xdd, 0xba, 0x99, 0xf3, 0x71, 0xb7, 0x6f, 0x61, 0xfa, 0xc4, 0x73, 0x3f,
-	0x24, 0xab, 0x97, 0x72, 0x6f, 0xc3, 0xc9, 0x30, 0x41, 0xa7, 0xc3, 0x04, 0xfd, 0x1c, 0x26, 0xe8,
-	0xf3, 0x28, 0xe9, 0x9c, 0x8e, 0x92, 0xce, 0xf7, 0x51, 0xd2, 0x79, 0xf3, 0x52, 0x48, 0x77, 0x50,
-	0x67, 0x34, 0xd7, 0x03, 0x16, 0x6c, 0xf6, 0x26, 0x3e, 0x59, 0xc3, 0x67, 0x6f, 0x6a, 0xb4, 0x17,
-	0x9c, 0xb2, 0x77, 0xcd, 0x91, 0xee, 0xd8, 0x80, 0xcd, 0x6e, 0xfa, 0xcf, 0xcf, 0xb3, 0x7f, 0x01,
-	0x00, 0x00, 0xff, 0xff, 0x53, 0xe5, 0x06, 0xa1, 0x52, 0x05, 0x00, 0x00,
+	// 563 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0x4d, 0x6b, 0xd4, 0x40,
+	0x18, 0xde, 0xb4, 0x55, 0x71, 0x3c, 0x14, 0x06, 0x11, 0x29, 0x92, 0xda, 0x08, 0x5a, 0x0b, 0x3b,
+	0x63, 0xab, 0xfe, 0x80, 0xed, 0xa1, 0x3d, 0x78, 0xa9, 0x0b, 0xf5, 0xe0, 0x45, 0x26, 0xc9, 0xcb,
+	0x34, 0x30, 0x9b, 0x99, 0x66, 0x26, 0x8b, 0x55, 0xbc, 0xf8, 0x0b, 0x04, 0x4f, 0xfe, 0xa3, 0x1e,
+	0x0b, 0xbd, 0x78, 0x12, 0xd9, 0xf5, 0xec, 0xc1, 0x5f, 0x20, 0x9b, 0x4c, 0xd8, 0x6c, 0x9a, 0xb4,
+	0xb4, 0xd9, 0xbd, 0x85, 0x99, 0xf7, 0xe3, 0x79, 0x9e, 0xf7, 0x99, 0x97, 0xa0, 0x07, 0x61, 0x20,
+	0x52, 0xc5, 0x13, 0x16, 0x02, 0x3d, 0x4e, 0x21, 0x39, 0x21, 0x2a, 0x91, 0x46, 0xe2, 0xd7, 0x9f,
+	0x22, 0xee, 0x03, 0x30, 0x21, 0x22, 0x16, 0x07, 0x40, 0xc2, 0x48, 0x9b, 0x24, 0xf2, 0x53, 0x03,
+	0x61, 0x20, 0x07, 0x2a, 0x3f, 0x15, 0x10, 0x72, 0x48, 0xc8, 0xb4, 0xc4, 0xda, 0x7d, 0x2e, 0xb9,
+	0xcc, 0x2a, 0xd0, 0xc9, 0x57, 0x5e, 0x6c, 0xed, 0x11, 0x97, 0x92, 0x0b, 0xa0, 0x4c, 0x45, 0x94,
+	0xc5, 0xb1, 0x34, 0xcc, 0x44, 0x32, 0xd6, 0xf6, 0x76, 0x2b, 0x90, 0x7a, 0x20, 0x35, 0xf5, 0x99,
+	0xb6, 0x18, 0xe8, 0x70, 0xdb, 0x07, 0xc3, 0xb6, 0xa9, 0x62, 0x3c, 0x8a, 0xb3, 0x60, 0x1b, 0xbb,
+	0x51, 0x82, 0xab, 0x12, 0xa9, 0xa4, 0x86, 0xf0, 0x83, 0x3d, 0xa8, 0x09, 0x61, 0x4a, 0x25, 0x72,
+	0x58, 0x0d, 0xf1, 0x5e, 0x21, 0xf7, 0xed, 0xa4, 0xcf, 0x3e, 0x98, 0x03, 0x5b, 0xe4, 0x30, 0x0f,
+	0xe8, 0xc3, 0x71, 0x0a, 0xda, 0x60, 0x8c, 0x56, 0x62, 0x36, 0x80, 0x87, 0xce, 0x63, 0x67, 0xf3,
+	0x6e, 0x3f, 0xfb, 0xf6, 0x7e, 0x38, 0x68, 0xbd, 0x31, 0x4d, 0x2b, 0x19, 0x6b, 0xc0, 0x43, 0xb4,
+	0xaa, 0x66, 0xaf, 0xb2, 0x12, 0xf7, 0x76, 0xf6, 0xc8, 0x8d, 0x04, 0x25, 0x95, 0x46, 0xbb, 0x2b,
+	0xa7, 0xbf, 0xd6, 0x3b, 0xfd, 0x6a, 0x13, 0xef, 0xc8, 0x32, 0xea, 0x09, 0xd1, 0xc0, 0x68, 0x0f,
+	0xa1, 0xa9, 0x9a, 0x16, 0xd4, 0x53, 0x92, 0x4b, 0x4f, 0x26, 0xd2, 0x93, 0x7c, 0xfc, 0x56, 0x7a,
+	0x72, 0xc0, 0x78, 0x91, 0xdb, 0x2f, 0x65, 0x7a, 0xa3, 0x42, 0x85, 0xba, 0x56, 0x97, 0xa9, 0xb0,
+	0xbc, 0x70, 0x15, 0xf0, 0xfe, 0x0c, 0xc7, 0xa5, 0x8c, 0xe3, 0xb3, 0x2b, 0x39, 0xe6, 0xa0, 0x67,
+	0x48, 0x96, 0x0c, 0xd2, 0xb3, 0x16, 0xba, 0xa6, 0x41, 0x2e, 0xa4, 0x4d, 0xa5, 0x61, 0xb3, 0x57,
+	0x2d, 0x0d, 0x52, 0x69, 0x54, 0x48, 0x53, 0x69, 0x52, 0x36, 0x48, 0x03, 0xa3, 0x45, 0x18, 0xe4,
+	0x5a, 0x2a, 0x2c, 0x2f, 0x5c, 0x85, 0xb9, 0x19, 0x64, 0xe7, 0xfc, 0x0e, 0xba, 0x95, 0x91, 0xc4,
+	0xff, 0x1c, 0xb4, 0x5a, 0xb1, 0x27, 0x3e, 0xbc, 0x21, 0x8b, 0xcb, 0x97, 0xd2, 0xda, 0xbb, 0x79,
+	0x97, 0xcd, 0x89, 0x79, 0x2f, 0xbe, 0x9e, 0xff, 0xf9, 0xbe, 0xb4, 0x85, 0x37, 0x69, 0x18, 0x08,
+	0x5a, 0xb3, 0x61, 0xbb, 0xf6, 0x40, 0xd3, 0xcf, 0x13, 0xa3, 0x7f, 0xc1, 0x7f, 0x1d, 0x84, 0x2b,
+	0xd5, 0x7a, 0x42, 0xb4, 0xe3, 0xdd, 0xb8, 0xba, 0xda, 0xf1, 0x6e, 0x5e, 0x53, 0xde, 0xf3, 0x8c,
+	0xf7, 0x13, 0xbc, 0x71, 0x25, 0xef, 0x6c, 0xca, 0x15, 0x8f, 0xb5, 0x9e, 0x72, 0xfd, 0x3b, 0x6c,
+	0x3d, 0xe5, 0x86, 0x37, 0xd7, 0x3c, 0xe5, 0xe2, 0x91, 0xd4, 0x4e, 0xb9, 0x52, 0x6d, 0x1e, 0x53,
+	0x5e, 0x04, 0xef, 0xe6, 0x5d, 0xd3, 0x3c, 0xe5, 0x0b, 0xbc, 0x77, 0xe1, 0x74, 0xe4, 0x3a, 0x67,
+	0x23, 0xd7, 0xf9, 0x3d, 0x72, 0x9d, 0x6f, 0x63, 0xb7, 0x73, 0x36, 0x76, 0x3b, 0x3f, 0xc7, 0x6e,
+	0xe7, 0xfd, 0x1b, 0x1e, 0x99, 0xa3, 0xd4, 0x27, 0x81, 0x1c, 0xd0, 0x1c, 0x66, 0xb7, 0xc0, 0x49,
+	0x4b, 0x38, 0xbb, 0x53, 0xa0, 0xdd, 0x1c, 0x29, 0xfd, 0x58, 0x6e, 0x69, 0x4e, 0x14, 0x68, 0xff,
+	0x76, 0xf6, 0x17, 0xf2, 0xf2, 0x7f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x54, 0xd0, 0xb4, 0x99, 0x7c,
+	0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -273,6 +467,10 @@ type QueryClient interface {
 	ProposedUpgrade(ctx context.Context, in *QueryGetProposedUpgradeRequest, opts ...grpc.CallOption) (*QueryGetProposedUpgradeResponse, error)
 	// Queries a list of ProposedUpgrade items.
 	ProposedUpgradeAll(ctx context.Context, in *QueryAllProposedUpgradeRequest, opts ...grpc.CallOption) (*QueryAllProposedUpgradeResponse, error)
+	// Queries a ApprovedUpgrade by index.
+	ApprovedUpgrade(ctx context.Context, in *QueryGetApprovedUpgradeRequest, opts ...grpc.CallOption) (*QueryGetApprovedUpgradeResponse, error)
+	// Queries a list of ApprovedUpgrade items.
+	ApprovedUpgradeAll(ctx context.Context, in *QueryAllApprovedUpgradeRequest, opts ...grpc.CallOption) (*QueryAllApprovedUpgradeResponse, error)
 }
 
 type queryClient struct {
@@ -301,12 +499,34 @@ func (c *queryClient) ProposedUpgradeAll(ctx context.Context, in *QueryAllPropos
 	return out, nil
 }
 
+func (c *queryClient) ApprovedUpgrade(ctx context.Context, in *QueryGetApprovedUpgradeRequest, opts ...grpc.CallOption) (*QueryGetApprovedUpgradeResponse, error) {
+	out := new(QueryGetApprovedUpgradeResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclupgrade.Query/ApprovedUpgrade", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) ApprovedUpgradeAll(ctx context.Context, in *QueryAllApprovedUpgradeRequest, opts ...grpc.CallOption) (*QueryAllApprovedUpgradeResponse, error) {
+	out := new(QueryAllApprovedUpgradeResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.dclupgrade.Query/ApprovedUpgradeAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Queries a ProposedUpgrade by index.
 	ProposedUpgrade(context.Context, *QueryGetProposedUpgradeRequest) (*QueryGetProposedUpgradeResponse, error)
 	// Queries a list of ProposedUpgrade items.
 	ProposedUpgradeAll(context.Context, *QueryAllProposedUpgradeRequest) (*QueryAllProposedUpgradeResponse, error)
+	// Queries a ApprovedUpgrade by index.
+	ApprovedUpgrade(context.Context, *QueryGetApprovedUpgradeRequest) (*QueryGetApprovedUpgradeResponse, error)
+	// Queries a list of ApprovedUpgrade items.
+	ApprovedUpgradeAll(context.Context, *QueryAllApprovedUpgradeRequest) (*QueryAllApprovedUpgradeResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -318,6 +538,12 @@ func (*UnimplementedQueryServer) ProposedUpgrade(ctx context.Context, req *Query
 }
 func (*UnimplementedQueryServer) ProposedUpgradeAll(ctx context.Context, req *QueryAllProposedUpgradeRequest) (*QueryAllProposedUpgradeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProposedUpgradeAll not implemented")
+}
+func (*UnimplementedQueryServer) ApprovedUpgrade(ctx context.Context, req *QueryGetApprovedUpgradeRequest) (*QueryGetApprovedUpgradeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApprovedUpgrade not implemented")
+}
+func (*UnimplementedQueryServer) ApprovedUpgradeAll(ctx context.Context, req *QueryAllApprovedUpgradeRequest) (*QueryAllApprovedUpgradeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApprovedUpgradeAll not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -360,6 +586,42 @@ func _Query_ProposedUpgradeAll_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_ApprovedUpgrade_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryGetApprovedUpgradeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ApprovedUpgrade(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclupgrade.Query/ApprovedUpgrade",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ApprovedUpgrade(ctx, req.(*QueryGetApprovedUpgradeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_ApprovedUpgradeAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryAllApprovedUpgradeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ApprovedUpgradeAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.dclupgrade.Query/ApprovedUpgradeAll",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ApprovedUpgradeAll(ctx, req.(*QueryAllApprovedUpgradeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.dclupgrade.Query",
 	HandlerType: (*QueryServer)(nil),
@@ -371,6 +633,14 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProposedUpgradeAll",
 			Handler:    _Query_ProposedUpgradeAll_Handler,
+		},
+		{
+			MethodName: "ApprovedUpgrade",
+			Handler:    _Query_ApprovedUpgrade_Handler,
+		},
+		{
+			MethodName: "ApprovedUpgradeAll",
+			Handler:    _Query_ApprovedUpgradeAll_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -524,6 +794,153 @@ func (m *QueryAllProposedUpgradeResponse) MarshalToSizedBuffer(dAtA []byte) (int
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryGetApprovedUpgradeRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetApprovedUpgradeRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetApprovedUpgradeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryGetApprovedUpgradeResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryGetApprovedUpgradeResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryGetApprovedUpgradeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.ApprovedUpgrade.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllApprovedUpgradeRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllApprovedUpgradeRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllApprovedUpgradeRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryAllApprovedUpgradeResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryAllApprovedUpgradeResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryAllApprovedUpgradeResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		{
+			size, err := m.Pagination.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintQuery(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ApprovedUpgrade) > 0 {
+		for iNdEx := len(m.ApprovedUpgrade) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ApprovedUpgrade[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -580,6 +997,62 @@ func (m *QueryAllProposedUpgradeResponse) Size() (n int) {
 	_ = l
 	if len(m.ProposedUpgrade) > 0 {
 		for _, e := range m.ProposedUpgrade {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetApprovedUpgradeRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryGetApprovedUpgradeResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.ApprovedUpgrade.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QueryAllApprovedUpgradeRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Pagination != nil {
+		l = m.Pagination.Size()
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryAllApprovedUpgradeResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.ApprovedUpgrade) > 0 {
+		for _, e := range m.ApprovedUpgrade {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -908,6 +1381,377 @@ func (m *QueryAllProposedUpgradeResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.ProposedUpgrade = append(m.ProposedUpgrade, ProposedUpgrade{})
 			if err := m.ProposedUpgrade[len(m.ProposedUpgrade)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageResponse{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetApprovedUpgradeRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetApprovedUpgradeRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetApprovedUpgradeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryGetApprovedUpgradeResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryGetApprovedUpgradeResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryGetApprovedUpgradeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ApprovedUpgrade", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.ApprovedUpgrade.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllApprovedUpgradeRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllApprovedUpgradeRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllApprovedUpgradeRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pagination", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Pagination == nil {
+				m.Pagination = &query.PageRequest{}
+			}
+			if err := m.Pagination.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryAllApprovedUpgradeResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryAllApprovedUpgradeResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryAllApprovedUpgradeResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ApprovedUpgrade", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ApprovedUpgrade = append(m.ApprovedUpgrade, ApprovedUpgrade{})
+			if err := m.ApprovedUpgrade[len(m.ApprovedUpgrade)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

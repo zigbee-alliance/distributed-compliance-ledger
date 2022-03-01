@@ -2,6 +2,7 @@
 import { Reader, Writer } from 'protobufjs/minimal';
 import { ProposedUpgrade } from '../dclupgrade/proposed_upgrade';
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
+import { ApprovedUpgrade } from '../dclupgrade/approved_upgrade';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclupgrade';
 const baseQueryGetProposedUpgradeRequest = { name: '' };
 export const QueryGetProposedUpgradeRequest = {
@@ -232,6 +233,235 @@ export const QueryAllProposedUpgradeResponse = {
         return message;
     }
 };
+const baseQueryGetApprovedUpgradeRequest = { name: '' };
+export const QueryGetApprovedUpgradeRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.name !== '') {
+            writer.uint32(10).string(message.name);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetApprovedUpgradeRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.name = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetApprovedUpgradeRequest };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = String(object.name);
+        }
+        else {
+            message.name = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.name !== undefined && (obj.name = message.name);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetApprovedUpgradeRequest };
+        if (object.name !== undefined && object.name !== null) {
+            message.name = object.name;
+        }
+        else {
+            message.name = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetApprovedUpgradeResponse = {};
+export const QueryGetApprovedUpgradeResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.approvedUpgrade !== undefined) {
+            ApprovedUpgrade.encode(message.approvedUpgrade, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetApprovedUpgradeResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.approvedUpgrade = ApprovedUpgrade.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetApprovedUpgradeResponse };
+        if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+            message.approvedUpgrade = ApprovedUpgrade.fromJSON(object.approvedUpgrade);
+        }
+        else {
+            message.approvedUpgrade = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.approvedUpgrade !== undefined && (obj.approvedUpgrade = message.approvedUpgrade ? ApprovedUpgrade.toJSON(message.approvedUpgrade) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetApprovedUpgradeResponse };
+        if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+            message.approvedUpgrade = ApprovedUpgrade.fromPartial(object.approvedUpgrade);
+        }
+        else {
+            message.approvedUpgrade = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllApprovedUpgradeRequest = {};
+export const QueryAllApprovedUpgradeRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllApprovedUpgradeRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllApprovedUpgradeRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllApprovedUpgradeRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllApprovedUpgradeResponse = {};
+export const QueryAllApprovedUpgradeResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.approvedUpgrade) {
+            ApprovedUpgrade.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllApprovedUpgradeResponse };
+        message.approvedUpgrade = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.approvedUpgrade.push(ApprovedUpgrade.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllApprovedUpgradeResponse };
+        message.approvedUpgrade = [];
+        if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+            for (const e of object.approvedUpgrade) {
+                message.approvedUpgrade.push(ApprovedUpgrade.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.approvedUpgrade) {
+            obj.approvedUpgrade = message.approvedUpgrade.map((e) => (e ? ApprovedUpgrade.toJSON(e) : undefined));
+        }
+        else {
+            obj.approvedUpgrade = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllApprovedUpgradeResponse };
+        message.approvedUpgrade = [];
+        if (object.approvedUpgrade !== undefined && object.approvedUpgrade !== null) {
+            for (const e of object.approvedUpgrade) {
+                message.approvedUpgrade.push(ApprovedUpgrade.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -245,5 +475,15 @@ export class QueryClientImpl {
         const data = QueryAllProposedUpgradeRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Query', 'ProposedUpgradeAll', data);
         return promise.then((data) => QueryAllProposedUpgradeResponse.decode(new Reader(data)));
+    }
+    ApprovedUpgrade(request) {
+        const data = QueryGetApprovedUpgradeRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Query', 'ApprovedUpgrade', data);
+        return promise.then((data) => QueryGetApprovedUpgradeResponse.decode(new Reader(data)));
+    }
+    ApprovedUpgradeAll(request) {
+        const data = QueryAllApprovedUpgradeRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Query', 'ApprovedUpgradeAll', data);
+        return promise.then((data) => QueryAllApprovedUpgradeResponse.decode(new Reader(data)));
     }
 }

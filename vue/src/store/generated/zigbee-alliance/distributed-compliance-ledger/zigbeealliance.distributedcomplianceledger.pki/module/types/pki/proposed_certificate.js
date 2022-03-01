@@ -1,7 +1,8 @@
 /* eslint-disable */
+import { Grant } from '../pki/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
-const baseProposedCertificate = { subject: '', subjectKeyId: '', pemCert: '', serialNumber: '', owner: '', approvals: '' };
+const baseProposedCertificate = { subject: '', subjectKeyId: '', pemCert: '', serialNumber: '', owner: '' };
 export const ProposedCertificate = {
     encode(message, writer = Writer.create()) {
         if (message.subject !== '') {
@@ -20,7 +21,7 @@ export const ProposedCertificate = {
             writer.uint32(42).string(message.owner);
         }
         for (const v of message.approvals) {
-            writer.uint32(50).string(v);
+            Grant.encode(v, writer.uint32(50).fork()).ldelim();
         }
         return writer;
     },
@@ -48,7 +49,7 @@ export const ProposedCertificate = {
                     message.owner = reader.string();
                     break;
                 case 6:
-                    message.approvals.push(reader.string());
+                    message.approvals.push(Grant.decode(reader, reader.uint32()));
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -92,7 +93,7 @@ export const ProposedCertificate = {
         }
         if (object.approvals !== undefined && object.approvals !== null) {
             for (const e of object.approvals) {
-                message.approvals.push(String(e));
+                message.approvals.push(Grant.fromJSON(e));
             }
         }
         return message;
@@ -105,7 +106,7 @@ export const ProposedCertificate = {
         message.serialNumber !== undefined && (obj.serialNumber = message.serialNumber);
         message.owner !== undefined && (obj.owner = message.owner);
         if (message.approvals) {
-            obj.approvals = message.approvals.map((e) => e);
+            obj.approvals = message.approvals.map((e) => (e ? Grant.toJSON(e) : undefined));
         }
         else {
             obj.approvals = [];
@@ -147,7 +148,7 @@ export const ProposedCertificate = {
         }
         if (object.approvals !== undefined && object.approvals !== null) {
             for (const e of object.approvals) {
-                message.approvals.push(e);
+                message.approvals.push(Grant.fromPartial(e));
             }
         }
         return message;

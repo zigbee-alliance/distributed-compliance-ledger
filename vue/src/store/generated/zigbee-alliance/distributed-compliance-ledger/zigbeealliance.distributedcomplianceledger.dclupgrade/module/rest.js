@@ -130,7 +130,7 @@ export class HttpClient {
     }
 }
 /**
- * @title dclupgrade/genesis.proto
+ * @title dclupgrade/approved_upgrade.proto
  * @version version not set
  */
 export class Api extends HttpClient {
@@ -140,12 +140,41 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryApprovedUpgradeAll
+         * @summary Queries a list of ApprovedUpgrade items.
+         * @request GET:/dcl/dclupgrade/approved-upgrades
+         */
+        this.queryApprovedUpgradeAll = (query, params = {}) => this.request({
+            path: `/dcl/dclupgrade/approved-upgrades`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryApprovedUpgrade
+         * @summary Queries a ApprovedUpgrade by index.
+         * @request GET:/dcl/dclupgrade/approved-upgrades/{name}
+         */
+        this.queryApprovedUpgrade = (name, params = {}) => this.request({
+            path: `/dcl/dclupgrade/approved-upgrades/${name}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryProposedUpgradeAll
          * @summary Queries a list of ProposedUpgrade items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade
+         * @request GET:/dcl/dclupgrade/proposed-upgrades
          */
         this.queryProposedUpgradeAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade`,
+            path: `/dcl/dclupgrade/proposed-upgrades`,
             method: "GET",
             query: query,
             format: "json",
@@ -157,10 +186,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryProposedUpgrade
          * @summary Queries a ProposedUpgrade by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/{name}
+         * @request GET:/dcl/dclupgrade/proposed-upgrades/{name}
          */
         this.queryProposedUpgrade = (name, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclupgrade/proposed_upgrade/${name}`,
+            path: `/dcl/dclupgrade/proposed-upgrades/${name}`,
             method: "GET",
             format: "json",
             ...params,
