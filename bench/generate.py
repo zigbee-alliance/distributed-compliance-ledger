@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import random
 import sys
 import os
 import yaml
@@ -39,6 +40,8 @@ QUERIES_F = "q"
 
 MODEL_INFO_PREFIX = 1
 # VENDOR_PRODUCTS_PREFIX = 2
+
+#VENDOR_NAME = "artur"
 
 
 def pack_model_info_key(vid, pid):
@@ -122,11 +125,72 @@ def txn_encode(f_path):
     cmd = [DCLCLI, "tx", "encode", f_path]
     return run_shell_cmd(cmd).stdout
 
+def keys_delete(key_name):
+    # If we have last Vendor account that we'll delete
+    cmd = [DCLCLI, "keys", "delete", key_name, "--yes"]
+    return run_shell_cmd(cmd).stdout
+
+
+def keys_add(key_name):
+    # Generate address and pubkey for a new Vendor
+    cmd = [DCLCLI, "keys", "add", key_name]
+    return run_shell_cmd(cmd).stdout
+
+
+def keys_show_address(key_name):
+    #Get node address
+    cmd = [DCLCLI, "keys", "show", key_name, "-a"]
+    return run_shell_cmd(cmd).stdout
+
+
+def keys_show_pubkey(key_name):
+    #Get node pubkey
+    cmd = [DCLCLI, "keys", "show", key_name, "-p"]
+    return run_shell_cmd(cmd).stdout
+
+VENDOR_ID = random.randint(1000, 100000)
+VENDOR_NAME = "artur"
+
+def add_vendor_account(key_name):
+
+    try:
+        keys_delete(key_name)
+    except Exception as ex:
+        print("We don't remove that user, because that user does not exist in dcld")
+
+    keys_add(key_name)
+
+    # Get a Vendor address and pubkey
+    vendor_address = keys_show_address(key_name).rstrip("\n")
+    vendor_pubkey = keys_show_pubkey(key_name).rstrip("\n")
+
+    # Send to request to another node to propose
+    cmd = [DCLCLI, "tx", "auth", "propose-add-account", "--address=" + vendor_address, "--pubkey=" + vendor_pubkey, "--roles=Vendor", "--vid=" + str(VENDOR_ID), "--from=jack", "--yes"]
+    print(run_shell_cmd(cmd))
+
+    #Send to request to another node to approve
+    cmd = [DCLCLI, "tx", "auth", "approve-add-account", "--address=" + vendor_address, "--from=alice", "--yes"]
+    run_shell_cmd(cmd)
+
+    #Send query auth
+    cmd = [DCLCLI, "query", "auth", "account", "--address=" + vendor_address]
+
+
+def add_model(key_name, current_model_id):
+    cmd = [DCLCLI, "tx", "model", "add-model", "--vid=" + str(VENDOR_ID), "--pid=" + str(current_model_id), "--deviceTypeID=" + str(current_model_id), "--productName=ProductName" + str(current_model_id), "--productLabel=ProductLabel" + str(current_model_id), "--partNumber=PartNumber" + str(current_model_id), "--from=" + key_name, "--yes"]
+    return run_shell_cmd(cmd).stdout
+
+
+def add_models(count_models):
+    current_model_id = 1
+    while current_model_id < count_models :
+        print(add_model(VENDOR_NAME, current_model_id))
+        current_model_id += 1
+
 
 ENV_PREFIX = "DCLBENCH_"
 
-
-def main():
+def generate_txns_to_file():
     render_ctx = {
         k.split(ENV_PREFIX)[1].lower(): v
         for k, v in os.environ.items()
@@ -191,6 +255,18 @@ def main():
     else:
         with out_file.open('w') as fd:
             yaml_dump(res, fd)
+
+
+def main():
+    
+    # Generate and write txns to file
+    #generate_txns_to_file()
+    
+    # Add a new Vendor account
+    add_vendor_account(VENDOR_NAME)
+
+    # Add models from a new Vendor account
+    add_models(10)
 
 
 if __name__ == "__main__":
