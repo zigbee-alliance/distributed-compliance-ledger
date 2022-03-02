@@ -7,19 +7,20 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdProposeDisableValidator() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "propose-disable-validator [address]",
-		Short: "Broadcast message ProposeDisableValidator",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argAddress := args[0]
+	var address string
 
+	cmd := &cobra.Command{
+		Use:   "propose-disable-validator --address [address]",
+		Short: "Proposes removing of the Validator node by a Trustee.",
+		Args:  cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -27,16 +28,23 @@ func CmdProposeDisableValidator() *cobra.Command {
 
 			msg := types.NewMsgProposeDisableValidator(
 				clientCtx.GetFromAddress().String(),
-				argAddress,
+				address,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			return err
 		},
 	}
 
+	cmd.Flags().StringVar(&address, FlagAddress, "", "Bench32 encoded validator address or owner account")
+
 	flags.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }
