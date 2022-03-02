@@ -33,9 +33,6 @@ By that reason load test uses prepared load data which can be generated as follo
     # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
     make localnet_init
     
-    # Move '.../distributed-compliance-ledger/.localnet/genesis.json' to '/home/$user/.dcl/config/'
-    # E.g. sudo mv '/home/john/Desktop/distributed-compliance-ledger/.localnet/genesis.json' '/home/john/.dcl/config/'
-    
     # ./gentestaccounts.sh [<NUM-USERS>]
     ./gentestaccounts.sh
 
@@ -87,8 +84,6 @@ Run options (DCLedger custom ones):
 *   `--dcl-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
     E.g. for local ledger `http://localhost:26657,http://localhost:26659,http://localhost:26661,http://localhost:26663` will specify all the nodes.
 *   `--dcl-rest-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
-    E.g. for local ledger `http://localhost:26640,http://localhost:26641,http://localhost:26642,http://localhost:26643` will specify all the nodes.
-*   `--dcl-txn-file` path to a file with generated txns
 
 Statistic options:
 
