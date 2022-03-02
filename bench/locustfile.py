@@ -107,7 +107,7 @@ def _(environment, **kw):
 #     to keep the initial number of them
 
 READ_REQUEST_COUNT = 0
-"""
+
 class DCLTestShape(LoadTestShape):
     def tick(self):
         logger.debug(f"{users_done}, users {self.runner.user_count}")
@@ -119,7 +119,7 @@ class DCLTestShape(LoadTestShape):
                 self.runner.environment.parsed_options.dcl_users,
                 self.runner.environment.parsed_options.dcl_spawn_rate
             )
-"""
+
 
 class DCLWriteUser(HttpUser):
     username = None
