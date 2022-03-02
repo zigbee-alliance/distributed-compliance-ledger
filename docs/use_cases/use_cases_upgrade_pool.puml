@@ -15,6 +15,7 @@ note over C, ND
 end note
 
 C -> OD: Starts `current/bin/dcld`\nsubprocess
+C -> C: Watches for changes\nin `data/upgrade-info.json`
 
 == Upgrade Planning ==
 
@@ -32,11 +33,15 @@ OD -> OD: Proposed upgrade plan\nis approved and scheduled
 
 note over OD
     Ledger reaches height of scheduled upgrade plan
-    for which application does not have upgrade handler
-    (hence this application version is old)
 end note
 
 group x/upgrade.BeginBlocker
+    note over OD
+        Application does not have upgrade handler
+        for reached scheduled upgrade plan
+        (hence this application version is old)
+    end note
+
     OD -> OD: Dumps `data/upgrade-info.json`
     OD -> OD: Panics
 end group
@@ -52,14 +57,15 @@ C -> C: Performes data back-up
 C -> C: Switches `current` symbolic link\nto new application version directory
 C -> C: Saves `data/upgrade-info.json`\nto `current/upgrade-info.json`
 C -> ND: Starts `current/bin/dcld`\nsubprocess
+C -> C: Watches for changes\nin `data/upgrade-info.json`
 
-note over ND
-    Ledger reaches height of scheduled upgrade plan
-    for which application has upgrade handler
-    (hence this application version is new)
-end note
+& group x/upgrade.BeginBlocker
+    note over ND
+        Application has upgrade handler
+        for reached scheduled upgrade plan
+        (hence this application version is new)
+    end note
 
-group x/upgrade.BeginBlocker
     ND -> ND: Executes upgrade handler\nwhich performs necessary\nstore migrations
     ND -> ND: Clears scheduled upgrade plan
     ND -> ND: Marks upgrade name\nas done at current height
