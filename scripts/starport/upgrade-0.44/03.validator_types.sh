@@ -12,3 +12,7 @@ starport scaffold --module validator map LastValidatorPower power:int --index ow
 # starport scaffold --module validator map ValidatorSigningInfo startHeight:uint indexOffset:uint missedBlocksCounter:uint --index owner --no-message
 #    ValidatorMissedBlockBitArray
 # starport scaffold --module validator map ValidatorMissedBlockBitArray --index owner,index:uint --no-message
+
+starport scaffold --module validator message ProposeDisableValidator address:string   
+
+starport scaffold --module validator message ApproveDisableValidator address:string   

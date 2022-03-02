@@ -13,6 +13,8 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 // Msg defines the Msg service.
 service Msg {
       rpc CreateValidator(MsgCreateValidator) returns (MsgCreateValidatorResponse);
+  rpc ProposeDisableValidator(MsgProposeDisableValidator) returns (MsgProposeDisableValidatorResponse);
+  rpc ApproveDisableValidator(MsgApproveDisableValidator) returns (MsgApproveDisableValidatorResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -26,6 +28,22 @@ message MsgCreateValidator {
 }
 
 message MsgCreateValidatorResponse {
+}
+
+message MsgProposeDisableValidator {
+  string creator = 1;
+  string address = 2;
+}
+
+message MsgProposeDisableValidatorResponse {
+}
+
+message MsgApproveDisableValidator {
+  string creator = 1;
+  string address = 2;
+}
+
+message MsgApproveDisableValidatorResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
