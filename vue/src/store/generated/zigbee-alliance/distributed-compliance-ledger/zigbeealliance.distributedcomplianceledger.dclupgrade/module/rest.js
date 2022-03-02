@@ -130,12 +130,41 @@ export class HttpClient {
     }
 }
 /**
- * @title dclupgrade/genesis.proto
+ * @title dclupgrade/approved_upgrade.proto
  * @version version not set
  */
 export class Api extends HttpClient {
     constructor() {
         super(...arguments);
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryApprovedUpgradeAll
+         * @summary Queries a list of ApprovedUpgrade items.
+         * @request GET:/dcl/dclupgrade/approved-upgrades
+         */
+        this.queryApprovedUpgradeAll = (query, params = {}) => this.request({
+            path: `/dcl/dclupgrade/approved-upgrades`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryApprovedUpgrade
+         * @summary Queries a ApprovedUpgrade by index.
+         * @request GET:/dcl/dclupgrade/approved-upgrades/{name}
+         */
+        this.queryApprovedUpgrade = (name, params = {}) => this.request({
+            path: `/dcl/dclupgrade/approved-upgrades/${name}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
         /**
          * No description
          *

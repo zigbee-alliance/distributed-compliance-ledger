@@ -1,0 +1,43 @@
+---
+# Copyright 2022 Samsung Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: prepare-keys | stop if passphrase is invalid
+  assert:
+    that:
+      - passphrase is string
+      - passphrase | length > 7
+    msg: passphrase must be at least 8 characters
+    quiet: true
+
+- name: prepare-keys | validate private key
+  changed_when: false
+  shell: "echo {{ passphrase }} | {{ dcld.path }} keys show {{ key_name }} --home {{ dcl_home }}"
+  register: key_name_exists
+  ignore_errors: true
+  no_log: true
+
+- name: prepare-keys | print key_name_exists output
+  debug:
+    msg: "{{ key_name_exists.stderr }}"
+
+- name: prepare-keys | add private key
+  shell: "(echo {{ passphrase }}; echo {{ passphrase }}) | {{ dcld.path }} keys add {{ key_name }} --home {{ dcl_home }}"
+  when: key_name_exists.rc != 0
+  no_log: true
+
+- name: prepare-keys | persist key name local fact
+  changed_when: false
+  shell: "echo {{ passphrase }} | {{ dcld.path }} keys show {{ key_name }} --home {{ dcl_home }} | tee /etc/ansible/facts.d/{{ key_name}}.fact"
+  no_log: true

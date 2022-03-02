@@ -51,6 +51,13 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 	} else {
 		// sufficient approvals count has been reached, so persist cached state (i.e. schedule upgrade)
 		writeCache()
+
+		approvedUpgrage := types.ApprovedUpgrade{
+			Plan:      msg.Plan,
+			Creator:   msg.Creator,
+			Approvals: []string{msg.Creator},
+		}
+		k.SetApprovedUpgrade(ctx, approvedUpgrage)
 	}
 
 	return &types.MsgProposeUpgradeResponse{}, nil
