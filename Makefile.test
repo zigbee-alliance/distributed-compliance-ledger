@@ -19,7 +19,6 @@ localnet_containers = $(shell docker ps --format '{{.ID}}' --filter network=$(LO
 clean_network = $(call remove_containers,$(call localnet_containers))
 
 # test deploy vars
-TEST_DEPLOY_IMAGE_NAME = "dcledger_deploy"
 TEST_DEPLOY_GVN = "test_deploy_gvn"
 TEST_DEPLOY_VN = "test_deploy_vn"
 TEST_DEPLOY_ON = "test_deploy_on"
@@ -68,10 +67,7 @@ localnet_clean: localnet_stop
 localnet_rebuild: localnet_clean localnet_init
 
 
-test_deploy_image: integration_tests/deploy/Dockerfile
-	docker-compose -f integration_tests/deploy/docker-compose.yml build
-
-test_deploy_env_build: test_deploy_image
+test_deploy_env_build:
 	docker-compose -f integration_tests/deploy/docker-compose.yml up -d
 
 test_deploy_env_clean:
@@ -82,5 +78,5 @@ localnet_init_test_upgrade: localnet_init
 
 .PHONY: localnet_init localnet_start localnet_stop localnet_clean localnet_export \
 		localnet_reset localnet_rebuild \
-		test_deploy_image test_deploy_env_build test_deploy_env_clean \
+		test_deploy_env_build test_deploy_env_clean \
 		localnet_init_test_upgrade
