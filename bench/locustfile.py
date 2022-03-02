@@ -13,6 +13,9 @@
 # limitations under the License.
 
 from ast import List
+from copy import copy
+from gzip import READ
+from flask import request
 import yaml
 import json
 import time
@@ -102,10 +105,13 @@ def _(environment, **kw):
 #     max count param from locust_plugins) don't work well since
 #     after stopping the users locust tries to re-spawn them again
 #     to keep the initial number of them
+
+READ_REQUEST_COUNT = 0
+"""
 class DCLTestShape(LoadTestShape):
     def tick(self):
         logger.debug(f"{users_done}, users {self.runner.user_count}")
-        if users_done and all(users_done.values()):
+        if users_done and all(users_done.values()) or READ_REQUEST_COUNT > 10000:
             logger.info("All users are done")
             return None
         else:
@@ -113,13 +119,13 @@ class DCLTestShape(LoadTestShape):
                 self.runner.environment.parsed_options.dcl_users,
                 self.runner.environment.parsed_options.dcl_spawn_rate
             )
-
+"""
 
 class DCLWriteUser(HttpUser):
     username = None
     txns = None
     host = ""
-    weight = 1
+    weight = 5
     # DEFAULT_TARGET_HOST
 
     @task
@@ -173,21 +179,55 @@ class DCLWriteUser(HttpUser):
         else:
             logger.warning("unexpected user: no more data")
 
+COUNT_MODELS = 0
+models = []
 class DCLReadUser(HttpUser):
     rest_host = ""
     weight = 1
+    global models
 
-    #@task
-    #def getAllModels(self):
-        #self.client.get(self.rest_host + "/dcl/model/models", name="get-all-models")
+    def get_model_vid(self, index):
+        return models[index]['vid']
+
+
+    def get_model_pid(self, index):
+        return models[index]['pid']
+    
+
+    def url_get_specific_model(self):
+        # Gererate random number for get random model
+        index = random.randint(0, len(models)-1)
+
+        #Get vid and pid model
+        vid = self.get_model_vid(index)
+        pid = self.get_model_pid(index)
+
+        url = "/dcl/model/models/" + str(vid) + "/" + str(pid)
+        return url 
+
 
     @task
     def getModel(self):
-        pass
-    
+        global READ_REQUEST_COUNT
+        self.client.get(self.rest_host + self.url_get_specific_model(), name = "dcl/model/models/vid/pid")
+        READ_REQUEST_COUNT += 1
+
+
     def on_start(self):
         # Get REST endpoint
         if dcl_rest_hosts:
             self.rest_host = random.choice(dcl_rest_hosts)
         else:
             self.rest_host = DEFAULT_REST_HOST
+
+        # We must get all models only one time
+        if len(models) == 0:
+            #Get 1000 models
+            response = self.client.get(self.rest_host + "/dcl/model/models?pagination.limit=1000", name="get-all-models")
+
+            # JSON type convert to type of Class(dictonary)
+            json_var = response.json()
+
+            # Save all models
+            for item in json_var['model']:
+                models.append(item)
