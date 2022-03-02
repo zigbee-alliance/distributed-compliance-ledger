@@ -57,7 +57,7 @@ def init_paraser(parser):
         "--dcl-rest-hosts", metavar="DCL_REST_HOSTS",
         include_in_web_ui=True,
         default=DEFAULT_REST_HOST,
-        help="Comma separated list of DCL hosts to target")
+        help="Comma separated list of DCL REST hosts to target")
 
 @events.test_start.add_listener
 def _(environment, **kw):
