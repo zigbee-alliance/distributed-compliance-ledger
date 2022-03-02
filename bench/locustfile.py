@@ -12,16 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ast import List
-from copy import copy
-from gzip import READ
-from flask import request
 import yaml
 import json
 import time
 import random
 import logging
-import os
 from pathlib import Path
 from locust import HttpUser, task, events, LoadTestShape
 # import locust_plugins
@@ -179,7 +174,6 @@ class DCLWriteUser(HttpUser):
         else:
             logger.warning("unexpected user: no more data")
 
-COUNT_MODELS = 0
 models = []
 class DCLReadUser(HttpUser):
     rest_host = ""
@@ -220,9 +214,9 @@ class DCLReadUser(HttpUser):
         else:
             self.rest_host = DEFAULT_REST_HOST
 
-        # We must get all models only one time
+        # Get models list only once
         if len(models) == 0:
-            #Get 1000 models
+            # Get up to 1000 models
             response = self.client.get(self.rest_host + "/dcl/model/models?pagination.limit=1000", name="get-all-models")
 
             # JSON type convert to type of Class(dictonary)
