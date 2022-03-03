@@ -43,7 +43,6 @@ MODEL_INFO_PREFIX = 1
 
 #VENDOR_NAME = "artur"
 
-
 def pack_model_info_key(vid, pid):
     return pack('<bhh', MODEL_INFO_PREFIX, vid, pid)
 

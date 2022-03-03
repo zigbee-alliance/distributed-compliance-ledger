@@ -32,10 +32,7 @@ By that reason load test uses prepared load data which can be generated as follo
 
     # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
     make localnet_init
-    
-    # Move '.../distributed-compliance-ledger/.localnet/genesis.json' to '/home/$user/.dcl/config/'
-    # E.g. sudo mv '/home/john/Desktop/distributed-compliance-ledger/.localnet/genesis.json' '/home/john/.dcl/config/'
-    
+
     # ./gentestaccounts.sh [<NUM-USERS>]
     ./gentestaccounts.sh
 
@@ -53,6 +50,7 @@ Here the following (**optional**) inputs are considered:
 
 *   `NUM-USERS`: number of client accounts with write access (created as Vendors). Default: 10
 *   `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
+*   `NUM-NEW-MODELS`: models are added to the ledger for reading afterwards in load tests. Default: 5
 
 ## Run
 
