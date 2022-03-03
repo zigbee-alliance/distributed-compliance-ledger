@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// DisabledValidatorKeyPrefix is the prefix to retrieve all DisabledValidator
+	// DisabledValidatorKeyPrefix is the prefix to retrieve all DisabledValidator.
 	DisabledValidatorKeyPrefix = "DisabledValidator/value/"
 )
 
-// DisabledValidatorKey returns the store key to retrieve a DisabledValidator from the index fields
+// DisabledValidatorKey returns the store key to retrieve a DisabledValidator from the index fields.
 func DisabledValidatorKey(
 	address string,
 ) []byte {
