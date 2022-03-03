@@ -32,7 +32,6 @@ By that reason load test uses prepared load data which can be generated as follo
 
     # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
     make localnet_init
-
     # ./gentestaccounts.sh [<NUM-USERS>]
     ./gentestaccounts.sh
 
@@ -42,7 +41,7 @@ By that reason load test uses prepared load data which can be generated as follo
 *   Generate test transactions:
 
     ```bash
-    # DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> python bench/generate.py bench/test.spec.yaml bench/txns
+    # DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> DCLBENCH_ADD_NEW_MODELS_COUNT=<NUM-NEW-MODELS> python bench/generate.py bench/test.spec.yaml bench/txns
     python bench/generate.py bench/test.spec.yaml bench/txns
     ```
 
