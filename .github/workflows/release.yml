@@ -30,6 +30,8 @@ jobs:
           echo "$tag"
           version="$(echo "$tag" | sed "s/^v//")"
           echo "$version"
+
+          echo "::set-output name=version::$version"
         shell: bash
 
       - name: Get release info
@@ -37,6 +39,7 @@ jobs:
         run: |
           release_info="$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
               | jq '.[] | select(.tag_name == "v${{ steps.current_version.outputs.version }}")')"
+          echo "::set-output name=release_info::$release_info"
           echo "$release_info"
 
           asset_bin_url="$(echo "$release_info" \
