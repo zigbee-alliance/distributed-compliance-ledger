@@ -10,11 +10,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-func SimulateMsgApproveDisableValidator(
-	ak types.AccountKeeper,
-	bk types.BankKeeper,
-	k keeper.Keeper,
-) simtypes.Operation {
+func SimulateMsgApproveDisableValidator(k keeper.Keeper) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		simAccount, _ := simtypes.RandomAcc(r, accs)

@@ -73,7 +73,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgProposeDisableValidator,
-		validatorsimulation.SimulateMsgProposeDisableValidator(am.accountKeeper, am.bankKeeper, am.keeper),
+		validatorsimulation.SimulateMsgProposeDisableValidator(am.keeper),
 	))
 
 	var weightMsgApproveDisableValidator int
@@ -84,7 +84,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgApproveDisableValidator,
-		validatorsimulation.SimulateMsgApproveDisableValidator(am.accountKeeper, am.bankKeeper, am.keeper),
+		validatorsimulation.SimulateMsgApproveDisableValidator(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

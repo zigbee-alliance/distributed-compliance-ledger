@@ -38,22 +38,22 @@ service Query {
 
 // Queries a ProposedDisableValidator by index.
 	rpc ProposedDisableValidator(QueryGetProposedDisableValidatorRequest) returns (QueryGetProposedDisableValidatorResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/proposed_disable_validator/{address}";
+		option (google.api.http).get = "/dcl/validator/proposed-disable-validators/{address}";
 	}
 
 	// Queries a list of ProposedDisableValidator items.
 	rpc ProposedDisableValidatorAll(QueryAllProposedDisableValidatorRequest) returns (QueryAllProposedDisableValidatorResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/proposed_disable_validator";
+		option (google.api.http).get = "/dcl/validator/proposed-disable-validators";
 	}
 
 // Queries a DisabledValidator by index.
 	rpc DisabledValidator(QueryGetDisabledValidatorRequest) returns (QueryGetDisabledValidatorResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/disabled_validator/{address}";
+		option (google.api.http).get = "/dcl/validator/disabled-validators/{address}";
 	}
 
 	// Queries a list of DisabledValidator items.
 	rpc DisabledValidatorAll(QueryAllDisabledValidatorRequest) returns (QueryAllDisabledValidatorResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/validator/disabled_validator";
+		option (google.api.http).get = "/dcl/validator/disabled-validators";
 	}
 
 // this line is used by starport scaffolding # 2
