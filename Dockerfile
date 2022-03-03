@@ -24,9 +24,7 @@ FROM golang:alpine AS builder
 # git is required for fetching the dependencies.
 RUN apk update && apk add --no-cache git
 
-COPY Makefile ./
-
-RUN make cosmovisor
+RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
 
 ############################
 # STEP 2 build node image

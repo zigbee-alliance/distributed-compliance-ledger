@@ -32,4 +32,6 @@ COPY docs/static ./docs/static/
 
 ARG DCL_VERSION
 ARG DCL_COMMIT
-RUN LEDGER_ENABLED=false make install cosmovisor
+RUN LEDGER_ENABLED=false make
+
+RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0

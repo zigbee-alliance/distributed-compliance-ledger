@@ -121,12 +121,9 @@ license-check:
 clean:
 	rm -rf $(OUTPUT_DIR)
 
-cosmovisor:
-  go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
-
 ${TEST_TARGETS}:
 	make -f ${MK_TEST} $@
 
 .PHONY: all build install test lint clean \
-		license license-check cosmovisor \
+		license license-check \
 		${TEST_TARGETS}

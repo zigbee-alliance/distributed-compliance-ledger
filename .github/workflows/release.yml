@@ -165,7 +165,7 @@ jobs:
       - name: build cosmovisor binary
         if: ${{ !matrix.cosmovisor }}
         run: |
-          make cosmovisor
+          go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
         shell: bash
 
       - name: upload to GitHub (cosmovisor binary)
