@@ -26,7 +26,7 @@ func createNDisabledValidator(keeper *keeper.Keeper, ctx sdk.Context, n int) []t
 }
 
 func TestDisabledValidatorGet(t *testing.T) {
-	keeper, ctx := keepertest.ValidatorKeeper(t)
+	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	items := createNDisabledValidator(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetDisabledValidator(ctx,
@@ -40,7 +40,7 @@ func TestDisabledValidatorGet(t *testing.T) {
 	}
 }
 func TestDisabledValidatorRemove(t *testing.T) {
-	keeper, ctx := keepertest.ValidatorKeeper(t)
+	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	items := createNDisabledValidator(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveDisabledValidator(ctx,
@@ -54,7 +54,7 @@ func TestDisabledValidatorRemove(t *testing.T) {
 }
 
 func TestDisabledValidatorGetAll(t *testing.T) {
-	keeper, ctx := keepertest.ValidatorKeeper(t)
+	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	items := createNDisabledValidator(keeper, ctx, 10)
 	require.ElementsMatch(t,
 		nullify.Fill(items),

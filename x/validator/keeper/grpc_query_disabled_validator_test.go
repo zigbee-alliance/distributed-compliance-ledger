@@ -19,7 +19,7 @@ import (
 var _ = strconv.IntSize
 
 func TestDisabledValidatorQuerySingle(t *testing.T) {
-	keeper, ctx := keepertest.ValidatorKeeper(t)
+	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNDisabledValidator(keeper, ctx, 2)
 	for _, tc := range []struct {
@@ -70,7 +70,7 @@ func TestDisabledValidatorQuerySingle(t *testing.T) {
 }
 
 func TestDisabledValidatorQueryPaginated(t *testing.T) {
-	keeper, ctx := keepertest.ValidatorKeeper(t)
+	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	wctx := sdk.WrapSDKContext(ctx)
 	msgs := createNDisabledValidator(keeper, ctx, 5)
 
