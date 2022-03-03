@@ -16,6 +16,7 @@ service Msg {
   rpc ProposeDisableValidator(MsgProposeDisableValidator) returns (MsgProposeDisableValidatorResponse);
   rpc ApproveDisableValidator(MsgApproveDisableValidator) returns (MsgApproveDisableValidatorResponse);
   rpc DisableValidator(MsgDisableValidator) returns (MsgDisableValidatorResponse);
+  rpc EnableValidator(MsgEnableValidator) returns (MsgEnableValidatorResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -53,6 +54,14 @@ message MsgDisableValidator {
 }
 
 message MsgDisableValidatorResponse {
+}
+
+message MsgEnableValidator {
+  string creator = 1;
+  string address = 2;
+}
+
+message MsgEnableValidatorResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
