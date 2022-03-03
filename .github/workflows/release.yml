@@ -171,6 +171,16 @@ jobs:
           go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
         shell: bash
 
+      - name: get GOBIN
+        id: get_gobin
+        run: |
+          GOPATH=${GOPATH:-${HOME}/go}
+          GOBIN=${GOBIN:-${GOPATH}/bin}
+          echo "$GOBIN"
+
+          echo "::set-output name=gobin::$GOBIN"
+        shell: bash
+
       - name: upload to GitHub (cosmovisor binary)
         if: ${{ !matrix.cosmovisor }}
         uses: actions/upload-release-asset@v1
@@ -178,7 +188,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.checks.outputs.upload_url }}
-          asset_path: /go/bin/cosmovisor
+          asset_path: ${{ steps.get_gobin.outputs.gobin }}/cosmovisor
           asset_name: cosmovisor
           asset_content_type: application/octet-stream  # TODO check for less generic type
 
