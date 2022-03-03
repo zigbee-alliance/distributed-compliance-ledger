@@ -189,13 +189,19 @@ def add_models(count_models):
 
 
 ENV_PREFIX = "DCLBENCH_"
+NEW_MODELS_COUNT = 1
 
 def generate_txns_to_file():
+    global NEW_MODELS_COUNT
+
     render_ctx = {
         k.split(ENV_PREFIX)[1].lower(): v
         for k, v in os.environ.items()
         if k.startswith(ENV_PREFIX)
     }
+
+    NEW_MODELS_COUNT = int(render_ctx['new_models_count'])
+
 
     # TODO argument parsing using argparse
     spec_yaml = render(sys.argv[1], ctx=render_ctx)
@@ -266,7 +272,7 @@ def main():
     add_vendor_account(VENDOR_NAME)
 
     # Add models from a new Vendor account
-    add_models(10)
+    add_models(NEW_MODELS_COUNT)
 
 
 if __name__ == "__main__":
