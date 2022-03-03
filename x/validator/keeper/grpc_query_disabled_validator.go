@@ -50,7 +50,7 @@ func (k Keeper) DisabledValidator(c context.Context, req *types.QueryGetDisabled
 		req.Address,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetDisabledValidatorResponse{DisabledValidator: val}, nil

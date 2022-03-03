@@ -50,7 +50,7 @@ func (k Keeper) ProposedDisableValidator(c context.Context, req *types.QueryGetP
 		req.Address,
 	)
 	if !found {
-		return nil, status.Error(codes.InvalidArgument, "not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 
 	return &types.QueryGetProposedDisableValidatorResponse{ProposedDisableValidator: val}, nil
