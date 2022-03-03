@@ -50,7 +50,7 @@ Here the following (**optional**) inputs are considered:
 
 *   `NUM-USERS`: number of client accounts with write access (created as Vendors). Default: 10
 *   `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
-*   `NUM-NEW-MODELS`: number of add new models. Default: 5
+*   `NUM-NEW-MODELS`: number of new models. Default: 5
 
 ## Run
 
