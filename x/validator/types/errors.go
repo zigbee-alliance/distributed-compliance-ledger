@@ -20,9 +20,29 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-var PoolIsFull = sdkerrors.Register(ModuleName, 601, "maximum number of active nodes reached")
+var (
+	PoolIsFull                               = sdkerrors.Register(ModuleName, 601, "maximum number of active nodes reached")
+	ErrProposedDisableValidatorAlreadyExists = sdkerrors.Register(ModuleName, 801, "disable validator propose already exists")
+	ErrProposedDisableValidatorDoesNotExist  = sdkerrors.Register(ModuleName, 802, "disable validator propose does not exist")
+)
 
 func ErrPoolIsFull() error {
 	return sdkerrors.Wrapf(PoolIsFull,
 		fmt.Sprintf("Pool ledger already contains maximum number of active nodes: \"%v\"", MaxNodes))
+}
+
+func NewErrProposedDisableValidatorAlreadyExists(name interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrProposedDisableValidatorAlreadyExists,
+		"Disable proposal with validator address=%v already exists on the ledger",
+		name,
+	)
+}
+
+func NewErrProposedDisableValidatorDoesNotExist(name interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrProposedDisableValidatorDoesNotExist,
+		"Disable proposal with validator address=%v does not exist on the ledger",
+		name,
+	)
 }
