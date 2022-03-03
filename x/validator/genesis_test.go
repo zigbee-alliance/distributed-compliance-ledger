@@ -36,6 +36,14 @@ func TestGenesis(t *testing.T) {
 			Address: "1",
 },
 	},
+	DisabledValidatorList: []types.DisabledValidator{
+		{
+			Address: "0",
+},
+		{
+			Address: "1",
+},
+	},
 	// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -49,6 +57,7 @@ func TestGenesis(t *testing.T) {
 	require.Len(t, got.LastValidatorPowerList, len(genesisState.LastValidatorPowerList))
 	require.Subset(t, genesisState.LastValidatorPowerList, got.LastValidatorPowerList)
 	require.ElementsMatch(t, genesisState.ProposedDisableValidatorList, got.ProposedDisableValidatorList)
+require.ElementsMatch(t, genesisState.DisabledValidatorList, got.DisabledValidatorList)
 // this line is used by starport scaffolding # genesis/test/assert
 }
 */

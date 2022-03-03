@@ -18,3 +18,5 @@ starport scaffold --module validator message ProposeDisableValidator address:str
 starport scaffold --module validator message ApproveDisableValidator address:string   
 
 starport scaffold --module validator map ProposedDisableValidator approvals:array.string --index address:string --no-message
+
+distributed-compliance-ledger % starport scaffold --module validator map DisabledValidator approvals:array.string disabledByNodeAdmin:bool --index address:string --no-message

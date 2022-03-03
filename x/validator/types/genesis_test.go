@@ -47,6 +47,14 @@ func TestGenesisState_Validate(t *testing.T) {
 		Address: "1",
 },
 },
+DisabledValidatorList: []types.DisabledValidator{
+	{
+		Address: "0",
+},
+	{
+		Address: "1",
+},
+},
 // this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -83,6 +91,20 @@ func TestGenesisState_Validate(t *testing.T) {
 	desc:     "duplicated proposedDisableValidator",
 	genState: &types.GenesisState{
 		ProposedDisableValidatorList: []types.ProposedDisableValidator{
+			{
+				Address: "0",
+},
+			{
+				Address: "0",
+},
+		},
+	},
+	valid:    false,
+},
+{
+	desc:     "duplicated disabledValidator",
+	genState: &types.GenesisState{
+		DisabledValidatorList: []types.DisabledValidator{
 			{
 				Address: "0",
 },

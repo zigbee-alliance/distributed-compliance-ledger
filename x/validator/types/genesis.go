@@ -19,6 +19,7 @@ func DefaultGenesis() *GenesisState {
 		ValidatorList:                []Validator{},
 		LastValidatorPowerList:       []LastValidatorPower{},
 		ProposedDisableValidatorList: []ProposedDisableValidator{},
+		DisabledValidatorList:        []DisabledValidator{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -65,6 +66,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for proposedDisableValidator")
 		}
 		proposedDisableValidatorIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in disabledValidator
+	disabledValidatorIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.DisabledValidatorList {
+		index := string(DisabledValidatorKey(elem.Address))
+		if _, ok := disabledValidatorIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for disabledValidator")
+		}
+		disabledValidatorIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

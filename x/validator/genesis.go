@@ -25,6 +25,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	for _, elem := range genState.ProposedDisableValidatorList {
 		k.SetProposedDisableValidator(ctx, elem)
 	}
+	// Set all the disabledValidator
+	for _, elem := range genState.DisabledValidatorList {
+		k.SetDisabledValidator(ctx, elem)
+	}
 	// this line is used by starport scaffolding # genesis/module/init
 
 	// TODO issue 99 error processing
@@ -40,6 +44,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.ValidatorList = k.GetAllValidator(ctx)
 	genesis.LastValidatorPowerList = k.GetAllLastValidatorPower(ctx)
 	genesis.ProposedDisableValidatorList = k.GetAllProposedDisableValidator(ctx)
+	genesis.DisabledValidatorList = k.GetAllDisabledValidator(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis
