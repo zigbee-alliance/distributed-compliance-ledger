@@ -18,7 +18,7 @@ func CmdApproveDisableValidator() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "approve-disable-validator --address [address]",
-		Short: "Approves removing of the Validator node by a Trustee.",
+		Short: "Approves disabling of the Validator node by a Trustee.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
