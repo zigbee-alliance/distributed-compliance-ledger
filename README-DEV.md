@@ -89,7 +89,7 @@ DCL_OBSERVERS=1 make localnet_init
 make localnet_start
 ```    
 
-This will start a local pool of 4 validator nodes in Docker. The nodes will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26663` correspondingly.
+This will start a local pool of 4 validator nodes in Docker. The nodes will expose their RPC endpoints on ports `26657`, `26659`, `26661`, `26663` correspondingly.
 
  Stopping the network: 
 
@@ -128,7 +128,7 @@ Please take into account the following when sending a PR:
     - make sure the app can be built
     - run go linter
     - run unit tests
-    - run integratioins test
+    - run integration tests
 
 ## How To Add a new Module
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
@@ -185,7 +185,7 @@ Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [
 ## Update Tendermint Version
 Please note, that we depend on the Tendermint fork https://github.com/zigbee-alliance/tendermint/releases/tag/v0.34.140 
 due to hotfixes for https://github.com/tendermint/tendermint/issues/7640 and https://github.com/tendermint/tendermint/issues/7641
-requitred for Light Client Proxy.
+required for Light Client Proxy.
 Now that fixes are merged to Tendermint master, so check if we still need to depend on the fork.
 
 Also don't forget to update the link to the Tendermint RPC in [Swagger UI](docs/index.html).

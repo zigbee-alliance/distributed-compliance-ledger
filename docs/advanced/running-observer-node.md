@@ -3,7 +3,7 @@
 This document describes in details how to run a observer node, and add it to the existing network.
 
 The existing network can be either a custom one, or one of the persistent networks (such as a Test Net).
-Configuration of all persistent networks can be found in [Persistent Chains](../deployment/persistent_chains)
+Configuration of all persistent networks can be found in [Persistent Chains](../../deployment/persistent_chains)
 where each subfolder represents a `<chain-id>`.
 
 If a new network needs to be initialized, please follow the [Running Genesis Node](running-genesis-node.md)
@@ -35,11 +35,11 @@ The following components will be needed:
 * `dcld` (part of the release): The application binary which can be run in node or CLI mode.
 * `cosmovisor` (part of the release): A small process manager that supports an automated process of Cosmos SDK based application upgrade (`dcld` upgrade in our case).
 * The service configuration file `cosmovisor.service` 
-(either part of the release or [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment) folder).    
+(either part of the release or [deployment](../../deployment) folder).    
 * Genesis transactions file: `genesis.json`
 * The list of alive peers: `persistent_peers.txt`. It has the following format: `<node id>@<node ip>,<node2 id>@<node2 ip>,...`.
 
-If you want to join an existing persistent network (such as Test Net), then look at the [Persistent Chains](../deployment/persistent_chains)
+If you want to join an existing persistent network (such as Test Net), then look at the [Persistent Chains](../../deployment/persistent_chains)
 folder for a list of available networks. Each subfolder there represents a `<chain-id>` 
 and contains the genesis and persistent_peers files. 
 
@@ -70,7 +70,7 @@ and contains the genesis and persistent_peers files.
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
     * Edit `cosmovisor.service` (Only needed for Ubuntu).
-        * Replace `ubuntu` with a user name you want to start service on behalf
+        * Replace `ubuntu` with a username you want to start service on behalf
     * Copy service configuration. (Only needed for Ubuntu).
         * `cp cosmovisor.service /etc/systemd/system/`
 

@@ -30,7 +30,7 @@ The following components will be needed:
 * `dcld` (part of the release): The application binary which can be run in node or CLI mode.
 * `cosmovisor` (part of the release): A small process manager that supports an automated process of Cosmos SDK based application upgrade (`dcld` upgrade in our case).
 * The service configuration file `cosmovisor.service` 
-(either part of the release or [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment) folder).    
+(either part of the release or [deployment](../../deployment) folder).    
 
 
 ### Deployment steps
@@ -78,7 +78,7 @@ must have a unique chain ID.
         * `sudo ufw allow 26656/tcp`
         * `sudo ufw allow 26657/tcp`
     * Edit `cosmovisor.service`
-        * Replace `ubuntu` with a user name you want to start service on behalf
+        * Replace `ubuntu` with a username you want to start service on behalf
     * Copy service configuration.
         * `cp cosmovisor.service /etc/systemd/system/`
     * Make your node public:
@@ -174,25 +174,25 @@ must have a unique chain ID.
       
 10. Add more initial trusted validator nodes to the network
    * Let's add more nodes that will be considered as trusted persistent peers by other nodes.
-   * Create a sub-folder in [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment/persistent_chains)
+   * Create a sub-folder in [deployment](../../deployment/persistent_chains)
    with the chosen chain ID (Step 3) as a name. 
    * Persist the genesis file in the created chain-id subfolder.
    The genesis file can be found in `$HOME/.dcl/config/genesis.json` (Step 6). 
-   * Create the `persistent_peers.txt` file from the template located in [deployment](https://github.com/zigbee-alliance/distributed-compliance-ledger/deployment)
+   * Create the `persistent_peers.txt` file from the template located in [deployment](../../deployment)
    and persist it in the chain-id subfolder. 
       * If there is only one genesis node (like in the current tutorial), it will contain 
       a single entry `<node1_id>@<node1_IP>:26656`.
       * `<node1_id>` - Node ID. Can be found as an `<ID>` prefix of the file `$HOME/.dcl/config/gentx/gentx-<ID>.json`.
       * `<node1-IP>` - public IP address of the genesis node. 
-   * Every node that needs to join the network should follow the [Running Node](running-node.md) instructions
+   * Every node that needs to join the network should follow the [Running Node](../running-node.md) instructions
    using the chosen chain-id and the genesis and persistent_peers files above (or from the chain-id subfolder).
    * Update the `persistent_peers.txt` file by including the entries for every added initial node.
    * Update the `persistent_peers` field in `$HOME/.dcl/config/config.toml`
     for every initial node (including the genesis one) to match the `persistent_peers.txt` content.
-        * See Step 4 from [Running Node](running-node.md) for details.
+        * See Step 4 from [Running Node](../running-node.md) for details.
 
 11. Adding more validator nodes to the network
-    * Just follow the [Running Node](running-node.md) instructions 
+    * Just follow the [Running Node](../running-node.md) instructions 
     using the chosen chain-id and the genesis and persistent_peers files above (from the chain-id subfolder).
        * Please make sure, that the persistent_peers contain all the nodes (including the genesis node)
     added at Step 10.
