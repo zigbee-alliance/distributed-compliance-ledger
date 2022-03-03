@@ -16,3 +16,5 @@ starport scaffold --module validator map LastValidatorPower power:int --index ow
 starport scaffold --module validator message ProposeDisableValidator address:string   
 
 starport scaffold --module validator message ApproveDisableValidator address:string   
+
+starport scaffold --module validator map ProposedDisableValidator approvals:array.string --index address:string --no-message

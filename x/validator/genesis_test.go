@@ -28,7 +28,15 @@ func TestGenesis(t *testing.T) {
 				Owner: "1",
 			},
 		},
-		// this line is used by starport scaffolding # genesis/test/state
+		ProposedDisableValidatorList: []types.ProposedDisableValidator{
+		{
+			Address: "0",
+},
+		{
+			Address: "1",
+},
+	},
+	// this line is used by starport scaffolding # genesis/test/state
 	}
 
 	k, ctx := keepertest.ValidatorKeeper(t, nil)
@@ -40,6 +48,7 @@ func TestGenesis(t *testing.T) {
 	require.Subset(t, genesisState.ValidatorList, got.ValidatorList)
 	require.Len(t, got.LastValidatorPowerList, len(genesisState.LastValidatorPowerList))
 	require.Subset(t, genesisState.LastValidatorPowerList, got.LastValidatorPowerList)
-	// this line is used by starport scaffolding # genesis/test/assert
+	require.ElementsMatch(t, genesisState.ProposedDisableValidatorList, got.ProposedDisableValidatorList)
+// this line is used by starport scaffolding # genesis/test/assert
 }
 */

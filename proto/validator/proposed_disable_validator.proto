@@ -1,0 +1,11 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.validator;
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
+
+message ProposedDisableValidator {
+  string address = 1; 
+  repeated string approvals = 2; 
+  
+}
+

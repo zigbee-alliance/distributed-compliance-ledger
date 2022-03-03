@@ -16,8 +16,9 @@ const DefaultIndex uint64 = 1
 // DefaultGenesis returns the default Capability genesis state.
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		ValidatorList:          []Validator{},
-		LastValidatorPowerList: []LastValidatorPower{},
+		ValidatorList:                []Validator{},
+		LastValidatorPowerList:       []LastValidatorPower{},
+		ProposedDisableValidatorList: []ProposedDisableValidator{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -54,6 +55,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for lastValidatorPower")
 		}
 		lastValidatorPowerIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in proposedDisableValidator
+	proposedDisableValidatorIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.ProposedDisableValidatorList {
+		index := string(ProposedDisableValidatorKey(elem.Address))
+		if _, ok := proposedDisableValidatorIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for proposedDisableValidator")
+		}
+		proposedDisableValidatorIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 
