@@ -31,7 +31,7 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Address)
 	}
 
-	if k.UpgradeApprovalsCount(ctx) > 1 {
+	if k.DisableValidatorApprovalsCount(ctx) > 1 {
 		proposedDisableValidator := types.ProposedDisableValidator{
 			Address:   msg.Address,
 			Approvals: []string{msg.Creator},

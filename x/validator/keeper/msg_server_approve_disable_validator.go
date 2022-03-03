@@ -43,8 +43,8 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 	// append approval
 	proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals, creatorAddr.String())
 
-	// check if proposed upgrade has enough approvals
-	if len(proposedDisableValidator.Approvals) == k.UpgradeApprovalsCount(ctx) {
+	// check if proposed disable validator has enough approvals
+	if len(proposedDisableValidator.Approvals) == k.DisableValidatorApprovalsCount(ctx) {
 		// remove disable validator
 		k.RemoveDisabledValidator(ctx, proposedDisableValidator.Address)
 

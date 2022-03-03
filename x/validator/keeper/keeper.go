@@ -41,6 +41,6 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-func (k Keeper) UpgradeApprovalsCount(ctx sdk.Context) int {
+func (k Keeper) DisableValidatorApprovalsCount(ctx sdk.Context) int {
 	return int(math.Round(types.DisableValidatorPercent * float64(k.dclauthKeeper.CountAccountsWithRole(ctx, dclauthtypes.Trustee))))
 }
