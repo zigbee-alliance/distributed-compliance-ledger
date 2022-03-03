@@ -189,7 +189,7 @@ def add_models(count_models):
 
 
 ENV_PREFIX = "DCLBENCH_"
-ADD_NEW_MODELS_COUNT = 1
+ADD_NEW_MODELS_COUNT = 5
 
 def generate_txns_to_file():
     global ADD_NEW_MODELS_COUNT
