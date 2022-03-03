@@ -6,13 +6,14 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
 func CmdListProposedDisableValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-proposed-disable-validator",
-		Short: "list all ProposedDisableValidator",
+		Use:   "all-proposed-disable-validators",
+		Short: "Query the list of all proposed disable validators",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -43,29 +44,30 @@ func CmdListProposedDisableValidator() *cobra.Command {
 }
 
 func CmdShowProposedDisableValidator() *cobra.Command {
+	var address string
+
 	cmd := &cobra.Command{
-		Use:   "show-proposed-disable-validator [address]",
-		Short: "shows a ProposedDisableValidator",
-		Args:  cobra.ExactArgs(1),
+		Use:   "proposed-disable-validator --address [address]",
+		Short: "Query proposed disable validator by address",
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
+			var res types.ProposedDisableValidator
 
-			argAddress := args[0]
-
-			params := &types.QueryGetProposedDisableValidatorRequest{
-				Address: argAddress,
-			}
-
-			res, err := queryClient.ProposedDisableValidator(context.Background(), params)
-			if err != nil {
-				return err
-			}
-
-			return clientCtx.PrintProto(res)
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.ProposedDisableValidatorKeyPrefix,
+				types.ProposedDisableValidatorKey(address),
+				&res,
+			)
 		},
 	}
+
+	cmd.Flags().StringVar(&address, FlagAddress, "", "Validator address")
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	flags.AddQueryFlagsToCmd(cmd)
 
