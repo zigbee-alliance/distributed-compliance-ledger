@@ -5,7 +5,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 message ProposedDisableValidator {
   string address = 1; 
-  repeated string approvals = 2; 
-  
+  string creator = 2;
+  repeated string approvals = 3; 
 }
 
