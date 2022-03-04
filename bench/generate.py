@@ -171,9 +171,6 @@ def add_vendor_account(key_name):
     cmd = [DCLCLI, "tx", "auth", "approve-add-account", "--address=" + vendor_address, "--from=alice", "--yes"]
     run_shell_cmd(cmd)
 
-    #Send query auth
-    cmd = [DCLCLI, "query", "auth", "account", "--address=" + vendor_address]
-
 
 def add_model(key_name, current_model_id):
     cmd = [DCLCLI, "tx", "model", "add-model", "--vid=" + str(VENDOR_ID), "--pid=" + str(current_model_id), "--deviceTypeID=" + str(current_model_id), "--productName=ProductName" + str(current_model_id), "--productLabel=ProductLabel" + str(current_model_id), "--partNumber=PartNumber" + str(current_model_id), "--from=" + key_name, "--yes"]
