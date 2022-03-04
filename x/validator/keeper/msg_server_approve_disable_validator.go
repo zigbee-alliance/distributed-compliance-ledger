@@ -31,14 +31,15 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Address)
 	}
 
-	// check if disable validator already has approval form message creator
-	proposedDisableValidator.HasApprovalFrom()
-	if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Disabled validator with address=%v already has approval from=%v",
-			msg.Address, msg.Creator,
-		)
-	}
+	//TODO::::
+	// // check if disable validator already has approval form message creator
+	// proposedDisableValidator.HasApprovalFrom()
+	// if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
+	// 	return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+	// 		"Disabled validator with address=%v already has approval from=%v",
+	// 		msg.Address, msg.Creator,
+	// 	)
+	// }
 
 	// append approval
 	proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals, creatorAddr.String())

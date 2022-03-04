@@ -49,17 +49,17 @@ func CmdShowDisabledValidator() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "disabled-validator --address [address]",
 		Short: "Query disabled validator by address",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			var res types.ProposedDisableValidator
+			var res types.DisabledValidator
 
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,
-				types.ProposedDisableValidatorKeyPrefix,
-				types.ProposedDisableValidatorKey(address),
+				types.DisabledValidatorKeyPrefix,
+				types.DisabledValidatorKey(address),
 				&res,
 			)
 		},

@@ -47,7 +47,7 @@ func TestDisabledValidatorQuerySingle(t *testing.T) {
 			request: &types.QueryGetDisabledValidatorRequest{
 				Address: strconv.Itoa(100000),
 			},
-			err: status.Error(codes.InvalidArgument, "not found"),
+			err: status.Error(codes.NotFound, "not found"),
 		},
 		{
 			desc: "InvalidRequest",

@@ -9,8 +9,7 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
@@ -52,43 +51,39 @@ func TestShowDisabledValidator(t *testing.T) {
 		idAddress string
 
 		args []string
-		err  error
-		obj  types.DisabledValidator
+		obj  *types.DisabledValidator
 	}{
 		{
 			desc:      "found",
 			idAddress: objs[0].Address,
 
 			args: common,
-			obj:  objs[0],
+			obj:  &objs[0],
 		},
 		{
 			desc:      "not found",
 			idAddress: strconv.Itoa(100000),
 
 			args: common,
-			err:  status.Error(codes.InvalidArgument, "not found"),
+			obj:  nil,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				tc.idAddress,
+				fmt.Sprintf("--%s=%v", cli.FlagAddress, tc.idAddress),
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowDisabledValidator(), args)
-			if tc.err != nil {
-				stat, ok := status.FromError(tc.err)
-				require.True(t, ok)
-				require.ErrorIs(t, stat.Err(), tc.err)
+			require.NoError(t, err)
+			if tc.obj == nil {
+				require.Equal(t, cliutils.NotFoundOutput, out.String())
 			} else {
-				require.NoError(t, err)
-				var resp types.QueryGetDisabledValidatorResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.DisabledValidator)
+				var disabledValidator types.DisabledValidator
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &disabledValidator))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.DisabledValidator),
+					nullify.Fill(&disabledValidator),
 				)
 			}
 		})

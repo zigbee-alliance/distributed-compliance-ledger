@@ -9,11 +9,10 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
+	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
@@ -52,43 +51,39 @@ func TestShowProposedDisableValidator(t *testing.T) {
 		idAddress string
 
 		args []string
-		err  error
-		obj  types.ProposedDisableValidator
+		obj  *types.ProposedDisableValidator
 	}{
 		{
 			desc:      "found",
 			idAddress: objs[0].Address,
 
 			args: common,
-			obj:  objs[0],
+			obj:  &objs[0],
 		},
 		{
 			desc:      "not found",
 			idAddress: strconv.Itoa(100000),
 
 			args: common,
-			err:  status.Error(codes.InvalidArgument, "not found"),
+			obj:  nil,
 		},
 	} {
 		tc := tc
 		t.Run(tc.desc, func(t *testing.T) {
 			args := []string{
-				tc.idAddress,
+				fmt.Sprintf("--%s=%v", cli.FlagAddress, tc.idAddress),
 			}
 			args = append(args, tc.args...)
 			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowProposedDisableValidator(), args)
-			if tc.err != nil {
-				stat, ok := status.FromError(tc.err)
-				require.True(t, ok)
-				require.ErrorIs(t, stat.Err(), tc.err)
+			require.NoError(t, err)
+			if tc.obj == nil {
+				require.Equal(t, cliutils.NotFoundOutput, out.String())
 			} else {
-				require.NoError(t, err)
-				var resp types.QueryGetProposedDisableValidatorResponse
-				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.ProposedDisableValidator)
+				var proposedDisableValidator types.ProposedDisableValidator
+				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &proposedDisableValidator))
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.ProposedDisableValidator),
+					nullify.Fill(&proposedDisableValidator),
 				)
 			}
 		})
