@@ -61,15 +61,3 @@ func (k Keeper) GetAllProposedDisableValidator(ctx sdk.Context) (list []types.Pr
 
 	return
 }
-
-//TODO::::::::
-// func (disableValidator types.ProposedDisableValidator) HasApprovalFrom(address sdk.AccAddress) bool {
-// 	addrStr := address.String()
-// 	for _, approval := range disableValidator.Approvals {
-// 		if approval == addrStr {
-// 			return true
-// 		}
-// 	}
-
-// 	return false
-// }

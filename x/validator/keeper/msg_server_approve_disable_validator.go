@@ -28,18 +28,16 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 	// check if proposed disable validator exists
 	proposedDisableValidator, isFound := k.GetProposedDisableValidator(ctx, msg.Address)
 	if !isFound {
-		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Address)
+		return nil, types.NewErrProposedDisableValidatorDoesNotExist(msg.Address)
 	}
 
-	//TODO::::
-	// // check if disable validator already has approval form message creator
-	// proposedDisableValidator.HasApprovalFrom()
-	// if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
-	// 	return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-	// 		"Disabled validator with address=%v already has approval from=%v",
-	// 		msg.Address, msg.Creator,
-	// 	)
-	// }
+	// check if disable validator already has approval form message creator
+	if proposedDisableValidator.HasApprovalFrom(creatorAddr) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"Disabled validator with address=%v already has approval from=%v",
+			msg.Address, msg.Creator,
+		)
+	}
 
 	// append approval
 	proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals, creatorAddr.String())
@@ -47,10 +45,11 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 	// check if proposed disable validator has enough approvals
 	if len(proposedDisableValidator.Approvals) == k.DisableValidatorApprovalsCount(ctx) {
 		// remove disable validator
-		k.RemoveDisabledValidator(ctx, proposedDisableValidator.Address)
+		k.RemoveProposedDisableValidator(ctx, proposedDisableValidator.Address)
 
 		approvedUpgrage := types.DisabledValidator{
 			Address:             proposedDisableValidator.Address,
+			Creator:             proposedDisableValidator.Creator,
 			Approvals:           proposedDisableValidator.Approvals,
 			DisabledByNodeAdmin: false,
 		}

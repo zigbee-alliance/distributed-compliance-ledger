@@ -34,6 +34,7 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 	if k.DisableValidatorApprovalsCount(ctx) > 1 {
 		proposedDisableValidator := types.ProposedDisableValidator{
 			Address:   msg.Address,
+			Creator:   msg.Creator,
 			Approvals: []string{msg.Creator},
 		}
 
@@ -42,6 +43,7 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 	} else {
 		disabledValidator := types.DisabledValidator{
 			Address:             msg.Address,
+			Creator:             msg.Creator,
 			Approvals:           []string{msg.Creator},
 			DisabledByNodeAdmin: false,
 		}

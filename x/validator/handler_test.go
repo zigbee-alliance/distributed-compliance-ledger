@@ -211,7 +211,7 @@ func TestHandler_OnlyTrusteeCanProposeDisableValidator(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee, dclauthtypes.CertificationCenter, dclauthtypes.Vendor}, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter, dclauthtypes.Vendor}, nil, testconstants.VendorID1)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	// propose new disablevalidator
@@ -313,7 +313,7 @@ func TestHandler_ProposeDisableValidatorWhenMoreVotesNeeded(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID3)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
-	ba4 := authtypes.NewBaseAccount(testdata.GenerateAccAddress(), testconstants.PubKey4, 0, 0)
+	ba4 := authtypes.NewBaseAccount(testdata.GenerateAccAddress(), testconstants.ValidatorPubKey1, 0, 0)
 	account4 := dclauthtypes.NewAccount(ba4,
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, 4000)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account4)
