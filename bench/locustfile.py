@@ -24,7 +24,6 @@ from locust import HttpUser, task, events, LoadTestShape
 DEFAULT_TARGET_HOST = "http://localhost:26657"
 DEFAULT_REST_HOST = "http://localhost:26640"
 
-DCLCLI = "dcld"
 
 txns = []
 dcl_hosts = []
@@ -134,7 +133,7 @@ class DCLWriteUser(HttpUser):
                 "id": 1
             }
             with self.client.post(
-                f"{self.host}/", json.dumps(payload), name="write-txn",
+                f"{self.host}/", json.dumps(payload), name="write transactions",
                 catch_response=True
             ) as response:
                 # logger.debug(f"{self.username}: response {response.__dict__}")
@@ -188,7 +187,7 @@ class DCLReadUser(HttpUser):
         return models[index]['pid']
     
 
-    def url_get_specific_model(self):
+    def generate_get_model_url(self):
         # Gererate random number for get random model
         index = random.randint(0, len(models)-1)
 
@@ -196,14 +195,14 @@ class DCLReadUser(HttpUser):
         vid = self.get_model_vid(index)
         pid = self.get_model_pid(index)
 
-        url = "/dcl/model/models/" + str(vid) + "/" + str(pid)
+        url = self.rest_host + "/dcl/model/models/" + str(vid) + "/" + str(pid)
         return url 
 
 
     @task
-    def getModel(self):
+    def get_model(self):
         global READ_REQUEST_COUNT
-        self.client.get(self.rest_host + self.url_get_specific_model(), name = "dcl/model/models/vid/pid")
+        self.client.get(self.generate_get_model_url(), name = "get random model")
         READ_REQUEST_COUNT += 1
 
 
@@ -217,7 +216,7 @@ class DCLReadUser(HttpUser):
         # Get models list only once
         if len(models) == 0:
             # Get up to 1000 models
-            response = self.client.get(self.rest_host + "/dcl/model/models?pagination.limit=1000", name="get-all-models")
+            response = self.client.get(self.rest_host + "/dcl/model/models?pagination.limit=1000", name="get all models")
 
             # JSON type convert to type of Class(dictonary)
             json_var = response.json()
