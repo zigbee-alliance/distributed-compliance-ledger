@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-// SetDisabledValidator set a specific disabledValidator in the store from its index
+// SetDisabledValidator set a specific disabledValidator in the store from its index.
 func (k Keeper) SetDisabledValidator(ctx sdk.Context, disabledValidator types.DisabledValidator) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DisabledValidatorKeyPrefix))
 	b := k.cdc.MustMarshal(&disabledValidator)
@@ -15,7 +15,7 @@ func (k Keeper) SetDisabledValidator(ctx sdk.Context, disabledValidator types.Di
 	), b)
 }
 
-// GetDisabledValidator returns a disabledValidator from its index
+// GetDisabledValidator returns a disabledValidator from its index.
 func (k Keeper) GetDisabledValidator(
 	ctx sdk.Context,
 	address string,
@@ -34,7 +34,7 @@ func (k Keeper) GetDisabledValidator(
 	return val, true
 }
 
-// RemoveDisabledValidator removes a disabledValidator from the store
+// RemoveDisabledValidator removes a disabledValidator from the store.
 func (k Keeper) RemoveDisabledValidator(
 	ctx sdk.Context,
 	address string,
@@ -46,7 +46,7 @@ func (k Keeper) RemoveDisabledValidator(
 	))
 }
 
-// GetAllDisabledValidator returns all disabledValidator
+// GetAllDisabledValidator returns all disabledValidator.
 func (k Keeper) GetAllDisabledValidator(ctx sdk.Context) (list []types.DisabledValidator) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.DisabledValidatorKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})

@@ -17,7 +17,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func networkWithDisabledValidatorObjects(t *testing.T, n int) (*network.Network, []types.DisabledValidator) {

@@ -31,7 +31,6 @@ func (k Keeper) DisabledValidatorAll(c context.Context, req *types.QueryAllDisab
 		disabledValidators = append(disabledValidators, disabledValidator)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

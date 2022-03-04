@@ -48,7 +48,6 @@ func ValidatorKeeper(t testing.TB, dclauthK *dclauthkeeper.Keeper) (*keeper.Keep
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
 	return k, ctx
-
 }
 
 func DefaultValidator() types.Validator {

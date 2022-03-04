@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNProposedDisableValidator(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.ProposedDisableValidator {
@@ -39,6 +39,7 @@ func TestProposedDisableValidatorGet(t *testing.T) {
 		)
 	}
 }
+
 func TestProposedDisableValidatorRemove(t *testing.T) {
 	keeper, ctx := keepertest.ValidatorKeeper(t, nil)
 	items := createNProposedDisableValidator(keeper, ctx, 10)
