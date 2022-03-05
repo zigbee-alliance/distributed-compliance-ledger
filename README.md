@@ -16,7 +16,7 @@ DC Ledger is a public permissioned Ledger which can be used for two main use cas
  - ZB/Matter compliance certification of device models
  - Public key infrastructure (PKI)
  
-More information about use cases can be found in [DC Ledger Overview](docs/ZB_Ledger_overview.pdf) and [Use Case Diagrams](docs/use_cases).
+More information about use cases can be found in [DC Ledger Overview](./docs/design/DCL-Overview.pdf) and [Use Case Diagrams](docs/use_cases).
 
 DC Ledger is based on [Tendermint](https://tendermint.com/) and [Cosmos SDK](https://cosmos.network/sdk).
 
@@ -25,11 +25,11 @@ DC Ledger is a public permissioned ledger in the following sense:
  - Writes to the ledger are permissioned. See [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
  - PoA (proof of authority) approach is used for adding new validator nodes to the network 
  (see [Add New Node Use Case](docs/use_cases/use_cases_add_validator_node.png)) and
-  [Running Node Instructions](docs/running-validator-node.md).
+  [Running Node Instructions](docs/advanced/running-validator-node.md).
 
 In order to send write transactions to the ledger you need: 
    - Have a private/public key pair
-   - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](use_cases/use_cases_txn_auth.puml)).
+   - Have an Account created on the ledger via `ACCOUNT` transaction (see [Use Case Txn Auth](docs/use_cases/use_cases_txn_auth.puml)).
        - The Account stores the public part of the key
        - The Account has an associated role. The role is used for authorization policies.
    - Sign every transaction by the private key.
@@ -83,7 +83,7 @@ A Light Client Proxy can be connected to multiple nodes and will verify the stat
     - please note that it doesn't show all the accounts on the ledger
     - it shows only the default (demo) accounts created on the UI server
 - **for demo purposes only**: can be used for sending write requests from the default (demo) accounts     
-- source code and documentation are located in [dcl-ui](/dcl-ui) directory
+- source code and documentation are located in [dcl-ui](dcl-ui) directory
 
 
 ## How To
