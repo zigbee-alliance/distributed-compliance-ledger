@@ -44,6 +44,10 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 		DisabledByNodeAdmin: true,
 	}
 
+	// Disable validator
+	validator, _ := k.GetValidator(ctx, sdk.ValAddress(msg.Address))
+	k.Jail(ctx, validator, msg.Info)
+
 	// store disabled validator
 	k.SetDisabledValidator(ctx, disabledValidator)
 

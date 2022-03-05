@@ -260,6 +260,17 @@ func TestHandler_ProposeDisableValidatorWhenSeveralVotesNeeded(t *testing.T) {
 func TestHandler_DisabledValidator(t *testing.T) {
 	setup := Setup(t)
 
+	// create validator
+	valAddr := sdk.ValAddress(testconstants.Address1)
+	msgCreateValidator, err := types.NewMsgCreateValidator(
+		valAddr,
+		testconstants.ValidatorPubKey1,
+		&types.Description{Moniker: testconstants.ProductName},
+	)
+	require.NoError(t, err)
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.NoError(t, err)
+
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
@@ -278,7 +289,7 @@ func TestHandler_DisabledValidator(t *testing.T) {
 
 	// propose and approve new disablevalidators
 	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress())
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator1)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator1)
 	require.NoError(t, err)
 
 	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress())
@@ -296,6 +307,57 @@ func TestHandler_DisabledValidator(t *testing.T) {
 	require.Equal(t, msgProposeDisableValidator1.Info, disabledValidator.Approvals[0].Info)
 	require.Equal(t, msgProposeDisableValidator1.Time, disabledValidator.Approvals[0].Time)
 	require.False(t, disabledValidator.DisabledByNodeAdmin)
+
+	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, sdk.ValAddress(msgProposeDisableValidator1.Address))
+	require.True(t, isFound)
+	require.True(t, validator.Jailed)
+}
+
+func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
+	setup := Setup(t)
+
+	// create validator
+	valAddr := sdk.ValAddress(testconstants.Address1)
+	msgCreateValidator, err := types.NewMsgCreateValidator(
+		valAddr,
+		testconstants.ValidatorPubKey1,
+		&types.Description{Moniker: testconstants.ProductName},
+	)
+	require.NoError(t, err)
+	_, err = setup.Handler(setup.Ctx, msgCreateValidator)
+	require.NoError(t, err)
+
+	// create Trustees
+	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
+	account1 := dclauthtypes.NewAccount(ba1,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID1)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
+
+	ba2 := authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
+	account2 := dclauthtypes.NewAccount(ba2,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID2)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
+
+	// propose new disablevalidators
+	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress())
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator1)
+	require.NoError(t, err)
+
+	_, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, msgProposeDisableValidator1.Address)
+	require.False(t, isFound)
+
+	disabledValidator, isFound := setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, msgProposeDisableValidator1.Address)
+	require.True(t, isFound)
+	require.Equal(t, msgProposeDisableValidator1.Address, disabledValidator.Address)
+	require.Equal(t, msgProposeDisableValidator1.Creator, disabledValidator.Creator)
+	require.Equal(t, msgProposeDisableValidator1.Creator, disabledValidator.Approvals[0].Address)
+	require.Equal(t, msgProposeDisableValidator1.Info, disabledValidator.Approvals[0].Info)
+	require.Equal(t, msgProposeDisableValidator1.Time, disabledValidator.Approvals[0].Time)
+	require.False(t, disabledValidator.DisabledByNodeAdmin)
+
+	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, sdk.ValAddress(msgProposeDisableValidator1.Address))
+	require.True(t, isFound)
+	require.True(t, validator.Jailed)
 }
 
 func TestHandler_ProposeDisableValidatorWhenMoreVotesNeeded(t *testing.T) {
@@ -422,7 +484,7 @@ func TestHandler_MessageCreatorAlreadyApprovedDisableValidator(t *testing.T) {
 func NewMsgProposeDisableValidator(signer sdk.AccAddress) *types.MsgProposeDisableValidator {
 	return &types.MsgProposeDisableValidator{
 		Creator: signer.String(),
-		Address: testconstants.ValidatorAddress1,
+		Address: string(testconstants.Address1),
 		Time:    testconstants.Time,
 		Info:    testconstants.Info,
 	}
@@ -431,7 +493,7 @@ func NewMsgProposeDisableValidator(signer sdk.AccAddress) *types.MsgProposeDisab
 func NewMsgApproveDisableValidator(signer sdk.AccAddress) *types.MsgApproveDisableValidator {
 	return &types.MsgApproveDisableValidator{
 		Creator: signer.String(),
-		Address: testconstants.ValidatorAddress1,
+		Address: string(testconstants.Address1),
 		Time:    testconstants.Time,
 		Info:    testconstants.Info,
 	}
