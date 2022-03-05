@@ -29,6 +29,9 @@ func CmdListDisabledValidator() *cobra.Command {
 			}
 
 			res, err := queryClient.DisabledValidatorAll(context.Background(), params)
+			if cli.IsKeyNotFoundRpcError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
+			}
 			if err != nil {
 				return err
 			}
