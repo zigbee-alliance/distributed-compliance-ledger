@@ -7,7 +7,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/tendermint/tendermint/libs/log"
-	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -42,5 +41,5 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 func (k Keeper) DisableValidatorApprovalsCount(ctx sdk.Context) int {
-	return int(math.Round(types.DisableValidatorPercent * float64(k.dclauthKeeper.CountAccountsWithRole(ctx, dclauthtypes.Trustee))))
+	return int(math.Round(types.DisableValidatorPercent * float64(k.dclauthKeeper.CountAccountsWithRole(ctx, types.VoteForDisableValidatorRole))))
 }

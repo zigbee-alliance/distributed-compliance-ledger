@@ -5,7 +5,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -18,10 +17,10 @@ func (k msgServer) EnableValidator(goCtx context.Context, msg *types.MsgEnableVa
 	}
 
 	// check if message creator has enough rights to propose disable validator
-	if !k.dclauthKeeper.HasRole(ctx, creatorAddr, dclauthtypes.NodeAdmin) {
+	if !k.dclauthKeeper.HasRole(ctx, creatorAddr, types.EnableDisableValidatorRole) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Enable validator transaction should be signed by an account with the %s role",
-			dclauthtypes.NodeAdmin,
+			types.EnableDisableValidatorRole,
 		)
 	}
 

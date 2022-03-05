@@ -4,6 +4,7 @@ import dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // TODO: 1. Move it to separate module  	2. Make it configurable		3. Save into store.
 var (
-	DisableValidatorPercent = 0.66
-	DisableValidatorRole    = []dclauthtypes.AccountRole{dclauthtypes.Trustee, dclauthtypes.NodeAdmin}
+	DisableValidatorPercent     = 0.66
+	VoteForDisableValidatorRole = dclauthtypes.Trustee
+	EnableDisableValidatorRole  = dclauthtypes.NodeAdmin
 )
