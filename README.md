@@ -56,8 +56,7 @@ See
 - [Deployment](docs/deployment.png)
 - [Deployment-detailed](docs/deployment-detailed.png).
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
-- https://docs.tendermint.com/master/nodes/
-- https://docs.tendermint.com/master/nodes/validators.html
+- https://docs.tendermint.com/v0.34/tendermint-core/validators.html
 - [Run Light Client Proxy](docs/running-light-client-proxy.md)
 
 ### Clients
