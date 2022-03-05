@@ -39,11 +39,17 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 		return nil, err
 	}
 
+	grant := types.Grant{
+		Address: creatorAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
+
 	if k.UpgradeApprovalsCount(ctx) > 1 {
 		proposedUpgrade := types.ProposedUpgrade{
 			Plan:      msg.Plan,
 			Creator:   msg.Creator,
-			Approvals: []string{msg.Creator},
+			Approvals: []*types.Grant{&grant},
 		}
 
 		// store proposed upgrade
@@ -55,8 +61,9 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 		approvedUpgrage := types.ApprovedUpgrade{
 			Plan:      msg.Plan,
 			Creator:   msg.Creator,
-			Approvals: []string{msg.Creator},
+			Approvals: []*types.Grant{&grant},
 		}
+
 		k.SetApprovedUpgrade(ctx, approvedUpgrage)
 	}
 
