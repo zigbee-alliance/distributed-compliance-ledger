@@ -33,32 +33,32 @@ message MsgCreateValidatorResponse {
 }
 
 message MsgProposeDisableValidator {
-  string creator = 1;
-  string address = 2;
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgProposeDisableValidatorResponse {
 }
 
 message MsgApproveDisableValidator {
-  string creator = 1;
-  string address = 2;
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgApproveDisableValidatorResponse {
 }
 
 message MsgDisableValidator {
-  string creator = 1;
-  string address = 2;
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgDisableValidatorResponse {
 }
 
 message MsgEnableValidator {
-  string creator = 1;
-  string address = 2;
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
 }
 
 message MsgEnableValidatorResponse {
