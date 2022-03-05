@@ -249,7 +249,9 @@ func TestHandler_ProposeDisableValidatorWhenSeveralVotesNeeded(t *testing.T) {
 	require.True(t, isFound)
 	require.Equal(t, msgProposeDisableValidator.Address, proposedDisableValidator.Address)
 	require.Equal(t, msgProposeDisableValidator.Creator, proposedDisableValidator.Creator)
-	require.Equal(t, msgProposeDisableValidator.Creator, proposedDisableValidator.Approvals[0])
+	require.Equal(t, msgProposeDisableValidator.Creator, proposedDisableValidator.Approvals[0].Address)
+	require.Equal(t, msgProposeDisableValidator.Info, proposedDisableValidator.Approvals[0].Info)
+	require.Equal(t, msgProposeDisableValidator.Time, proposedDisableValidator.Approvals[0].Time)
 
 	_, isFound = setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, msgProposeDisableValidator.Address)
 	require.False(t, isFound)
@@ -290,7 +292,9 @@ func TestHandler_DisabledValidator(t *testing.T) {
 	require.True(t, isFound)
 	require.Equal(t, msgProposeDisableValidator1.Address, disabledValidator.Address)
 	require.Equal(t, msgProposeDisableValidator1.Creator, disabledValidator.Creator)
-	require.Equal(t, msgProposeDisableValidator1.Creator, disabledValidator.Approvals[0])
+	require.Equal(t, msgProposeDisableValidator1.Creator, disabledValidator.Approvals[0].Address)
+	require.Equal(t, msgProposeDisableValidator1.Info, disabledValidator.Approvals[0].Info)
+	require.Equal(t, msgProposeDisableValidator1.Time, disabledValidator.Approvals[0].Time)
 	require.False(t, disabledValidator.DisabledByNodeAdmin)
 }
 
@@ -331,7 +335,9 @@ func TestHandler_ProposeDisableValidatorWhenMoreVotesNeeded(t *testing.T) {
 	require.True(t, isFound)
 	require.Equal(t, msgProposeDisableValidator.Address, proposedDisableValidator.Address)
 	require.Equal(t, msgProposeDisableValidator.Creator, proposedDisableValidator.Creator)
-	require.Equal(t, msgProposeDisableValidator.Creator, proposedDisableValidator.Approvals[0])
+	require.Equal(t, msgProposeDisableValidator.Creator, proposedDisableValidator.Approvals[0].Address)
+	require.Equal(t, msgProposeDisableValidator.Info, proposedDisableValidator.Approvals[0].Info)
+	require.Equal(t, msgProposeDisableValidator.Time, proposedDisableValidator.Approvals[0].Time)
 	require.Equal(t, 2, len(proposedDisableValidator.Approvals))
 
 	_, isFound = setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, msgProposeDisableValidator.Address)
@@ -417,6 +423,8 @@ func NewMsgProposeDisableValidator(signer sdk.AccAddress) *types.MsgProposeDisab
 	return &types.MsgProposeDisableValidator{
 		Creator: signer.String(),
 		Address: testconstants.ValidatorAddress1,
+		Time:    testconstants.Time,
+		Info:    testconstants.Info,
 	}
 }
 
@@ -424,5 +432,7 @@ func NewMsgApproveDisableValidator(signer sdk.AccAddress) *types.MsgApproveDisab
 	return &types.MsgApproveDisableValidator{
 		Creator: signer.String(),
 		Address: testconstants.ValidatorAddress1,
+		Time:    testconstants.Time,
+		Info:    testconstants.Info,
 	}
 }

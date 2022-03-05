@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -10,10 +12,12 @@ const TypeMsgEnableValidator = "enable_validator"
 
 var _ sdk.Msg = &MsgEnableValidator{}
 
-func NewMsgEnableValidator(creator string, address string) *MsgEnableValidator {
+func NewMsgEnableValidator(creator string, address string, info string) *MsgEnableValidator {
 	return &MsgEnableValidator{
 		Creator: creator,
 		Address: address,
+		Info:    info,
+		Time:    time.Now().Unix(),
 	}
 }
 

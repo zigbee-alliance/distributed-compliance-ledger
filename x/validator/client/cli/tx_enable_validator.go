@@ -14,7 +14,10 @@ import (
 var _ = strconv.Itoa(0)
 
 func CmdEnableValidator() *cobra.Command {
-	var address string
+	var (
+		address string
+		info    string
+	)
 
 	cmd := &cobra.Command{
 		Use:   "enable-validator --address [address]",
@@ -29,6 +32,7 @@ func CmdEnableValidator() *cobra.Command {
 			msg := types.NewMsgEnableValidator(
 				clientCtx.GetFromAddress().String(),
 				address,
+				info,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -41,6 +45,7 @@ func CmdEnableValidator() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&address, FlagAddress, "", "Bench32 encoded validator address or owner account")
+	cmd.Flags().StringVar(&info, FlagInfo, "", "Optional information/notes for approval, proposal, disable or enable validator")
 
 	flags.AddTxFlagsToCmd(cmd)
 

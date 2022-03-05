@@ -40,7 +40,13 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 	}
 
 	// append approval
-	proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals, creatorAddr.String())
+	grant := types.Grant{
+		Address: creatorAddr.String(),
+		Time:    msg.Time,
+		Info:    msg.Info,
+	}
+
+	proposedDisableValidator.Approvals = append(proposedDisableValidator.Approvals, &grant)
 
 	// check if proposed disable validator has enough approvals
 	if len(proposedDisableValidator.Approvals) == k.DisableValidatorApprovalsCount(ctx) {

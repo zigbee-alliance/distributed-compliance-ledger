@@ -35,6 +35,8 @@ message MsgCreateValidatorResponse {
 message MsgProposeDisableValidator {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
 }
 
 message MsgProposeDisableValidatorResponse {
@@ -43,6 +45,8 @@ message MsgProposeDisableValidatorResponse {
 message MsgApproveDisableValidator {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
 }
 
 message MsgApproveDisableValidatorResponse {
@@ -51,6 +55,8 @@ message MsgApproveDisableValidatorResponse {
 message MsgDisableValidator {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
 }
 
 message MsgDisableValidatorResponse {
@@ -59,6 +65,8 @@ message MsgDisableValidatorResponse {
 message MsgEnableValidator {
   string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
 }
 
 message MsgEnableValidatorResponse {

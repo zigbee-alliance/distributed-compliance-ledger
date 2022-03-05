@@ -14,10 +14,13 @@ import (
 var _ = strconv.Itoa(0)
 
 func CmdApproveDisableValidator() *cobra.Command {
-	var address string
+	var (
+		address string
+		info    string
+	)
 
 	cmd := &cobra.Command{
-		Use:   "approve-disable-validator --address [address]",
+		Use:   "approve-disable-validator --address --info [info] [address]",
 		Short: "Approves disabling of the Validator node by a Trustee.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -29,6 +32,7 @@ func CmdApproveDisableValidator() *cobra.Command {
 			msg := types.NewMsgApproveDisableValidator(
 				clientCtx.GetFromAddress().String(),
 				address,
+				info,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -41,6 +45,7 @@ func CmdApproveDisableValidator() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&address, FlagAddress, "", "Bench32 encoded validator address or owner account")
+	cmd.Flags().StringVar(&info, FlagInfo, "", "Optional information/notes for approval, proposal, disable or enable validator")
 
 	flags.AddTxFlagsToCmd(cmd)
 

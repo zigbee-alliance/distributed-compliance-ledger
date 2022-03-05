@@ -33,18 +33,30 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 
 	if k.DisableValidatorApprovalsCount(ctx) > 1 {
 		proposedDisableValidator := types.ProposedDisableValidator{
-			Address:   msg.Address,
-			Creator:   msg.Creator,
-			Approvals: []string{msg.Creator},
+			Address: msg.Address,
+			Creator: msg.Creator,
+			Approvals: []*types.Grant{
+				{
+					Address: msg.Creator,
+					Time:    msg.Time,
+					Info:    msg.Info,
+				},
+			},
 		}
 
-		// store disabled validator
+		// store proposed disable validator
 		k.SetProposedDisableValidator(ctx, proposedDisableValidator)
 	} else {
 		disabledValidator := types.DisabledValidator{
-			Address:             msg.Address,
-			Creator:             msg.Creator,
-			Approvals:           []string{msg.Creator},
+			Address: msg.Address,
+			Creator: msg.Creator,
+			Approvals: []*types.Grant{
+				{
+					Address: msg.Creator,
+					Time:    msg.Time,
+					Info:    msg.Info,
+				},
+			},
 			DisabledByNodeAdmin: false,
 		}
 

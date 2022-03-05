@@ -32,9 +32,15 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 	}
 
 	disabledValidator := types.DisabledValidator{
-		Address:             msg.Address,
-		Creator:             msg.Creator,
-		Approvals:           []string{msg.Creator},
+		Address: msg.Address,
+		Creator: msg.Creator,
+		Approvals: []*types.Grant{
+			{
+				Address: msg.Creator,
+				Time:    msg.Time,
+				Info:    msg.Info,
+			},
+		},
 		DisabledByNodeAdmin: true,
 	}
 
