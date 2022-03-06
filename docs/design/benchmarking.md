@@ -27,7 +27,7 @@
 
 ### Tendermint metrics
 
-Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/v0.34/nodes/metrics.html#metrics).
+Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/v0.35/nodes/metrics.html#metrics).
 
 The following ones makes sense to track:
 
