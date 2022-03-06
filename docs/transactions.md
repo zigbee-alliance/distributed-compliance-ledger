@@ -1286,6 +1286,20 @@ dcld query dclupgrade proposed-upgrade --name=<string>
 - REST API: 
     -   GET `/dcl/dclupgrade/proposed-upgrades/{name}`
 
+#### GET_APPROVED_UPGRADE
+**Status: Implemented**
+
+Gets the approved upgrade plan with the given name.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+- CLI command:
+```
+dcld query dclupgrade approved-upgrade --name=<string>
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/approved-upgrades/{name}`
+
 #### GET_ALL_PROPOSED_UPGRADES
 **Status: Implemented**
 
@@ -1299,6 +1313,20 @@ dcld query dclupgrade all-proposed-upgrades
 ```
 - REST API: 
     -   GET `/dcl/dclupgrade/proposed-upgrades`
+
+#### GET_ALL_APPROVED_UPGRADES
+**Status: Implemented**
+
+Gets all the approved upgrade plans.
+
+- Parameters:
+    - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+```
+dcld query dclupgrade all-approved-upgrades
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/approved-upgrades`
 
 #### PLAN
 **Status: Implemented**

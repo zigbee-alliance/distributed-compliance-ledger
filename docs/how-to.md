@@ -164,7 +164,7 @@ dcld tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<h
  
 ##### 9. Propose a pool upgrade
 ```
-dcld tx dclupgrade propose-upgrade --name=<upgrade name> --upgrade-height=<upgrade height> --from=<account>
+dcld tx dclupgrade propose-upgrade --name=<upgrade name> --upgrade-height=<upgrade height> --upgrade-info=<upgrade info> --from=<account>
 ```
   
 ##### 10. Approve a pool upgrade
