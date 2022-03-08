@@ -20,6 +20,14 @@ func NewErrProposedUpgradeAlreadyExists(name interface{}) error {
 	)
 }
 
+func NewErrApprovedUpgradeAlreadyExists(name interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrProposedUpgradeAlreadyExists,
+		"Approved upgrade with name=%v already exists on the ledger",
+		name,
+	)
+}
+
 func NewErrProposedUpgradeDoesNotExist(name interface{}) error {
 	return sdkerrors.Wrapf(
 		ErrProposedUpgradeDoesNotExist,

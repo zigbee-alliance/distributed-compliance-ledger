@@ -15,4 +15,5 @@ type DclauthKeeper interface {
 type UpgradeKeeper interface {
 	// Methods imported from upgrade should be defined here
 	ScheduleUpgrade(ctx sdk.Context, plan upgradetypes.Plan) error
+	GetUpgradePlan(ctx sdk.Context) (plan upgradetypes.Plan, havePlan bool)
 }

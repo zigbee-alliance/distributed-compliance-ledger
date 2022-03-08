@@ -26,6 +26,8 @@ func (m *DclauthKeeperMock) CountAccountsWithRole(ctx sdk.Context, roleToCount d
 	return args.Int(0)
 }
 
+var _ types.DclauthKeeper = &DclauthKeeperMock{}
+
 type UpgradeKeeperMock struct {
 	mock.Mock
 }
@@ -35,4 +37,9 @@ func (m *UpgradeKeeperMock) ScheduleUpgrade(ctx sdk.Context, plan upgradetypes.P
 	return args.Error(0)
 }
 
-var _ types.DclauthKeeper = &DclauthKeeperMock{}
+func (m *UpgradeKeeperMock) GetUpgradePlan(ctx sdk.Context) (plan types.Plan, havePlan bool) {
+	args := m.Called(ctx)
+	return args.Get(0).(types.Plan), args.Bool(1)
+}
+
+var _ types.UpgradeKeeper = &UpgradeKeeperMock{}

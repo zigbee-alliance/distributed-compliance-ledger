@@ -22,6 +22,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -68,6 +69,8 @@ func Setup(t *testing.T) TestSetup {
 		UpgradeKeeper: upgradeKeeper,
 		Handler:       NewHandler(*keeper),
 	}
+
+	setup.UpgradeKeeper.On("GetUpgradePlan", mock.Anything).Return(upgradetypes.Plan{}, false)
 
 	return setup
 }

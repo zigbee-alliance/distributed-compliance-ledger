@@ -43,10 +43,18 @@ func (k msgServer) ApproveUpgrade(goCtx context.Context, msg *types.MsgApproveUp
 
 	// check if proposed upgrade has enough approvals
 	if len(proposedUpgrade.Approvals) == k.UpgradeApprovalsCount(ctx) {
+		// Get existing scheduled plan which will be displaced by upgrade being approved
+		existingPlan, existingPlanFound := k.upgradeKeeper.GetUpgradePlan(ctx)
+
 		// schedule upgrade
 		err = k.upgradeKeeper.ScheduleUpgrade(ctx, proposedUpgrade.Plan)
 		if err != nil {
 			return nil, err
+		}
+
+		// Remove approved upgrade that was previously scheduled if any
+		if existingPlanFound {
+			k.RemoveApprovedUpgrade(ctx, existingPlan.Name)
 		}
 
 		// remove proposed upgrade
