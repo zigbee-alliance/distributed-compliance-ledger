@@ -15,18 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import random
-import sys
-import os
-import yaml
 import json
+import os
+import random
 import subprocess
+import sys
 import tempfile
-from struct import pack
 from pathlib import Path
+from struct import pack
 
+import yaml
 from render import render
-
 
 DCLCLI = "dcld"
 DCL_CHAIN_ID = "dclchain"
@@ -41,10 +40,11 @@ QUERIES_F = "q"
 MODEL_INFO_PREFIX = 1
 # VENDOR_PRODUCTS_PREFIX = 2
 
-#VENDOR_NAME = "artur"
+# VENDOR_NAME = "artur"
+
 
 def pack_model_info_key(vid, pid):
-    return pack('<bhh', MODEL_INFO_PREFIX, vid, pid)
+    return pack("<bhh", MODEL_INFO_PREFIX, vid, pid)
 
 
 def run_shell_cmd(cmd, **kwargs):
@@ -52,7 +52,7 @@ def run_shell_cmd(cmd, **kwargs):
         check=True,
         universal_newlines=True,
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        stderr=subprocess.PIPE,
     )
 
     _kwargs.update(kwargs)
@@ -85,7 +85,7 @@ def yaml_dump(
     indent=4,
     default_flow_style=False,
     canonical=False,
-    **kwargs
+    **kwargs,
 ):
     return yaml.safe_dump(
         data,
@@ -94,7 +94,7 @@ def yaml_dump(
         canonical=canonical,
         width=width,
         indent=indent,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -113,9 +113,7 @@ def txn_generate(u_address, txn_t_cls, txn_t_cmd, **params):
 def txn_sign(u_address, account, sequence, f_path):
     cmd = [DCLCLI, "tx", "sign", "--chain-id", DCL_CHAIN_ID]
     params = {"from": u_address}
-    cmd += to_cli_args(
-        account_number=account, sequence=sequence, gas="auto", **params
-    )
+    cmd += to_cli_args(account_number=account, sequence=sequence, gas="auto", **params)
     cmd.extend(["--offline", f_path])
     return run_shell_cmd(cmd).stdout
 
@@ -123,6 +121,7 @@ def txn_sign(u_address, account, sequence, f_path):
 def txn_encode(f_path):
     cmd = [DCLCLI, "tx", "encode", f_path]
     return run_shell_cmd(cmd).stdout
+
 
 def keys_delete(key_name):
     # If we have last Vendor account that we'll delete
@@ -137,24 +136,26 @@ def keys_add(key_name):
 
 
 def keys_show_address(key_name):
-    #Get node address
+    # Get node address
     cmd = [DCLCLI, "keys", "show", key_name, "-a"]
     return run_shell_cmd(cmd).stdout
 
 
 def keys_show_pubkey(key_name):
-    #Get node pubkey
+    # Get node pubkey
     cmd = [DCLCLI, "keys", "show", key_name, "-p"]
     return run_shell_cmd(cmd).stdout
 
+
 VENDOR_ID = random.randint(1000, 65000)
 VENDOR_NAME = "artur"
+
 
 def create_vendor_account():
 
     try:
         keys_delete(VENDOR_NAME)
-    except Exception as ex:
+    except Exception:
         print("We don't remove that user, because that user does not exist in dcld")
 
     keys_add(VENDOR_NAME)
@@ -164,33 +165,75 @@ def create_vendor_account():
     vendor_pubkey = keys_show_pubkey(VENDOR_NAME).rstrip("\n")
 
     # Send to request to another node to propose
-    cmd = [DCLCLI, "tx", "auth", "propose-add-account", "--address=" + vendor_address, "--pubkey=" + vendor_pubkey, "--roles=Vendor", "--vid=" + str(VENDOR_ID), "--from=jack", "--yes"]
+    cmd = [
+        DCLCLI,
+        "tx",
+        "auth",
+        "propose-add-account",
+        "--address=" + vendor_address,
+        "--pubkey=" + vendor_pubkey,
+        "--roles=Vendor",
+        "--vid=" + str(VENDOR_ID),
+        "--from=jack",
+        "--yes",
+    ]
     run_shell_cmd(cmd)
 
-    #Send to request to another node to approve
-    cmd = [DCLCLI, "tx", "auth", "approve-add-account", "--address=" + vendor_address, "--from=alice", "--yes"]
+    # Send to request to another node to approve
+    cmd = [
+        DCLCLI,
+        "tx",
+        "auth",
+        "approve-add-account",
+        "--address=" + vendor_address,
+        "--from=alice",
+        "--yes",
+    ]
     run_shell_cmd(cmd)
 
-    #Send to request to another node to approve
-    cmd = [DCLCLI, "tx", "auth", "approve-add-account", "--address=" + vendor_address, "--from=anna", "--yes"]
+    # Send to request to another node to approve
+    cmd = [
+        DCLCLI,
+        "tx",
+        "auth",
+        "approve-add-account",
+        "--address=" + vendor_address,
+        "--from=anna",
+        "--yes",
+    ]
     run_shell_cmd(cmd)
 
 
 def create_model(key_name, current_model_id):
-    cmd = [DCLCLI, "tx", "model", "add-model", "--vid=" + str(VENDOR_ID), "--pid=" + str(current_model_id), "--deviceTypeID=" + str(current_model_id), "--productName=ProductName" + str(current_model_id), "--productLabel=ProductLabel" + str(current_model_id), "--partNumber=PartNumber" + str(current_model_id), "--from=" + key_name, "--yes"]
+    cmd = [
+        DCLCLI,
+        "tx",
+        "model",
+        "add-model",
+        "--vid=" + str(VENDOR_ID),
+        "--pid=" + str(current_model_id),
+        "--deviceTypeID=" + str(current_model_id),
+        "--productName=ProductName" + str(current_model_id),
+        "--productLabel=ProductLabel" + str(current_model_id),
+        "--partNumber=PartNumber" + str(current_model_id),
+        "--from=" + key_name,
+        "--yes",
+    ]
     return run_shell_cmd(cmd).stdout
+
 
 def add_models(add_new_models_count):
 
     create_vendor_account()
 
     current_model_id = 1
-    while current_model_id < add_new_models_count :
+    while current_model_id < add_new_models_count:
         print(create_model(VENDOR_NAME, current_model_id))
         current_model_id += 1
 
 
 ENV_PREFIX = "DCLBENCH_"
+
 
 def get_cli_Arguments():
     render_ctx = {
@@ -201,12 +244,13 @@ def get_cli_Arguments():
 
     return render_ctx
 
+
 def get_new_models_count(render_ctx):
 
     # Check we have key or not
-    if 'add_new_models_count' in render_ctx:
-        str_new_models_count = render_ctx['add_new_models_count']
-    
+    if "add_new_models_count" in render_ctx:
+        str_new_models_count = render_ctx["add_new_models_count"]
+
         # Check argument new models count is natural number or not
         if str_new_models_count.isdigit() and 1 <= int(str_new_models_count):
             add_new_models_count = int(str_new_models_count)
@@ -214,7 +258,7 @@ def get_new_models_count(render_ctx):
     else:
         add_new_models_count = 5
         return add_new_models_count
-    
+
 
 def generate_txns_to_file(render_ctx):
     # TODO argument parsing using argparse
@@ -226,10 +270,8 @@ def generate_txns_to_file(render_ctx):
     except IndexError:
         out_file = None
 
-    account_n_start = spec["defaults"].get(
-        ACCOUNT_N_START_F, DEF_ACCOUNT_N_START)
-    sequence_start = spec["defaults"].get(
-        SEQUENCE_START_F, DEF_SEQUENCE_START)
+    account_n_start = spec["defaults"].get(ACCOUNT_N_START_F, DEF_ACCOUNT_N_START)
+    sequence_start = spec["defaults"].get(SEQUENCE_START_F, DEF_SEQUENCE_START)
 
     users = resolve_users()
 
@@ -250,9 +292,7 @@ def generate_txns_to_file(render_ctx):
                 q_cls, q_t, q_cmd = q_id.split("/")
 
                 if q_cls == "tx":
-                    tmp_file.write_text(
-                        txn_generate(u_address, q_t, q_cmd, **q_data)
-                    )
+                    tmp_file.write_text(txn_generate(u_address, q_t, q_cmd, **q_data))
                     # XXX by some reason pipe to encode doesn't work
                     tmp_file.write_text(
                         txn_sign(u_address, account_n, sequence, str(tmp_file))
@@ -273,7 +313,7 @@ def generate_txns_to_file(render_ctx):
     if out_file is None:
         print(yaml_dump(res))
     else:
-        with out_file.open('w') as fd:
+        with out_file.open("w") as fd:
             yaml_dump(res, fd)
 
 
