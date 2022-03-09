@@ -1,0 +1,39 @@
+---
+# Copyright 2022 Samsung Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: add-genesis-account | stop if unknown role
+  assert:
+    that: item in ['TestHouse','CertificationCenter', 'Trustee', 'NodeAdmin']
+    msg: "{{ item }} is not supported role"
+  loop: "{{ roles }}"
+
+- name: add-genesis-account | read genesis file
+  changed_when: false
+  command: "cat {{ dcld_home }}/config/genesis.json"
+  register: genesis_file
+
+- name: add-genesis-account | get addresses
+  vars:
+    query: "app_state.dclauth.accountList[].base_account.address"
+  set_fact:
+    addresses: "{{ genesis_file.stdout|from_json|json_query(query) }}"
+
+- name: add-genesis-account | print addresses value
+  debug:
+    msg: "addresses={{ addresses }}"
+
+- name: add-genesis-account | add genesis account
+  shell: "{{ dcld.path }} add-genesis-account --address='{{ address }}' --pubkey='{{ pubkey | regex_replace(\"'\", '\"') }}' --roles='{{ roles|flatten|join(',') }}' --home='{{ dcld_home }}'"
+  when: addresses is undefined or address not in addresses
