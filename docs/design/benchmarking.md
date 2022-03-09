@@ -14,20 +14,20 @@
    - simulate deployment as close to production as possible
 
 
-## Client Side Metrics
+## Client-side Metrics
 
 *   `response time` (percentiles): the time between client's initial request and the last byte of a validator response
 *   `requests per second (RPS)`: number of requests per second
 *   `transactions per second (TPS)`: number of write requests (txns) per second
-    *   **Note** to measure that on a client side write requests should use `broadcast_tx_commit` requests
+    *   **Note** to measure that on a client-side write requests should use `broadcast_tx_commit` requests
 *   `number of clients`: number of concurrent clients that ledger serves
 *   (optional) `throughtput` (in/out): number of KB per second. Marked as optional since we don't expect much in/out data due to relatively small txns payloads.
 
-## Server Side Metrics
+## Server-side Metrics
 
 ### Tendermint metrics
 
-Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/master/nodes/metrics.html#metrics).
+Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/v0.34/tendermint-core/metrics.html).
 
 The following ones makes sense to track:
 
@@ -43,7 +43,7 @@ The following ones makes sense to track:
 
 ### Cosmos SDK metrics
 
-Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/master/core/telemetry.html) package as a server side support for application performance and behavior explorations.
+Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/master/core/telemetry.html) package as a server-side support for application performance and behavior explorations.
 
 The following [metrics](https://docs.cosmos.network/master/core/telemetry.html#supported-metrics) make sense to track:
 
@@ -122,7 +122,7 @@ As long as DCledger based on Cosmos SDK and Tendermint which provide standard HT
 *   tests can be configured using simple python scripts (version control, CI/CD), in comparison:
     *   JS based configuration for [K6](https://k6.io/) will likely require more efforts
     *   [jMeter](https://jmeter.apache.org/) configuration is mostly about UI but not coding
-*   [distributed testing](https://docs.locust.io/en/stable/running-locust-distributed.html) with results aggregation is supported (if we decide to use it)
+*   [distributed testing](http://docs.locust.io/en/stable/running-distributed.html) with results aggregation is supported (if we decide to use it)
 *   there are some [concerns](https://k6.io/blog/comparing-best-open-source-load-testing-tools/) regarding its performance and accuracy but the current vision is that it should be acceptable for our case
 
 ## Testing Environment Provisioning Automation
