@@ -1,6 +1,7 @@
 # Helper scripts to build proto files and generate openapi docs
 
-## Prerequisites 
+## Prerequisites
+
 ### Docker
 
 The [Dockerfile](./Dockerfile) might be handy for the following cases:
@@ -18,7 +19,6 @@ docker build -t <name[:tag]> ./scripts
 
 Run docker container (from the root of the project) in an interactive mode:
 
-
 ```bash
 docker run -it -v "$PWD":/dcl <name[:tag]> /bin/bash
 ```
@@ -26,12 +26,14 @@ docker run -it -v "$PWD":/dcl <name[:tag]> /bin/bash
 ## Scripts
 
 Build proto (for example `starport chain build`).
-```
+
+```bash
 starport chain build
 ```
 
 Generate Cosmos base openapi
-```
+
+```bash
 ./scripts/cosmos-swagger-gen.sh base
 ./scripts/cosmos-swagger-gen.sh tx
 ```

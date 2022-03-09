@@ -5,6 +5,7 @@ creates keys defined on `accounts` list variable and set up the command-line
 interface.
 
 ## Requirements
+
 None
 
 ## Role Variables
@@ -44,6 +45,7 @@ The *user* and *group* to be used by OS to run the DCL service. The *home* var
 specifies the path to store DCL config information.
 
 ## Dependencies
+
 None
 
 ## Example Playbook

@@ -2,7 +2,7 @@
 
 This playbook can be used to deploy your own network of validator nodes for debug purposes.
 
-If you like to join one of the persistent networks instead, please follow the [Running Node](../../docs/running-node.md) instructions. 
+If you like to join one of the persistent networks instead, please follow the [Running Node](../../docs/running-node.md) instructions.
 
 ## Setting up nodes
 

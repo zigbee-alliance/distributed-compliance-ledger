@@ -4,7 +4,7 @@ DCLedger testing is implemented in python3 and based on [Locust](https://locust.
 
 ## Requirements
 
-*   python >= 3.7
+* python >= 3.7
 
 ## Installation
 
@@ -20,12 +20,12 @@ pip3 install -r bench/requirements.txt
 
 Each write transactions is signed and thus requires:
 
-*   an account with write permissions (e.g. Vendor account)
-*   proper values for txn `sequence` which enforces txns ordering for an account
+* an account with write permissions (e.g. Vendor account)
+* proper values for txn `sequence` which enforces txns ordering for an account
 
 By that reason load test uses prepared load data which can be generated as follows:
 
-*   Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
+* Initialize the pool and test accounts (**Warning** applicable to local in-docker pool only for now):
 
     ```bash
     make localnet_clean
@@ -38,7 +38,8 @@ By that reason load test uses prepared load data which can be generated as follo
     make localnet_start
     # Note: once started ledger may require some time to complete the initialization.
     ```
-*   Generate test transactions:
+
+* Generate test transactions:
 
     ```bash
     # DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> DCLBENCH_ADD_NEW_MODELS_COUNT=<NUM-NEW-MODELS> python bench/generate.py bench/test.spec.yaml.j2 bench/txns
@@ -47,9 +48,9 @@ By that reason load test uses prepared load data which can be generated as follo
 
 Here the following (**optional**) inputs are considered:
 
-*   `NUM-USERS`: number of client accounts with write access (created as Vendors). Default: 10
-*   `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
-*   `NUM-NEW-MODELS`: models are added to the ledger for reading afterwards in load tests. Default: 5
+* `NUM-USERS`: number of client accounts with write access (created as Vendors). Default: 10
+* `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
+* `NUM-NEW-MODELS`: models are added to the ledger for reading afterwards in load tests. Default: 5
 
 ## Run
 
@@ -63,34 +64,40 @@ And open `http://localhost:9090/` to query and monitor the server-side metrics.
 
 ## Headless
 
-### To run write/read load tests
+To run write/read load tests
+
 ```bash
 locust --headless
 ```
 
-### To run write load tests
+To run write load tests
+
 ```bash
 locust --headless DCLWriteUser
 ```
 
-### To run read load tests
+To run read load tests
+
 ```bash
 locust --headless DCLReadUser
 ```
 
 ## Web UI
 
-### To run write/read load tests
+To run write/read load tests
+
 ```bash
 locust
 ```
 
-### To run write load tests
+To run write load tests
+
 ```bash
 locust DCLWriteUser
 ```
 
-### To run read load tests
+To run read load tests
+
 ```bash
 locust DCLReadUser
 ```
@@ -101,29 +108,29 @@ Then you can open `http://localhost:8089/` and launch the tests from the browser
 
 Run options (DCLedger custom ones):
 
-*   `--dcl-users`: number of users
-*   `--dcl-spawn-rate` Rate to spawn users at (users per second)
-*   `--dcl-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
+* `--dcl-users`: number of users
+* `--dcl-spawn-rate` Rate to spawn users at (users per second)
+* `--dcl-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
     E.g. for local ledger `http://localhost:26657,http://localhost:26659,http://localhost:26661,http://localhost:26663` will specify all the nodes.
-*   `--dcl-rest-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
+* `--dcl-rest-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
     E.g. for local ledger `http://localhost:26640,http://localhost:26641,http://localhost:26642,http://localhost:26643` will specify all the nodes.
-*   `--dcl-txn-file` path to a file with generated txns
+* `--dcl-txn-file` path to a file with generated txns
 
 Statistic options:
 
 [Locust](https://locust.io/) provides the following options to present the results:
 
-*   `--csv <prefix>`: generates a set of stat files (summary, failures, exceptions and stats history) with the provided `<prefix>`
-*   `--csv-full-history`: populates the stats history with more entries (including each specific request type)
-*   `--html <path>`: generates an html report
-*   Web UI also includes `Download Data` tab where the reports can be found.
+* `--csv <prefix>`: generates a set of stat files (summary, failures, exceptions and stats history) with the provided `<prefix>`
+* `--csv-full-history`: populates the stats history with more entries (including each specific request type)
+* `--html <path>`: generates an html report
+* Web UI also includes `Download Data` tab where the reports can be found.
 
 More details can be found in:
 
-*   [locust.conf](../locust.conf): default values
-*   `locust --help` (being in the project root)
-*   [locust configuration](https://docs.locust.io/en/stable/configuration.html)
-*   [locust stats](https://docs.locust.io/en/stable/retrieving-stats.html)
+* [locust.conf](../locust.conf): default values
+* `locust --help` (being in the project root)
+* [locust configuration](https://docs.locust.io/en/stable/configuration.html)
+* [locust stats](https://docs.locust.io/en/stable/retrieving-stats.html)
 
 ### Re-run
 
@@ -146,15 +153,15 @@ Please check the details [here](https://github.com/locustio/locust/wiki/Installa
 
 Additional sources (linux):
 
-*   `man limits.conf`
-*   [RedHat: How to set ulimit values](https://access.redhat.com/solutions/61334)
+* `man limits.conf`
+* [RedHat: How to set ulimit values](https://access.redhat.com/solutions/61334)
 
 ## ToDo
 
-*   explore the options to export test accounts to commit static data (accounts and test txns)
-*   read requests loads
-*   combined (and configured) loads: write + read
-*   stat gathering and interpretation
-*   non-local setups automation and targeting (e.g. AWS)
-*   harden data generation scripts
-*   consider different types of tx: async, sync (currently used), commit
+* explore the options to export test accounts to commit static data (accounts and test txns)
+* read requests loads
+* combined (and configured) loads: write + read
+* stat gathering and interpretation
+* non-local setups automation and targeting (e.g. AWS)
+* harden data generation scripts
+* consider different types of tx: async, sync (currently used), commit
