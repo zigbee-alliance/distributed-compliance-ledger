@@ -12,7 +12,7 @@ As long as DCLedger is built on top of Cosmos SDK and Tendermint their monitorin
 Server:
 
 *   set server settings as described in [Tendermint Metrics](https://docs.tendermint.com/v0.34/tendermint-core/metrics.html)
-*   restart the `dcld` service
+*   restart the `cosmovisor` service
 *   configure a firewall (if any) so incoming HTTP connections to prometheus port would be allowed
 *   verify (e.g. `curl IP:PORT`): you should see the metrics along with the values
 
