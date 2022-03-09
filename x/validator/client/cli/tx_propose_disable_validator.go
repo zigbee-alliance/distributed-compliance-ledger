@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -29,9 +30,15 @@ func CmdProposeDisableValidator() *cobra.Command {
 				return err
 			}
 
+			fromAddr := clientCtx.GetFromAddress()
+			valAddr, err := sdk.ValAddressFromBech32(address)
+			if err != nil {
+				return err
+			}
+
 			msg := types.NewMsgProposeDisableValidator(
-				clientCtx.GetFromAddress().String(),
-				address,
+				fromAddr,
+				valAddr,
 				info,
 			)
 

@@ -5,7 +5,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
 
 func TestMsgDisableValidator_ValidateBasic(t *testing.T) {
@@ -37,7 +37,7 @@ func TestMsgDisableValidator_ValidateBasic(t *testing.T) {
 		{
 			name: "valid DisableValidator message",
 			msg: MsgDisableValidator{
-				Creator: sample.AccAddress(),
+				Creator: testconstants.ValidatorAddress1,
 			},
 		},
 	}

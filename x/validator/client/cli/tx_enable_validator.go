@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -29,10 +30,9 @@ func CmdEnableValidator() *cobra.Command {
 				return err
 			}
 
+			fromAddr := clientCtx.GetFromAddress()
 			msg := types.NewMsgEnableValidator(
-				clientCtx.GetFromAddress().String(),
-				address,
-				info,
+				sdk.ValAddress(fromAddr),
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI

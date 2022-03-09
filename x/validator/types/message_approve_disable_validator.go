@@ -12,10 +12,10 @@ const TypeMsgApproveDisableValidator = "approve_disable_validator"
 
 var _ sdk.Msg = &MsgApproveDisableValidator{}
 
-func NewMsgApproveDisableValidator(creator string, address string, info string) *MsgApproveDisableValidator {
+func NewMsgApproveDisableValidator(creator sdk.AccAddress, address sdk.ValAddress, info string) *MsgApproveDisableValidator {
 	return &MsgApproveDisableValidator{
-		Creator: creator,
-		Address: address,
+		Creator: creator.String(),
+		Address: address.String(),
 		Info:    info,
 		Time:    time.Now().Unix(),
 	}
@@ -48,7 +48,7 @@ func (msg *MsgApproveDisableValidator) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	_, err = sdk.ConsAddressFromBech32(msg.Address)
+	_, err = sdk.ValAddressFromBech32(msg.Address)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid validator address (%s)", err)
 	}
