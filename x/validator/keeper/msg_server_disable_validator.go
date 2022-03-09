@@ -25,27 +25,20 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 	}
 
 	// check if disabled validator exists
-	_, isFound := k.GetDisabledValidator(ctx, msg.Address)
+	_, isFound := k.GetDisabledValidator(ctx, msg.Creator)
 	if isFound {
-		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Address)
+		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Creator)
 	}
 
 	disabledValidator := types.DisabledValidator{
-		Address: msg.Address,
-		Creator: msg.Creator,
-		Approvals: []*types.Grant{
-			{
-				Address: msg.Creator,
-				Time:    msg.Time,
-				Info:    msg.Info,
-			},
-		},
+		Address:             msg.Creator,
+		Creator:             msg.Creator,
 		DisabledByNodeAdmin: true,
 	}
 
 	// Disable validator
-	validator, _ := k.GetValidator(ctx, sdk.ValAddress(msg.Address))
-	k.Jail(ctx, validator, msg.Info)
+	validator, _ := k.GetValidator(ctx, sdk.ValAddress(msg.Creator))
+	k.Jail(ctx, validator, "disabled by a node admin")
 
 	// store disabled validator
 	k.SetDisabledValidator(ctx, disabledValidator)

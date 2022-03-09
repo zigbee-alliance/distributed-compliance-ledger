@@ -1,8 +1,6 @@
 package types
 
 import (
-	"time"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
@@ -12,12 +10,9 @@ const TypeMsgDisableValidator = "disable_validator"
 
 var _ sdk.Msg = &MsgDisableValidator{}
 
-func NewMsgDisableValidator(creator string, address string, info string) *MsgDisableValidator {
+func NewMsgDisableValidator(creator sdk.ValAddress) *MsgDisableValidator {
 	return &MsgDisableValidator{
-		Creator: creator,
-		Address: address,
-		Info:    info,
-		Time:    time.Now().Unix(),
+		Creator: creator.String(),
 	}
 }
 
@@ -48,7 +43,7 @@ func (msg *MsgDisableValidator) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	_, err = sdk.ConsAddressFromBech32(msg.Address)
+	_, err = sdk.ConsAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid validator address (%s)", err)
 	}

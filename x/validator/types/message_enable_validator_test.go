@@ -5,10 +5,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
-	tmrand "github.com/tendermint/tendermint/libs/rand"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/sample"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 func TestMsgEnableValidator_ValidateBasic(t *testing.T) {
@@ -21,9 +18,6 @@ func TestMsgEnableValidator_ValidateBasic(t *testing.T) {
 			name: "invalid creator address",
 			msg: MsgEnableValidator{
 				Creator: "invalid_address",
-				Address: testconstants.ValidatorAddress1,
-				Info:    testconstants.Info,
-				Time:    testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -31,41 +25,8 @@ func TestMsgEnableValidator_ValidateBasic(t *testing.T) {
 			name: "omitted creator address",
 			msg: MsgEnableValidator{
 				Creator: "",
-				Address: testconstants.ValidatorAddress1,
-				Info:    testconstants.Info,
-				Time:    testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidAddress,
-		},
-		{
-			name: "invalid validator address",
-			msg: MsgEnableValidator{
-				Creator: testconstants.Address1.String(),
-				Address: "invalid_address",
-				Info:    testconstants.Info,
-				Time:    testconstants.Time,
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		},
-		{
-			name: "omitted validator address",
-			msg: MsgEnableValidator{
-				Creator: testconstants.Address1.String(),
-				Address: "",
-				Info:    testconstants.Info,
-				Time:    testconstants.Time,
-			},
-			err: sdkerrors.ErrInvalidAddress,
-		},
-		{
-			name: "info len > 4096",
-			msg: MsgEnableValidator{
-				Creator: sample.AccAddress(),
-				Address: testconstants.ValidatorAddress1,
-				Info:    tmrand.Str(4097),
-				Time:    testconstants.Time,
-			},
-			err: validator.ErrFieldMaxLengthExceeded,
 		},
 	}
 
@@ -76,10 +37,7 @@ func TestMsgEnableValidator_ValidateBasic(t *testing.T) {
 		{
 			name: "valid EnableValidator message",
 			msg: MsgEnableValidator{
-				Creator: sample.AccAddress(),
-				Address: testconstants.ValidatorAddress1,
-				Info:    testconstants.Info,
-				Time:    testconstants.Time,
+				Creator: testconstants.ValidatorAddress1,
 			},
 		},
 	}
