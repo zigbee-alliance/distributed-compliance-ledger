@@ -17,7 +17,8 @@ set -euo pipefail
 source integration_tests/cli/common.sh
 
 LOCALNET_DIR=".localnet"
-DCL_DIR="/var/lib/dcl/.dcl"
+DCL_USER_HOME="/var/lib/dcl"
+DCL_DIR="$DCL_USER_HOME/.dcl"
 
 random_string account
 container="validator-demo"
@@ -45,22 +46,30 @@ trap cleanup EXIT
 
 cleanup
 
+docker build -f Dockerfile-build -t dcld-build .
+docker container create --name dcld-build-inst dcld-build
+docker cp dcld-build-inst:/go/bin/dcld ./
+docker rm dcld-build-inst
+
 docker run -d --name $container --ip $ip -p "$node_p2p_port-$node_client_port:26656-26657" --network $docker_network -i dcledger
+
+docker cp ./dcld "$container":"$DCL_USER_HOME"/
+rm -f ./dcld
 
 test_divider
 
 echo "$account Configure CLI"
 docker exec $container /bin/sh -c "
-  dcld config chain-id dclchain &&
-  dcld config output json &&
-  dcld config node $node0conn &&
-  dcld config keyring-backend test &&
-  dcld config broadcast-mode block"
+  ./dcld config chain-id dclchain &&
+  ./dcld config output json &&
+  ./dcld config node $node0conn &&
+  ./dcld config keyring-backend test &&
+  ./dcld config broadcast-mode block"
 
 test_divider
 
 echo "$account Prepare Node configuration files"
-docker exec $container dcld init $node_name --chain-id $chain_id
+docker exec $container ./dcld init $node_name --chain-id $chain_id
 docker cp "$LOCALNET_DIR/node0/config/genesis.json" $container:$DCL_DIR/config
 peers="$(cat "$LOCALNET_DIR/node0/config/config.toml" | grep -o -E "persistent_peers = \".*\"")"
 docker exec $container sed -i "s/persistent_peers = \"\"/$peers/g" $DCL_DIR/config/config.toml
@@ -69,19 +78,19 @@ docker exec $container sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:
 test_divider
 
 echo "Generate keys for $account"
-cmd="(echo $passphrase; echo $passphrase) | dcld keys add $account"
+cmd="(echo $passphrase; echo $passphrase) | ./dcld keys add $account"
 docker exec $container /bin/sh -c "$cmd"
 
-address="$(docker exec $container /bin/sh -c "echo $passphrase | dcld keys show $account -a")"
-pubkey="$(docker exec $container /bin/sh -c "echo $passphrase | dcld keys show $account -p")"
+address="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -a")"
+pubkey="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -p")"
 echo "Create account for $account and Assign NodeAdmin role"
 echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
 echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes
 
 test_divider
 
-vaddress=$(docker exec $container dcld tendermint show-address)
-vpubkey=$(docker exec $container dcld tendermint show-validator)
+vaddress=$(docker exec $container ./dcld tendermint show-address)
+vpubkey=$(docker exec $container ./dcld tendermint show-validator)
 
 echo "Check pool response for yet unknown node \"$node_name\""
 result=$(dcld query validator node --address "$address")
@@ -96,14 +105,18 @@ echo "$account Add Node \"$node_name\" to validator set"
 ! read -r -d '' _script << EOF
     set -eu; echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes
 EOF
-result="$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
+result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validator add-node --pubkey='$vpubkey' --moniker="$node_name" --from="$account" --yes")"
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
+echo "Locating the app to $DCL_DIR/cosmovisor/genesis/bin directory"
+docker exec $container mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
+docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
+
 echo "$account Start Node \"$node_name\""
-docker exec -d $container dcld start
+docker exec -d $container cosmovisor start
 sleep 10
 
 test_divider

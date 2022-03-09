@@ -151,7 +151,9 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - propose revocation of X509 root certificates
     - approve revocation of X509 root certificates
     - publish X509 certificates
-    - revoke X509 certificates    
+    - revoke X509 certificates
+    - propose pool upgrade
+    - approve pool upgrade
 - [CA](docs/how-to.md#ca-instructions)
     - propose X509 root certificates
     - publish X509 certificates    
