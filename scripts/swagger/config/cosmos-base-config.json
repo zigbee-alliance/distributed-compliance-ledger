@@ -1,0 +1,17 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "cosmos/base/tendermint/v1beta1/query.proto",
+      "version": "v0.44.4","description": "A REST interface for base service endpoints"
+    },
+    "apis": [
+      {
+        "url": "cosmos/base/tendermint/v1beta1/query.swagger.json",
+        "operationIds": {
+          "rename": {
+            "Params": "BaseParams"
+          }
+        }
+      }
+    ]
+  }

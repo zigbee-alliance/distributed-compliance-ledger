@@ -131,6 +131,7 @@ dcld validate-genesis
 # Update genesis for all nodes
 
 cp "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR"
+cp "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR"/client/config
 
 for node_name in node0 node1 node2 node3; do
     cp "$DCL_DIR"/config/genesis.json "$LOCALNET_DIR/$node_name/config/"

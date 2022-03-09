@@ -7,8 +7,7 @@ Please note, that CLI can use a Light Client proxy only for single-value query r
 A Full Node (Validator or Observer) should be used for multi-value query requests and write requests.
 
 See the following links for details about a Light Client:
-- https://docs.tendermint.com/v0.35/tendermint-core/light-client.html
-- https://docs.tendermint.com/v0.35/nodes/light-client.html
+- https://docs.tendermint.com/v0.34/tendermint-core/light-client.html
 
 ## Running Light Client Proxy - Short
 ```
@@ -18,7 +17,7 @@ dcld config node tcp://<light-client-proxy-host>:8888
 ```
 
 ## Running Light Client Proxy - Detailed
-See https://docs.tendermint.com/v0.35/nodes/light-client.html for details
+See https://docs.tendermint.com/v0.34/tendermint-core/light-client.html for details
 
 ### 1. Choose Semi-trusted or Non-trusted Nodes for Connection
 Light Client must be connected to one Primary Full Node (Validator or Observer) and
