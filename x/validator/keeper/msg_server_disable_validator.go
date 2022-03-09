@@ -11,13 +11,13 @@ import (
 func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisableValidator) (*types.MsgDisableValidatorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	creatorAddr, err := sdk.ValAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
 	// check if message creator has enough rights to propose disable validator
-	if !k.dclauthKeeper.HasRole(ctx, creatorAddr, types.EnableDisableValidatorRole) {
+	if !k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(creatorAddr), types.EnableDisableValidatorRole) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"Disable validator transaction should be signed by an account with the %s role",
 			types.EnableDisableValidatorRole,
