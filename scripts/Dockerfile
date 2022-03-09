@@ -12,19 +12,25 @@ RUN curl -L https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz -o /tmp/go.
     && rm -f /tmp/go.tar.gz
 
 # Install protoc
-RUN PROTOC_ZIP=protoc-3.19.4-linux-x86_64.zip \
-    && curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/$PROTOC_ZIP \
+ARG PROTOC_VERSION
+ENV PROTOC_VERSION=${PROTOC_VERSION:-3.19.4}
+RUN PROTOC_ZIP=protoc-${PROTOC_VERSION}-linux-x86_64.zip \
+    && curl -OL https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_ZIP} \
     && unzip -o $PROTOC_ZIP -d /usr/local bin/protoc \
     && unzip -o $PROTOC_ZIP -d /usr/local 'include/*' \
     && rm -f $PROTOC_ZIP
 
 # Install grpc-gateway tools
-RUN go install \
-        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.8.0 \
-        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.8.0
+ENV PROTOC_GEN_GRPC_GATEWAY_VERSION=v2.8.0
+ENV PROTOC_GEN_OPENAPIV2_VERSION=v2.8.0
+ENV PROTOC_GEN_SWAGGER_VERSION=v1.16.0
 
 RUN go install \
-    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger@v1.16.0
+        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@${PROTOC_GEN_GRPC_GATEWAY_VERSION} \
+        github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@${PROTOC_GEN_OPENAPIV2_VERSION}
+
+RUN go install \
+    github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger@${PROTOC_GEN_SWAGGER_VERSION}
 
 RUN npm install -g swagger-combine
 
