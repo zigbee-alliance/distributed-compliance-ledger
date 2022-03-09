@@ -25,9 +25,13 @@ func (k msgServer) EnableValidator(goCtx context.Context, msg *types.MsgEnableVa
 	}
 
 	// check if disabled validator exists
-	_, isFound := k.GetDisabledValidator(ctx, msg.Creator)
-	if isFound {
-		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Creator)
+	disabledValidator, isFound := k.GetDisabledValidator(ctx, msg.Creator)
+	if !isFound {
+		return nil, types.NewErrDisabledValidatorDoesNotExist(msg.Creator)
+	}
+
+	if !disabledValidator.DisabledByNodeAdmin {
+		return nil, types.NewErrEnableValidatorWrongRole(msg.Creator, types.EnableDisableValidatorRole)
 	}
 
 	// Enable validator
