@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import random
 import sys
 import os
 import yaml
@@ -40,6 +41,7 @@ QUERIES_F = "q"
 MODEL_INFO_PREFIX = 1
 # VENDOR_PRODUCTS_PREFIX = 2
 
+#VENDOR_NAME = "artur"
 
 def pack_model_info_key(vid, pid):
     return pack('<bhh', MODEL_INFO_PREFIX, vid, pid)
@@ -122,17 +124,99 @@ def txn_encode(f_path):
     cmd = [DCLCLI, "tx", "encode", f_path]
     return run_shell_cmd(cmd).stdout
 
+def keys_delete(key_name):
+    # If we have last Vendor account that we'll delete
+    cmd = [DCLCLI, "keys", "delete", key_name, "--yes"]
+    return run_shell_cmd(cmd).stdout
+
+
+def keys_add(key_name):
+    # Generate address and pubkey for a new Vendor
+    cmd = [DCLCLI, "keys", "add", key_name]
+    return run_shell_cmd(cmd).stdout
+
+
+def keys_show_address(key_name):
+    #Get node address
+    cmd = [DCLCLI, "keys", "show", key_name, "-a"]
+    return run_shell_cmd(cmd).stdout
+
+
+def keys_show_pubkey(key_name):
+    #Get node pubkey
+    cmd = [DCLCLI, "keys", "show", key_name, "-p"]
+    return run_shell_cmd(cmd).stdout
+
+VENDOR_ID = random.randint(1000, 65000)
+VENDOR_NAME = "artur"
+
+def create_vendor_account():
+
+    try:
+        keys_delete(VENDOR_NAME)
+    except Exception as ex:
+        print("We don't remove that user, because that user does not exist in dcld")
+
+    keys_add(VENDOR_NAME)
+
+    # Get a Vendor address and pubkey
+    vendor_address = keys_show_address(VENDOR_NAME).rstrip("\n")
+    vendor_pubkey = keys_show_pubkey(VENDOR_NAME).rstrip("\n")
+
+    # Send to request to another node to propose
+    cmd = [DCLCLI, "tx", "auth", "propose-add-account", "--address=" + vendor_address, "--pubkey=" + vendor_pubkey, "--roles=Vendor", "--vid=" + str(VENDOR_ID), "--from=jack", "--yes"]
+    run_shell_cmd(cmd)
+
+    #Send to request to another node to approve
+    cmd = [DCLCLI, "tx", "auth", "approve-add-account", "--address=" + vendor_address, "--from=alice", "--yes"]
+    run_shell_cmd(cmd)
+
+    #Send to request to another node to approve
+    cmd = [DCLCLI, "tx", "auth", "approve-add-account", "--address=" + vendor_address, "--from=anna", "--yes"]
+    run_shell_cmd(cmd)
+
+
+def create_model(key_name, current_model_id):
+    cmd = [DCLCLI, "tx", "model", "add-model", "--vid=" + str(VENDOR_ID), "--pid=" + str(current_model_id), "--deviceTypeID=" + str(current_model_id), "--productName=ProductName" + str(current_model_id), "--productLabel=ProductLabel" + str(current_model_id), "--partNumber=PartNumber" + str(current_model_id), "--from=" + key_name, "--yes"]
+    return run_shell_cmd(cmd).stdout
+
+def add_models(add_new_models_count):
+
+    create_vendor_account()
+
+    current_model_id = 1
+    while current_model_id < add_new_models_count :
+        print(create_model(VENDOR_NAME, current_model_id))
+        current_model_id += 1
+
 
 ENV_PREFIX = "DCLBENCH_"
 
-
-def main():
+def get_cli_Arguments():
     render_ctx = {
         k.split(ENV_PREFIX)[1].lower(): v
         for k, v in os.environ.items()
         if k.startswith(ENV_PREFIX)
     }
 
+    return render_ctx
+
+def get_new_models_count(render_ctx):
+
+    # Check we have key or not
+    if 'add_new_models_count' in render_ctx:
+        str_new_models_count = render_ctx['add_new_models_count']
+    
+        # Check argument new models count is natural number or not
+        if str_new_models_count.isdigit() and 1 <= int(str_new_models_count):
+            add_new_models_count = int(str_new_models_count)
+            return add_new_models_count
+    else:
+        add_new_models_count = 5
+        return add_new_models_count
+    
+
+def generate_txns_to_file(render_ctx):
     # TODO argument parsing using argparse
     spec_yaml = render(sys.argv[1], ctx=render_ctx)
     spec = yaml.safe_load(spec_yaml)
@@ -191,6 +275,18 @@ def main():
     else:
         with out_file.open('w') as fd:
             yaml_dump(res, fd)
+
+
+def main():
+    # Get CLI arguments
+    render_ctx = get_cli_Arguments()
+
+    add_new_models_count = get_new_models_count(render_ctx)
+
+    # Generate and write txns to file
+    generate_txns_to_file(render_ctx)
+
+    add_models(add_new_models_count)
 
 
 if __name__ == "__main__":
