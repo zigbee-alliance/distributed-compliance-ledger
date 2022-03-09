@@ -26,6 +26,7 @@ The following steps are expected to be done **before** the ceremony.
     1.3. Login as a DCL user
 
     1.4. (Optional) Clean up the system
+    *   Note. Following steps are needed if you earlier version of DCL installed on the same computer.
 
     ```bash
     $ sudo systemctl stop dcld
@@ -73,6 +74,7 @@ The following steps are expected to be done **before** the ceremony.
     ```bash
     dcld init "<node-name>" --chain-id "testnet-2.0"
     ```
+    * Choose a descriptive label for <node-name> e.g. <Company-testnet-VN"
 
 3.  **Share VN info with other Node Admins** (in Slack or in a special doc)
 
