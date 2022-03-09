@@ -27,7 +27,7 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 	// check if disabled validator exists
 	_, isFound := k.GetDisabledValidator(ctx, msg.Creator)
 	if isFound {
-		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Creator)
+		return nil, types.NewErrDisabledValidatorAlreadyExists(msg.Creator)
 	}
 
 	disabledValidator := types.DisabledValidator{

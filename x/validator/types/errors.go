@@ -26,7 +26,6 @@ var (
 	ErrProposedDisableValidatorDoesNotExist  = sdkerrors.Register(ModuleName, 802, "disable validator propose does not exist")
 	ErrDisabledValidatorAlreadytExists       = sdkerrors.Register(ModuleName, 803, "disabled validator already exist")
 	ErrDisabledValidatorDoesNotExist         = sdkerrors.Register(ModuleName, 804, "disabled validator does not exist")
-	ErrEnableValidatorWrongRole              = sdkerrors.Register(ModuleName, 805, "validator disabled not by node admin")
 )
 
 func ErrPoolIsFull() error {
@@ -63,14 +62,5 @@ func NewErrDisabledValidatorDoesNotExist(name interface{}) error {
 		ErrDisabledValidatorDoesNotExist,
 		"Disabled validator with address=%v does not exist on the ledger",
 		name,
-	)
-}
-
-func NewErrEnableValidatorWrongRole(name interface{}, role interface{}) error {
-	return sdkerrors.Wrapf(
-		ErrDisabledValidatorDoesNotExist,
-		"Validator with address=%v was disabled not by %v role",
-		name,
-		role,
 	)
 }
