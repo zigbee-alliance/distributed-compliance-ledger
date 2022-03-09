@@ -89,7 +89,7 @@ DCL_OBSERVERS=1 make localnet_init
 make localnet_start
 ```    
 
-This will start a local pool of 4 validator nodes in Docker. The nodes will expose their RPC enpoints on ports `26657`, `26659`, `26661`, `26663` correspondingly.
+This will start a local pool of 4 validator nodes in Docker. The nodes will expose their RPC endpoints on ports `26657`, `26659`, `26661`, `26663` correspondingly.
 
  Stopping the network: 
 
@@ -145,11 +145,11 @@ Please take into account the following when sending a PR:
     - make sure the app can be built
     - run go linter
     - run unit tests
-    - run integratioins test
+    - run integration tests
 
 ## How To Add a new Module
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-  Consider using the provided [Dockerfile](scripts/starport/Dockerfile) to have a predictable version of starport. See [README.md](scripts/starport/README.md).
+  Consider using a docker container built from the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of starport. See [README.md](scripts/README.md).
 - Have a look at the scripts and commands used for generation of existing modules and do it in a similar way
   (for example [PKI module commands](scripts/starport/upgrade-0.44/07.pki_types.sh)).
 - Adjust the generated code
@@ -162,12 +162,12 @@ Please take into account the following when sending a PR:
     - Note2: for `uint16` type: use `int32` during starport scaffolding, and add custom validation (annotations above) to check the lower and upper bounds.
     - Note3: for `uint32` type: use `int32` during starport scaffolding, then replace it by `uint32` in .proto files, re-generate the code and fix compilation errors.
   - build proto (for example `starport chain build`). Fix compilation errors if any.
+  - generate openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). recommended to run from container built from [Dockerfile](scripts/Dockerfile)
+
   - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
     `allow_colon_final_segments=true` should be used as a workaround.
     So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
     It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-  - **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yml`. 
-    Revert the default cosmos modules keeping only DCL ones.   
 - Call `validator.Validate(msg)` in `ValidateBasic` methods for all generated messages
 - Implement business logic in `msg_server_xxx.go`
 - Improve `NotFound` error processing:
@@ -182,27 +182,27 @@ Please take into account the following when sending a PR:
 
 ## How To Make Changes in Data Model for Existing Modules
 - Use [starport](https://github.com/tendermint/starport) command to scaffold the module.
-  Consider using the provided [Dockerfile](scripts/starport/Dockerfile) to have a predictable version of starport. See [README.md](scripts/starport/README.md).
+  Consider using the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of starport. See [README.md](scripts/README.md).
 - **Never change `.pb` files manually**. Do the changes in `.proto` files.
 - Every time `.proto` files change, re-generate the code (for example `starport chain build`) and fix compilation errors if any.
+- Update openapi docs from proto using (`scripts/dcl-swagger-gen.sh`). recommended to run from container built from [Dockerfile](scripts/Dockerfile)
 - **Note1**: colons (`:`) are part of subject-id in PKI module, but colons are not allowed in gRPC REST URLs by default.
   `allow_colon_final_segments=true` should be used as a workaround.
   So, make sure that `runtime.AssumeColonVerbOpt(false)` in `/x/pki/types/query.pb.gw.go`. 
-  It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.
-- **Note2**: starport will include all default cosmos modules (even if we don't use them from DCL) into `docs/static/openapi.yml`. 
-    Revert the default cosmos modules keeping only DCL ones.   
+  It's usually sufficient to revert the generated changes in `/x/pki/types/query.pb.gw.go`.   
 
 ## Update Cosmos-sdk Version
-Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [cosmos-base-swagger-gen.sh](scripts/cosmos-base-swagger-gen.sh) from the project root:
+Re-generate cosmos base openapi (service API from cosmos exposed in DCL) using [cosmos-swagger-gen.sh](scripts/cosmos-swagger-gen.sh) from the project root:
+- Consider using a docker container built from the provided [Dockerfile](scripts/Dockerfile) to have a predictable version of swagger
 ```
-./scripts/cosmos-base-swagger-gen.sh base
-./scripts/cosmos-base-swagger-gen.sh tx
+./scripts/cosmos-swagger-gen.sh base
+./scripts/cosmos-swagger-gen.sh tx
 ```
 
 ## Update Tendermint Version
 Please note, that we depend on the Tendermint fork https://github.com/zigbee-alliance/tendermint/releases/tag/v0.34.140 
 due to hotfixes for https://github.com/tendermint/tendermint/issues/7640 and https://github.com/tendermint/tendermint/issues/7641
-requitred for Light Client Proxy.
+required for Light Client Proxy.
 Now that fixes are merged to Tendermint master, so check if we still need to depend on the fork.
 
 Also don't forget to update the link to the Tendermint RPC in [Swagger UI](docs/index.html).
