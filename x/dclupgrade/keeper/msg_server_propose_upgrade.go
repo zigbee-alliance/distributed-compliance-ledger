@@ -36,9 +36,6 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 		return nil, types.NewErrApprovedUpgradeAlreadyExists(msg.Plan.Name)
 	}
 
-	// Get existing scheduled plan for the case if proposed upgrade will be scheduled and so displace it
-	existingPlan, existingPlanFound := k.upgradeKeeper.GetUpgradePlan(ctx)
-
 	// Execute scheduling upgrade in a new context branch (with branched store)
 	// to validate msg.Plan before the proposal proceeds through the approval process.
 	// State is not persisted.
@@ -60,11 +57,6 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 	} else {
 		// sufficient approvals count has been reached, so persist cached state (i.e. schedule upgrade)
 		writeCache()
-
-		// Remove approved upgrade that was previously scheduled if any
-		if existingPlanFound {
-			k.RemoveApprovedUpgrade(ctx, existingPlan.Name)
-		}
 
 		approvedUpgrage := types.ApprovedUpgrade{
 			Plan:      msg.Plan,

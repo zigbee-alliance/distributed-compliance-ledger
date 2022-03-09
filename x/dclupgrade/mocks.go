@@ -37,9 +37,4 @@ func (m *UpgradeKeeperMock) ScheduleUpgrade(ctx sdk.Context, plan upgradetypes.P
 	return args.Error(0)
 }
 
-func (m *UpgradeKeeperMock) GetUpgradePlan(ctx sdk.Context) (plan types.Plan, havePlan bool) {
-	args := m.Called(ctx)
-	return args.Get(0).(types.Plan), args.Bool(1)
-}
-
 var _ types.UpgradeKeeper = &UpgradeKeeperMock{}
