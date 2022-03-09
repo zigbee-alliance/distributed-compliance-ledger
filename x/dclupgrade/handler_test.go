@@ -169,9 +169,15 @@ func TestHandler_ProposeUpgradeWhenSeveralVotesNeeded(t *testing.T) {
 	// check proposed upgrade for being created
 	proposedUpgrade, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.True(t, isFound)
-	require.Equal(t, proposedUpgrade.Plan, msgProposeUpgrade.Plan)
-	require.Equal(t, proposedUpgrade.Creator, msgProposeUpgrade.Creator)
-	require.Equal(t, proposedUpgrade.Approvals[0], msgProposeUpgrade.Creator)
+
+	require.Equal(t, msgProposeUpgrade.Plan, proposedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Creator)
+
+	require.Equal(t, 1, len(proposedUpgrade.Approvals))
+
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(t, msgProposeUpgrade.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(t, msgProposeUpgrade.Info, proposedUpgrade.Approvals[0].Info)
 
 	// check approved upgrade for not being created
 	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
@@ -241,11 +247,19 @@ func TestHandler_ApproveUpgrade(t *testing.T) {
 	require.True(t, isFound)
 
 	// verification of ApprovedUpgrade
-	require.Equal(t, len(approvedUpgrade.Approvals), 2)
-	require.Contains(t, approvedUpgrade.Approvals, msgProposeUpgrade.Creator)
-	require.Contains(t, approvedUpgrade.Approvals, msgApproveUpgrade.Creator)
-	require.Equal(t, approvedUpgrade.Creator, msgProposeUpgrade.Creator)
-	require.Equal(t, approvedUpgrade.Plan, msgProposeUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Plan, approvedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, approvedUpgrade.Creator)
+
+	// one approval is from propose stage, another is from approve stage
+	require.Equal(t, 2, len(approvedUpgrade.Approvals))
+
+	require.Equal(t, msgProposeUpgrade.Creator, approvedUpgrade.Approvals[0].Address)
+	require.Equal(t, msgProposeUpgrade.Time, approvedUpgrade.Approvals[0].Time)
+	require.Equal(t, msgProposeUpgrade.Info, approvedUpgrade.Approvals[0].Info)
+
+	require.Equal(t, msgApproveUpgrade.Creator, approvedUpgrade.Approvals[1].Address)
+	require.Equal(t, msgApproveUpgrade.Time, approvedUpgrade.Approvals[1].Time)
+	require.Equal(t, msgApproveUpgrade.Info, approvedUpgrade.Approvals[1].Info)
 }
 
 func TestHandler_ProposeUpgradeWhenApprovedUpgradeWithSameNameExists(t *testing.T) {
@@ -315,18 +329,27 @@ func TestHandler_UpgradeApprovalWhenMoreVotesNeeded(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
 	require.NoError(t, err)
 
-	// check proposed upgrade for not being deleted
-	upgrade, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	// check proposed proposedUpgrade for not being deleted
+	proposedUpgrade, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.True(t, isFound)
+
+	require.Equal(t, msgProposeUpgrade.Plan, proposedUpgrade.Plan)
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Creator)
+
+	// one approval is from propose stage, another is from approve stage
+	require.Equal(t, 2, len(proposedUpgrade.Approvals))
+
+	require.Equal(t, msgProposeUpgrade.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(t, msgProposeUpgrade.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(t, msgProposeUpgrade.Info, proposedUpgrade.Approvals[0].Info)
+
+	require.Equal(t, msgApproveUpgrade.Creator, proposedUpgrade.Approvals[1].Address)
+	require.Equal(t, msgApproveUpgrade.Time, proposedUpgrade.Approvals[1].Time)
+	require.Equal(t, msgApproveUpgrade.Info, proposedUpgrade.Approvals[1].Info)
 
 	// check upgrade for not being added to ApprovedUpgrade store
 	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
 	require.False(t, isFound)
-
-	// one approval is from propose stage, another is from approve stage
-	require.Equal(t, len(upgrade.Approvals), 2)
-	require.Contains(t, upgrade.Approvals, msgApproveUpgrade.Creator)
-	require.Contains(t, upgrade.Approvals, msgProposeUpgrade.Creator)
 }
 
 func TestHandler_OnlyTrusteeCanApproveUpgrade(t *testing.T) {
@@ -487,13 +510,21 @@ func isContextWithNonCachedMultiStore(ctx sdk.Context) bool {
 func NewMsgProposeUpgrade(signer sdk.AccAddress) *types.MsgProposeUpgrade {
 	return &types.MsgProposeUpgrade{
 		Creator: signer.String(),
-		Plan:    testconstants.Plan,
+		Plan: types.Plan{
+			Name:   testconstants.UpgradePlanName,
+			Height: testconstants.UpgradePlanHeight,
+			Info:   testconstants.UpgradePlanInfo,
+		},
+		Info: testconstants.Info,
+		Time: testconstants.Time,
 	}
 }
 
 func NewMsgApproveUpgrade(signer sdk.AccAddress) *types.MsgApproveUpgrade {
 	return &types.MsgApproveUpgrade{
 		Creator: signer.String(),
-		Name:    testconstants.Plan.Name,
+		Name:    testconstants.UpgradePlanName,
+		Info:    testconstants.Info2,
+		Time:    testconstants.Time2,
 	}
 }

@@ -56,8 +56,7 @@ See
 - [Deployment](docs/deployment.png)
 - [Deployment-detailed](docs/deployment-detailed.png).
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
-- https://docs.tendermint.com/master/nodes/
-- https://docs.tendermint.com/master/nodes/validators.html
+- https://docs.tendermint.com/v0.34/tendermint-core/validators.html
 - [Run Light Client Proxy](docs/running-light-client-proxy.md)
 
 ### Clients
@@ -152,7 +151,9 @@ the following instructions from [how-to.md](docs/how-to.md) can be used for ever
     - propose revocation of X509 root certificates
     - approve revocation of X509 root certificates
     - publish X509 certificates
-    - revoke X509 certificates    
+    - revoke X509 certificates
+    - propose pool upgrade
+    - approve pool upgrade
 - [CA](docs/how-to.md#ca-instructions)
     - propose X509 root certificates
     - publish X509 certificates    
