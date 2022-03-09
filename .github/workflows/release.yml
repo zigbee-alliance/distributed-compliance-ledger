@@ -41,13 +41,8 @@ jobs:
         id: current_version
         run: |
           git fetch --all --tags
-
           tag="$(git describe --tags --exact-match)"
-          echo "$tag"
-          version="$(echo "$tag" | sed "s/^v//")"
-          echo "$version"
-
-          echo "::set-output name=version::$version"
+          echo "::set-output name=version::${tag#v}"
         shell: bash
 
       - name: Get release info
