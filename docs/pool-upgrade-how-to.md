@@ -21,7 +21,7 @@ application version:
    transactions with the name of the proposed upgrade until the count of
    approvals (including the proposal) reaches 2/3 of the total count of
    trustees. So the upgrade plan is approved and scheduled.
-6. Before the ledger reaches the height specified in the upgrade plan, each node
+6. [All Node Admins] **Download new binary**: Before the ledger reaches the height specified in the upgrade plan, each node
    admin does the following steps:
     1. Downloads the application binary at the URL specified in the upgrade plan
        `Info` field and corresponding to the node platform.
