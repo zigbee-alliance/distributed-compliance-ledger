@@ -11,7 +11,7 @@ application version:
    name of the upgrade to this new version.
 2. [Trustees] **Upgrade Height**: A ledger height not reached yet at which all the nodes in the pool must be
    upgraded to the new application version is chosen.
-3. SHA-256 or SHA-512 checksums of the new application version binaries for
+3. [A Trustee] **Release binary checksum**: SHA-256 or SHA-512 checksums of the new application version binaries for
    supported platforms are calculated.
 4. One of trustees sends [`ProposeUpgrade`](./transactions.md#propose_upgrade)
    transaction with the name of the new upgrade handler, the chosen ledger
