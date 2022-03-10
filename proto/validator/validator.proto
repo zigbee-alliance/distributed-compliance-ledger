@@ -19,13 +19,13 @@ message Validator {
   // description of the validator
   Description description = 2; 
   // the consensus public key of the tendermint validator
-  google.protobuf.Any pubKey = 3 [(cosmos_proto.accepts_interface) = "cosmos.crypto.PubKey"]; 
+  google.protobuf.Any pub_key = 3 [(cosmos_proto.accepts_interface) = "cosmos.crypto.PubKey"]; 
   // validator consensus power
   int32 power = 4; 
   // has the validator been removed from validator set
   bool jailed = 5; 
   // the reason of validator jailing
-  string jailedReason = 6; 
+  string jailed_reason = 6; 
   
 }
 

@@ -12,9 +12,9 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // GenesisState defines the dclauth module's genesis state.
 message GenesisState {
-    repeated Account accountList = 1 [(gogoproto.nullable) = false];
-  repeated PendingAccount pendingAccountList = 2 [(gogoproto.nullable) = false];
-  repeated PendingAccountRevocation pendingAccountRevocationList = 3 [(gogoproto.nullable) = false];
-  AccountStat accountStat = 4;
+    repeated Account account_list = 1 [(gogoproto.nullable) = false];
+  repeated PendingAccount pending_account_list = 2 [(gogoproto.nullable) = false];
+  repeated PendingAccountRevocation pending_account_revocation_list = 3 [(gogoproto.nullable) = false];
+  AccountStat account_stat = 4;
   // this line is used by starport scaffolding # genesis/proto/state
 }

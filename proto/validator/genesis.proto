@@ -10,7 +10,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // GenesisState defines the validator module's genesis state.
 message GenesisState {
-    repeated Validator validatorList = 1 [(gogoproto.nullable) = false];
-  repeated LastValidatorPower lastValidatorPowerList = 2 [(gogoproto.nullable) = false];
+    repeated Validator validator_list = 1 [(gogoproto.nullable) = false];
+  repeated LastValidatorPower last_validator_power_list = 2 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

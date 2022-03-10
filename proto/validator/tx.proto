@@ -21,7 +21,7 @@ message MsgCreateValidator {
   option (gogoproto.goproto_getters) = false;
 
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
-  google.protobuf.Any pubKey = 2 [(cosmos_proto.accepts_interface) = "cosmos.crypto.PubKey", (gogoproto.moretags) = "validate:\"required\""];
+  google.protobuf.Any pub_key = 2 [(cosmos_proto.accepts_interface) = "cosmos.crypto.PubKey", (gogoproto.moretags) = "validate:\"required\""];
   Description description = 3 [(gogoproto.nullable) = false];
 }
 

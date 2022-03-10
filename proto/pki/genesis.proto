@@ -17,14 +17,14 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // GenesisState defines the pki module's genesis state.
 message GenesisState {
-    repeated ApprovedCertificates approvedCertificatesList = 1 [(gogoproto.nullable) = false];
-  repeated ProposedCertificate proposedCertificateList = 2 [(gogoproto.nullable) = false];
-  repeated ChildCertificates childCertificatesList = 3 [(gogoproto.nullable) = false];
-  repeated ProposedCertificateRevocation proposedCertificateRevocationList = 4 [(gogoproto.nullable) = false];
-  repeated RevokedCertificates revokedCertificatesList = 5 [(gogoproto.nullable) = false];
-  repeated UniqueCertificate uniqueCertificateList = 6 [(gogoproto.nullable) = false];
-  ApprovedRootCertificates approvedRootCertificates = 7;
-  RevokedRootCertificates revokedRootCertificates = 8;
-  repeated ApprovedCertificatesBySubject approvedCertificatesBySubjectList = 9 [(gogoproto.nullable) = false];
+    repeated ApprovedCertificates approved_certificates_list = 1 [(gogoproto.nullable) = false];
+  repeated ProposedCertificate proposed_certificate_list = 2 [(gogoproto.nullable) = false];
+  repeated ChildCertificates child_certificates_list = 3 [(gogoproto.nullable) = false];
+  repeated ProposedCertificateRevocation proposed_certificate_revocation_list = 4 [(gogoproto.nullable) = false];
+  repeated RevokedCertificates revoked_certificates_list = 5 [(gogoproto.nullable) = false];
+  repeated UniqueCertificate unique_certificate_list = 6 [(gogoproto.nullable) = false];
+  ApprovedRootCertificates approved_root_certificates = 7;
+  RevokedRootCertificates revoked_root_certificates = 8;
+  repeated ApprovedCertificatesBySubject approved_certificates_by_subject_list = 9 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

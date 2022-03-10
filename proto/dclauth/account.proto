@@ -19,7 +19,7 @@ message Account {
   //       (but that might be not the final solution)
   repeated string roles = 2 [(gogoproto.casttype) = "AccountRole"]; 
   repeated Grant approvals = 3;
-  int32 vendorID = 4;
+  int32 vid = 4;
   
 }
 

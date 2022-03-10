@@ -10,7 +10,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 // GenesisState defines the dclupgrade module's genesis state.
 message GenesisState {
-  repeated ProposedUpgrade proposedUpgradeList = 1 [(gogoproto.nullable) = false];
-  repeated ApprovedUpgrade approvedUpgradeList = 2 [(gogoproto.nullable) = false];
+  repeated ProposedUpgrade proposed_upgrade_list = 1 [(gogoproto.nullable) = false];
+  repeated ApprovedUpgrade approved_upgrade_list = 2 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }
