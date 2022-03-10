@@ -44,8 +44,8 @@ application version:
       dcld query dclupgrade proposed-upgrade --name=v0.7.0
       ```
    3. Verifies that the application binaries URLs provided in the proposed
-      upgrade plan `Info` field are valid and the files referenced by them match
-      the provided checksums.
+      upgrade plan `Info` field are valid and that the files referenced by them
+      match the provided checksums.
    4. Verifies that `Height` field of the proposed upgrade plan has the proper
       value.
    5. Sends [`ApproveUpgrade`](./transactions.md#approve_upgrade) transaction
