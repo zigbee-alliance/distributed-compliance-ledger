@@ -36,9 +36,8 @@ and is actually scheduled.
 There can be multiple proposed upgrade plans at the same time but not more than
 one scheduled upgrade plan at a time. If there is currently a scheduled upgrade
 plan and another upgrade plan turns into the approved state, then the latter is
-scheduled and the former is actually discarded. When the upgrade procedure is
-completed, the current scheduled upgrade plan is cleared. However, the approved
-upgrade plan entity remains in the store forever for information purposes.
+scheduled and the former is actually cancelled. When the upgrade procedure is
+completed, the current scheduled upgrade plan is cleared. Please note, once an upgrade is approved, the approved upgrade entity remains in the store forever (no matter if the upgrade is later completed or cancelled).
 
 For the upgrade procedure to be feasible in an automated mode, the application
 process `dcld` is controlled as a sub-process by the parent process
