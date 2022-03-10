@@ -13,7 +13,7 @@ application version:
    upgraded to the new application version is chosen.
 3. [A Trustee] **Release binary checksum**: SHA-256 or SHA-512 checksums of the new application version binaries for
    supported platforms are calculated.
-4. One of trustees sends [`ProposeUpgrade`](./transactions.md#propose_upgrade)
+4. [A Trustee] **ProposeUpgrade**: One of trustees sends [`ProposeUpgrade`](./transactions.md#propose_upgrade)
    transaction with the name of the new upgrade handler, the chosen ledger
    height and the info containing URLs of the application binaries for supported
    platforms with the calculated checksums. So the upgrade plan is proposed.
