@@ -15,8 +15,8 @@ application version:
 3. **[A Trustee] ProposeUpgrade**: One of trustees proposes the upgrade using
    the following steps:
    1. Calculates SHA-256 or SHA-512 checksums of the new application version
-      binaries for supported platforms. This can be done using `sha256sum` or
-      `sha512sum` tool. For example:
+      binaries (for the supported platforms) taken from the project release.
+      This can be done using `sha256sum` or `sha512sum` tool. For example:
       ```
       sha256sum ./dcld
       ```
@@ -27,13 +27,13 @@ application version:
       ```
       dcld tx dclupgrade propose-upgrade --name=v0.7.0 --upgrade-height=10000 --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a\"}}" --from=alice
       ```
-4. **[Trustees] ApproveUpgrade**: Other trustees approve the upgrade until it
-   turns into the approved state and is scheduled (this happens when the count
-   of approvals including the proposal reaches 2/3 of the total count of
-   trustees). Each of them uses the following steps to accomplish this:
-   1. Re-calculates checksums for the application binaries specified in the
-      proposed upgrade plan `Info` field. This can be done using `sha256sum` or
-      `sha512sum` tool. For example:
+4. **[Trustees] ApproveUpgrade**: Other trustees approve the proposed upgrade
+   until it turns into the approved state and is scheduled (this happens when
+   the count of approvals including the proposal reaches 2/3 of the total count
+   of trustees). Each of them uses the following steps to accomplish this:
+   1. Re-calculates checksums of the new application version binaries (for the
+      supported platforms) taken from the project release. This can be done
+      using `sha256sum` / `sha512sum` tool. For example:
       ```
       sha256sum ./dcld
       ```
@@ -43,17 +43,32 @@ application version:
       ```
       dcld query dclupgrade proposed-upgrade --name=v0.7.0
       ```
-   3. Sends [`ApproveUpgrade`](./transactions.md#approve_upgrade) transactions
+   3. Verifies that the application binaries URLs provided in the proposed
+      upgrade plan `Info` field are valid and the files referenced by them match
+      the provided checksums.
+   4. Verifies that `Height` field of the proposed upgrade plan has the proper
+      value.
+   5. Sends [`ApproveUpgrade`](./transactions.md#approve_upgrade) transaction
       with the name of the proposed upgrade. For example:
       ```
       dcld tx dclupgrade approve-upgrade --name=v0.7.0 --from=bob
       ```
-5. **[All Node Admins] Download New Binary**: Before the ledger reaches the
+5. **Ensure That Upgrade Has Been Scheduled**: It makes sense to ensure that the
+   upgrade has been approved and scheduled. Example how to view the approved
+   upgrade plan:
+   ```
+   dcld query dclupgrade approved-upgrade --name=v0.7.0
+   ```
+   Command to view the current scheduled upgrade plan:
+   ```
+   dcld query upgrade plan
+   ```
+6. **[All Node Admins] Download New Binary**: Before the ledger reaches the
    height specified in the upgrade plan, each node admin does the following
    steps:
     1. Downloads the application binary from the URL specified in the upgrade
-       plan `Info` field and corresponding to the node platform. Example how to
-       view the scheduled upgrade plan:
+       plan `Info` field and corresponding to the node platform. Command to view
+       the current scheduled upgrade plan:
        ```
        dcld query upgrade plan
        ```
@@ -82,5 +97,5 @@ application version:
        cd ~/Downloads
        cp ./dcld /var/lib/ubuntu/.dcl/cosmovisor/v0.7.0/bin
        ```
-6. The upgrade is performed on all the nodes in the pool when the ledger reaches
+7. The upgrade is performed on all the nodes in the pool when the ledger reaches
    the height specified in the upgrade plan.
