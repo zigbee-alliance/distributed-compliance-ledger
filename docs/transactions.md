@@ -177,7 +177,7 @@ Not all fields can be edited (see `EDIT_MODEL`).
   - productName: `string` -  model name
   - productLabel: `string` -  model description (string or path to file containing data)
   - partNumber: `string` -  stock keeping unit
-  - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with the necessary details for how to configure the product for initial commissioning
+  - commissioningCustomFlow: `optional(uint8)` - A value of 1 indicates that user interaction with the device (pressing a button, for example) is required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end user with the necessary details for how to configure the product for initial commissioning
   - commissioningCustomFlowURL: `optional(string)` - commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the device model when the commissioningCustomFlow field is set to '2'
   - commissioningModeInitialStepsHint: `optional(uint32)` - commissioningModeInitialStepsHint SHALL identify a hint for the steps that can be used to put into commissioning mode a device that has not yet been commissioned. This field is a bitmap with values defined in the Pairing Hint Table. For example, a value of 1 (bit 0 is set) indicates that a device that has not yet been commissioned will enter Commissioning Mode upon a power cycle.
   - commissioningModeInitialStepsInstruction: `optional(string)` - commissioningModeInitialStepsInstruction SHALL contain text which relates to specific values of CommissioningModeInitialStepsHint. Certain values of CommissioningModeInitialStepsHint, as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, and for these values the commissioningModeInitialStepsInstruction SHALL be set
@@ -769,7 +769,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 #### GET_X509_CERT
 **Status: Implemented**
 
-Gets a certificate (either root, intermediate or leaf) by the given subject and subject key id attributes.
+Gets a certificate (either root, intermediate or leaf) by the given subject and subject key ID attributes.
 Revoked certificates are not returned. 
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates. 
 
@@ -813,7 +813,7 @@ Revoked certificates are not returned.
 #### GET_PROPOSED_X509_ROOT_CERT
 **Status: Implemented**
 
-Gets a proposed but not approved root certificate with the given subject and subject key id attributes.
+Gets a proposed but not approved root certificate with the given subject and subject key ID attributes.
 
 - Parameters:
   - subject: `string`  - certificates's `Subject`
@@ -826,7 +826,7 @@ Gets a proposed but not approved root certificate with the given subject and sub
 #### GET_REVOKED_CERT
 **Status: Implemented**
 
-Gets a revoked certificate (either root, intermediate or leaf) by the given subject and subject key id attributes.
+Gets a revoked certificate (either root, intermediate or leaf) by the given subject and subject key ID attributes.
 
 - Parameters:
   - subject: `string`  - certificates's `Subject`
@@ -949,7 +949,7 @@ will be in a pending state until sufficient number of approvals is received.
 - Parameters:
     - address: `string` - account address; Bench32 encoded
     - pub_key: `string` - account's Protobuf JSON encoded public key
-    - vid: `optional(uint16)` - vendor id (only needed for vendor role)
+    - vid: `optional(uint16)` - vendor ID (only needed for vendor role)
     - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`. 
     - info: `optional(string)` - information/notes for the proposal
     - time: `optional(int64)` - proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -1116,7 +1116,7 @@ Adds a new Validator node.
     - pubkey: `string` - The validator's Protobuf JSON encoded public key
     - moniker: `string` - The validator's human-readable name
     - identity: `optional(string)` - identity signature (ex. UPort or Keybase)
-    - website: `optional(string)` - The validator's website link
+    - website: `optional(string)` - The validator's site link
     - details: `optional(string)` - The validator's details
     - ip: `optional(string)` - The node's public IP
     - node-id: `optional(string)` - The node's ID
@@ -1167,7 +1167,7 @@ Updates the Validator node by the owner.
     - address: `string` - Bench32 encoded validator address or owner account
     - moniker: `string` - The validator's human-readable name
     - identity: `optional(string)` - identity signature (ex. UPort or Keybase)
-    - website: `optional(string)` - The validator's website link
+    - website: `optional(string)` - The validator's site link
     - details: `optional(string)` - The validator's details
     - ip: `optional(string)` - The node's public IP
     - node-id: `optional(string)` - The node's ID
@@ -1228,8 +1228,151 @@ the node will be unjailed and returned to the active validator set.
     - Trustee
 - Number of required approvals: 
     - 2/3 of Trustees
-            
-   
+
+
+## UPGRADE
+
+#### PROPOSE_UPGRADE
+**Status: Implemented**
+
+Proposes an upgrade plan with the given name at the given height.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+    - upgrade-height: `int64` -  upgrade plan height (positive non-zero)
+    - upgrade-info: `optional(string)` - upgrade plan info
+- In State: `dclupgrade/ProposedUpgrade/value/<name>`
+- Who can send: 
+    - Trustee
+- Number of required approvals: 
+    - 2/3 of Trustees
+- CLI command minimal:
+```
+dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --from=<account>
+```
+- CLI command full:
+```
+dcld tx dclupgrade propose-upgrade --name=<string> --upgrade-height=<int64> --upgrade-info=<string> --from=<account>
+```
+
+#### APPROVE_UPGRADE
+**Status: Implemented**
+
+Approves the proposed upgrade plan with the given name.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+- In State: `upgrade/0x0`
+- Who can send: 
+    - Trustee
+- Number of required approvals: 
+    - 2/3 of Trustees
+- CLI command:
+```
+dcld tx dclupgrade approve-upgrade --name=<string> --from=<account>
+```
+
+#### GET_PROPOSED_UPGRADE
+**Status: Implemented**
+
+Gets the proposed upgrade plan with the given name.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+- CLI command:
+```
+dcld query dclupgrade proposed-upgrade --name=<string>
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/proposed-upgrades/{name}`
+
+#### GET_APPROVED_UPGRADE
+**Status: Implemented**
+
+Gets the approved upgrade plan with the given name.
+
+- Parameters:
+    - name: `string` - upgrade plan name
+- CLI command:
+```
+dcld query dclupgrade approved-upgrade --name=<string>
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/approved-upgrades/{name}`
+
+#### GET_ALL_PROPOSED_UPGRADES
+**Status: Implemented**
+
+Gets all the proposed upgrade plans.
+
+- Parameters:
+    - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+```
+dcld query dclupgrade all-proposed-upgrades
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/proposed-upgrades`
+
+#### GET_ALL_APPROVED_UPGRADES
+**Status: Implemented**
+
+Gets all the approved upgrade plans.
+
+- Parameters:
+    - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+```
+dcld query dclupgrade all-approved-upgrades
+```
+- REST API: 
+    -   GET `/dcl/dclupgrade/approved-upgrades`
+
+#### PLAN
+**Status: Implemented**
+
+Gets the currently scheduled upgrade plan, if it exists.
+
+- CLI command:
+```
+dcld query upgrade plan
+```
+- REST API: 
+    -   GET `/cosmos/upgrade/v1beta1/current_plan`
+
+#### APPLIED
+**Status: Implemented**
+
+Returns the header for the block at which the upgrade with the given name was applied, if it was previously executed on the chain. This helps a client determine which binary was valid over a given range of blocks, as well as gives more context to understand past migrations.
+
+- Parameters:
+    - `string` - upgrade name
+- CLI command:
+```
+dcld query upgrade applied <string>
+```
+- REST API: 
+    -   GET `/cosmos/upgrade/v1beta1/applied_plan/{name}`
+
+#### MODULE_VERSIONS
+**Status: Implemented**
+
+Gets a list of module names and their respective consensus versions. Following the command with a specific module name will return only that module's information.
+
+- Parameters:
+    - `optional(string)` - module name
+- CLI command minimal:
+```
+dcld query upgrade module_versions
+```
+- CLI command full:
+```
+dcld query upgrade module_versions <string>
+```
+- REST API: 
+    -   GET `/cosmos/upgrade/v1beta1/module_versions`
+
+
 ## Extensions    
 
 #### Sign
@@ -1240,7 +1383,7 @@ Sign transaction by the given key.
     - `from` -  name or address of private key to use to sign.
     - `account-number` - (optional) the account number of the signing account.
     - `sequence` - (optional) the sequence number of the signing account.
-    - `chain-id` - (optional) chain id.
+    - `chain-id` - (optional) chain ID.
 - CLI command: 
     -   `dcld tx sign [path-to-txn-file] --from [address]`
 Note: if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  

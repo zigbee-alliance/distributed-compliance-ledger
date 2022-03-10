@@ -12,49 +12,6 @@ import (
 )
 
 func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
-	// negative test constants
-
-	planNameLen0 := Plan{
-		Name:   "",
-		Height: 1,
-		Info:   "Some info",
-	}
-
-	planHeight0 := Plan{
-		Name:   "Some plan name",
-		Height: 0,
-		Info:   "Some info",
-	}
-
-	planHeightLess0 := Plan{
-		Name:   "Some plan name",
-		Height: -1,
-		Info:   "Some info",
-	}
-
-	planTimeIsNot0 := Plan{
-		Name:   "Some plan name",
-		Height: 1,
-		Info:   "Some info",
-		Time:   time.Now(),
-	}
-	planUpgradedClientStateIsNotNil := Plan{
-		Name:                "Some plan name",
-		Height:              1,
-		Info:                "Some info",
-		UpgradedClientState: &codectypes.Any{TypeUrl: "333"},
-	}
-
-	// positive test constants
-
-	planNormal := testconstants.Plan
-
-	planInfoLen0 := Plan{
-		Name:   "Some plan name",
-		Height: 1,
-		Info:   "",
-	}
-
 	negative_tests := []struct {
 		name string
 		msg  MsgProposeUpgrade
@@ -64,7 +21,13 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: MsgProposeUpgrade{
 				Creator: "invalid_address",
-				Plan:    testconstants.Plan,
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -72,39 +35,70 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 			name: "omitted address",
 			msg: MsgProposeUpgrade{
 				Creator: "",
-				Plan:    testconstants.Plan,
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
 		{
-			name: "Plan name len 0",
+			name: "plan name is not set",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
-				Plan:    planNameLen0,
+				Plan: Plan{
+					Name:   "",
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
 		{
-			name: "Plan height 0",
+			name: "plan height is 0",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
-				Plan:    planHeight0,
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: 0,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
 		{
-			name: "Plan height less than 0",
+			name: "plan height is less than 0",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
-				Plan:    planHeightLess0,
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: -1,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 			err: sdkerrors.ErrInvalidRequest,
 		},
 		{
-			name: "Plan time is not zero",
+			name: "plan time is not zero",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
-				Plan:    planTimeIsNot0,
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+					Time:   time.Now(),
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 			err: *sdkerrors.ErrInvalidRequest,
 		},
@@ -112,7 +106,14 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 			name: "Plan upgradedClientState is not nil",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
-				Plan:    planUpgradedClientStateIsNotNil,
+				Plan: Plan{
+					Name:                testconstants.UpgradePlanName,
+					Height:              testconstants.UpgradePlanHeight,
+					Info:                testconstants.UpgradePlanInfo,
+					UpgradedClientState: &codectypes.Any{TypeUrl: "333"},
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 			err: *sdkerrors.ErrInvalidRequest,
 		},
@@ -123,17 +124,55 @@ func TestMsgProposeUpgrade_ValidateBasic(t *testing.T) {
 		msg  MsgProposeUpgrade
 	}{
 		{
-			name: "valid msg propose upgrade message",
+			name: "valid MsgProposeUpgrade message",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
-				Plan:    planNormal,
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 		},
 		{
-			name: "info len 0",
+			name: "info is not set",
 			msg: MsgProposeUpgrade{
 				Creator: sample.AccAddress(),
-				Plan:    planInfoLen0,
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: "",
+				Time: testconstants.Time,
+			},
+		},
+		{
+			name: "plan height is greater than 0",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: 1,
+					Info:   testconstants.UpgradePlanInfo,
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
+			},
+		},
+		{
+			name: "plan info is not set",
+			msg: MsgProposeUpgrade{
+				Creator: sample.AccAddress(),
+				Plan: Plan{
+					Name:   testconstants.UpgradePlanName,
+					Height: testconstants.UpgradePlanHeight,
+					Info:   "",
+				},
+				Info: testconstants.Info,
+				Time: testconstants.Time,
 			},
 		},
 	}

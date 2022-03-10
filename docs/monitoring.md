@@ -4,15 +4,15 @@
 
 As long as DCLedger is built on top of Cosmos SDK and Tendermint their monitoring abilities can be considered for DCLedger as well.
 
-*   Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/master/nodes/metrics.html#metrics).
-*   Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/master/core/telemetry.html) package as a server side support for application performance and behavior explorations.
+*   Starting from `v0.21.0` Tendermint provides Prometheus compatible [metrics](https://docs.tendermint.com/v0.34/tendermint-core/metrics.html).
+*   Starting from `v0.40.0` Cosmos SDK provides [telemetry](https://docs.cosmos.network/master/core/telemetry.html) package as a server-side support for application performance and behavior explorations.
 
 ## Installation & Configuration
 
 Server:
 
-*   set server settings as described in [Tendermint Metrics](https://docs.tendermint.com/master/nodes/metrics.html#metrics)
-*   restart the `dcld` service
+*   set server settings as described in [Tendermint Metrics](https://docs.tendermint.com/v0.34/tendermint-core/metrics.html)
+*   restart the `cosmovisor` service
 *   configure a firewall (if any) so incoming HTTP connections to prometheus port would be allowed
 *   verify (e.g. `curl IP:PORT`): you should see the metrics along with the values
 
@@ -31,4 +31,4 @@ Run
 prometheus --config.file=prometheus.yml
 ```
 
-And open <http://localhost:9090/> to query and monitor the server side metrics.
+And open `http://localhost:9090/` to query and monitor the server-side metrics.

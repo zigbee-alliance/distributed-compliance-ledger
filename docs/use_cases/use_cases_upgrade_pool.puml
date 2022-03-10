@@ -1,0 +1,74 @@
+@startuml
+!pragma teoz true
+hide footbox
+
+participant cosmovisor as C
+database old_dcld as OD
+database new_dcld as ND
+actor "Trustee 1" as T1
+actor "Trustee 2" as T2
+actor "Trustee N" as TN
+
+note over C, ND
+    cosmovisor, old dcld and new dcld binaries are present <b>on every node in pool</b>.
+    The scenario decribed below is performed <b>on every node in pool</b>.
+end note
+
+C -> OD: Starts `current/bin/dcld`\nsubprocess
+C -> C: Watches for changes\nin `data/upgrade-info.json`
+
+== Upgrade Planning ==
+
+T1 -> OD: PROPOSE_UPGRADE
+T2 -> OD: APPROVE_UPGRADE
+TN -> OD: APPROVE_UPGRADE
+
+note over OD
+    Approvals from K% of Trustees have been received
+end note
+
+OD -> OD: Proposed upgrade plan\nis approved and scheduled
+
+== Upgrade Execution ==
+
+note over OD
+    Ledger reaches height of scheduled upgrade plan
+end note
+
+group x/upgrade.BeginBlocker
+    note over OD
+        Application does not have upgrade handler
+        for reached scheduled upgrade plan
+        (hence this application version is old)
+    end note
+
+    OD -> OD: Dumps `data/upgrade-info.json`
+    OD -> OD: Panics
+end group
+
+note over C
+    cosmovisor detects that upgrade name
+    in `data/upgrade-info.json` differs from
+    upgrade name in `current/upgrade-info.json`
+end note
+
+C -> OD: Kills `dcld` subprocess
+C -> C: Performes data back-up
+C -> C: Switches `current` symbolic link\nto new application version directory
+C -> C: Saves `data/upgrade-info.json`\nto `current/upgrade-info.json`
+C -> ND: Starts `current/bin/dcld`\nsubprocess
+C -> C: Watches for changes\nin `data/upgrade-info.json`
+
+& group x/upgrade.BeginBlocker
+    note over ND
+        Application has upgrade handler
+        for reached scheduled upgrade plan
+        (hence this application version is new)
+    end note
+
+    ND -> ND: Executes upgrade handler\nwhich performs necessary\nstore migrations
+    ND -> ND: Clears scheduled upgrade plan
+    ND -> ND: Marks upgrade name\nas done at current height
+end group
+
+@enduml

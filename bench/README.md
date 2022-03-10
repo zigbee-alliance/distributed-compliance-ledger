@@ -14,7 +14,7 @@ Run (consider to use virtual environment):
 pip3 install -r bench/requirements.txt
 ```
 
-**Optional** If you need to monitor server side metrics please install [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/).
+**Optional** If you need to monitor server-side metrics please install [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/).
 
 ## Preparation
 
@@ -32,7 +32,6 @@ By that reason load test uses prepared load data which can be generated as follo
 
     # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
     make localnet_init
-    
     # ./gentestaccounts.sh [<NUM-USERS>]
     ./gentestaccounts.sh
 
@@ -42,7 +41,7 @@ By that reason load test uses prepared load data which can be generated as follo
 *   Generate test transactions:
 
     ```bash
-    # DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> python bench/generate.py bench/test.spec.yaml bench/txns
+    # DCLBENCH_WRITE_USERS_COUNT=<NUM-USERS> DCLBENCH_WRITE_USERS_Q_COUNT=<NUM-REQ-PER-USER> DCLBENCH_ADD_NEW_MODELS_COUNT=<NUM-NEW-MODELS> python bench/generate.py bench/test.spec.yaml bench/txns
     python bench/generate.py bench/test.spec.yaml bench/txns
     ```
 
@@ -50,6 +49,7 @@ Here the following (**optional**) inputs are considered:
 
 *   `NUM-USERS`: number of client accounts with write access (created as Vendors). Default: 10
 *   `NUM-REQ-PER-USER`: number of write txns to perform per a user. Default: 1000
+*   `NUM-NEW-MODELS`: models are added to the ledger for reading afterwards in load tests. Default: 5
 
 ## Run
 
@@ -59,7 +59,7 @@ Here the following (**optional**) inputs are considered:
 prometheus --config.file=bench/prometheus.yml
 ```
 
-And open <http://localhost:9090/> to query and monitor the server side metrics.
+And open `http://localhost:9090/` to query and monitor the server-side metrics.
 
 ### Headless
 
@@ -73,7 +73,7 @@ locust --headless
 locust
 ```
 
-Then you can open <http://localhost:8089/> and launch the tests from the browser.
+Then you can open `http://localhost:8089/` and launch the tests from the browser.
 
 ### Configuration
 
@@ -83,6 +83,8 @@ Run options (DCLedger custom ones):
 *   `--dcl-spawn-rate` Rate to spawn users at (users per second)
 *   `--dcl-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
     E.g. for local ledger `http://localhost:26657,http://localhost:26659,http://localhost:26661,http://localhost:26663` will specify all the nodes.
+*   `--dcl-rest-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
+    E.g. for local ledger `http://localhost:26640,http://localhost:26641,http://localhost:26642,http://localhost:26643` will specify all the nodes.
 *   `--dcl-txn-file` path to a file with generated txns
 
 Statistic options:
