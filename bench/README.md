@@ -61,16 +61,38 @@ prometheus --config.file=bench/prometheus.yml
 
 And open `http://localhost:9090/` to query and monitor the server-side metrics.
 
-### Headless
+## Headless
 
+### To run write/read load tests
 ```bash
 locust --headless
 ```
 
-### Web UI
+### To run write load tests
+```bash
+locust --headless DCLWriteUser
+```
 
+### To run read load tests
+```bash
+locust --headless DCLReadUser
+```
+
+## Web UI
+
+### To run write/read load tests
 ```bash
 locust
+```
+
+### To run write load tests
+```bash
+locust DCLWriteUser
+```
+
+### To run read load tests
+```bash
+locust DCLReadUser
 ```
 
 Then you can open `http://localhost:8089/` and launch the tests from the browser.
