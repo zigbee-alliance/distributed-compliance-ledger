@@ -10,6 +10,7 @@ import (
 var (
 	ErrProposedUpgradeAlreadyExists = sdkerrors.Register(ModuleName, 801, "proposed upgrade already exists")
 	ErrProposedUpgradeDoesNotExist  = sdkerrors.Register(ModuleName, 802, "proposed upgrade does not exist")
+	ErrApprovedUpgradeAlreadyExists = sdkerrors.Register(ModuleName, 803, "approved upgrade already exists")
 )
 
 func NewErrProposedUpgradeAlreadyExists(name interface{}) error {
@@ -24,6 +25,14 @@ func NewErrProposedUpgradeDoesNotExist(name interface{}) error {
 	return sdkerrors.Wrapf(
 		ErrProposedUpgradeDoesNotExist,
 		"Proposed upgrade with name=%v does not exist on the ledger",
+		name,
+	)
+}
+
+func NewErrApprovedUpgradeAlreadyExists(name interface{}) error {
+	return sdkerrors.Wrapf(
+		ErrApprovedUpgradeAlreadyExists,
+		"Approved upgrade with name=%v already exists on the ledger",
 		name,
 	)
 }
