@@ -64,9 +64,9 @@ application version:
       dcld tx dclupgrade approve-upgrade --name=v0.7.0 --from=bob
       ```
 
-5. **Ensure That Upgrade Has Been Scheduled**: It makes sense to ensure that the
-   upgrade has been approved and scheduled. Example how to view the approved
-   upgrade plan:
+5. **[Anyone] Ensure That Upgrade Has Been Scheduled**: It makes sense to ensure
+   that the upgrade has been approved and scheduled. Example how to view the
+   approved upgrade plan:
    ```
    dcld query dclupgrade approved-upgrade --name=v0.7.0
    ```
