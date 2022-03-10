@@ -67,10 +67,21 @@ And open `http://localhost:9090/` to query and monitor the server-side metrics.
 locust --headless
 ```
 
-### Web UI
+## Web UI
 
+### For run write/read load tests
 ```bash
 locust
+```
+
+### For run write load tests
+```bash
+locust DCLWriteUser
+```
+
+### For run read load tests
+```bash
+locust DCLReadUser
 ```
 
 Then you can open `http://localhost:8089/` and launch the tests from the browser.
