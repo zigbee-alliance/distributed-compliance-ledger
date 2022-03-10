@@ -24,10 +24,16 @@ func (k msgServer) ProposeUpgrade(goCtx context.Context, msg *types.MsgProposeUp
 		)
 	}
 
-	// check if proposed upgrade exists
+	// check if proposed upgrade with the same name already exists
 	_, isFound := k.GetProposedUpgrade(ctx, msg.Plan.Name)
 	if isFound {
 		return nil, types.NewErrProposedUpgradeAlreadyExists(msg.Plan.Name)
+	}
+
+	// check if approved upgrade with the same name already exists
+	_, isFound = k.GetApprovedUpgrade(ctx, msg.Plan.Name)
+	if isFound {
+		return nil, types.NewErrApprovedUpgradeAlreadyExists(msg.Plan.Name)
 	}
 
 	// Execute scheduling upgrade in a new context branch (with branched store)
