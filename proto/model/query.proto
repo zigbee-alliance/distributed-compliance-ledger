@@ -48,7 +48,7 @@ message QueryGetVendorProductsRequest {
 }
 
 message QueryGetVendorProductsResponse {
-	VendorProducts vendorProducts = 1 [(gogoproto.nullable) = false];
+	VendorProducts vendor_products = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryGetModelRequest {
@@ -78,7 +78,7 @@ message QueryGetModelVersionRequest {
 }
 
 message QueryGetModelVersionResponse {
-	ModelVersion modelVersion = 1 [(gogoproto.nullable) = false];
+	ModelVersion model_version = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryGetModelVersionsRequest {
@@ -88,7 +88,7 @@ message QueryGetModelVersionsRequest {
 }
 
 message QueryGetModelVersionsResponse {
-	ModelVersions modelVersions = 1 [(gogoproto.nullable) = false];
+	ModelVersions model_versions = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

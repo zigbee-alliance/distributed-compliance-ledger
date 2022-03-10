@@ -41,7 +41,7 @@ message QueryGetProposedUpgradeRequest {
 }
 
 message QueryGetProposedUpgradeResponse {
-	ProposedUpgrade proposedUpgrade = 1 [(gogoproto.nullable) = false];
+	ProposedUpgrade proposed_upgrade = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllProposedUpgradeRequest {
@@ -49,7 +49,7 @@ message QueryAllProposedUpgradeRequest {
 }
 
 message QueryAllProposedUpgradeResponse {
-	repeated ProposedUpgrade proposedUpgrade = 1 [(gogoproto.nullable) = false];
+	repeated ProposedUpgrade proposed_upgrade = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -59,7 +59,7 @@ message QueryGetApprovedUpgradeRequest {
 }
 
 message QueryGetApprovedUpgradeResponse {
-	ApprovedUpgrade approvedUpgrade = 1 [(gogoproto.nullable) = false];
+	ApprovedUpgrade approved_upgrade = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllApprovedUpgradeRequest {
@@ -67,7 +67,7 @@ message QueryAllApprovedUpgradeRequest {
 }
 
 message QueryAllApprovedUpgradeResponse {
-	repeated ApprovedUpgrade approvedUpgrade = 1 [(gogoproto.nullable) = false];
+	repeated ApprovedUpgrade approved_upgrade = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

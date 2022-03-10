@@ -91,7 +91,7 @@ message QueryGetApprovedCertificatesRequest {
 }
 
 message QueryGetApprovedCertificatesResponse {
-	ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = false];
+	ApprovedCertificates approved_certificates = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllApprovedCertificatesRequest {
@@ -99,7 +99,7 @@ message QueryAllApprovedCertificatesRequest {
 }
 
 message QueryAllApprovedCertificatesResponse {
-	repeated ApprovedCertificates approvedCertificates = 1 [(gogoproto.nullable) = false];
+	repeated ApprovedCertificates approved_certificates = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -110,7 +110,7 @@ message QueryGetProposedCertificateRequest {
 }
 
 message QueryGetProposedCertificateResponse {
-	ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = false];
+	ProposedCertificate proposed_certificate = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllProposedCertificateRequest {
@@ -118,7 +118,7 @@ message QueryAllProposedCertificateRequest {
 }
 
 message QueryAllProposedCertificateResponse {
-	repeated ProposedCertificate proposedCertificate = 1 [(gogoproto.nullable) = false];
+	repeated ProposedCertificate proposed_certificate = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -129,7 +129,7 @@ message QueryGetChildCertificatesRequest {
 }
 
 message QueryGetChildCertificatesResponse {
-	ChildCertificates childCertificates = 1 [(gogoproto.nullable) = false];
+	ChildCertificates child_certificates = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryGetProposedCertificateRevocationRequest {
@@ -139,7 +139,7 @@ message QueryGetProposedCertificateRevocationRequest {
 }
 
 message QueryGetProposedCertificateRevocationResponse {
-	ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = false];
+	ProposedCertificateRevocation proposed_certificate_revocation = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllProposedCertificateRevocationRequest {
@@ -147,7 +147,7 @@ message QueryAllProposedCertificateRevocationRequest {
 }
 
 message QueryAllProposedCertificateRevocationResponse {
-	repeated ProposedCertificateRevocation proposedCertificateRevocation = 1 [(gogoproto.nullable) = false];
+	repeated ProposedCertificateRevocation proposed_certificate_revocation = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -158,7 +158,7 @@ message QueryGetRevokedCertificatesRequest {
 }
 
 message QueryGetRevokedCertificatesResponse {
-	RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = false];
+	RevokedCertificates revoked_certificates = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllRevokedCertificatesRequest {
@@ -166,19 +166,19 @@ message QueryAllRevokedCertificatesRequest {
 }
 
 message QueryAllRevokedCertificatesResponse {
-	repeated RevokedCertificates revokedCertificates = 1 [(gogoproto.nullable) = false];
+	repeated RevokedCertificates revoked_certificates = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 message QueryGetApprovedRootCertificatesRequest {}
 
 message QueryGetApprovedRootCertificatesResponse {
-	ApprovedRootCertificates ApprovedRootCertificates = 1 [(gogoproto.nullable) = false];
+	ApprovedRootCertificates approved_root_certificates = 1 [(gogoproto.nullable) = false];
 }
 message QueryGetRevokedRootCertificatesRequest {}
 
 message QueryGetRevokedRootCertificatesResponse {
-	RevokedRootCertificates RevokedRootCertificates = 1 [(gogoproto.nullable) = false];
+	RevokedRootCertificates revoked_root_certificates = 1 [(gogoproto.nullable) = false];
 }
 message QueryGetApprovedCertificatesBySubjectRequest {
 	  string subject = 1;
@@ -186,7 +186,7 @@ message QueryGetApprovedCertificatesBySubjectRequest {
 }
 
 message QueryGetApprovedCertificatesBySubjectResponse {
-	ApprovedCertificatesBySubject approvedCertificatesBySubject = 1 [(gogoproto.nullable) = false];
+	ApprovedCertificatesBySubject approved_certificates_by_subject = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3

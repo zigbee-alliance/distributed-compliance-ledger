@@ -60,7 +60,7 @@ message QueryGetLastValidatorPowerRequest {
 }
 
 message QueryGetLastValidatorPowerResponse {
-	LastValidatorPower lastValidatorPower = 1 [(gogoproto.nullable) = false];
+	LastValidatorPower last_validator_power = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllLastValidatorPowerRequest {
@@ -68,7 +68,7 @@ message QueryAllLastValidatorPowerRequest {
 }
 
 message QueryAllLastValidatorPowerResponse {
-	repeated LastValidatorPower lastValidatorPower = 1 [(gogoproto.nullable) = false];
+	repeated LastValidatorPower last_validator_power = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

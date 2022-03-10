@@ -30,7 +30,7 @@ message QueryGetVendorInfoRequest {
 }
 
 message QueryGetVendorInfoResponse {
-	VendorInfo vendorInfo = 1 [(gogoproto.nullable) = false];
+	VendorInfo vendor_info = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllVendorInfoRequest {
@@ -38,7 +38,7 @@ message QueryAllVendorInfoRequest {
 }
 
 message QueryAllVendorInfoResponse {
-	repeated VendorInfo vendorInfo = 1 [(gogoproto.nullable) = false];
+	repeated VendorInfo vendor_info = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

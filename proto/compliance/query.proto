@@ -66,7 +66,7 @@ message QueryGetComplianceInfoRequest {
 }
 
 message QueryGetComplianceInfoResponse {
-	ComplianceInfo complianceInfo = 1 [(gogoproto.nullable) = false];
+	ComplianceInfo compliance_info = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllComplianceInfoRequest {
@@ -74,7 +74,7 @@ message QueryAllComplianceInfoRequest {
 }
 
 message QueryAllComplianceInfoResponse {
-	repeated ComplianceInfo complianceInfo = 1 [(gogoproto.nullable) = false];
+	repeated ComplianceInfo compliance_info = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -87,7 +87,7 @@ message QueryGetCertifiedModelRequest {
 }
 
 message QueryGetCertifiedModelResponse {
-	CertifiedModel certifiedModel = 1 [(gogoproto.nullable) = false];
+	CertifiedModel certified_model = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllCertifiedModelRequest {
@@ -95,7 +95,7 @@ message QueryAllCertifiedModelRequest {
 }
 
 message QueryAllCertifiedModelResponse {
-	repeated CertifiedModel certifiedModel = 1 [(gogoproto.nullable) = false];
+	repeated CertifiedModel certified_model = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -108,7 +108,7 @@ message QueryGetRevokedModelRequest {
 }
 
 message QueryGetRevokedModelResponse {
-	RevokedModel revokedModel = 1 [(gogoproto.nullable) = false];
+	RevokedModel revoked_model = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllRevokedModelRequest {
@@ -116,7 +116,7 @@ message QueryAllRevokedModelRequest {
 }
 
 message QueryAllRevokedModelResponse {
-	repeated RevokedModel revokedModel = 1 [(gogoproto.nullable) = false];
+	repeated RevokedModel revoked_model = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -129,7 +129,7 @@ message QueryGetProvisionalModelRequest {
 }
 
 message QueryGetProvisionalModelResponse {
-	ProvisionalModel provisionalModel = 1 [(gogoproto.nullable) = false];
+	ProvisionalModel provisional_model = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryAllProvisionalModelRequest {
@@ -137,7 +137,7 @@ message QueryAllProvisionalModelRequest {
 }
 
 message QueryAllProvisionalModelResponse {
-	repeated ProvisionalModel provisionalModel = 1 [(gogoproto.nullable) = false];
+	repeated ProvisionalModel provisional_model = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
