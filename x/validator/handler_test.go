@@ -46,19 +46,19 @@ func Setup(t *testing.T) TestSetup {
 	k, ctx := testkeeper.ValidatorKeeper(t, dclauthK)
 	handler := NewHandler(*k)
 
-	validator1, _ := types.NewValidator(
-		sdk.ValAddress(testconstants.ValidatorAddress1),
-		testconstants.ValidatorPubKey1,
-		types.Description{Moniker: "Validator 1"},
-	)
-	k.SetValidator(ctx, validator1)
-
 	ba := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account := dclauthtypes.NewAccount(
 		ba,
 		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, testconstants.VendorID1,
 	)
 	dclauthK.SetAccount(ctx, account)
+
+	validator1, _ := types.NewValidator(
+		sdk.ValAddress(testconstants.ValidatorAddress1),
+		testconstants.ValidatorPubKey1,
+		types.Description{Moniker: "Validator 1"},
+	)
+	k.SetValidator(ctx, validator1)
 
 	setup := TestSetup{
 		Ctx:             ctx,
@@ -345,8 +345,10 @@ func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin, dclauthtypes.CertificationCenter, dclauthtypes.Vendor}, nil, testconstants.VendorID3)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
+	valAddr := sdk.ValAddress(testconstants.ValidatorAddress1)
+
 	// propose new disablevalidator
-	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(account3.Address))
+	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress(), valAddr)
 	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator1)
 	require.NoError(t, err)
 
@@ -362,7 +364,7 @@ func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
 	require.Equal(t, msgProposeDisableValidator1.Time, disabledValidator.Approvals[0].Time)
 	require.False(t, disabledValidator.DisabledByNodeAdmin)
 
-	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, sdk.ValAddress(account3.Address))
+	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, valAddr)
 	require.True(t, isFound)
 	require.True(t, validator.Jailed)
 }
