@@ -29,6 +29,7 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 			types.VoteForDisableValidatorRole,
 		)
 	}
+
 	// check if validator exists
 	isFound := k.Keeper.IsValidatorPresent(ctx, validatorAddr)
 	if !isFound {

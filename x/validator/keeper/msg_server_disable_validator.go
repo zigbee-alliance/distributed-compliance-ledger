@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -24,8 +25,14 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 		)
 	}
 
+	// check if validator exists
+	isFound := k.Keeper.IsValidatorPresent(ctx, creatorAddr)
+	if !isFound {
+		return nil, sdkstakingtypes.ErrNoValidatorFound
+	}
+
 	// check if disabled validator exists
-	_, isFound := k.GetDisabledValidator(ctx, msg.Creator)
+	_, isFound = k.GetDisabledValidator(ctx, msg.Creator)
 	if isFound {
 		return nil, types.NewErrDisabledValidatorAlreadyExists(msg.Creator)
 	}
