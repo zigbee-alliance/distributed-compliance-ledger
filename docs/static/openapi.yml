@@ -7347,7 +7347,7 @@ paths:
                     jailed:
                       type: boolean
                       title: has the validator been removed from validator set
-                    jailedReason:
+                    jailed_reason:
                       type: string
                       title: the reason of validator jailing
               pagination:
@@ -8057,13 +8057,13 @@ paths:
                     vendorID:
                       type: integer
                       format: int32
-                    vendorName:
+                    vendor_name:
                       type: string
-                    companyLegalName:
+                    company_legal_name:
                       type: string
-                    companyPrefferedName:
+                    company_preffered_name:
                       type: string
-                    vendorLandingPageURL:
+                    vendor_landing_page_url:
                       type: string
                     creator:
                       type: string
@@ -8191,13 +8191,13 @@ paths:
                   vendorID:
                     type: integer
                     format: int32
-                  vendorName:
+                  vendor_name:
                     type: string
-                  companyLegalName:
+                  company_legal_name:
                     type: string
-                  companyPrefferedName:
+                  company_preffered_name:
                     type: string
-                  vendorLandingPageURL:
+                  vendor_landing_page_url:
                     type: string
                   creator:
                     type: string
@@ -8728,7 +8728,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllCertifiedModelResponse:
     type: object
     properties:
-      certifiedModel:
+      certified_model:
         type: array
         items:
           type: object
@@ -8774,7 +8774,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllComplianceInfoResponse:
     type: object
     properties:
-      complianceInfo:
+      compliance_info:
         type: array
         items:
           type: object
@@ -8847,7 +8847,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllProvisionalModelResponse:
     type: object
     properties:
-      provisionalModel:
+      provisional_model:
         type: array
         items:
           type: object
@@ -8893,7 +8893,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllRevokedModelResponse:
     type: object
     properties:
-      revokedModel:
+      revoked_model:
         type: array
         items:
           type: object
@@ -8939,7 +8939,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetCertifiedModelResponse:
     type: object
     properties:
-      certifiedModel:
+      certified_model:
         type: object
         properties:
           vid:
@@ -8958,7 +8958,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetComplianceInfoResponse:
     type: object
     properties:
-      complianceInfo:
+      compliance_info:
         type: object
         properties:
           vid:
@@ -9004,7 +9004,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
     properties:
-      provisionalModel:
+      provisional_model:
         type: object
         properties:
           vid:
@@ -9023,7 +9023,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetRevokedModelResponse:
     type: object
     properties:
-      revokedModel:
+      revoked_model:
         type: object
         properties:
           vid:
@@ -9951,7 +9951,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountResponse:
     type: object
     properties:
-      pendingAccount:
+      pending_account:
         type: array
         items:
           type: object
@@ -10207,7 +10207,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountRevocationResponse:
     type: object
     properties:
-      pendingAccountRevocation:
+      pending_account_revocation:
         type: array
         items:
           type: object
@@ -10474,7 +10474,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse:
     type: object
     properties:
-      AccountStat:
+      account_stat:
         type: object
         properties:
           number:
@@ -10483,7 +10483,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountResponse:
     type: object
     properties:
-      pendingAccount:
+      pending_account:
         type: object
         properties:
           account:
@@ -10710,7 +10710,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationResponse:
     type: object
     properties:
-      pendingAccountRevocation:
+      pending_account_revocation:
         type: object
         properties:
           address:
@@ -11107,7 +11107,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllApprovedUpgradeResponse:
     type: object
     properties:
-      approvedUpgrade:
+      approved_upgrade:
         type: array
         items:
           type: object
@@ -11272,7 +11272,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllProposedUpgradeResponse:
     type: object
     properties:
-      proposedUpgrade:
+      proposed_upgrade:
         type: array
         items:
           type: object
@@ -11437,7 +11437,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetApprovedUpgradeResponse:
     type: object
     properties:
-      approvedUpgrade:
+      approved_upgrade:
         type: object
         properties:
           plan:
@@ -11573,7 +11573,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetProposedUpgradeResponse:
     type: object
     properties:
-      proposedUpgrade:
+      proposed_upgrade:
         type: object
         properties:
           plan:
@@ -11945,7 +11945,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
     properties:
-      modelVersion:
+      model_version:
         type: object
         properties:
           vid:
@@ -11989,7 +11989,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:
     type: object
     properties:
-      modelVersions:
+      model_versions:
         type: object
         properties:
           vid:
@@ -12006,7 +12006,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.model.QueryGetVendorProductsResponse:
     type: object
     properties:
-      vendorProducts:
+      vendor_products:
         type: object
         properties:
           vid:
@@ -12222,7 +12222,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
     type: object
     properties:
-      approvedCertificates:
+      approved_certificates:
         type: array
         items:
           type: object
@@ -12296,7 +12296,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateResponse:
     type: object
     properties:
-      proposedCertificate:
+      proposed_certificate:
         type: array
         items:
           type: object
@@ -12351,7 +12351,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateRevocationResponse:
     type: object
     properties:
-      proposedCertificateRevocation:
+      proposed_certificate_revocation:
         type: array
         items:
           type: object
@@ -12400,7 +12400,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedCertificatesResponse:
     type: object
     properties:
-      revokedCertificates:
+      revoked_certificates:
         type: array
         items:
           type: object
@@ -12474,7 +12474,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesBySubjectResponse:
     type: object
     properties:
-      approvedCertificatesBySubject:
+      approved_certificates_by_subject:
         type: object
         properties:
           subject:
@@ -12486,7 +12486,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse:
     type: object
     properties:
-      approvedCertificates:
+      approved_certificates:
         type: object
         properties:
           subject:
@@ -12533,7 +12533,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
-      ApprovedRootCertificates:
+      approved_root_certificates:
         type: object
         properties:
           certs:
@@ -12548,7 +12548,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesResponse:
     type: object
     properties:
-      childCertificates:
+      child_certificates:
         type: object
         properties:
           issuer:
@@ -12567,7 +12567,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
     type: object
     properties:
-      proposedCertificate:
+      proposed_certificate:
         type: object
         properties:
           subject:
@@ -12595,7 +12595,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse:
     type: object
     properties:
-      proposedCertificateRevocation:
+      proposed_certificate_revocation:
         type: object
         properties:
           subject:
@@ -12617,7 +12617,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedCertificatesResponse:
     type: object
     properties:
-      revokedCertificates:
+      revoked_certificates:
         type: object
         properties:
           subject:
@@ -12664,7 +12664,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
-      RevokedRootCertificates:
+      revoked_root_certificates:
         type: object
         properties:
           certs:
@@ -12758,7 +12758,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.validator.QueryAllLastValidatorPowerResponse:
     type: object
     properties:
-      lastValidatorPower:
+      last_validator_power:
         type: array
         items:
           type: object
@@ -12997,7 +12997,7 @@ definitions:
             jailed:
               type: boolean
               title: has the validator been removed from validator set
-            jailedReason:
+            jailed_reason:
               type: string
               title: the reason of validator jailing
       pagination:
@@ -13028,7 +13028,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.validator.QueryGetLastValidatorPowerResponse:
     type: object
     properties:
-      lastValidatorPower:
+      last_validator_power:
         type: object
         properties:
           owner:
@@ -13234,7 +13234,7 @@ definitions:
           jailed:
             type: boolean
             title: has the validator been removed from validator set
-          jailedReason:
+          jailed_reason:
             type: string
             title: the reason of validator jailing
   zigbeealliance.distributedcomplianceledger.validator.Validator:
@@ -13426,13 +13426,13 @@ definitions:
       jailed:
         type: boolean
         title: has the validator been removed from validator set
-      jailedReason:
+      jailed_reason:
         type: string
         title: the reason of validator jailing
   zigbeealliance.distributedcomplianceledger.vendorinfo.QueryAllVendorInfoResponse:
     type: object
     properties:
-      vendorInfo:
+      vendor_info:
         type: array
         items:
           type: object
@@ -13440,13 +13440,13 @@ definitions:
             vendorID:
               type: integer
               format: int32
-            vendorName:
+            vendor_name:
               type: string
-            companyLegalName:
+            company_legal_name:
               type: string
-            companyPrefferedName:
+            company_preffered_name:
               type: string
-            vendorLandingPageURL:
+            vendor_landing_page_url:
               type: string
             creator:
               type: string
@@ -13478,19 +13478,19 @@ definitions:
   zigbeealliance.distributedcomplianceledger.vendorinfo.QueryGetVendorInfoResponse:
     type: object
     properties:
-      vendorInfo:
+      vendor_info:
         type: object
         properties:
           vendorID:
             type: integer
             format: int32
-          vendorName:
+          vendor_name:
             type: string
-          companyLegalName:
+          company_legal_name:
             type: string
-          companyPrefferedName:
+          company_preffered_name:
             type: string
-          vendorLandingPageURL:
+          vendor_landing_page_url:
             type: string
           creator:
             type: string
@@ -13500,13 +13500,13 @@ definitions:
       vendorID:
         type: integer
         format: int32
-      vendorName:
+      vendor_name:
         type: string
-      companyLegalName:
+      company_legal_name:
         type: string
-      companyPrefferedName:
+      company_preffered_name:
         type: string
-      vendorLandingPageURL:
+      vendor_landing_page_url:
         type: string
       creator:
         type: string
