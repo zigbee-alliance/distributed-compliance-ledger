@@ -9,7 +9,7 @@ application version:
    augmented by a new upgrade handler which will handle an upgrade to this new
    version. This upgrade handler must have a unique name which will serve as the
    name of the upgrade to this new version.
-2. A ledger height not reached yet at which all the nodes in the pool must be
+2. [Trustees] **Upgrade Height**: A ledger height not reached yet at which all the nodes in the pool must be
    upgraded to the new application version is chosen.
 3. SHA-256 or SHA-512 checksums of the new application version binaries for
    supported platforms are calculated.
