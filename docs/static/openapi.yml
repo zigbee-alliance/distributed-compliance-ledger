@@ -22,7 +22,7 @@ paths:
           schema:
             type: object
             properties:
-              certifiedModel:
+              certified_model:
                 type: array
                 items:
                   type: object
@@ -158,7 +158,7 @@ paths:
           schema:
             type: object
             properties:
-              certifiedModel:
+              certified_model:
                 type: object
                 properties:
                   vid:
@@ -228,7 +228,7 @@ paths:
           schema:
             type: object
             properties:
-              complianceInfo:
+              compliance_info:
                 type: array
                 items:
                   type: object
@@ -391,7 +391,7 @@ paths:
           schema:
             type: object
             properties:
-              complianceInfo:
+              compliance_info:
                 type: object
                 properties:
                   vid:
@@ -488,7 +488,7 @@ paths:
           schema:
             type: object
             properties:
-              provisionalModel:
+              provisional_model:
                 type: array
                 items:
                   type: object
@@ -624,7 +624,7 @@ paths:
           schema:
             type: object
             properties:
-              provisionalModel:
+              provisional_model:
                 type: object
                 properties:
                   vid:
@@ -694,7 +694,7 @@ paths:
           schema:
             type: object
             properties:
-              revokedModel:
+              revoked_model:
                 type: array
                 items:
                   type: object
@@ -830,7 +830,7 @@ paths:
           schema:
             type: object
             properties:
-              revokedModel:
+              revoked_model:
                 type: object
                 properties:
                   vid:
@@ -1123,7 +1123,7 @@ paths:
                             format: int64
                           info:
                             type: string
-                    vendorID:
+                    vid:
                       type: integer
                       format: int32
               pagination:
@@ -1411,7 +1411,7 @@ paths:
           schema:
             type: object
             properties:
-              AccountStat:
+              account_stat:
                 type: object
                 properties:
                   number:
@@ -1838,7 +1838,7 @@ paths:
                           format: int64
                         info:
                           type: string
-                  vendorID:
+                  vid:
                     type: integer
                     format: int32
         default:
@@ -2047,7 +2047,7 @@ paths:
           schema:
             type: object
             properties:
-              pendingAccount:
+              pending_account:
                 type: array
                 items:
                   type: object
@@ -2274,7 +2274,7 @@ paths:
                                 format: int64
                               info:
                                 type: string
-                        vendorID:
+                        vid:
                           type: integer
                           format: int32
               pagination:
@@ -2562,7 +2562,7 @@ paths:
           schema:
             type: object
             properties:
-              pendingAccount:
+              pending_account:
                 type: object
                 properties:
                   account:
@@ -2787,7 +2787,7 @@ paths:
                               format: int64
                             info:
                               type: string
-                      vendorID:
+                      vid:
                         type: integer
                         format: int32
         default:
@@ -2996,7 +2996,7 @@ paths:
           schema:
             type: object
             properties:
-              pendingAccountRevocation:
+              pending_account_revocation:
                 type: array
                 items:
                   type: object
@@ -3300,7 +3300,7 @@ paths:
           schema:
             type: object
             properties:
-              pendingAccountRevocation:
+              pending_account_revocation:
                 type: object
                 properties:
                   address:
@@ -3523,7 +3523,7 @@ paths:
           schema:
             type: object
             properties:
-              approvedUpgrade:
+              approved_upgrade:
                 type: array
                 items:
                   type: object
@@ -3659,7 +3659,15 @@ paths:
                     approvals:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -3945,7 +3953,7 @@ paths:
           schema:
             type: object
             properties:
-              approvedUpgrade:
+              approved_upgrade:
                 type: object
                 properties:
                   plan:
@@ -4079,7 +4087,15 @@ paths:
                   approvals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -4286,7 +4302,7 @@ paths:
           schema:
             type: object
             properties:
-              proposedUpgrade:
+              proposed_upgrade:
                 type: array
                 items:
                   type: object
@@ -4422,7 +4438,15 @@ paths:
                     approvals:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -4708,7 +4732,7 @@ paths:
           schema:
             type: object
             properties:
-              proposedUpgrade:
+              proposed_upgrade:
                 type: object
                 properties:
                   plan:
@@ -4842,7 +4866,15 @@ paths:
                   approvals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -5215,7 +5247,7 @@ paths:
           schema:
             type: object
             properties:
-              vendorProducts:
+              vendor_products:
                 type: object
                 properties:
                   vid:
@@ -5364,7 +5396,7 @@ paths:
           schema:
             type: object
             properties:
-              modelVersions:
+              model_versions:
                 type: object
                 properties:
                   vid:
@@ -5423,7 +5455,7 @@ paths:
           schema:
             type: object
             properties:
-              modelVersion:
+              model_version:
                 type: object
                 properties:
                   vid:
@@ -5514,7 +5546,7 @@ paths:
           schema:
             type: object
             properties:
-              approvedCertificates:
+              approved_certificates:
                 type: array
                 items:
                   type: object
@@ -5678,7 +5710,7 @@ paths:
           schema:
             type: object
             properties:
-              approvedCertificatesBySubject:
+              approved_certificates_by_subject:
                 type: object
                 properties:
                   subject:
@@ -5726,7 +5758,7 @@ paths:
           schema:
             type: object
             properties:
-              approvedCertificates:
+              approved_certificates:
                 type: object
                 properties:
                   subject:
@@ -5813,7 +5845,7 @@ paths:
           schema:
             type: object
             properties:
-              childCertificates:
+              child_certificates:
                 type: object
                 properties:
                   issuer:
@@ -5872,7 +5904,7 @@ paths:
           schema:
             type: object
             properties:
-              proposedCertificate:
+              proposed_certificate:
                 type: array
                 items:
                   type: object
@@ -6017,7 +6049,7 @@ paths:
           schema:
             type: object
             properties:
-              proposedCertificate:
+              proposed_certificate:
                 type: object
                 properties:
                   subject:
@@ -6085,7 +6117,7 @@ paths:
           schema:
             type: object
             properties:
-              proposedCertificateRevocation:
+              proposed_certificate_revocation:
                 type: array
                 items:
                   type: object
@@ -6224,7 +6256,7 @@ paths:
           schema:
             type: object
             properties:
-              proposedCertificateRevocation:
+              proposed_certificate_revocation:
                 type: object
                 properties:
                   subject:
@@ -6286,7 +6318,7 @@ paths:
           schema:
             type: object
             properties:
-              revokedCertificates:
+              revoked_certificates:
                 type: array
                 items:
                   type: object
@@ -6450,7 +6482,7 @@ paths:
           schema:
             type: object
             properties:
-              revokedCertificates:
+              revoked_certificates:
                 type: object
                 properties:
                   subject:
@@ -6537,7 +6569,7 @@ paths:
           schema:
             type: object
             properties:
-              RevokedRootCertificates:
+              revoked_root_certificates:
                 type: object
                 properties:
                   certs:
@@ -6583,7 +6615,7 @@ paths:
           schema:
             type: object
             properties:
-              ApprovedRootCertificates:
+              approved_root_certificates:
                 type: object
                 properties:
                   certs:
@@ -6629,7 +6661,7 @@ paths:
           schema:
             type: object
             properties:
-              lastValidatorPower:
+              last_validator_power:
                 type: array
                 items:
                   type: object
@@ -6924,7 +6956,7 @@ paths:
           schema:
             type: object
             properties:
-              lastValidatorPower:
+              last_validator_power:
                 type: object
                 properties:
                   owner:
@@ -7162,7 +7194,7 @@ paths:
                         details:
                           type: string
                           description: optional details.
-                    pubKey:
+                    pub_key:
                       type: object
                       properties:
                         type_url:
@@ -7347,7 +7379,7 @@ paths:
                     jailed:
                       type: boolean
                       title: has the validator been removed from validator set
-                    jailedReason:
+                    jailed_reason:
                       type: string
                       title: the reason of validator jailing
               pagination:
@@ -7657,7 +7689,7 @@ paths:
                       details:
                         type: string
                         description: optional details.
-                  pubKey:
+                  pub_key:
                     type: object
                     properties:
                       type_url:
@@ -7840,7 +7872,7 @@ paths:
                   jailed:
                     type: boolean
                     title: has the validator been removed from validator set
-                  jailedReason:
+                  jailed_reason:
                     type: string
                     title: the reason of validator jailing
         default:
@@ -8049,21 +8081,21 @@ paths:
           schema:
             type: object
             properties:
-              vendorInfo:
+              vendor_info:
                 type: array
                 items:
                   type: object
                   properties:
-                    vendorID:
+                    vid:
                       type: integer
                       format: int32
-                    vendorName:
+                    vendor_name:
                       type: string
-                    companyLegalName:
+                    company_legal_name:
                       type: string
-                    companyPrefferedName:
+                    company_preffered_name:
                       type: string
-                    vendorLandingPageURL:
+                    vendor_landing_page_url:
                       type: string
                     creator:
                       type: string
@@ -8175,7 +8207,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/vendorinfo/vendors/{vendorID}:
+  /dcl/vendorinfo/vendors/{vid}:
     get:
       summary: Queries a vendorInfo by index.
       operationId: VendorInfo
@@ -8185,19 +8217,19 @@ paths:
           schema:
             type: object
             properties:
-              vendorInfo:
+              vendor_info:
                 type: object
                 properties:
-                  vendorID:
+                  vid:
                     type: integer
                     format: int32
-                  vendorName:
+                  vendor_name:
                     type: string
-                  companyLegalName:
+                  company_legal_name:
                     type: string
-                  companyPrefferedName:
+                  company_preffered_name:
                     type: string
-                  vendorLandingPageURL:
+                  vendor_landing_page_url:
                     type: string
                   creator:
                     type: string
@@ -8224,7 +8256,7 @@ paths:
                       type: string
                       format: byte
       parameters:
-        - name: vendorID
+        - name: vid
           in: path
           required: true
           type: integer
@@ -8728,7 +8760,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllCertifiedModelResponse:
     type: object
     properties:
-      certifiedModel:
+      certified_model:
         type: array
         items:
           type: object
@@ -8774,7 +8806,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllComplianceInfoResponse:
     type: object
     properties:
-      complianceInfo:
+      compliance_info:
         type: array
         items:
           type: object
@@ -8847,7 +8879,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllProvisionalModelResponse:
     type: object
     properties:
-      provisionalModel:
+      provisional_model:
         type: array
         items:
           type: object
@@ -8893,7 +8925,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryAllRevokedModelResponse:
     type: object
     properties:
-      revokedModel:
+      revoked_model:
         type: array
         items:
           type: object
@@ -8939,7 +8971,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetCertifiedModelResponse:
     type: object
     properties:
-      certifiedModel:
+      certified_model:
         type: object
         properties:
           vid:
@@ -8958,7 +8990,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetComplianceInfoResponse:
     type: object
     properties:
-      complianceInfo:
+      compliance_info:
         type: object
         properties:
           vid:
@@ -9004,7 +9036,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
     type: object
     properties:
-      provisionalModel:
+      provisional_model:
         type: object
         properties:
           vid:
@@ -9023,7 +9055,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetRevokedModelResponse:
     type: object
     properties:
-      revokedModel:
+      revoked_model:
         type: object
         properties:
           vid:
@@ -9441,7 +9473,7 @@ definitions:
               format: int64
             info:
               type: string
-      vendorID:
+      vid:
         type: integer
         format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.AccountStat:
@@ -9677,7 +9709,7 @@ definitions:
                   format: int64
                 info:
                   type: string
-          vendorID:
+          vid:
             type: integer
             format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccountRevocation:
@@ -9920,7 +9952,7 @@ definitions:
                     format: int64
                   info:
                     type: string
-            vendorID:
+            vid:
               type: integer
               format: int32
       pagination:
@@ -9951,7 +9983,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountResponse:
     type: object
     properties:
-      pendingAccount:
+      pending_account:
         type: array
         items:
           type: object
@@ -10176,7 +10208,7 @@ definitions:
                         format: int64
                       info:
                         type: string
-                vendorID:
+                vid:
                   type: integer
                   format: int32
       pagination:
@@ -10207,7 +10239,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryAllPendingAccountRevocationResponse:
     type: object
     properties:
-      pendingAccountRevocation:
+      pending_account_revocation:
         type: array
         items:
           type: object
@@ -10468,13 +10500,13 @@ definitions:
                   format: int64
                 info:
                   type: string
-          vendorID:
+          vid:
             type: integer
             format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse:
     type: object
     properties:
-      AccountStat:
+      account_stat:
         type: object
         properties:
           number:
@@ -10483,7 +10515,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountResponse:
     type: object
     properties:
-      pendingAccount:
+      pending_account:
         type: object
         properties:
           account:
@@ -10704,13 +10736,13 @@ definitions:
                       format: int64
                     info:
                       type: string
-              vendorID:
+              vid:
                 type: integer
                 format: int32
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationResponse:
     type: object
     properties:
-      pendingAccountRevocation:
+      pending_account_revocation:
         type: object
         properties:
           address:
@@ -10972,7 +11004,25 @@ definitions:
       approvals:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+  zigbeealliance.distributedcomplianceledger.dclupgrade.Grant:
+    type: object
+    properties:
+      address:
+        type: string
+      time:
+        type: string
+        format: int64
+      info:
+        type: string
   zigbeealliance.distributedcomplianceledger.dclupgrade.ProposedUpgrade:
     type: object
     properties:
@@ -11103,11 +11153,19 @@ definitions:
       approvals:
         type: array
         items:
-          type: string
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllApprovedUpgradeResponse:
     type: object
     properties:
-      approvedUpgrade:
+      approved_upgrade:
         type: array
         items:
           type: object
@@ -11243,7 +11301,15 @@ definitions:
             approvals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
@@ -11272,7 +11338,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllProposedUpgradeResponse:
     type: object
     properties:
-      proposedUpgrade:
+      proposed_upgrade:
         type: array
         items:
           type: object
@@ -11408,7 +11474,15 @@ definitions:
             approvals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
@@ -11437,7 +11511,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetApprovedUpgradeResponse:
     type: object
     properties:
-      approvedUpgrade:
+      approved_upgrade:
         type: object
         properties:
           plan:
@@ -11569,11 +11643,19 @@ definitions:
           approvals:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetProposedUpgradeResponse:
     type: object
     properties:
-      proposedUpgrade:
+      proposed_upgrade:
         type: object
         properties:
           plan:
@@ -11705,7 +11787,15 @@ definitions:
           approvals:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.model.Model:
     type: object
     properties:
@@ -11945,7 +12035,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionResponse:
     type: object
     properties:
-      modelVersion:
+      model_version:
         type: object
         properties:
           vid:
@@ -11989,7 +12079,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.model.QueryGetModelVersionsResponse:
     type: object
     properties:
-      modelVersions:
+      model_versions:
         type: object
         properties:
           vid:
@@ -12006,7 +12096,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.model.QueryGetVendorProductsResponse:
     type: object
     properties:
-      vendorProducts:
+      vendor_products:
         type: object
         properties:
           vid:
@@ -12222,7 +12312,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
     type: object
     properties:
-      approvedCertificates:
+      approved_certificates:
         type: array
         items:
           type: object
@@ -12296,7 +12386,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateResponse:
     type: object
     properties:
-      proposedCertificate:
+      proposed_certificate:
         type: array
         items:
           type: object
@@ -12351,7 +12441,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllProposedCertificateRevocationResponse:
     type: object
     properties:
-      proposedCertificateRevocation:
+      proposed_certificate_revocation:
         type: array
         items:
           type: object
@@ -12400,7 +12490,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryAllRevokedCertificatesResponse:
     type: object
     properties:
-      revokedCertificates:
+      revoked_certificates:
         type: array
         items:
           type: object
@@ -12474,7 +12564,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesBySubjectResponse:
     type: object
     properties:
-      approvedCertificatesBySubject:
+      approved_certificates_by_subject:
         type: object
         properties:
           subject:
@@ -12486,7 +12576,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedCertificatesResponse:
     type: object
     properties:
-      approvedCertificates:
+      approved_certificates:
         type: object
         properties:
           subject:
@@ -12533,7 +12623,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
-      ApprovedRootCertificates:
+      approved_root_certificates:
         type: object
         properties:
           certs:
@@ -12548,7 +12638,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesResponse:
     type: object
     properties:
-      childCertificates:
+      child_certificates:
         type: object
         properties:
           issuer:
@@ -12567,7 +12657,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
     type: object
     properties:
-      proposedCertificate:
+      proposed_certificate:
         type: object
         properties:
           subject:
@@ -12595,7 +12685,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse:
     type: object
     properties:
-      proposedCertificateRevocation:
+      proposed_certificate_revocation:
         type: object
         properties:
           subject:
@@ -12617,7 +12707,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedCertificatesResponse:
     type: object
     properties:
-      revokedCertificates:
+      revoked_certificates:
         type: object
         properties:
           subject:
@@ -12664,7 +12754,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
-      RevokedRootCertificates:
+      revoked_root_certificates:
         type: object
         properties:
           certs:
@@ -12758,7 +12848,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.validator.QueryAllLastValidatorPowerResponse:
     type: object
     properties:
-      lastValidatorPower:
+      last_validator_power:
         type: array
         items:
           type: object
@@ -12820,7 +12910,7 @@ definitions:
                 details:
                   type: string
                   description: optional details.
-            pubKey:
+            pub_key:
               type: object
               properties:
                 type_url:
@@ -12997,7 +13087,7 @@ definitions:
             jailed:
               type: boolean
               title: has the validator been removed from validator set
-            jailedReason:
+            jailed_reason:
               type: string
               title: the reason of validator jailing
       pagination:
@@ -13028,7 +13118,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.validator.QueryGetLastValidatorPowerResponse:
     type: object
     properties:
-      lastValidatorPower:
+      last_validator_power:
         type: object
         properties:
           owner:
@@ -13061,7 +13151,7 @@ definitions:
               details:
                 type: string
                 description: optional details.
-          pubKey:
+          pub_key:
             type: object
             properties:
               type_url:
@@ -13234,7 +13324,7 @@ definitions:
           jailed:
             type: boolean
             title: has the validator been removed from validator set
-          jailedReason:
+          jailed_reason:
             type: string
             title: the reason of validator jailing
   zigbeealliance.distributedcomplianceledger.validator.Validator:
@@ -13259,7 +13349,7 @@ definitions:
           details:
             type: string
             description: optional details.
-      pubKey:
+      pub_key:
         type: object
         properties:
           type_url:
@@ -13426,27 +13516,27 @@ definitions:
       jailed:
         type: boolean
         title: has the validator been removed from validator set
-      jailedReason:
+      jailed_reason:
         type: string
         title: the reason of validator jailing
   zigbeealliance.distributedcomplianceledger.vendorinfo.QueryAllVendorInfoResponse:
     type: object
     properties:
-      vendorInfo:
+      vendor_info:
         type: array
         items:
           type: object
           properties:
-            vendorID:
+            vid:
               type: integer
               format: int32
-            vendorName:
+            vendor_name:
               type: string
-            companyLegalName:
+            company_legal_name:
               type: string
-            companyPrefferedName:
+            company_preffered_name:
               type: string
-            vendorLandingPageURL:
+            vendor_landing_page_url:
               type: string
             creator:
               type: string
@@ -13478,35 +13568,35 @@ definitions:
   zigbeealliance.distributedcomplianceledger.vendorinfo.QueryGetVendorInfoResponse:
     type: object
     properties:
-      vendorInfo:
+      vendor_info:
         type: object
         properties:
-          vendorID:
+          vid:
             type: integer
             format: int32
-          vendorName:
+          vendor_name:
             type: string
-          companyLegalName:
+          company_legal_name:
             type: string
-          companyPrefferedName:
+          company_preffered_name:
             type: string
-          vendorLandingPageURL:
+          vendor_landing_page_url:
             type: string
           creator:
             type: string
   zigbeealliance.distributedcomplianceledger.vendorinfo.VendorInfo:
     type: object
     properties:
-      vendorID:
+      vid:
         type: integer
         format: int32
-      vendorName:
+      vendor_name:
         type: string
-      companyLegalName:
+      company_legal_name:
         type: string
-      companyPrefferedName:
+      company_preffered_name:
         type: string
-      vendorLandingPageURL:
+      vendor_landing_page_url:
         type: string
       creator:
         type: string
