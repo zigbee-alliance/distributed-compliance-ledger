@@ -13,7 +13,12 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 
 	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid creator address: (%s)", err)
+	}
+
+	validatorAddr, err := sdk.ValAddressFromBech32(msg.Address)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid validator address: (%s)", err)
 	}
 
 	// check if message creator has enough rights to approve disable validator
@@ -52,7 +57,7 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 		// remove disable validator
 		k.RemoveProposedDisableValidator(ctx, proposedDisableValidator.Address)
 
-		approvedUpgrage := types.DisabledValidator{
+		approvedDisableValidator := types.DisabledValidator{
 			Address:             proposedDisableValidator.Address,
 			Creator:             proposedDisableValidator.Creator,
 			Approvals:           proposedDisableValidator.Approvals,
@@ -60,10 +65,10 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 		}
 
 		// Disable validator
-		validator, _ := k.GetValidator(ctx, sdk.ValAddress(msg.Address))
+		validator, _ := k.GetValidator(ctx, validatorAddr)
 		k.Jail(ctx, validator, msg.Info)
 
-		k.SetDisabledValidator(ctx, approvedUpgrage)
+		k.SetDisabledValidator(ctx, approvedDisableValidator)
 	} else {
 		// update proposed disable validator
 		k.SetProposedDisableValidator(ctx, proposedDisableValidator)

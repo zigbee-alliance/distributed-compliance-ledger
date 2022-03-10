@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -13,7 +14,12 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 
 	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid creator address: (%s)", err)
+	}
+
+	validatorAddr, err := sdk.ValAddressFromBech32(msg.Address)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid validator address: (%s)", err)
 	}
 
 	// check if message creator has enough rights to propose disable validator
@@ -23,14 +29,14 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 			types.VoteForDisableValidatorRole,
 		)
 	}
-	// // check if validator exists
-	// isFound := k.Keeper.IsValidatorPresent(ctx, sdk.ValAddress(msg.Address))
-	// if !isFound {
-	// 	return nil, sdkstakingtypes.ErrNoValidatorFound
-	// }
+	// check if validator exists
+	isFound := k.Keeper.IsValidatorPresent(ctx, validatorAddr)
+	if !isFound {
+		return nil, sdkstakingtypes.ErrNoValidatorFound
+	}
 
 	// check if disabled validator exists
-	_, isFound := k.GetDisabledValidator(ctx, msg.Address)
+	_, isFound = k.GetDisabledValidator(ctx, msg.Address)
 	if isFound {
 		return nil, types.NewErrDisabledValidatorAlreadyExists(msg.Address)
 	}
@@ -71,7 +77,7 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 		}
 
 		// Disable validator
-		validator, _ := k.GetValidator(ctx, sdk.ValAddress(msg.Address))
+		validator, _ := k.GetValidator(ctx, validatorAddr)
 		k.Jail(ctx, validator, msg.Info)
 
 		// store disabled validator
