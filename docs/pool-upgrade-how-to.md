@@ -3,7 +3,7 @@
 Below there are steps which need to be done to upgrade a pool to a new DCL
 application version:
 
-1. A new release of
+1. **[Dev Team] New Release and Upgrade Name**: A new release of
    [distributed-compliance-ledger](https://github.com/zigbee-alliance/distributed-compliance-ledger)
    project is issued. The code of the new released application version must be
    augmented by a new upgrade handler which will handle an upgrade to this new
