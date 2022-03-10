@@ -194,8 +194,15 @@ func DCLUpgradeDemo(suite *utils.TestSuite) {
 	// Check upgrade is proposed
 	proposedUpgrade, err := GetProposedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
 	require.NoError(suite.T, err)
+
 	require.Equal(suite.T, proposeUpgradeMsg.Creator, proposedUpgrade.Creator)
 	require.Equal(suite.T, proposeUpgradeMsg.Plan, proposedUpgrade.Plan)
+
+	require.Equal(suite.T, 1, len(proposedUpgrade.Approvals))
+
+	require.Equal(suite.T, proposeUpgradeMsg.Creator, proposedUpgrade.Approvals[0].Address)
+	require.Equal(suite.T, proposeUpgradeMsg.Time, proposedUpgrade.Approvals[0].Time)
+	require.Equal(suite.T, proposeUpgradeMsg.Info, proposedUpgrade.Approvals[0].Info)
 
 	// Get all proposed upgrades
 	proposedUpgrades, err := GetProposedUpgrades(suite)
@@ -214,8 +221,19 @@ func DCLUpgradeDemo(suite *utils.TestSuite) {
 	// Check upgrade is approved
 	approvedUpgrade, err := GetApprovedUpgrade(suite, proposeUpgradeMsg.Plan.Name)
 	require.NoError(suite.T, err)
+
 	require.Equal(suite.T, proposeUpgradeMsg.Creator, approvedUpgrade.Creator)
 	require.Equal(suite.T, proposeUpgradeMsg.Plan, approvedUpgrade.Plan)
+
+	require.Equal(suite.T, 2, len(approvedUpgrade.Approvals))
+
+	require.Equal(suite.T, proposeUpgradeMsg.Creator, approvedUpgrade.Approvals[0].Address)
+	require.Equal(suite.T, proposeUpgradeMsg.Time, approvedUpgrade.Approvals[0].Time)
+	require.Equal(suite.T, proposeUpgradeMsg.Info, approvedUpgrade.Approvals[0].Info)
+
+	require.Equal(suite.T, approveUpgradeMsg.Creator, approvedUpgrade.Approvals[1].Address)
+	require.Equal(suite.T, approveUpgradeMsg.Time, approvedUpgrade.Approvals[1].Time)
+	require.Equal(suite.T, approveUpgradeMsg.Info, approvedUpgrade.Approvals[1].Info)
 
 	// Get all proposed upgrades
 	proposedUpgrades, err = GetProposedUpgrades(suite)

@@ -14,10 +14,11 @@ func CmdProposeUpgrade() *cobra.Command {
 		name          string
 		upgradeHeight int64
 		upgradeInfo   string
+		info          string
 	)
 
 	cmd := &cobra.Command{
-		Use:   "propose-upgrade --name [name] --upgrade-height [height] --upgrade-info [info] [flags]",
+		Use:   "propose-upgrade --name [name] --upgrade-height [upgrade-height] --upgrade-info [upgrade-info] --info [info] [flags]",
 		Short: "Propose upgrade with given name at given height",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -31,6 +32,7 @@ func CmdProposeUpgrade() *cobra.Command {
 			msg := types.NewMsgProposeUpgrade(
 				clientCtx.GetFromAddress().String(),
 				plan,
+				info,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -45,6 +47,7 @@ func CmdProposeUpgrade() *cobra.Command {
 	cmd.Flags().StringVar(&name, FlagName, "", "Upgrade name")
 	cmd.Flags().Int64Var(&upgradeHeight, FlagUpgradeHeight, 0, "Height at which upgrade must be performed")
 	cmd.Flags().StringVar(&upgradeInfo, FlagUpgradeInfo, "", "Any application specific upgrade info")
+	cmd.Flags().StringVar(&info, FlagInfo, "", FlagInfoUsage)
 
 	flags.AddTxFlagsToCmd(cmd)
 
