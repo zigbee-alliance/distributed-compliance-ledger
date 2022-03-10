@@ -28,7 +28,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	}
 
 	// check if proposed account has vendor role, vendor id should be present.
-	if msg.HasRole(types.Vendor) && msg.VendorID <= 0 {
+	if msg.HasRole(types.Vendor) && msg.Vid <= 0 {
 		return nil, types.ErrMissingVendorIDForVendorAccount()
 	}
 
@@ -54,7 +54,7 @@ func (k msgServer) ProposeAddAccount(goCtx context.Context, msg *types.MsgPropos
 	}
 
 	ba := authtypes.NewBaseAccount(accAddr, pk, 0, 0)
-	account := types.NewAccount(ba, msg.Roles, nil, msg.VendorID)
+	account := types.NewAccount(ba, msg.Roles, nil, msg.Vid)
 
 	// if more than 1 trustee's approval is needed, create pending account else create an active account.
 	if k.AccountApprovalsCount(ctx) > 1 {

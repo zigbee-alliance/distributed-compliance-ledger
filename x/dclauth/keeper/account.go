@@ -135,7 +135,7 @@ func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid int32) boo
 		return false
 	}
 
-	if account.VendorID == vid {
+	if account.Vid == vid {
 		return true
 	} else {
 		return false

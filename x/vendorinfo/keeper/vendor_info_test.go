@@ -17,7 +17,7 @@ var _ = strconv.IntSize
 func createNVendorInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.VendorInfo {
 	items := make([]types.VendorInfo, n)
 	for i := range items {
-		items[i].VendorID = int32(i)
+		items[i].Vid = int32(i)
 
 		keeper.SetVendorInfo(ctx, items[i])
 	}
@@ -29,7 +29,7 @@ func TestVendorInfoGet(t *testing.T) {
 	items := createNVendorInfo(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetVendorInfo(ctx,
-			item.VendorID,
+			item.Vid,
 		)
 		require.True(t, found)
 		require.Equal(t, item, rst)
@@ -41,10 +41,10 @@ func TestVendorInfoRemove(t *testing.T) {
 	items := createNVendorInfo(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveVendorInfo(ctx,
-			item.VendorID,
+			item.Vid,
 		)
 		_, found := keeper.GetVendorInfo(ctx,
-			item.VendorID,
+			item.Vid,
 		)
 		require.False(t, found)
 	}

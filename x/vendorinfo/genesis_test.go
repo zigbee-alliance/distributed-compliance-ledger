@@ -13,10 +13,10 @@ func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		VendorInfoList: []types.VendorInfo{
 			{
-				VendorID: 0,
+				Vid: 0,
 			},
 			{
-				VendorID: 1,
+				Vid: 1,
 			},
 		},
 		// this line is used by starport scaffolding # genesis/test/state

@@ -11,7 +11,7 @@ func (k Keeper) SetVendorInfo(ctx sdk.Context, vendorInfo types.VendorInfo) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorInfoKeyPrefix))
 	b := k.cdc.MustMarshal(&vendorInfo)
 	store.Set(types.VendorInfoKey(
-		vendorInfo.VendorID,
+		vendorInfo.Vid,
 	), b)
 }
 

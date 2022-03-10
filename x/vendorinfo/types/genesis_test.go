@@ -23,10 +23,10 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				VendorInfoList: []types.VendorInfo{
 					{
-						VendorID: 0,
+						Vid: 0,
 					},
 					{
-						VendorID: 1,
+						Vid: 1,
 					},
 				},
 				// this line is used by starport scaffolding # types/genesis/validField
@@ -38,10 +38,10 @@ func TestGenesisState_Validate(t *testing.T) {
 			genState: &types.GenesisState{
 				VendorInfoList: []types.VendorInfo{
 					{
-						VendorID: 0,
+						Vid: 0,
 					},
 					{
-						VendorID: 0,
+						Vid: 0,
 					},
 				},
 			},

@@ -29,21 +29,21 @@ func TestVendorInfoQuerySingle(t *testing.T) {
 		{
 			desc: "First",
 			request: &types.QueryGetVendorInfoRequest{
-				VendorID: msgs[0].VendorID,
+				Vid: msgs[0].Vid,
 			},
 			response: &types.QueryGetVendorInfoResponse{VendorInfo: msgs[0]},
 		},
 		{
 			desc: "Second",
 			request: &types.QueryGetVendorInfoRequest{
-				VendorID: msgs[1].VendorID,
+				Vid: msgs[1].Vid,
 			},
 			response: &types.QueryGetVendorInfoResponse{VendorInfo: msgs[1]},
 		},
 		{
 			desc: "KeyNotFound",
 			request: &types.QueryGetVendorInfoRequest{
-				VendorID: 100000,
+				Vid: 100000,
 			},
 			err: status.Error(codes.NotFound, "not found"),
 		},

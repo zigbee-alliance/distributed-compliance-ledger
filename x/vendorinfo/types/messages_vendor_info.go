@@ -19,11 +19,11 @@ func NewMsgCreateVendorInfo(
 ) *MsgCreateVendorInfo {
 	return &MsgCreateVendorInfo{
 		Creator:              creator,
-		VendorID:             vendorID,
+		Vid:                  vendorID,
 		VendorName:           vendorName,
 		CompanyLegalName:     companyLegalName,
 		CompanyPrefferedName: companyPrefferedName,
-		VendorLandingPageURL: vendorLandingPageURL,
+		VendorLandingPageUrl: vendorLandingPageURL,
 	}
 }
 
@@ -75,11 +75,11 @@ func NewMsgUpdateVendorInfo(
 ) *MsgUpdateVendorInfo {
 	return &MsgUpdateVendorInfo{
 		Creator:              creator,
-		VendorID:             vendorID,
+		Vid:                  vendorID,
 		VendorName:           vendorName,
 		CompanyLegalName:     companyLegalName,
 		CompanyPrefferedName: companyPrefferedName,
-		VendorLandingPageURL: vendorLandingPageURL,
+		VendorLandingPageUrl: vendorLandingPageURL,
 	}
 }
 
@@ -127,7 +127,7 @@ func (msg *MsgUpdateVendorInfo) ValidateBasic() error {
 // ) *MsgDeleteVendorInfo {
 // 	return &MsgDeleteVendorInfo{
 // 		Creator:  creator,
-// 		VendorID: vendorID,
+// 		Vid: vendorID,
 // 	}
 // }
 
