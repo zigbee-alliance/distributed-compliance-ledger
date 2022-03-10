@@ -149,6 +149,6 @@ docker_exec "$VN_NAME" ./dcld tx validator add-node --pubkey="$vn_pubkey" --moni
 echo "Check node \"$VN_NAME\" is in the validator set"
 result=$(docker_exec "$GVN_NAME" ./dcld query validator all-nodes)
 check_response "$result" "\"moniker\": \"$VN_NAME\""
-check_response "$result" "\"pubKey\":$vn_pubkey" raw
+check_response "$result" "\"pub_key\":$vn_pubkey" raw
 
 echo "PASSED"
