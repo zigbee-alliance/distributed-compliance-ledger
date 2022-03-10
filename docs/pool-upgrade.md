@@ -74,7 +74,9 @@ note that the URLs should include checksums. This allows to verify that no false
 binary is run. It is recommended to use
 [`go-getter`](https://github.com/hashicorp/go-getter) tool for downloading the
 application binaries because it verifies that the downloaded file matches the
-checksum when the URL is provided in the specified format. To view `Info` field
-value of an upgrade plan, just execute an appropriate query command from
-`dclupgrade` or `upgrade` module. See [Upgrade CLI commands
-reference](./transactions.md#upgrade) for details.
+checksum when the URL is provided in the specified format. If the downloaded
+file checksum does not equal to the checksum provided in the URL, `go-getter`
+reports that checksums did not match. To view `Info` field value of an upgrade
+plan, just execute an appropriate query command from `dclupgrade` or `upgrade`
+module. See [Upgrade CLI commands reference](./transactions.md#upgrade) for
+details.
