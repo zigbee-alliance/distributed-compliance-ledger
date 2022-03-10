@@ -91,8 +91,8 @@ func TestHandler_ProposedUpgradeExists(t *testing.T) {
 	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.NoError(t, err)
 
-	msgProposeUpgrade.Creator = trusteeAccAddress2.String()
 	// propose the same upgrade
+	msgProposeUpgrade.Creator = trusteeAccAddress2.String()
 	_, err = setup.Handler(setup.Ctx, msgProposeUpgrade)
 	require.Error(t, err)
 	require.True(t, types.ErrProposedUpgradeAlreadyExists.Is(err))
@@ -260,6 +260,46 @@ func TestHandler_ApproveUpgrade(t *testing.T) {
 	require.Equal(t, msgApproveUpgrade.Creator, approvedUpgrade.Approvals[1].Address)
 	require.Equal(t, msgApproveUpgrade.Time, approvedUpgrade.Approvals[1].Time)
 	require.Equal(t, msgApproveUpgrade.Info, approvedUpgrade.Approvals[1].Info)
+}
+
+func TestHandler_ProposeUpgradeWhenApprovedUpgradeWithSameNameExists(t *testing.T) {
+	setup := Setup(t)
+
+	trusteeAccAddress1 := testdata.GenerateAccAddress()
+	trusteeAccAddress2 := testdata.GenerateAccAddress()
+	trusteeAccAddress3 := testdata.GenerateAccAddress()
+	setup.AddAccount(trusteeAccAddress1, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress2, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.AddAccount(trusteeAccAddress3, []dclauthtypes.AccountRole{dclauthtypes.Trustee})
+	setup.DclauthKeeper.On("CountAccountsWithRole", mock.Anything, dclauthtypes.Trustee).Return(3)
+
+	// propose and approve upgrade by Trustees (3 Trustees, >=2/3 approvals needed)
+
+	// propose new upgrade
+	msgProposeUpgrade := NewMsgProposeUpgrade(trusteeAccAddress1)
+
+	setup.UpgradeKeeper.On("ScheduleUpgrade", mock.Anything, msgProposeUpgrade.Plan).Return(nil)
+	_, err := setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.NoError(t, err)
+
+	// approve upgrade
+	msgApproveUpgrade := NewMsgApproveUpgrade(trusteeAccAddress2)
+	_, err = setup.Handler(setup.Ctx, msgApproveUpgrade)
+	require.NoError(t, err)
+
+	// check proposed upgrade for being deleted
+	_, isFound := setup.Keeper.GetProposedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.False(t, isFound)
+
+	// check upgrade for being added to ApprovedUpgrade store
+	_, isFound = setup.Keeper.GetApprovedUpgrade(setup.Ctx, msgProposeUpgrade.Plan.Name)
+	require.True(t, isFound)
+
+	// propose upgrade with the same name
+	msgProposeUpgrade.Creator = trusteeAccAddress3.String()
+	_, err = setup.Handler(setup.Ctx, msgProposeUpgrade)
+	require.Error(t, err)
+	require.True(t, types.ErrApprovedUpgradeAlreadyExists.Is(err))
 }
 
 func TestHandler_UpgradeApprovalWhenMoreVotesNeeded(t *testing.T) {
