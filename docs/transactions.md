@@ -1240,7 +1240,14 @@ Proposes an upgrade plan with the given name at the given height.
 - Parameters:
     - name: `string` - upgrade plan name
     - upgrade-height: `int64` -  upgrade plan height (positive non-zero)
-    - upgrade-info: `optional(string)` - upgrade plan info
+    - upgrade-info: `optional(string)` - upgrade plan info (for node admins to read). Recommended format is an os/architecture -> application binary URL map as a JSON under `binaries` key where each URL should include the corresponding checksum as `checksum` query parameter with the value in the format `type:value` where `type` is `sha256` or `sha512` and `value` is the actual checksum value. For example:
+```json
+{
+  "binaries": {
+    "linux/amd64":"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:aec070645fe53ee3b3763059376134f058cc337247c978add178b6ccdfb0019f"
+  }
+}
+```
 - In State: `dclupgrade/ProposedUpgrade/value/<name>`
 - Who can send: 
     - Trustee
