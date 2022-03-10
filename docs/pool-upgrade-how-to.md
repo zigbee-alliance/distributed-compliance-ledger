@@ -28,9 +28,9 @@ application version:
       dcld tx dclupgrade propose-upgrade --name=v0.7.0 --upgrade-height=10000 --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a\"}}" --from=alice
       ```
 4. **[Trustees] ApproveUpgrade**: Other trustees approve the upgrade until it
-   turns into the approved state and scheduled (this happens when the count of
-   approvals including the proposal reaches 2/3 of the total count of trustees).
-   Each of them uses the following steps to accomplish this:
+   turns into the approved state and is scheduled (this happens when the count
+   of approvals including the proposal reaches 2/3 of the total count of
+   trustees). Each of them uses the following steps to accomplish this:
    1. Re-calculates checksums for the application binaries specified in the
       proposed upgrade plan `Info` field. This can be done using `sha256sum` or
       `sha512sum` tool. For example:
