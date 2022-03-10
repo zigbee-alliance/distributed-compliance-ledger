@@ -17,7 +17,7 @@ application version:
    transaction with the name of the new upgrade handler, the chosen ledger
    height and the info containing URLs of the application binaries for supported
    platforms with the calculated checksums. So the upgrade plan is proposed.
-5. Other trustees send [`ApproveUpgrade`](./transactions.md#approve_upgrade)
+5. [Trustees] **ApproveUpgrade**: Other trustees send [`ApproveUpgrade`](./transactions.md#approve_upgrade)
    transactions with the name of the proposed upgrade until the count of
    approvals (including the proposal) reaches 2/3 of the total count of
    trustees. So the upgrade plan is approved and scheduled.
