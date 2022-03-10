@@ -56,18 +56,18 @@ test_divider
 # Query vendor info record
 echo "Verify if VendorInfo Record for VID: $vid is present or not"
 result=$(dcld query vendorinfo vendor --vid=$vid)
-check_response "$result" "\"vendorID\": $vid"
-check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
-check_response "$result" "\"vendorName\": \"$vendorName\""
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"company_legal_name\": \"$companyLegalName\""
+check_response "$result" "\"vendor_name\": \"$vendorName\""
 echo "$result"
 
 test_divider
 
 echo "Request all vendor info"
 result=$(dcld query vendorinfo all-vendors)
-check_response "$result" "\"vendorID\": $vid"
-check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
-check_response "$result" "\"vendorName\": \"$vendorName\""
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"company_legal_name\": \"$companyLegalName\""
+check_response "$result" "\"vendor_name\": \"$vendorName\""
 echo "$result"
 
 test_divider
@@ -85,10 +85,10 @@ test_divider
 # Query updated vendor info record
 echo "Verify if VendorInfo Record for VID: $vid is updated or not"
 result=$(dcld query vendorinfo vendor --vid=$vid)
-check_response "$result" "\"vendorID\": $vid"
-check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
-check_response "$result" "\"vendorName\": \"$vendorName\""
-check_response "$result" "\"vendorLandingPageURL\": \"$vendorLandingPageURL\""
+check_response "$result" "\"vid\": $vid"
+check_response "$result" "\"company_legal_name\": \"$companyLegalName\""
+check_response "$result" "\"vendor_name\": \"$vendorName\""
+check_response "$result" "\"vendor_landing_page_url\": \"$vendorLandingPageURL\""
 echo "$result"
 
 test_divider

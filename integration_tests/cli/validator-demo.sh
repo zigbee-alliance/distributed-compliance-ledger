@@ -125,7 +125,7 @@ echo "Check node \"$node_name\" is in the validator set"
 result=$(dcld query validator all-nodes)
 check_response "$result" "\"moniker\": \"$node_name\""
 #check_response "$result" "\"validator_address\": \"$vaddress\""
-check_response "$result" "\"pubKey\":$vpubkey" raw
+check_response "$result" "\"pub_key\":$vpubkey" raw
 echo "$result"
 
 test_divider
