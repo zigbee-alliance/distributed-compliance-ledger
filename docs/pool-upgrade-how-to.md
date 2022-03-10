@@ -113,5 +113,5 @@ application version:
        cp ./dcld /var/lib/ubuntu/.dcl/cosmovisor/v0.7.0/bin
        ```
 
-7. The upgrade is performed on all the nodes in the pool when the ledger reaches
-   the height specified in the upgrade plan.
+7. **Upgrade Is Performed**: The upgrade is performed on all the nodes in the
+   pool when the ledger reaches the height specified in the upgrade plan.
