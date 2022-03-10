@@ -28,22 +28,22 @@ application version:
       dcld tx dclupgrade propose-upgrade --name=v0.7.0 --upgrade-height=10000 --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a\"}}" --from=alice
       ```
 4. **[Trustees] ApproveUpgrade**: Other trustees approve the upgrade until it
-   turns into the approved state (this happens when the count of approvals
-   including the proposal reaches 2/3 of the total count of trustees). Each of
-   them uses the following steps to accomplish this:
-   1. Re-calculate checksums for the application binaries specified in the
+   turns into the approved state and scheduled (this happens when the count of
+   approvals including the proposal reaches 2/3 of the total count of trustees).
+   Each of them uses the following steps to accomplish this:
+   1. Re-calculates checksums for the application binaries specified in the
       proposed upgrade plan `Info` field. This can be done using `sha256sum` or
       `sha512sum` tool. For example:
       ```
       sha256sum ./dcld
       ```
-   2. Ensure that the re-calculated values are equal to the checksums specified
+   2. Ensures that the re-calculated values are equal to the checksums specified
       in the proposed upgrade plan `Info` field. Example how to view the
       proposed upgrade plan:
       ```
       dcld query dclupgrade proposed-upgrade --name=v0.7.0
       ```
-   3. Send [`ApproveUpgrade`](./transactions.md#approve_upgrade) transactions
+   3. Sends [`ApproveUpgrade`](./transactions.md#approve_upgrade) transactions
       with the name of the proposed upgrade. For example:
       ```
       dcld tx dclupgrade approve-upgrade --name=v0.7.0 --from=bob
@@ -53,9 +53,9 @@ application version:
    steps:
     1. Downloads the application binary from the URL specified in the upgrade
        plan `Info` field and corresponding to the node platform. Example how to
-       view the proposed upgrade plan:
+       view the scheduled upgrade plan:
        ```
-       dcld query dclupgrade proposed-upgrade --name=v0.7.0
+       dcld query upgrade plan
        ```
     2. Verifies that the downloaded application binary matches the checksum
        specified in the URL. This can be done automatically together with the
