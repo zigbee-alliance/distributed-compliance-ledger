@@ -46,7 +46,7 @@ application version:
    3. Send [`ApproveUpgrade`](./transactions.md#approve_upgrade) transactions
       with the name of the proposed upgrade. For example:
       ```
-      dcld tx dclupgrade propose-upgrade --name=v0.7.0 --upgrade-height=10000 --from=bob
+      dcld tx dclupgrade approve-upgrade --name=v0.7.0 --from=bob
       ```
 5. **[All Node Admins] Download New Binary**: Before the ledger reaches the
    height specified in the upgrade plan, each node admin does the following
