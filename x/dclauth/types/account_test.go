@@ -87,7 +87,7 @@ func TestNewAccount(t *testing.T) {
 				BaseAccount: &authtypes.BaseAccount{},
 				Roles:       []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
 				Approvals:   []*Grant{},
-				VendorID:    1,
+				Vid:         1,
 			},
 		},
 		{
@@ -102,7 +102,7 @@ func TestNewAccount(t *testing.T) {
 				BaseAccount: &authtypes.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
 				Approvals:   []*Grant{},
-				VendorID:    2,
+				Vid:         2,
 			},
 		},
 	}
@@ -121,7 +121,7 @@ func TestAccount_Validate(t *testing.T) {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
 		Approvals   []*Grant
-		VendorID    int32
+		Vid         int32
 	}
 	tests := []struct {
 		name    string
@@ -134,7 +134,7 @@ func TestAccount_Validate(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
 				Approvals:   []*Grant{},
-				VendorID:    1,
+				Vid:         1,
 			},
 			wantErr: false,
 		},
@@ -144,7 +144,7 @@ func TestAccount_Validate(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{CertificationCenter},
 				Approvals:   []*Grant{},
-				VendorID:    0,
+				Vid:         0,
 			},
 			wantErr: false,
 		},
@@ -154,7 +154,7 @@ func TestAccount_Validate(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
 				Approvals:   []*Grant{},
-				VendorID:    0,
+				Vid:         0,
 			},
 			wantErr: true,
 		},
@@ -166,7 +166,7 @@ func TestAccount_Validate(t *testing.T) {
 				BaseAccount: tt.fields.BaseAccount,
 				Roles:       tt.fields.Roles,
 				Approvals:   tt.fields.Approvals,
-				VendorID:    tt.fields.VendorID,
+				Vid:         tt.fields.Vid,
 			}
 			if err := acc.Validate(); (err != nil) != tt.wantErr {
 				t.Errorf("Account.Validate() error = %v, wantErr %v", err, tt.wantErr)
@@ -180,7 +180,7 @@ func TestAccount_GetRoles(t *testing.T) {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
 		Approvals   []*Grant
-		VendorID    int32
+		Vid         int32
 	}
 	tests := []struct {
 		name   string
@@ -193,7 +193,7 @@ func TestAccount_GetRoles(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee},
 				Approvals:   []*Grant{},
-				VendorID:    1,
+				Vid:         1,
 			},
 			want: []AccountRole{Vendor, Trustee},
 		},
@@ -203,7 +203,7 @@ func TestAccount_GetRoles(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
 				Approvals:   []*Grant{},
-				VendorID:    1,
+				Vid:         1,
 			},
 			want: []AccountRole{Vendor, Trustee, NodeAdmin},
 		},
@@ -214,7 +214,7 @@ func TestAccount_GetRoles(t *testing.T) {
 				BaseAccount: tt.fields.BaseAccount,
 				Roles:       tt.fields.Roles,
 				Approvals:   tt.fields.Approvals,
-				VendorID:    tt.fields.VendorID,
+				Vid:         tt.fields.Vid,
 			}
 			if got := acc.GetRoles(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Account.GetRoles() = %v, want %v", got, tt.want)
@@ -223,12 +223,12 @@ func TestAccount_GetRoles(t *testing.T) {
 	}
 }
 
-func TestAccount_GetVendorID(t *testing.T) {
+func TestAccount_GetVid(t *testing.T) {
 	type fields struct {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
 		Approvals   []*Grant
-		VendorID    int32
+		Vid         int32
 	}
 	tests := []struct {
 		name   string
@@ -241,7 +241,7 @@ func TestAccount_GetVendorID(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
 				Approvals:   []*Grant{},
-				VendorID:    45,
+				Vid:         45,
 			},
 			want: 45,
 		},
@@ -251,7 +251,7 @@ func TestAccount_GetVendorID(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Trustee},
 				Approvals:   []*Grant{},
-				VendorID:    0,
+				Vid:         0,
 			},
 			want: 0,
 		},
@@ -263,10 +263,10 @@ func TestAccount_GetVendorID(t *testing.T) {
 				BaseAccount: tt.fields.BaseAccount,
 				Roles:       tt.fields.Roles,
 				Approvals:   tt.fields.Approvals,
-				VendorID:    tt.fields.VendorID,
+				Vid:         tt.fields.Vid,
 			}
 			if got := acc.GetVendorID(); got != tt.want {
-				t.Errorf("Account.GetVendorID() = %v, want %v", got, tt.want)
+				t.Errorf("Account.GetVid() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -277,7 +277,7 @@ func TestAccount_HasRole(t *testing.T) {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
 		Approvals   []*Grant
-		VendorID    int32
+		Vid         int32
 	}
 	type args struct {
 		targetRole AccountRole
@@ -294,7 +294,7 @@ func TestAccount_HasRole(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee},
 				Approvals:   []*Grant{},
-				VendorID:    1,
+				Vid:         1,
 			},
 			args: args{
 				targetRole: Vendor,
@@ -307,7 +307,7 @@ func TestAccount_HasRole(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
 				Approvals:   []*Grant{},
-				VendorID:    1,
+				Vid:         1,
 			},
 			args: args{
 				targetRole: NodeAdmin,
@@ -320,7 +320,7 @@ func TestAccount_HasRole(t *testing.T) {
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, Trustee, NodeAdmin},
 				Approvals:   []*Grant{},
-				VendorID:    1,
+				Vid:         1,
 			},
 			args: args{
 				targetRole: CertificationCenter,
@@ -334,7 +334,7 @@ func TestAccount_HasRole(t *testing.T) {
 				BaseAccount: tt.fields.BaseAccount,
 				Roles:       tt.fields.Roles,
 				Approvals:   tt.fields.Approvals,
-				VendorID:    tt.fields.VendorID,
+				Vid:         tt.fields.Vid,
 			}
 			if got := acc.HasRole(tt.args.targetRole); got != tt.want {
 				t.Errorf("Account.HasRole() = %v, want %v", got, tt.want)
@@ -375,7 +375,7 @@ func TestAccount_GetApprovals(t *testing.T) {
 		BaseAccount *types.BaseAccount
 		Roles       []AccountRole
 		Approvals   []*Grant
-		VendorID    int32
+		Vid         int32
 	}
 	tests := []struct {
 		name   string
@@ -399,7 +399,7 @@ func TestAccount_GetApprovals(t *testing.T) {
 						Time:    456,
 					},
 				},
-				VendorID: 1,
+				Vid: 1,
 			},
 			want: []*Grant{
 				{
@@ -426,7 +426,7 @@ func TestAccount_GetApprovals(t *testing.T) {
 						Time:    123,
 					},
 				},
-				VendorID: 1,
+				Vid: 1,
 			},
 			want: []*Grant{
 				{
@@ -441,7 +441,7 @@ func TestAccount_GetApprovals(t *testing.T) {
 			fields: fields{
 				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
-				VendorID:    1,
+				Vid:         1,
 				Approvals:   []*Grant{},
 			},
 			want: []*Grant{},
@@ -453,7 +453,7 @@ func TestAccount_GetApprovals(t *testing.T) {
 				BaseAccount: tt.fields.BaseAccount,
 				Roles:       tt.fields.Roles,
 				Approvals:   tt.fields.Approvals,
-				VendorID:    tt.fields.VendorID,
+				Vid:         tt.fields.Vid,
 			}
 			if got := acc.GetApprovals(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Account.GetApprovals() = %v, want %v", got, tt.want)

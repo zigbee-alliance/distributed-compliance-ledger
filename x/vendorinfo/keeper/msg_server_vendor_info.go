@@ -14,24 +14,24 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 	// Check if the value already exists
 	_, isFound := k.GetVendorInfo(
 		ctx,
-		msg.VendorID,
+		msg.Vid,
 	)
 	if isFound {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "index already set")
 	}
 
 	// check if creator has enough rights to create vendorinfo
-	if err := checkAddVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+	if err := checkAddVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.Vid); err != nil {
 		return nil, err
 	}
 
 	vendorInfo := types.VendorInfo{
 		Creator:              msg.Creator,
-		VendorID:             msg.VendorID,
+		Vid:                  msg.Vid,
 		VendorName:           msg.VendorName,
 		CompanyLegalName:     msg.CompanyLegalName,
 		CompanyPrefferedName: msg.CompanyPrefferedName,
-		VendorLandingPageURL: msg.VendorLandingPageURL,
+		VendorLandingPageUrl: msg.VendorLandingPageUrl,
 	}
 
 	k.SetVendorInfo(
@@ -47,24 +47,24 @@ func (k msgServer) UpdateVendorInfo(goCtx context.Context, msg *types.MsgUpdateV
 	// Check if the value exists
 	_, isFound := k.GetVendorInfo(
 		ctx,
-		msg.VendorID,
+		msg.Vid,
 	)
 	if !isFound {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrKeyNotFound, "index not set")
 	}
 
 	// check if creator has enough rights to update vendorinfo
-	if err := checkUpdateVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.VendorID); err != nil {
+	if err := checkUpdateVendorRights(ctx, k.Keeper, msg.GetSigners()[0], msg.Vid); err != nil {
 		return nil, err
 	}
 
 	vendorInfo := types.VendorInfo{
 		Creator:              msg.Creator,
-		VendorID:             msg.VendorID,
+		Vid:                  msg.Vid,
 		VendorName:           msg.VendorName,
 		CompanyLegalName:     msg.CompanyLegalName,
 		CompanyPrefferedName: msg.CompanyPrefferedName,
-		VendorLandingPageURL: msg.VendorLandingPageURL,
+		VendorLandingPageUrl: msg.VendorLandingPageUrl,
 	}
 
 	k.SetVendorInfo(ctx, vendorInfo)

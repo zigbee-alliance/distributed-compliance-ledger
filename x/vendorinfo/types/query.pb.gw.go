@@ -44,15 +44,15 @@ func request_Query_VendorInfo_0(ctx context.Context, marshaler runtime.Marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["vendorID"]
+	val, ok = pathParams["vid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vendorID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vid")
 	}
 
-	protoReq.VendorID, err = runtime.Int32(val)
+	protoReq.Vid, err = runtime.Int32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vendorID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vid", err)
 	}
 
 	msg, err := client.VendorInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -71,15 +71,15 @@ func local_request_Query_VendorInfo_0(ctx context.Context, marshaler runtime.Mar
 		_   = err
 	)
 
-	val, ok = pathParams["vendorID"]
+	val, ok = pathParams["vid"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vendorID")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "vid")
 	}
 
-	protoReq.VendorID, err = runtime.Int32(val)
+	protoReq.Vid, err = runtime.Int32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vendorID", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "vid", err)
 	}
 
 	msg, err := server.VendorInfo(ctx, &protoReq)
@@ -260,7 +260,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_VendorInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "vendorinfo", "vendors", "vendorID"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_VendorInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "vendorinfo", "vendors", "vid"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_VendorInfoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "vendorinfo", "vendors"}, "", runtime.AssumeColonVerbOpt(true)))
 )

@@ -33,13 +33,13 @@ func NewMsgProposeAddAccount(
 	}
 
 	return &MsgProposeAddAccount{
-		Signer:   signer.String(),
-		Address:  address.String(),
-		PubKey:   pkAny,
-		Roles:    roles,
-		VendorID: vendorID,
-		Info:     info,
-		Time:     time.Now().Unix(),
+		Signer:  signer.String(),
+		Address: address.String(),
+		PubKey:  pkAny,
+		Roles:   roles,
+		Vid:     vendorID,
+		Info:    info,
+		Time:    time.Now().Unix(),
 	}, nil
 }
 
@@ -117,7 +117,7 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 	}
 
 	// can not create Vendor with vid=0 (reserved)
-	if msg.HasRole(Vendor) && msg.VendorID <= 0 {
+	if msg.HasRole(Vendor) && msg.Vid <= 0 {
 		return ErrMissingVendorIDForVendorAccount()
 	}
 

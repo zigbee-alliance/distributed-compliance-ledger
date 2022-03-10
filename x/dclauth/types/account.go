@@ -71,7 +71,7 @@ func NewAccount(ba *authtypes.BaseAccount, roles AccountRoles, approvals []*Gran
 		BaseAccount: ba,
 		Roles:       roles,
 		Approvals:   approvals,
-		VendorID:    vendorID,
+		Vid:         vendorID,
 	}
 }
 
@@ -89,7 +89,7 @@ func (acc Account) Validate() error {
 	}
 
 	// If creating an account with Vendor Role, we need to have a associated VendorID
-	if acc.HasRole(Vendor) && acc.VendorID <= 0 {
+	if acc.HasRole(Vendor) && acc.Vid <= 0 {
 		return ErrMissingVendorIDForVendorAccount()
 	}
 
@@ -105,7 +105,7 @@ func (acc Account) GetApprovals() []*Grant {
 }
 
 func (acc Account) GetVendorID() int32 {
-	return acc.VendorID
+	return acc.Vid
 }
 
 func (acc Account) HasRole(targetRole AccountRole) bool {

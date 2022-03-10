@@ -18,22 +18,22 @@ import (
 func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreateVendorInfo {
 	return &vendorinfotypes.MsgCreateVendorInfo{
 		Creator:              signer,
-		VendorID:             vid,
+		Vid:                  vid,
 		VendorName:           testconstants.VendorName,
 		CompanyLegalName:     testconstants.CompanyLegalName,
 		CompanyPrefferedName: testconstants.CompanyPreferredName,
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+		VendorLandingPageUrl: testconstants.VendorLandingPageUrl,
 	}
 }
 
 func NewMsgUpdateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgUpdateVendorInfo {
 	return &vendorinfotypes.MsgUpdateVendorInfo{
 		Creator:              signer,
-		VendorID:             vid,
+		Vid:                  vid,
 		VendorName:           testconstants.VendorName + "/new",
 		CompanyLegalName:     testconstants.CompanyLegalName + "/new",
 		CompanyPrefferedName: testconstants.CompanyPreferredName + "/new",
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl + "/new",
+		VendorLandingPageUrl: testconstants.VendorLandingPageUrl + "/new",
 	}
 }
 
@@ -68,7 +68,7 @@ func GetVendorInfo(
 		vendorinfoClient := vendorinfotypes.NewQueryClient(grpcConn)
 		resp, err := vendorinfoClient.VendorInfo(
 			context.Background(),
-			&vendorinfotypes.QueryGetVendorInfoRequest{VendorID: vid},
+			&vendorinfotypes.QueryGetVendorInfoRequest{Vid: vid},
 		)
 		if err != nil {
 			return nil, err
@@ -142,13 +142,13 @@ func VendorInfoDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check first vendorinfo is added
-	receivedVendorInfo, err := GetVendorInfo(suite, createFirstVendorInfoMsg.VendorID)
+	receivedVendorInfo, err := GetVendorInfo(suite, createFirstVendorInfoMsg.Vid)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, createFirstVendorInfoMsg.VendorID, receivedVendorInfo.VendorID)
+	require.Equal(suite.T, createFirstVendorInfoMsg.Vid, receivedVendorInfo.Vid)
 	require.Equal(suite.T, createFirstVendorInfoMsg.VendorName, receivedVendorInfo.VendorName)
 	require.Equal(suite.T, createFirstVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
 	require.Equal(suite.T, createFirstVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
-	require.Equal(suite.T, createFirstVendorInfoMsg.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
+	require.Equal(suite.T, createFirstVendorInfoMsg.VendorLandingPageUrl, receivedVendorInfo.VendorLandingPageUrl)
 
 	// Get all vendorinfos
 	_, err = GetVendorInfos(suite)

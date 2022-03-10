@@ -22,7 +22,7 @@ func (gs GenesisState) Validate() error {
 	vendorInfoIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.VendorInfoList {
-		index := string(VendorInfoKey(elem.VendorID))
+		index := string(VendorInfoKey(elem.Vid))
 		if _, ok := vendorInfoIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for vendorInfo")
 		}
