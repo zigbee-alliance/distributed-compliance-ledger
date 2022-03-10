@@ -10,10 +10,13 @@ import (
 )
 
 func CmdApproveUpgrade() *cobra.Command {
-	var name string
+	var (
+		name string
+		info string
+	)
 
 	cmd := &cobra.Command{
-		Use:   "approve-upgrade --name [name]",
+		Use:   "approve-upgrade --name [name] --info [info] [flags]",
 		Short: "Approve proposed upgrade with given name",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -25,6 +28,7 @@ func CmdApproveUpgrade() *cobra.Command {
 			msg := types.NewMsgApproveUpgrade(
 				clientCtx.GetFromAddress().String(),
 				name,
+				info,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
@@ -37,6 +41,7 @@ func CmdApproveUpgrade() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&name, FlagName, "", "Upgrade name")
+	cmd.Flags().StringVar(&info, FlagInfo, "", FlagInfoUsage)
 
 	flags.AddTxFlagsToCmd(cmd)
 
