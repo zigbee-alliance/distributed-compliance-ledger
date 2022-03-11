@@ -89,7 +89,9 @@ application version:
     2. Verifies that the downloaded application binary matches the checksum
        specified in the URL. This can be done automatically together with the
        previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
-       download tool. For example:
+       download tool (its executable binaries for various platforms can be
+       downloaded from https://github.com/hashicorp/go-getter/releases). For
+       example:
        ```
        go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a ~/Downloads
        ```
@@ -102,16 +104,43 @@ application version:
        `/var/lib/<USERNAME>/.dcl/cosmovisor/` (where <USERNAME> is the name of
        the user on behalf of whom `cosmovisor` service is running), creates
        `bin` sub-directory within the created directory, and puts the new
-       application binary within `bin` sub-directory. Example (for the user
-       `ubuntu`):
+       application binary within `bin` sub-directory.
+       
+       Example (for the user `ubuntu`):
        ```
        cd /var/lib/ubuntu/.dcl/cosmovisor
+       mkdir -p upgrades
+       cd upgrades
        mkdir v0.7.0
        cd v0.7.0
        mkdir bin
        cd ~/Downloads
-       cp ./dcld /var/lib/ubuntu/.dcl/cosmovisor/v0.7.0/bin
+       cp ./dcld /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/
+       ```
+       Ensure that `dcld` file has been copied to the new application version
+       binary directory:
+       ```
+       ls -l /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
+       ```
+       The command output must contatain information about `dcld` file like
+       following:
+       ```
+       -rw-r--r--    1 ubuntu   ubuntu    55816720 Mar 11 08:23 /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
        ```
 
-7. **Upgrade Is Performed**: The upgrade is performed on all the nodes in the
-   pool when the ledger reaches the height specified in the upgrade plan.
+7. **Upgrade Is Applied**: The upgrade is applied on all the nodes in the pool
+   when the ledger reaches the height specified in the upgrade plan.
+   
+   Command to view the current pool status:
+   ```
+   dcld status
+   ```
+   The current ledger height is reported in `SyncInfo` -> `latest_block_height`
+   field.
+   
+   Example of command to check whether the upgrade was applied:
+   ```
+   dcld query upgrade applied v0.7.0
+   ```
+   If the upgrade with the passed name was applied, this command output will
+   contain information about it.

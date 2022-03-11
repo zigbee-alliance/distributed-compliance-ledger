@@ -18,7 +18,7 @@ Any upgrade plan has the following fields:
     proposed, it is impossible to propose an upgrade with the same name any time
     in the future).
 *   `Height: int64` - the height of the ledger at which the upgrade must be
-    performed on all the nodes in the pool.
+    applied on all the nodes in the pool.
 *   `Info: optional(string)` - a string containing any additional information
     about the upgrade, e.g. URLs for downloading the new application version
     binaries for supported platforms (see below).
@@ -53,10 +53,10 @@ documentation](https://github.com/cosmos/cosmos-sdk/tree/cosmovisor/v1.0.0/cosmo
 for details.
 
 When the ledger reaches the height specified in the current scheduled upgrade
-plan, `dcld` notifies `cosmovisor` that the upgrade must be performed and stops.
+plan, `dcld` notifies `cosmovisor` that the upgrade must be applied and stops.
 `cosmovisor`, having been notified, performs data back-up, switches `current`
 symbolic link to the new application version directory and launches the new
-`dcld` binary which performes necessary store migrations and clears the current
+`dcld` binary which performs necessary store migrations and clears the current
 scheduled upgrade plan on start.
 
 ## Application Binary Download
