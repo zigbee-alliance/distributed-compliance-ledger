@@ -148,13 +148,13 @@ The following steps are expected to be done **during** the ceremony.
     9.1. A Trustee proposes a NodeAdmin account
 
     ```bash
-    dcld tx auth propose-add-account --address='<bench32 encoded admin-account-address>' --pubkey='<protobuf JSON encoded admin-account-pubkey>' --roles=NodeAdmin --from='<trustee-account-name>'
+    dcld tx auth propose-add-account --address='<bench32 encoded admin-account-address>' --pubkey='<protobuf JSON encoded admin-account-pubkey>' --roles=NodeAdmin --from='<trustee-account-name>' --info="Propose from Name"
     ```
 
     9.2. Trustees approve the NodeAdmin account
 
     ```bash
-    dcld tx auth approve-add-account --address='<bench32 encoded admin-account-address>' --from='<trustee-account-name>'
+    dcld tx auth approve-add-account --address='<bench32 encoded admin-account-address>' --from='<trustee-account-name>' --info="Approval from Name"
     ```
 
 10. **[Optional] Add Trustee account**
