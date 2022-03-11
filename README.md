@@ -49,7 +49,8 @@ In order to send write transactions to the ledger you need:
      - **Private Sentry Node:** connected to other Validators or Sentry nodes only; should not be accessed by clients.
      - **Public Sentry Node:** clients and other nodes can access it; basically the same as an Observer node.
   - **Observer Node (ON):** a full node that doesn't participate in consensus. Should be used to receive read/write requests from the clients. Technically can be a Public Sentry node. 
-- **Light Client Proxy Node**: doesn't contain a full replication of data. Can be used as a proxy to untrusted Full nodes for single-value query requests sent via CLI or Tendermint RPC. It will verify all state proofs automatically. 
+- **Light Client Proxy Node**: doesn't contain a full replication of data. Can be used as a proxy to untrusted Full nodes for single-value query requests sent via CLI or Tendermint RPC. 
+  It will verify all state proofs automatically. 
 - **Seed Node**: provides a list of peers which a node can connect to. 
 
 See
@@ -193,6 +194,10 @@ you will need to create a genesis node and a genesis file first as described in
 Please note, that these instructions describe the case when the genesis block consists of a single node only. 
 This is done just for simplicity, and nothing prevents you from adding more nodes to the genesis file by adapting the instructions accordingly. 
 
+### Upgrade all nodes in a pool to a new version of DCL application
+DCL application can be simultaneously updated on all nodes in the pool without breaking consensus. 
+See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upgrade-how-to.md) for details.
+
 ## Useful Links 
 - [OpenAPI specification](https://zigbee-alliance.github.io/distributed-compliance-ledger/)
 - [Quick Start](docs/quickStartGuide.adoc)
@@ -204,6 +209,7 @@ This is done just for simplicity, and nothing prevents you from adding more node
     - [Device off-ledger certification](docs/use_cases/use_cases_device_off_ledger_certification.png)
     - [Auth](docs/use_cases/use_cases_txn_auth.png)
     - [Validators](docs/use_cases/use_cases_add_validator_node.png)
+    - [Pool Upgrade](docs/use_cases/use_cases_upgrade_pool.png)
 - [DC Ledger Overview](docs/design/DCL-Overview.pdf)
 - [DC Ledger Architecture Details](docs/design/DCL-arch-overview.pdf)
 - [Deployment Pattern](docs/deployment.png)
@@ -213,9 +219,7 @@ This is done just for simplicity, and nothing prevents you from adding more node
   - [Running a Genesis Validator Node](docs/advanced/running-genesis-node.md)
   - [Running a Validator Node](docs/advanced/running-validator-node.md)
   - [Running an Observer Node](docs/advanced/running-observer-node.md)
+- [Pool Upgrade](docs/pool-upgrade.md)
+- [Pool Upgrade How To Guide](docs/pool-upgrade-how-to.md)
 - [Tendermint](https://tendermint.com/)
 - [Cosmos SDK](https://cosmos.network/sdk)
-     
-
-
-
