@@ -59,6 +59,7 @@ func (setup *TestSetup) AddAccount(
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.VendorinfoKeeper(t, dclauthKeeper)
 

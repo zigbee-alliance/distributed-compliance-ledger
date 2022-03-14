@@ -53,6 +53,7 @@ import (
 // New creates instance with fully configured cosmos network.
 // Accepts optional config, that will be used in place of the DefaultConfig() if provided.
 func New(t *testing.T, configs ...Config) *Network {
+	t.Helper()
 	if len(configs) > 1 {
 		panic("at most one config should be provided")
 	}
@@ -200,6 +201,7 @@ type (
 
 // New creates a new Network for integration tests.
 func newNetwork(t *testing.T, cfg Config) *Network {
+	t.Helper()
 	// only one caller/test can create and use a network at a time
 	t.Log("acquiring test network lock")
 	lock.Lock()

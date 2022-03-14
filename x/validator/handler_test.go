@@ -41,6 +41,7 @@ type TestSetup struct {
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	dclauthK, _ := testkeeper.DclauthKeeper(t)
 	k, ctx := testkeeper.ValidatorKeeper(t, dclauthK)
 

@@ -54,6 +54,7 @@ func (setup *TestSetup) AddAccount(
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	upgradeKeeper := &UpgradeKeeperMock{}
 	keeper, ctx := testkeeper.DclupgradeKeeper(t, dclauthKeeper, upgradeKeeper)

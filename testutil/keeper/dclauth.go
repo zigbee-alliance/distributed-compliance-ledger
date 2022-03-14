@@ -17,7 +17,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-func DclauthKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+func DclauthKeeper(tb testing.TB) (*keeper.Keeper, sdk.Context) {
+	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -25,7 +26,7 @@ func DclauthKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, sdk.StoreTypeMemory, nil)
-	require.NoError(t, stateStore.LoadLatestVersion())
+	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	cryptocodec.RegisterInterfaces(registry)

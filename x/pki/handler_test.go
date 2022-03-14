@@ -65,6 +65,7 @@ func GenerateAccAddress() sdk.AccAddress {
 }
 
 func Setup(t *testing.T) *TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.PkiKeeper(t, dclauthKeeper)
 

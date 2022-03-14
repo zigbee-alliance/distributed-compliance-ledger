@@ -24,7 +24,6 @@ linters:
     - varnamelen
     - tagliatelle
     - wrapcheck
-    - thelper
     - testpackage
     - paralleltest
     - ireturn

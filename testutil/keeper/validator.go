@@ -19,7 +19,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
-func ValidatorKeeper(t testing.TB, dclauthK *dclauthkeeper.Keeper) (*keeper.Keeper, sdk.Context) {
+func ValidatorKeeper(tb testing.TB, dclauthK *dclauthkeeper.Keeper) (*keeper.Keeper, sdk.Context) {
+	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -34,7 +35,7 @@ func ValidatorKeeper(t testing.TB, dclauthK *dclauthkeeper.Keeper) (*keeper.Keep
 		stateStore.MountStoreWithDB(dclauthK.MemKey(), sdk.StoreTypeMemory, nil)
 	}
 
-	require.NoError(t, stateStore.LoadLatestVersion())
+	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	cryptocodec.RegisterInterfaces(registry)
@@ -66,6 +67,7 @@ type TestSetup struct {
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	dclauthK, _ := DclauthKeeper(t)
 	k, ctx := ValidatorKeeper(t, dclauthK)
 

@@ -104,6 +104,7 @@ func (setup *TestSetup) SetNoModelVersionForKey(
 }
 
 func Setup(t *testing.T) *TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	modelKeeper := &ModelKeeperMock{}
 	keeper, ctx := testkeeper.ComplianceKeeper(t, dclauthKeeper, modelKeeper)
@@ -1094,6 +1095,7 @@ func checkProvisionalModelInfo(
 	provisionalModelMsg *types.MsgProvisionModel,
 	receivedComplianceInfo *types.ComplianceInfo,
 ) {
+	t.Helper()
 	require.Equal(t, provisionalModelMsg.Vid, receivedComplianceInfo.Vid)
 	require.Equal(t, provisionalModelMsg.Pid, receivedComplianceInfo.Pid)
 	require.Equal(t, types.CodeProvisional, receivedComplianceInfo.SoftwareVersionCertificationStatus)
@@ -1107,6 +1109,7 @@ func checkCertifiedModelInfo(
 	certifyModelMsg *types.MsgCertifyModel,
 	receivedComplianceInfo *types.ComplianceInfo,
 ) {
+	t.Helper()
 	require.Equal(t, certifyModelMsg.Vid, receivedComplianceInfo.Vid)
 	require.Equal(t, certifyModelMsg.Pid, receivedComplianceInfo.Pid)
 	require.Equal(t, types.CodeCertified, receivedComplianceInfo.SoftwareVersionCertificationStatus)
@@ -1120,6 +1123,7 @@ func checkRevokedModelInfo(
 	revokeModelMsg *types.MsgRevokeModel,
 	receivedComplianceInfo *types.ComplianceInfo,
 ) {
+	t.Helper()
 	require.Equal(t, revokeModelMsg.Vid, receivedComplianceInfo.Vid)
 	require.Equal(t, revokeModelMsg.Pid, receivedComplianceInfo.Pid)
 	require.Equal(t, types.CodeRevoked, receivedComplianceInfo.SoftwareVersionCertificationStatus)

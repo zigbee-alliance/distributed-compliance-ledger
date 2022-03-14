@@ -12,6 +12,7 @@ import (
 )
 
 func ExecTestCLITxCmd(t *testing.T, clientCtx client.Context, cmd *cobra.Command, args []string) (*sdk.TxResponse, error) {
+	t.Helper()
 	out, err := clitestutil.ExecTestCLICmd(clientCtx, cmd, args)
 	require.NoError(t, err)
 

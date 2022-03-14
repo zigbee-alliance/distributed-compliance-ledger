@@ -62,6 +62,7 @@ func (suite *TestSuite) GetGRPCConn() *grpc.ClientConn {
 }
 
 func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
+	t.Helper()
 	inBuf := bufio.NewReader(os.Stdin)
 
 	// TODO issue 99: pass as an arg
