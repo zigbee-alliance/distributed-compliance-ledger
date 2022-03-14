@@ -22,6 +22,7 @@ func DefaultGenesis() *GenesisState {
 		PendingAccountList:           []PendingAccount{},
 		PendingAccountRevocationList: []PendingAccountRevocation{},
 		AccountStat:                  nil,
+		RevokedAccountList:           []RevokedAccount{},
 		// this line is used by starport scaffolding # genesis/types/default
 	}
 }
@@ -70,6 +71,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for pendingAccountRevocation")
 		}
 		pendingAccountRevocationIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in revokedAccount
+	revokedAccountIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.RevokedAccountList {
+		index := string(RevokedAccountKey(elem.Address))
+		if _, ok := revokedAccountIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for revokedAccount")
+		}
+		revokedAccountIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

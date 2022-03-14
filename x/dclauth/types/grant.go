@@ -2,4 +2,3 @@
 // source: dclauth/grant.proto
 
 package types
-
