@@ -16,11 +16,10 @@
 linters:
   enable-all: true
   disable:
-    - golint
+    - golint # The linter 'golint' is deprecated (since v1.41.0) due to: The repository of the linter has been archived by the owner.  Replaced by revive. 
     - gochecknoinits
     - gochecknoglobals
     - gomnd
-    - nolintlint
     - dupl
     - varnamelen
     - tagliatelle
