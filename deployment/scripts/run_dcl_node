@@ -501,6 +501,9 @@ wait_node_up
 echo -e "\nexport PATH=\$PATH:$CURRENT_APP_DIR" >> "$HOME"/.profile
 source "$HOME"/.profile
 
+echo "Added '${CURRENT_APP_DIR}' to PATH to maintain 'dcld' command associated with the latest installed app binary."
+echo "Execute 'source ~/.profile' or restart shell to take the PATH change effective."
+
 STATUS="$(dcld status)"
 VAL_ID="$(_jq "$STATUS"| grep '"id"' | awk '{print $NF}' | sed -e 's/^"//' -e 's/[",]\+$//')"
 VAL_ADDR="$(dcld tendermint show-address)"
