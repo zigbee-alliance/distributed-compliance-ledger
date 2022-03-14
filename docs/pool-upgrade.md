@@ -11,15 +11,16 @@ not reached yet. When the ledger reaches the height of the scheduled upgrade,
 the upgrade procedure is performed on all the nodes in the pool simultaneously.
 
 Any upgrade plan has the following fields:
-*   `Name: string` - the upgrade name for which the new application version must
+
+* `Name: string` - the upgrade name for which the new application version must
     contain an associated upgrade handler; this upgrade handler is responsible
     for running store migrations for application modules that change in the new
     application version (the upgrade name is unique; after an upgrade has been
     proposed, it is impossible to propose an upgrade with the same name any time
     in the future).
-*   `Height: int64` - the height of the ledger at which the upgrade must be
+* `Height: int64` - the height of the ledger at which the upgrade must be
     applied on all the nodes in the pool.
-*   `Info: optional(string)` - a string containing any additional information
+* `Info: optional(string)` - a string containing any additional information
     about the upgrade, e.g. URLs for downloading the new application version
     binaries for supported platforms (see below).
 
@@ -66,7 +67,7 @@ location for cosmovisor is a manual routine for the node admin. For all the node
 admins to be aware of where to download the new application version binary from,
 it is recommended to provide a value for `Info` field of an upgrade plan in the
 format specified in **Item 1** at
-https://github.com/cosmos/cosmos-sdk/tree/cosmovisor/v1.0.0/cosmovisor#auto-download.
+<https://github.com/cosmos/cosmos-sdk/tree/cosmovisor/v1.0.0/cosmovisor#auto-download>.
 DCL application does not support the audo-download feature for which this format
 is primarily intended but it is quite convenient for providing URLs for
 downloading the application version binaries for supported platforms. Please

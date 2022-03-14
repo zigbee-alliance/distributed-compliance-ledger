@@ -1,5 +1,5 @@
 ---
-# Copyright 2020 DSR Corporation
+# Copyright 2022 Samsung Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- hosts: nodes
-  user: ubuntu
-  tasks:
-    - name: Service status
-      command: "service dcld status"
-      changed_when: false
-      register: status
+default: true
 
-    - name: Result
-      debug: var=status.stdout_lines
+# MD013/line-length - Line length
+MD013: false
