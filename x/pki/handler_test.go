@@ -747,7 +747,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 	require.NoError(t, err)
 
 	// query and check proposed certificate revocation
-	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedRevocation, _ := queryProposedCertificateRevocation(setup)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
 	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee.String()))
@@ -783,7 +783,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	require.NoError(t, err)
 
 	// query and check proposed certificate revocation
-	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedRevocation, _ := queryProposedCertificateRevocation(setup)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
 	require.True(t, proposedRevocation.HasRevocationFrom(anotherTrustee.String()))
@@ -932,7 +932,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	require.NoError(t, err)
 
 	// query and check proposed certificate revocation
-	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedRevocation, _ := queryProposedCertificateRevocation(setup)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
 	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee.String()))
@@ -979,7 +979,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.NoError(t, err)
 
 	// check that proposed certificate revocation does not exist anymore
-	_, err = queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	_, err = queryProposedCertificateRevocation(setup)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
@@ -1434,13 +1434,11 @@ func queryAllProposedCertificateRevocations(setup *TestSetup) ([]types.ProposedC
 
 func queryProposedCertificateRevocation(
 	setup *TestSetup,
-	subject string,
-	subjectKeyId string,
 ) (*types.ProposedCertificateRevocation, error) {
 	// query proposed certificate revocation
 	req := &types.QueryGetProposedCertificateRevocationRequest{
-		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		Subject:      testconstants.RootSubject,
+		SubjectKeyId: testconstants.RootSubjectKeyID,
 	}
 
 	resp, err := setup.Keeper.ProposedCertificateRevocation(setup.Wctx, req)

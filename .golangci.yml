@@ -17,7 +17,6 @@ linters:
   enable-all: true
   disable:
     - golint
-    - unparam
     - gochecknoinits
     - gochecknoglobals
     - gomnd
