@@ -41,16 +41,16 @@ func (k Keeper) RevokedAccountAll(c context.Context, req *types.QueryAllRevokedA
 
 func (k Keeper) RevokedAccount(c context.Context, req *types.QueryGetRevokedAccountRequest) (*types.QueryGetRevokedAccountResponse, error) {
 	if req == nil {
-		return nil, status.Error(codes.NotFound, "not found")
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
 	val, found := k.GetRevokedAccount(
 		ctx,
-		req.Address,
+		sdk.AccAddress(req.Address),
 	)
 	if !found {
-		return nil, status.Error(codes.NotFound, "not found")
+		return nil, status.Error(codes.InvalidArgument, "not found")
 	}
 
 	return &types.QueryGetRevokedAccountResponse{RevokedAccount: val}, nil

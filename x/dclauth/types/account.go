@@ -186,17 +186,6 @@ func NewPendingAccountRevocation(address sdk.AccAddress,
 	return pendingAccountRevocation
 }
 
-// NewRevokedAccount creates a new RevokedAccount object
-func NewRevokedAccount(acc *Account, approvals []*Grant, info string, time int64) *RevokedAccount {
-	revokedAccount := &RevokedAccount{
-		Account: acc,
-	}
-
-	revokedAccount.RevokeApprovals = approvals
-
-	return revokedAccount
-}
-
 // String implements fmt.Stringer.
 func (revoc PendingAccountRevocation) String() string {
 	bytes, err := json.Marshal(revoc)

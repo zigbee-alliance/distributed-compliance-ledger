@@ -76,7 +76,7 @@ func (gs GenesisState) Validate() error {
 	revokedAccountIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.RevokedAccountList {
-		index := string(RevokedAccountKey(elem.Address))
+		index := string(RevokedAccountKey(elem.GetAddress()))
 		if _, ok := revokedAccountIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for revokedAccount")
 		}

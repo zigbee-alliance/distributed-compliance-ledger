@@ -30,7 +30,7 @@ func TestRevokedAccountGet(t *testing.T) {
 	items := createNRevokedAccount(keeper, ctx, 10)
 	for _, item := range items {
 		rst, found := keeper.GetRevokedAccount(ctx,
-			item.Address,
+			item.GetAddress(),
 		)
 		require.True(t, found)
 		require.Equal(t,
@@ -44,10 +44,10 @@ func TestRevokedAccountRemove(t *testing.T) {
 	items := createNRevokedAccount(keeper, ctx, 10)
 	for _, item := range items {
 		keeper.RemoveRevokedAccount(ctx,
-			item.Address,
+			item.GetAddress(),
 		)
 		_, found := keeper.GetRevokedAccount(ctx,
-			item.Address,
+			item.GetAddress(),
 		)
 		require.False(t, found)
 	}
