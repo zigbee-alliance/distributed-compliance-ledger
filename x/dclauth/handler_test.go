@@ -122,6 +122,57 @@ func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
 }
 
+func TestHandler_ReAdding_RevokedAccount_TwoApprovalsAreNeeded(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustees
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	revokeAccount_TwoApprovalsAreNeeded(t, setup, trustee1, trustee2)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// ensure pending account created
+	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+	require.Equal(t, address.String(), pendingAccount.Address)
+	require.Equal(t, testconstants.Info, pendingAccount.Approvals[0].Info)
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
+
+	// ensure no active account created
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee2 approves account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// active account must be created
+	account := setup.Keeper.GetAccount(setup.Ctx, address)
+	require.Equal(t, address, account.GetAddress())
+	require.Equal(t, pubKey, account.GetPubKey())
+
+	// check for info field and approvals
+	dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[1].Info)
+	require.Equal(t, trustee1.String(), dclAccount.Approvals[0].Address)
+	require.Equal(t, trustee2.String(), dclAccount.Approvals[1].Address)
+
+	// ensure pending account removed
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+
+	// check that account revoked from entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+}
+
 func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	setup := Setup(t)
 
@@ -130,6 +181,8 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	trustee2 := storeTrustee(setup)
 	trustee3 := storeTrustee(setup)
 	_ = storeTrustee(setup)
+
+	revokeAccount_ThreeApprovalsAreNeeded(t, setup, trustee1, trustee2, trustee3)
 
 	// ensure 3 trustee approvals are needed
 	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx))
@@ -182,6 +235,9 @@ func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 
 	// ensure pending account removed
 	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+
+	// check that account revoked from entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 }
 
 func TestHandler_ProposeAddAccount_ByNotTrustee(t *testing.T) {
@@ -369,39 +425,7 @@ func TestHandler_RevokeAccount_TwoApprovalsAreNeeded(t *testing.T) {
 	trustee2 := storeTrustee(setup)
 	_ = storeTrustee(setup)
 
-	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
-
-	// ensure 2 trustee revocation approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
-
-	// trustee1 proposes to revoke account
-	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
-	_, err := setup.Handler(setup.Ctx, proposeRevokeAccount)
-	require.NoError(t, err)
-
-	// ensure pending account revocation created
-	revocation, found := setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
-	require.True(t, found)
-	require.Equal(t, address.String(), revocation.Address)
-	require.Equal(t, true, revocation.HasRevocationFrom(trustee1))
-
-	// ensure active account still exists
-	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
-
-	// trustee2 approves account revocation
-	approveRevokeAccount := types.NewMsgApproveRevokeAccount(trustee2, address, testconstants.Info)
-	_, err = setup.Handler(setup.Ctx, approveRevokeAccount)
-	require.NoError(t, err)
-
-	// active account must be removed
-	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
-
-	// ensure pending account revocation removed
-	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
-
-	// ensure adding account to entity RevokedAccount
-	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+	revokeAccount_TwoApprovalsAreNeeded(t, setup, trustee1, trustee2)
 }
 
 func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
@@ -413,53 +437,7 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	trustee3 := storeTrustee(setup)
 	_ = storeTrustee(setup)
 
-	// store account
-	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
-
-	// ensure 3 trustee revocation approvals are needed
-	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx))
-
-	// trustee1 proposes to revoke account
-	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
-	_, err := setup.Handler(setup.Ctx, proposeRevokeAccount)
-	require.NoError(t, err)
-
-	// ensure pending account revocation created
-	revocation, found := setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
-	require.True(t, found)
-	require.Equal(t, address.String(), revocation.Address)
-	require.Equal(t, true, revocation.HasRevocationFrom(trustee1))
-
-	// ensure active account still exists
-	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
-
-	// trustee2 approves account revocation
-	approveRevokeAccount := types.NewMsgApproveRevokeAccount(trustee2, address, testconstants.Info)
-	_, err = setup.Handler(setup.Ctx, approveRevokeAccount)
-	require.NoError(t, err)
-
-	// ensure second approval added to pending account revocation
-	revocation, found = setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
-	require.True(t, found)
-	require.Equal(t, address.String(), revocation.Address)
-	require.Equal(t, true, revocation.HasRevocationFrom(trustee2))
-
-	// ensure active account still exists
-	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
-
-	// trustee3 approves account revocation
-	approveRevokeAccount = types.NewMsgApproveRevokeAccount(trustee3, address, testconstants.Info)
-	_, err = setup.Handler(setup.Ctx, approveRevokeAccount)
-	require.NoError(t, err)
-
-	// active account must be removed
-	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
-
-	// ensure pending account revocation removed
-	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
-
-	// ensure adding account to entity RevokedAccount
-	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+	revokeAccount_ThreeApprovalsAreNeeded(t, setup, trustee1, trustee2, trustee3)
 }
 
 func TestHandler_ProposeRevokeAccount_ByNotTrustee(t *testing.T) {
@@ -675,4 +653,90 @@ func proposeAddAccount(setup TestSetup, signer sdk.AccAddress) (*sdk.Result, sdk
 	result, err := setup.Handler(setup.Ctx, proposeAddAccount)
 
 	return result, address, pubKey, err
+}
+
+func revokeAccount_TwoApprovalsAreNeeded(t *testing.T, setup TestSetup, trustee1, trustee2 sdk.AccAddress) {
+	// store account
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
+
+	// ensure 2 trustee revocation approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 proposes to revoke account
+	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
+	_, err := setup.Handler(setup.Ctx, proposeRevokeAccount)
+	require.NoError(t, err)
+
+	// ensure pending account revocation created
+	revocation, found := setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
+	require.True(t, found)
+	require.Equal(t, address.String(), revocation.Address)
+	require.Equal(t, true, revocation.HasRevocationFrom(trustee1))
+
+	// ensure active account still exists
+	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee2 approves account revocation
+	approveRevokeAccount := types.NewMsgApproveRevokeAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveRevokeAccount)
+	require.NoError(t, err)
+
+	// active account must be removed
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// ensure pending account revocation removed
+	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
+
+	// ensure adding account to entity RevokedAccount
+	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+}
+
+func revokeAccount_ThreeApprovalsAreNeeded(t *testing.T, setup TestSetup, trustee1, trustee2, trustee3 sdk.AccAddress) {
+	// store account
+	address := storeAccountWithVendorID(setup, types.Vendor, testconstants.VendorID1)
+
+	// ensure 3 trustee revocation approvals are needed
+	require.Equal(t, 3, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 proposes to revoke account
+	proposeRevokeAccount := types.NewMsgProposeRevokeAccount(trustee1, address, testconstants.Info)
+	_, err := setup.Handler(setup.Ctx, proposeRevokeAccount)
+	require.NoError(t, err)
+
+	// ensure pending account revocation created
+	revocation, found := setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
+	require.True(t, found)
+	require.Equal(t, address.String(), revocation.Address)
+	require.Equal(t, true, revocation.HasRevocationFrom(trustee1))
+
+	// ensure active account still exists
+	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee2 approves account revocation
+	approveRevokeAccount := types.NewMsgApproveRevokeAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveRevokeAccount)
+	require.NoError(t, err)
+
+	// ensure second approval added to pending account revocation
+	revocation, found = setup.Keeper.GetPendingAccountRevocation(setup.Ctx, address)
+	require.True(t, found)
+	require.Equal(t, address.String(), revocation.Address)
+	require.Equal(t, true, revocation.HasRevocationFrom(trustee2))
+
+	// ensure active account still exists
+	require.True(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee3 approves account revocation
+	approveRevokeAccount = types.NewMsgApproveRevokeAccount(trustee3, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveRevokeAccount)
+	require.NoError(t, err)
+
+	// active account must be removed
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// ensure pending account revocation removed
+	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
+
+	// ensure adding account to entity RevokedAccount
+	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 }
