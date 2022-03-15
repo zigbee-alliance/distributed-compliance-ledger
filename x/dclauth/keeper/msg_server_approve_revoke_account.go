@@ -65,8 +65,8 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 		// save to map RevokedAccount
 		revokedAccount := types.NewRevokedAccount(&account, revoc.Approvals, msg.Info, msg.Time)
-
 		k.SetRevokedAccount(ctx, *revokedAccount)
+
 		// delete account record
 		k.RemoveAccount(ctx, accAddr)
 
