@@ -44,6 +44,15 @@ func (k Keeper) IsPendingAccountRevocationPresent(ctx sdk.Context, address sdk.A
 	))
 }
 
+// Check if the Revoked Account record associated with an address is present in the store or not.
+func (k Keeper) IsRevokedAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedAccountKeyPrefix))
+
+	return store.Has(types.RevokedAccountKey(
+		address,
+	))
+}
+
 // RemovePendingAccountRevocation removes a pendingAccountRevocation from the store.
 func (k Keeper) RemovePendingAccountRevocation(
 	ctx sdk.Context,
