@@ -399,6 +399,9 @@ func TestHandler_RevokeAccount_TwoApprovalsAreNeeded(t *testing.T) {
 
 	// ensure pending account revocation removed
 	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
+
+	// ensure adding account to entity RevokedAccount
+	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 }
 
 func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
@@ -454,6 +457,9 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 
 	// ensure pending account revocation removed
 	require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
+
+	// ensure adding account to entity RevokedAccount
+	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 }
 
 func TestHandler_ProposeRevokeAccount_ByNotTrustee(t *testing.T) {
