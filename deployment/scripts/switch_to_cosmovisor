@@ -90,12 +90,19 @@ sudo rm -f /usr/bin/dcld
 echo "Removed old stand-alone 'dcld' binary from '/usr/bin/'"
 
 sudo cp -f ./cosmovisor /usr/bin/
+sudo chown "$NODE_USER" /usr/bin/cosmovisor
+sudo chmod u+x /usr/bin/cosmovisor
 echo "Copied 'cosmovisor' to '/usr/bin/'"
 
 mkdir -p "$GENESIS_APP_DIR"
 echo "Created '${GENESIS_APP_DIR}' directory treated by cosmovisor as path to genesis app version"
 
-sudo cp -f ./dcld "${GENESIS_APP_DIR}/"
+sudo cp -f ./dcld "$GENESIS_APP_DIR"/
+sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
+# Execution permissions on `dcld` are granted to all (i.e. User, Group and Others classes)
+# because cosmovisor requires execution permission on the application binary to be granted to Others class:
+# https://github.com/cosmos/cosmos-sdk/blob/cosmovisor/v1.0.0/cosmovisor/upgrade.go#L164
+sudo chmod a+x "$GENESIS_APP_DIR"/dcld
 echo "Copied new 'dcld' binary to '${GENESIS_APP_DIR}/'"
 
 # set up systemd cosmovisor.service
