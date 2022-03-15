@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -124,3 +125,5 @@ func TestRevokedAccountQueryPaginated(t *testing.T) {
 		require.ErrorIs(t, err, status.Error(codes.NotFound, "not found"))
 	})
 }
+
+*/
