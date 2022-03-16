@@ -65,6 +65,7 @@ func New(t *testing.T, configs ...Config) *Network {
 	}
 	net := newNetwork(t, cfg)
 	t.Cleanup(net.Cleanup)
+
 	return net
 }
 
@@ -72,6 +73,7 @@ func New(t *testing.T, configs ...Config) *Network {
 // genesis and single validator. All other parameters are inherited from cosmos-sdk/testutil/network.DefaultConfig.
 func DefaultConfig() Config {
 	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)
+
 	return Config{
 		Codec:             encoding.Marshaler,
 		TxConfig:          encoding.TxConfig,
@@ -462,6 +464,7 @@ func (n *Network) WaitForHeightWithTimeout(h int64, t time.Duration) (int64, err
 		select {
 		case <-timeout:
 			ticker.Stop()
+
 			return latestHeight, errors.New("timeout exceeded waiting for block")
 		case <-ticker.C:
 			status, err := val.RPCClient.Status(context.Background())

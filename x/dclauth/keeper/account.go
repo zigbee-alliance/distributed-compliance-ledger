@@ -50,6 +50,7 @@ func (k Keeper) GetAccountO(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -89,6 +90,7 @@ func (k Keeper) RemoveAccount(
 func (k Keeper) GetAllAccount(ctx sdk.Context) (list []types.Account) {
 	k.IterateAccounts(ctx, func(acc types.Account) (stop bool) {
 		list = append(list, acc)
+
 		return false
 	})
 

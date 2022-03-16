@@ -26,6 +26,7 @@ func strToPubKey(pkStr string, cdc codec.Codec) cryptotypes.PubKey {
 	if err := cdc.UnmarshalInterfaceJSON([]byte(pkStr), &pk); err != nil {
 		panic(err)
 	}
+
 	return pk
 }
 

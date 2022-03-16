@@ -39,6 +39,7 @@ func CmdCreateValidator() *cobra.Command {
 			if cli.IsWriteInsteadReadRpcError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}

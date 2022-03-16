@@ -35,6 +35,7 @@ func networkWithModelVersionsObjects(t *testing.T, n int) (*network.Network, []t
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
+
 	return network.New(t, cfg), state.ModelVersionsList
 }
 

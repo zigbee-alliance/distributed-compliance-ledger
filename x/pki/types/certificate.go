@@ -37,6 +37,7 @@ func (cert ProposedCertificate) HasApprovalFrom(address string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -46,5 +47,6 @@ func (d ProposedCertificateRevocation) HasApprovalFrom(address string) bool {
 			return true
 		}
 	}
+
 	return false
 }

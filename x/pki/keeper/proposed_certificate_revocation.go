@@ -34,6 +34,7 @@ func (k Keeper) GetProposedCertificateRevocation(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -76,6 +77,7 @@ func (k Keeper) IsProposedCertificateRevocationPresent(
 
 ) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
+
 	return store.Has(types.ProposedCertificateRevocationKey(
 		subject,
 		subjectKeyId,

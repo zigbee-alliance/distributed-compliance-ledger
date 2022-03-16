@@ -23,6 +23,7 @@ func createNModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Model {
 
 		keeper.SetModel(ctx, items[i])
 	}
+
 	return items
 }
 

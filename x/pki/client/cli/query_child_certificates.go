@@ -21,6 +21,7 @@ func CmdShowChildCertificates() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			var res types.ChildCertificates
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

@@ -43,6 +43,7 @@ func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string
 	}
 
 	clientCtx.Codec.MustUnmarshal(resBytes, res)
+
 	return clientCtx.PrintProto(res)
 }
 
@@ -67,6 +68,7 @@ func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix st
 	if resBytes != nil {
 		clientCtx.Codec.MustUnmarshal(resBytes, res)
 	}
+
 	return clientCtx.PrintProto(res)
 }
 
@@ -91,6 +93,7 @@ func IsKeyNotFoundRpcError(err error) bool {
 	if !errors.As(err, &rpcerror) {
 		return false
 	}
+
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "empty key")
 }
 
@@ -106,6 +109,7 @@ func isRpcError22(err error) bool {
 	if !errors.As(err, &rpcerror) {
 		return false
 	}
+
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "err response code: 22")
 }
 
@@ -117,6 +121,7 @@ func IsEmptySubtreeRpcError(err error) bool {
 	if !errors.As(err, &rpcerror) {
 		return false
 	}
+
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "Nonexistence proof has empty Left and Right proof")
 }
 
@@ -124,6 +129,7 @@ func isEofError(err error) bool {
 	if err == nil {
 		return false
 	}
+
 	return strings.Contains(err.Error(), "EOF")
 }
 

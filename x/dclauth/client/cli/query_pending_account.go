@@ -62,6 +62,7 @@ func CmdShowPendingAccount() *cobra.Command {
 			}
 
 			var res types.PendingAccount
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

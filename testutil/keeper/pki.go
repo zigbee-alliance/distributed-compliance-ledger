@@ -36,5 +36,6 @@ func PkiKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keeper
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

@@ -58,6 +58,7 @@ func (suite *TestSuite) GetGRPCConn() *grpc.ClientConn {
 		grpc.WithInsecure(), // The SDK doesn't support any transport security mechanism.
 	)
 	require.NoError(suite.T, err)
+
 	return grpcConn
 }
 
@@ -96,6 +97,7 @@ func SetupTest(t *testing.T, chainID string, rest bool) (suite TestSuite) {
 func (suite *TestSuite) GetAddress(uid string) sdk.AccAddress {
 	signerInfo, err := suite.Kr.Key(uid)
 	require.NoError(suite.T, err)
+
 	return signerInfo.GetAddress()
 }
 
@@ -164,6 +166,7 @@ func (suite *TestSuite) BroadcastTx(txBytes []byte) (*sdk.TxResponse, error) {
 	resp := broadcastResp.TxResponse
 	if resp.Code != 0 {
 		err = sdkerrors.ABCIError(resp.Codespace, resp.Code, resp.RawLog)
+
 		return nil, err
 	}
 
@@ -185,6 +188,7 @@ func (suite *TestSuite) QueryREST(uri string, resp proto.Message) error {
 		return err
 	}
 	require.NoError(suite.T, suite.EncodingConfig.Marshaler.UnmarshalJSON(respBytes, resp))
+
 	return nil
 }
 

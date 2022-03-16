@@ -40,6 +40,7 @@ func (k Keeper) GetRevokedModel(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

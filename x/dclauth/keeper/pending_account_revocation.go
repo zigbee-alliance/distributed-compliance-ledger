@@ -32,6 +32,7 @@ func (k Keeper) GetPendingAccountRevocation(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -69,6 +70,7 @@ func (k Keeper) RemovePendingAccountRevocation(
 func (k Keeper) GetAllPendingAccountRevocation(ctx sdk.Context) (list []types.PendingAccountRevocation) {
 	k.IteratePendingAccountRevocations(ctx, func(acc types.PendingAccountRevocation) (stop bool) {
 		list = append(list, acc)
+
 		return false
 	})
 

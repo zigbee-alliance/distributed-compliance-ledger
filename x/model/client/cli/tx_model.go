@@ -70,6 +70,7 @@ func CmdCreateModel() *cobra.Command {
 			if cli.IsWriteInsteadReadRpcError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}
@@ -190,6 +191,7 @@ func CmdUpdateModel() *cobra.Command {
 			if cli.IsWriteInsteadReadRpcError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}
@@ -261,6 +263,7 @@ func CmdDeleteModel() *cobra.Command {
 			if cli.IsWriteInsteadReadRpcError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}

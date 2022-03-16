@@ -31,6 +31,7 @@ func (k Keeper) GetVendorProducts(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -103,6 +104,7 @@ func (k Keeper) RemoveVendorProduct(
 		for i, value := range vendorProducts.Products {
 			if value.Pid == pid {
 				vendorProducts.Products = append(vendorProducts.Products[:i], vendorProducts.Products[i+1:]...)
+
 				break
 			}
 		}

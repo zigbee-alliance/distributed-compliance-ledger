@@ -31,6 +31,7 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
@@ -47,6 +48,7 @@ func (m *ModelKeeperMock) GetModelVersion(
 	softwareVersion uint32,
 ) (val modeltypes.ModelVersion, found bool) {
 	args := m.Called(ctx, vid, pid, softwareVersion)
+
 	return args.Get(0).(modeltypes.ModelVersion), args.Bool(1)
 }
 
@@ -1011,10 +1013,12 @@ func queryComplianceInfo(
 	resp, err := setup.Keeper.ComplianceInfo(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ComplianceInfo, nil
 }
 
@@ -1035,10 +1039,12 @@ func queryProvisionalModel(
 	resp, err := setup.Keeper.ProvisionalModel(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ProvisionalModel, nil
 }
 
@@ -1059,10 +1065,12 @@ func queryCertifiedModel(
 	resp, err := setup.Keeper.CertifiedModel(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.CertifiedModel, nil
 }
 
@@ -1083,10 +1091,12 @@ func queryRevokedModel(
 	resp, err := setup.Keeper.RevokedModel(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.RevokedModel, nil
 }
 
@@ -1222,5 +1232,6 @@ func NewModelVersion(
 
 func GenerateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
+
 	return accAddress
 }

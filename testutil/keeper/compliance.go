@@ -41,5 +41,6 @@ func ComplianceKeeper(
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

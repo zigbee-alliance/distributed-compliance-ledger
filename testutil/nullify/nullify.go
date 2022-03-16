@@ -53,5 +53,6 @@ func Fill(x interface{}) interface{} {
 			}
 		}
 	}
+
 	return reflect.Indirect(v).Interface()
 }

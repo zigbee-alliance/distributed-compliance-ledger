@@ -30,6 +30,7 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
@@ -61,6 +62,7 @@ func (setup *TestSetup) AddAccount(
 
 func GenerateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
+
 	return accAddress
 }
 
@@ -1360,10 +1362,12 @@ func queryProposedCertificate(
 	resp, err := setup.Keeper.ProposedCertificate(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ProposedCertificate, nil
 }
 
@@ -1374,10 +1378,12 @@ func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificate
 	resp, err := setup.Keeper.ApprovedCertificatesAll(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return resp.ApprovedCertificates, nil
 }
 
@@ -1412,10 +1418,12 @@ func queryApprovedCertificates(
 	resp, err := setup.Keeper.ApprovedCertificates(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ApprovedCertificates, nil
 }
 
@@ -1426,10 +1434,12 @@ func queryAllProposedCertificateRevocations(setup *TestSetup) ([]types.ProposedC
 	resp, err := setup.Keeper.ProposedCertificateRevocationAll(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return resp.ProposedCertificateRevocation, nil
 }
 
@@ -1445,10 +1455,12 @@ func queryProposedCertificateRevocation(
 	resp, err := setup.Keeper.ProposedCertificateRevocation(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ProposedCertificateRevocation, nil
 }
 
@@ -1459,10 +1471,12 @@ func queryAllRevokedCertificates(setup *TestSetup) ([]types.RevokedCertificates,
 	resp, err := setup.Keeper.RevokedCertificatesAll(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return resp.RevokedCertificates, nil
 }
 
@@ -1497,10 +1511,12 @@ func queryRevokedCertificates(
 	resp, err := setup.Keeper.RevokedCertificates(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.RevokedCertificates, nil
 }
 
@@ -1518,10 +1534,12 @@ func queryChildCertificates(
 	resp, err := setup.Keeper.ChildCertificates(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ChildCertificates, nil
 }
 

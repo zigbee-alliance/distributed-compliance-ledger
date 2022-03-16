@@ -53,6 +53,7 @@ func SimulateMsgCreateModel(
 			// AccountKeeper:   ak,
 			// Bankkeeper:      bk,
 		}
+
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
@@ -75,6 +76,7 @@ func SimulateMsgUpdateModel(
 			simAccount, found = FindAccount(accs, obj.Creator)
 			if found {
 				model = obj
+
 				break
 			}
 		}
@@ -100,6 +102,7 @@ func SimulateMsgUpdateModel(
 			// AccountKeeper:   ak,
 			// Bankkeeper:      bk,
 		}
+
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
@@ -122,6 +125,7 @@ func SimulateMsgDeleteModel(
 			simAccount, found = FindAccount(accs, obj.Creator)
 			if found {
 				model = obj
+
 				break
 			}
 		}
@@ -147,6 +151,7 @@ func SimulateMsgDeleteModel(
 			// AccountKeeper:   ak,
 			// Bankkeeper:      bk,
 		}
+
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }

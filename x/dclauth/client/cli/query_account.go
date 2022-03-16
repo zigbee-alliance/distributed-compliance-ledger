@@ -62,6 +62,7 @@ func CmdShowAccount() *cobra.Command {
 			}
 
 			var res types.Account
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

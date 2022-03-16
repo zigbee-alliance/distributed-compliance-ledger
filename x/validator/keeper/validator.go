@@ -38,6 +38,7 @@ func (k Keeper) GetValidator(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

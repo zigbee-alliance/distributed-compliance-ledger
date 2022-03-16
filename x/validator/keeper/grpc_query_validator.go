@@ -30,6 +30,7 @@ func (k Keeper) ValidatorAll(c context.Context, req *types.QueryAllValidatorRequ
 		}
 
 		validators = append(validators, validator)
+
 		return nil
 	})
 	if err != nil {

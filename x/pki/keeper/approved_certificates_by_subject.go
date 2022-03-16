@@ -31,6 +31,7 @@ func (k Keeper) GetApprovedCertificatesBySubject(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -87,6 +88,7 @@ func (k Keeper) RemoveApprovedCertificateBySubject(ctx sdk.Context, subject stri
 	for i, existingIdentifier := range approvedCertificatesBySubject.SubjectKeyIds {
 		if existingIdentifier == subjectKeyId {
 			certIDIndex = i
+
 			break
 		}
 	}

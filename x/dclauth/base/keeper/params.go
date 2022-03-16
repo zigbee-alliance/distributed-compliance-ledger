@@ -13,5 +13,6 @@ func (ak Keeper) SetParams(ctx sdk.Context, params types.Params) {
 // GetParams gets the auth module's parameters.
 func (ak Keeper) GetParams(ctx sdk.Context) (params types.Params) {
 	ak.paramSubspace.GetParamSet(ctx, &params)
+
 	return
 }

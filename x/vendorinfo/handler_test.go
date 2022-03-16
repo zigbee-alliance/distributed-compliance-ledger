@@ -114,10 +114,12 @@ func queryVendorInfo(
 	resp, err := setup.Keeper.VendorInfo(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.VendorInfo, nil
 }
 
@@ -263,5 +265,6 @@ func NewMsgUpdateVendorInfo(signer sdk.AccAddress) *types.MsgUpdateVendorInfo {
 
 func GenerateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
+
 	return accAddress
 }

@@ -62,6 +62,7 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 			}
 
 			var res types.PendingAccountRevocation
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

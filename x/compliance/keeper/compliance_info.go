@@ -40,6 +40,7 @@ func (k Keeper) GetComplianceInfo(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

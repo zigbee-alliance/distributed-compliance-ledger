@@ -32,6 +32,7 @@ func (k Keeper) Accounts(c context.Context, req *types.QueryAccountsRequest) (*t
 		}
 
 		accounts = append(accounts, any)
+
 		return nil
 	})
 	if err != nil {

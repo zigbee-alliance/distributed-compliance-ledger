@@ -23,6 +23,7 @@ func createNProposedCertificateRevocation(keeper *keeper.Keeper, ctx sdk.Context
 
 		keeper.SetProposedCertificateRevocation(ctx, items[i])
 	}
+
 	return items
 }
 

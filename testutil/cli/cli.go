@@ -22,6 +22,7 @@ func ExecTestCLITxCmd(t *testing.T, clientCtx client.Context, cmd *cobra.Command
 
 	if resp.Code != 0 {
 		err = sdkerrors.ABCIError(resp.Codespace, resp.Code, resp.RawLog)
+
 		return nil, err
 	}
 

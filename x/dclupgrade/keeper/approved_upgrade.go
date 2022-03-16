@@ -31,6 +31,7 @@ func (k Keeper) GetApprovedUpgrade(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

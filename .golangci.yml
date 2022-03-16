@@ -27,7 +27,6 @@ linters:
     - testpackage
     - paralleltest
     - ireturn
-    - nlreturn
     - goerr113
     - exhaustivestruct
     - wsl

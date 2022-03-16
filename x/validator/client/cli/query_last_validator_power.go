@@ -66,6 +66,7 @@ func CmdShowLastValidatorPower() *cobra.Command {
 			}
 
 			var res types.LastValidatorPower
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

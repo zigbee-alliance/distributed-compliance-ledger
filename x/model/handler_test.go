@@ -43,6 +43,7 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
@@ -52,6 +53,7 @@ func (m *DclauthKeeperMock) HasVendorID(
 	vid int32,
 ) bool {
 	args := m.Called(ctx, addr, vid)
+
 	return args.Bool(0)
 }
 
@@ -875,10 +877,12 @@ func queryModel(
 	resp, err := setup.Keeper.Model(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.Model, nil
 }
 
@@ -897,10 +901,12 @@ func queryModelVersion(
 	resp, err := setup.Keeper.ModelVersion(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ModelVersion, nil
 }
 
@@ -917,10 +923,12 @@ func queryAllModelVersions(
 	resp, err := setup.Keeper.ModelVersions(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ModelVersions, nil
 }
 

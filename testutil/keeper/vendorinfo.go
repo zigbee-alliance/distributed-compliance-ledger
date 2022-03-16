@@ -36,5 +36,6 @@ func VendorinfoKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

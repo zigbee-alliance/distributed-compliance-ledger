@@ -288,6 +288,7 @@ func checkForExistingProviders(db dbm.DB) (string, []string, error) {
 		return "", []string{""}, err
 	}
 	witnessesAddrs := strings.Split(string(witnessesBytes), ",")
+
 	return string(primaryBytes), witnessesAddrs, nil
 }
 
@@ -300,6 +301,7 @@ func saveProviders(db dbm.DB, primaryAddr, witnessesAddrs string) error {
 	if err != nil {
 		return fmt.Errorf("failed to save witness providers: %w", err)
 	}
+
 	return nil
 }
 

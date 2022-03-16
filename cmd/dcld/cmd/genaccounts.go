@@ -142,6 +142,7 @@ the address will be looked up in the local Keybase.
 			}
 
 			genDoc.AppState = appStateJSON
+
 			return dclgenutil.ExportGenesisFile(genDoc, genFile)
 		},
 	}

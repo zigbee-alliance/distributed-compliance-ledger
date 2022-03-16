@@ -23,6 +23,7 @@ func createNProposedCertificate(keeper *keeper.Keeper, ctx sdk.Context, n int) [
 
 		keeper.SetProposedCertificate(ctx, items[i])
 	}
+
 	return items
 }
 

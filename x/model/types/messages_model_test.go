@@ -22,6 +22,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Creator is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Creator = ""
+
 				return msg
 			}(validMsgCreateModel()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -30,6 +31,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Creator is not valid address",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Creator = "not valid address"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -38,6 +40,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Vid < 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Vid = -1
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -46,6 +49,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Vid == 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Vid = 0
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -54,6 +58,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Vid > 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Vid = 65536
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -62,6 +67,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Pid < 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Pid = -1
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -70,6 +76,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Pid == 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Pid = 0
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -78,6 +85,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Pid > 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Pid = 65536
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -86,6 +94,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "DeviceTypeId < 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DeviceTypeId = -1
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -94,6 +103,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "DeviceTypeId > 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DeviceTypeId = 65536
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -102,6 +112,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductName is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductName = ""
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrRequiredFieldMissing,
@@ -110,6 +121,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductName length > 128",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductName = tmrand.Str(129)
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -118,6 +130,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductLabel is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductLabel = ""
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrRequiredFieldMissing,
@@ -126,6 +139,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductLabel length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductLabel = tmrand.Str(257)
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -134,6 +148,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "PartNumber is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.PartNumber = ""
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrRequiredFieldMissing,
@@ -142,6 +157,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "PartNumber length > 32",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.PartNumber = tmrand.Str(33)
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -150,6 +166,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlow < 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = -1
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -158,6 +175,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlow > 2",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = 3
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -167,6 +185,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = 2
 				msg.CommissioningCustomFlowUrl = ""
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrRequiredFieldMissing,
@@ -175,6 +194,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl is not valid URL",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlowUrl = "not valid URL"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -183,6 +203,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl starts with http:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlowUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -191,6 +212,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -199,6 +221,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction length > 1024",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeInitialStepsInstruction = tmrand.Str(1025)
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -207,6 +230,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsInstruction length > 1024",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeSecondaryStepsInstruction = tmrand.Str(1025)
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -215,6 +239,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl is not valid URL",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = "not valid URL"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -223,6 +248,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl starts with http:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -231,6 +257,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -239,6 +266,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl is not valid URL",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.SupportUrl = "not valid URL"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -247,6 +275,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl starts with http:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.SupportUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -255,6 +284,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.SupportUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -263,6 +293,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl is not valid URL",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductUrl = "not valid URL"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -271,6 +302,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl starts with http:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -279,6 +311,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -287,6 +320,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl is not valid URL",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "not valid URL"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -295,6 +329,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl starts with http:",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldNotValid,
@@ -303,6 +338,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl length > 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgCreateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -321,6 +357,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Creator is valid address",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Creator = sample.AccAddress()
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -328,6 +365,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Vid == 1",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Vid = 1
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -335,6 +373,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Vid == 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Vid = 65535
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -342,6 +381,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Pid == 1",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Pid = 1
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -349,6 +389,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "Pid == 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.Pid = 65535
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -356,6 +397,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "DeviceTypeId == 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DeviceTypeId = 0
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -363,6 +405,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "DeviceTypeId == 65535",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.DeviceTypeId = 65535
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -370,6 +413,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductName length == 128",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductName = tmrand.Str(128)
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -377,6 +421,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductLabel length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductLabel = tmrand.Str(256)
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -384,6 +429,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "PartNumber length == 32",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.PartNumber = tmrand.Str(32)
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -391,6 +437,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlow == 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = 0
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -398,6 +445,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlow == 2",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = 2
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -406,6 +454,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = 1
 				msg.CommissioningCustomFlowUrl = ""
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -414,6 +463,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlow = 2
 				msg.CommissioningCustomFlowUrl = "https://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -421,6 +471,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningCustomFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -428,6 +479,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsHint == 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeInitialStepsHint = 0
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -435,6 +487,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsHint > 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeInitialStepsHint = 1
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -442,6 +495,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeInitialStepsInstruction = ""
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -449,6 +503,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction length == 1024",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeInitialStepsInstruction = tmrand.Str(1024)
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -456,6 +511,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsHint == 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeSecondaryStepsHint = 0
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -463,6 +519,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsHint > 0",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeSecondaryStepsHint = 1
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -470,6 +527,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsInstruction is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeSecondaryStepsInstruction = ""
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -477,6 +535,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsInstruction length == 1024",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.CommissioningModeSecondaryStepsInstruction = tmrand.Str(1024)
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -484,6 +543,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = ""
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -491,6 +551,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.UserManualUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -498,6 +559,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.SupportUrl = ""
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -505,6 +567,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.SupportUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -512,6 +575,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductUrl = ""
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -519,6 +583,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.ProductUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -526,6 +591,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl is omitted",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = ""
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -533,6 +599,7 @@ func TestMsgCreateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl length == 256",
 			msg: func(msg *MsgCreateModel) *MsgCreateModel {
 				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgCreateModel()),
 		},
@@ -564,6 +631,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Creator is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Creator = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -572,6 +640,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Creator is not valid address",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Creator = "not valid address"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -580,6 +649,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Vid < 0",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Vid = -1
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -588,6 +658,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Vid == 0",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Vid = 0
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -596,6 +667,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Vid > 65535",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Vid = 65536
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -604,6 +676,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Pid < 0",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Pid = -1
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -612,6 +685,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Pid == 0",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Pid = 0
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -620,6 +694,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Pid > 65535",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Pid = 65536
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -628,6 +703,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductName length > 128",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductName = tmrand.Str(129)
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -636,6 +712,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductLabel length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductLabel = tmrand.Str(257)
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -644,6 +721,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "PartNumber length > 32",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.PartNumber = tmrand.Str(33)
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -652,6 +730,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl is not valid URL",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningCustomFlowUrl = "not valid URL"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -660,6 +739,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl starts with http:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningCustomFlowUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -668,6 +748,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningCustomFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -676,6 +757,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction length > 1024",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningModeInitialStepsInstruction = tmrand.Str(1025)
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -684,6 +766,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsInstruction length > 1024",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningModeSecondaryStepsInstruction = tmrand.Str(1025)
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -692,6 +775,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl is not valid URL",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.UserManualUrl = "not valid URL"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -700,6 +784,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl starts with http:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.UserManualUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -708,6 +793,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.UserManualUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -716,6 +802,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl is not valid URL",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.SupportUrl = "not valid URL"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -724,6 +811,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl starts with http:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.SupportUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -732,6 +820,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.SupportUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -740,6 +829,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl is not valid URL",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = "not valid URL"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -748,6 +838,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl starts with http:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -756,6 +847,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -764,6 +856,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl is not valid URL",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfUrl = "not valid URL"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -772,6 +865,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl starts with http:",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldNotValid,
@@ -780,6 +874,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl length > 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -788,6 +883,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfRevision is negative",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfRevision = -1
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -796,6 +892,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfRevision is greater then max uint16",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfRevision = 65536
+
 				return msg
 			}(validMsgUpdateModel()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -814,6 +911,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Creator is valid address",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Creator = sample.AccAddress()
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -821,6 +919,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Vid == 1",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Vid = 1
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -828,6 +927,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Vid == 65535",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Vid = 65535
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -835,6 +935,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Pid == 1",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Pid = 1
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -842,6 +943,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "Pid == 65535",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.Pid = 65535
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -849,6 +951,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductName is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductName = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -856,6 +959,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductName length == 128",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductName = tmrand.Str(128)
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -863,6 +967,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductLabel is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductLabel = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -870,6 +975,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductLabel length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductLabel = tmrand.Str(256)
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -877,6 +983,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "PartNumber is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.PartNumber = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -884,6 +991,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "PartNumber length == 32",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.PartNumber = tmrand.Str(32)
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -891,6 +999,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningCustomFlowUrl = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -898,6 +1007,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningCustomFlowUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningCustomFlowUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -905,6 +1015,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningModeInitialStepsInstruction = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -912,6 +1023,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeInitialStepsInstruction length == 1024",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningModeInitialStepsInstruction = tmrand.Str(1024)
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -919,6 +1031,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsInstruction is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningModeSecondaryStepsInstruction = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -926,6 +1039,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "CommissioningModeSecondaryStepsInstruction length == 1024",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.CommissioningModeSecondaryStepsInstruction = tmrand.Str(1024)
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -933,6 +1047,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.UserManualUrl = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -940,6 +1055,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "UserManualUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.UserManualUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -947,6 +1063,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.SupportUrl = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -954,6 +1071,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "SupportUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.SupportUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -961,6 +1079,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl is omitted",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = ""
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -968,6 +1087,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "ProductUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.ProductUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -976,6 +1096,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfUrl = ""
 				msg.LsfRevision = 0
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -984,6 +1105,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfUrl length == 256",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgUpdateModel()),
 		},
@@ -991,6 +1113,7 @@ func TestMsgUpdateModel_ValidateBasic(t *testing.T) {
 			name: "LsfRevision is set to 65535",
 			msg: func(msg *MsgUpdateModel) *MsgUpdateModel {
 				msg.LsfRevision = 65535
+
 				return msg
 			}(validMsgUpdateModel()),
 		},

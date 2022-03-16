@@ -34,6 +34,7 @@ func (k Keeper) GetModel(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

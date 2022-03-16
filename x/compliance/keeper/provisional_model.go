@@ -40,6 +40,7 @@ func (k Keeper) GetProvisionalModel(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

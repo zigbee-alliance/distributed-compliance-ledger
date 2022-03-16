@@ -31,6 +31,7 @@ func (k Keeper) GetPendingAccount(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -59,6 +60,7 @@ func (k Keeper) RemovePendingAccount(
 func (k Keeper) GetAllPendingAccount(ctx sdk.Context) (list []types.PendingAccount) {
 	k.IteratePendingAccounts(ctx, func(acc types.PendingAccount) (stop bool) {
 		list = append(list, acc)
+
 		return false
 	})
 

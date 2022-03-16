@@ -499,11 +499,13 @@ func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 
 func isContextWithCachedMultiStore(ctx sdk.Context) bool {
 	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
+
 	return ok // CacheMultiStore
 }
 
 func isContextWithNonCachedMultiStore(ctx sdk.Context) bool {
 	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
+
 	return !ok // not CacheMultiStore
 }
 

@@ -45,6 +45,7 @@ func (k Keeper) GetLastValidatorPower(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

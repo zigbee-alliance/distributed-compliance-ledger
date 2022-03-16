@@ -23,6 +23,7 @@ func (k Keeper) GetRevokedRootCertificates(ctx sdk.Context) (val types.RevokedRo
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -56,6 +57,7 @@ func (k Keeper) RemoveRevokedRootCertificate(ctx sdk.Context, certId types.Certi
 	for i, existingIdentifier := range rootCertificates.Certs {
 		if *existingIdentifier == certId {
 			certIDIndex = i
+
 			break
 		}
 	}

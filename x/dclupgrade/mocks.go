@@ -18,11 +18,13 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
 func (m *DclauthKeeperMock) CountAccountsWithRole(ctx sdk.Context, roleToCount dclauthtypes.AccountRole) int {
 	args := m.Called(ctx, roleToCount)
+
 	return args.Int(0)
 }
 
@@ -34,6 +36,7 @@ type UpgradeKeeperMock struct {
 
 func (m *UpgradeKeeperMock) ScheduleUpgrade(ctx sdk.Context, plan upgradetypes.Plan) error {
 	args := m.Called(ctx, plan)
+
 	return args.Error(0)
 }
 

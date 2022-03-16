@@ -285,6 +285,7 @@ func ProposeAddAccount(
 	msg, err := dclauthtypes.NewMsgProposeAddAccount(
 		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID, info)
 	require.NoError(suite.T, err)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -296,6 +297,7 @@ func ApproveAddAccount(
 	info string,
 ) (*sdk.TxResponse, error) {
 	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signerName), accAddr, info)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -307,6 +309,7 @@ func ProposeRevokeAccount(
 	info string,
 ) (*sdk.TxResponse, error) {
 	msg := dclauthtypes.NewMsgProposeRevokeAccount(suite.GetAddress(signerName), accAddr, info)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -318,6 +321,7 @@ func ApproveRevokeAccount(
 	info string,
 ) (*sdk.TxResponse, error) {
 	msg := dclauthtypes.NewMsgApproveRevokeAccount(suite.GetAddress(signerName), accAddr, info)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 

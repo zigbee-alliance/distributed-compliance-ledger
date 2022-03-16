@@ -23,6 +23,7 @@ func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.Approved
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -56,6 +57,7 @@ func (k Keeper) RemoveApprovedRootCertificate(ctx sdk.Context, certId types.Cert
 	for i, existingIdentifier := range rootCertificates.Certs {
 		if *existingIdentifier == certId {
 			certIDIndex = i
+
 			break
 		}
 	}

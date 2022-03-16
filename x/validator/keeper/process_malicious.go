@@ -38,6 +38,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 
 	if !found {
 		logger.Error(fmt.Sprintf("Validator by validator address %s not found", consAddr))
+
 		return
 	}
 
@@ -61,6 +62,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 				"infraction_time", infractionTime,
 				"max_age_duration", cp.Evidence.MaxAgeDuration,
 			)
+
 			return
 		}
 	}

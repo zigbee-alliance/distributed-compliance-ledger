@@ -26,6 +26,7 @@ func (k Keeper) GetAccountStat(ctx sdk.Context) (val types.AccountStat, found bo
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

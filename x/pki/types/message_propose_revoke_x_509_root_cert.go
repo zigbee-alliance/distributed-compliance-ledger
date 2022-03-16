@@ -35,11 +35,13 @@ func (msg *MsgProposeRevokeX509RootCert) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{signer}
 }
 
 func (msg *MsgProposeRevokeX509RootCert) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 

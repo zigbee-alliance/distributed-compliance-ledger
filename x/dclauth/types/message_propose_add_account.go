@@ -66,11 +66,13 @@ func (msg *MsgProposeAddAccount) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{signer}
 }
 
 func (msg *MsgProposeAddAccount) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
@@ -132,5 +134,6 @@ func (msg *MsgProposeAddAccount) ValidateBasic() error {
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces.
 func (msg MsgProposeAddAccount) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
+
 	return unpacker.UnpackAny(msg.PubKey, &pubKey)
 }

@@ -37,6 +37,7 @@ func (app *App) ExportAppStateAndValidators(
 	if err != nil {
 		return servertypes.ExportedApp{}, err
 	}
+
 	return servertypes.ExportedApp{
 		AppState:        appState,
 		Validators:      validators,

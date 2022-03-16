@@ -37,6 +37,7 @@ func (k Keeper) GetApprovedCertificates(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -108,6 +109,7 @@ func (k Keeper) IsApprovedCertificatePresent(
 
 ) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
+
 	return store.Has(types.ApprovedCertificatesKey(
 		subject,
 		subjectKeyId,

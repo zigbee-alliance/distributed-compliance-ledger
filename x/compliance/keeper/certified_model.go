@@ -40,6 +40,7 @@ func (k Keeper) GetCertifiedModel(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

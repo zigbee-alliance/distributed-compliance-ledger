@@ -123,6 +123,7 @@ func AddModel(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -133,6 +134,7 @@ func AddModelVersion(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -143,6 +145,7 @@ func UpdateModel(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -153,6 +156,7 @@ func UpdateModelVersion(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 

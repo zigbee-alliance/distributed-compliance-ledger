@@ -34,6 +34,7 @@ func (k Keeper) GetRevokedCertificates(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 

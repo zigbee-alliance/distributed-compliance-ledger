@@ -48,6 +48,7 @@ func ValidatorKeeper(tb testing.TB, dclauthK *dclauthkeeper.Keeper) (*keeper.Kee
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }
 
@@ -57,6 +58,7 @@ func DefaultValidator() types.Validator {
 		testconstants.PubKey1,
 		types.Description{Moniker: testconstants.ProductName},
 	)
+
 	return v
 }
 

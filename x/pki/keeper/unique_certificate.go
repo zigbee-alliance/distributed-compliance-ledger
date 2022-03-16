@@ -34,6 +34,7 @@ func (k Keeper) GetUniqueCertificate(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -75,6 +76,7 @@ func (k Keeper) IsUniqueCertificatePresent(
 
 ) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
+
 	return store.Has(types.UniqueCertificateKey(
 		issuer,
 		serialNumber,

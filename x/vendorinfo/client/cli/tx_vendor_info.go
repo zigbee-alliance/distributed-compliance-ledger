@@ -42,6 +42,7 @@ func CmdCreateVendorInfo() *cobra.Command {
 			if cli.IsWriteInsteadReadRpcError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}
@@ -99,6 +100,7 @@ func CmdUpdateVendorInfo() *cobra.Command {
 			if cli.IsWriteInsteadReadRpcError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}

@@ -36,5 +36,6 @@ func ModelKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keep
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

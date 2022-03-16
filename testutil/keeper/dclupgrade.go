@@ -37,5 +37,6 @@ func DclupgradeKeeper(tb testing.TB, dclAuthKeeper types.DclauthKeeper, upgradeK
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

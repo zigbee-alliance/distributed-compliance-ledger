@@ -80,6 +80,7 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 	resp, err := client.Do(req)
 	if err != nil {
 		fmt.Printf("Error received from server: %v", err)
+
 		return nil, err
 	}
 
@@ -101,5 +102,6 @@ func sendRequest(uri string, method string, body []byte, account string, passphr
 
 func ReadResponseBody(resp *http.Response) ([]byte, error) {
 	defer resp.Body.Close()
+
 	return ioutil.ReadAll(resp.Body)
 }

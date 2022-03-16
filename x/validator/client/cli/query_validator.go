@@ -69,6 +69,7 @@ func CmdShowValidator() *cobra.Command {
 			}
 
 			var res types.Validator
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

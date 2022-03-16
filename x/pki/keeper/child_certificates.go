@@ -34,6 +34,7 @@ func (k Keeper) GetChildCertificates(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -132,6 +133,7 @@ func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, author
 	for i, existingIdentifier := range childCertificates.CertIds {
 		if *existingIdentifier == certIdentifier {
 			certIDIndex = i
+
 			break
 		}
 	}

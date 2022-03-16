@@ -41,6 +41,7 @@ func ProposeUpgrade(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -51,6 +52,7 @@ func ApproveUpgrade(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 

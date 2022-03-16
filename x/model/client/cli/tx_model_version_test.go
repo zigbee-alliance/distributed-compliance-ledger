@@ -34,6 +34,7 @@ func networkWithPreconditions(t *testing.T) *network.Network {
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
+
 	return network.New(t, cfg)
 }
 
