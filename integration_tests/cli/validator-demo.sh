@@ -164,6 +164,19 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"product_label\": \"$productName\""
 echo "$result"
 
+test_divider
+
+
+echo "cannot propose disable validator twice"
+propose=$(dcld tx validator propose-disable-validator --name=$vaddress--from alice --yes)
+check_response "$propose" "\"code\": 0"
+
+second_propose=$(dcld tx validator propose-disable-validator --name=$vaddress--from bob --yes)
+check_response_and_report "$second_propose" "proposed upgrade already exists" raw
+
+
+test_divider
+
 echo "PASSED"
 
 cleanup
