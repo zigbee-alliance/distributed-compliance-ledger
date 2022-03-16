@@ -10,10 +10,12 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	basetypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
 	abci "github.com/tendermint/tendermint/abci/types"
+	basekeeper "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/base/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/client/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
@@ -76,6 +78,7 @@ func (AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, rtr *mux.Rout
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
 	_ = types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	_ = basetypes.RegisterQueryHandlerClient(context.Background(), mux, basetypes.NewQueryClient(clientCtx))
 }
 
 // GetTxCmd returns the dclauth module's root tx command.
@@ -96,13 +99,15 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 type AppModule struct {
 	AppModuleBasic
 
-	keeper keeper.Keeper
+	keeper     keeper.Keeper
+	basekeeper basekeeper.Keeper
 }
 
-func NewAppModule(cdc codec.Codec, keeper keeper.Keeper) AppModule {
+func NewAppModule(cdc codec.Codec, keeper keeper.Keeper, basekeeper basekeeper.Keeper) AppModule {
 	return AppModule{
 		AppModuleBasic: NewAppModuleBasic(cdc),
 		keeper:         keeper,
+		basekeeper:     basekeeper,
 	}
 }
 
@@ -129,6 +134,8 @@ func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sd
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)
+	// This is to register /cosmos.auth.v1beta1.Query routes used by cosmjs libraries
+	basetypes.RegisterQueryServer(cfg.QueryServer(), am.basekeeper)
 }
 
 // RegisterInvariants registers the dclauth module's invariants.

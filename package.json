@@ -1,0 +1,13 @@
+{
+  "name": "distributed-compliance-ledger",
+  "lockfileVersion": 2,
+  "requires": true,
+  "packages": {},
+  "standard": {
+    "ignore": [
+      "docs/swagger-ui/",
+      "vue/src/store/generated/"
+    ]
+  }
+}
+

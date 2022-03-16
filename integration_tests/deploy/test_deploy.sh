@@ -43,7 +43,17 @@ function docker_exec {
 test_divider
 
 echo "PROVISIONING"
-make build install
+GOPATH=${GOPATH:-${HOME}/go}
+GOBIN=${GOBIN:-${GOPATH}/bin}
+
+mkdir -p "$GOBIN"
+
+docker build -f integration_tests/deploy/Dockerfile-build -t dcl-deploy-build .
+docker container create --name dcl-deploy-build-inst dcl-deploy-build
+docker cp dcl-deploy-build-inst:/go/bin/dcld "$GOBIN"/
+docker cp dcl-deploy-build-inst:/go/bin/cosmovisor "$GOBIN"/
+docker rm dcl-deploy-build-inst
+
 make test_deploy_env_build
 
 GVN_IP="$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $GVN_NAME)"
@@ -54,25 +64,26 @@ test_divider
 
 echo "CLUSTER NODES PREPARATION"
 for node in "$GVN_NAME" "$VN_NAME"; do
-    # TODO improve: assumes that host is compatible with test deploy containers
-    echo "$node: install binary"
-    docker cp build/dcld "$node":/usr/bin
-    docker_exec "$node" dcld version
+    echo "$node: install cosmovisor"
+    docker cp "$GOBIN"/cosmovisor "$node":/usr/bin
 
     # TODO firewall routine (requires ufw installed)
 
     echo "$node: upload release artifacts"
-    docker cp deployment/dcld.service "$node":"$DCL_USER_HOME"
+    docker cp deployment/cosmovisor.service "$node":"$DCL_USER_HOME"
+    docker cp "$GOBIN"/dcld "$node":"$DCL_USER_HOME"
     docker cp deployment/scripts/run_dcl_node "$node":"$DCL_USER_HOME"
     docker cp deployment/scripts/test_peers_conn "$node":"$DCL_USER_HOME"
 
+    docker_exec "$node" ./dcld version
+
     echo "$node: init"
-    docker_exec "$node" bash -c "dcld init $node --chain-id $CHAIN_ID 2>init.stderr"
+    docker_exec "$node" bash -c "./dcld init $node --chain-id $CHAIN_ID 2>init.stderr"
 
     echo "$node: Create NodeAdmin and Trustee keys"
-    docker_exec "$node" dcld config keyring-backend test
-    docker_exec "$node" dcld keys add "${node}_admin"
-    docker_exec "$node" dcld keys add "${node}_tr"
+    docker_exec "$node" ./dcld config keyring-backend test
+    docker_exec "$node" ./dcld keys add "${node}_admin"
+    docker_exec "$node" ./dcld keys add "${node}_tr"
 done
 
 echo "Generating persistent peers list"
@@ -93,9 +104,9 @@ docker_exec -e KEYRING_BACKEND=test "$GVN_NAME"  \
     ./run_dcl_node -t genesis -c "$CHAIN_ID" \
     --gen-key-name "${GVN_NAME}_admin" --gen-key-name-trustee "${GVN_NAME}_tr" \
     "$GVN_NAME"
-docker_exec "$GVN_NAME" systemctl status dcld
+docker_exec "$GVN_NAME" systemctl status cosmovisor
 
-# we shold be fine with shell limits here
+# we should be fine with shell limits here
 genesis_data="$(docker_exec "$GVN_NAME" cat "$GENESIS_FILE")"
 
 test_divider
@@ -110,33 +121,33 @@ docker_exec "$VN_NAME" ./test_peers_conn
 
 echo "VN: run"
 docker_exec -e KEYRING_BACKEND=test "$VN_NAME" ./run_dcl_node -c "$CHAIN_ID" "$VN_NAME"
-docker_exec "$VN_NAME" systemctl status dcld
+docker_exec "$VN_NAME" systemctl status cosmovisor
 
 test_divider
 
 echo "VALIDATOR NODE REGISTRATION"
 
 echo "$GVN_NAME: approve \"$VN_NAME\" to validator set"
-vn_addr=$(docker_exec "$VN_NAME" dcld tendermint show-address)
-vn_pubkey=$(docker_exec "$VN_NAME" dcld tendermint show-validator)
+vn_addr=$(docker_exec "$VN_NAME" ./dcld tendermint show-address)
+vn_pubkey=$(docker_exec "$VN_NAME" ./dcld tendermint show-validator)
 vn_admin_name="${VN_NAME}_admin"
-vn_admin_addr="$(docker_exec "$VN_NAME" dcld keys show "$vn_admin_name" -a)"
-vn_admin_pubkey="$(docker_exec "$VN_NAME" dcld keys show "$vn_admin_name" -p)"
+vn_admin_addr="$(docker_exec "$VN_NAME" ./dcld keys show "$vn_admin_name" -a)"
+vn_admin_pubkey="$(docker_exec "$VN_NAME" ./dcld keys show "$vn_admin_name" -p)"
 
 # ensure that the genesis node is ready
-wait_for_height 2 15 "tcp://$GVN_IP:26657"
+wait_for_height 2 15 normal "tcp://$GVN_IP:26657"
 
-docker_exec "$GVN_NAME" dcld tx auth propose-add-account --address "$vn_admin_addr" --pubkey "$vn_admin_pubkey" --roles="NodeAdmin" --from "${GVN_NAME}_tr" --yes
+docker_exec "$GVN_NAME" ./dcld tx auth propose-add-account --address "$vn_admin_addr" --pubkey "$vn_admin_pubkey" --roles="NodeAdmin" --from "${GVN_NAME}_tr" --yes
 #dcld tx auth approve-add-account --address="$vn_admin_addr" --from alice --yes
 
 echo "$GVN_NAME: Add Node \"$VN_NAME\" to validator set"
 
 # ensure that the validator node is ready
-wait_for_height 4 30 "tcp://$VN_IP:26657"
-docker_exec "$VN_NAME" dcld tx validator add-node --pubkey="$vn_pubkey" --moniker="$VN_NAME" --from="$vn_admin_name" --yes
+wait_for_height 4 30 normal "tcp://$VN_IP:26657"
+docker_exec "$VN_NAME" ./dcld tx validator add-node --pubkey="$vn_pubkey" --moniker="$VN_NAME" --from="$vn_admin_name" --yes
 
 echo "Check node \"$VN_NAME\" is in the validator set"
-result=$(docker_exec "$GVN_NAME" dcld query validator all-nodes)
+result=$(docker_exec "$GVN_NAME" ./dcld query validator all-nodes)
 check_response "$result" "\"moniker\": \"$VN_NAME\""
 check_response "$result" "\"pubKey\":$vn_pubkey" raw
 
