@@ -180,6 +180,47 @@ echo "$result"
 test_divider
 
 
+echo "node admin disables validator"
+result=$(echo $passphrase | dcld tx validator propose-disable-validator --address="$vaddress" --from "$account" --yes)
+check_response "$result" "\"code\": 0"
+
+
+test_divider
+
+
+echo "node admin disables validator"
+result=$(echo $passphrase | dcld tx validator disable-validator --address="$vaddress" --from "$account" --yes)
+check_response "$result" "\"code\": 0"
+
+
+test_divider
+
+
+echo "Get a validator $vaddress from disabled-validator query"
+result=$(dcld query validator disabled-validator --address="$vaddress")
+check_response "$result" "\"owner\": \"$vaddress\""
+check_response "$result" "\"jailed\": true"
+
+
+test_divider
+
+
+echo "node admin enables validator"
+result=$(echo $passphrase | dcld tx validator enable-validator --address="$vaddress" --from "$account" --yes)
+check_response "$result" "\"code\": 0"
+
+
+test_divider
+
+
+echo "Get a validator $vaddress from disabled-validator query"
+result=$(dcld query validator disabled-validator --address="$vaddress")
+check_response "$result" "Not Found"
+
+
+test_divider
+
+
 echo "Alice proposes to disable validator $vaddress"
 result=$(echo $passphrase | dcld tx validator propose-disable-validator --address="$vaddress" --from alice --yes)
 check_response "$result" "\"code\": 0"
@@ -218,6 +259,7 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+
 echo "Get all proposed validators to disable. $vaddress not in the list"
 result=$(dcld query validator all-proposed-disable-validators)
 check_response "$result" "\[\]"
@@ -229,6 +271,15 @@ test_divider
 echo "Get a proposed validator to disable $vaddress is not found"
 result=$(dcld query validator proposed-disable-validator --address="$vaddress")
 check_response "$result" "Not Found"
+
+
+test_divider
+
+
+echo "Get a validator $vaddress from disabled-validator query"
+result=$(dcld query validator disabled-validator --address="$vaddress")
+check_response "$result" "\"owner\": \"$vaddress\""
+check_response "$result" "\"jailed\": true"
 
 
 test_divider
