@@ -1,16 +1,47 @@
 # Switch to Cosmovisor: How To
 
-This document describes the procedure how to switch a node from direct use of `dcld` binary to use of `cosmovisor` process manager which controls `dcld` process and supports DCL application upgrades that includes `dcld` binary updates and store migrations.
+This document describes the procedure of how to switch a node from direct use of
+`dcld` binary to use of `cosmovisor` process manager which controls `dcld`
+process and supports DCL application upgrades that include `dcld` binary updates
+and store migrations.
 
-Switching to use of `cosmovisor` is performed by `switch_to_cosmovisor` script. This procedure does not include any store migrations. So it can be applied only if the diff between the target and source versions of `dcld` does not include any breaking changes of the store.
+Switching to use of `cosmovisor` is performed by `switch_to_cosmovisor` script.
+This procedure does not include any store migrations. So it can be applied only
+if the difference between the previously installed stand-alone `dcld` binary and
+`dcld` binary to install with cosmovisor does not include any breaking changes
+of the store.
 
-Assumptions:
-* `switch_to_cosmovisor` script assumes that old `dcld` binary is located in `/usr/bin` directory. The script is operable in this case only.
+**Pre-requisites:**
 
-Pre-requisites:
 * `dcld` is launched as `dcld` systemd service.
-* `dcld` systemd service is currently running, i.e. is in active state.
-* The following files, taken from a DCL release, have been put into the current working directory from where the script is executed:
-    * new `dcld` binary (that will be controlled by `cosmovisor` and so should include the upgrade feature)
-    * `cosmovisor` binary
-    * `cosmovisor.service`
+* `dcld` systemd service is currently in active state (i.e. running).
+
+**Steps:**
+
+* Download new `dcld`, `cosmovisor` and `cosmovisor.service` from GitHub
+  [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases)
+
+    Example using curl:
+    ```bash
+    curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
+    curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor
+    curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor.service
+    ```
+
+* Download `switch_to_cosmovisor` script from [repository](../../deployment/scripts/)
+
+    Example using curl:
+    ```bash
+    curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/switch_to_cosmovisor
+    ```
+
+* Run `switch_to_cosmovisor` script:
+
+    ```bash
+    ./switch_to_cosmovisor
+    ```
+
+    When it is done, it will print:
+    ```
+    Done
+    ```

@@ -87,7 +87,6 @@ rm -rf "$HOME/.dcl"
 ```bash
 # release artifacts
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
-# TODO: Add cosmovisor to release
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor
 curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/cosmovisor.service
 
