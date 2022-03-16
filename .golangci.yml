@@ -42,8 +42,7 @@ linters:
     - gocognit
     - godox
     - gomoddirectives
-    - maligned
+    - maligned # The linter 'maligned' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.  Replaced by govet 'fieldalignment'.
     - gci
-    - whitespace
     - containedctx
     - maintidx

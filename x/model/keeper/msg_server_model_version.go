@@ -106,7 +106,6 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 
 	if msg.MinApplicableSoftwareVersion == 0 && msg.MaxApplicableSoftwareVersion != 0 &&
 		msg.MaxApplicableSoftwareVersion < modelVersion.MinApplicableSoftwareVersion {
-
 		return nil, types.NewErrMaxSVLessThanMinSV(modelVersion.MinApplicableSoftwareVersion, msg.MaxApplicableSoftwareVersion)
 	}
 
