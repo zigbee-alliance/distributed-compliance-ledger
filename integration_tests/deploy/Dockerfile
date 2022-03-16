@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+################################################################################
+# Image of a clean machine to deploy the new node onto.
+################################################################################
 FROM jrei/systemd-ubuntu:20.04
 
 RUN apt-get update && apt-get install -y \

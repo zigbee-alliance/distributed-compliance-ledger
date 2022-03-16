@@ -1,3 +1,4 @@
+---
 # Copyright 2020 DSR Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +14,7 @@
 # limitations under the License.
 
 global:
-  scrape_interval:     1s # By default, scrape targets every 1 seconds.
+  scrape_interval: 1s  # By default, scrape targets every 1 seconds.
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).

@@ -12,40 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+################################################################################
+# Image of a node in DCL pool.
+################################################################################
+
 ############################
-# STEP 1 build executable binary
+# STEP 1 build cosmovisor
 ############################
 FROM golang:alpine AS builder
 
-# Git is required for fetching the dependencies,
-# make is required for building.
-# build-base is needed because gcc is required by delve
-RUN apk update && apk add --no-cache git make build-base
+# git is required for fetching the dependencies.
+RUN apk update && apk add --no-cache git
 
-# Build Delve - This is helpful if you want to do remote debugging by attaching to one of the docker containers remotely
-RUN go get github.com/go-delve/delve/cmd/dlv
-
-WORKDIR /go/src/dc-ledger
-COPY app ./app/
-COPY cmd ./cmd/
-COPY testutil ./testutil/
-COPY utils ./utils/
-COPY x ./x/
-COPY go.mod go.sum Makefile ./
-COPY docs/docs.go ./docs/
-COPY docs/static ./docs/static/
-
-ARG DCL_VERSION
-ARG DCL_COMMIT
-RUN LEDGER_ENABLED=false make
+RUN go install github.com/cosmos/cosmos-sdk/cosmovisor/cmd/cosmovisor@v1.0.0
 
 ############################
-# STEP 2 build an image
+# STEP 2 build node image
 ############################
 FROM alpine:latest
 
-COPY --from=builder /go/bin/dcld /usr/bin/dcld
-COPY --from=builder /go/bin/dlv /usr/bin/dlv
+COPY --from=builder /go/bin/cosmovisor /usr/bin/
 
 # test user
 ARG TEST_USER
@@ -59,6 +45,9 @@ ENV TEST_UID=${TEST_UID:-1000}
 #ARG gid=1000
 RUN adduser -D -u ${TEST_UID} -h /var/lib/${TEST_USER} -g 'DCLedger user' ${TEST_USER}
 
+ENV DAEMON_HOME=/var/lib/${TEST_USER}/.dcl
+ENV DAEMON_NAME=dcld
+
 VOLUME /var/lib/${TEST_USER}
 
 EXPOSE 26656 26657 1317 26660 8888
@@ -66,4 +55,7 @@ EXPOSE 26656 26657 1317 26660 8888
 STOPSIGNAL SIGTERM
 
 USER ${TEST_USER}
+
+ENV PATH=$PATH:${DAEMON_HOME}/cosmovisor/current/bin
+
 WORKDIR /var/lib/${TEST_USER}
