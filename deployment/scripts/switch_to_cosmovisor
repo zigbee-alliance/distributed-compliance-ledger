@@ -41,6 +41,8 @@ function wait_node_up {
     echo -e "\n\tNode is responding"
 }
 
+### Preliminary checks
+
 if [[ ! -d "/etc/systemd/system" ]]; then
     echo "Error. Not a systemd system. This script supports systemd systems only."
     exit 1
@@ -87,6 +89,8 @@ if ! systemctl is-active --quiet dcld; then
     exit 1
 fi
 
+### Old stand-alone dcld removal
+
 sudo systemctl stop dcld
 echo "Stopped 'dcld' service"
 
@@ -97,6 +101,11 @@ echo "Removed 'dcld' service"
 
 sudo rm -f "$BIN_DIR"/dcld
 echo "Removed old stand-alone 'dcld' binary from '${BIN_DIR}'"
+
+### Cosmovisor and new dcld installation
+
+sudo chown "$NODE_USER" ./dcld
+sudo chmod u+x ./dcld
 
 sudo cp -f ./cosmovisor "$BIN_DIR"/
 sudo chown "$NODE_USER" "$BIN_DIR"/cosmovisor

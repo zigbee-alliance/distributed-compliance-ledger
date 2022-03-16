@@ -452,6 +452,9 @@ if [[ "$verbosity" -ge 1 ]]; then
     #echo -e "Parsed arguments:\n$parsed_args"
 fi
 
+sudo chown "$NODE_USER" ./dcld
+sudo chmod u+x ./dcld
+
 echo "Configuring CLI"
 
 # Note. we consider that cli would connect to local node (default setting)
