@@ -67,7 +67,10 @@ func CmdShowRevokedAccount() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }
