@@ -70,6 +70,19 @@ export interface DclauthQueryAllPendingAccountRevocationResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface DclauthQueryAllRevokedAccountResponse {
+    revokedAccount?: DclauthRevokedAccount[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface DclauthQueryGetAccountResponse {
     account?: DclauthAccount;
 }
@@ -81,6 +94,13 @@ export interface DclauthQueryGetPendingAccountResponse {
 }
 export interface DclauthQueryGetPendingAccountRevocationResponse {
     pendingAccountRevocation?: DclauthPendingAccountRevocation;
+}
+export interface DclauthQueryGetRevokedAccountResponse {
+    revokedAccount?: DclauthRevokedAccount;
+}
+export interface DclauthRevokedAccount {
+    account?: DclauthAccount;
+    revokeApprovals?: DclauthGrant[];
 }
 /**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
@@ -496,5 +516,29 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/auth/proposed-revocation-accounts/{address}
      */
     queryPendingAccountRevocation: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetPendingAccountRevocationResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRevokedAccountAll
+     * @summary Queries a list of RevokedAccount items.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account
+     */
+    queryRevokedAccountAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<DclauthQueryAllRevokedAccountResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryRevokedAccount
+     * @summary Queries a RevokedAccount by index.
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account/{address}
+     */
+    queryRevokedAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetRevokedAccountResponse, RpcStatus>>;
 }
 export {};
