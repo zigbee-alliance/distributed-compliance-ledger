@@ -248,7 +248,7 @@ func NewMsgCreateVendorInfo(signer sdk.AccAddress) *types.MsgCreateVendorInfo {
 		CompanyLegalName:     testconstants.CompanyLegalName,
 		CompanyPrefferedName: testconstants.CompanyPreferredName,
 		VendorName:           testconstants.VendorName,
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 }
 
@@ -259,7 +259,7 @@ func NewMsgUpdateVendorInfo(signer sdk.AccAddress) *types.MsgUpdateVendorInfo {
 		CompanyLegalName:     testconstants.CompanyLegalName + "/updated",
 		CompanyPrefferedName: testconstants.CompanyPreferredName + "/updated",
 		VendorName:           testconstants.VendorName + "/updated",
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl + "/updated",
+		VendorLandingPageURL: testconstants.VendorLandingPageURL + "/updated",
 	}
 }
 

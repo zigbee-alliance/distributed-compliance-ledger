@@ -855,13 +855,13 @@ func validMsgCreateModelVersion() *MsgCreateModelVersion {
 		CdVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl,
+		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
 		OtaChecksum:                  testconstants.OtaChecksum,
 		OtaChecksumType:              testconstants.OtaChecksumType,
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl,
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 	}
 }
 
@@ -872,9 +872,9 @@ func validMsgUpdateModelVersion() *MsgUpdateModelVersion {
 		Pid:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionValid:         !testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl + "/updated",
+		OtaUrl:                       testconstants.OtaURL + "/updated",
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion + 1,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion + 1,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl + "/updated",
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL + "/updated",
 	}
 }

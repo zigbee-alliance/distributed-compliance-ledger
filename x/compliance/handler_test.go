@@ -1219,13 +1219,13 @@ func NewModelVersion(
 		CdVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl,
+		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
 		OtaChecksum:                  testconstants.OtaChecksum,
 		OtaChecksumType:              testconstants.OtaChecksumType,
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl,
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 		Creator:                      GenerateAccAddress().String(),
 	}
 }
