@@ -139,9 +139,9 @@ func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid int32) boo
 
 	if account.VendorID == vid {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
 // Count account with assigned role.

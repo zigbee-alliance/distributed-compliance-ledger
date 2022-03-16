@@ -18,13 +18,13 @@ func CmdCreateModelVersion() *cobra.Command {
 		cdVersionNumber              int32
 		firmwareDigests              string
 		softwareVersionValid         bool
-		otaUrl                       string
+		otaURL                       string
 		otaFileSize                  uint64
 		otaChecksum                  string
 		otaChecksumType              int32
 		minApplicableSoftwareVersion uint32
 		maxApplicableSoftwareVersion uint32
-		releaseNotesUrl              string
+		releaseNotesURL              string
 	)
 
 	cmd := &cobra.Command{
@@ -45,18 +45,18 @@ func CmdCreateModelVersion() *cobra.Command {
 				cdVersionNumber,
 				firmwareDigests,
 				softwareVersionValid,
-				otaUrl,
+				otaURL,
 				otaFileSize,
 				otaChecksum,
 				otaChecksumType,
 				minApplicableSoftwareVersion,
 				maxApplicableSoftwareVersion,
-				releaseNotesUrl,
+				releaseNotesURL,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-			if cli.IsWriteInsteadReadRpcError(err) {
+			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
 
@@ -79,7 +79,7 @@ func CmdCreateModelVersion() *cobra.Command {
 	// by default the Software Version is valid, unless --softwareVersionValid is passed by user explicitly
 	cmd.Flags().BoolVar(&softwareVersionValid, FlagSoftwareVersionValid, true,
 		"boolean flag to revoke the software version model")
-	cmd.Flags().StringVar(&otaUrl, FlagOtaUrl, "",
+	cmd.Flags().StringVar(&otaURL, FlagOtaURL, "",
 		"URL where to obtain the OTA image")
 	cmd.Flags().Uint64Var(&otaFileSize, FlagOtaFileSize, 0,
 		"OtaFileSize is the total size of the OTA software image in bytes")
@@ -99,7 +99,7 @@ SoftwareVersion for which this image can be applied`)
 	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
 		`MaxApplicableSoftwareVersion should specify the highest 
 SoftwareVersion for which this image can be applied`)
-	cmd.Flags().StringVar(&releaseNotesUrl, FlagReleaseNotesUrl, "",
+	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains 
 release notes for the device model.`)
 
@@ -123,10 +123,10 @@ func CmdUpdateModelVersion() *cobra.Command {
 		pid                          int32
 		softwareVersion              uint32
 		softwareVersionValid         bool
-		otaUrl                       string
+		otaURL                       string
 		minApplicableSoftwareVersion uint32
 		maxApplicableSoftwareVersion uint32
-		releaseNotesUrl              string
+		releaseNotesURL              string
 	)
 
 	cmd := &cobra.Command{
@@ -144,15 +144,15 @@ func CmdUpdateModelVersion() *cobra.Command {
 				pid,
 				softwareVersion,
 				softwareVersionValid,
-				otaUrl,
+				otaURL,
 				minApplicableSoftwareVersion,
 				maxApplicableSoftwareVersion,
-				releaseNotesUrl,
+				releaseNotesURL,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-			if cli.IsWriteInsteadReadRpcError(err) {
+			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
 
@@ -170,13 +170,13 @@ func CmdUpdateModelVersion() *cobra.Command {
 	// FIXME: This behavior looks erroneous because the user can implicitly change invalid model version to valid
 	cmd.Flags().BoolVar(&softwareVersionValid, FlagSoftwareVersionValid, true,
 		"boolean flag to revoke the software version model")
-	cmd.Flags().StringVar(&otaUrl, FlagOtaUrl, "",
+	cmd.Flags().StringVar(&otaURL, FlagOtaURL, "",
 		"URL where to obtain the OTA image")
 	cmd.Flags().Uint32Var(&minApplicableSoftwareVersion, FlagMinApplicableSoftwareVersion, 0,
 		`MinApplicableSoftwareVersion should specify the lowest SoftwareVersion for which this image can be applied`)
 	cmd.Flags().Uint32Var(&maxApplicableSoftwareVersion, FlagMaxApplicableSoftwareVersion, 0,
 		`MaxApplicableSoftwareVersion should specify the highest SoftwareVersion for which this image can be applied`)
-	cmd.Flags().StringVar(&releaseNotesUrl, FlagReleaseNotesUrl, "",
+	cmd.Flags().StringVar(&releaseNotesURL, FlagReleaseNotesURL, "",
 		`URL that contains product specific web page that contains release notes for the device model.`)
 
 	cli.AddTxFlagsToCmd(cmd)

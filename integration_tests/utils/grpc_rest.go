@@ -187,6 +187,7 @@ func (suite *TestSuite) QueryREST(uri string, resp proto.Message) error {
 	if err != nil {
 		return err
 	}
+
 	require.NoError(suite.T, suite.EncodingConfig.Marshaler.UnmarshalJSON(respBytes, resp))
 
 	return nil

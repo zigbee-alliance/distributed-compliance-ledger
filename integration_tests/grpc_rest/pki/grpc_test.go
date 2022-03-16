@@ -33,5 +33,5 @@ import (
 //nolint:funlen
 func TestPkiDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	pki.PKIDemo(&suite)
+	pki.Demo(&suite)
 }

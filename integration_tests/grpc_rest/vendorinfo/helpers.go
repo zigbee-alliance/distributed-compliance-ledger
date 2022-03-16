@@ -107,7 +107,7 @@ func GetVendorInfos(suite *utils.TestSuite) (res []vendorinfotypes.VendorInfo, e
 	return res, nil
 }
 
-func VendorInfoDemo(suite *utils.TestSuite) {
+func Demo(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)

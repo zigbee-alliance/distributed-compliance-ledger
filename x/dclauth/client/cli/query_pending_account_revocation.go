@@ -31,7 +31,7 @@ func CmdListPendingAccountRevocation() *cobra.Command {
 			}
 
 			res, err := queryClient.PendingAccountRevocationAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {

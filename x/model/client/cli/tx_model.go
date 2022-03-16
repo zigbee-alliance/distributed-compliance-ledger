@@ -14,20 +14,20 @@ func CmdCreateModel() *cobra.Command {
 	var (
 		vid                                        int32
 		pid                                        int32
-		deviceTypeId                               int32
+		deviceTypeID                               int32
 		productName                                string
 		productLabel                               string
 		partNumber                                 string
 		commissioningCustomFlow                    int32
-		commissioningCustomFlowUrl                 string
+		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsHint          uint32
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsHint        uint32
 		commissioningModeSecondaryStepsInstruction string
-		userManualUrl                              string
-		supportUrl                                 string
-		productUrl                                 string
-		lsfUrl                                     string
+		userManualURL                              string
+		supportURL                                 string
+		productURL                                 string
+		lsfURL                                     string
 	)
 
 	cmd := &cobra.Command{
@@ -49,25 +49,25 @@ func CmdCreateModel() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				vid,
 				pid,
-				deviceTypeId,
+				deviceTypeID,
 				productName,
 				productLabel,
 				partNumber,
 				commissioningCustomFlow,
-				commissioningCustomFlowUrl,
+				commissioningCustomFlowURL,
 				commissioningModeInitialStepsHint,
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsHint,
 				commissioningModeSecondaryStepsInstruction,
-				userManualUrl,
-				supportUrl,
-				productUrl,
-				lsfUrl,
+				userManualURL,
+				supportURL,
+				productURL,
+				lsfURL,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-			if cli.IsWriteInsteadReadRpcError(err) {
+			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
 
@@ -79,7 +79,7 @@ func CmdCreateModel() *cobra.Command {
 		"Model vendor ID (positive non-zero uint16)")
 	cmd.Flags().Int32Var(&pid, FlagPid, 0,
 		"Model product ID (positive non-zero uint16)")
-	cmd.Flags().Int32Var(&deviceTypeId, FlagDeviceTypeId, 0,
+	cmd.Flags().Int32Var(&deviceTypeID, FlagDeviceTypeID, 0,
 		"Model category ID")
 	cmd.Flags().StringVarP(&productName, FlagProductName, FlagProductNameShortcut, "",
 		"Model name")
@@ -92,7 +92,7 @@ func CmdCreateModel() *cobra.Command {
 required before commissioning can take place. When CommissioningCustomflow is set to a value of 2, 
 the commissioner SHOULD attempt to obtain a URL which MAY be used to provide an end-user with 
 the necessary details for how to configure the product for initial commissioning.`)
-	cmd.Flags().StringVar(&commissioningCustomFlowUrl, FlagCommissioningCustomFlowUrl, "",
+	cmd.Flags().StringVar(&commissioningCustomFlowURL, FlagCommissioningCustomFlowURL, "",
 		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
 device model when the commissioningCustomFlow field is set to '2'`)
 	cmd.Flags().Uint32Var(&commissioningModeInitialStepsHint, FlagCommissioningModeInitialStepsHint, 0,
@@ -117,18 +117,18 @@ current CHIP Administrator to put the device into commissioning mode.`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&userManualUrl, FlagUserManualUrl, "",
+	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
-	cmd.Flags().StringVar(&supportUrl, FlagSupportUrl, "",
+	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
 		"URL that contains product specific web page that contains support details for the device model.")
-	cmd.Flags().StringVar(&productUrl, FlagProductUrl, "",
+	cmd.Flags().StringVar(&productURL, FlagProductURL, "",
 		"URL that contains product specific web page that contains details for the device model.")
-	cmd.Flags().StringVar(&lsfUrl, FlagLsfUrl, "", "URL to the Localized String File of this product")
+	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cli.AddTxFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagVid)
 	_ = cmd.MarkFlagRequired(FlagPid)
-	_ = cmd.MarkFlagRequired(FlagDeviceTypeId)
+	_ = cmd.MarkFlagRequired(FlagDeviceTypeID)
 	_ = cmd.MarkFlagRequired(FlagProductName)
 	_ = cmd.MarkFlagRequired(FlagProductLabel)
 	_ = cmd.MarkFlagRequired(FlagPartNumber)
@@ -144,13 +144,13 @@ func CmdUpdateModel() *cobra.Command {
 		productName                                string
 		productLabel                               string
 		partNumber                                 string
-		commissioningCustomFlowUrl                 string
+		commissioningCustomFlowURL                 string
 		commissioningModeInitialStepsInstruction   string
 		commissioningModeSecondaryStepsInstruction string
-		userManualUrl                              string
-		supportUrl                                 string
-		productUrl                                 string
-		lsfUrl                                     string
+		userManualURL                              string
+		supportURL                                 string
+		productURL                                 string
+		lsfURL                                     string
 		lsfRevision                                int32
 	)
 
@@ -176,19 +176,19 @@ func CmdUpdateModel() *cobra.Command {
 				productName,
 				productLabel,
 				partNumber,
-				commissioningCustomFlowUrl,
+				commissioningCustomFlowURL,
 				commissioningModeInitialStepsInstruction,
 				commissioningModeSecondaryStepsInstruction,
-				userManualUrl,
-				supportUrl,
-				productUrl,
-				lsfUrl,
+				userManualURL,
+				supportURL,
+				productURL,
+				lsfURL,
 				lsfRevision,
 			)
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-			if cli.IsWriteInsteadReadRpcError(err) {
+			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
 
@@ -206,7 +206,7 @@ func CmdUpdateModel() *cobra.Command {
 		"Model description (string or path to file containing data)")
 	cmd.Flags().StringVar(&partNumber, FlagPartNumber, "",
 		"Model Part Number (or sku)")
-	cmd.Flags().StringVar(&commissioningCustomFlowUrl, FlagCommissioningCustomFlowUrl, "",
+	cmd.Flags().StringVar(&commissioningCustomFlowURL, FlagCommissioningCustomFlowURL, "",
 		`commissioningCustomFlowURL SHALL identify a vendor specific commissioning URL for the 
 device model when the commissioningCustomFlow field is set to '2'`)
 	cmd.Flags().StringVar(&commissioningModeInitialStepsInstruction, FlagCommissioningModeInitialStepsInstruction, "",
@@ -219,13 +219,13 @@ values the commissioningModeInitialStepsInstruction SHALL be set`)
 of commissioningModeSecondaryStepsHint. Certain values of commissioningModeSecondaryStepsHint, 
 as defined in the Pairing Hint Table, indicate a Pairing Instruction (PI) dependency, 
 and for these values the commissioningModeSecondaryStepInstruction SHALL be set`)
-	cmd.Flags().StringVar(&userManualUrl, FlagUserManualUrl, "",
+	cmd.Flags().StringVar(&userManualURL, FlagUserManualURL, "",
 		"URL that contains product specific web page that contains user manual for the device model.")
-	cmd.Flags().StringVar(&supportUrl, FlagSupportUrl, "",
+	cmd.Flags().StringVar(&supportURL, FlagSupportURL, "",
 		"URL that contains product specific web page that contains support details for the device model.")
-	cmd.Flags().StringVar(&productUrl, FlagProductUrl, "",
+	cmd.Flags().StringVar(&productURL, FlagProductURL, "",
 		"URL that contains product specific web page that contains details for the device model.")
-	cmd.Flags().StringVar(&lsfUrl, FlagLsfUrl, "", "URL to the Localized String File of this product")
+	cmd.Flags().StringVar(&lsfURL, FlagLsfURL, "", "URL to the Localized String File of this product")
 	cmd.Flags().Int32Var(&lsfRevision, FlagLsfRevision, 0,
 		"LsfRevision is a monotonically increasing positive integer indicating the latest available version of Localized String File")
 	cli.AddTxFlagsToCmd(cmd)
@@ -260,7 +260,7 @@ func CmdDeleteModel() *cobra.Command {
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-			if cli.IsWriteInsteadReadRpcError(err) {
+			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
 

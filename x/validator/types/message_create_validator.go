@@ -19,6 +19,7 @@ func NewMsgCreateValidator(
 	description *Description,
 ) (*MsgCreateValidator, error) {
 	var pkAny *codectypes.Any
+
 	if pubKey != nil {
 		var err error
 		if pkAny, err = codectypes.NewAnyWithValue(pubKey); err != nil {

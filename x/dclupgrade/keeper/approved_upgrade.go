@@ -53,7 +53,6 @@ func (k Keeper) GetAllApprovedUpgrade(ctx sdk.Context) (list []types.ApprovedUpg
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
-
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ApprovedUpgrade
 		k.cdc.MustUnmarshal(iterator.Value(), &val)

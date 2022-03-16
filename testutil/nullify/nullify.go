@@ -32,6 +32,7 @@ func Fill(x interface{}) interface{} {
 			if !f.CanSet() {
 				continue
 			}
+
 			switch f.Kind() {
 			case reflect.Slice:
 				f.Set(reflect.MakeSlice(f.Type(), 0, 0))

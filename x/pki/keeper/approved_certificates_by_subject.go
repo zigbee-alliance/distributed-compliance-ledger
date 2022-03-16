@@ -64,29 +64,29 @@ func (k Keeper) GetAllApprovedCertificatesBySubject(ctx sdk.Context) (list []typ
 }
 
 // Add ApprovedCertificates to a subject->subjectKeyId index.
-func (k Keeper) AddApprovedCertificateBySubject(ctx sdk.Context, subject string, subjectKeyId string) {
+func (k Keeper) AddApprovedCertificateBySubject(ctx sdk.Context, subject string, subjectKeyID string) {
 	approvedCertificatesBySubject, _ := k.GetApprovedCertificatesBySubject(ctx, subject)
 
 	// Check if cert is already there
-	for _, existingId := range approvedCertificatesBySubject.SubjectKeyIds {
-		if existingId == subjectKeyId {
+	for _, existingID := range approvedCertificatesBySubject.SubjectKeyIds {
+		if existingID == subjectKeyID {
 			return
 		}
 	}
 
 	approvedCertificatesBySubject.Subject = subject
-	approvedCertificatesBySubject.SubjectKeyIds = append(approvedCertificatesBySubject.SubjectKeyIds, subjectKeyId)
+	approvedCertificatesBySubject.SubjectKeyIds = append(approvedCertificatesBySubject.SubjectKeyIds, subjectKeyID)
 
 	k.SetApprovedCertificatesBySubject(ctx, approvedCertificatesBySubject)
 }
 
 // Remove revoked root certificate from the list.
-func (k Keeper) RemoveApprovedCertificateBySubject(ctx sdk.Context, subject string, subjectKeyId string) {
+func (k Keeper) RemoveApprovedCertificateBySubject(ctx sdk.Context, subject string, subjectKeyID string) {
 	approvedCertificatesBySubject, _ := k.GetApprovedCertificatesBySubject(ctx, subject)
 
 	certIDIndex := -1
 	for i, existingIdentifier := range approvedCertificatesBySubject.SubjectKeyIds {
-		if existingIdentifier == subjectKeyId {
+		if existingIdentifier == subjectKeyID {
 			certIDIndex = i
 
 			break

@@ -53,7 +53,6 @@ func (k Keeper) GetAllVendorInfo(ctx sdk.Context) (list []types.VendorInfo) {
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
-
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.VendorInfo
 		k.cdc.MustUnmarshal(iterator.Value(), &val)

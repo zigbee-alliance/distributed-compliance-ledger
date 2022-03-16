@@ -29,7 +29,7 @@ func CmdListRevokedModel() *cobra.Command {
 			}
 
 			res, err := queryClient.RevokedModelAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {

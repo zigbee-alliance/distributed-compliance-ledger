@@ -29,7 +29,7 @@ func CmdListProposedCertificate() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedCertificateAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {

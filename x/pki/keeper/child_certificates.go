@@ -20,14 +20,14 @@ func (k Keeper) SetChildCertificates(ctx sdk.Context, childCertificates types.Ch
 func (k Keeper) GetChildCertificates(
 	ctx sdk.Context,
 	issuer string,
-	authorityKeyId string,
+	authorityKeyID string,
 
 ) (val types.ChildCertificates, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 
 	b := store.Get(types.ChildCertificatesKey(
 		issuer,
-		authorityKeyId,
+		authorityKeyID,
 	))
 	if b == nil {
 		return val, false
@@ -42,13 +42,13 @@ func (k Keeper) GetChildCertificates(
 func (k Keeper) RemoveChildCertificates(
 	ctx sdk.Context,
 	issuer string,
-	authorityKeyId string,
+	authorityKeyID string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 	store.Delete(types.ChildCertificatesKey(
 		issuer,
-		authorityKeyId,
+		authorityKeyID,
 	))
 }
 
@@ -69,43 +69,43 @@ func (k Keeper) GetAllChildCertificates(ctx sdk.Context) (list []types.ChildCert
 }
 
 // Add a child certificate to the list of child certificate IDs for the issuer/authorityKeyId map.
-func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKeyId string, certId types.CertificateIdentifier) {
+func (k Keeper) AddChildCertificate(ctx sdk.Context, issuer string, authorityKeyID string, certID types.CertificateIdentifier) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 
 	childCertificatesBytes := store.Get(types.ChildCertificatesKey(
 		issuer,
-		authorityKeyId,
+		authorityKeyID,
 	))
 
 	var childCertificates types.ChildCertificates
 	if childCertificatesBytes == nil {
 		childCertificates = types.ChildCertificates{
 			Issuer:         issuer,
-			AuthorityKeyId: authorityKeyId,
+			AuthorityKeyId: authorityKeyID,
 			CertIds:        []*types.CertificateIdentifier{},
 		}
 	} else {
 		k.cdc.MustUnmarshal(childCertificatesBytes, &childCertificates)
 	}
 
-	for _, existingCertId := range childCertificates.CertIds {
-		if *existingCertId == certId {
+	for _, existingCertID := range childCertificates.CertIds {
+		if *existingCertID == certID {
 			return
 		}
 	}
 
-	childCertificates.CertIds = append(childCertificates.CertIds, &certId)
+	childCertificates.CertIds = append(childCertificates.CertIds, &certID)
 
 	b := k.cdc.MustMarshal(&childCertificates)
 	store.Set(types.ChildCertificatesKey(
 		issuer,
-		authorityKeyId,
+		authorityKeyID,
 	), b)
 }
 
-func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, authorityKeyId string) {
+func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, authorityKeyID string) {
 	// Get issuer's ChildCertificates record
-	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyId)
+	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyID)
 
 	// For each child certificate subject/subjectKeyID combination
 	for _, certIdentifier := range childCertificates.CertIds {
@@ -122,12 +122,12 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 	}
 
 	// Delete entire ChildCertificates record of issuer
-	k.RemoveChildCertificates(ctx, issuer, authorityKeyId)
+	k.RemoveChildCertificates(ctx, issuer, authorityKeyID)
 }
 
-func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, authorityKeyId string,
+func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, authorityKeyID string,
 	certIdentifier types.CertificateIdentifier) {
-	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyId)
+	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyID)
 
 	certIDIndex := -1
 	for i, existingIdentifier := range childCertificates.CertIds {
@@ -147,6 +147,6 @@ func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, author
 	if len(childCertificates.CertIds) > 0 {
 		k.SetChildCertificates(ctx, childCertificates)
 	} else {
-		k.RemoveChildCertificates(ctx, issuer, authorityKeyId)
+		k.RemoveChildCertificates(ctx, issuer, authorityKeyID)
 	}
 }

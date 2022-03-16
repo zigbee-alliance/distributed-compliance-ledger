@@ -682,11 +682,11 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 		uniqueCertificate(intermediateCertificate.Issuer, intermediateCertificate.SerialNumber),
 	)
 
-	childCertId := certificateIdentifier(intermediateCertificate.Subject, intermediateCertificate.SubjectKeyId)
+	childCertID := certificateIdentifier(intermediateCertificate.Subject, intermediateCertificate.SubjectKeyId)
 	rootChildCertificates := types.ChildCertificates{
 		Issuer:         intermediateCertificate.Issuer,
 		AuthorityKeyId: intermediateCertificate.AuthorityKeyId,
-		CertIds:        []*types.CertificateIdentifier{&childCertId},
+		CertIds:        []*types.CertificateIdentifier{&childCertID},
 	}
 	setup.Keeper.SetChildCertificates(setup.Ctx, rootChildCertificates)
 
@@ -1351,12 +1351,12 @@ func proposeAndApproveRootCertificate(setup *TestSetup, ownerTrustee sdk.AccAddr
 func queryProposedCertificate(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.ProposedCertificate, error) {
 	// query proposed certificate
 	req := &types.QueryGetProposedCertificateRequest{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 
 	resp, err := setup.Keeper.ProposedCertificate(setup.Wctx, req)
@@ -1390,9 +1390,9 @@ func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificate
 func querySingleApprovedCertificate(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.Certificate, error) {
-	certificates, err := queryApprovedCertificates(setup, subject, subjectKeyId)
+	certificates, err := queryApprovedCertificates(setup, subject, subjectKeyID)
 	if err != nil {
 		return nil, err
 	}
@@ -1407,12 +1407,12 @@ func querySingleApprovedCertificate(
 func queryApprovedCertificates(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.ApprovedCertificates, error) {
 	// query certificate
 	req := &types.QueryGetApprovedCertificatesRequest{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 
 	resp, err := setup.Keeper.ApprovedCertificates(setup.Wctx, req)
@@ -1483,9 +1483,9 @@ func queryAllRevokedCertificates(setup *TestSetup) ([]types.RevokedCertificates,
 func querySingleRevokedCertificate(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.Certificate, error) {
-	certificates, err := queryRevokedCertificates(setup, subject, subjectKeyId)
+	certificates, err := queryRevokedCertificates(setup, subject, subjectKeyID)
 	if err != nil {
 		return nil, err
 	}
@@ -1500,12 +1500,12 @@ func querySingleRevokedCertificate(
 func queryRevokedCertificates(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.RevokedCertificates, error) {
 	// query revoked certificate
 	req := &types.QueryGetRevokedCertificatesRequest{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 
 	resp, err := setup.Keeper.RevokedCertificates(setup.Wctx, req)
@@ -1523,12 +1523,12 @@ func queryRevokedCertificates(
 func queryChildCertificates(
 	setup *TestSetup,
 	issuer string,
-	authorityKeyId string,
+	authorityKeyID string,
 ) (*types.ChildCertificates, error) {
 	// query certificate
 	req := &types.QueryGetChildCertificatesRequest{
 		Issuer:         issuer,
-		AuthorityKeyId: authorityKeyId,
+		AuthorityKeyId: authorityKeyID,
 	}
 
 	resp, err := setup.Keeper.ChildCertificates(setup.Wctx, req)
@@ -1576,9 +1576,9 @@ func uniqueCertificate(issuer string, serialNumber string) types.UniqueCertifica
 	}
 }
 
-func certificateIdentifier(subject string, subjectKeyId string) types.CertificateIdentifier {
+func certificateIdentifier(subject string, subjectKeyID string) types.CertificateIdentifier {
 	return types.CertificateIdentifier{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 }

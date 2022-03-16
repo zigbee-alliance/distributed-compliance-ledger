@@ -31,15 +31,15 @@ import (
 
 func TestComplianceDemoTrackComplianceGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	compliance.ComplianceDemoTrackCompliance(&suite)
+	compliance.DemoTrackCompliance(&suite)
 }
 
 func TestComplianceDemoTrackRevocationGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	compliance.ComplianceDemoTrackRevocation(&suite)
+	compliance.DemoTrackRevocation(&suite)
 }
 
 func TestComplianceDemoTrackProvisionGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	compliance.ComplianceDemoTrackProvision(&suite)
+	compliance.DemoTrackProvision(&suite)
 }

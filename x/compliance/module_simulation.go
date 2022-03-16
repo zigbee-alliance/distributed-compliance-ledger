@@ -74,6 +74,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 			weightMsgCertifyModel = defaultWeightMsgCertifyModel
 		},
 	)
+
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgCertifyModel,
 		compliancesimulation.SimulateMsgCertifyModel(am.keeper),

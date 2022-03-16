@@ -72,6 +72,7 @@ func SimulateMsgUpdateModel(
 			allModel   = k.GetAllModel(ctx)
 			found      = false
 		)
+
 		for _, obj := range allModel {
 			simAccount, found = FindAccount(accs, obj.Creator)
 			if found {
@@ -121,6 +122,7 @@ func SimulateMsgDeleteModel(
 			allModel   = k.GetAllModel(ctx)
 			found      = false
 		)
+
 		for _, obj := range allModel {
 			simAccount, found = FindAccount(accs, obj.Creator)
 			if found {

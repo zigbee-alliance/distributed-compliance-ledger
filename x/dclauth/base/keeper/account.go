@@ -58,6 +58,7 @@ func (k Keeper) IterateAccounts(ctx sdk.Context, cb func(account types.Account) 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Account
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
+
 		if cb(val) {
 			break
 		}

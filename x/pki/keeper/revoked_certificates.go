@@ -20,14 +20,13 @@ func (k Keeper) SetRevokedCertificates(ctx sdk.Context, revokedCertificates type
 func (k Keeper) GetRevokedCertificates(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
-
+	subjectKeyID string,
 ) (val types.RevokedCertificates, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 
 	b := store.Get(types.RevokedCertificatesKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 	if b == nil {
 		return val, false
@@ -42,13 +41,12 @@ func (k Keeper) GetRevokedCertificates(
 func (k Keeper) RemoveRevokedCertificates(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
-
+	subjectKeyID string,
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedCertificatesKeyPrefix))
 	store.Delete(types.RevokedCertificatesKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 }
 

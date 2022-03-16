@@ -34,28 +34,28 @@ func (k Keeper) RemoveRevokedRootCertificates(ctx sdk.Context) {
 }
 
 // Add revoked root certificate to the list.
-func (k Keeper) AddRevokedRootCertificate(ctx sdk.Context, certId types.CertificateIdentifier) {
+func (k Keeper) AddRevokedRootCertificate(ctx sdk.Context, certID types.CertificateIdentifier) {
 	rootCertificates, _ := k.GetRevokedRootCertificates(ctx)
 
 	// Check if the root cert is already there
-	for _, existingCertId := range rootCertificates.Certs {
-		if *existingCertId == certId {
+	for _, existingCertID := range rootCertificates.Certs {
+		if *existingCertID == certID {
 			return
 		}
 	}
 
-	rootCertificates.Certs = append(rootCertificates.Certs, &certId)
+	rootCertificates.Certs = append(rootCertificates.Certs, &certID)
 
 	k.SetRevokedRootCertificates(ctx, rootCertificates)
 }
 
 // Remove revoked root certificate from the list.
-func (k Keeper) RemoveRevokedRootCertificate(ctx sdk.Context, certId types.CertificateIdentifier) {
+func (k Keeper) RemoveRevokedRootCertificate(ctx sdk.Context, certID types.CertificateIdentifier) {
 	rootCertificates, _ := k.GetRevokedRootCertificates(ctx)
 
 	certIDIndex := -1
 	for i, existingIdentifier := range rootCertificates.Certs {
-		if *existingIdentifier == certId {
+		if *existingIdentifier == certID {
 			certIDIndex = i
 
 			break

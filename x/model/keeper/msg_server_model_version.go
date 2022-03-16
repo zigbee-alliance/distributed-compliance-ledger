@@ -100,9 +100,7 @@ func (k msgServer) UpdateModelVersion(goCtx context.Context, msg *types.MsgUpdat
 		return nil, types.NewErrOtaURLCannotBeSet(msg.Vid, msg.Pid, msg.SoftwareVersion)
 	}
 
-	if msg.MinApplicableSoftwareVersion != 0 && msg.MaxApplicableSoftwareVersion == 0 &&
-		msg.MinApplicableSoftwareVersion > modelVersion.MaxApplicableSoftwareVersion {
-
+	if msg.MinApplicableSoftwareVersion != 0 && msg.MaxApplicableSoftwareVersion == 0 && msg.MinApplicableSoftwareVersion > modelVersion.MaxApplicableSoftwareVersion {
 		return nil, types.NewErrMaxSVLessThanMinSV(msg.MinApplicableSoftwareVersion, modelVersion.MaxApplicableSoftwareVersion)
 	}
 

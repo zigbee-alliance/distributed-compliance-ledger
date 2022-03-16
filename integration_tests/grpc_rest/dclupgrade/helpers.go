@@ -174,7 +174,7 @@ func GetApprovedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.Approved
 	return res, nil
 }
 
-func DCLUpgradeDemo(suite *utils.TestSuite) {
+func Demo(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)

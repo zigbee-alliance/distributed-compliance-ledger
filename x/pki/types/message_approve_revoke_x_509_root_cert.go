@@ -12,11 +12,11 @@ const TypeMsgApproveRevokeX509RootCert = "approve_revoke_x_509_root_cert"
 
 var _ sdk.Msg = &MsgApproveRevokeX509RootCert{}
 
-func NewMsgApproveRevokeX509RootCert(signer string, subject string, subjectKeyId string, info string) *MsgApproveRevokeX509RootCert {
+func NewMsgApproveRevokeX509RootCert(signer string, subject string, subjectKeyID string, info string) *MsgApproveRevokeX509RootCert {
 	return &MsgApproveRevokeX509RootCert{
 		Signer:       signer,
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 		Info:         info,
 		Time:         time.Now().Unix(),
 	}

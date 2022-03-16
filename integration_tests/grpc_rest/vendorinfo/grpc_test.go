@@ -24,7 +24,7 @@ import (
 
 func TestVendorInfoDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	vendorinfo.VendorInfoDemo(&suite)
+	vendorinfo.Demo(&suite)
 }
 
 func TestAddVendorInfoByNonVendorGRPC(t *testing.T) {

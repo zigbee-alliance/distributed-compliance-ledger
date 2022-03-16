@@ -41,7 +41,7 @@ func (k Keeper) GetNextAccountNumber(ctx sdk.Context) (accNumber uint64) {
 
 	accNumber = accountStat.Number
 
-	accountStat.Number += 1
+	accountStat.Number++
 
 	// that logic is not exposed as API intentionally
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountStatKey))

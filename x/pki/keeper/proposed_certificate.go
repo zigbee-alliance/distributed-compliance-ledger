@@ -20,14 +20,14 @@ func (k Keeper) SetProposedCertificate(ctx sdk.Context, proposedCertificate type
 func (k Keeper) GetProposedCertificate(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 
 ) (val types.ProposedCertificate, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
 
 	b := store.Get(types.ProposedCertificateKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 	if b == nil {
 		return val, false
@@ -42,13 +42,13 @@ func (k Keeper) GetProposedCertificate(
 func (k Keeper) RemoveProposedCertificate(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
 	store.Delete(types.ProposedCertificateKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 }
 
@@ -73,13 +73,12 @@ func (k Keeper) GetAllProposedCertificate(ctx sdk.Context) (list []types.Propose
 func (k Keeper) IsProposedCertificatePresent(
 	ctx sdk.Context,
 	subject string,
-	subjectKeyId string,
-
+	subjectKeyID string,
 ) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
 
 	return store.Has(types.ProposedCertificateKey(
 		subject,
-		subjectKeyId,
+		subjectKeyID,
 	))
 }
