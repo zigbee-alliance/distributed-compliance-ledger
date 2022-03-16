@@ -44,7 +44,7 @@ func CmdListRevokedAccount() *cobra.Command {
 
 func CmdShowRevokedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-revoked-account [address]",
+		Use:   "revoked-account [address]",
 		Short: "shows a RevokedAccount",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
