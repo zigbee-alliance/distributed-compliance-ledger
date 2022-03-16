@@ -8,7 +8,7 @@ import "pki/grant.proto";
 
 message ProposedCertificateRevocation {
   string subject = 1; 
-  string subject_key_id = 2; 
+  string subjectKeyId = 2; 
   repeated Grant approvals = 3;
 }
 
