@@ -16,7 +16,7 @@
 linters:
   enable-all: true
   disable:
-    - golint # The linter 'golint' is deprecated (since v1.41.0) due to: The repository of the linter has been archived by the owner.  Replaced by revive. 
+    - golint  # The linter 'golint' is deprecated (since v1.41.0) due to: The repository of the linter has been archived by the owner.  Replaced by revive.
     - gochecknoinits
     - gochecknoglobals
     - gomnd
@@ -32,9 +32,9 @@ linters:
     - wsl
     - forcetypeassert
     - exhaustive
-    - scopelint # The linter 'scopelint' is deprecated (since v1.39.0) due to: The repository of the linter has been deprecated by the owner.  Replaced by exportloopref.
+    - scopelint  # The linter 'scopelint' is deprecated (since v1.39.0) due to: The repository of the linter has been deprecated by the owner.  Replaced by exportloopref.
     - lll
-    - interfacer # The linter 'interfacer' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.
+    - interfacer  # The linter 'interfacer' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.
     - gosec
     - funlen
     - cyclop
@@ -42,7 +42,7 @@ linters:
     - gocognit
     - godox
     - gomoddirectives
-    - maligned # The linter 'maligned' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.  Replaced by govet 'fieldalignment'.
+    - maligned  # The linter 'maligned' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.  Replaced by govet 'fieldalignment'.
     - gci
     - containedctx
     - maintidx

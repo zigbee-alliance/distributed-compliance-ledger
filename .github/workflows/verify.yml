@@ -69,6 +69,7 @@ jobs:
       - name: Run tests
         run: |
           set -euo pipefail
+          # shellcheck disable=SC2046
           go test -json -v $(go list ./... | grep -v '/integration_tests') 2>&1 | tee /tmp/gotest.log | gotestfmt
   integration-tests:
     if: needs.changes.outputs.src == 'true'
