@@ -180,12 +180,63 @@ echo "$result"
 test_divider
 
 
-echo "cannot propose disable validator twice"
-propose=$(dcld tx validator propose-disable-validator --name=$vaddress--from alice --yes)
-check_response "$propose" "\"code\": 0"
+echo "Alice proposes to disable validator $vaddress"
+result=$(echo $passphrase | dcld tx validator propose-disable-validator --address="$vaddress" --from alice --yes)
+check_response "$result" "\"code\": 0"
 
-second_propose=$(dcld tx validator propose-disable-validator --name=$vaddress--from bob --yes)
-check_response_and_report "$second_propose" "proposed upgrade already exists" raw
+
+test_divider
+
+echo "Get all validators. $vaddress still in the list because not enought approvals to disable received"
+result=$(dcld query validator all-nodes)
+check_response "$result" "\"owner\": \"$vaddress\""
+
+
+test_divider
+
+
+echo "Get all proposed validators to disable. $vaddress in the list"
+result=$(dcld query validator all-proposed-disable-validators)
+check_response "$result" "\"owner\": \"$vaddress\""
+
+
+test_divider
+
+
+echo "Get a proposed validator to disable $vaddress"
+result=$(dcld query validator proposed-disable-validator --address="vaddress")
+check_response "$result" "\"owner\": \"$vaddress\""
+
+
+test_divider
+
+
+echo "Bob approves to disable validator $vaddress"
+result=$(echo $passphrase | dcld tx validator approve-disable-validator --address="$vaddress" --from bob --yes)
+check_response "$result" "\"code\": 0"
+
+
+test_divider
+
+echo "Get all proposed validators to disable. $vaddress not in the list"
+result=$(dcld query validator all-proposed-disable-validators)
+check_response "$result" "\[\]"
+
+
+test_divider
+
+
+echo "Get a proposed validator to disable $vaddress is not found"
+result=$(dcld query validator proposed-disable-validator --address="$vaddress")
+check_response "$result" "Not Found"
+
+
+test_divider
+
+
+echo "Get $vaddress"
+result=$(dcld query validator node --address=$vaddress)
+check_response "$result" "\"jailed\": true"
 
 
 test_divider
