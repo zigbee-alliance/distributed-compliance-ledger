@@ -14,7 +14,8 @@ of the store.
 **Pre-requisites:**
 
 * `dcld` is launched as `dcld` systemd service.
-* `dcld` systemd service is currently in active state (i.e. running).
+* `dcld` service is currently in active state (i.e. running).
+* The current user is the user on behalf of whom `dcld` service is launched.
 
 **Steps:**
 

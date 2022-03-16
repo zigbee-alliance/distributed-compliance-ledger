@@ -78,7 +78,7 @@ fi
 OLD_NODE_USER=$(cat /etc/systemd/system/dcld.service | sed -n "s~^User=\([a-z_][a-z0-9_-]*[$]\?\)$~\1~p")
 
 if [[ "$NODE_USER" != "$OLD_NODE_USER" ]]; then
-    echo "Error. Wrong current user: '${NODE_USER}'. Expected user: '${OLD_NODE_USER}', on behalf of whom 'dcld' service was previously run."
+    echo "Error. Wrong current user: '${NODE_USER}'. Expected user: '${OLD_NODE_USER}', on behalf of whom 'dcld' service is launched."
     exit 1
 fi
 
