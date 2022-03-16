@@ -181,7 +181,7 @@ export default {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryComplianceInfo( key.vid,  key.pid,  key.software_version,  key.certification_type)).data
+				let value= (await queryClient.queryComplianceInfo( key.vid,  key.pid,  key.softwareVersion,  key.certificationType)).data
 				
 					
 				commit('QUERY', { query: 'ComplianceInfo', key: { params: {...key}, query}, value })
@@ -229,7 +229,7 @@ export default {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryCertifiedModel( key.vid,  key.pid,  key.software_version,  key.certification_type)).data
+				let value= (await queryClient.queryCertifiedModel( key.vid,  key.pid,  key.softwareVersion,  key.certificationType)).data
 				
 					
 				commit('QUERY', { query: 'CertifiedModel', key: { params: {...key}, query}, value })
@@ -277,7 +277,7 @@ export default {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryRevokedModel( key.vid,  key.pid,  key.software_version,  key.certification_type)).data
+				let value= (await queryClient.queryRevokedModel( key.vid,  key.pid,  key.softwareVersion,  key.certificationType)).data
 				
 					
 				commit('QUERY', { query: 'RevokedModel', key: { params: {...key}, query}, value })
@@ -325,7 +325,7 @@ export default {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryProvisionalModel( key.vid,  key.pid,  key.software_version,  key.certification_type)).data
+				let value= (await queryClient.queryProvisionalModel( key.vid,  key.pid,  key.softwareVersion,  key.certificationType)).data
 				
 					
 				commit('QUERY', { query: 'ProvisionalModel', key: { params: {...key}, query}, value })
@@ -364,21 +364,6 @@ export default {
 		},
 		
 		
-		async sendMsgRevokeModel({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRevokeModel(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new SpVuexError('TxClient:MsgRevokeModel:Init', 'Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new SpVuexError('TxClient:MsgRevokeModel:Send', 'Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgCertifyModel({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -409,21 +394,22 @@ export default {
 				}
 			}
 		},
-		
-		async MsgRevokeModel({ rootGetters }, { value }) {
+		async sendMsgRevokeModel({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgRevokeModel(value)
-				return msg
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new SpVuexError('TxClient:MsgRevokeModel:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new SpVuexError('TxClient:MsgRevokeModel:Create', 'Could not create message: ' + e.message)
-					
+					throw new SpVuexError('TxClient:MsgRevokeModel:Send', 'Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		
 		async MsgCertifyModel({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -448,6 +434,20 @@ export default {
 					throw new SpVuexError('TxClient:MsgProvisionModel:Init', 'Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new SpVuexError('TxClient:MsgProvisionModel:Create', 'Could not create message: ' + e.message)
+					
+				}
+			}
+		},
+		async MsgRevokeModel({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRevokeModel(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new SpVuexError('TxClient:MsgRevokeModel:Init', 'Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new SpVuexError('TxClient:MsgRevokeModel:Create', 'Could not create message: ' + e.message)
 					
 				}
 			}

@@ -1,8 +1,9 @@
 /* eslint-disable */
-import { Reader, Writer } from 'protobufjs/minimal';
+import { Reader, util, configure, Writer } from 'protobufjs/minimal';
+import * as Long from 'long';
 import { Plan } from '../cosmos/upgrade/v1beta1/upgrade';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclupgrade';
-const baseMsgProposeUpgrade = { creator: '' };
+const baseMsgProposeUpgrade = { creator: '', info: '', time: 0 };
 export const MsgProposeUpgrade = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== '') {
@@ -10,6 +11,12 @@ export const MsgProposeUpgrade = {
         }
         if (message.plan !== undefined) {
             Plan.encode(message.plan, writer.uint32(18).fork()).ldelim();
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -25,6 +32,12 @@ export const MsgProposeUpgrade = {
                     break;
                 case 2:
                     message.plan = Plan.decode(reader, reader.uint32());
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -47,12 +60,26 @@ export const MsgProposeUpgrade = {
         else {
             message.plan = undefined;
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.plan !== undefined && (obj.plan = message.plan ? Plan.toJSON(message.plan) : undefined);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -68,6 +95,18 @@ export const MsgProposeUpgrade = {
         }
         else {
             message.plan = undefined;
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -104,7 +143,7 @@ export const MsgProposeUpgradeResponse = {
         return message;
     }
 };
-const baseMsgApproveUpgrade = { creator: '', name: '' };
+const baseMsgApproveUpgrade = { creator: '', name: '', info: '', time: 0 };
 export const MsgApproveUpgrade = {
     encode(message, writer = Writer.create()) {
         if (message.creator !== '') {
@@ -112,6 +151,12 @@ export const MsgApproveUpgrade = {
         }
         if (message.name !== '') {
             writer.uint32(18).string(message.name);
+        }
+        if (message.info !== '') {
+            writer.uint32(26).string(message.info);
+        }
+        if (message.time !== 0) {
+            writer.uint32(32).int64(message.time);
         }
         return writer;
     },
@@ -127,6 +172,12 @@ export const MsgApproveUpgrade = {
                     break;
                 case 2:
                     message.name = reader.string();
+                    break;
+                case 3:
+                    message.info = reader.string();
+                    break;
+                case 4:
+                    message.time = longToNumber(reader.int64());
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -149,12 +200,26 @@ export const MsgApproveUpgrade = {
         else {
             message.name = '';
         }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = String(object.info);
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = Number(object.time);
+        }
+        else {
+            message.time = 0;
+        }
         return message;
     },
     toJSON(message) {
         const obj = {};
         message.creator !== undefined && (obj.creator = message.creator);
         message.name !== undefined && (obj.name = message.name);
+        message.info !== undefined && (obj.info = message.info);
+        message.time !== undefined && (obj.time = message.time);
         return obj;
     },
     fromPartial(object) {
@@ -170,6 +235,18 @@ export const MsgApproveUpgrade = {
         }
         else {
             message.name = '';
+        }
+        if (object.info !== undefined && object.info !== null) {
+            message.info = object.info;
+        }
+        else {
+            message.info = '';
+        }
+        if (object.time !== undefined && object.time !== null) {
+            message.time = object.time;
+        }
+        else {
+            message.time = 0;
         }
         return message;
     }
@@ -220,4 +297,25 @@ export class MsgClientImpl {
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclupgrade.Msg', 'ApproveUpgrade', data);
         return promise.then((data) => MsgApproveUpgradeResponse.decode(new Reader(data)));
     }
+}
+var globalThis = (() => {
+    if (typeof globalThis !== 'undefined')
+        return globalThis;
+    if (typeof self !== 'undefined')
+        return self;
+    if (typeof window !== 'undefined')
+        return window;
+    if (typeof global !== 'undefined')
+        return global;
+    throw 'Unable to locate global object';
+})();
+function longToNumber(long) {
+    if (long.gt(Number.MAX_SAFE_INTEGER)) {
+        throw new globalThis.Error('Value is larger than Number.MAX_SAFE_INTEGER');
+    }
+    return long.toNumber();
+}
+if (util.Long !== Long) {
+    util.Long = Long;
+    configure();
 }
