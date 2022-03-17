@@ -25,13 +25,15 @@ config_values:
   - broadcast-mode block
 
 dcld:
-  version: 0.7.0
+  version: 0.8.0
   user: dcl
   group: dcl
   path: /usr/bin/dcld
   home: /var/lib/dcl
 
 dcld_checksums:
+  0.9.0: c333d828a124e527dd7a9c0170f77d61ad07091d9f6cd61dd0175a36b55aadce
+  0.8.0: eae8e20cbe7c9fc1e090aa8ab358afdf2044636911d75c2284f733e33f0acaab
   0.7.0: 50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a
   0.6.0: 1ab6b9084fc0444858307f13b708d9f275d548dd2cfb3bc7d8e10d59897d7278
 
