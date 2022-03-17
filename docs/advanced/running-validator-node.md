@@ -154,7 +154,7 @@ and contains the genesis and persistent_peers files.
 
     - Add the following line to the end of `$HOME/.profile` file:
         - `export PATH=$PATH:$HOME/.dcl/cosmovisor/current/bin`
-    - Execute the following command to apply the updated PATH immediately:
+    - Execute the following command to apply the updated `$PATH` immediately:
         - `source $HOME/.profile`
 
     - Wait until the value of `catching_up` field gets to `false` value.
