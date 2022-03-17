@@ -19,7 +19,9 @@ application version:
 
    1. Calculates SHA-256 or SHA-512 checksums of the new application version
       binaries (for the supported platforms) taken from the project release.
-      This can be done using `sha256sum` or `sha512sum` tool. For example:
+      This can be done using `sha256sum` or `sha512sum` tool.
+      
+      For example:
 
       ```bash
       sha256sum ./dcld
@@ -28,10 +30,12 @@ application version:
    2. Sends [`ProposeUpgrade`](./transactions.md#propose_upgrade) transaction
       with the name of the new upgrade handler, the chosen ledger height and the
       info containing URLs of the new application version binaries for supported
-      platforms with the calculated checksums. For example:
+      platforms with the calculated checksums.
+      
+      For example:
 
       ```bash
-      dcld tx dclupgrade propose-upgrade --name=v0.7.0 --upgrade-height=10000 --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a\"}}" --from=alice
+      dcld tx dclupgrade propose-upgrade --name=vX.X.X --upgrade-height=<int64> --upgrade-info="{\"binaries\":{\"linux/amd64\":\"https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/vX.X.X/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a\"}}" --from=alice
       ```
 
 4. **[Trustees] ApproveUpgrade**: Other trustees approve the proposed upgrade
@@ -41,18 +45,21 @@ application version:
 
    1. Re-calculates checksums of the new application version binaries (for the
       supported platforms) taken from the project release. This can be done
-      using `sha256sum` / `sha512sum` tool. For example:
+      using `sha256sum` / `sha512sum` tool.
+      
+      For example:
 
       ```bash
       sha256sum ./dcld
       ```
 
    2. Ensures that the re-calculated values are equal to the checksums specified
-      in the proposed upgrade plan `Info` field. Example how to view the
-      proposed upgrade plan:
+      in the proposed upgrade plan `Info` field.
+      
+      Example how to view the proposed upgrade plan:
 
       ```bash
-      dcld query dclupgrade proposed-upgrade --name=v0.7.0
+      dcld query dclupgrade proposed-upgrade --name=vX.X.X
       ```
 
    3. Verifies that the application binaries URLs provided in the proposed
@@ -63,18 +70,21 @@ application version:
       value.
 
    5. Sends [`ApproveUpgrade`](./transactions.md#approve_upgrade) transaction
-      with the name of the proposed upgrade. For example:
+      with the name of the proposed upgrade.
+      
+      For example:
 
       ```bash
-      dcld tx dclupgrade approve-upgrade --name=v0.7.0 --from=bob
+      dcld tx dclupgrade approve-upgrade --name=vX.X.X --from=bob
       ```
 
 5. **[Anyone] Ensure That Upgrade Has Been Scheduled**: It makes sense to ensure
-   that the upgrade has been approved and scheduled. Example how to view the
-   approved upgrade plan:
+   that the upgrade has been approved and scheduled.
+   
+   Example how to view the approved upgrade plan:
 
    ```bash
-   dcld query dclupgrade approved-upgrade --name=v0.7.0
+   dcld query dclupgrade approved-upgrade --name=vX.X.X
    ```
 
    Command to view the current scheduled upgrade plan:
@@ -85,25 +95,38 @@ application version:
 
 6. **[All Node Admins] Download New Binary**: Before the ledger reaches the
    height specified in the upgrade plan, each node admin does the following
-   steps:
+   steps *(these must be done for all the nodes: validators, observers, seed
+   nodes, sentry nodes)*:
 
-    1. Downloads the application binary from the URL specified in the upgrade
-       plan `Info` field and corresponding to the node platform. Command to view
-       the current scheduled upgrade plan:
+    1. Switches current user to the user on behalf of whom `cosmovisor` service
+       is running:
+
+       ```bash
+       su - <USERNAME>
+       ```
+       where `<USERNAME>` is the corresponding user name
+
+       The command will ask for the user's password. Enter it.
+
+    2. Downloads the application binary from the URL specified in the upgrade
+       plan `Info` field and corresponding to the node platform.
+       
+       Command to view the current scheduled upgrade plan:
 
        ```bash
        dcld query upgrade plan
        ```
 
-    2. Verifies that the downloaded application binary matches the checksum
+    3. Verifies that the downloaded application binary matches the checksum
        specified in the URL. This can be done automatically together with the
        previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
        download tool (its executable binaries for various platforms can be
-       downloaded from <https://github.com/hashicorp/go-getter/releases>). For
-       example:
+       downloaded from <https://github.com/hashicorp/go-getter/releases>).
+       
+       For example:
 
        ```bash
-       go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a ~/Downloads
+       go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/vX.X.X/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a $HOME/Downloads
        ```
 
        `go-getter` verifies that the downloaded file matches the checksum when
@@ -111,37 +134,31 @@ application version:
        checksum does not equal to the checksum provided in the URL, `go-getter`
        reports that checksums did not match.
 
-    3. Creates a directory with the name of the upgrade within
-       `/var/lib/<USERNAME>/.dcl/cosmovisor/` (where `<USERNAME>` is the name of
-       the user on behalf of whom `cosmovisor` service is running), creates
-       `bin` sub-directory within the created directory, and puts the new
-       application binary within `bin` sub-directory.
-
-       Example (for the user `ubuntu`):
+    4. Creates a directory with the name of the upgrade within
+       `$HOME/.dcl/cosmovisor/`, creates `bin` sub-directory within the created
+       directory, and puts the new application binary within `bin`
+       sub-directory.
+       
+       For example:
 
        ```bash
-       cd /var/lib/ubuntu/.dcl/cosmovisor
+       cd $HOME/.dcl/cosmovisor
        mkdir -p upgrades
        cd upgrades
-       mkdir v0.7.0
-       cd v0.7.0
+       mkdir vX.X.X
+       cd vX.X.X
        mkdir bin
-       cd ~/Downloads
-       cp ./dcld /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/
+       cd $HOME/Downloads
+       cp ./dcld $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/
        ```
 
-       Ensure that `dcld` file has been copied to the new application version
-       binary directory:
-
+    5. Sets proper owner and permissions for the new application binary.
+    
+       For example:
+       
        ```bash
-       ls -l /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
-       ```
-
-       The command output must contatain information about `dcld` file like
-       following:
-
-       ```bash
-       -rw-r--r--    1 ubuntu   ubuntu    55816720 Mar 11 08:23 /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
+       sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
+       sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
        ```
 
 7. **Upgrade Is Applied**: The upgrade is applied on all the nodes in the pool
@@ -159,7 +176,7 @@ application version:
    Example of command to check whether the upgrade was applied:
 
    ```bash
-   dcld query upgrade applied v0.7.0
+   dcld query upgrade applied vX.X.X
    ```
 
    If the upgrade with the passed name was applied, this command output will
