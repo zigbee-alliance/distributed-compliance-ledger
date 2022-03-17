@@ -526,8 +526,8 @@ func TestHandler_ReAdding_RevokedAccount(t *testing.T) {
 	// ensure no active account created
 	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
 
-	// ensure active account still exist in entity RevokedAccount
-	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+	// ensure active account revoked in entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
 
 	// trustee2 approves account
 	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
