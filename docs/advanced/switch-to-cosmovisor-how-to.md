@@ -27,12 +27,6 @@ of the store.
 
     The command will ask for the user's password. Enter it.
 
-2. Switch current user to the user on behalf of whom `dcld` service is running:
-
-    ```bash
-    sudo rm -f ./dcld
-    ```
-
 2. Download new `dcld`, `cosmovisor` and `cosmovisor.service` from GitHub
   [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases). *(To ensure that no old `dcld` binary remains in the current direcory, try to remove it at first.)*
 

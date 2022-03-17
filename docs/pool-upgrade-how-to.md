@@ -87,8 +87,8 @@ application version:
    height specified in the upgrade plan, each node admin does the following
    steps:
 
-    1. Switch current user to the user on behalf of whom `cosmovisor` service is
-       running:
+    1. Switches current user to the user on behalf of whom `cosmovisor` service
+       is running:
 
        ```bash
        su - <USERNAME>
@@ -137,7 +137,7 @@ application version:
        cp ./dcld $HOME/.dcl/cosmovisor/upgrades/v0.7.0/bin/
        ```
 
-    5. Set proper owner and permissions for the new application binary:
+    5. Sets proper owner and permissions for the new application binary:
        
        ```bash
        sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
