@@ -87,7 +87,17 @@ application version:
    height specified in the upgrade plan, each node admin does the following
    steps:
 
-    1. Downloads the application binary from the URL specified in the upgrade
+    1. Switch current user to the user on behalf of whom `cosmovisor` service is
+       running:
+
+       ```bash
+       su - <USERNAME>
+       ```
+       where `<USERNAME>` is the corresponding user name
+
+       The command will ask for the user's password. Enter it.
+
+    2. Downloads the application binary from the URL specified in the upgrade
        plan `Info` field and corresponding to the node platform. Command to view
        the current scheduled upgrade plan:
 
@@ -95,7 +105,7 @@ application version:
        dcld query upgrade plan
        ```
 
-    2. Verifies that the downloaded application binary matches the checksum
+    3. Verifies that the downloaded application binary matches the checksum
        specified in the URL. This can be done automatically together with the
        previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
        download tool (its executable binaries for various platforms can be
@@ -103,7 +113,7 @@ application version:
        example:
 
        ```bash
-       go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a ~/Downloads
+       go-getter https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/v0.7.0/dcld?checksum=sha256:50708d4f7e00da347d4e678bf26780cd424232461c4bb414f72391c75e39545a $HOME/Downloads
        ```
 
        `go-getter` verifies that the downloaded file matches the checksum when
@@ -111,37 +121,27 @@ application version:
        checksum does not equal to the checksum provided in the URL, `go-getter`
        reports that checksums did not match.
 
-    3. Creates a directory with the name of the upgrade within
-       `/var/lib/<USERNAME>/.dcl/cosmovisor/` (where `<USERNAME>` is the name of
-       the user on behalf of whom `cosmovisor` service is running), creates
-       `bin` sub-directory within the created directory, and puts the new
-       application binary within `bin` sub-directory.
-
-       Example (for the user `ubuntu`):
+    4. Creates a directory with the name of the upgrade within
+       `$HOME/.dcl/cosmovisor/`, creates `bin` sub-directory within the created
+       directory, and puts the new application binary within `bin`
+       sub-directory. For example:
 
        ```bash
-       cd /var/lib/ubuntu/.dcl/cosmovisor
+       cd $HOME/.dcl/cosmovisor
        mkdir -p upgrades
        cd upgrades
        mkdir v0.7.0
        cd v0.7.0
        mkdir bin
-       cd ~/Downloads
-       cp ./dcld /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/
+       cd $HOME/Downloads
+       cp ./dcld $HOME/.dcl/cosmovisor/upgrades/v0.7.0/bin/
        ```
 
-       Ensure that `dcld` file has been copied to the new application version
-       binary directory:
-
+    5. Set proper owner and permissions for the new application binary:
+       
        ```bash
-       ls -l /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
-       ```
-
-       The command output must contatain information about `dcld` file like
-       following:
-
-       ```bash
-       -rw-r--r--    1 ubuntu   ubuntu    55816720 Mar 11 08:23 /var/lib/ubuntu/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
+       sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
+       sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/v0.7.0/bin/dcld
        ```
 
 7. **Upgrade Is Applied**: The upgrade is applied on all the nodes in the pool
