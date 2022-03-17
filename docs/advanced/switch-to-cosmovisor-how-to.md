@@ -3,7 +3,8 @@
 This document describes the procedure of how to switch a node from direct use of
 `dcld` binary to use of `cosmovisor` process manager which controls `dcld`
 process and supports DCL application upgrades that include `dcld` binary updates
-and store migrations.
+and store migrations. This procedure must be performed one by one on all the
+nodes in the pool (validators, observers, seed nodes, sentry nodes).
 
 Switching to use of `cosmovisor` is performed by `switch_to_cosmovisor` script.
 This procedure does not include any store migrations. So it can be applied only
