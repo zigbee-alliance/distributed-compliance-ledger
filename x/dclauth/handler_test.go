@@ -76,6 +76,55 @@ func TestHandler_CreateAccount_OneApprovalIsNeeded(t *testing.T) {
 	}
 }
 
+func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
+	setup := Setup(t)
+
+	// store 3 trustees
+	trustee1 := storeTrustee(setup)
+	trustee2 := storeTrustee(setup)
+	_ = storeTrustee(setup)
+
+	// ensure 2 trustee approvals are needed
+	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
+
+	// trustee1 propose account
+	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
+	require.NoError(t, err)
+
+	// ensure pending account created
+	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
+	require.True(t, found)
+	require.Equal(t, address.String(), pendingAccount.Address)
+	require.Equal(t, testconstants.Info, pendingAccount.Approvals[0].Info)
+	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
+
+	// ensure no active account created
+	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
+
+	// trustee2 approves account
+	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
+	_, err = setup.Handler(setup.Ctx, approveAddAccount)
+	require.NoError(t, err)
+
+	// active account must be created
+	account := setup.Keeper.GetAccount(setup.Ctx, address)
+	require.Equal(t, address, account.GetAddress())
+	require.Equal(t, pubKey, account.GetPubKey())
+
+	// check for info field and approvals
+	dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
+	require.Equal(t, testconstants.Info, dclAccount.Approvals[1].Info)
+	require.Equal(t, trustee1.String(), dclAccount.Approvals[0].Address)
+	require.Equal(t, trustee2.String(), dclAccount.Approvals[1].Address)
+
+	// ensure pending account removed
+	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
+
+	// check that account revoked from entity RevokedAccount
+	require.False(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+}
+
 func TestHandler_CreateAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 	setup := Setup(t)
 
@@ -736,52 +785,6 @@ func TestHandler_ProposeAddAccount_VendorIDRequiredForVendorAccounts(t *testing.
 	require.NoError(t, err)
 	_, err = setup.Handler(setup.Ctx, proposeVendorAccount)
 	require.ErrorIs(t, err, types.MissingVendorIDForVendorAccount)
-}
-
-func TestHandler_CreateAccount_TwoApprovalsAreNeeded(t *testing.T) {
-	setup := Setup(t)
-
-	// store 3 trustees
-	trustee1 := storeTrustee(setup)
-	trustee2 := storeTrustee(setup)
-	_ = storeTrustee(setup)
-
-	// ensure 2 trustee approvals are needed
-	require.Equal(t, 2, setup.Keeper.AccountApprovalsCount(setup.Ctx))
-
-	// trustee1 propose account
-	_, address, pubKey, err := proposeAddAccount(setup, trustee1)
-	require.NoError(t, err)
-
-	// ensure pending account created
-	pendingAccount, found := setup.Keeper.GetPendingAccount(setup.Ctx, address)
-	require.True(t, found)
-	require.Equal(t, address.String(), pendingAccount.Address)
-	require.Equal(t, testconstants.Info, pendingAccount.Approvals[0].Info)
-	require.Equal(t, true, pendingAccount.HasApprovalFrom(trustee1))
-
-	// ensure no active account created
-	require.False(t, setup.Keeper.IsAccountPresent(setup.Ctx, address))
-
-	// trustee2 approves account
-	approveAddAccount := types.NewMsgApproveAddAccount(trustee2, address, testconstants.Info)
-	_, err = setup.Handler(setup.Ctx, approveAddAccount)
-	require.NoError(t, err)
-
-	// active account must be created
-	account := setup.Keeper.GetAccount(setup.Ctx, address)
-	require.Equal(t, address, account.GetAddress())
-	require.Equal(t, pubKey, account.GetPubKey())
-
-	// check for info field and approvals
-	dclAccount, _ := setup.Keeper.GetAccountO(setup.Ctx, address)
-	require.Equal(t, testconstants.Info, dclAccount.Approvals[0].Info)
-	require.Equal(t, testconstants.Info, dclAccount.Approvals[1].Info)
-	require.Equal(t, trustee1.String(), dclAccount.Approvals[0].Address)
-	require.Equal(t, trustee2.String(), dclAccount.Approvals[1].Address)
-
-	// ensure pending account removed
-	require.False(t, setup.Keeper.IsPendingAccountPresent(setup.Ctx, address))
 }
 
 func storeTrustee(setup TestSetup) sdk.AccAddress {
