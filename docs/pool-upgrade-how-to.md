@@ -135,8 +135,8 @@ application version:
        reports that checksums did not match.
 
     4. Creates a directory with the name of the upgrade within
-       `$HOME/.dcl/cosmovisor/`, creates `bin` sub-directory within the created
-       directory, and puts the new application binary within `bin`
+       `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
+       created directory, and puts the new application binary into `bin`
        sub-directory.
        
        For example:

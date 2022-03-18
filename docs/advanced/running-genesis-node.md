@@ -105,7 +105,7 @@ must have a unique chain ID.
 
     - Add the following line to the end of `$HOME/.profile` file:
         - `export PATH=$PATH:$HOME/.dcl/cosmovisor/current/bin`
-    - Execute the following command to apply the updated PATH immediately:
+    - Execute the following command to apply the updated `$PATH` immediately:
         - `source $HOME/.profile`
 
 8. Check that genesis account is created:
