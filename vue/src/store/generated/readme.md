@@ -1,3 +1,1 @@
-# NOTICE
-
-This folder is generated automatically. Do not modify.
+THIS FOLDER IS GENERATED AUTOMATICALLY. DO NOT MODIFY.

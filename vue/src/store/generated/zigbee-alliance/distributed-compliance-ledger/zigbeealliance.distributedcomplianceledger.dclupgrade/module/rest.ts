@@ -13,7 +13,15 @@ export interface DclupgradeApprovedUpgrade {
   /** Plan specifies information about a planned upgrade and when it should occur. */
   plan?: V1Beta1Plan;
   creator?: string;
-  approvals?: string[];
+  approvals?: DclupgradeGrant[];
+}
+
+export interface DclupgradeGrant {
+  address?: string;
+
+  /** @format int64 */
+  time?: string;
+  info?: string;
 }
 
 export type DclupgradeMsgApproveUpgradeResponse = object;
@@ -24,7 +32,7 @@ export interface DclupgradeProposedUpgrade {
   /** Plan specifies information about a planned upgrade and when it should occur. */
   plan?: V1Beta1Plan;
   creator?: string;
-  approvals?: string[];
+  approvals?: DclupgradeGrant[];
 }
 
 export interface DclupgradeQueryAllApprovedUpgradeResponse {

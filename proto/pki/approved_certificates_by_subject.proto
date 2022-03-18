@@ -5,7 +5,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 message ApprovedCertificatesBySubject {
   string subject = 1; 
-  repeated string subject_key_ids = 2; 
+  repeated string subjectKeyIds = 2; 
   
 }
 

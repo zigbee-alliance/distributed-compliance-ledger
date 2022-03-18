@@ -4,12 +4,16 @@ export declare const protobufPackage = "zigbeealliance.distributedcomplianceledg
 export interface MsgProposeUpgrade {
     creator: string;
     plan: Plan | undefined;
+    info: string;
+    time: number;
 }
 export interface MsgProposeUpgradeResponse {
 }
 export interface MsgApproveUpgrade {
     creator: string;
     name: string;
+    info: string;
+    time: number;
 }
 export interface MsgApproveUpgradeResponse {
 }

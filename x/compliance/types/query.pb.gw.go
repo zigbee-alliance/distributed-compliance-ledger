@@ -66,26 +66,26 @@ func request_Query_ComplianceInfo_0(ctx context.Context, marshaler runtime.Marsh
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := client.ComplianceInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -126,26 +126,26 @@ func local_request_Query_ComplianceInfo_0(ctx context.Context, marshaler runtime
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := server.ComplianceInfo(ctx, &protoReq)
@@ -222,26 +222,26 @@ func request_Query_CertifiedModel_0(ctx context.Context, marshaler runtime.Marsh
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := client.CertifiedModel(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -282,26 +282,26 @@ func local_request_Query_CertifiedModel_0(ctx context.Context, marshaler runtime
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := server.CertifiedModel(ctx, &protoReq)
@@ -378,26 +378,26 @@ func request_Query_RevokedModel_0(ctx context.Context, marshaler runtime.Marshal
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := client.RevokedModel(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -438,26 +438,26 @@ func local_request_Query_RevokedModel_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := server.RevokedModel(ctx, &protoReq)
@@ -534,26 +534,26 @@ func request_Query_ProvisionalModel_0(ctx context.Context, marshaler runtime.Mar
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := client.ProvisionalModel(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -594,26 +594,26 @@ func local_request_Query_ProvisionalModel_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
-	val, ok = pathParams["certification_type"]
+	val, ok = pathParams["certificationType"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certification_type")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "certificationType")
 	}
 
 	protoReq.CertificationType, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certification_type", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "certificationType", err)
 	}
 
 	msg, err := server.ProvisionalModel(ctx, &protoReq)
@@ -1052,19 +1052,19 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_ComplianceInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "compliance-info", "vid", "pid", "software_version", "certification_type"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ComplianceInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "compliance-info", "vid", "pid", "softwareVersion", "certificationType"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_ComplianceInfoAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "compliance-info"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_CertifiedModel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "certified-models", "vid", "pid", "software_version", "certification_type"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_CertifiedModel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "certified-models", "vid", "pid", "softwareVersion", "certificationType"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_CertifiedModelAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "certified-models"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_RevokedModel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "revoked-models", "vid", "pid", "software_version", "certification_type"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_RevokedModel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "revoked-models", "vid", "pid", "softwareVersion", "certificationType"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_RevokedModelAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "revoked-models"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProvisionalModel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "provisional-models", "vid", "pid", "software_version", "certification_type"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProvisionalModel_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 1, 0, 4, 1, 5, 6}, []string{"dcl", "compliance", "provisional-models", "vid", "pid", "softwareVersion", "certificationType"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_ProvisionalModelAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "compliance", "provisional-models"}, "", runtime.AssumeColonVerbOpt(true)))
 )
