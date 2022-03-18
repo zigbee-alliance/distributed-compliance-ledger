@@ -9,6 +9,6 @@ import "dclauth/grant.proto";
 
 message RevokedAccount {
   Account account = 1 [(gogoproto.embed) = true];    
-  repeated Grant revoke_approvals = 2;
+  repeated Grant revokeApprovals = 2;
 }
 
