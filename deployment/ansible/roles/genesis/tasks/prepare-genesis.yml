@@ -56,13 +56,13 @@
 
 - name: prepare-genesis | create genesis transactions
   changed_when: false
-  shell: "echo {{ admin.passphrase }} | {{ dcld.path }} gentx {{ admin.name }} --chain-id {{ chain_id }} --moniker {{ moniker | default(ansible_hostname) }} --home {{ dcld_home }}"
+  shell: "echo {{ admin.passphrase }} | {{ dcld.path }} gentx {{ admin.name }} --chain-id {{ chain_id }} --moniker {{ moniker | default(ansible_hostname) }} --home {{ dcl_home }}"
   no_log: true
   ignore_errors: true
 
 - name: prepare-genesis | collect gentx files
   changed_when: false
-  command: "find {{ dcld_home }}/config/gentx/ -maxdepth 1 -type f -name '*.json'"
+  command: "find {{ dcl_home }}/config/gentx/ -maxdepth 1 -type f -name '*.json'"
   register: gentx_files
 
 # NOTE: synchronize ansible module requires SSH key based authentication which is not supported by molecule docker
@@ -74,8 +74,8 @@
 
 - name: prepare-genesis | collect genesis transactions
   changed_when: false
-  command: "{{ dcld.path }} collect-gentxs --home {{ dcld_home }}"
+  command: "{{ dcld.path }} collect-gentxs --home {{ dcl_home }}"
 
 - name: prepare-genesis | validate genesis file
   changed_when: false
-  command: "{{ dcld.path }} validate-genesis --home {{ dcld_home }}"
+  command: "{{ dcld.path }} validate-genesis --home {{ dcl_home }}"
