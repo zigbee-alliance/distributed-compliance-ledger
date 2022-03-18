@@ -29,21 +29,11 @@ jobs:
     name: Run markdown-link-check tool to verify link issues
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      - uses: actions/checkout@master
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
   check-spellcheck:
     name: Run PySpelling tool to verify spelling issues
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: rojopolis/spellcheck-github-actions@0.22.1
-  check-super-linter:
-    name: Run textlint tool to verify natural language issues
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: github/super-linter@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: /
-          VALIDATE_NATURAL_LANGUAGE: true

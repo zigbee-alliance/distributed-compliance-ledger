@@ -452,6 +452,9 @@ if [[ "$verbosity" -ge 1 ]]; then
     #echo -e "Parsed arguments:\n$parsed_args"
 fi
 
+sudo chown "$NODE_USER" ./dcld
+sudo chmod u+x ./dcld
+
 echo "Configuring CLI"
 
 # Note. we consider that cli would connect to local node (default setting)
@@ -491,6 +494,11 @@ echo -e "\nOptionally, edit '$CONFIG_FILE' in order to set different setting (li
 echo "Locating the genesis app version to $GENESIS_APP_DIR directory"
 mkdir -p "$GENESIS_APP_DIR"
 cp -f ./dcld "$GENESIS_APP_DIR"/
+sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
+# Execution permissions on `dcld` are granted to all (i.e. User, Group and Others classes)
+# because cosmovisor requires execution permission on the application binary to be granted to Others class:
+# https://github.com/cosmos/cosmos-sdk/blob/cosmovisor/v1.0.0/cosmovisor/upgrade.go#L164
+sudo chmod a+x "$GENESIS_APP_DIR"/dcld
 
 echo "Running the node"
 run_node
@@ -500,6 +508,9 @@ wait_node_up
 
 echo -e "\nexport PATH=\$PATH:$CURRENT_APP_DIR" >> "$HOME"/.profile
 source "$HOME"/.profile
+
+echo "Added '${CURRENT_APP_DIR}' to PATH to maintain 'dcld' command associated with the latest installed app binary."
+echo "Execute 'source \$HOME/.profile' or restart shell to take the PATH change effective."
 
 STATUS="$(dcld status)"
 VAL_ID="$(_jq "$STATUS"| grep '"id"' | awk '{print $NF}' | sed -e 's/^"//' -e 's/[",]\+$//')"

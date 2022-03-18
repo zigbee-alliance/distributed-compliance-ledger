@@ -3,6 +3,7 @@
 An Ansible role that initializes and configures the DCL Genesis node.
 
 ## Requirements
+
 None
 
 ## Role Variables
@@ -24,6 +25,7 @@ The *user* and *group* to be used by OS to run the DCL service. The *home* var
 specifies the path to store DCL config information.
 
 ## Dependencies
+
 1. `bootstrap` ansible role.
 
 ## Example Playbook

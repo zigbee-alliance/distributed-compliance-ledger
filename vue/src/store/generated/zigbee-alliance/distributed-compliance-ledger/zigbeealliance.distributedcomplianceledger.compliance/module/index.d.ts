@@ -4,6 +4,7 @@ import { Api } from "./rest";
 import { MsgCertifyModel } from "./types/compliance/tx";
 import { MsgRevokeModel } from "./types/compliance/tx";
 import { MsgProvisionModel } from "./types/compliance/tx";
+import { MsgRevokeModel } from "./types/compliance/tx";
 export declare const MissingWalletError: Error;
 export declare const registry: Registry;
 interface TxClientOptions {
@@ -18,6 +19,7 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     msgCertifyModel: (data: MsgCertifyModel) => EncodeObject;
     msgRevokeModel: (data: MsgRevokeModel) => EncodeObject;
     msgProvisionModel: (data: MsgProvisionModel) => EncodeObject;
+    msgRevokeModel: (data: MsgRevokeModel) => EncodeObject;
 }>;
 interface QueryClientOptions {
     addr: string;

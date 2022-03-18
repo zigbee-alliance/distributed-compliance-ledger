@@ -1,5 +1,21 @@
+---
+# Copyright 2022
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 name: release
 
+# yamllint disable-line rule:truthy
 on:
   release:
     types: [published]
@@ -16,7 +32,7 @@ jobs:
     outputs:
       included: ${{ steps.release_info.outputs.included }}
       matrix_os: ${{ steps.release_info.outputs.matrix_os }}
-      upload_url:  ${{ steps.release_info.outputs.upload_url }}
+      upload_url: ${{ steps.release_info.outputs.upload_url }}
 
     steps:
       - uses: actions/checkout@v2
@@ -25,13 +41,8 @@ jobs:
         id: current_version
         run: |
           git fetch --all --tags
-
           tag="$(git describe --tags --exact-match)"
-          echo "$tag"
-          version="$(echo "$tag" | sed "s/^v//")"
-          echo "$version"
-
-          echo "::set-output name=version::$version"
+          echo "::set-output name=version::${tag#v}"
         shell: bash
 
       - name: Get release info

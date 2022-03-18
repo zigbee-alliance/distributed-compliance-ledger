@@ -33,10 +33,10 @@ paths:
                     pid:
                       type: integer
                       format: int32
-                    software_version:
+                    softwareVersion:
                       type: integer
                       format: int64
-                    certification_type:
+                    certificationType:
                       type: string
                     value:
                       type: boolean
@@ -148,7 +148,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/compliance/certified-models/{vid}/{pid}/{software_version}/{certification_type}:
+  /dcl/compliance/certified-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a CertifiedModel by index.
       operationId: CertifiedModel
@@ -167,10 +167,10 @@ paths:
                   pid:
                     type: integer
                     format: int32
-                  software_version:
+                  softwareVersion:
                     type: integer
                     format: int64
-                  certification_type:
+                  certificationType:
                     type: string
                   value:
                     type: boolean
@@ -207,12 +207,12 @@ paths:
           required: true
           type: integer
           format: int32
-        - name: software_version
+        - name: softwareVersion
           in: path
           required: true
           type: integer
           format: int64
-        - name: certification_type
+        - name: certificationType
           in: path
           required: true
           type: string
@@ -239,17 +239,17 @@ paths:
                     pid:
                       type: integer
                       format: int32
-                    software_version:
+                    softwareVersion:
                       type: integer
                       format: int64
-                    certification_type:
+                    certificationType:
                       type: string
-                    software_version_string:
+                    softwareVersionString:
                       type: string
-                    c_d_version_number:
+                    cDVersionNumber:
                       type: integer
                       format: int64
-                    software_version_certification_status:
+                    softwareVersionCertificationStatus:
                       type: integer
                       format: int64
                     date:
@@ -263,14 +263,14 @@ paths:
                       items:
                         type: object
                         properties:
-                          software_version_certification_status:
+                          softwareVersionCertificationStatus:
                             type: integer
                             format: int64
                           date:
                             type: string
                           reason:
                             type: string
-                          c_d_version_number:
+                          cDVersionNumber:
                             type: integer
                             format: int64
               pagination:
@@ -381,7 +381,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/compliance/compliance-info/{vid}/{pid}/{software_version}/{certification_type}:
+  /dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a ComplianceInfo by index.
       operationId: ComplianceInfo
@@ -400,17 +400,17 @@ paths:
                   pid:
                     type: integer
                     format: int32
-                  software_version:
+                  softwareVersion:
                     type: integer
                     format: int64
-                  certification_type:
+                  certificationType:
                     type: string
-                  software_version_string:
+                  softwareVersionString:
                     type: string
-                  c_d_version_number:
+                  cDVersionNumber:
                     type: integer
                     format: int64
-                  software_version_certification_status:
+                  softwareVersionCertificationStatus:
                     type: integer
                     format: int64
                   date:
@@ -424,14 +424,14 @@ paths:
                     items:
                       type: object
                       properties:
-                        software_version_certification_status:
+                        softwareVersionCertificationStatus:
                           type: integer
                           format: int64
                         date:
                           type: string
                         reason:
                           type: string
-                        c_d_version_number:
+                        cDVersionNumber:
                           type: integer
                           format: int64
         default:
@@ -467,12 +467,12 @@ paths:
           required: true
           type: integer
           format: int32
-        - name: software_version
+        - name: softwareVersion
           in: path
           required: true
           type: integer
           format: int64
-        - name: certification_type
+        - name: certificationType
           in: path
           required: true
           type: string
@@ -499,10 +499,10 @@ paths:
                     pid:
                       type: integer
                       format: int32
-                    software_version:
+                    softwareVersion:
                       type: integer
                       format: int64
-                    certification_type:
+                    certificationType:
                       type: string
                     value:
                       type: boolean
@@ -614,7 +614,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/compliance/provisional-models/{vid}/{pid}/{software_version}/{certification_type}:
+  /dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a ProvisionalModel by index.
       operationId: ProvisionalModel
@@ -633,10 +633,10 @@ paths:
                   pid:
                     type: integer
                     format: int32
-                  software_version:
+                  softwareVersion:
                     type: integer
                     format: int64
-                  certification_type:
+                  certificationType:
                     type: string
                   value:
                     type: boolean
@@ -673,12 +673,12 @@ paths:
           required: true
           type: integer
           format: int32
-        - name: software_version
+        - name: softwareVersion
           in: path
           required: true
           type: integer
           format: int64
-        - name: certification_type
+        - name: certificationType
           in: path
           required: true
           type: string
@@ -705,10 +705,10 @@ paths:
                     pid:
                       type: integer
                       format: int32
-                    software_version:
+                    softwareVersion:
                       type: integer
                       format: int64
-                    certification_type:
+                    certificationType:
                       type: string
                     value:
                       type: boolean
@@ -820,7 +820,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/compliance/revoked-models/{vid}/{pid}/{software_version}/{certification_type}:
+  /dcl/compliance/revoked-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a RevokedModel by index.
       operationId: RevokedModel
@@ -839,10 +839,10 @@ paths:
                   pid:
                     type: integer
                     format: int32
-                  software_version:
+                  softwareVersion:
                     type: integer
                     format: int64
-                  certification_type:
+                  certificationType:
                     type: string
                   value:
                     type: boolean
@@ -879,12 +879,12 @@ paths:
           required: true
           type: integer
           format: int32
-        - name: software_version
+        - name: softwareVersion
           in: path
           required: true
           type: integer
           format: int64
-        - name: certification_type
+        - name: certificationType
           in: path
           required: true
           type: string
@@ -6065,39 +6065,39 @@ paths:
                     pid:
                       type: integer
                       format: int32
-                    device_type_id:
+                    deviceTypeId:
                       type: integer
                       format: int32
-                    product_name:
+                    productName:
                       type: string
-                    product_label:
+                    productLabel:
                       type: string
-                    part_number:
+                    partNumber:
                       type: string
-                    commissioning_custom_flow:
+                    commissioningCustomFlow:
                       type: integer
                       format: int32
-                    commissioning_custom_flow_url:
+                    commissioningCustomFlowUrl:
                       type: string
-                    commissioning_mode_initial_steps_hint:
+                    commissioningModeInitialStepsHint:
                       type: integer
                       format: int64
-                    commissioning_mode_initial_steps_instruction:
+                    commissioningModeInitialStepsInstruction:
                       type: string
-                    commissioning_mode_secondary_steps_hint:
+                    commissioningModeSecondaryStepsHint:
                       type: integer
                       format: int64
-                    commissioning_mode_secondary_steps_instruction:
+                    commissioningModeSecondaryStepsInstruction:
                       type: string
-                    user_manual_url:
+                    userManualUrl:
                       type: string
-                    support_url:
+                    supportUrl:
                       type: string
-                    product_url:
+                    productUrl:
                       type: string
-                    lsf_url:
+                    lsfUrl:
                       type: string
-                    lsf_revision:
+                    lsfRevision:
                       type: integer
                       format: int32
                     creator:
@@ -6236,7 +6236,7 @@ paths:
                           format: int32
                         name:
                           type: string
-                        part_number:
+                        partNumber:
                           type: string
         default:
           description: An unexpected error response.
@@ -6287,39 +6287,39 @@ paths:
                   pid:
                     type: integer
                     format: int32
-                  device_type_id:
+                  deviceTypeId:
                     type: integer
                     format: int32
-                  product_name:
+                  productName:
                     type: string
-                  product_label:
+                  productLabel:
                     type: string
-                  part_number:
+                  partNumber:
                     type: string
-                  commissioning_custom_flow:
+                  commissioningCustomFlow:
                     type: integer
                     format: int32
-                  commissioning_custom_flow_url:
+                  commissioningCustomFlowUrl:
                     type: string
-                  commissioning_mode_initial_steps_hint:
+                  commissioningModeInitialStepsHint:
                     type: integer
                     format: int64
-                  commissioning_mode_initial_steps_instruction:
+                  commissioningModeInitialStepsInstruction:
                     type: string
-                  commissioning_mode_secondary_steps_hint:
+                  commissioningModeSecondaryStepsHint:
                     type: integer
                     format: int64
-                  commissioning_mode_secondary_steps_instruction:
+                  commissioningModeSecondaryStepsInstruction:
                     type: string
-                  user_manual_url:
+                  userManualUrl:
                     type: string
-                  support_url:
+                  supportUrl:
                     type: string
-                  product_url:
+                  productUrl:
                     type: string
-                  lsf_url:
+                  lsfUrl:
                     type: string
-                  lsf_revision:
+                  lsfRevision:
                     type: integer
                     format: int32
                   creator:
@@ -6378,7 +6378,7 @@ paths:
                   pid:
                     type: integer
                     format: int32
-                  software_versions:
+                  softwareVersions:
                     type: array
                     items:
                       type: integer
@@ -6418,7 +6418,7 @@ paths:
           format: int32
       tags:
         - Query
-  /dcl/model/versions/{vid}/{pid}/{software_version}:
+  /dcl/model/versions/{vid}/{pid}/{softwareVersion}:
     get:
       summary: Queries a ModelVersion by index.
       operationId: ModelVersion
@@ -6437,35 +6437,35 @@ paths:
                   pid:
                     type: integer
                     format: int32
-                  software_version:
+                  softwareVersion:
                     type: integer
                     format: int64
-                  software_version_string:
+                  softwareVersionString:
                     type: string
-                  cd_version_number:
+                  cdVersionNumber:
                     type: integer
                     format: int32
-                  firmware_digests:
+                  firmwareDigests:
                     type: string
-                  software_version_valid:
+                  softwareVersionValid:
                     type: boolean
-                  ota_url:
+                  otaUrl:
                     type: string
-                  ota_file_size:
+                  otaFileSize:
                     type: string
                     format: uint64
-                  ota_checksum:
+                  otaChecksum:
                     type: string
-                  ota_checksum_type:
+                  otaChecksumType:
                     type: integer
                     format: int32
-                  min_applicable_software_version:
+                  minApplicableSoftwareVersion:
                     type: integer
                     format: int64
-                  max_applicable_software_version:
+                  maxApplicableSoftwareVersion:
                     type: integer
                     format: int64
-                  release_notes_url:
+                  releaseNotesUrl:
                     type: string
                   creator:
                     type: string
@@ -6502,7 +6502,7 @@ paths:
           required: true
           type: integer
           format: int32
-        - name: software_version
+        - name: softwareVersion
           in: path
           required: true
           type: integer
@@ -6526,32 +6526,32 @@ paths:
                   properties:
                     subject:
                       type: string
-                    subject_key_id:
+                    subjectKeyId:
                       type: string
                     certs:
                       type: array
                       items:
                         type: object
                         properties:
-                          pem_cert:
+                          pemCert:
                             type: string
-                          serial_number:
+                          serialNumber:
                             type: string
                           issuer:
                             type: string
-                          authority_key_id:
+                          authorityKeyId:
                             type: string
-                          root_subject:
+                          rootSubject:
                             type: string
-                          root_subject_key_id:
+                          rootSubjectKeyId:
                             type: string
-                          is_root:
+                          isRoot:
                             type: boolean
                           owner:
                             type: string
                           subject:
                             type: string
-                          subject_key_id:
+                          subjectKeyId:
                             type: string
                           approvals:
                             type: array
@@ -6688,7 +6688,7 @@ paths:
                 properties:
                   subject:
                     type: string
-                  subject_key_ids:
+                  subjectKeyIds:
                     type: array
                     items:
                       type: string
@@ -6721,7 +6721,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/pki/certificates/{subject}/{subject_key_id}:
+  /dcl/pki/certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a ApprovedCertificates by index.
       operationId: ApprovedCertificates
@@ -6736,32 +6736,32 @@ paths:
                 properties:
                   subject:
                     type: string
-                  subject_key_id:
+                  subjectKeyId:
                     type: string
                   certs:
                     type: array
                     items:
                       type: object
                       properties:
-                        pem_cert:
+                        pemCert:
                           type: string
-                        serial_number:
+                        serialNumber:
                           type: string
                         issuer:
                           type: string
-                        authority_key_id:
+                        authorityKeyId:
                           type: string
-                        root_subject:
+                        rootSubject:
                           type: string
-                        root_subject_key_id:
+                        rootSubjectKeyId:
                           type: string
-                        is_root:
+                        isRoot:
                           type: boolean
                         owner:
                           type: string
                         subject:
                           type: string
-                        subject_key_id:
+                        subjectKeyId:
                           type: string
                         approvals:
                           type: array
@@ -6802,13 +6802,13 @@ paths:
           in: path
           required: true
           type: string
-        - name: subject_key_id
+        - name: subjectKeyId
           in: path
           required: true
           type: string
       tags:
         - Query
-  /dcl/pki/child-certificates/{issuer}/{authority_key_id}:
+  /dcl/pki/child-certificates/{issuer}/{authorityKeyId}:
     get:
       summary: Queries a ChildCertificates by index.
       operationId: ChildCertificates
@@ -6823,16 +6823,16 @@ paths:
                 properties:
                   issuer:
                     type: string
-                  authority_key_id:
+                  authorityKeyId:
                     type: string
-                  cert_ids:
+                  certIds:
                     type: array
                     items:
                       type: object
                       properties:
                         subject:
                           type: string
-                        subject_key_id:
+                        subjectKeyId:
                           type: string
         default:
           description: An unexpected error response.
@@ -6861,7 +6861,7 @@ paths:
           in: path
           required: true
           type: string
-        - name: authority_key_id
+        - name: authorityKeyId
           in: path
           required: true
           type: string
@@ -6884,11 +6884,11 @@ paths:
                   properties:
                     subject:
                       type: string
-                    subject_key_id:
+                    subjectKeyId:
                       type: string
-                    pem_cert:
+                    pemCert:
                       type: string
-                    serial_number:
+                    serialNumber:
                       type: string
                     owner:
                       type: string
@@ -7012,7 +7012,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/proposed-certificates/{subject}/{subject_key_id}:
+  /dcl/pki/proposed-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a ProposedCertificate by index.
       operationId: ProposedCertificate
@@ -7027,11 +7027,11 @@ paths:
                 properties:
                   subject:
                     type: string
-                  subject_key_id:
+                  subjectKeyId:
                     type: string
-                  pem_cert:
+                  pemCert:
                     type: string
-                  serial_number:
+                  serialNumber:
                     type: string
                   owner:
                     type: string
@@ -7074,7 +7074,7 @@ paths:
           in: path
           required: true
           type: string
-        - name: subject_key_id
+        - name: subjectKeyId
           in: path
           required: true
           type: string
@@ -7097,7 +7097,7 @@ paths:
                   properties:
                     subject:
                       type: string
-                    subject_key_id:
+                    subjectKeyId:
                       type: string
                     approvals:
                       type: array
@@ -7219,7 +7219,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/proposed-revocation-certificates/{subject}/{subject_key_id}:
+  /dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a ProposedCertificateRevocation by index.
       operationId: ProposedCertificateRevocation
@@ -7234,7 +7234,7 @@ paths:
                 properties:
                   subject:
                     type: string
-                  subject_key_id:
+                  subjectKeyId:
                     type: string
                   approvals:
                     type: array
@@ -7275,7 +7275,7 @@ paths:
           in: path
           required: true
           type: string
-        - name: subject_key_id
+        - name: subjectKeyId
           in: path
           required: true
           type: string
@@ -7298,32 +7298,32 @@ paths:
                   properties:
                     subject:
                       type: string
-                    subject_key_id:
+                    subjectKeyId:
                       type: string
                     certs:
                       type: array
                       items:
                         type: object
                         properties:
-                          pem_cert:
+                          pemCert:
                             type: string
-                          serial_number:
+                          serialNumber:
                             type: string
                           issuer:
                             type: string
-                          authority_key_id:
+                          authorityKeyId:
                             type: string
-                          root_subject:
+                          rootSubject:
                             type: string
-                          root_subject_key_id:
+                          rootSubjectKeyId:
                             type: string
-                          is_root:
+                          isRoot:
                             type: boolean
                           owner:
                             type: string
                           subject:
                             type: string
-                          subject_key_id:
+                          subjectKeyId:
                             type: string
                           approvals:
                             type: array
@@ -7445,7 +7445,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/pki/revoked-certificates/{subject}/{subject_key_id}:
+  /dcl/pki/revoked-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a RevokedCertificates by index.
       operationId: RevokedCertificates
@@ -7460,32 +7460,32 @@ paths:
                 properties:
                   subject:
                     type: string
-                  subject_key_id:
+                  subjectKeyId:
                     type: string
                   certs:
                     type: array
                     items:
                       type: object
                       properties:
-                        pem_cert:
+                        pemCert:
                           type: string
-                        serial_number:
+                        serialNumber:
                           type: string
                         issuer:
                           type: string
-                        authority_key_id:
+                        authorityKeyId:
                           type: string
-                        root_subject:
+                        rootSubject:
                           type: string
-                        root_subject_key_id:
+                        rootSubjectKeyId:
                           type: string
-                        is_root:
+                        isRoot:
                           type: boolean
                         owner:
                           type: string
                         subject:
                           type: string
-                        subject_key_id:
+                        subjectKeyId:
                           type: string
                         approvals:
                           type: array
@@ -7526,7 +7526,7 @@ paths:
           in: path
           required: true
           type: string
-        - name: subject_key_id
+        - name: subjectKeyId
           in: path
           required: true
           type: string
@@ -7552,7 +7552,7 @@ paths:
                       properties:
                         subject:
                           type: string
-                        subject_key_id:
+                        subjectKeyId:
                           type: string
         default:
           description: An unexpected error response.
@@ -7598,7 +7598,7 @@ paths:
                       properties:
                         subject:
                           type: string
-                        subject_key_id:
+                        subjectKeyId:
                           type: string
         default:
           description: An unexpected error response.
@@ -9651,24 +9651,24 @@ definitions:
       pid:
         type: integer
         format: int32
-      software_version:
+      softwareVersion:
         type: integer
         format: int64
-      certification_type:
+      certificationType:
         type: string
       value:
         type: boolean
   zigbeealliance.distributedcomplianceledger.compliance.ComplianceHistoryItem:
     type: object
     properties:
-      software_version_certification_status:
+      softwareVersionCertificationStatus:
         type: integer
         format: int64
       date:
         type: string
       reason:
         type: string
-      c_d_version_number:
+      cDVersionNumber:
         type: integer
         format: int64
   zigbeealliance.distributedcomplianceledger.compliance.ComplianceInfo:
@@ -9680,17 +9680,17 @@ definitions:
       pid:
         type: integer
         format: int32
-      software_version:
+      softwareVersion:
         type: integer
         format: int64
-      certification_type:
+      certificationType:
         type: string
-      software_version_string:
+      softwareVersionString:
         type: string
-      c_d_version_number:
+      cDVersionNumber:
         type: integer
         format: int64
-      software_version_certification_status:
+      softwareVersionCertificationStatus:
         type: integer
         format: int64
       date:
@@ -9704,14 +9704,14 @@ definitions:
         items:
           type: object
           properties:
-            software_version_certification_status:
+            softwareVersionCertificationStatus:
               type: integer
               format: int64
             date:
               type: string
             reason:
               type: string
-            c_d_version_number:
+            cDVersionNumber:
               type: integer
               format: int64
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
@@ -9723,10 +9723,10 @@ definitions:
       pid:
         type: integer
         format: int32
-      software_version:
+      softwareVersion:
         type: integer
         format: int64
-      certification_type:
+      certificationType:
         type: string
       value:
         type: boolean
@@ -9744,10 +9744,10 @@ definitions:
             pid:
               type: integer
               format: int32
-            software_version:
+            softwareVersion:
               type: integer
               format: int64
-            certification_type:
+            certificationType:
               type: string
             value:
               type: boolean
@@ -9790,17 +9790,17 @@ definitions:
             pid:
               type: integer
               format: int32
-            software_version:
+            softwareVersion:
               type: integer
               format: int64
-            certification_type:
+            certificationType:
               type: string
-            software_version_string:
+            softwareVersionString:
               type: string
-            c_d_version_number:
+            cDVersionNumber:
               type: integer
               format: int64
-            software_version_certification_status:
+            softwareVersionCertificationStatus:
               type: integer
               format: int64
             date:
@@ -9814,14 +9814,14 @@ definitions:
               items:
                 type: object
                 properties:
-                  software_version_certification_status:
+                  softwareVersionCertificationStatus:
                     type: integer
                     format: int64
                   date:
                     type: string
                   reason:
                     type: string
-                  c_d_version_number:
+                  cDVersionNumber:
                     type: integer
                     format: int64
       pagination:
@@ -9863,10 +9863,10 @@ definitions:
             pid:
               type: integer
               format: int32
-            software_version:
+            softwareVersion:
               type: integer
               format: int64
-            certification_type:
+            certificationType:
               type: string
             value:
               type: boolean
@@ -9909,10 +9909,10 @@ definitions:
             pid:
               type: integer
               format: int32
-            software_version:
+            softwareVersion:
               type: integer
               format: int64
-            certification_type:
+            certificationType:
               type: string
             value:
               type: boolean
@@ -9953,10 +9953,10 @@ definitions:
           pid:
             type: integer
             format: int32
-          software_version:
+          softwareVersion:
             type: integer
             format: int64
-          certification_type:
+          certificationType:
             type: string
           value:
             type: boolean
@@ -9972,17 +9972,17 @@ definitions:
           pid:
             type: integer
             format: int32
-          software_version:
+          softwareVersion:
             type: integer
             format: int64
-          certification_type:
+          certificationType:
             type: string
-          software_version_string:
+          softwareVersionString:
             type: string
-          c_d_version_number:
+          cDVersionNumber:
             type: integer
             format: int64
-          software_version_certification_status:
+          softwareVersionCertificationStatus:
             type: integer
             format: int64
           date:
@@ -9996,14 +9996,14 @@ definitions:
             items:
               type: object
               properties:
-                software_version_certification_status:
+                softwareVersionCertificationStatus:
                   type: integer
                   format: int64
                 date:
                   type: string
                 reason:
                   type: string
-                c_d_version_number:
+                cDVersionNumber:
                   type: integer
                   format: int64
   zigbeealliance.distributedcomplianceledger.compliance.QueryGetProvisionalModelResponse:
@@ -10018,10 +10018,10 @@ definitions:
           pid:
             type: integer
             format: int32
-          software_version:
+          softwareVersion:
             type: integer
             format: int64
-          certification_type:
+          certificationType:
             type: string
           value:
             type: boolean
@@ -10037,10 +10037,10 @@ definitions:
           pid:
             type: integer
             format: int32
-          software_version:
+          softwareVersion:
             type: integer
             format: int64
-          certification_type:
+          certificationType:
             type: string
           value:
             type: boolean
@@ -10053,10 +10053,10 @@ definitions:
       pid:
         type: integer
         format: int32
-      software_version:
+      softwareVersion:
         type: integer
         format: int64
-      certification_type:
+      certificationType:
         type: string
       value:
         type: boolean
@@ -13517,39 +13517,39 @@ definitions:
       pid:
         type: integer
         format: int32
-      device_type_id:
+      deviceTypeId:
         type: integer
         format: int32
-      product_name:
+      productName:
         type: string
-      product_label:
+      productLabel:
         type: string
-      part_number:
+      partNumber:
         type: string
-      commissioning_custom_flow:
+      commissioningCustomFlow:
         type: integer
         format: int32
-      commissioning_custom_flow_url:
+      commissioningCustomFlowUrl:
         type: string
-      commissioning_mode_initial_steps_hint:
+      commissioningModeInitialStepsHint:
         type: integer
         format: int64
-      commissioning_mode_initial_steps_instruction:
+      commissioningModeInitialStepsInstruction:
         type: string
-      commissioning_mode_secondary_steps_hint:
+      commissioningModeSecondaryStepsHint:
         type: integer
         format: int64
-      commissioning_mode_secondary_steps_instruction:
+      commissioningModeSecondaryStepsInstruction:
         type: string
-      user_manual_url:
+      userManualUrl:
         type: string
-      support_url:
+      supportUrl:
         type: string
-      product_url:
+      productUrl:
         type: string
-      lsf_url:
+      lsfUrl:
         type: string
-      lsf_revision:
+      lsfRevision:
         type: integer
         format: int32
       creator:
@@ -13563,35 +13563,35 @@ definitions:
       pid:
         type: integer
         format: int32
-      software_version:
+      softwareVersion:
         type: integer
         format: int64
-      software_version_string:
+      softwareVersionString:
         type: string
-      cd_version_number:
+      cdVersionNumber:
         type: integer
         format: int32
-      firmware_digests:
+      firmwareDigests:
         type: string
-      software_version_valid:
+      softwareVersionValid:
         type: boolean
-      ota_url:
+      otaUrl:
         type: string
-      ota_file_size:
+      otaFileSize:
         type: string
         format: uint64
-      ota_checksum:
+      otaChecksum:
         type: string
-      ota_checksum_type:
+      otaChecksumType:
         type: integer
         format: int32
-      min_applicable_software_version:
+      minApplicableSoftwareVersion:
         type: integer
         format: int64
-      max_applicable_software_version:
+      maxApplicableSoftwareVersion:
         type: integer
         format: int64
-      release_notes_url:
+      releaseNotesUrl:
         type: string
       creator:
         type: string
@@ -13604,7 +13604,7 @@ definitions:
       pid:
         type: integer
         format: int32
-      software_versions:
+      softwareVersions:
         type: array
         items:
           type: integer
@@ -13617,7 +13617,7 @@ definitions:
         format: int32
       name:
         type: string
-      part_number:
+      partNumber:
         type: string
   zigbeealliance.distributedcomplianceledger.model.QueryAllModelResponse:
     type: object
@@ -13633,39 +13633,39 @@ definitions:
             pid:
               type: integer
               format: int32
-            device_type_id:
+            deviceTypeId:
               type: integer
               format: int32
-            product_name:
+            productName:
               type: string
-            product_label:
+            productLabel:
               type: string
-            part_number:
+            partNumber:
               type: string
-            commissioning_custom_flow:
+            commissioningCustomFlow:
               type: integer
               format: int32
-            commissioning_custom_flow_url:
+            commissioningCustomFlowUrl:
               type: string
-            commissioning_mode_initial_steps_hint:
+            commissioningModeInitialStepsHint:
               type: integer
               format: int64
-            commissioning_mode_initial_steps_instruction:
+            commissioningModeInitialStepsInstruction:
               type: string
-            commissioning_mode_secondary_steps_hint:
+            commissioningModeSecondaryStepsHint:
               type: integer
               format: int64
-            commissioning_mode_secondary_steps_instruction:
+            commissioningModeSecondaryStepsInstruction:
               type: string
-            user_manual_url:
+            userManualUrl:
               type: string
-            support_url:
+            supportUrl:
               type: string
-            product_url:
+            productUrl:
               type: string
-            lsf_url:
+            lsfUrl:
               type: string
-            lsf_revision:
+            lsfRevision:
               type: integer
               format: int32
             creator:
@@ -13707,39 +13707,39 @@ definitions:
           pid:
             type: integer
             format: int32
-          device_type_id:
+          deviceTypeId:
             type: integer
             format: int32
-          product_name:
+          productName:
             type: string
-          product_label:
+          productLabel:
             type: string
-          part_number:
+          partNumber:
             type: string
-          commissioning_custom_flow:
+          commissioningCustomFlow:
             type: integer
             format: int32
-          commissioning_custom_flow_url:
+          commissioningCustomFlowUrl:
             type: string
-          commissioning_mode_initial_steps_hint:
+          commissioningModeInitialStepsHint:
             type: integer
             format: int64
-          commissioning_mode_initial_steps_instruction:
+          commissioningModeInitialStepsInstruction:
             type: string
-          commissioning_mode_secondary_steps_hint:
+          commissioningModeSecondaryStepsHint:
             type: integer
             format: int64
-          commissioning_mode_secondary_steps_instruction:
+          commissioningModeSecondaryStepsInstruction:
             type: string
-          user_manual_url:
+          userManualUrl:
             type: string
-          support_url:
+          supportUrl:
             type: string
-          product_url:
+          productUrl:
             type: string
-          lsf_url:
+          lsfUrl:
             type: string
-          lsf_revision:
+          lsfRevision:
             type: integer
             format: int32
           creator:
@@ -13756,35 +13756,35 @@ definitions:
           pid:
             type: integer
             format: int32
-          software_version:
+          softwareVersion:
             type: integer
             format: int64
-          software_version_string:
+          softwareVersionString:
             type: string
-          cd_version_number:
+          cdVersionNumber:
             type: integer
             format: int32
-          firmware_digests:
+          firmwareDigests:
             type: string
-          software_version_valid:
+          softwareVersionValid:
             type: boolean
-          ota_url:
+          otaUrl:
             type: string
-          ota_file_size:
+          otaFileSize:
             type: string
             format: uint64
-          ota_checksum:
+          otaChecksum:
             type: string
-          ota_checksum_type:
+          otaChecksumType:
             type: integer
             format: int32
-          min_applicable_software_version:
+          minApplicableSoftwareVersion:
             type: integer
             format: int64
-          max_applicable_software_version:
+          maxApplicableSoftwareVersion:
             type: integer
             format: int64
-          release_notes_url:
+          releaseNotesUrl:
             type: string
           creator:
             type: string
@@ -13800,7 +13800,7 @@ definitions:
           pid:
             type: integer
             format: int32
-          software_versions:
+          softwareVersions:
             type: array
             items:
               type: integer
@@ -13824,7 +13824,7 @@ definitions:
                   format: int32
                 name:
                   type: string
-                part_number:
+                partNumber:
                   type: string
   zigbeealliance.distributedcomplianceledger.model.VendorProducts:
     type: object
@@ -13842,39 +13842,39 @@ definitions:
               format: int32
             name:
               type: string
-            part_number:
+            partNumber:
               type: string
   zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificates:
     type: object
     properties:
       subject:
         type: string
-      subject_key_id:
+      subjectKeyId:
         type: string
       certs:
         type: array
         items:
           type: object
           properties:
-            pem_cert:
+            pemCert:
               type: string
-            serial_number:
+            serialNumber:
               type: string
             issuer:
               type: string
-            authority_key_id:
+            authorityKeyId:
               type: string
-            root_subject:
+            rootSubject:
               type: string
-            root_subject_key_id:
+            rootSubjectKeyId:
               type: string
-            is_root:
+            isRoot:
               type: boolean
             owner:
               type: string
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
             approvals:
               type: array
@@ -13893,7 +13893,7 @@ definitions:
     properties:
       subject:
         type: string
-      subject_key_ids:
+      subjectKeyIds:
         type: array
         items:
           type: string
@@ -13907,30 +13907,30 @@ definitions:
           properties:
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
   zigbeealliance.distributedcomplianceledger.pki.Certificate:
     type: object
     properties:
-      pem_cert:
+      pemCert:
         type: string
-      serial_number:
+      serialNumber:
         type: string
       issuer:
         type: string
-      authority_key_id:
+      authorityKeyId:
         type: string
-      root_subject:
+      rootSubject:
         type: string
-      root_subject_key_id:
+      rootSubjectKeyId:
         type: string
-      is_root:
+      isRoot:
         type: boolean
       owner:
         type: string
       subject:
         type: string
-      subject_key_id:
+      subjectKeyId:
         type: string
       approvals:
         type: array
@@ -13949,23 +13949,23 @@ definitions:
     properties:
       subject:
         type: string
-      subject_key_id:
+      subjectKeyId:
         type: string
   zigbeealliance.distributedcomplianceledger.pki.ChildCertificates:
     type: object
     properties:
       issuer:
         type: string
-      authority_key_id:
+      authorityKeyId:
         type: string
-      cert_ids:
+      certIds:
         type: array
         items:
           type: object
           properties:
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
   zigbeealliance.distributedcomplianceledger.pki.Grant:
     type: object
@@ -13982,11 +13982,11 @@ definitions:
     properties:
       subject:
         type: string
-      subject_key_id:
+      subjectKeyId:
         type: string
-      pem_cert:
+      pemCert:
         type: string
-      serial_number:
+      serialNumber:
         type: string
       owner:
         type: string
@@ -14007,7 +14007,7 @@ definitions:
     properties:
       subject:
         type: string
-      subject_key_id:
+      subjectKeyId:
         type: string
       approvals:
         type: array
@@ -14031,32 +14031,32 @@ definitions:
           properties:
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
             certs:
               type: array
               items:
                 type: object
                 properties:
-                  pem_cert:
+                  pemCert:
                     type: string
-                  serial_number:
+                  serialNumber:
                     type: string
                   issuer:
                     type: string
-                  authority_key_id:
+                  authorityKeyId:
                     type: string
-                  root_subject:
+                  rootSubject:
                     type: string
-                  root_subject_key_id:
+                  rootSubjectKeyId:
                     type: string
-                  is_root:
+                  isRoot:
                     type: boolean
                   owner:
                     type: string
                   subject:
                     type: string
-                  subject_key_id:
+                  subjectKeyId:
                     type: string
                   approvals:
                     type: array
@@ -14105,11 +14105,11 @@ definitions:
           properties:
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
-            pem_cert:
+            pemCert:
               type: string
-            serial_number:
+            serialNumber:
               type: string
             owner:
               type: string
@@ -14160,7 +14160,7 @@ definitions:
           properties:
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
             approvals:
               type: array
@@ -14209,32 +14209,32 @@ definitions:
           properties:
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
             certs:
               type: array
               items:
                 type: object
                 properties:
-                  pem_cert:
+                  pemCert:
                     type: string
-                  serial_number:
+                  serialNumber:
                     type: string
                   issuer:
                     type: string
-                  authority_key_id:
+                  authorityKeyId:
                     type: string
-                  root_subject:
+                  rootSubject:
                     type: string
-                  root_subject_key_id:
+                  rootSubjectKeyId:
                     type: string
-                  is_root:
+                  isRoot:
                     type: boolean
                   owner:
                     type: string
                   subject:
                     type: string
-                  subject_key_id:
+                  subjectKeyId:
                     type: string
                   approvals:
                     type: array
@@ -14281,7 +14281,7 @@ definitions:
         properties:
           subject:
             type: string
-          subject_key_ids:
+          subjectKeyIds:
             type: array
             items:
               type: string
@@ -14293,32 +14293,32 @@ definitions:
         properties:
           subject:
             type: string
-          subject_key_id:
+          subjectKeyId:
             type: string
           certs:
             type: array
             items:
               type: object
               properties:
-                pem_cert:
+                pemCert:
                   type: string
-                serial_number:
+                serialNumber:
                   type: string
                 issuer:
                   type: string
-                authority_key_id:
+                authorityKeyId:
                   type: string
-                root_subject:
+                rootSubject:
                   type: string
-                root_subject_key_id:
+                rootSubjectKeyId:
                   type: string
-                is_root:
+                isRoot:
                   type: boolean
                 owner:
                   type: string
                 subject:
                   type: string
-                subject_key_id:
+                subjectKeyId:
                   type: string
                 approvals:
                   type: array
@@ -14345,7 +14345,7 @@ definitions:
               properties:
                 subject:
                   type: string
-                subject_key_id:
+                subjectKeyId:
                   type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetChildCertificatesResponse:
     type: object
@@ -14355,16 +14355,16 @@ definitions:
         properties:
           issuer:
             type: string
-          authority_key_id:
+          authorityKeyId:
             type: string
-          cert_ids:
+          certIds:
             type: array
             items:
               type: object
               properties:
                 subject:
                   type: string
-                subject_key_id:
+                subjectKeyId:
                   type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateResponse:
     type: object
@@ -14374,11 +14374,11 @@ definitions:
         properties:
           subject:
             type: string
-          subject_key_id:
+          subjectKeyId:
             type: string
-          pem_cert:
+          pemCert:
             type: string
-          serial_number:
+          serialNumber:
             type: string
           owner:
             type: string
@@ -14402,7 +14402,7 @@ definitions:
         properties:
           subject:
             type: string
-          subject_key_id:
+          subjectKeyId:
             type: string
           approvals:
             type: array
@@ -14424,32 +14424,32 @@ definitions:
         properties:
           subject:
             type: string
-          subject_key_id:
+          subjectKeyId:
             type: string
           certs:
             type: array
             items:
               type: object
               properties:
-                pem_cert:
+                pemCert:
                   type: string
-                serial_number:
+                serialNumber:
                   type: string
                 issuer:
                   type: string
-                authority_key_id:
+                authorityKeyId:
                   type: string
-                root_subject:
+                rootSubject:
                   type: string
-                root_subject_key_id:
+                rootSubjectKeyId:
                   type: string
-                is_root:
+                isRoot:
                   type: boolean
                 owner:
                   type: string
                 subject:
                   type: string
-                subject_key_id:
+                subjectKeyId:
                   type: string
                 approvals:
                   type: array
@@ -14476,39 +14476,39 @@ definitions:
               properties:
                 subject:
                   type: string
-                subject_key_id:
+                subjectKeyId:
                   type: string
   zigbeealliance.distributedcomplianceledger.pki.RevokedCertificates:
     type: object
     properties:
       subject:
         type: string
-      subject_key_id:
+      subjectKeyId:
         type: string
       certs:
         type: array
         items:
           type: object
           properties:
-            pem_cert:
+            pemCert:
               type: string
-            serial_number:
+            serialNumber:
               type: string
             issuer:
               type: string
-            authority_key_id:
+            authorityKeyId:
               type: string
-            root_subject:
+            rootSubject:
               type: string
-            root_subject_key_id:
+            rootSubjectKeyId:
               type: string
-            is_root:
+            isRoot:
               type: boolean
             owner:
               type: string
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
             approvals:
               type: array
@@ -14532,7 +14532,7 @@ definitions:
           properties:
             subject:
               type: string
-            subject_key_id:
+            subjectKeyId:
               type: string
   zigbeealliance.distributedcomplianceledger.validator.Description:
     type: object

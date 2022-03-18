@@ -28,3 +28,5 @@ dclbench_stats.csv
 dclbench_stats_history.csv 
 dclbench_exceptions.csv
 bench/txns
+terraform.tfstate*
+.terraform*

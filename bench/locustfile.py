@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import yaml
 import json
-import time
-import random
 import logging
+import random
+import time
 from pathlib import Path
-from locust import HttpUser, task, events, LoadTestShape
+from typing import List
+
+import yaml
+from locust import HttpUser, LoadTestShape, events, task
+
 # import locust_plugins
 
 DEFAULT_TARGET_HOST = "http://localhost:26657"
@@ -30,33 +33,49 @@ dcl_hosts = []
 dcl_rest_hosts = []
 users_done = {}
 
-logger = logging.getLogger('dclbench')
+logger = logging.getLogger("dclbench")
+
 
 @events.init_command_line_parser.add_listener
 def init_paraser(parser):
     parser.add_argument(
-        "--dcl-users", type=int,
+        "--dcl-users",
+        type=int,
         include_in_web_ui=True,
-        default=10, help="Peak number of concurrent Locust users")
+        default=10,
+        help="Peak number of concurrent Locust users",
+    )
     parser.add_argument(
-        "--dcl-spawn-rate", type=int,
+        "--dcl-spawn-rate",
+        type=int,
         include_in_web_ui=True,
-        default=1, help="Rate to spawn users at (users per second)")
+        default=1,
+        help="Rate to spawn users at (users per second)",
+    )
     parser.add_argument(
-        "--dcl-txn-file", type=str, env_var="LOCUST_TXN_FILE",
+        "--dcl-txn-file",
+        type=str,
+        env_var="LOCUST_TXN_FILE",
         include_in_web_ui=True,
-        default="./txns", help="Path to a file with write transactions")
+        default="./txns",
+        help="Path to a file with write transactions",
+    )
     # Set `include_in_web_ui` to False if you want to hide from the web UI
     parser.add_argument(
-        "--dcl-hosts", metavar="DCL_HOSTS",
+        "--dcl-hosts",
+        metavar="DCL_HOSTS",
         include_in_web_ui=True,
         default=DEFAULT_TARGET_HOST,
-        help="Comma separated list of DCL hosts to target")
+        help="Comma separated list of DCL hosts to target",
+    )
     parser.add_argument(
-        "--dcl-rest-hosts", metavar="DCL_REST_HOSTS",
+        "--dcl-rest-hosts",
+        metavar="DCL_REST_HOSTS",
         include_in_web_ui=True,
         default=DEFAULT_REST_HOST,
-        help="Comma separated list of DCL REST hosts to target")
+        help="Comma separated list of DCL REST hosts to target",
+    )
+
 
 @events.test_start.add_listener
 def _(environment, **kw):
@@ -71,11 +90,10 @@ def _(environment, **kw):
     if environment.parsed_options.dcl_rest_hosts:
         dcl_rest_hosts.extend(environment.parsed_options.dcl_rest_hosts.split(","))
 
-    _txns = yaml.safe_load(
-        Path(environment.parsed_options.dcl_txn_file).read_text())
- 
+    _txns = yaml.safe_load(Path(environment.parsed_options.dcl_txn_file).read_text())
+
     # user only necessary number of users
-    txns.extend(list(_txns.items())[:environment.parsed_options.dcl_users])
+    txns.extend(list(_txns.items())[: environment.parsed_options.dcl_users])
 
     for user in txns:
         users_done[user[0]] = False
@@ -88,6 +106,7 @@ def _(environment, **kw):
     # reset the stat as we considering next runs
     logger.info("Resetting users progress")
     users_done.clear()
+
 
 # curl --header "Content-Type: application/json" --request POST --data  localhost:26657  # noqa
 
@@ -102,6 +121,7 @@ def _(environment, **kw):
 
 READ_REQUEST_COUNT = 0
 
+
 class DCLTestShape(LoadTestShape):
     def tick(self):
         logger.debug(f"{users_done}, users {self.runner.user_count}")
@@ -111,7 +131,7 @@ class DCLTestShape(LoadTestShape):
         else:
             return (
                 self.runner.environment.parsed_options.dcl_users,
-                self.runner.environment.parsed_options.dcl_spawn_rate
+                self.runner.environment.parsed_options.dcl_spawn_rate,
             )
 
 
@@ -127,14 +147,12 @@ class DCLWriteUser(HttpUser):
         logger.debug(f"{self.username}: {len(self.txns or [])} txns remain")
         if self.txns:
             txn = self.txns.pop(0)
-            payload = {
-                "method": "broadcast_tx_sync",
-                "params": {"tx": txn},
-                "id": 1
-            }
+            payload = {"method": "broadcast_tx_sync", "params": {"tx": txn}, "id": 1}
             with self.client.post(
-                f"{self.host}/", json.dumps(payload), name="write transactions",
-                catch_response=True
+                f"{self.host}/",
+                json.dumps(payload),
+                name="write transactions",
+                catch_response=True,
             ) as response:
                 # logger.debug(f"{self.username}: response {response.__dict__}")
                 logger.debug(f"{self.username}: response {response.text}")
@@ -168,43 +186,43 @@ class DCLWriteUser(HttpUser):
                 self.host = DEFAULT_TARGET_HOST
             logger.info(
                 f"{self.username}: started, num txns {len(self.txns)},"
-                f" target host {self.host}")
-        
+                f" target host {self.host}"
+            )
+
         else:
             logger.warning("unexpected user: no more data")
 
-models = []
+
+models: List[int] = []
+
+
 class DCLReadUser(HttpUser):
     rest_host = ""
     weight = 1
     global models
 
     def get_model_vid(self, index):
-        return models[index]['vid']
-
+        return models[index]["vid"]
 
     def get_model_pid(self, index):
-        return models[index]['pid']
-    
+        return models[index]["pid"]
 
     def generate_get_model_url(self):
         # Gererate random number for get random model
-        index = random.randint(0, len(models)-1)
+        index = random.randint(0, len(models) - 1)
 
-        #Get vid and pid model
+        # Get vid and pid model
         vid = self.get_model_vid(index)
         pid = self.get_model_pid(index)
 
         url = self.rest_host + "/dcl/model/models/" + str(vid) + "/" + str(pid)
-        return url 
-
+        return url
 
     @task
     def get_model(self):
         global READ_REQUEST_COUNT
-        self.client.get(self.generate_get_model_url(), name = "get random model")
+        self.client.get(self.generate_get_model_url(), name="get random model")
         READ_REQUEST_COUNT += 1
-
 
     def on_start(self):
         # Get REST endpoint
@@ -216,11 +234,14 @@ class DCLReadUser(HttpUser):
         # Get models list only once
         if len(models) == 0:
             # Get up to 1000 models
-            response = self.client.get(self.rest_host + "/dcl/model/models?pagination.limit=1000", name="get all models")
+            response = self.client.get(
+                self.rest_host + "/dcl/model/models?pagination.limit=1000",
+                name="get all models",
+            )
 
             # JSON type convert to type of Class(dictonary)
             json_var = response.json()
 
             # Save all models
-            for item in json_var['model']:
+            for item in json_var["model"]:
                 models.append(item)

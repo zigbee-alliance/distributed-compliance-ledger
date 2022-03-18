@@ -5,8 +5,8 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 
 message ComplianceHistoryItem {
   
-  uint32 software_version_certification_status = 1; 
+  uint32 softwareVersionCertificationStatus = 1; 
   string date = 2; 
   string reason = 3; 
-  uint32 c_d_version_number = 4; 
+  uint32 cDVersionNumber = 4; 
 }
