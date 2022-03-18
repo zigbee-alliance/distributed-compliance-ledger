@@ -1,7 +1,6 @@
 import { StdFee } from "@cosmjs/launchpad";
 import { Registry, OfflineSigner, EncodeObject } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
-import { MsgRevokeModel } from "./types/compliance/tx";
 import { MsgCertifyModel } from "./types/compliance/tx";
 import { MsgRevokeModel } from "./types/compliance/tx";
 import { MsgProvisionModel } from "./types/compliance/tx";
@@ -16,7 +15,6 @@ interface SignAndBroadcastOptions {
 }
 declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions) => Promise<{
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }?: SignAndBroadcastOptions) => any;
-    msgRevokeModel: (data: MsgRevokeModel) => EncodeObject;
     msgCertifyModel: (data: MsgCertifyModel) => EncodeObject;
     msgRevokeModel: (data: MsgRevokeModel) => EncodeObject;
     msgProvisionModel: (data: MsgProvisionModel) => EncodeObject;
