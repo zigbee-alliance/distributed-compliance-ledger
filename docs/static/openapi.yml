@@ -7542,7 +7542,7 @@ paths:
           schema:
             type: object
             properties:
-              RevokedRootCertificates:
+              revokedRootCertificates:
                 type: object
                 properties:
                   certs:
@@ -7588,7 +7588,7 @@ paths:
           schema:
             type: object
             properties:
-              ApprovedRootCertificates:
+              approvedRootCertificates:
                 type: object
                 properties:
                   certs:
@@ -14335,7 +14335,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
-      ApprovedRootCertificates:
+      approvedRootCertificates:
         type: object
         properties:
           certs:
@@ -14466,7 +14466,7 @@ definitions:
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
-      RevokedRootCertificates:
+      revokedRootCertificates:
         type: object
         properties:
           certs:
