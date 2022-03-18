@@ -83,7 +83,7 @@ Run options (DCLedger custom ones):
 *   `--dcl-spawn-rate` Rate to spawn users at (users per second)
 *   `--dcl-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
     E.g. for local ledger `http://localhost:26657,http://localhost:26659,http://localhost:26661,http://localhost:26663` will specify all the nodes.
-*   `--dcl-txn-file` path to a file with generated txns
+*   `--dcl-rest-hosts <comma-sepated-list>`: list of DCL nodes to target. Each user randomly picks one
 
 Statistic options:
 
