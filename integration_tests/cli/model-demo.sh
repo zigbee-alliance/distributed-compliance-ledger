@@ -61,7 +61,7 @@ echo "Get Model with VID: $vid PID: $pid"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"product_label\": \"$productLabel\""
+check_response "$result" "\"productLabel\": \"$productLabel\""
 echo "$result"
 
 test_divider
@@ -93,7 +93,7 @@ echo "Get Model with VID: ${vid} PID: ${pid}"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"product_label\": \"$description\""
+check_response "$result" "\"productLabel\": \"$description\""
 echo "$result"
 
 test_divider
@@ -110,5 +110,5 @@ echo "Get Model with VID: ${vid} PID: ${pid}"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"support_url\": \"$supportURL\""
+check_response "$result" "\"supportUrl\": \"$supportURL\""
 echo "$result"

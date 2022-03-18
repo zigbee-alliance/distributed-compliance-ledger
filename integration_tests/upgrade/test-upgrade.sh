@@ -82,7 +82,7 @@ result=$(dcld query model get-model --vid=$vid --pid=$pid)
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"product_label\": \"$original_product_label\""
+check_response "$result" "\"productLabel\": \"$original_product_label\""
 
 test_divider
 
@@ -116,6 +116,6 @@ result=$(dcld query model get-model --vid=$vid --pid=$pid)
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"product_label\": \"$updated_product_label\""
+check_response "$result" "\"productLabel\": \"$updated_product_label\""
 
 echo "PASSED"

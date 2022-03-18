@@ -9,15 +9,15 @@ import "pki/grant.proto";
 
 message Certificate {
   
-  string pem_cert = 1; 
-  string serial_number = 2; 
+  string pemCert = 1; 
+  string serialNumber = 2; 
   string issuer = 3; 
-  string authority_key_id = 4; 
-  string root_subject = 5; 
-  string root_subject_key_id = 6; 
-  bool is_root = 7; 
+  string authorityKeyId = 4; 
+  string rootSubject = 5; 
+  string rootSubjectKeyId = 6; 
+  bool isRoot = 7; 
   string owner = 8 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
   string subject = 9; 
-  string subject_key_id = 10; 
+  string subjectKeyId = 10; 
   repeated Grant approvals = 11;
 }

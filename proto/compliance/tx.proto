@@ -20,11 +20,11 @@ message MsgCertifyModel {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
-  uint32 software_version = 4;
-  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
-  uint32 c_d_version_number = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  string certification_date = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  uint32 softwareVersion = 4;
+  string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  string certificationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
+  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
 }
 
@@ -35,11 +35,11 @@ message MsgRevokeModel {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
-  uint32 software_version = 4;
-  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
-  uint32 c_d_version_number = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];  
-  string revocation_date = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  uint32 softwareVersion = 4;
+  string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  uint32 cDVersionNumber = 6  [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];  
+  string revocationDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
+  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
 }
 
@@ -50,11 +50,11 @@ message MsgProvisionModel {
   string signer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
   int32 vid = 2 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
   int32 pid = 3 [(gogoproto.moretags) = "validate:\"gte=1,lte=65535\""];
-  uint32 software_version = 4;
-  string software_version_string = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
-  uint32 c_d_version_number = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
-  string provisional_date = 7 [(gogoproto.moretags) = "validate:\"required\""];
-  string certification_type = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
+  uint32 softwareVersion = 4;
+  string softwareVersionString = 5 [(gogoproto.moretags) = "validate:\"required,max=64\""];
+  uint32 cDVersionNumber = 6 [(gogoproto.moretags) = "validate:\"gte=0,lte=65535\""];
+  string provisionalDate = 7 [(gogoproto.moretags) = "validate:\"required\""];
+  string certificationType = 8 [(gogoproto.moretags) = "validate:\"required,max=100\""];
   string reason = 9 [(gogoproto.moretags) = "validate:\"max=102400\""];
 }
 

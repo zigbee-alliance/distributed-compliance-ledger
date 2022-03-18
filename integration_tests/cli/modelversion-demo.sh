@@ -48,12 +48,12 @@ result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version\": $sv"
-check_response "$result" "\"software_version_string\": \"1\""
-check_response "$result" "\"cd_version_number\": 1"
-check_response "$result" "\"software_version_valid\": true"
-check_response "$result" "\"min_applicable_software_version\": 1"
-check_response "$result" "\"max_applicable_software_version\": 10"
+check_response "$result" "\"softwareVersion\": $sv"
+check_response "$result" "\"softwareVersionString\": \"1\""
+check_response "$result" "\"cdVersionNumber\": 1"
+check_response "$result" "\"softwareVersionValid\": true"
+check_response "$result" "\"minApplicableSoftwareVersion\": 1"
+check_response "$result" "\"maxApplicableSoftwareVersion\": 10"
 
 test_divider
 
@@ -63,7 +63,7 @@ result=$(dcld query model all-model-versions --vid=$vid --pid=$pid)
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_versions\""
+check_response "$result" "\"softwareVersions\""
 check_response "$result" "$sv"
 
 test_divider
@@ -99,12 +99,12 @@ result=$(dcld query model model-version --vid=$vid --pid=$pid --softwareVersion=
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version\": $sv"
-check_response "$result" "\"software_version_string\": \"1\""
-check_response "$result" "\"cd_version_number\": 1"
-check_response "$result" "\"software_version_valid\": false"
-check_response "$result" "\"min_applicable_software_version\": 2"
-check_response "$result" "\"max_applicable_software_version\": 10"
+check_response "$result" "\"softwareVersion\": $sv"
+check_response "$result" "\"softwareVersionString\": \"1\""
+check_response "$result" "\"cdVersionNumber\": 1"
+check_response "$result" "\"softwareVersionValid\": false"
+check_response "$result" "\"minApplicableSoftwareVersion\": 2"
+check_response "$result" "\"maxApplicableSoftwareVersion\": 10"
 
 test_divider
 
@@ -123,7 +123,7 @@ result=$(dcld query model all-model-versions --vid=$vid --pid=$pid)
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_versions\""
+check_response "$result" "\"softwareVersions\""
 check_response "$result" "$sv"
 check_response "$result" "$sv2"
 

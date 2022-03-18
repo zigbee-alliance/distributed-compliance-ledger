@@ -7,8 +7,8 @@ import "pki/certificate_identifier.proto";
 
 message ChildCertificates {
   string issuer = 1; 
-  string authority_key_id = 2; 
-  repeated CertificateIdentifier cert_ids = 3; 
+  string authorityKeyId = 2; 
+  repeated CertificateIdentifier certIds = 3; 
   
 }
 

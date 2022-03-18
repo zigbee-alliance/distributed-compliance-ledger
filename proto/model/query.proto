@@ -31,7 +31,7 @@ service Query {
 
 	// Queries a ModelVersion by index.
 	rpc ModelVersion(QueryGetModelVersionRequest) returns (QueryGetModelVersionResponse) {
-		option (google.api.http).get = "/dcl/model/versions/{vid}/{pid}/{software_version}";
+		option (google.api.http).get = "/dcl/model/versions/{vid}/{pid}/{softwareVersion}";
 	}
 
 	// Queries ModelVersions by index.
@@ -73,7 +73,7 @@ message QueryAllModelResponse {
 message QueryGetModelVersionRequest {
 	  int32 vid = 1;
   int32 pid = 2;
-  uint32 software_version = 3;
+  uint32 softwareVersion = 3;
 
 }
 

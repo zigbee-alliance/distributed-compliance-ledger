@@ -201,8 +201,8 @@ echo "Query existent cert"
 result=$(execute_with_retry "dcld query pki x509-cert --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$root_cert_serial_number\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
 
 test_divider
 
@@ -210,8 +210,8 @@ echo "Query existent revoked cert"
 result=$(execute_with_retry "dcld query pki revoked-x509-cert --subject=$leaf_cert_subject --subject-key-id=$leaf_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$leaf_cert_subject_key_id\""
-check_response "$result" "\"serial_number\": \"$leaf_cert_serial_number\""
+check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
 test_divider
 
 
@@ -234,7 +234,7 @@ echo "Query existent proposed revoked cert"
 result=$(execute_with_retry "dcld query pki proposed-x509-root-cert-to-revoke --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$root_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$root_cert_subject_key_id\""
+check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 
 test_divider
 
@@ -242,7 +242,7 @@ echo "Query existent child certs"
 result=$(execute_with_retry "dcld query pki all-child-x509-certs --subject=$root_cert_subject --subject-key-id=$root_cert_subject_key_id")
 echo "$result"
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
-check_response "$result" "\"subject_key_id\": \"$intermediate_cert_subject_key_id\""
+check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 
 test_divider
 
