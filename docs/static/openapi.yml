@@ -3753,7 +3753,7 @@ paths:
                         vendorID:
                           type: integer
                           format: int32
-                    revoke_approvals:
+                    revokeApprovals:
                       type: array
                       items:
                         type: object
@@ -4278,7 +4278,7 @@ paths:
                       vendorID:
                         type: integer
                         format: int32
-                  revoke_approvals:
+                  revokeApprovals:
                     type: array
                     items:
                       type: object
@@ -11487,7 +11487,7 @@ definitions:
                 vendorID:
                   type: integer
                   format: int32
-            revoke_approvals:
+            revokeApprovals:
               type: array
               items:
                 type: object
@@ -12227,7 +12227,7 @@ definitions:
               vendorID:
                 type: integer
                 format: int32
-          revoke_approvals:
+          revokeApprovals:
             type: array
             items:
               type: object
@@ -12459,7 +12459,7 @@ definitions:
           vendorID:
             type: integer
             format: int32
-      revoke_approvals:
+      revokeApprovals:
         type: array
         items:
           type: object
