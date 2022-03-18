@@ -7,7 +7,7 @@ import "pki/certificate.proto";
 
 message RevokedCertificates {
   string subject = 1; 
-  string subject_key_id = 2; 
+  string subjectKeyId = 2; 
   repeated Certificate certs = 3; 
 }
 

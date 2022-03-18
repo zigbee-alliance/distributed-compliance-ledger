@@ -1,0 +1,81 @@
+---
+# Copyright 2022 Samsung Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- name: prepare-genesis | gather local facts
+  setup:
+    filter: ansible_local
+  delegate_to: "{{ item }}"
+  register: key_name_facts
+  loop: "{{ groups['all'] | list }}"
+
+- name: prepare-genesis | init key_names and all_accounts vars
+  set_fact:
+    key_names: {}
+    all_accounts: []
+
+- name: prepare-genesis | append key_name items
+  set_fact:
+    key_names: "{{ key_names | combine(item) }}"
+  loop: "{{ key_name_facts.results | map(attribute='ansible_facts.ansible_local') | list }}"
+
+- name: prepare-genesis | append account items
+  set_fact:
+    all_accounts: "{{ all_accounts + item }}"
+  loop: "{{ hostvars | dict2items | selectattr('value.accounts', 'defined') | map(attribute='value.accounts') }}"
+  no_log: true
+
+- name: prepare-genesis | add genesis accounts
+  include_tasks: add-genesis-account.yml
+  vars:
+    address: "{{ key_names[account.name].address }}"
+    pubkey: "{{ key_names[account.name].pubkey }}"
+    roles: "{{ account.roles }}"
+  loop: "{{ all_accounts }}"
+  loop_control:
+    loop_var: account
+  no_log: true
+
+- name: prepare-genesis | find admin node account
+  set_fact:
+    admin: "{{ item }}"
+  when: "'NodeAdmin' in item.roles"
+  loop: "{{ accounts }}"
+  no_log: true
+
+- name: prepare-genesis | create genesis transactions
+  changed_when: false
+  shell: "echo {{ admin.passphrase }} | {{ dcld.path }} gentx {{ admin.name }} --chain-id {{ chain_id }} --moniker {{ moniker | default(ansible_hostname) }} --home {{ dcld_home }}"
+  no_log: true
+  ignore_errors: true
+
+- name: prepare-genesis | collect gentx files
+  changed_when: false
+  command: "find {{ dcld_home }}/config/gentx/ -maxdepth 1 -type f -name '*.json'"
+  register: gentx_files
+
+# NOTE: synchronize ansible module requires SSH key based authentication which is not supported by molecule docker
+- name: prepare-genesis | collect all validator creation transactions
+  include_tasks: copy-gentx-files.yml
+  loop: "{{ gentx_files.stdout_lines }}"
+  loop_control:
+    loop_var: gentx_file
+
+- name: prepare-genesis | collect genesis transactions
+  changed_when: false
+  command: "{{ dcld.path }} collect-gentxs --home {{ dcld_home }}"
+
+- name: prepare-genesis | validate genesis file
+  changed_when: false
+  command: "{{ dcld.path }} validate-genesis --home {{ dcld_home }}"

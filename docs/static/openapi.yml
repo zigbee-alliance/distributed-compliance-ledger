@@ -4,15 +4,18 @@ info:
   version: master
   license:
     name: Apache 2.0
-    url: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/LICENSE
-  description: |
-    A REST interface for state queries.
-    Tendermint RPC endpoints are available here: https://docs.tendermint.com/v0.34/rpc/.
+    url: >-
+      https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/LICENSE
+  description: >-
+    A REST interface for state queries. 
+
+    Tendermint RPC endpoints are available here:
+    https://docs.tendermint.com/v0.34/rpc/.
 paths:
   /dcl/compliance/certified-models:
     get:
       summary: Queries a list of CertifiedModel items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceCertifiedModelAll
+      operationId: CertifiedModelAll
       responses:
         '200':
           description: A successful response.
@@ -40,7 +43,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -69,6 +72,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -79,9 +84,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -114,7 +121,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -141,10 +148,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/compliance/certified-models/{vid}/{pid}/{softwareVersion}/{certificationType}':
+  /dcl/compliance/certified-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a CertifiedModel by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceCertifiedModel
+      operationId: CertifiedModel
       responses:
         '200':
           description: A successful response.
@@ -172,6 +179,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -182,9 +191,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -210,7 +221,7 @@ paths:
   /dcl/compliance/compliance-info:
     get:
       summary: Queries a list of ComplianceInfo items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceComplianceInfoAll
+      operationId: ComplianceInfoAll
       responses:
         '200':
           description: A successful response.
@@ -265,7 +276,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -294,6 +305,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -304,9 +317,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -339,7 +354,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -366,10 +381,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}':
+  /dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a ComplianceInfo by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceComplianceInfo
+      operationId: ComplianceInfo
       responses:
         '200':
           description: A successful response.
@@ -424,6 +439,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -434,9 +451,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -462,7 +481,7 @@ paths:
   /dcl/compliance/provisional-models:
     get:
       summary: Queries a list of ProvisionalModel items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceProvisionalModelAll
+      operationId: ProvisionalModelAll
       responses:
         '200':
           description: A successful response.
@@ -490,7 +509,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -519,6 +538,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -529,9 +550,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -564,7 +587,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -591,10 +614,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}':
+  /dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a ProvisionalModel by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceProvisionalModel
+      operationId: ProvisionalModel
       responses:
         '200':
           description: A successful response.
@@ -622,6 +645,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -632,9 +657,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -660,7 +687,7 @@ paths:
   /dcl/compliance/revoked-models:
     get:
       summary: Queries a list of RevokedModel items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceRevokedModelAll
+      operationId: RevokedModelAll
       responses:
         '200':
           description: A successful response.
@@ -688,7 +715,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -717,6 +744,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -727,9 +756,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -762,7 +793,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -789,10 +820,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/compliance/revoked-models/{vid}/{pid}/{softwareVersion}/{certificationType}':
+  /dcl/compliance/revoked-models/{vid}/{pid}/{softwareVersion}/{certificationType}:
     get:
       summary: Queries a RevokedModel by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerComplianceRevokedModel
+      operationId: RevokedModel
       responses:
         '200':
           description: A successful response.
@@ -820,6 +851,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -830,9 +863,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -858,7 +893,7 @@ paths:
   /dcl/auth/accounts:
     get:
       summary: Queries a list of account items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccountAll
+      operationId: AccountAll
       responses:
         '200':
           description: A successful response.
@@ -870,15 +905,15 @@ paths:
                 items:
                   type: object
                   properties:
-                    baseAccount:
+                    base_account:
                       type: object
                       properties:
                         address:
                           type: string
-                        pubKey:
+                        pub_key:
                           type: object
                           properties:
-                            '@type':
+                            type_url:
                               type: string
                               description: >-
                                 A URL/resource name that uniquely identifies the
@@ -936,7 +971,12 @@ paths:
                                 scheme) might be
 
                                 used with implementation specific semantics.
-                          additionalProperties: {}
+                            value:
+                              type: string
+                              format: byte
+                              description: >-
+                                Must be a valid serialized protocol buffer of
+                                the above specified type.
                           description: >-
                             `Any` contains an arbitrary serialized protocol
                             buffer message along with a
@@ -984,13 +1024,10 @@ paths:
                              Example 4: Pack and unpack a message in Go
 
                                  foo := &pb.Foo{...}
-                                 any, err := anypb.New(foo)
-                                 if err != nil {
-                                   ...
-                                 }
+                                 any, err := ptypes.MarshalAny(foo)
                                  ...
                                  foo := &pb.Foo{}
-                                 if err := any.UnmarshalTo(foo); err != nil {
+                                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
                                    ...
                                  }
 
@@ -1051,7 +1088,7 @@ paths:
                                   "@type": "type.googleapis.com/google.protobuf.Duration",
                                   "value": "1.212s"
                                 }
-                        accountNumber:
+                        account_number:
                           type: string
                           format: uint64
                         sequence:
@@ -1092,7 +1129,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -1121,6 +1158,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -1131,7 +1170,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -1189,7 +1228,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -1236,13 +1280,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -1333,7 +1374,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -1363,7 +1404,7 @@ paths:
   /dcl/auth/accounts/stat:
     get:
       summary: Queries a accountStat by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccountStat
+      operationId: AccountStat
       responses:
         '200':
           description: A successful response.
@@ -1381,6 +1422,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -1391,7 +1434,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -1449,7 +1492,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -1496,13 +1544,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -1563,10 +1608,10 @@ paths:
                         }
       tags:
         - Query
-  '/dcl/auth/accounts/{address}':
+  /dcl/auth/accounts/{address}:
     get:
       summary: Queries a account by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthAccount
+      operationId: Account
       responses:
         '200':
           description: A successful response.
@@ -1576,15 +1621,15 @@ paths:
               account:
                 type: object
                 properties:
-                  baseAccount:
+                  base_account:
                     type: object
                     properties:
                       address:
                         type: string
-                      pubKey:
+                      pub_key:
                         type: object
                         properties:
-                          '@type':
+                          type_url:
                             type: string
                             description: >-
                               A URL/resource name that uniquely identifies the
@@ -1642,7 +1687,12 @@ paths:
                               scheme) might be
 
                               used with implementation specific semantics.
-                        additionalProperties: {}
+                          value:
+                            type: string
+                            format: byte
+                            description: >-
+                              Must be a valid serialized protocol buffer of the
+                              above specified type.
                         description: >-
                           `Any` contains an arbitrary serialized protocol buffer
                           message along with a
@@ -1689,13 +1739,10 @@ paths:
                            Example 4: Pack and unpack a message in Go
 
                                foo := &pb.Foo{...}
-                               any, err := anypb.New(foo)
-                               if err != nil {
-                                 ...
-                               }
+                               any, err := ptypes.MarshalAny(foo)
                                ...
                                foo := &pb.Foo{}
-                               if err := any.UnmarshalTo(foo); err != nil {
+                               if err := ptypes.UnmarshalAny(any, foo); err != nil {
                                  ...
                                }
 
@@ -1756,7 +1803,7 @@ paths:
                                 "@type": "type.googleapis.com/google.protobuf.Duration",
                                 "value": "1.212s"
                               }
-                      accountNumber:
+                      account_number:
                         type: string
                         format: uint64
                       sequence:
@@ -1799,6 +1846,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -1809,7 +1858,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -1867,7 +1916,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -1914,13 +1968,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -1989,7 +2040,7 @@ paths:
   /dcl/auth/proposed-accounts:
     get:
       summary: Queries a list of pendingAccount items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthPendingAccountAll
+      operationId: PendingAccountAll
       responses:
         '200':
           description: A successful response.
@@ -2004,15 +2055,15 @@ paths:
                     account:
                       type: object
                       properties:
-                        baseAccount:
+                        base_account:
                           type: object
                           properties:
                             address:
                               type: string
-                            pubKey:
+                            pub_key:
                               type: object
                               properties:
-                                '@type':
+                                type_url:
                                   type: string
                                   description: >-
                                     A URL/resource name that uniquely identifies
@@ -2071,7 +2122,12 @@ paths:
                                     empty scheme) might be
 
                                     used with implementation specific semantics.
-                              additionalProperties: {}
+                                value:
+                                  type: string
+                                  format: byte
+                                  description: >-
+                                    Must be a valid serialized protocol buffer
+                                    of the above specified type.
                               description: >-
                                 `Any` contains an arbitrary serialized protocol
                                 buffer message along with a
@@ -2119,13 +2175,10 @@ paths:
                                  Example 4: Pack and unpack a message in Go
 
                                      foo := &pb.Foo{...}
-                                     any, err := anypb.New(foo)
-                                     if err != nil {
-                                       ...
-                                     }
+                                     any, err := ptypes.MarshalAny(foo)
                                      ...
                                      foo := &pb.Foo{}
-                                     if err := any.UnmarshalTo(foo); err != nil {
+                                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
                                        ...
                                      }
 
@@ -2186,7 +2239,7 @@ paths:
                                       "@type": "type.googleapis.com/google.protobuf.Duration",
                                       "value": "1.212s"
                                     }
-                            accountNumber:
+                            account_number:
                               type: string
                               format: uint64
                             sequence:
@@ -2227,7 +2280,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -2256,6 +2309,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -2266,7 +2321,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -2324,7 +2379,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -2371,13 +2431,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -2468,7 +2525,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -2495,10 +2552,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/auth/proposed-accounts/{address}':
+  /dcl/auth/proposed-accounts/{address}:
     get:
       summary: Queries a pendingAccount by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthPendingAccount
+      operationId: PendingAccount
       responses:
         '200':
           description: A successful response.
@@ -2511,15 +2568,15 @@ paths:
                   account:
                     type: object
                     properties:
-                      baseAccount:
+                      base_account:
                         type: object
                         properties:
                           address:
                             type: string
-                          pubKey:
+                          pub_key:
                             type: object
                             properties:
-                              '@type':
+                              type_url:
                                 type: string
                                 description: >-
                                   A URL/resource name that uniquely identifies
@@ -2578,7 +2635,12 @@ paths:
                                   empty scheme) might be
 
                                   used with implementation specific semantics.
-                            additionalProperties: {}
+                              value:
+                                type: string
+                                format: byte
+                                description: >-
+                                  Must be a valid serialized protocol buffer of
+                                  the above specified type.
                             description: >-
                               `Any` contains an arbitrary serialized protocol
                               buffer message along with a
@@ -2626,13 +2688,10 @@ paths:
                                Example 4: Pack and unpack a message in Go
 
                                    foo := &pb.Foo{...}
-                                   any, err := anypb.New(foo)
-                                   if err != nil {
-                                     ...
-                                   }
+                                   any, err := ptypes.MarshalAny(foo)
                                    ...
                                    foo := &pb.Foo{}
-                                   if err := any.UnmarshalTo(foo); err != nil {
+                                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
                                      ...
                                    }
 
@@ -2693,7 +2752,7 @@ paths:
                                     "@type": "type.googleapis.com/google.protobuf.Duration",
                                     "value": "1.212s"
                                   }
-                          accountNumber:
+                          account_number:
                             type: string
                             format: uint64
                           sequence:
@@ -2736,6 +2795,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -2746,7 +2807,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -2804,7 +2865,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -2851,13 +2917,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -2926,8 +2989,7 @@ paths:
   /dcl/auth/proposed-revocation-accounts:
     get:
       summary: Queries a list of pendingAccountRevocation items.
-      operationId: >-
-        ZigbeeallianceDistributedcomplianceledgerDclauthPendingAccountRevocationAll
+      operationId: PendingAccountRevocationAll
       responses:
         '200':
           description: A successful response.
@@ -2956,7 +3018,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -2985,6 +3047,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -2995,7 +3059,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -3053,7 +3117,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -3100,13 +3169,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -3197,7 +3263,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -3224,10 +3290,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/auth/proposed-revocation-accounts/{address}':
+  /dcl/auth/proposed-revocation-accounts/{address}:
     get:
       summary: Queries a pendingAccountRevocation by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclauthPendingAccountRevocation
+      operationId: PendingAccountRevocation
       responses:
         '200':
           description: A successful response.
@@ -3256,6 +3322,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -3266,7 +3334,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -3324,7 +3392,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -3371,13 +3444,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -3446,7 +3516,7 @@ paths:
   /dcl/dclupgrade/approved-upgrades:
     get:
       summary: Queries a list of ApprovedUpgrade items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeApprovedUpgradeAll
+      operationId: ApprovedUpgradeAll
       responses:
         '200':
           description: A successful response.
@@ -3507,7 +3577,7 @@ paths:
 
                             such as a git commit that validators could
                             automatically upgrade to
-                        upgradedClientState:
+                        upgraded_client_state:
                           description: >-
                             Deprecated: UpgradedClientState field has been
                             deprecated. IBC upgrade logic has been
@@ -3517,7 +3587,7 @@ paths:
                             If this field is not empty, an error will be thrown.
                           type: object
                           properties:
-                            '@type':
+                            type_url:
                               type: string
                               description: >-
                                 A URL/resource name that uniquely identifies the
@@ -3575,7 +3645,12 @@ paths:
                                 scheme) might be
 
                                 used with implementation specific semantics.
-                          additionalProperties: {}
+                            value:
+                              type: string
+                              format: byte
+                              description: >-
+                                Must be a valid serialized protocol buffer of
+                                the above specified type.
                       description: >-
                         Plan specifies information about a planned upgrade and
                         when it should occur.
@@ -3584,11 +3659,19 @@ paths:
                     approvals:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -3617,6 +3700,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -3627,7 +3712,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -3685,7 +3770,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -3732,13 +3822,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -3829,7 +3916,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -3856,10 +3943,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/dclupgrade/approved-upgrades/{name}':
+  /dcl/dclupgrade/approved-upgrades/{name}:
     get:
       summary: Queries a ApprovedUpgrade by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeApprovedUpgrade
+      operationId: ApprovedUpgrade
       responses:
         '200':
           description: A successful response.
@@ -3918,7 +4005,7 @@ paths:
 
                           such as a git commit that validators could
                           automatically upgrade to
-                      upgradedClientState:
+                      upgraded_client_state:
                         description: >-
                           Deprecated: UpgradedClientState field has been
                           deprecated. IBC upgrade logic has been
@@ -3928,7 +4015,7 @@ paths:
                           If this field is not empty, an error will be thrown.
                         type: object
                         properties:
-                          '@type':
+                          type_url:
                             type: string
                             description: >-
                               A URL/resource name that uniquely identifies the
@@ -3986,7 +4073,12 @@ paths:
                               scheme) might be
 
                               used with implementation specific semantics.
-                        additionalProperties: {}
+                          value:
+                            type: string
+                            format: byte
+                            description: >-
+                              Must be a valid serialized protocol buffer of the
+                              above specified type.
                     description: >-
                       Plan specifies information about a planned upgrade and
                       when it should occur.
@@ -3995,12 +4087,22 @@ paths:
                   approvals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -4011,7 +4113,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -4069,7 +4171,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -4116,13 +4223,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -4191,7 +4295,7 @@ paths:
   /dcl/dclupgrade/proposed-upgrades:
     get:
       summary: Queries a list of ProposedUpgrade items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeProposedUpgradeAll
+      operationId: ProposedUpgradeAll
       responses:
         '200':
           description: A successful response.
@@ -4252,7 +4356,7 @@ paths:
 
                             such as a git commit that validators could
                             automatically upgrade to
-                        upgradedClientState:
+                        upgraded_client_state:
                           description: >-
                             Deprecated: UpgradedClientState field has been
                             deprecated. IBC upgrade logic has been
@@ -4262,7 +4366,7 @@ paths:
                             If this field is not empty, an error will be thrown.
                           type: object
                           properties:
-                            '@type':
+                            type_url:
                               type: string
                               description: >-
                                 A URL/resource name that uniquely identifies the
@@ -4320,7 +4424,12 @@ paths:
                                 scheme) might be
 
                                 used with implementation specific semantics.
-                          additionalProperties: {}
+                            value:
+                              type: string
+                              format: byte
+                              description: >-
+                                Must be a valid serialized protocol buffer of
+                                the above specified type.
                       description: >-
                         Plan specifies information about a planned upgrade and
                         when it should occur.
@@ -4329,11 +4438,19 @@ paths:
                     approvals:
                       type: array
                       items:
-                        type: string
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -4362,6 +4479,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -4372,7 +4491,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -4430,7 +4549,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -4477,13 +4601,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -4574,7 +4695,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -4601,10 +4722,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/dclupgrade/proposed-upgrades/{name}':
+  /dcl/dclupgrade/proposed-upgrades/{name}:
     get:
       summary: Queries a ProposedUpgrade by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerDclupgradeProposedUpgrade
+      operationId: ProposedUpgrade
       responses:
         '200':
           description: A successful response.
@@ -4663,7 +4784,7 @@ paths:
 
                           such as a git commit that validators could
                           automatically upgrade to
-                      upgradedClientState:
+                      upgraded_client_state:
                         description: >-
                           Deprecated: UpgradedClientState field has been
                           deprecated. IBC upgrade logic has been
@@ -4673,7 +4794,7 @@ paths:
                           If this field is not empty, an error will be thrown.
                         type: object
                         properties:
-                          '@type':
+                          type_url:
                             type: string
                             description: >-
                               A URL/resource name that uniquely identifies the
@@ -4731,7 +4852,12 @@ paths:
                               scheme) might be
 
                               used with implementation specific semantics.
-                        additionalProperties: {}
+                          value:
+                            type: string
+                            format: byte
+                            description: >-
+                              Must be a valid serialized protocol buffer of the
+                              above specified type.
                     description: >-
                       Plan specifies information about a planned upgrade and
                       when it should occur.
@@ -4740,12 +4866,22 @@ paths:
                   approvals:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -4756,7 +4892,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -4814,7 +4950,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -4861,13 +5002,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -4936,7 +5074,7 @@ paths:
   /dcl/model/models:
     get:
       summary: Queries a list of all Model items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelAll
+      operationId: ModelAll
       responses:
         '200':
           description: A successful response.
@@ -4994,7 +5132,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -5023,6 +5161,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5033,9 +5173,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -5068,7 +5210,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -5095,10 +5237,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/model/models/{vid}':
+  /dcl/model/models/{vid}:
     get:
       summary: Queries VendorProducts by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerModelVendorProducts
+      operationId: VendorProducts
       responses:
         '200':
           description: A successful response.
@@ -5128,6 +5270,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5138,9 +5282,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -5149,10 +5295,10 @@ paths:
           format: int32
       tags:
         - Query
-  '/dcl/model/models/{vid}/{pid}':
+  /dcl/model/models/{vid}/{pid}:
     get:
       summary: Queries a Model by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerModelModel
+      operationId: Model
       responses:
         '200':
           description: A successful response.
@@ -5210,6 +5356,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5220,9 +5368,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -5236,10 +5386,10 @@ paths:
           format: int32
       tags:
         - Query
-  '/dcl/model/versions/{vid}/{pid}':
+  /dcl/model/versions/{vid}/{pid}:
     get:
       summary: Queries ModelVersions by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersions
+      operationId: ModelVersions
       responses:
         '200':
           description: A successful response.
@@ -5265,6 +5415,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5275,9 +5427,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -5291,10 +5445,10 @@ paths:
           format: int32
       tags:
         - Query
-  '/dcl/model/versions/{vid}/{pid}/{softwareVersion}':
+  /dcl/model/versions/{vid}/{pid}/{softwareVersion}:
     get:
       summary: Queries a ModelVersion by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerModelModelVersion
+      operationId: ModelVersion
       responses:
         '200':
           description: A successful response.
@@ -5347,6 +5501,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5357,9 +5513,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vid
           in: path
@@ -5381,7 +5539,7 @@ paths:
   /dcl/pki/certificates:
     get:
       summary: Queries a list of ApprovedCertificates items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificatesAll
+      operationId: ApprovedCertificatesAll
       responses:
         '200':
           description: A successful response.
@@ -5437,7 +5595,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -5466,6 +5624,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5476,9 +5636,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -5511,7 +5673,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -5538,11 +5700,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/pki/certificates/{subject}':
+  /dcl/pki/certificates/{subject}:
     get:
       summary: Queries a ApprovedCertificatesBySubject by index.
-      operationId: >-
-        ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificatesBySubject
+      operationId: ApprovedCertificatesBySubject
       responses:
         '200':
           description: A successful response.
@@ -5563,6 +5724,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5573,9 +5736,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: subject
           in: path
@@ -5583,10 +5748,10 @@ paths:
           type: string
       tags:
         - Query
-  '/dcl/pki/certificates/{subject}/{subjectKeyId}':
+  /dcl/pki/certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a ApprovedCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedCertificates
+      operationId: ApprovedCertificates
       responses:
         '200':
           description: A successful response.
@@ -5642,6 +5807,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5652,9 +5819,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: subject
           in: path
@@ -5666,10 +5835,10 @@ paths:
           type: string
       tags:
         - Query
-  '/dcl/pki/child-certificates/{issuer}/{authorityKeyId}':
+  /dcl/pki/child-certificates/{issuer}/{authorityKeyId}:
     get:
       summary: Queries a ChildCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiChildCertificates
+      operationId: ChildCertificates
       responses:
         '200':
           description: A successful response.
@@ -5697,6 +5866,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5707,9 +5878,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: issuer
           in: path
@@ -5724,7 +5897,7 @@ paths:
   /dcl/pki/proposed-certificates:
     get:
       summary: Queries a list of ProposedCertificate items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateAll
+      operationId: ProposedCertificateAll
       responses:
         '200':
           description: A successful response.
@@ -5761,7 +5934,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -5790,6 +5963,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5800,9 +5975,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -5835,7 +6012,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -5862,10 +6039,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/pki/proposed-certificates/{subject}/{subjectKeyId}':
+  /dcl/pki/proposed-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a ProposedCertificate by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificate
+      operationId: ProposedCertificate
       responses:
         '200':
           description: A successful response.
@@ -5902,6 +6079,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -5912,9 +6091,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: subject
           in: path
@@ -5929,8 +6110,7 @@ paths:
   /dcl/pki/proposed-revocation-certificates:
     get:
       summary: Queries a list of ProposedCertificateRevocation items.
-      operationId: >-
-        ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateRevocationAll
+      operationId: ProposedCertificateRevocationAll
       responses:
         '200':
           description: A successful response.
@@ -5961,7 +6141,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -5990,6 +6170,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6000,9 +6182,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -6035,7 +6219,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -6062,11 +6246,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}':
+  /dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a ProposedCertificateRevocation by index.
-      operationId: >-
-        ZigbeeallianceDistributedcomplianceledgerPkiProposedCertificateRevocation
+      operationId: ProposedCertificateRevocation
       responses:
         '200':
           description: A successful response.
@@ -6097,6 +6280,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6107,9 +6292,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: subject
           in: path
@@ -6124,7 +6311,7 @@ paths:
   /dcl/pki/revoked-certificates:
     get:
       summary: Queries a list of RevokedCertificates items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedCertificatesAll
+      operationId: RevokedCertificatesAll
       responses:
         '200':
           description: A successful response.
@@ -6180,7 +6367,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -6209,6 +6396,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6219,9 +6408,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -6254,7 +6445,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -6281,10 +6472,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/pki/revoked-certificates/{subject}/{subjectKeyId}':
+  /dcl/pki/revoked-certificates/{subject}/{subjectKeyId}:
     get:
       summary: Queries a RevokedCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedCertificates
+      operationId: RevokedCertificates
       responses:
         '200':
           description: A successful response.
@@ -6340,6 +6531,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6350,9 +6543,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: subject
           in: path
@@ -6367,7 +6562,7 @@ paths:
   /dcl/pki/revoked-root-certificates:
     get:
       summary: Queries a RevokedRootCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiRevokedRootCertificates
+      operationId: RevokedRootCertificates
       responses:
         '200':
           description: A successful response.
@@ -6391,6 +6586,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6401,15 +6598,17 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       tags:
         - Query
   /dcl/pki/root-certificates:
     get:
       summary: Queries a ApprovedRootCertificates by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerPkiApprovedRootCertificates
+      operationId: ApprovedRootCertificates
       responses:
         '200':
           description: A successful response.
@@ -6433,6 +6632,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6443,15 +6644,17 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       tags:
         - Query
   /dcl/validator/last-powers:
     get:
       summary: Queries a list of lastValidatorPower items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorLastValidatorPowerAll
+      operationId: LastValidatorPowerAll
       responses:
         '200':
           description: A successful response.
@@ -6471,7 +6674,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -6500,6 +6703,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6510,7 +6715,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -6568,7 +6773,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -6615,13 +6825,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -6712,7 +6919,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -6739,10 +6946,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/validator/last-powers/{owner}':
+  /dcl/validator/last-powers/{owner}:
     get:
       summary: Queries a lastValidatorPower by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorLastValidatorPower
+      operationId: LastValidatorPower
       responses:
         '200':
           description: A successful response.
@@ -6762,6 +6969,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -6772,7 +6981,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -6830,7 +7039,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -6877,13 +7091,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -6952,7 +7163,7 @@ paths:
   /dcl/validator/nodes:
     get:
       summary: Queries a list of validator items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorValidatorAll
+      operationId: ValidatorAll
       responses:
         '200':
           description: A successful response.
@@ -6986,7 +7197,7 @@ paths:
                     pubKey:
                       type: object
                       properties:
-                        '@type':
+                        type_url:
                           type: string
                           description: >-
                             A URL/resource name that uniquely identifies the
@@ -7044,7 +7255,12 @@ paths:
                             scheme) might be
 
                             used with implementation specific semantics.
-                      additionalProperties: {}
+                        value:
+                          type: string
+                          format: byte
+                          description: >-
+                            Must be a valid serialized protocol buffer of the
+                            above specified type.
                       description: >-
                         `Any` contains an arbitrary serialized protocol buffer
                         message along with a
@@ -7091,13 +7307,10 @@ paths:
                          Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := anypb.New(foo)
-                             if err != nil {
-                               ...
-                             }
+                             any, err := ptypes.MarshalAny(foo)
                              ...
                              foo := &pb.Foo{}
-                             if err := any.UnmarshalTo(foo); err != nil {
+                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
                                ...
                              }
 
@@ -7172,7 +7385,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -7201,6 +7414,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -7211,7 +7426,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -7269,7 +7484,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -7316,13 +7536,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -7413,7 +7630,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -7440,10 +7657,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/validator/nodes/{owner}':
+  /dcl/validator/nodes/{owner}:
     get:
       summary: Queries a validator by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerValidatorValidator
+      operationId: Validator
       responses:
         '200':
           description: A successful response.
@@ -7475,7 +7692,7 @@ paths:
                   pubKey:
                     type: object
                     properties:
-                      '@type':
+                      type_url:
                         type: string
                         description: >-
                           A URL/resource name that uniquely identifies the type
@@ -7533,7 +7750,12 @@ paths:
                           scheme) might be
 
                           used with implementation specific semantics.
-                    additionalProperties: {}
+                      value:
+                        type: string
+                        format: byte
+                        description: >-
+                          Must be a valid serialized protocol buffer of the
+                          above specified type.
                     description: >-
                       `Any` contains an arbitrary serialized protocol buffer
                       message along with a
@@ -7580,13 +7802,10 @@ paths:
                        Example 4: Pack and unpack a message in Go
 
                            foo := &pb.Foo{...}
-                           any, err := anypb.New(foo)
-                           if err != nil {
-                             ...
-                           }
+                           any, err := ptypes.MarshalAny(foo)
                            ...
                            foo := &pb.Foo{}
-                           if err := any.UnmarshalTo(foo); err != nil {
+                           if err := ptypes.UnmarshalAny(any, foo); err != nil {
                              ...
                            }
 
@@ -7661,6 +7880,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -7671,7 +7892,7 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -7729,7 +7950,12 @@ paths:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -7776,13 +8002,10 @@ paths:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -7851,7 +8074,7 @@ paths:
   /dcl/vendorinfo/vendors:
     get:
       summary: Queries a list of vendorInfo items.
-      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfoAll
+      operationId: VendorInfoAll
       responses:
         '200':
           description: A successful response.
@@ -7879,7 +8102,7 @@ paths:
               pagination:
                 type: object
                 properties:
-                  nextKey:
+                  next_key:
                     type: string
                     format: byte
                     title: |-
@@ -7908,6 +8131,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -7918,9 +8143,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: pagination.key
           description: |-
@@ -7953,7 +8180,7 @@ paths:
           required: false
           type: string
           format: uint64
-        - name: pagination.countTotal
+        - name: pagination.count_total
           description: >-
             count_total is set to true  to indicate that the result set should
             include
@@ -7980,10 +8207,10 @@ paths:
           type: boolean
       tags:
         - Query
-  '/dcl/vendorinfo/vendors/{vendorID}':
+  /dcl/vendorinfo/vendors/{vendorID}:
     get:
       summary: Queries a vendorInfo by index.
-      operationId: ZigbeeallianceDistributedcomplianceledgerVendorinfoVendorInfo
+      operationId: VendorInfo
       responses:
         '200':
           description: A successful response.
@@ -8011,6 +8238,8 @@ paths:
           schema:
             type: object
             properties:
+              error:
+                type: string
               code:
                 type: integer
                 format: int32
@@ -8021,9 +8250,11 @@ paths:
                 items:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
       parameters:
         - name: vendorID
           in: path
@@ -8033,6 +8264,411 @@ paths:
       tags:
         - Query
 definitions:
+  cosmos.base.query.v1beta1.PageRequest:
+    type: object
+    properties:
+      key:
+        type: string
+        format: byte
+        description: |-
+          key is a value returned in PageResponse.next_key to begin
+          querying the next page most efficiently. Only one of offset or key
+          should be set.
+      offset:
+        type: string
+        format: uint64
+        description: |-
+          offset is a numeric offset that can be used when key is unavailable.
+          It is less efficient than using key. Only one of offset or key should
+          be set.
+      limit:
+        type: string
+        format: uint64
+        description: >-
+          limit is the total number of results to be returned in the result
+          page.
+
+          If left empty it will default to a value to be set by each app.
+      count_total:
+        type: boolean
+        description: >-
+          count_total is set to true  to indicate that the result set should
+          include
+
+          a count of the total number of items available for pagination in UIs.
+
+          count_total is only respected when offset is used. It is ignored when
+          key
+
+          is set.
+      reverse:
+        type: boolean
+        description: >-
+          reverse is set to true if results are to be returned in the descending
+          order.
+
+
+          Since: cosmos-sdk 0.43
+    description: |-
+      message SomeRequest {
+               Foo some_parameter = 1;
+               PageRequest pagination = 2;
+       }
+    title: |-
+      PageRequest is to be embedded in gRPC request messages for efficient
+      pagination. Ex:
+  cosmos.base.query.v1beta1.PageResponse:
+    type: object
+    properties:
+      next_key:
+        type: string
+        format: byte
+        title: |-
+          next_key is the key to be passed to PageRequest.key to
+          query the next page most efficiently
+      total:
+        type: string
+        format: uint64
+        title: |-
+          total is total number of results available if PageRequest.count_total
+          was set, its value is undefined otherwise
+    description: |-
+      PageResponse is to be embedded in gRPC response messages where the
+      corresponding request message has used PageRequest.
+
+       message SomeResponse {
+               repeated Bar results = 1;
+               PageResponse page = 2;
+       }
+  google.protobuf.Any:
+    type: object
+    properties:
+      type_url:
+        type: string
+        description: >-
+          A URL/resource name that uniquely identifies the type of the
+          serialized
+
+          protocol buffer message. This string must contain at least
+
+          one "/" character. The last segment of the URL's path must represent
+
+          the fully qualified name of the type (as in
+
+          `path/google.protobuf.Duration`). The name should be in a canonical
+          form
+
+          (e.g., leading "." is not accepted).
+
+
+          In practice, teams usually precompile into the binary all types that
+          they
+
+          expect it to use in the context of Any. However, for URLs which use
+          the
+
+          scheme `http`, `https`, or no scheme, one can optionally set up a type
+
+          server that maps type URLs to message definitions as follows:
+
+
+          * If no scheme is provided, `https` is assumed.
+
+          * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+            value in binary format, or produce an error.
+          * Applications are allowed to cache lookup results based on the
+            URL, or have them precompiled into a binary to avoid any
+            lookup. Therefore, binary compatibility needs to be preserved
+            on changes to types. (Use versioned type names to manage
+            breaking changes.)
+
+          Note: this functionality is not currently available in the official
+
+          protobuf release, and it is not used for type URLs beginning with
+
+          type.googleapis.com.
+
+
+          Schemes other than `http`, `https` (or the empty scheme) might be
+
+          used with implementation specific semantics.
+      value:
+        type: string
+        format: byte
+        description: >-
+          Must be a valid serialized protocol buffer of the above specified
+          type.
+    description: >-
+      `Any` contains an arbitrary serialized protocol buffer message along with
+      a
+
+      URL that describes the type of the serialized message.
+
+
+      Protobuf library provides support to pack/unpack Any values in the form
+
+      of utility functions or additional generated methods of the Any type.
+
+
+      Example 1: Pack and unpack a message in C++.
+
+          Foo foo = ...;
+          Any any;
+          any.PackFrom(foo);
+          ...
+          if (any.UnpackTo(&foo)) {
+            ...
+          }
+
+      Example 2: Pack and unpack a message in Java.
+
+          Foo foo = ...;
+          Any any = Any.pack(foo);
+          ...
+          if (any.is(Foo.class)) {
+            foo = any.unpack(Foo.class);
+          }
+
+       Example 3: Pack and unpack a message in Python.
+
+          foo = Foo(...)
+          any = Any()
+          any.Pack(foo)
+          ...
+          if any.Is(Foo.DESCRIPTOR):
+            any.Unpack(foo)
+            ...
+
+       Example 4: Pack and unpack a message in Go
+
+           foo := &pb.Foo{...}
+           any, err := ptypes.MarshalAny(foo)
+           ...
+           foo := &pb.Foo{}
+           if err := ptypes.UnmarshalAny(any, foo); err != nil {
+             ...
+           }
+
+      The pack methods provided by protobuf library will by default use
+
+      'type.googleapis.com/full.type.name' as the type URL and the unpack
+
+      methods only use the fully qualified type name after the last '/'
+
+      in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+      name "y.z".
+
+
+
+      JSON
+
+      ====
+
+      The JSON representation of an `Any` value uses the regular
+
+      representation of the deserialized, embedded message, with an
+
+      additional field `@type` which contains the type URL. Example:
+
+          package google.profile;
+          message Person {
+            string first_name = 1;
+            string last_name = 2;
+          }
+
+          {
+            "@type": "type.googleapis.com/google.profile.Person",
+            "firstName": <string>,
+            "lastName": <string>
+          }
+
+      If the embedded message type is well-known and has a custom JSON
+
+      representation, that representation will be embedded adding a field
+
+      `value` which holds the custom JSON in addition to the `@type`
+
+      field. Example (for message [google.protobuf.Duration][]):
+
+          {
+            "@type": "type.googleapis.com/google.protobuf.Duration",
+            "value": "1.212s"
+          }
+  grpc.gateway.runtime.Error:
+    type: object
+    properties:
+      error:
+        type: string
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          properties:
+            type_url:
+              type: string
+              description: >-
+                A URL/resource name that uniquely identifies the type of the
+                serialized
+
+                protocol buffer message. This string must contain at least
+
+                one "/" character. The last segment of the URL's path must
+                represent
+
+                the fully qualified name of the type (as in
+
+                `path/google.protobuf.Duration`). The name should be in a
+                canonical form
+
+                (e.g., leading "." is not accepted).
+
+
+                In practice, teams usually precompile into the binary all types
+                that they
+
+                expect it to use in the context of Any. However, for URLs which
+                use the
+
+                scheme `http`, `https`, or no scheme, one can optionally set up
+                a type
+
+                server that maps type URLs to message definitions as follows:
+
+
+                * If no scheme is provided, `https` is assumed.
+
+                * An HTTP GET on the URL must yield a [google.protobuf.Type][]
+                  value in binary format, or produce an error.
+                * Applications are allowed to cache lookup results based on the
+                  URL, or have them precompiled into a binary to avoid any
+                  lookup. Therefore, binary compatibility needs to be preserved
+                  on changes to types. (Use versioned type names to manage
+                  breaking changes.)
+
+                Note: this functionality is not currently available in the
+                official
+
+                protobuf release, and it is not used for type URLs beginning
+                with
+
+                type.googleapis.com.
+
+
+                Schemes other than `http`, `https` (or the empty scheme) might
+                be
+
+                used with implementation specific semantics.
+            value:
+              type: string
+              format: byte
+              description: >-
+                Must be a valid serialized protocol buffer of the above
+                specified type.
+          description: >-
+            `Any` contains an arbitrary serialized protocol buffer message along
+            with a
+
+            URL that describes the type of the serialized message.
+
+
+            Protobuf library provides support to pack/unpack Any values in the
+            form
+
+            of utility functions or additional generated methods of the Any
+            type.
+
+
+            Example 1: Pack and unpack a message in C++.
+
+                Foo foo = ...;
+                Any any;
+                any.PackFrom(foo);
+                ...
+                if (any.UnpackTo(&foo)) {
+                  ...
+                }
+
+            Example 2: Pack and unpack a message in Java.
+
+                Foo foo = ...;
+                Any any = Any.pack(foo);
+                ...
+                if (any.is(Foo.class)) {
+                  foo = any.unpack(Foo.class);
+                }
+
+             Example 3: Pack and unpack a message in Python.
+
+                foo = Foo(...)
+                any = Any()
+                any.Pack(foo)
+                ...
+                if any.Is(Foo.DESCRIPTOR):
+                  any.Unpack(foo)
+                  ...
+
+             Example 4: Pack and unpack a message in Go
+
+                 foo := &pb.Foo{...}
+                 any, err := ptypes.MarshalAny(foo)
+                 ...
+                 foo := &pb.Foo{}
+                 if err := ptypes.UnmarshalAny(any, foo); err != nil {
+                   ...
+                 }
+
+            The pack methods provided by protobuf library will by default use
+
+            'type.googleapis.com/full.type.name' as the type URL and the unpack
+
+            methods only use the fully qualified type name after the last '/'
+
+            in the type URL, for example "foo.bar.com/x/y.z" will yield type
+
+            name "y.z".
+
+
+
+            JSON
+
+            ====
+
+            The JSON representation of an `Any` value uses the regular
+
+            representation of the deserialized, embedded message, with an
+
+            additional field `@type` which contains the type URL. Example:
+
+                package google.profile;
+                message Person {
+                  string first_name = 1;
+                  string last_name = 2;
+                }
+
+                {
+                  "@type": "type.googleapis.com/google.profile.Person",
+                  "firstName": <string>,
+                  "lastName": <string>
+                }
+
+            If the embedded message type is well-known and has a custom JSON
+
+            representation, that representation will be embedded adding a field
+
+            `value` which holds the custom JSON in addition to the `@type`
+
+            field. Example (for message [google.protobuf.Duration][]):
+
+                {
+                  "@type": "type.googleapis.com/google.protobuf.Duration",
+                  "value": "1.212s"
+                }
   zigbeealliance.distributedcomplianceledger.compliance.CertifiedModel:
     type: object
     properties:
@@ -8105,12 +8741,6 @@ definitions:
             cDVersionNumber:
               type: integer
               format: int64
-  zigbeealliance.distributedcomplianceledger.compliance.MsgCertifyModelResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.compliance.MsgProvisionModelResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.compliance.MsgRevokeModelResponse:
-    type: object
   zigbeealliance.distributedcomplianceledger.compliance.ProvisionalModel:
     type: object
     properties:
@@ -8151,7 +8781,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -8224,7 +8854,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -8270,7 +8900,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -8316,7 +8946,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -8462,10 +9092,10 @@ definitions:
     properties:
       address:
         type: string
-      pubKey:
+      pub_key:
         type: object
         properties:
-          '@type':
+          type_url:
             type: string
             description: >-
               A URL/resource name that uniquely identifies the type of the
@@ -8517,7 +9147,12 @@ definitions:
               Schemes other than `http`, `https` (or the empty scheme) might be
 
               used with implementation specific semantics.
-        additionalProperties: {}
+          value:
+            type: string
+            format: byte
+            description: >-
+              Must be a valid serialized protocol buffer of the above specified
+              type.
         description: >-
           `Any` contains an arbitrary serialized protocol buffer message along
           with a
@@ -8563,13 +9198,10 @@ definitions:
            Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := anypb.New(foo)
-               if err != nil {
-                 ...
-               }
+               any, err := ptypes.MarshalAny(foo)
                ...
                foo := &pb.Foo{}
-               if err := any.UnmarshalTo(foo); err != nil {
+               if err := ptypes.UnmarshalAny(any, foo); err != nil {
                  ...
                }
 
@@ -8619,7 +9251,7 @@ definitions:
                 "@type": "type.googleapis.com/google.protobuf.Duration",
                 "value": "1.212s"
               }
-      accountNumber:
+      account_number:
         type: string
         format: uint64
       sequence:
@@ -8636,15 +9268,15 @@ definitions:
   zigbeealliance.distributedcomplianceledger.dclauth.Account:
     type: object
     properties:
-      baseAccount:
+      base_account:
         type: object
         properties:
           address:
             type: string
-          pubKey:
+          pub_key:
             type: object
             properties:
-              '@type':
+              type_url:
                 type: string
                 description: >-
                   A URL/resource name that uniquely identifies the type of the
@@ -8699,7 +9331,12 @@ definitions:
                   be
 
                   used with implementation specific semantics.
-            additionalProperties: {}
+              value:
+                type: string
+                format: byte
+                description: >-
+                  Must be a valid serialized protocol buffer of the above
+                  specified type.
             description: >-
               `Any` contains an arbitrary serialized protocol buffer message
               along with a
@@ -8746,13 +9383,10 @@ definitions:
                Example 4: Pack and unpack a message in Go
 
                    foo := &pb.Foo{...}
-                   any, err := anypb.New(foo)
-                   if err != nil {
-                     ...
-                   }
+                   any, err := ptypes.MarshalAny(foo)
                    ...
                    foo := &pb.Foo{}
-                   if err := any.UnmarshalTo(foo); err != nil {
+                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
                      ...
                    }
 
@@ -8804,7 +9438,7 @@ definitions:
                     "@type": "type.googleapis.com/google.protobuf.Duration",
                     "value": "1.212s"
                   }
-          accountNumber:
+          account_number:
             type: string
             format: uint64
           sequence:
@@ -8858,29 +9492,21 @@ definitions:
         format: int64
       info:
         type: string
-  zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccountResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccountResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccountResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccountResponse:
-    type: object
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccount:
     type: object
     properties:
       account:
         type: object
         properties:
-          baseAccount:
+          base_account:
             type: object
             properties:
               address:
                 type: string
-              pubKey:
+              pub_key:
                 type: object
                 properties:
-                  '@type':
+                  type_url:
                     type: string
                     description: >-
                       A URL/resource name that uniquely identifies the type of
@@ -8937,7 +9563,12 @@ definitions:
                       might be
 
                       used with implementation specific semantics.
-                additionalProperties: {}
+                  value:
+                    type: string
+                    format: byte
+                    description: >-
+                      Must be a valid serialized protocol buffer of the above
+                      specified type.
                 description: >-
                   `Any` contains an arbitrary serialized protocol buffer message
                   along with a
@@ -8984,13 +9615,10 @@ definitions:
                    Example 4: Pack and unpack a message in Go
 
                        foo := &pb.Foo{...}
-                       any, err := anypb.New(foo)
-                       if err != nil {
-                         ...
-                       }
+                       any, err := ptypes.MarshalAny(foo)
                        ...
                        foo := &pb.Foo{}
-                       if err := any.UnmarshalTo(foo); err != nil {
+                       if err := ptypes.UnmarshalAny(any, foo); err != nil {
                          ...
                        }
 
@@ -9046,7 +9674,7 @@ definitions:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
-              accountNumber:
+              account_number:
                 type: string
                 format: uint64
               sequence:
@@ -9109,15 +9737,15 @@ definitions:
         items:
           type: object
           properties:
-            baseAccount:
+            base_account:
               type: object
               properties:
                 address:
                   type: string
-                pubKey:
+                pub_key:
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -9175,7 +9803,12 @@ definitions:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
                   description: >-
                     `Any` contains an arbitrary serialized protocol buffer
                     message along with a
@@ -9222,13 +9855,10 @@ definitions:
                      Example 4: Pack and unpack a message in Go
 
                          foo := &pb.Foo{...}
-                         any, err := anypb.New(foo)
-                         if err != nil {
-                           ...
-                         }
+                         any, err := ptypes.MarshalAny(foo)
                          ...
                          foo := &pb.Foo{}
-                         if err := any.UnmarshalTo(foo); err != nil {
+                         if err := ptypes.UnmarshalAny(any, foo); err != nil {
                            ...
                          }
 
@@ -9287,7 +9917,7 @@ definitions:
                           "@type": "type.googleapis.com/google.protobuf.Duration",
                           "value": "1.212s"
                         }
-                accountNumber:
+                account_number:
                   type: string
                   format: uint64
                 sequence:
@@ -9328,7 +9958,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -9361,15 +9991,15 @@ definitions:
             account:
               type: object
               properties:
-                baseAccount:
+                base_account:
                   type: object
                   properties:
                     address:
                       type: string
-                    pubKey:
+                    pub_key:
                       type: object
                       properties:
-                        '@type':
+                        type_url:
                           type: string
                           description: >-
                             A URL/resource name that uniquely identifies the
@@ -9427,7 +10057,12 @@ definitions:
                             scheme) might be
 
                             used with implementation specific semantics.
-                      additionalProperties: {}
+                        value:
+                          type: string
+                          format: byte
+                          description: >-
+                            Must be a valid serialized protocol buffer of the
+                            above specified type.
                       description: >-
                         `Any` contains an arbitrary serialized protocol buffer
                         message along with a
@@ -9474,13 +10109,10 @@ definitions:
                          Example 4: Pack and unpack a message in Go
 
                              foo := &pb.Foo{...}
-                             any, err := anypb.New(foo)
-                             if err != nil {
-                               ...
-                             }
+                             any, err := ptypes.MarshalAny(foo)
                              ...
                              foo := &pb.Foo{}
-                             if err := any.UnmarshalTo(foo); err != nil {
+                             if err := ptypes.UnmarshalAny(any, foo); err != nil {
                                ...
                              }
 
@@ -9541,7 +10173,7 @@ definitions:
                               "@type": "type.googleapis.com/google.protobuf.Duration",
                               "value": "1.212s"
                             }
-                    accountNumber:
+                    account_number:
                       type: string
                       format: uint64
                     sequence:
@@ -9582,7 +10214,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -9629,7 +10261,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -9657,15 +10289,15 @@ definitions:
       account:
         type: object
         properties:
-          baseAccount:
+          base_account:
             type: object
             properties:
               address:
                 type: string
-              pubKey:
+              pub_key:
                 type: object
                 properties:
-                  '@type':
+                  type_url:
                     type: string
                     description: >-
                       A URL/resource name that uniquely identifies the type of
@@ -9722,7 +10354,12 @@ definitions:
                       might be
 
                       used with implementation specific semantics.
-                additionalProperties: {}
+                  value:
+                    type: string
+                    format: byte
+                    description: >-
+                      Must be a valid serialized protocol buffer of the above
+                      specified type.
                 description: >-
                   `Any` contains an arbitrary serialized protocol buffer message
                   along with a
@@ -9769,13 +10406,10 @@ definitions:
                    Example 4: Pack and unpack a message in Go
 
                        foo := &pb.Foo{...}
-                       any, err := anypb.New(foo)
-                       if err != nil {
-                         ...
-                       }
+                       any, err := ptypes.MarshalAny(foo)
                        ...
                        foo := &pb.Foo{}
-                       if err := any.UnmarshalTo(foo); err != nil {
+                       if err := ptypes.UnmarshalAny(any, foo); err != nil {
                          ...
                        }
 
@@ -9831,7 +10465,7 @@ definitions:
                         "@type": "type.googleapis.com/google.protobuf.Duration",
                         "value": "1.212s"
                       }
-              accountNumber:
+              account_number:
                 type: string
                 format: uint64
               sequence:
@@ -9887,15 +10521,15 @@ definitions:
           account:
             type: object
             properties:
-              baseAccount:
+              base_account:
                 type: object
                 properties:
                   address:
                     type: string
-                  pubKey:
+                  pub_key:
                     type: object
                     properties:
-                      '@type':
+                      type_url:
                         type: string
                         description: >-
                           A URL/resource name that uniquely identifies the type
@@ -9953,7 +10587,12 @@ definitions:
                           scheme) might be
 
                           used with implementation specific semantics.
-                    additionalProperties: {}
+                      value:
+                        type: string
+                        format: byte
+                        description: >-
+                          Must be a valid serialized protocol buffer of the
+                          above specified type.
                     description: >-
                       `Any` contains an arbitrary serialized protocol buffer
                       message along with a
@@ -10000,13 +10639,10 @@ definitions:
                        Example 4: Pack and unpack a message in Go
 
                            foo := &pb.Foo{...}
-                           any, err := anypb.New(foo)
-                           if err != nil {
-                             ...
-                           }
+                           any, err := ptypes.MarshalAny(foo)
                            ...
                            foo := &pb.Foo{}
-                           if err := any.UnmarshalTo(foo); err != nil {
+                           if err := ptypes.UnmarshalAny(any, foo); err != nil {
                              ...
                            }
 
@@ -10065,7 +10701,7 @@ definitions:
                             "@type": "type.googleapis.com/google.protobuf.Duration",
                             "value": "1.212s"
                           }
-                  accountNumber:
+                  account_number:
                     type: string
                     format: uint64
                   sequence:
@@ -10167,7 +10803,7 @@ definitions:
         title: |-
           Any application specific upgrade info to be included on-chain
           such as a git commit that validators could automatically upgrade to
-      upgradedClientState:
+      upgraded_client_state:
         description: >-
           Deprecated: UpgradedClientState field has been deprecated. IBC upgrade
           logic has been
@@ -10177,7 +10813,7 @@ definitions:
           If this field is not empty, an error will be thrown.
         type: object
         properties:
-          '@type':
+          type_url:
             type: string
             description: >-
               A URL/resource name that uniquely identifies the type of the
@@ -10229,11 +10865,16 @@ definitions:
               Schemes other than `http`, `https` (or the empty scheme) might be
 
               used with implementation specific semantics.
-        additionalProperties: {}
+          value:
+            type: string
+            format: byte
+            description: >-
+              Must be a valid serialized protocol buffer of the above specified
+              type.
     description: >-
       Plan specifies information about a planned upgrade and when it should
       occur.
-    zigbeealliance.distributedcomplianceledger.dclupgrade.ApprovedUpgrade:
+  zigbeealliance.distributedcomplianceledger.dclupgrade.ApprovedUpgrade:
     type: object
     properties:
       plan:
@@ -10284,7 +10925,7 @@ definitions:
 
               such as a git commit that validators could automatically upgrade
               to
-          upgradedClientState:
+          upgraded_client_state:
             description: >-
               Deprecated: UpgradedClientState field has been deprecated. IBC
               upgrade logic has been
@@ -10294,7 +10935,7 @@ definitions:
               If this field is not empty, an error will be thrown.
             type: object
             properties:
-              '@type':
+              type_url:
                 type: string
                 description: >-
                   A URL/resource name that uniquely identifies the type of the
@@ -10349,7 +10990,12 @@ definitions:
                   be
 
                   used with implementation specific semantics.
-            additionalProperties: {}
+              value:
+                type: string
+                format: byte
+                description: >-
+                  Must be a valid serialized protocol buffer of the above
+                  specified type.
         description: >-
           Plan specifies information about a planned upgrade and when it should
           occur.
@@ -10358,11 +11004,25 @@ definitions:
       approvals:
         type: array
         items:
-          type: string
-  zigbeealliance.distributedcomplianceledger.dclupgrade.MsgApproveUpgradeResponse:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+  zigbeealliance.distributedcomplianceledger.dclupgrade.Grant:
     type: object
-  zigbeealliance.distributedcomplianceledger.dclupgrade.MsgProposeUpgradeResponse:
-    type: object
+    properties:
+      address:
+        type: string
+      time:
+        type: string
+        format: int64
+      info:
+        type: string
   zigbeealliance.distributedcomplianceledger.dclupgrade.ProposedUpgrade:
     type: object
     properties:
@@ -10414,7 +11074,7 @@ definitions:
 
               such as a git commit that validators could automatically upgrade
               to
-          upgradedClientState:
+          upgraded_client_state:
             description: >-
               Deprecated: UpgradedClientState field has been deprecated. IBC
               upgrade logic has been
@@ -10424,7 +11084,7 @@ definitions:
               If this field is not empty, an error will be thrown.
             type: object
             properties:
-              '@type':
+              type_url:
                 type: string
                 description: >-
                   A URL/resource name that uniquely identifies the type of the
@@ -10479,7 +11139,12 @@ definitions:
                   be
 
                   used with implementation specific semantics.
-            additionalProperties: {}
+              value:
+                type: string
+                format: byte
+                description: >-
+                  Must be a valid serialized protocol buffer of the above
+                  specified type.
         description: >-
           Plan specifies information about a planned upgrade and when it should
           occur.
@@ -10488,8 +11153,16 @@ definitions:
       approvals:
         type: array
         items:
-          type: string
-    zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllApprovedUpgradeResponse:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
+  zigbeealliance.distributedcomplianceledger.dclupgrade.QueryAllApprovedUpgradeResponse:
     type: object
     properties:
       approvedUpgrade:
@@ -10546,7 +11219,7 @@ definitions:
 
                     such as a git commit that validators could automatically
                     upgrade to
-                upgradedClientState:
+                upgraded_client_state:
                   description: >-
                     Deprecated: UpgradedClientState field has been deprecated.
                     IBC upgrade logic has been
@@ -10556,7 +11229,7 @@ definitions:
                     If this field is not empty, an error will be thrown.
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -10614,7 +11287,12 @@ definitions:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
               description: >-
                 Plan specifies information about a planned upgrade and when it
                 should occur.
@@ -10623,11 +11301,19 @@ definitions:
             approvals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -10706,7 +11392,7 @@ definitions:
 
                     such as a git commit that validators could automatically
                     upgrade to
-                upgradedClientState:
+                upgraded_client_state:
                   description: >-
                     Deprecated: UpgradedClientState field has been deprecated.
                     IBC upgrade logic has been
@@ -10716,7 +11402,7 @@ definitions:
                     If this field is not empty, an error will be thrown.
                   type: object
                   properties:
-                    '@type':
+                    type_url:
                       type: string
                       description: >-
                         A URL/resource name that uniquely identifies the type of
@@ -10774,7 +11460,12 @@ definitions:
                         might be
 
                         used with implementation specific semantics.
-                  additionalProperties: {}
+                    value:
+                      type: string
+                      format: byte
+                      description: >-
+                        Must be a valid serialized protocol buffer of the above
+                        specified type.
               description: >-
                 Plan specifies information about a planned upgrade and when it
                 should occur.
@@ -10783,11 +11474,19 @@ definitions:
             approvals:
               type: array
               items:
-                type: string
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -10809,7 +11508,7 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-    zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetApprovedUpgradeResponse:
+  zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetApprovedUpgradeResponse:
     type: object
     properties:
       approvedUpgrade:
@@ -10863,7 +11562,7 @@ definitions:
 
                   such as a git commit that validators could automatically
                   upgrade to
-              upgradedClientState:
+              upgraded_client_state:
                 description: >-
                   Deprecated: UpgradedClientState field has been deprecated. IBC
                   upgrade logic has been
@@ -10873,7 +11572,7 @@ definitions:
                   If this field is not empty, an error will be thrown.
                 type: object
                 properties:
-                  '@type':
+                  type_url:
                     type: string
                     description: >-
                       A URL/resource name that uniquely identifies the type of
@@ -10930,7 +11629,12 @@ definitions:
                       might be
 
                       used with implementation specific semantics.
-                additionalProperties: {}
+                  value:
+                    type: string
+                    format: byte
+                    description: >-
+                      Must be a valid serialized protocol buffer of the above
+                      specified type.
             description: >-
               Plan specifies information about a planned upgrade and when it
               should occur.
@@ -10939,7 +11643,15 @@ definitions:
           approvals:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.dclupgrade.QueryGetProposedUpgradeResponse:
     type: object
     properties:
@@ -10994,7 +11706,7 @@ definitions:
 
                   such as a git commit that validators could automatically
                   upgrade to
-              upgradedClientState:
+              upgraded_client_state:
                 description: >-
                   Deprecated: UpgradedClientState field has been deprecated. IBC
                   upgrade logic has been
@@ -11004,7 +11716,7 @@ definitions:
                   If this field is not empty, an error will be thrown.
                 type: object
                 properties:
-                  '@type':
+                  type_url:
                     type: string
                     description: >-
                       A URL/resource name that uniquely identifies the type of
@@ -11061,7 +11773,12 @@ definitions:
                       might be
 
                       used with implementation specific semantics.
-                additionalProperties: {}
+                  value:
+                    type: string
+                    format: byte
+                    description: >-
+                      Must be a valid serialized protocol buffer of the above
+                      specified type.
             description: >-
               Plan specifies information about a planned upgrade and when it
               should occur.
@@ -11070,7 +11787,15 @@ definitions:
           approvals:
             type: array
             items:
-              type: string
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.model.Model:
     type: object
     properties:
@@ -11172,16 +11897,6 @@ definitions:
         items:
           type: integer
           format: int64
-  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgCreateModelVersionResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgDeleteModelResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.model.MsgUpdateModelVersionResponse:
-    type: object
   zigbeealliance.distributedcomplianceledger.model.Product:
     type: object
     properties:
@@ -11246,7 +11961,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -11550,18 +12265,6 @@ definitions:
         format: int64
       info:
         type: string
-  zigbeealliance.distributedcomplianceledger.pki.MsgAddX509CertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgApproveAddX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgApproveRevokeX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgProposeAddX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgProposeRevokeX509RootCertResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.pki.MsgRevokeX509CertResponse:
-    type: object
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificate:
     type: object
     properties:
@@ -11658,7 +12361,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -11713,7 +12416,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -11762,7 +12465,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -11836,7 +12539,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -12142,8 +12845,6 @@ definitions:
       power:
         type: integer
         format: int32
-  zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidatorResponse:
-    type: object
   zigbeealliance.distributedcomplianceledger.validator.QueryAllLastValidatorPowerResponse:
     type: object
     properties:
@@ -12160,7 +12861,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -12212,7 +12913,7 @@ definitions:
             pubKey:
               type: object
               properties:
-                '@type':
+                type_url:
                   type: string
                   description: >-
                     A URL/resource name that uniquely identifies the type of the
@@ -12269,7 +12970,12 @@ definitions:
                     might be
 
                     used with implementation specific semantics.
-              additionalProperties: {}
+                value:
+                  type: string
+                  format: byte
+                  description: >-
+                    Must be a valid serialized protocol buffer of the above
+                    specified type.
               description: >-
                 `Any` contains an arbitrary serialized protocol buffer message
                 along with a
@@ -12316,13 +13022,10 @@ definitions:
                  Example 4: Pack and unpack a message in Go
 
                      foo := &pb.Foo{...}
-                     any, err := anypb.New(foo)
-                     if err != nil {
-                       ...
-                     }
+                     any, err := ptypes.MarshalAny(foo)
                      ...
                      foo := &pb.Foo{}
-                     if err := any.UnmarshalTo(foo); err != nil {
+                     if err := ptypes.UnmarshalAny(any, foo); err != nil {
                        ...
                      }
 
@@ -12390,7 +13093,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-
@@ -12451,7 +13154,7 @@ definitions:
           pubKey:
             type: object
             properties:
-              '@type':
+              type_url:
                 type: string
                 description: >-
                   A URL/resource name that uniquely identifies the type of the
@@ -12506,7 +13209,12 @@ definitions:
                   be
 
                   used with implementation specific semantics.
-            additionalProperties: {}
+              value:
+                type: string
+                format: byte
+                description: >-
+                  Must be a valid serialized protocol buffer of the above
+                  specified type.
             description: >-
               `Any` contains an arbitrary serialized protocol buffer message
               along with a
@@ -12553,13 +13261,10 @@ definitions:
                Example 4: Pack and unpack a message in Go
 
                    foo := &pb.Foo{...}
-                   any, err := anypb.New(foo)
-                   if err != nil {
-                     ...
-                   }
+                   any, err := ptypes.MarshalAny(foo)
                    ...
                    foo := &pb.Foo{}
-                   if err := any.UnmarshalTo(foo); err != nil {
+                   if err := ptypes.UnmarshalAny(any, foo); err != nil {
                      ...
                    }
 
@@ -12647,7 +13352,7 @@ definitions:
       pubKey:
         type: object
         properties:
-          '@type':
+          type_url:
             type: string
             description: >-
               A URL/resource name that uniquely identifies the type of the
@@ -12699,7 +13404,12 @@ definitions:
               Schemes other than `http`, `https` (or the empty scheme) might be
 
               used with implementation specific semantics.
-        additionalProperties: {}
+          value:
+            type: string
+            format: byte
+            description: >-
+              Must be a valid serialized protocol buffer of the above specified
+              type.
         description: >-
           `Any` contains an arbitrary serialized protocol buffer message along
           with a
@@ -12745,13 +13455,10 @@ definitions:
            Example 4: Pack and unpack a message in Go
 
                foo := &pb.Foo{...}
-               any, err := anypb.New(foo)
-               if err != nil {
-                 ...
-               }
+               any, err := ptypes.MarshalAny(foo)
                ...
                foo := &pb.Foo{}
-               if err := any.UnmarshalTo(foo); err != nil {
+               if err := ptypes.UnmarshalAny(any, foo); err != nil {
                  ...
                }
 
@@ -12812,10 +13519,6 @@ definitions:
       jailedReason:
         type: string
         title: the reason of validator jailing
-  zigbeealliance.distributedcomplianceledger.vendorinfo.MsgCreateVendorInfoResponse:
-    type: object
-  zigbeealliance.distributedcomplianceledger.vendorinfo.MsgUpdateVendorInfoResponse:
-    type: object
   zigbeealliance.distributedcomplianceledger.vendorinfo.QueryAllVendorInfoResponse:
     type: object
     properties:
@@ -12840,7 +13543,7 @@ definitions:
       pagination:
         type: object
         properties:
-          nextKey:
+          next_key:
             type: string
             format: byte
             title: |-

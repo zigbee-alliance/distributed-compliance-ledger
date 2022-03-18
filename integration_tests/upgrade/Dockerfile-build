@@ -1,0 +1,82 @@
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+################################################################################
+# Builds the upgraded dcld application for upgrade procedure test needs.
+# The resulting image is used only for getting the build artifact from
+# a container based on it. Containers based on this image are never run.
+################################################################################
+FROM dcld-build
+
+WORKDIR /go/src/dc-ledger
+
+RUN echo -e \
+'package keeper\n'\
+'\n'\
+'import (\n'\
+'	sdk "github.com/cosmos/cosmos-sdk/types"\n'\
+')\n'\
+'\n'\
+'// Migrator is a struct for handling in-place store migrations.\n'\
+'type Migrator struct {\n'\
+'	keeper Keeper\n'\
+'}\n'\
+'\n'\
+'// NewMigrator returns a new Migrator.\n'\
+'func NewMigrator(keeper Keeper) Migrator {\n'\
+'	return Migrator{keeper: keeper}\n'\
+'}\n'\
+'\n'\
+'// Migrate1to2 migrates from version 1 to 2.\n'\
+'func (m Migrator) Migrate1to2(ctx sdk.Context) error {\n'\
+'	for _, model := range m.keeper.GetAllModel(ctx) {\n'\
+'		model.ProductLabel += "_UPDATED"\n'\
+'		m.keeper.SetModel(ctx, model)\n'\
+'	}\n'\
+'	return nil\n'\
+'}\n'\
+| tee ./x/model/keeper/migrations.go
+
+RUN cat ./x/model/module.go | tr '\n' '\r' | sed -e 's/'\
+'	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)\r'\
+'/'\
+'	types.RegisterQueryServer(cfg.QueryServer(), am.keeper)\r'\
+'\r'\
+'	m := keeper.NewMigrator(am.keeper)\r'\
+'	err := cfg.RegisterMigration(types.ModuleName, 1, m.Migrate1to2)\r'\
+'	if err != nil {\r'\
+'		panic(err)\r'\
+'	}\r'\
+'/' -e 's/'\
+'func (AppModule) ConsensusVersion() uint64 { return 1 }\r'\
+'/'\
+'func (AppModule) ConsensusVersion() uint64 { return 2 }\r'\
+'/' | tr '\r' '\n' | tee ./x/model/module.go
+
+RUN cat ./app/app.go | tr '\n' '\r' | sed -e 's/'\
+'	return app\r'\
+'/'\
+'	app.UpgradeKeeper.SetUpgradeHandler(\r'\
+'		"test-upgrade",\r'\
+'		func(ctx sdk.Context, plan upgradetypes.Plan, fromVM module.VersionMap) (module.VersionMap, error) {\r'\
+'			return app.mm.RunMigrations(ctx, cfg, fromVM)\r'\
+'		},\r'\
+'	)\r'\
+'\r'\
+'	return app\r'\
+'/' | tr '\r' '\n' | tee ./app/app.go
+
+ARG DCL_VERSION
+ARG DCL_COMMIT
+RUN LEDGER_ENABLED=false make

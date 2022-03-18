@@ -232,15 +232,15 @@ func request_Query_ModelVersion_0(ctx context.Context, marshaler runtime.Marshal
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
 	msg, err := client.ModelVersion(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -281,15 +281,15 @@ func local_request_Query_ModelVersion_0(ctx context.Context, marshaler runtime.M
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "pid", err)
 	}
 
-	val, ok = pathParams["software_version"]
+	val, ok = pathParams["softwareVersion"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "software_version")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "softwareVersion")
 	}
 
 	protoReq.SoftwareVersion, err = runtime.Uint32(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "software_version", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "softwareVersion", err)
 	}
 
 	msg, err := server.ModelVersion(ctx, &protoReq)
@@ -645,7 +645,7 @@ var (
 
 	pattern_Query_ModelAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "model", "models"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ModelVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "model", "versions", "vid", "pid", "software_version"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ModelVersion_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5}, []string{"dcl", "model", "versions", "vid", "pid", "softwareVersion"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_ModelVersions_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "model", "versions", "vid", "pid"}, "", runtime.AssumeColonVerbOpt(true)))
 )

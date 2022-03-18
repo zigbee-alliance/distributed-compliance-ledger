@@ -2,8 +2,9 @@ import { txClient, queryClient, MissingWalletError, registry } from './module';
 // @ts-ignore
 import { SpVuexError } from '@starport/vuex';
 import { ApprovedUpgrade } from "./module/types/dclupgrade/approved_upgrade";
+import { Grant } from "./module/types/dclupgrade/grant";
 import { ProposedUpgrade } from "./module/types/dclupgrade/proposed_upgrade";
-export { ApprovedUpgrade, ProposedUpgrade };
+export { ApprovedUpgrade, Grant, ProposedUpgrade };
 async function initTxClient(vuexGetters) {
     return await txClient(vuexGetters['common/wallet/signer'], {
         addr: vuexGetters['common/env/apiTendermint']
@@ -43,6 +44,7 @@ const getDefaultState = () => {
         ApprovedUpgradeAll: {},
         _Structure: {
             ApprovedUpgrade: getStructure(ApprovedUpgrade.fromPartial({})),
+            Grant: getStructure(Grant.fromPartial({})),
             ProposedUpgrade: getStructure(ProposedUpgrade.fromPartial({})),
         },
         _Registry: registry,
@@ -190,23 +192,6 @@ export default {
                 throw new SpVuexError('QueryClient:QueryApprovedUpgradeAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
-        async sendMsgProposeUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
-            try {
-                const txClient = await initTxClient(rootGetters);
-                const msg = await txClient.msgProposeUpgrade(value);
-                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
-                        gas: "200000" }, memo });
-                return result;
-            }
-            catch (e) {
-                if (e == MissingWalletError) {
-                    throw new SpVuexError('TxClient:MsgProposeUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
-                }
-                else {
-                    throw new SpVuexError('TxClient:MsgProposeUpgrade:Send', 'Could not broadcast Tx: ' + e.message);
-                }
-            }
-        },
         async sendMsgApproveUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -224,18 +209,20 @@ export default {
                 }
             }
         },
-        async MsgProposeUpgrade({ rootGetters }, { value }) {
+        async sendMsgProposeUpgrade({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
                 const msg = await txClient.msgProposeUpgrade(value);
-                return msg;
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
             }
             catch (e) {
                 if (e == MissingWalletError) {
                     throw new SpVuexError('TxClient:MsgProposeUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
                 }
                 else {
-                    throw new SpVuexError('TxClient:MsgProposeUpgrade:Create', 'Could not create message: ' + e.message);
+                    throw new SpVuexError('TxClient:MsgProposeUpgrade:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -251,6 +238,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgApproveUpgrade:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgProposeUpgrade({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgProposeUpgrade(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgProposeUpgrade:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgProposeUpgrade:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

@@ -3,12 +3,11 @@ package zigbeealliance.distributedcomplianceledger.pki;
 
 option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types";
 
-import "cosmos_proto/cosmos.proto";
 import "pki/grant.proto";
 
 message ProposedCertificateRevocation {
   string subject = 1; 
-  string subject_key_id = 2; 
+  string subjectKeyId = 2; 
   repeated Grant approvals = 3;
 }
 

@@ -8,21 +8,21 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 message Model {
   int32 vid = 1; 
   int32 pid = 2; 
-  int32 device_type_id = 3; 
-  string product_name = 4; 
-  string product_label = 5; 
-  string part_number = 6; 
-  int32 commissioning_custom_flow = 7; 
-  string commissioning_custom_flow_url = 8; 
-  uint32 commissioning_mode_initial_steps_hint = 9; 
-  string commissioning_mode_initial_steps_instruction = 10; 
-  uint32 commissioning_mode_secondary_steps_hint = 11; 
-  string commissioning_mode_secondary_steps_instruction = 12; 
-  string user_manual_url = 13; 
-  string support_url = 14; 
-  string product_url = 15; 
-  string lsf_url = 16;
-  int32 lsf_revision = 17;
+  int32 deviceTypeId = 3; 
+  string productName = 4; 
+  string productLabel = 5; 
+  string partNumber = 6; 
+  int32 commissioningCustomFlow = 7; 
+  string commissioningCustomFlowUrl = 8; 
+  uint32 commissioningModeInitialStepsHint = 9; 
+  string commissioningModeInitialStepsInstruction = 10; 
+  uint32 commissioningModeSecondaryStepsHint = 11; 
+  string commissioningModeSecondaryStepsInstruction = 12; 
+  string userManualUrl = 13; 
+  string supportUrl = 14; 
+  string productUrl = 15; 
+  string lsfUrl = 16;
+  int32 lsfRevision = 17;
   string creator = 18 [(cosmos_proto.scalar) = "cosmos.AddressString"];
 }
 

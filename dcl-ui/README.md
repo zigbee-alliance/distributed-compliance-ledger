@@ -9,18 +9,18 @@ __This project was generated with [Angular CLI](https://github.com/angular/angul
 
 __Read more about the project structure:__
 
-- https://medium.com/@motcowley/angular-folder-structure-d1809be95542
-- https://itnext.io/choosing-a-highly-scalable-folder-structure-in-angular-d987de65ec7
+- <https://medium.com/@motcowley/angular-folder-structure-d1809be95542>
+- <https://itnext.io/choosing-a-highly-scalable-folder-structure-in-angular-d987de65ec7>
 
-__Dev environment__
+## Dev environment
 
 You will want nginx to add 'allow cross origin' headers to `dclcli` responses. Find nginx configuration template in `templates` and place it into `/etc/nginx/conf.d`.
 
-__Deployment__
+## Deployment
 
 - Read more about deployment in `ansible/README.md`.
 
-__Configuration__
+## Configuration
 
 Configuration is located in: `src/environments/environment.tx` and `src/environments/environment.prod.tx` for dev and prod environments correspondingly.
 There are two important settings here:
