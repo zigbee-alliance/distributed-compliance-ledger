@@ -5,7 +5,10 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -44,26 +47,25 @@ func CmdListRevokedAccount() *cobra.Command {
 
 func CmdShowRevokedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "revoked-account [address]",
+		Use:   "revoked-account",
 		Short: "shows a RevokedAccount",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
-
-			argAddress := args[0]
-
-			params := &types.QueryGetRevokedAccountRequest{
-				Address: argAddress,
-			}
-
-			res, err := queryClient.RevokedAccount(context.Background(), params)
+			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
 
-			return clientCtx.PrintProto(res)
+			var res types.RevokedAccount
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.PendingAccountRevocationKeyPrefix,
+				types.PendingAccountRevocationKey(argAddress),
+				&res,
+			)
 		},
 	}
 
