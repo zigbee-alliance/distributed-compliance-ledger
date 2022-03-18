@@ -46,6 +46,17 @@ of the store.
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/switch_to_cosmovisor
     ```
 
+    > Note:
+    >
+    > * `switch_to_cosmovisor` script adds the cosmovisor-controlled directory
+    containing the current version of `dcld` binary to `$PATH` of current user.
+    To do this the script adds a line doing the corresponding `$PATH` assignment
+    to `$HOME/.profile` file. If for some reason it is not effective for your
+    environment, please modify the corresponding line in the script in the way
+    you need or just comment out the corresponding line and manually add
+    `$HOME/.dcl/cosmovisor/current/bin` to `$PATH` of current user after
+    `switch_to_cosmovisor` script is executed (see below).
+
 4. Grant execution permission on `switch_to_cosmovisor` script:
 
     ```bash
