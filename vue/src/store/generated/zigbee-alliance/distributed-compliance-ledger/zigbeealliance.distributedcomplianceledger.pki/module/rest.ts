@@ -153,7 +153,7 @@ export interface PkiQueryGetApprovedCertificatesResponse {
 }
 
 export interface PkiQueryGetApprovedRootCertificatesResponse {
-  ApprovedRootCertificates?: PkiApprovedRootCertificates;
+  approvedRootCertificates?: PkiApprovedRootCertificates;
 }
 
 export interface PkiQueryGetChildCertificatesResponse {
@@ -173,7 +173,7 @@ export interface PkiQueryGetRevokedCertificatesResponse {
 }
 
 export interface PkiQueryGetRevokedRootCertificatesResponse {
-  RevokedRootCertificates?: PkiRevokedRootCertificates;
+  revokedRootCertificates?: PkiRevokedRootCertificates;
 }
 
 export interface PkiRevokedCertificates {
