@@ -21,7 +21,6 @@ func (k Keeper) GetProposedCertificateRevocation(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
-
 ) (val types.ProposedCertificateRevocation, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateRevocationKeyPrefix))
 

@@ -168,7 +168,8 @@ func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 
 // NewPendingAccountRevocation creates a new PendingAccountRevocation object.
 func NewPendingAccountRevocation(address sdk.AccAddress,
-	info string, time int64, approval sdk.AccAddress) PendingAccountRevocation {
+	info string, time int64, approval sdk.AccAddress,
+) PendingAccountRevocation {
 	pendingAccountRevocation := PendingAccountRevocation{
 		Address: address.String(),
 	}

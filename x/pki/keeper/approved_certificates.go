@@ -24,7 +24,6 @@ func (k Keeper) GetApprovedCertificates(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
-
 ) (val types.ApprovedCertificates, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
@@ -46,7 +45,6 @@ func (k Keeper) RemoveApprovedCertificates(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 	store.Delete(types.ApprovedCertificatesKey(
@@ -106,7 +104,6 @@ func (k Keeper) IsApprovedCertificatePresent(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
-
 ) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesKeyPrefix))
 
@@ -119,7 +116,8 @@ func (k Keeper) IsApprovedCertificatePresent(
 // Tries to build a valid certificate chain for the given certificate.
 // Returns the RootSubject/RootSubjectKeyID combination or an error in case no valid certificate chain can be built.
 func (k Keeper) verifyCertificate(ctx sdk.Context,
-	x509Certificate *x509.Certificate) (string, string, error) {
+	x509Certificate *x509.Certificate,
+) (string, string, error) {
 	// nolint:nestif
 	if x509Certificate.IsSelfSigned() {
 		// in this system a certificate is self-signed if and only if it is a root certificate

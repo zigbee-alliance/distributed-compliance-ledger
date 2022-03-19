@@ -21,7 +21,6 @@ func (k Keeper) GetModel(
 	ctx sdk.Context,
 	vid int32,
 	pid int32,
-
 ) (val types.Model, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelKeyPrefix))
 
@@ -43,7 +42,6 @@ func (k Keeper) RemoveModel(
 	ctx sdk.Context,
 	vid int32,
 	pid int32,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ModelKeyPrefix))
 	store.Delete(types.ModelKey(

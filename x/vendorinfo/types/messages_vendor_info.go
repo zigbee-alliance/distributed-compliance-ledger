@@ -15,7 +15,6 @@ func NewMsgCreateVendorInfo(
 	companyLegalName string,
 	companyPrefferedName string,
 	vendorLandingPageURL string,
-
 ) *MsgCreateVendorInfo {
 	return &MsgCreateVendorInfo{
 		Creator:              creator,
@@ -73,7 +72,6 @@ func NewMsgUpdateVendorInfo(
 	companyLegalName string,
 	companyPrefferedName string,
 	vendorLandingPageURL string,
-
 ) *MsgUpdateVendorInfo {
 	return &MsgUpdateVendorInfo{
 		Creator:              creator,

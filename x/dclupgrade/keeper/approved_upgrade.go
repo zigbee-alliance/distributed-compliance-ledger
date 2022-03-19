@@ -19,7 +19,6 @@ func (k Keeper) SetApprovedUpgrade(ctx sdk.Context, approvedUpgrade types.Approv
 func (k Keeper) GetApprovedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) (val types.ApprovedUpgrade, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedUpgradeKeyPrefix))
 
@@ -39,7 +38,6 @@ func (k Keeper) GetApprovedUpgrade(
 func (k Keeper) RemoveApprovedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedUpgradeKeyPrefix))
 	store.Delete(types.ApprovedUpgradeKey(

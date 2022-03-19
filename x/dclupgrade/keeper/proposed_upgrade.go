@@ -19,7 +19,6 @@ func (k Keeper) SetProposedUpgrade(ctx sdk.Context, proposedUpgrade types.Propos
 func (k Keeper) GetProposedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) (val types.ProposedUpgrade, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedUpgradeKeyPrefix))
 
@@ -39,7 +38,6 @@ func (k Keeper) GetProposedUpgrade(
 func (k Keeper) RemoveProposedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedUpgradeKeyPrefix))
 	store.Delete(types.ProposedUpgradeKey(

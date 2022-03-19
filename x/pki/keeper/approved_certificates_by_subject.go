@@ -19,7 +19,6 @@ func (k Keeper) SetApprovedCertificatesBySubject(ctx sdk.Context, approvedCertif
 func (k Keeper) GetApprovedCertificatesBySubject(
 	ctx sdk.Context,
 	subject string,
-
 ) (val types.ApprovedCertificatesBySubject, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 
@@ -39,7 +38,6 @@ func (k Keeper) GetApprovedCertificatesBySubject(
 func (k Keeper) RemoveApprovedCertificatesBySubject(
 	ctx sdk.Context,
 	subject string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedCertificatesBySubjectKeyPrefix))
 	store.Delete(types.ApprovedCertificatesBySubjectKey(

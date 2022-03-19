@@ -108,7 +108,6 @@ func NewMsgUpdateModel(
 	productURL string,
 	lsfURL string,
 	lsfRevision int32,
-
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
 		Creator:                                  creator,
@@ -171,7 +170,6 @@ func NewMsgDeleteModel(
 	creator string,
 	vid int32,
 	pid int32,
-
 ) *MsgDeleteModel {
 	return &MsgDeleteModel{
 		Creator: creator,

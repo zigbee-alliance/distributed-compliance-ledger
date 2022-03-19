@@ -21,8 +21,10 @@ func NewMsgProposeAddAccountWrapper(
 	roles AccountRoles,
 	vendorID int32,
 ) *MsgProposeAddAccount {
+	t.Helper()
 	msg, err := NewMsgProposeAddAccount(signer, address, pubKey, roles, vendorID, testconstants.Info)
 	require.NoError(t, err)
+
 	return msg
 }
 

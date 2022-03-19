@@ -21,7 +21,6 @@ func (k Keeper) GetProposedCertificate(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
-
 ) (val types.ProposedCertificate, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
 
@@ -43,7 +42,6 @@ func (k Keeper) RemoveProposedCertificate(
 	ctx sdk.Context,
 	subject string,
 	subjectKeyID string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedCertificateKeyPrefix))
 	store.Delete(types.ProposedCertificateKey(

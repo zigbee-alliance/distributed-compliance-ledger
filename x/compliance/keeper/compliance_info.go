@@ -25,7 +25,6 @@ func (k Keeper) GetComplianceInfo(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) (val types.ComplianceInfo, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 
@@ -51,7 +50,6 @@ func (k Keeper) RemoveComplianceInfo(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ComplianceInfoKeyPrefix))
 	store.Delete(types.ComplianceInfoKey(

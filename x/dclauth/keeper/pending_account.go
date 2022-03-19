@@ -19,7 +19,6 @@ func (k Keeper) SetPendingAccount(ctx sdk.Context, pendingAccount types.PendingA
 func (k Keeper) GetPendingAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) (val types.PendingAccount, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 
@@ -48,7 +47,6 @@ func (k Keeper) IsPendingAccountPresent(ctx sdk.Context, address sdk.AccAddress)
 func (k Keeper) RemovePendingAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountKeyPrefix))
 	store.Delete(types.PendingAccountKey(

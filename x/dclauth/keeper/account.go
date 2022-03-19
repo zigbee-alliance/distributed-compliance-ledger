@@ -38,7 +38,6 @@ func (k Keeper) SetAccount(ctx sdk.Context, account authtypes.AccountI) {
 func (k Keeper) GetAccountO(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) (val types.Account, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 
@@ -78,7 +77,6 @@ func (k Keeper) IsAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
 func (k Keeper) RemoveAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 	store.Delete(types.AccountKey(

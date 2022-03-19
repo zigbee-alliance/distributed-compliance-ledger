@@ -11,7 +11,6 @@ import (
 func (k Keeper) GetAccountO(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) (val types.Account, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 

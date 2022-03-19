@@ -21,7 +21,6 @@ func (k Keeper) GetChildCertificates(
 	ctx sdk.Context,
 	issuer string,
 	authorityKeyID string,
-
 ) (val types.ChildCertificates, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 
@@ -43,7 +42,6 @@ func (k Keeper) RemoveChildCertificates(
 	ctx sdk.Context,
 	issuer string,
 	authorityKeyID string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ChildCertificatesKeyPrefix))
 	store.Delete(types.ChildCertificatesKey(
@@ -126,7 +124,8 @@ func (k msgServer) RevokeChildCertificates(ctx sdk.Context, issuer string, autho
 }
 
 func (k msgServer) RemoveChildCertificate(ctx sdk.Context, issuer string, authorityKeyID string,
-	certIdentifier types.CertificateIdentifier) {
+	certIdentifier types.CertificateIdentifier,
+) {
 	childCertificates, _ := k.GetChildCertificates(ctx, issuer, authorityKeyID)
 
 	certIDIndex := -1

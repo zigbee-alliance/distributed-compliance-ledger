@@ -25,7 +25,6 @@ func (k Keeper) GetRevokedModel(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) (val types.RevokedModel, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedModelKeyPrefix))
 
@@ -51,7 +50,6 @@ func (k Keeper) RemoveRevokedModel(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedModelKeyPrefix))
 	store.Delete(types.RevokedModelKey(
