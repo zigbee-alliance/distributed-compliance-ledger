@@ -24,7 +24,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 service Query {
     // Queries a ApprovedCertificates by index.
 	rpc ApprovedCertificates(QueryGetApprovedCertificatesRequest) returns (QueryGetApprovedCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/certificates/{subject}/{subject_key_id}";
+		option (google.api.http).get = "/dcl/pki/certificates/{subject}/{subjectKeyId}";
 	}
 
 	// Queries a list of ApprovedCertificates items.
@@ -34,7 +34,7 @@ service Query {
 
 // Queries a ProposedCertificate by index.
 	rpc ProposedCertificate(QueryGetProposedCertificateRequest) returns (QueryGetProposedCertificateResponse) {
-		option (google.api.http).get = "/dcl/pki/proposed-certificates/{subject}/{subject_key_id}";
+		option (google.api.http).get = "/dcl/pki/proposed-certificates/{subject}/{subjectKeyId}";
 	}
 
 	// Queries a list of ProposedCertificate items.
@@ -44,12 +44,12 @@ service Query {
 
 // Queries a ChildCertificates by index.
 	rpc ChildCertificates(QueryGetChildCertificatesRequest) returns (QueryGetChildCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/child-certificates/{issuer}/{authority_key_id}";
+		option (google.api.http).get = "/dcl/pki/child-certificates/{issuer}/{authorityKeyId}";
 	}
 
 // Queries a ProposedCertificateRevocation by index.
 	rpc ProposedCertificateRevocation(QueryGetProposedCertificateRevocationRequest) returns (QueryGetProposedCertificateRevocationResponse) {
-		option (google.api.http).get = "/dcl/pki/proposed-revocation-certificates/{subject}/{subject_key_id}";
+		option (google.api.http).get = "/dcl/pki/proposed-revocation-certificates/{subject}/{subjectKeyId}";
 	}
 
 	// Queries a list of ProposedCertificateRevocation items.
@@ -59,7 +59,7 @@ service Query {
 
 // Queries a RevokedCertificates by index.
 	rpc RevokedCertificates(QueryGetRevokedCertificatesRequest) returns (QueryGetRevokedCertificatesResponse) {
-		option (google.api.http).get = "/dcl/pki/revoked-certificates/{subject}/{subject_key_id}";
+		option (google.api.http).get = "/dcl/pki/revoked-certificates/{subject}/{subjectKeyId}";
 	}
 
 	// Queries a list of RevokedCertificates items.
@@ -86,7 +86,7 @@ service Query {
 
 message QueryGetApprovedCertificatesRequest {
 	  string subject = 1;
-  string subject_key_id = 2;
+  string subjectKeyId = 2;
 
 }
 
@@ -105,7 +105,7 @@ message QueryAllApprovedCertificatesResponse {
 
 message QueryGetProposedCertificateRequest {
 	  string subject = 1;
-  string subject_key_id = 2;
+  string subjectKeyId = 2;
 
 }
 
@@ -124,7 +124,7 @@ message QueryAllProposedCertificateResponse {
 
 message QueryGetChildCertificatesRequest {
 	  string issuer = 1;
-  string authority_key_id = 2;
+  string authorityKeyId = 2;
 
 }
 
@@ -134,7 +134,7 @@ message QueryGetChildCertificatesResponse {
 
 message QueryGetProposedCertificateRevocationRequest {
 	  string subject = 1;
-  string subject_key_id = 2;
+  string subjectKeyId = 2;
 
 }
 
@@ -153,7 +153,7 @@ message QueryAllProposedCertificateRevocationResponse {
 
 message QueryGetRevokedCertificatesRequest {
 	  string subject = 1;
-  string subject_key_id = 2;
+  string subjectKeyId = 2;
 
 }
 
@@ -173,12 +173,12 @@ message QueryAllRevokedCertificatesResponse {
 message QueryGetApprovedRootCertificatesRequest {}
 
 message QueryGetApprovedRootCertificatesResponse {
-	ApprovedRootCertificates ApprovedRootCertificates = 1 [(gogoproto.nullable) = false];
+	ApprovedRootCertificates approvedRootCertificates = 1 [(gogoproto.nullable) = false];
 }
 message QueryGetRevokedRootCertificatesRequest {}
 
 message QueryGetRevokedRootCertificatesResponse {
-	RevokedRootCertificates RevokedRootCertificates = 1 [(gogoproto.nullable) = false];
+	RevokedRootCertificates revokedRootCertificates = 1 [(gogoproto.nullable) = false];
 }
 message QueryGetApprovedCertificatesBySubjectRequest {
 	  string subject = 1;

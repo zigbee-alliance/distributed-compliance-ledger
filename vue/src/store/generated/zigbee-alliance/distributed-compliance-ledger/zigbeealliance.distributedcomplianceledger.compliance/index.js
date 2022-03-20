@@ -164,7 +164,7 @@ export default {
             try {
                 const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
-                let value = (await queryClient.queryComplianceInfo(key.vid, key.pid, key.software_version, key.certification_type)).data;
+                let value = (await queryClient.queryComplianceInfo(key.vid, key.pid, key.softwareVersion, key.certificationType)).data;
                 commit('QUERY', { query: 'ComplianceInfo', key: { params: { ...key }, query }, value });
                 if (subscribe)
                     commit('SUBSCRIBE', { action: 'QueryComplianceInfo', payload: { options: { all }, params: { ...key }, query } });
@@ -196,7 +196,7 @@ export default {
             try {
                 const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
-                let value = (await queryClient.queryCertifiedModel(key.vid, key.pid, key.software_version, key.certification_type)).data;
+                let value = (await queryClient.queryCertifiedModel(key.vid, key.pid, key.softwareVersion, key.certificationType)).data;
                 commit('QUERY', { query: 'CertifiedModel', key: { params: { ...key }, query }, value });
                 if (subscribe)
                     commit('SUBSCRIBE', { action: 'QueryCertifiedModel', payload: { options: { all }, params: { ...key }, query } });
@@ -228,7 +228,7 @@ export default {
             try {
                 const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
-                let value = (await queryClient.queryRevokedModel(key.vid, key.pid, key.software_version, key.certification_type)).data;
+                let value = (await queryClient.queryRevokedModel(key.vid, key.pid, key.softwareVersion, key.certificationType)).data;
                 commit('QUERY', { query: 'RevokedModel', key: { params: { ...key }, query }, value });
                 if (subscribe)
                     commit('SUBSCRIBE', { action: 'QueryRevokedModel', payload: { options: { all }, params: { ...key }, query } });
@@ -260,7 +260,7 @@ export default {
             try {
                 const key = params ?? {};
                 const queryClient = await initQueryClient(rootGetters);
-                let value = (await queryClient.queryProvisionalModel(key.vid, key.pid, key.software_version, key.certification_type)).data;
+                let value = (await queryClient.queryProvisionalModel(key.vid, key.pid, key.softwareVersion, key.certificationType)).data;
                 commit('QUERY', { query: 'ProvisionalModel', key: { params: { ...key }, query }, value });
                 if (subscribe)
                     commit('SUBSCRIBE', { action: 'QueryProvisionalModel', payload: { options: { all }, params: { ...key }, query } });

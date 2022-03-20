@@ -180,7 +180,7 @@ echo "Get Model with VID: $vid PID: $pid"
 result=$(dcld query model get-model --vid=$vid --pid=$pid)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"product_name\": \"$productName\""
+check_response "$result" "\"productName\": \"$productName\""
 
 test_divider
 

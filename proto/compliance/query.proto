@@ -16,7 +16,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 service Query {
     // Queries a ComplianceInfo by index.
 	rpc ComplianceInfo(QueryGetComplianceInfoRequest) returns (QueryGetComplianceInfoResponse) {
-		option (google.api.http).get = "/dcl/compliance/compliance-info/{vid}/{pid}/{software_version}/{certification_type}";
+		option (google.api.http).get = "/dcl/compliance/compliance-info/{vid}/{pid}/{softwareVersion}/{certificationType}";
 	}
 
 	// Queries a list of ComplianceInfo items.
@@ -26,7 +26,7 @@ service Query {
 
 // Queries a CertifiedModel by index.
 	rpc CertifiedModel(QueryGetCertifiedModelRequest) returns (QueryGetCertifiedModelResponse) {
-		option (google.api.http).get = "/dcl/compliance/certified-models/{vid}/{pid}/{software_version}/{certification_type}";
+		option (google.api.http).get = "/dcl/compliance/certified-models/{vid}/{pid}/{softwareVersion}/{certificationType}";
 	}
 
 	// Queries a list of CertifiedModel items.
@@ -36,7 +36,7 @@ service Query {
 
 // Queries a RevokedModel by index.
 	rpc RevokedModel(QueryGetRevokedModelRequest) returns (QueryGetRevokedModelResponse) {
-		option (google.api.http).get = "/dcl/compliance/revoked-models/{vid}/{pid}/{software_version}/{certification_type}";
+		option (google.api.http).get = "/dcl/compliance/revoked-models/{vid}/{pid}/{softwareVersion}/{certificationType}";
 	}
 
 	// Queries a list of RevokedModel items.
@@ -46,7 +46,7 @@ service Query {
 
 // Queries a ProvisionalModel by index.
 	rpc ProvisionalModel(QueryGetProvisionalModelRequest) returns (QueryGetProvisionalModelResponse) {
-		option (google.api.http).get = "/dcl/compliance/provisional-models/{vid}/{pid}/{software_version}/{certification_type}";
+		option (google.api.http).get = "/dcl/compliance/provisional-models/{vid}/{pid}/{softwareVersion}/{certificationType}";
 	}
 
 	// Queries a list of ProvisionalModel items.
@@ -60,8 +60,8 @@ service Query {
 message QueryGetComplianceInfoRequest {
   int32 vid = 1;
   int32 pid = 2;
-  uint32 software_version = 3;
-  string certification_type = 4;
+  uint32 softwareVersion = 3;
+  string certificationType = 4;
 
 }
 
@@ -81,8 +81,8 @@ message QueryAllComplianceInfoResponse {
 message QueryGetCertifiedModelRequest {
   int32 vid = 1;
   int32 pid = 2;
-  uint32 software_version = 3;
-  string certification_type = 4;
+  uint32 softwareVersion = 3;
+  string certificationType = 4;
 
 }
 
@@ -102,8 +102,8 @@ message QueryAllCertifiedModelResponse {
 message QueryGetRevokedModelRequest {
   int32 vid = 1;
   int32 pid = 2;
-  uint32 software_version = 3;
-  string certification_type = 4;
+  uint32 softwareVersion = 3;
+  string certificationType = 4;
 
 }
 
@@ -123,8 +123,8 @@ message QueryAllRevokedModelResponse {
 message QueryGetProvisionalModelRequest {
   int32 vid = 1;
   int32 pid = 2;
-  uint32 software_version = 3;
-  string certification_type = 4;
+  uint32 softwareVersion = 3;
+  string certificationType = 4;
 
 }
 

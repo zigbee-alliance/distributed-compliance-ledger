@@ -1,5 +1,6 @@
 /* eslint-disable */
 import { Plan } from '../cosmos/upgrade/v1beta1/upgrade'
+import { Grant } from '../dclupgrade/grant'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclupgrade'
@@ -7,10 +8,10 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclup
 export interface ApprovedUpgrade {
   plan: Plan | undefined
   creator: string
-  approvals: string[]
+  approvals: Grant[]
 }
 
-const baseApprovedUpgrade: object = { creator: '', approvals: '' }
+const baseApprovedUpgrade: object = { creator: '' }
 
 export const ApprovedUpgrade = {
   encode(message: ApprovedUpgrade, writer: Writer = Writer.create()): Writer {
@@ -21,7 +22,7 @@ export const ApprovedUpgrade = {
       writer.uint32(18).string(message.creator)
     }
     for (const v of message.approvals) {
-      writer.uint32(26).string(v!)
+      Grant.encode(v!, writer.uint32(26).fork()).ldelim()
     }
     return writer
   },
@@ -41,7 +42,7 @@ export const ApprovedUpgrade = {
           message.creator = reader.string()
           break
         case 3:
-          message.approvals.push(reader.string())
+          message.approvals.push(Grant.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -66,7 +67,7 @@ export const ApprovedUpgrade = {
     }
     if (object.approvals !== undefined && object.approvals !== null) {
       for (const e of object.approvals) {
-        message.approvals.push(String(e))
+        message.approvals.push(Grant.fromJSON(e))
       }
     }
     return message
@@ -77,7 +78,7 @@ export const ApprovedUpgrade = {
     message.plan !== undefined && (obj.plan = message.plan ? Plan.toJSON(message.plan) : undefined)
     message.creator !== undefined && (obj.creator = message.creator)
     if (message.approvals) {
-      obj.approvals = message.approvals.map((e) => e)
+      obj.approvals = message.approvals.map((e) => (e ? Grant.toJSON(e) : undefined))
     } else {
       obj.approvals = []
     }
@@ -99,7 +100,7 @@ export const ApprovedUpgrade = {
     }
     if (object.approvals !== undefined && object.approvals !== null) {
       for (const e of object.approvals) {
-        message.approvals.push(e)
+        message.approvals.push(Grant.fromPartial(e))
       }
     }
     return message

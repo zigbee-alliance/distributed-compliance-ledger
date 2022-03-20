@@ -17,14 +17,14 @@
 
 import sys
 from pathlib import Path
+
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 def render(f_path, **ctxargs):
     tmpl_path = Path(f_path).resolve()
     jinja_env = Environment(
-        loader=FileSystemLoader(str(tmpl_path.parent)),
-        autoescape=select_autoescape()
+        loader=FileSystemLoader(str(tmpl_path.parent)), autoescape=select_autoescape()
     )
     template = jinja_env.get_template(tmpl_path.name)
     return template.render(**ctxargs)

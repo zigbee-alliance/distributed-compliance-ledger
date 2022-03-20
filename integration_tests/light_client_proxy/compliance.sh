@@ -133,9 +133,9 @@ result=$(execute_with_retry "dcld query compliance compliance-info --vid=$vid --
 echo "$result"
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version_certification_status\": 2"
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"date\": \"$certification_date\""
-check_response "$result" "\"certification_type\": \"zigbee\""
+check_response "$result" "\"certificationType\": \"zigbee\""
 
 test_divider
 

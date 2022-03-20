@@ -96,13 +96,13 @@ export interface QueryAllRevokedCertificatesResponse {
 export interface QueryGetApprovedRootCertificatesRequest {}
 
 export interface QueryGetApprovedRootCertificatesResponse {
-  ApprovedRootCertificates: ApprovedRootCertificates | undefined
+  approvedRootCertificates: ApprovedRootCertificates | undefined
 }
 
 export interface QueryGetRevokedRootCertificatesRequest {}
 
 export interface QueryGetRevokedRootCertificatesResponse {
-  RevokedRootCertificates: RevokedRootCertificates | undefined
+  revokedRootCertificates: RevokedRootCertificates | undefined
 }
 
 export interface QueryGetApprovedCertificatesBySubjectRequest {
@@ -1333,8 +1333,8 @@ const baseQueryGetApprovedRootCertificatesResponse: object = {}
 
 export const QueryGetApprovedRootCertificatesResponse = {
   encode(message: QueryGetApprovedRootCertificatesResponse, writer: Writer = Writer.create()): Writer {
-    if (message.ApprovedRootCertificates !== undefined) {
-      ApprovedRootCertificates.encode(message.ApprovedRootCertificates, writer.uint32(10).fork()).ldelim()
+    if (message.approvedRootCertificates !== undefined) {
+      ApprovedRootCertificates.encode(message.approvedRootCertificates, writer.uint32(10).fork()).ldelim()
     }
     return writer
   },
@@ -1347,7 +1347,7 @@ export const QueryGetApprovedRootCertificatesResponse = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.ApprovedRootCertificates = ApprovedRootCertificates.decode(reader, reader.uint32())
+          message.approvedRootCertificates = ApprovedRootCertificates.decode(reader, reader.uint32())
           break
         default:
           reader.skipType(tag & 7)
@@ -1359,27 +1359,27 @@ export const QueryGetApprovedRootCertificatesResponse = {
 
   fromJSON(object: any): QueryGetApprovedRootCertificatesResponse {
     const message = { ...baseQueryGetApprovedRootCertificatesResponse } as QueryGetApprovedRootCertificatesResponse
-    if (object.ApprovedRootCertificates !== undefined && object.ApprovedRootCertificates !== null) {
-      message.ApprovedRootCertificates = ApprovedRootCertificates.fromJSON(object.ApprovedRootCertificates)
+    if (object.approvedRootCertificates !== undefined && object.approvedRootCertificates !== null) {
+      message.approvedRootCertificates = ApprovedRootCertificates.fromJSON(object.approvedRootCertificates)
     } else {
-      message.ApprovedRootCertificates = undefined
+      message.approvedRootCertificates = undefined
     }
     return message
   },
 
   toJSON(message: QueryGetApprovedRootCertificatesResponse): unknown {
     const obj: any = {}
-    message.ApprovedRootCertificates !== undefined &&
-      (obj.ApprovedRootCertificates = message.ApprovedRootCertificates ? ApprovedRootCertificates.toJSON(message.ApprovedRootCertificates) : undefined)
+    message.approvedRootCertificates !== undefined &&
+      (obj.approvedRootCertificates = message.approvedRootCertificates ? ApprovedRootCertificates.toJSON(message.approvedRootCertificates) : undefined)
     return obj
   },
 
   fromPartial(object: DeepPartial<QueryGetApprovedRootCertificatesResponse>): QueryGetApprovedRootCertificatesResponse {
     const message = { ...baseQueryGetApprovedRootCertificatesResponse } as QueryGetApprovedRootCertificatesResponse
-    if (object.ApprovedRootCertificates !== undefined && object.ApprovedRootCertificates !== null) {
-      message.ApprovedRootCertificates = ApprovedRootCertificates.fromPartial(object.ApprovedRootCertificates)
+    if (object.approvedRootCertificates !== undefined && object.approvedRootCertificates !== null) {
+      message.approvedRootCertificates = ApprovedRootCertificates.fromPartial(object.approvedRootCertificates)
     } else {
-      message.ApprovedRootCertificates = undefined
+      message.approvedRootCertificates = undefined
     }
     return message
   }
@@ -1427,8 +1427,8 @@ const baseQueryGetRevokedRootCertificatesResponse: object = {}
 
 export const QueryGetRevokedRootCertificatesResponse = {
   encode(message: QueryGetRevokedRootCertificatesResponse, writer: Writer = Writer.create()): Writer {
-    if (message.RevokedRootCertificates !== undefined) {
-      RevokedRootCertificates.encode(message.RevokedRootCertificates, writer.uint32(10).fork()).ldelim()
+    if (message.revokedRootCertificates !== undefined) {
+      RevokedRootCertificates.encode(message.revokedRootCertificates, writer.uint32(10).fork()).ldelim()
     }
     return writer
   },
@@ -1441,7 +1441,7 @@ export const QueryGetRevokedRootCertificatesResponse = {
       const tag = reader.uint32()
       switch (tag >>> 3) {
         case 1:
-          message.RevokedRootCertificates = RevokedRootCertificates.decode(reader, reader.uint32())
+          message.revokedRootCertificates = RevokedRootCertificates.decode(reader, reader.uint32())
           break
         default:
           reader.skipType(tag & 7)
@@ -1453,27 +1453,27 @@ export const QueryGetRevokedRootCertificatesResponse = {
 
   fromJSON(object: any): QueryGetRevokedRootCertificatesResponse {
     const message = { ...baseQueryGetRevokedRootCertificatesResponse } as QueryGetRevokedRootCertificatesResponse
-    if (object.RevokedRootCertificates !== undefined && object.RevokedRootCertificates !== null) {
-      message.RevokedRootCertificates = RevokedRootCertificates.fromJSON(object.RevokedRootCertificates)
+    if (object.revokedRootCertificates !== undefined && object.revokedRootCertificates !== null) {
+      message.revokedRootCertificates = RevokedRootCertificates.fromJSON(object.revokedRootCertificates)
     } else {
-      message.RevokedRootCertificates = undefined
+      message.revokedRootCertificates = undefined
     }
     return message
   },
 
   toJSON(message: QueryGetRevokedRootCertificatesResponse): unknown {
     const obj: any = {}
-    message.RevokedRootCertificates !== undefined &&
-      (obj.RevokedRootCertificates = message.RevokedRootCertificates ? RevokedRootCertificates.toJSON(message.RevokedRootCertificates) : undefined)
+    message.revokedRootCertificates !== undefined &&
+      (obj.revokedRootCertificates = message.revokedRootCertificates ? RevokedRootCertificates.toJSON(message.revokedRootCertificates) : undefined)
     return obj
   },
 
   fromPartial(object: DeepPartial<QueryGetRevokedRootCertificatesResponse>): QueryGetRevokedRootCertificatesResponse {
     const message = { ...baseQueryGetRevokedRootCertificatesResponse } as QueryGetRevokedRootCertificatesResponse
-    if (object.RevokedRootCertificates !== undefined && object.RevokedRootCertificates !== null) {
-      message.RevokedRootCertificates = RevokedRootCertificates.fromPartial(object.RevokedRootCertificates)
+    if (object.revokedRootCertificates !== undefined && object.revokedRootCertificates !== null) {
+      message.revokedRootCertificates = RevokedRootCertificates.fromPartial(object.revokedRootCertificates)
     } else {
-      message.RevokedRootCertificates = undefined
+      message.revokedRootCertificates = undefined
     }
     return message
   }

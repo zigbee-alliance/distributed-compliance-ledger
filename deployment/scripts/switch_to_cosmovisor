@@ -1,0 +1,147 @@
+#!/bin/bash
+# Copyright 2020 DSR Corporation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+set -eu
+set -o pipefail
+
+GENESIS_APP_DIR="$HOME/.dcl/cosmovisor/genesis/bin"
+CURRENT_APP_DIR="$HOME/.dcl/cosmovisor/current/bin"
+
+DEF_NODE_USER="ubuntu"
+CURR_USER="${USER:-$(whoami 2>/dev/null)}"
+NODE_USER="${CURR_USER:-$DEF_NODE_USER}"
+
+function wait_node_up {
+    local _timeout="${1:-60}"
+    local _try=1
+
+    echo -e "Waiting the node becomes up"
+    until ./dcld status >/dev/null 2>&1
+    do
+        if [[ "$_try" -gt "$_timeout" ]]; then
+            echo -e "\nERROR: dcld node seems not ready after $_timeout seconds."
+            return 1
+        fi
+        echo -n "."
+        _try=$(( $_try + 1 ))
+        sleep 1
+    done
+    echo -e "\n\tNode is responding"
+}
+
+### Preliminary checks
+
+if [[ ! -d "/etc/systemd/system" ]]; then
+    echo "Error. Not a systemd system. This script supports systemd systems only."
+    exit 1
+fi
+
+if [[ ! -f "./dcld" ]]; then
+    echo "Error. './dcld' file to install not found"
+    exit 1
+fi
+
+if [[ ! -f "./cosmovisor" ]]; then
+    echo "Error. './cosmovisor' file not found"
+    exit 1
+fi
+
+if [[ ! -f "./cosmovisor.service" ]]; then
+    echo "Error. './cosmovisor.service' file not found"
+    exit 1
+fi
+
+OLD_DCLD="$(which dcld)"
+
+if [[ -z "$OLD_DCLD" ]]; then
+    echo "Error. No installed 'dcld' found"
+    exit 1
+fi
+
+BIN_DIR="$(dirname "$OLD_DCLD")"
+
+if [[ ! -f "/etc/systemd/system/dcld.service" ]]; then
+    echo "Error. '/etc/systemd/system/dcld.service' file not found"
+    exit 1
+fi
+
+OLD_NODE_USER=$(cat /etc/systemd/system/dcld.service | sed -n "s~^User=\([a-z_][a-z0-9_-]*[$]\?\)$~\1~p")
+
+if [[ "$NODE_USER" != "$OLD_NODE_USER" ]]; then
+    echo "Error. Wrong current user: '${NODE_USER}'. Expected user: '${OLD_NODE_USER}', on behalf of whom 'dcld' service is launched."
+    exit 1
+fi
+
+if ! systemctl is-active --quiet dcld; then
+    echo "Error. 'dcld' service is not running. Transition to cosmovisor will not be performed."
+    exit 1
+fi
+
+### Old stand-alone dcld removal
+
+sudo systemctl stop dcld
+echo "Stopped 'dcld' service"
+
+sudo systemctl disable dcld
+
+sudo rm -f /etc/systemd/system/dcld.service
+echo "Removed 'dcld' service"
+
+sudo rm -f "$BIN_DIR"/dcld
+echo "Removed old stand-alone 'dcld' binary from '${BIN_DIR}'"
+
+### Cosmovisor and new dcld installation
+
+sudo chown "$NODE_USER" ./dcld
+sudo chmod u+x ./dcld
+
+sudo cp -f ./cosmovisor "$BIN_DIR"/
+sudo chown "$NODE_USER" "$BIN_DIR"/cosmovisor
+sudo chmod u+x "$BIN_DIR"/cosmovisor
+echo "Copied 'cosmovisor' to '${BIN_DIR}'"
+
+mkdir -p "$GENESIS_APP_DIR"
+echo "Created '${GENESIS_APP_DIR}' directory treated by cosmovisor as path to genesis app version"
+
+sudo cp -f ./dcld "$GENESIS_APP_DIR"/
+sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
+# Execution permissions on `dcld` are granted to all (i.e. User, Group and Others classes)
+# because cosmovisor requires execution permission on the application binary to be granted to Others class:
+# https://github.com/cosmos/cosmos-sdk/blob/cosmovisor/v1.0.0/cosmovisor/upgrade.go#L164
+sudo chmod a+x "$GENESIS_APP_DIR"/dcld
+echo "Copied new 'dcld' binary to '${GENESIS_APP_DIR}/'"
+
+# set up systemd cosmovisor.service
+sed -i -r "s~^User=ubuntu$~User=${NODE_USER}~" ./cosmovisor.service
+sed -i -r "s~\"DAEMON_HOME=/var/lib/ubuntu/.dcl\"~\"DAEMON_HOME=${HOME}/.dcl\"~" ./cosmovisor.service
+
+sudo cp -f ./cosmovisor.service /etc/systemd/system/
+echo "Added 'cosmovisor' service"
+
+sudo systemctl enable cosmovisor
+
+sudo systemctl start cosmovisor
+echo "Started 'cosmovisor' service"
+
+echo -e "\tUse 'systemctl status cosmovisor' to get the node service status."
+echo "Use 'journalctl -u cosmovisor.service -f' to see node logs."
+
+echo -e "\nexport PATH=\$PATH:$CURRENT_APP_DIR" >> "$HOME"/.profile
+
+echo "Added '${CURRENT_APP_DIR}' to \$PATH to maintain 'dcld' command associated with the latest installed app binary."
+echo "Execute 'source \$HOME/.profile' or restart shell to take the \$PATH change effective."
+
+wait_node_up
+echo "Done"

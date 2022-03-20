@@ -16,7 +16,7 @@
 extends: default
 
 ignore: |
-  .tox/
+  openapi.yml
 
 rules:
   line-length: disable

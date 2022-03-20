@@ -5,17 +5,17 @@ import Relayers from '@/views/Relayers.vue'
 
 const routerHistory = createWebHistory()
 const routes = [
-	{
-		path: '/',
-		component: Index
-	},
-	{ path: '/types', component: Types },
-	{ path: '/relayers', component: Relayers }
+  {
+    path: '/',
+    component: Index
+  },
+  { path: '/types', component: Types },
+  { path: '/relayers', component: Relayers }
 ]
 
 const router = createRouter({
-	history: routerHistory,
-	routes
+  history: routerHistory,
+  routes
 })
 
 export default router
