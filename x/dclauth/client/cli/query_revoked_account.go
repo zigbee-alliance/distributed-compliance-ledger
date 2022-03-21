@@ -14,7 +14,7 @@ import (
 
 func CmdListRevokedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-revoked-account",
+		Use:   "all-revoked-accounts",
 		Short: "list all RevokedAccount",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
