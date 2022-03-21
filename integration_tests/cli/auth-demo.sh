@@ -78,8 +78,8 @@ response_does_not_contain "$result" "\"address\": \"$user_address\""
 
 test_divider
 
-echo "Get list revoked account must be empty"
-result=$(dcld query auth list-revoked-account)
+echo "Get all revoked accounts. No $user account in the list"
+result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"address\": \"$user_address\""
 
@@ -244,8 +244,8 @@ check_response_and_report "$result"  '"info": "Alice proposes to revoke account"
 
 test_divider
 
-echo "Get list revoked account must be exist"
-result=$(dcld query auth list-revoked-account)
+echo "Get all revoked accounts. No $user account in the list"
+result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"address\": \"$user_address\""
 
@@ -257,8 +257,8 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Get list revoked account must be exist"
-result=$(dcld query auth list-revoked-account)
+echo "Get all revoked accounts. $user account in the list"
+result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
@@ -300,8 +300,8 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Get list revoked account must be exist"
-result=$(dcld query auth list-revoked-account)
+echo "Get all revoked accounts. $user account in the list"
+result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
@@ -343,8 +343,8 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Get list revoked account must be empty"
-result=$(dcld query auth list-revoked-account)
+echo "Get all revoked accounts. No $user account in the list"
+result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"address\": \"$user_address\""
 
@@ -427,8 +427,8 @@ check_response_and_report "$result"  '"info": "Alice proposes to revoke account"
 
 test_divider
 
-echo "Get list revoked account must be exist"
-result=$(dcld query auth list-revoked-account)
+echo "Get all revoked accounts. No $user account in the list"
+result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"address\": \"$user_address\""
 
@@ -440,8 +440,8 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
-echo "Get list revoked account must be exist"
-result=$(dcld query auth list-revoked-account)
+echo "Get all revoked accounts. $user account in the list"
+result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\"address\": \"$user_address\""
 
 test_divider
