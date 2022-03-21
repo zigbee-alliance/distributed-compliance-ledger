@@ -53,12 +53,12 @@ service Query {
 	}
 // Queries a RevokedAccount by index.
 	rpc RevokedAccount(QueryGetRevokedAccountRequest) returns (QueryGetRevokedAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account/{address}";
+		option (google.api.http).get = "/dcl/auth/revoked-accounts/{address}";
 	}
 
 	// Queries a list of RevokedAccount items.
 	rpc RevokedAccountAll(QueryAllRevokedAccountRequest) returns (QueryAllRevokedAccountResponse) {
-		option (google.api.http).get = "/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account";
+		option (google.api.http).get = "/dcl/auth/revoked-accounts";
 	}
 
 // this line is used by starport scaffolding # 2
