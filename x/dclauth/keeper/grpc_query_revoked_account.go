@@ -45,9 +45,13 @@ func (k Keeper) RevokedAccount(c context.Context, req *types.QueryGetRevokedAcco
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
+	addr, err := sdk.AccAddressFromBech32(req.Address)
+	if err != nil {
+		return nil, err
+	}
+
 	val, found := k.GetRevokedAccount(
-		ctx,
-		sdk.AccAddress(req.Address),
+		ctx, addr,
 	)
 	if !found {
 		return nil, status.Error(codes.NotFound, "not found")
