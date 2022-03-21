@@ -3513,7 +3513,7 @@ paths:
           type: string
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account:
+  /dcl/auth/revoked-accounts:
     get:
       summary: Queries a list of RevokedAccount items.
       operationId: RevokedAccountAll
@@ -4040,7 +4040,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account/{address}:
+  /dcl/auth/revoked-accounts/{address}:
     get:
       summary: Queries a RevokedAccount by index.
       operationId: RevokedAccount
