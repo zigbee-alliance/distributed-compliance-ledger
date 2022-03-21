@@ -62,7 +62,6 @@ type DCLAccountI interface {
 
 	GetRoles() []AccountRole
 	GetVendorID() int32
-	GetApprovals() []*Grant
 }
 
 // NewAccount creates a new Account object.
@@ -98,10 +97,6 @@ func (acc Account) Validate() error {
 
 func (acc Account) GetRoles() []AccountRole {
 	return acc.Roles
-}
-
-func (acc Account) GetApprovals() []*Grant {
-	return acc.Approvals
 }
 
 func (acc Account) GetVendorID() int32 {
