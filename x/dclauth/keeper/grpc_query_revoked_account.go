@@ -31,7 +31,6 @@ func (k Keeper) RevokedAccountAll(c context.Context, req *types.QueryAllRevokedA
 		revokedAccounts = append(revokedAccounts, revokedAccount)
 		return nil
 	})
-
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
