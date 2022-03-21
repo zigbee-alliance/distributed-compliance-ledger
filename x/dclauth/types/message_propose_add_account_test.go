@@ -1,6 +1,6 @@
 package types
 
-// TODO issue 99
+// TODO issue 99.
 import (
 	fmt "fmt"
 	"testing"

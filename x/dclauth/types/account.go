@@ -144,7 +144,7 @@ func NewPendingAccount(acc *Account, approval sdk.AccAddress, info string, time 
 	return pendingAccount
 }
 
-// NewRevokedAccount creates a new RevokedAccount object
+// NewRevokedAccount creates a new RevokedAccount object.
 func NewRevokedAccount(acc *Account, approvals []*Grant, info string, time int64) *RevokedAccount {
 	revokedAccount := &RevokedAccount{
 		Account: acc,

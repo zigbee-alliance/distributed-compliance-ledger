@@ -9,11 +9,11 @@ import (
 var _ binary.ByteOrder
 
 const (
-	// RevokedAccountKeyPrefix is the prefix to retrieve all RevokedAccount
+	// RevokedAccountKeyPrefix is the prefix to retrieve all RevokedAccount.
 	RevokedAccountKeyPrefix = "RevokedAccount/value/"
 )
 
-// RevokedAccountKey returns the store key to retrieve a RevokedAccount from the index fields
+// RevokedAccountKey returns the store key to retrieve a RevokedAccount from the index fields.
 func RevokedAccountKey(
 	address sdk.AccAddress,
 ) []byte {
