@@ -770,7 +770,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRevokedAccountAll
    * @summary Queries a list of RevokedAccount items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account
+   * @request GET:/dcl/auth/revoked-accounts
    */
   queryRevokedAccountAll = (
     query?: {
@@ -783,7 +783,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclauthQueryAllRevokedAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account`,
+      path: `/dcl/auth/revoked-accounts`,
       method: "GET",
       query: query,
       format: "json",
@@ -796,11 +796,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRevokedAccount
    * @summary Queries a RevokedAccount by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account/{address}
+   * @request GET:/dcl/auth/revoked-accounts/{address}
    */
   queryRevokedAccount = (address: string, params: RequestParams = {}) =>
     this.request<DclauthQueryGetRevokedAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account/${address}`,
+      path: `/dcl/auth/revoked-accounts/${address}`,
       method: "GET",
       format: "json",
       ...params,

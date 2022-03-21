@@ -522,7 +522,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRevokedAccountAll
      * @summary Queries a list of RevokedAccount items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account
+     * @request GET:/dcl/auth/revoked-accounts
      */
     queryRevokedAccountAll: (query?: {
         "pagination.key"?: string;
@@ -537,7 +537,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRevokedAccount
      * @summary Queries a RevokedAccount by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/revoked_account/{address}
+     * @request GET:/dcl/auth/revoked-accounts/{address}
      */
     queryRevokedAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetRevokedAccountResponse, RpcStatus>>;
 }
