@@ -35,6 +35,7 @@ const (
 	DCLAuthAccountsEndpoint                   = "/dcl/auth/accounts/"
 	DCLAuthProposedAccountsEndpoint           = "/dcl/auth/proposed-accounts/"
 	DCLAuthProposedRevocationAccountsEndpoint = "/dcl/auth/proposed-revocation-accounts/"
+	DCLAuthRevokedAccountsEndpoint            = "/dcl/auth/revoked-accounts/"
 )
 
 //nolint:godox
@@ -215,6 +216,62 @@ func GetProposedAccountToRevoke(suite *utils.TestSuite, address sdk.AccAddress) 
 	return &res, nil
 }
 
+func GetRevokedAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauthtypes.RevokedAccount, error) {
+	var res dclauthtypes.RevokedAccount
+
+	if suite.Rest {
+		var resp dclauthtypes.QueryGetRevokedAccountResponse
+		err := suite.QueryREST(DCLAuthRevokedAccountsEndpoint+address.String(), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedAccount()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		//This creates a gRPC cliennt to query the x/dclauth service.
+		accClient := dclauthtypes.NewQueryClient(grpcConn)
+		resp, err := accClient.RevokedAccount(
+			context.Background(),
+			&dclauthtypes.QueryGetRevokedAccountRequest{Address: address.String()},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedAccount()
+	}
+
+	return &res, nil
+}
+
+func GetRevokedAccounts(suite *utils.TestSuite) (res []dclauthtypes.RevokedAccount, err error) {
+	if suite.Rest {
+		var resp dclauthtypes.QueryAllRevokedAccountResponse
+		err := suite.QueryREST(DCLAuthRevokedAccountsEndpoint, &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedAccount()
+	} else {
+		grpcConn := suite.GetGRPCConn()
+		defer grpcConn.Close()
+
+		//This creates a gRPC client to query the x/dclauth service.
+		accClient := dclauthtypes.NewQueryClient(grpcConn)
+		resp, err := accClient.RevokedAccountAll(
+			context.Background(),
+			&dclauthtypes.QueryAllRevokedAccountRequest{},
+		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetRevokedAccount()
+	}
+
+	return res, nil
+}
+
 func ProposeAddAccount(
 	suite *utils.TestSuite,
 	accAddr sdk.AccAddress,
@@ -376,6 +433,11 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, 0, len(inputProposedAccountsToRevoke))
 
+	// Query all revoked accounts
+	inputRevokedAccounts, err := GetRevokedAccounts(suite)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, 0, len(inputRevokedAccounts))
+
 	accountName := utils.RandString()
 	accountInfo := CreateAccountInfo(suite, accountName)
 	testAccPubKey := accountInfo.GetPubKey()
@@ -391,6 +453,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	// Query unknown proposed account to revoke
 	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown revoked account
+	_, err = GetRevokedAccount(suite, testAccAddr)
 	suite.AssertNotFound(err)
 
 	// Jack proposes new account
@@ -416,6 +482,10 @@ func AuthDemo(suite *utils.TestSuite) {
 	receivedProposedAccountsToRevoke, _ := GetProposedAccountsToRevoke(suite)
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
+	// Query all revoked accounts
+	receivedRevokedAccounts, _ := GetRevokedAccounts(suite)
+	require.Equal(suite.T, len(inputRevokedAccounts), len(receivedRevokedAccounts))
+
 	// Query unknown account
 	_, err = GetAccount(suite, testAccAddr)
 	suite.AssertNotFound(err)
@@ -429,6 +499,10 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, proposedAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
+
+	// Query unknown revoked account
+	_, err = GetRevokedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
 
 	// Alice approves new account
 	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
@@ -446,6 +520,10 @@ func AuthDemo(suite *utils.TestSuite) {
 	receivedProposedAccountsToRevoke, _ = GetProposedAccountsToRevoke(suite)
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
+	// Query all revoked accounts
+	receivedRevokedAccounts, _ = GetRevokedAccounts(suite)
+	require.Equal(suite.T, len(inputRevokedAccounts), len(receivedRevokedAccounts))
+
 	// Get new account
 	testAccount, err := GetAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
@@ -458,6 +536,10 @@ func AuthDemo(suite *utils.TestSuite) {
 
 	// Query unknown proposed account to revoke
 	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown revoked account
+	_, err = GetRevokedAccount(suite, testAccAddr)
 	suite.AssertNotFound(err)
 
 	// Alice proposes to revoke new account
@@ -476,6 +558,10 @@ func AuthDemo(suite *utils.TestSuite) {
 	// Query all accounts proposed to be revoked
 	receivedProposedAccountsToRevoke, _ = GetProposedAccountsToRevoke(suite)
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke)+1, len(receivedProposedAccountsToRevoke))
+
+	// Query all revoked accounts
+	receivedRevokedAccounts, _ = GetRevokedAccounts(suite)
+	require.Equal(suite.T, len(inputRevokedAccounts), len(receivedRevokedAccounts))
 
 	// Query proposed account to revoke
 	proposedToRevokeAccount, err := GetProposedAccountToRevoke(suite, testAccAddr)
@@ -499,6 +585,10 @@ func AuthDemo(suite *utils.TestSuite) {
 	receivedProposedAccountsToRevoke, _ = GetProposedAccountsToRevoke(suite)
 	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
 
+	// Query all revoked accounts
+	receivedRevokedAccounts, _ = GetRevokedAccounts(suite)
+	require.Equal(suite.T, len(inputRevokedAccounts)+1, len(receivedRevokedAccounts))
+
 	// Ensure that new account is not available anymore
 	_, err = GetAccount(suite, testAccAddr)
 	require.Error(suite.T, err)
@@ -519,4 +609,98 @@ func AuthDemo(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, accountName, testAccount)
 	require.Error(suite.T, err)
 	require.True(suite.T, sdkerrors.ErrUnknownAddress.Is(err))
+
+	// Ensure that new account is exist in revoked account
+	receivedRevokedAccount, err := GetRevokedAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, receivedRevokedAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, receivedRevokedAccount.GetRoles())
+
+	// Jack proposes for reading the revoked account
+	_, err = ProposeAddAccount(
+		suite,
+		testAccAddr, testAccPubKey,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor}, vid,
+		jackName, jackAccount,
+		testconstants.Info,
+	)
+	require.NoError(suite.T, err)
+
+	// Query all active accounts
+	receivedAccounts, _ = GetAccounts(suite)
+	require.Equal(suite.T, len(inputAccounts), len(receivedAccounts))
+
+	// Query all proposed accounts
+	receivedProposedAccounts, _ = GetProposedAccounts(suite)
+	require.Equal(suite.T, len(inputProposedAccounts)+1, len(receivedProposedAccounts))
+
+	// Query all accounts proposed to be revoked
+	receivedProposedAccountsToRevoke, _ = GetProposedAccountsToRevoke(suite)
+	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
+
+	// Query all revoked accounts
+	receivedRevokedAccounts, _ = GetRevokedAccounts(suite)
+	require.Equal(suite.T, len(inputRevokedAccounts)+1, len(receivedRevokedAccounts))
+
+	// Query unknown account
+	_, err = GetAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account to revoke
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query proposed account
+	proposedAccount, err = GetProposedAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, proposedAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, proposedAccount.GetRoles())
+
+	// Ensure that new account is exist in revoked account
+	receivedRevokedAccount, err = GetRevokedAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, receivedRevokedAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, receivedRevokedAccount.GetRoles())
+
+	// Alice approves the revoked account
+	_, err = ApproveAddAccount(suite, testAccAddr, aliceName, aliceAccount, testconstants.Info)
+	require.NoError(suite.T, err)
+
+	// Query all active accounts
+	receivedAccounts, _ = GetAccounts(suite)
+	require.Equal(suite.T, len(inputAccounts)+1, len(receivedAccounts))
+
+	// Query all proposed accounts
+	receivedProposedAccounts, _ = GetProposedAccounts(suite)
+	require.Equal(suite.T, len(inputProposedAccounts), len(receivedProposedAccounts))
+
+	// Query all accounts proposed to be revoked
+	receivedProposedAccountsToRevoke, _ = GetProposedAccountsToRevoke(suite)
+	require.Equal(suite.T, len(inputProposedAccountsToRevoke), len(receivedProposedAccountsToRevoke))
+
+	// Query all revoked accounts
+	receivedRevokedAccounts, _ = GetRevokedAccounts(suite)
+	require.Equal(suite.T, len(inputRevokedAccounts), len(receivedRevokedAccounts))
+
+	// Get new account
+	testAccount, err = GetAccount(suite, testAccAddr)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, testAccAddr, testAccount.GetAddress())
+	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testAccount.GetRoles())
+
+	// Query unknown proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account
+	_, err = GetProposedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown proposed account to revoke
+	_, err = GetProposedAccountToRevoke(suite, testAccAddr)
+	suite.AssertNotFound(err)
+
+	// Query unknown revoked account
+	_, err = GetRevokedAccount(suite, testAccAddr)
+	suite.AssertNotFound(err)
 }
