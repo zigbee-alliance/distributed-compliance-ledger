@@ -91,11 +91,11 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, nil, testconstants.PubKey1,
 				AccountRoles{NodeAdmin}, 1),
 		},
-		//{
-		//valid: false,
-		//msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, "",
-		//AccountRoles{}, 1),
-		//},
+		// {
+		// valid: false,
+		// msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, "",
+		// AccountRoles{}, 1),
+		// },
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
