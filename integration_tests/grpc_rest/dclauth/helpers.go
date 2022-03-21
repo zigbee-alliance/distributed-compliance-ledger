@@ -616,7 +616,7 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.Equal(suite.T, testAccAddr, receivedRevokedAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, receivedRevokedAccount.GetRoles())
 
-	// Jack proposes for reading the revoked account
+	// Jack proposes for re-adding the revoked account
 	_, err = ProposeAddAccount(
 		suite,
 		testAccAddr, testAccPubKey,
@@ -687,10 +687,6 @@ func AuthDemo(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, testAccAddr, testAccount.GetAddress())
 	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, testAccount.GetRoles())
-
-	// Query unknown proposed account
-	_, err = GetProposedAccount(suite, testAccAddr)
-	suite.AssertNotFound(err)
 
 	// Query unknown proposed account
 	_, err = GetProposedAccount(suite, testAccAddr)

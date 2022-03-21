@@ -69,7 +69,7 @@ func (k msgServer) ApproveAddAccount(
 		}
 		k.SetAccountO(ctx, *account)
 
-		// delete from map RevokedAccount
+		// delete revoked account record
 		k.RemoveRevokedAccount(ctx, accAddr)
 
 		// delete pending account record

@@ -51,6 +51,7 @@ service Query {
 	rpc AccountStat(QueryGetAccountStatRequest) returns (QueryGetAccountStatResponse) {
 		option (google.api.http).get = "/dcl/auth/accounts/stat";
 	}
+	
 // Queries a RevokedAccount by index.
 	rpc RevokedAccount(QueryGetRevokedAccountRequest) returns (QueryGetRevokedAccountResponse) {
 		option (google.api.http).get = "/dcl/auth/revoked-accounts/{address}";
@@ -123,6 +124,7 @@ message QueryGetAccountStatRequest {}
 message QueryGetAccountStatResponse {
 	AccountStat AccountStat = 1 [(gogoproto.nullable) = false];
 }
+
 message QueryGetRevokedAccountRequest {
 	  string address = 1;
 
