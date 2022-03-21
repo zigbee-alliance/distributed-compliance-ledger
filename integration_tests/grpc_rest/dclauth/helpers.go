@@ -230,7 +230,7 @@ func GetRevokedAccount(suite *utils.TestSuite, address sdk.AccAddress) (*dclauth
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
 
-		//This creates a gRPC cliennt to query the x/dclauth service.
+		// This creates a gRPC cliennt to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
 		resp, err := accClient.RevokedAccount(
 			context.Background(),
@@ -257,7 +257,7 @@ func GetRevokedAccounts(suite *utils.TestSuite) (res []dclauthtypes.RevokedAccou
 		grpcConn := suite.GetGRPCConn()
 		defer grpcConn.Close()
 
-		//This creates a gRPC client to query the x/dclauth service.
+		// This creates a gRPC client to query the x/dclauth service.
 		accClient := dclauthtypes.NewQueryClient(grpcConn)
 		resp, err := accClient.RevokedAccountAll(
 			context.Background(),
