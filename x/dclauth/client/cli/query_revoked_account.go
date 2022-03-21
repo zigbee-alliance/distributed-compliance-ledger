@@ -62,8 +62,8 @@ func CmdShowRevokedAccount() *cobra.Command {
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,
-				types.PendingAccountRevocationKeyPrefix,
-				types.PendingAccountRevocationKey(argAddress),
+				types.RevokedAccountKeyPrefix,
+				types.RevokedAccountKey(argAddress),
 				&res,
 			)
 		},
