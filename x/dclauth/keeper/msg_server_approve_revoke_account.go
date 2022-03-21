@@ -56,7 +56,7 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 	// check if pending account revocation has enough approvals
 	if len(revoc.Approvals) == k.AccountApprovalsCount(ctx) {
 		// get account
-		account, ok := k.GetAccountO(ctx, sdk.AccAddress(accAddr))
+		account, ok := k.GetAccountO(ctx, accAddr)
 
 		// check we can get that account or can not
 		if !ok {
