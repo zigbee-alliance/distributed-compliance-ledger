@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// SetRevokedAccount set a specific revokedAccount in the store from its index
+// SetRevokedAccount set a specific revokedAccount in the store from its index.
 func (k Keeper) SetRevokedAccount(ctx sdk.Context, revokedAccount types.RevokedAccount) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedAccountKeyPrefix))
 	b := k.cdc.MustMarshal(&revokedAccount)
@@ -15,7 +15,7 @@ func (k Keeper) SetRevokedAccount(ctx sdk.Context, revokedAccount types.RevokedA
 	), b)
 }
 
-// GetRevokedAccount returns a revokedAccount from its index
+// GetRevokedAccount returns a revokedAccount from its index.
 func (k Keeper) GetRevokedAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -34,7 +34,7 @@ func (k Keeper) GetRevokedAccount(
 	return val, true
 }
 
-// RemoveRevokedAccount removes a revokedAccount from the store
+// RemoveRevokedAccount removes a revokedAccount from the store.
 func (k Keeper) RemoveRevokedAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
@@ -46,7 +46,7 @@ func (k Keeper) RemoveRevokedAccount(
 	))
 }
 
-// GetAllRevokedAccount returns all revokedAccount
+// GetAllRevokedAccount returns all revokedAccount.
 func (k Keeper) GetAllRevokedAccount(ctx sdk.Context) (list []types.RevokedAccount) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedAccountKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
