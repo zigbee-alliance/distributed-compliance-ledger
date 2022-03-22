@@ -18,7 +18,7 @@ func TestNewMsgApproveRevokeAccount(t *testing.T) {
 }
 
 func TestValidateMsgApproveRevokeAccount(t *testing.T) {
-	tests := []struct {
+	positiveTests := []struct {
 		valid bool
 		msg   *MsgApproveRevokeAccount
 	}{
@@ -30,6 +30,12 @@ func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 			valid: true,
 			msg:   NewMsgApproveRevokeAccount(testconstants.Signer, testconstants.Address1, ""),
 		},
+	}
+
+	negativeTests := []struct {
+		valid bool
+		msg   *MsgApproveRevokeAccount
+	}{
 		{
 			valid: false,
 			msg:   NewMsgApproveRevokeAccount(testconstants.Signer, nil, testconstants.Info),
@@ -40,7 +46,17 @@ func TestValidateMsgApproveRevokeAccount(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
+	for _, tt := range positiveTests {
+		err := tt.msg.ValidateBasic()
+
+		if tt.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+
+	for _, tt := range negativeTests {
 		err := tt.msg.ValidateBasic()
 
 		if tt.valid {

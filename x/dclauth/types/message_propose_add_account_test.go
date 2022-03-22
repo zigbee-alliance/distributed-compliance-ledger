@@ -38,15 +38,10 @@ func TestNewMsgProposeAddAccount(t *testing.T) {
 }
 
 func TestValidateMsgProposeAddAccount(t *testing.T) {
-	tests := []struct {
+	positiveTests := []struct {
 		valid bool
 		msg   *MsgProposeAddAccount
 	}{
-		{
-			valid: false,
-			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-				AccountRoles{}, 1), // no roles provided
-		},
 		{
 			valid: true,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
@@ -57,17 +52,33 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1),
 		},
-		// zero VID with Vendor role - error - can not create Vendor with vid=0 (reserved)
-		{
-			valid: false,
-			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-				AccountRoles{Vendor, NodeAdmin}, 0),
-		},
 		// zero VID without Vendor role - no error
 		{
 			valid: true,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{NodeAdmin}, 0),
+		},
+		{
+			valid: true,
+			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
+				AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1),
+		},
+	}
+
+	negativeTests := []struct {
+		valid bool
+		msg   *MsgProposeAddAccount
+	}{
+		{
+			valid: false,
+			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
+				AccountRoles{}, 1), // no roles provided
+		},
+		// zero VID with Vendor role - error - can not create Vendor with vid=0 (reserved)
+		{
+			valid: false,
+			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
+				AccountRoles{Vendor, NodeAdmin}, 0),
 		},
 		// negative VID - error
 		{
@@ -80,11 +91,6 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{Vendor, NodeAdmin}, 65535+1),
-		},
-		{
-			valid: true,
-			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
-				AccountRoles{Vendor, NodeAdmin}, testconstants.VendorID1),
 		},
 		{
 			valid: false,
@@ -108,7 +114,17 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
+	for _, tt := range positiveTests {
+		err := tt.msg.ValidateBasic()
+
+		if tt.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+
+	for _, tt := range negativeTests {
 		err := tt.msg.ValidateBasic()
 
 		if tt.valid {

@@ -17,7 +17,7 @@ func TestNewMsgApproveAddAccount(t *testing.T) {
 }
 
 func TestValidateMsgApproveAddAccount(t *testing.T) {
-	tests := []struct {
+	positiveTests := []struct {
 		valid bool
 		msg   *MsgApproveAddAccount
 	}{
@@ -29,6 +29,12 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 			valid: true,
 			msg:   NewMsgApproveAddAccount(testconstants.Signer, testconstants.Address1, ""),
 		},
+	}
+
+	negativeTests := []struct {
+		valid bool
+		msg   *MsgApproveAddAccount
+	}{
 		{
 			valid: false,
 			msg:   NewMsgApproveAddAccount(testconstants.Signer, nil, testconstants.Info),
@@ -39,7 +45,17 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
+	for _, tt := range positiveTests {
+		err := tt.msg.ValidateBasic()
+
+		if tt.valid {
+			require.Nil(t, err)
+		} else {
+			require.NotNil(t, err)
+		}
+	}
+
+	for _, tt := range negativeTests {
 		err := tt.msg.ValidateBasic()
 
 		if tt.valid {
