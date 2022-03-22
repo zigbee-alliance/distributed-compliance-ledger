@@ -1053,6 +1053,7 @@ The account is not revoked until sufficient number of Trustees approve it.
   - 2/3 of Trustees
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
+- Note: If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
 
 #### GET_ACCOUNT
 
@@ -1092,6 +1093,19 @@ Gets a proposed but not approved accounts to be revoked by its address.
   - `dcld query auth proposed-account-to-revoke --address <bench32 encoded string>`
 - REST API:
   - GET `/dcl/auth/proposed-revocation-accounts/{address}`
+
+#### GET_REVOKED_ACCOUNT
+
+**Status: Implemented**
+
+Gets a revoked account by its address.
+
+- Parameters:
+  - address: `string` - account address; Bench32 encoded
+- CLI command:
+  - `dcld query auth revoked-account --address <bench32 encoded string>`
+- REST API:
+  - GET `/dcl/auth/revoked-accounts/{address}`
 
 #### GET_ALL_ACCOUNTS
 
@@ -1137,6 +1151,21 @@ Should be sent to trusted nodes only.
   - `dcld query auth all-proposed-accounts-to-revoke`
 - REST API:
   - GET `/dcl/auth/proposed-revocation-accounts`
+
+#### GET_ALL_REVOKED_ACCOUNTS
+
+**Status: Implemented**
+
+Gets all revoked accounts.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query auth all-revoked-accounts`
+- REST API:
+  - GET `/dcl/auth/revoked-accounts`
 
 #### ROTATE_KEY
 
