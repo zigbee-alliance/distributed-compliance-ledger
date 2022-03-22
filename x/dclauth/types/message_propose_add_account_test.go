@@ -7,8 +7,10 @@ import (
 
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
+	validator "github.com/zigbee-alliance/distributed-compliance-ledger/utils/validator"
 )
 
 func NewMsgProposeAddAccountWrapper(
@@ -68,49 +70,61 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 	negativeTests := []struct {
 		valid bool
 		msg   *MsgProposeAddAccount
+		err   error
 	}{
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{}, 1), // no roles provided
+			err: sdkerrors.Wrapf(MissingRoles,
+				"No roles provided"),
 		},
 		// zero VID with Vendor role - error - can not create Vendor with vid=0 (reserved)
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{Vendor, NodeAdmin}, 0),
+			err: sdkerrors.Wrapf(MissingVendorIDForVendorAccount,
+				"No Vendor ID is provided in the Vendor Role for the new account"),
 		},
 		// negative VID - error
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{Vendor, NodeAdmin}, -1),
+			err: sdkerrors.Wrapf(MissingVendorIDForVendorAccount,
+				"No Vendor ID is provided in the Vendor Role for the new account"),
 		},
 		// too large VID - error
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{Vendor, NodeAdmin}, 65535+1),
+			err: validator.ErrFieldUpperBoundViolated,
 		},
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, nil, testconstants.PubKey1,
 				AccountRoles{NodeAdmin}, 1),
+			err: sdkerrors.ErrInvalidAddress,
 		},
 		// {
 		// valid: false,
 		// msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, "",
 		// AccountRoles{}, 1),
+		// err: sdkerrors.ErrInvalidType,
 		// },
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, testconstants.Signer, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{"Wrong Role"}, 1),
+			err: sdkerrors.ErrUnknownRequest,
 		},
 		{
 			valid: false,
 			msg: NewMsgProposeAddAccountWrapper(t, nil, testconstants.Address1, testconstants.PubKey1,
 				AccountRoles{NodeAdmin}, 1),
+			err: sdkerrors.ErrInvalidAddress,
 		},
 	}
 
@@ -131,6 +145,7 @@ func TestValidateMsgProposeAddAccount(t *testing.T) {
 			require.Nil(t, err)
 		} else {
 			require.NotNil(t, err)
+			require.ErrorIs(t, err, tt.err)
 		}
 	}
 }

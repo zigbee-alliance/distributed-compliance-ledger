@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 )
@@ -34,14 +35,17 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 	negativeTests := []struct {
 		valid bool
 		msg   *MsgApproveAddAccount
+		err   error
 	}{
 		{
 			valid: false,
 			msg:   NewMsgApproveAddAccount(testconstants.Signer, nil, testconstants.Info),
+			err:   sdkerrors.ErrInvalidAddress,
 		},
 		{
 			valid: false,
 			msg:   NewMsgApproveAddAccount(nil, testconstants.Address1, testconstants.Info),
+			err:   sdkerrors.ErrInvalidAddress,
 		},
 	}
 
@@ -62,6 +66,7 @@ func TestValidateMsgApproveAddAccount(t *testing.T) {
 			require.Nil(t, err)
 		} else {
 			require.NotNil(t, err)
+			require.ErrorIs(t, err, tt.err)
 		}
 	}
 }
