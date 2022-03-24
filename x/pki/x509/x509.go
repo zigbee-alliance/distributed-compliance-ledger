@@ -45,10 +45,24 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
 		return nil, types.NewErrInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
 	}
 
+	oldVID := []byte("1.3.6.1.4.1.37244.2.1")
+	oldPID := []byte("1.3.6.1.4.1.37244.2.2")
+
+	newVIDKey := []byte("vid=0x")
+	newPIDKey := []byte("pid=0x")
+
+	issuer := cert.Issuer.String()
+	issuer = formatOID([]byte(issuer), oldVID, newVIDKey)
+	issuer = formatOID([]byte(issuer), oldPID, newPIDKey)
+
+	subject := cert.Subject.String()
+	subject = formatOID([]byte(subject), oldVID, newVIDKey)
+	subject = formatOID([]byte(subject), oldPID, newPIDKey)
+
 	certificate := X509Certificate{
-		Issuer:         TranslateToVidOrPid([]byte(cert.Issuer.String())),
+		Issuer:         issuer,
 		SerialNumber:   cert.SerialNumber.String(),
-		Subject:        TranslateToVidOrPid([]byte(cert.Subject.String())),
+		Subject:        subject,
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
@@ -57,39 +71,22 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
 	return &certificate, nil
 }
 
-func TranslateToVidOrPid(subject []byte) string {
-	oldVID := []byte("1.3.6.1.4.1.37244.2.1")
-	oldPID := []byte("1.3.6.1.4.1.37244.2.2")
-
-	var vid, vidValue, pid, pidValue []byte
-
-	if i := bytes.Index(subject, oldVID); i >= 0 {
-		// get vid value from subject
-		vidValue = subject[i+len(oldVID)+2 : len(string(subject))]
+func formatOID(header []byte, oldKey []byte, newKey []byte) string {
+	if i := bytes.Index(header, oldKey); i >= 0 {
+		// get value from header
+		value := header[i+len(oldKey)+2 : len(string(header))]
 		// get last 8 numbers from vidValue
-		vidValue = vidValue[len(vidValue)-8:]
+		value = value[len(value)-8:]
 
-		decoded, _ := hex.DecodeString(string(vidValue))
+		decoded, _ := hex.DecodeString(string(value))
 
-		vid = []byte(("vid=0x") + string(decoded))
+		newKey = []byte(string(newKey) + string(decoded))
 
-		subject = subject[0:i]
-		subject = []byte(string(subject) + string(vid))
-	} else if i := bytes.Index(subject, oldPID); i >= 0 {
-		// get pid value from subject
-		pidValue = subject[i+len(oldPID)+2 : len(string(subject))]
-		// get last 8 number from pidValue
-		pidValue = pidValue[len(pidValue)-8:]
-
-		decoded, _ := hex.DecodeString(string(pidValue))
-
-		pid = []byte(("pid=0x") + string(decoded))
-
-		subject = subject[0:i]
-		subject = []byte(string(subject) + string(pid))
+		header = header[0:i]
+		header = []byte(string(header) + string(newKey))
 	}
 
-	return string(subject)
+	return string(header)
 }
 
 func BytesToHex(bytes []byte) string {
