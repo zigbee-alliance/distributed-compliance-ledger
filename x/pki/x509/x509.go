@@ -71,22 +71,23 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
 	return &certificate, nil
 }
 
-func formatOID(header []byte, oldKey []byte, newKey []byte) string {
-	if i := bytes.Index(header, oldKey); i >= 0 {
+func FormatOID(header, oldKey, newKey string) string {
+	subjectValues := strings.Split(header, ",")
+
+	for index, value := range subjectValues {
+		if i := strings.Index(value, oldKey); i >= 0 {
 		// get value from header
-		value := header[i+len(oldKey)+2 : len(string(header))]
-		// get last 8 numbers from vidValue
 		value = value[len(value)-8:]
 
-		decoded, _ := hex.DecodeString(string(value))
+			decoded, _ := hex.DecodeString(value)
+			hexStr := "=0x" + string(decoded)
 
-		newKey = []byte(string(newKey) + string(decoded))
-
-		header = header[0:i]
-		header = []byte(string(header) + string(newKey))
+			value = newKey + hexStr
+			subjectValues[index] = value
+		}
 	}
 
-	return string(header)
+	return strings.Join(subjectValues, ",")
 }
 
 func BytesToHex(bytes []byte) string {
