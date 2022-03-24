@@ -83,7 +83,7 @@ func FormatOID(header, oldKey, newKey string) string {
 	subjectValues := strings.Split(header, ",")
 
 	for index, value := range subjectValues {
-		if i := strings.Index(value, oldKey); i >= 0 {
+		if strings.HasPrefix(value, oldKey) {
 			// get value from header
 			value = value[len(value)-8:]
 
