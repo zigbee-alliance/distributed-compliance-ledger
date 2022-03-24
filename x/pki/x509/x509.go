@@ -15,7 +15,9 @@
 package x509
 
 import (
+	"bytes"
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"fmt"
 	"strings"
@@ -44,15 +46,50 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
 	}
 
 	certificate := X509Certificate{
-		Issuer:         cert.Issuer.String(),
+		Issuer:         TranslateToVidOrPid([]byte(cert.Issuer.String())),
 		SerialNumber:   cert.SerialNumber.String(),
-		Subject:        cert.Subject.String(),
+		Subject:        TranslateToVidOrPid([]byte(cert.Subject.String())),
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
 	}
 
 	return &certificate, nil
+}
+
+func TranslateToVidOrPid(subject []byte) string {
+	oldVID := []byte("1.3.6.1.4.1.37244.2.1")
+	oldPID := []byte("1.3.6.1.4.1.37244.2.2")
+
+	var vid, vidValue, pid, pidValue []byte
+
+	if i := bytes.Index(subject, oldVID); i >= 0 {
+		// get vid value from subject
+		vidValue = subject[i+len(oldVID)+2 : len(string(subject))]
+		// get last 8 numbers from vidValue
+		vidValue = vidValue[len(vidValue)-8:]
+
+		decoded, _ := hex.DecodeString(string(vidValue))
+
+		vid = []byte(("vid=0x") + string(decoded))
+
+		subject = subject[0:i]
+		subject = []byte(string(subject) + string(vid))
+	} else if i := bytes.Index(subject, oldPID); i >= 0 {
+		// get pid value from subject
+		pidValue = subject[i+len(oldPID)+2 : len(string(subject))]
+		// get last 8 number from pidValue
+		pidValue = pidValue[len(pidValue)-8:]
+
+		decoded, _ := hex.DecodeString(string(pidValue))
+
+		pid = []byte(("pid=0x") + string(decoded))
+
+		subject = subject[0:i]
+		subject = []byte(string(subject) + string(pid))
+	}
+
+	return string(subject)
 }
 
 func BytesToHex(bytes []byte) string {
