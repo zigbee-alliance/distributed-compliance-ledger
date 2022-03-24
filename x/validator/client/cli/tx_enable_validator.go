@@ -15,13 +15,8 @@ import (
 var _ = strconv.Itoa(0)
 
 func CmdEnableValidator() *cobra.Command {
-	var (
-		address string
-		info    string
-	)
-
 	cmd := &cobra.Command{
-		Use:   "enable-validator --address [address]",
+		Use:   "enable-validator",
 		Short: "Enables the Validator node by a NodeAdmin.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -31,6 +26,7 @@ func CmdEnableValidator() *cobra.Command {
 			}
 
 			fromAddr := clientCtx.GetFromAddress()
+
 			msg := types.NewMsgEnableValidator(
 				sdk.ValAddress(fromAddr),
 			)
@@ -44,12 +40,7 @@ func CmdEnableValidator() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&address, FlagAddress, "", "Bench32 encoded validator address or owner account")
-	cmd.Flags().StringVar(&info, FlagInfo, "", "Optional information/notes for approval, proposal, disable or enable validator")
-
 	flags.AddTxFlagsToCmd(cmd)
-
-	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

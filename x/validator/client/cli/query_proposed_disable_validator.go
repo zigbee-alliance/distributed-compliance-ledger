@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
@@ -58,11 +59,20 @@ func CmdShowProposedDisableValidator() *cobra.Command {
 
 			var res types.ProposedDisableValidator
 
+			addr, err := sdk.ValAddressFromBech32(address)
+			if err != nil {
+				addr2, err2 := sdk.AccAddressFromBech32(address)
+				if err2 != nil {
+					return err2
+				}
+				addr = sdk.ValAddress(addr2)
+			}
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,
 				types.ProposedDisableValidatorKeyPrefix,
-				types.ProposedDisableValidatorKey(address),
+				types.ProposedDisableValidatorKey(addr.String()),
 				&res,
 			)
 		},

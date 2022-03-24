@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
 
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/nullify"
 	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
@@ -20,19 +21,18 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func networkWithProposedDisableValidatorObjects(t *testing.T, n int) (*network.Network, []types.ProposedDisableValidator) {
+func networkWithProposedDisableValidatorObjects(t *testing.T) (*network.Network, []types.ProposedDisableValidator) {
 	t.Helper()
 	cfg := network.DefaultConfig()
 	state := types.GenesisState{}
 	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
 
-	for i := 0; i < n; i++ {
-		proposedDisableValidator := types.ProposedDisableValidator{
-			Address: strconv.Itoa(i),
-		}
-		nullify.Fill(&proposedDisableValidator)
-		state.ProposedDisableValidatorList = append(state.ProposedDisableValidatorList, proposedDisableValidator)
+	proposedDisableValidator := types.ProposedDisableValidator{
+		Address: testconstants.ValidatorAddress1,
 	}
+	nullify.Fill(&proposedDisableValidator)
+	state.ProposedDisableValidatorList = append(state.ProposedDisableValidatorList, proposedDisableValidator)
+
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
@@ -40,7 +40,7 @@ func networkWithProposedDisableValidatorObjects(t *testing.T, n int) (*network.N
 }
 
 func TestShowProposedDisableValidator(t *testing.T) {
-	net, objs := networkWithProposedDisableValidatorObjects(t, 2)
+	net, objs := networkWithProposedDisableValidatorObjects(t)
 
 	ctx := net.Validators[0].ClientCtx
 	common := []string{
@@ -62,7 +62,7 @@ func TestShowProposedDisableValidator(t *testing.T) {
 		},
 		{
 			desc:      "not found",
-			idAddress: strconv.Itoa(100000),
+			idAddress: testconstants.Address1.String(),
 
 			args: common,
 			obj:  nil,
@@ -91,7 +91,7 @@ func TestShowProposedDisableValidator(t *testing.T) {
 }
 
 func TestListProposedDisableValidator(t *testing.T) {
-	net, objs := networkWithProposedDisableValidatorObjects(t, 5)
+	net, objs := networkWithProposedDisableValidatorObjects(t)
 
 	ctx := net.Validators[0].ClientCtx
 	request := func(next []byte, offset, limit uint64, total bool) []string {
