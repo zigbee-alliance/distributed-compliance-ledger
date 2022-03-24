@@ -4,12 +4,13 @@ After=network.target
 StartLimitIntervalSec=0
 
 [Service]
-User={{ dcld.user }}
-Group={{ dcld.group }}
+User={{ cosmovisor.user }}
+Group={{ cosmovisor.group }}
 Type=simple
 Restart=always
 RestartSec=1
-ExecStart={{ dcld.path }} start --home {{ dcl_home }}
+Environment="DAEMON_HOME={{ dcl_home }}" "DAEMON_NAME=dcld"
+ExecStart={{ cosmovisor.path }} start
 
 [Install]
 WantedBy=multi-user.target

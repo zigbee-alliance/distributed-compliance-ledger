@@ -7,6 +7,7 @@ import "dclauth/account.proto";
 import "dclauth/pending_account.proto";
 import "dclauth/pending_account_revocation.proto";
 import "dclauth/account_stat.proto";
+import "dclauth/revoked_account.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -50,6 +51,17 @@ service Query {
 	rpc AccountStat(QueryGetAccountStatRequest) returns (QueryGetAccountStatResponse) {
 		option (google.api.http).get = "/dcl/auth/accounts/stat";
 	}
+	
+// Queries a RevokedAccount by index.
+	rpc RevokedAccount(QueryGetRevokedAccountRequest) returns (QueryGetRevokedAccountResponse) {
+		option (google.api.http).get = "/dcl/auth/revoked-accounts/{address}";
+	}
+
+	// Queries a list of RevokedAccount items.
+	rpc RevokedAccountAll(QueryAllRevokedAccountRequest) returns (QueryAllRevokedAccountResponse) {
+		option (google.api.http).get = "/dcl/auth/revoked-accounts";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -112,4 +124,23 @@ message QueryGetAccountStatRequest {}
 message QueryGetAccountStatResponse {
 	AccountStat AccountStat = 1 [(gogoproto.nullable) = false];
 }
+
+message QueryGetRevokedAccountRequest {
+	  string address = 1;
+
+}
+
+message QueryGetRevokedAccountResponse {
+	RevokedAccount revokedAccount = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRevokedAccountRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRevokedAccountResponse {
+	repeated RevokedAccount revokedAccount = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
 // this line is used by starport scaffolding # 3

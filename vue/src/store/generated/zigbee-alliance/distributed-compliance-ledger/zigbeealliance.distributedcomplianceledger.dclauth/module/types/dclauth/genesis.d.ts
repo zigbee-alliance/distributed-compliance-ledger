@@ -2,6 +2,7 @@ import { Account } from '../dclauth/account';
 import { PendingAccount } from '../dclauth/pending_account';
 import { PendingAccountRevocation } from '../dclauth/pending_account_revocation';
 import { AccountStat } from '../dclauth/account_stat';
+import { RevokedAccount } from '../dclauth/revoked_account';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 /** GenesisState defines the dclauth module's genesis state. */
@@ -9,8 +10,9 @@ export interface GenesisState {
     accountList: Account[];
     pendingAccountList: PendingAccount[];
     pendingAccountRevocationList: PendingAccountRevocation[];
-    /** this line is used by starport scaffolding # genesis/proto/state */
     accountStat: AccountStat | undefined;
+    /** this line is used by starport scaffolding # genesis/proto/state */
+    revokedAccountList: RevokedAccount[];
 }
 export declare const GenesisState: {
     encode(message: GenesisState, writer?: Writer): Writer;

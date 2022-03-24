@@ -21,11 +21,11 @@ import testinfra.utils.ansible_runner
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ["MOLECULE_INVENTORY_FILE"]
 ).get_hosts("all")
-dcld_cmd = "/usr/bin/dcld {} --home=/var/lib/dcl/.dcl/"
+dcld_cmd = "/var/lib/dcl/.dcl/cosmovisor/current/bin/dcld {} --home=/var/lib/dcl/.dcl/"
 
 
 def test_service(host):
-    svc = host.service("dcld")
+    svc = host.service("cosmovisor")
     assert svc.is_running
     assert svc.is_enabled
 

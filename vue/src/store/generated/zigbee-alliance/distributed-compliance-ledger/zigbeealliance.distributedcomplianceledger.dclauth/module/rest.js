@@ -237,5 +237,34 @@ export class Api extends HttpClient {
             format: "json",
             ...params,
         });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRevokedAccountAll
+         * @summary Queries a list of RevokedAccount items.
+         * @request GET:/dcl/auth/revoked-accounts
+         */
+        this.queryRevokedAccountAll = (query, params = {}) => this.request({
+            path: `/dcl/auth/revoked-accounts`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryRevokedAccount
+         * @summary Queries a RevokedAccount by index.
+         * @request GET:/dcl/auth/revoked-accounts/{address}
+         */
+        this.queryRevokedAccount = (address, params = {}) => this.request({
+            path: `/dcl/auth/revoked-accounts/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
     }
 }

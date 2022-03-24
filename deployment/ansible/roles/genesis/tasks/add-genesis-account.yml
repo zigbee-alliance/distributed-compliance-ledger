@@ -21,7 +21,7 @@
 
 - name: add-genesis-account | read genesis file
   changed_when: false
-  command: "cat {{ dcld_home }}/config/genesis.json"
+  command: "cat {{ dcl_home }}/config/genesis.json"
   register: genesis_file
 
 - name: add-genesis-account | get addresses
@@ -35,5 +35,5 @@
     msg: "addresses={{ addresses }}"
 
 - name: add-genesis-account | add genesis account
-  shell: "{{ dcld.path }} add-genesis-account --address='{{ address }}' --pubkey='{{ pubkey | regex_replace(\"'\", '\"') }}' --roles='{{ roles|flatten|join(',') }}' --home='{{ dcld_home }}'"
+  shell: "{{ dcld.path }} add-genesis-account --address='{{ address }}' --pubkey='{{ pubkey | regex_replace(\"'\", '\"') }}' --roles='{{ roles|flatten|join(',') }}' --home='{{ dcl_home }}'"
   when: addresses is undefined or address not in addresses
