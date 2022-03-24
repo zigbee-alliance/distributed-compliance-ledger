@@ -51,6 +51,26 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Equal(t, testconstants.RootSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.RootSubject, certificate.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, certificate.SubjectKeyID)
+
+	// decode root google certificate with vid
+	certificate, err = DecodeX509Certificate(testconstants.GoogleCertPem)
+	require.Nil(t, err)
+	require.True(t, certificate.IsSelfSigned())
+	require.Equal(t, testconstants.GoogleSubject, certificate.Issuer)
+	require.Equal(t, testconstants.GoogleSerialNumber, certificate.SerialNumber)
+	require.Equal(t, testconstants.GoogleSubject, certificate.Subject)
+	require.Equal(t, testconstants.GoogleSubjectKeyID, certificate.SubjectKeyID)
+
+	// decode root test certificate with vid
+	certificate, err = DecodeX509Certificate(testconstants.TestCertPem)
+	require.Nil(t, err)
+	require.True(t, certificate.IsSelfSigned())
+	require.Equal(t, testconstants.TestSubject, certificate.Issuer)
+	require.Equal(t, testconstants.TestSerialNumber, certificate.SerialNumber)
+	require.Equal(t, testconstants.TestSubject, certificate.Subject)
+	require.Equal(t, testconstants.TestSubjectKeyID, certificate.SubjectKeyID)
+	require.Equal(t, testconstants.TestAuthorityKeyID, certificate.AuthorityKeyID)
+
 }
 
 func Test_VerifyLeafCertificate(t *testing.T) {
