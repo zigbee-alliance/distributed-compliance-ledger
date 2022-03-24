@@ -15,7 +15,6 @@
 package x509
 
 import (
-	"bytes"
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
@@ -45,30 +44,39 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
 		return nil, types.NewErrInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
 	}
 
-	oldVID := []byte("1.3.6.1.4.1.37244.2.1")
-	oldPID := []byte("1.3.6.1.4.1.37244.2.2")
-
-	newVIDKey := []byte("vid=0x")
-	newPIDKey := []byte("pid=0x")
-
-	issuer := cert.Issuer.String()
-	issuer = formatOID([]byte(issuer), oldVID, newVIDKey)
-	issuer = formatOID([]byte(issuer), oldPID, newPIDKey)
-
-	subject := cert.Subject.String()
-	subject = formatOID([]byte(subject), oldVID, newVIDKey)
-	subject = formatOID([]byte(subject), oldPID, newPIDKey)
-
 	certificate := X509Certificate{
-		Issuer:         issuer,
+		Issuer:         cert.Issuer.String(),
 		SerialNumber:   cert.SerialNumber.String(),
-		Subject:        subject,
+		Subject:        cert.Subject.String(),
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
 	}
 
+	certificate = PatchCertificate(certificate)
+
 	return &certificate, nil
+}
+
+func PatchCertificate(certificate X509Certificate) X509Certificate {
+	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
+	oldPIDKey := "1.3.6.1.4.1.37244.2.2"
+
+	newVIDKey := "vid"
+	newPIDKey := "pid"
+
+	issuer := certificate.Issuer
+	issuer = FormatOID(issuer, oldVIDKey, newVIDKey)
+	issuer = FormatOID(issuer, oldPIDKey, newPIDKey)
+
+	subject := certificate.Subject
+	subject = FormatOID(subject, oldVIDKey, newVIDKey)
+	subject = FormatOID(subject, oldPIDKey, newPIDKey)
+
+	certificate.Issuer = issuer
+	certificate.Subject = subject
+
+	return certificate
 }
 
 func FormatOID(header, oldKey, newKey string) string {
@@ -76,8 +84,8 @@ func FormatOID(header, oldKey, newKey string) string {
 
 	for index, value := range subjectValues {
 		if i := strings.Index(value, oldKey); i >= 0 {
-		// get value from header
-		value = value[len(value)-8:]
+			// get value from header
+			value = value[len(value)-8:]
 
 			decoded, _ := hex.DecodeString(value)
 			hexStr := "=0x" + string(decoded)
