@@ -30,7 +30,7 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 	}
 
 	// check if proposed disable validator exists
-	proposedDisableValidator, isFound := k.GetProposedDisableValidator(ctx, msg.Address)
+	proposedDisableValidator, isFound := k.GetProposedDisableValidator(ctx, validatorAddr.String())
 	if !isFound {
 		return nil, types.NewErrProposedDisableValidatorDoesNotExist(msg.Address)
 	}

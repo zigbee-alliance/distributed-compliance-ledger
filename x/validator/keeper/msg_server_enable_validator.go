@@ -31,7 +31,7 @@ func (k msgServer) EnableValidator(goCtx context.Context, msg *types.MsgEnableVa
 	}
 
 	// Enable validator
-	validator, _ := k.GetValidator(ctx, sdk.ValAddress(msg.Creator))
+	validator, _ := k.GetValidator(ctx, creatorAddr)
 	k.Unjail(ctx, validator)
 
 	// remove disabled validator from store

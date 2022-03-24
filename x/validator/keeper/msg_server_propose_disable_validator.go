@@ -37,13 +37,13 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 	}
 
 	// check if disabled validator exists
-	_, isFound = k.GetDisabledValidator(ctx, msg.Address)
+	_, isFound = k.GetDisabledValidator(ctx, validatorAddr.String())
 	if isFound {
 		return nil, types.NewErrDisabledValidatorAlreadyExists(msg.Address)
 	}
 
 	// check if proposed disable validator exists
-	_, isFound = k.GetProposedDisableValidator(ctx, msg.Address)
+	_, isFound = k.GetProposedDisableValidator(ctx, validatorAddr.String())
 	if isFound {
 		return nil, types.NewErrProposedDisableValidatorAlreadyExists(msg.Address)
 	}

@@ -25,11 +25,11 @@ func (msg *MsgEnableValidator) Type() string {
 }
 
 func (msg *MsgEnableValidator) GetSigners() []sdk.AccAddress {
-	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	creator, err := sdk.ValAddressFromBech32(msg.Creator)
 	if err != nil {
 		panic(err)
 	}
-	return []sdk.AccAddress{creator}
+	return []sdk.AccAddress{sdk.AccAddress(creator)}
 }
 
 func (msg *MsgEnableValidator) GetSignBytes() []byte {
