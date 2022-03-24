@@ -5,6 +5,7 @@ import "dclauth/account.proto";
 import "dclauth/pending_account.proto";
 import "dclauth/pending_account_revocation.proto";
 import "dclauth/account_stat.proto";
+import "dclauth/revoked_account.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -16,5 +17,6 @@ message GenesisState {
   repeated PendingAccount pendingAccountList = 2 [(gogoproto.nullable) = false];
   repeated PendingAccountRevocation pendingAccountRevocationList = 3 [(gogoproto.nullable) = false];
   AccountStat accountStat = 4;
+  repeated RevokedAccount revokedAccountList = 5 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

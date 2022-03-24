@@ -48,7 +48,7 @@ func CmdProposeRevokeAccount() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
 	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
 	cli.AddTxFlagsToCmd(cmd)
 

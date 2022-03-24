@@ -3,6 +3,7 @@ import { Account } from '../dclauth/account'
 import { PendingAccount } from '../dclauth/pending_account'
 import { PendingAccountRevocation } from '../dclauth/pending_account_revocation'
 import { AccountStat } from '../dclauth/account_stat'
+import { RevokedAccount } from '../dclauth/revoked_account'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
@@ -12,8 +13,9 @@ export interface GenesisState {
   accountList: Account[]
   pendingAccountList: PendingAccount[]
   pendingAccountRevocationList: PendingAccountRevocation[]
-  /** this line is used by starport scaffolding # genesis/proto/state */
   accountStat: AccountStat | undefined
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  revokedAccountList: RevokedAccount[]
 }
 
 const baseGenesisState: object = {}
@@ -32,6 +34,9 @@ export const GenesisState = {
     if (message.accountStat !== undefined) {
       AccountStat.encode(message.accountStat, writer.uint32(34).fork()).ldelim()
     }
+    for (const v of message.revokedAccountList) {
+      RevokedAccount.encode(v!, writer.uint32(42).fork()).ldelim()
+    }
     return writer
   },
 
@@ -42,6 +47,7 @@ export const GenesisState = {
     message.accountList = []
     message.pendingAccountList = []
     message.pendingAccountRevocationList = []
+    message.revokedAccountList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -57,6 +63,9 @@ export const GenesisState = {
         case 4:
           message.accountStat = AccountStat.decode(reader, reader.uint32())
           break
+        case 5:
+          message.revokedAccountList.push(RevokedAccount.decode(reader, reader.uint32()))
+          break
         default:
           reader.skipType(tag & 7)
           break
@@ -70,6 +79,7 @@ export const GenesisState = {
     message.accountList = []
     message.pendingAccountList = []
     message.pendingAccountRevocationList = []
+    message.revokedAccountList = []
     if (object.accountList !== undefined && object.accountList !== null) {
       for (const e of object.accountList) {
         message.accountList.push(Account.fromJSON(e))
@@ -89,6 +99,11 @@ export const GenesisState = {
       message.accountStat = AccountStat.fromJSON(object.accountStat)
     } else {
       message.accountStat = undefined
+    }
+    if (object.revokedAccountList !== undefined && object.revokedAccountList !== null) {
+      for (const e of object.revokedAccountList) {
+        message.revokedAccountList.push(RevokedAccount.fromJSON(e))
+      }
     }
     return message
   },
@@ -111,6 +126,11 @@ export const GenesisState = {
       obj.pendingAccountRevocationList = []
     }
     message.accountStat !== undefined && (obj.accountStat = message.accountStat ? AccountStat.toJSON(message.accountStat) : undefined)
+    if (message.revokedAccountList) {
+      obj.revokedAccountList = message.revokedAccountList.map((e) => (e ? RevokedAccount.toJSON(e) : undefined))
+    } else {
+      obj.revokedAccountList = []
+    }
     return obj
   },
 
@@ -119,6 +139,7 @@ export const GenesisState = {
     message.accountList = []
     message.pendingAccountList = []
     message.pendingAccountRevocationList = []
+    message.revokedAccountList = []
     if (object.accountList !== undefined && object.accountList !== null) {
       for (const e of object.accountList) {
         message.accountList.push(Account.fromPartial(e))
@@ -138,6 +159,11 @@ export const GenesisState = {
       message.accountStat = AccountStat.fromPartial(object.accountStat)
     } else {
       message.accountStat = undefined
+    }
+    if (object.revokedAccountList !== undefined && object.revokedAccountList !== null) {
+      for (const e of object.revokedAccountList) {
+        message.revokedAccountList.push(RevokedAccount.fromPartial(e))
+      }
     }
     return message
   }

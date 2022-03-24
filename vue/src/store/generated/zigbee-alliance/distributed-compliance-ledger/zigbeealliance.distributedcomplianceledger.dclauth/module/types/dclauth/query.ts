@@ -5,6 +5,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { PendingAccount } from '../dclauth/pending_account'
 import { PendingAccountRevocation } from '../dclauth/pending_account_revocation'
 import { AccountStat } from '../dclauth/account_stat'
+import { RevokedAccount } from '../dclauth/revoked_account'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth'
 
@@ -63,6 +64,23 @@ export interface QueryGetAccountStatRequest {}
 
 export interface QueryGetAccountStatResponse {
   AccountStat: AccountStat | undefined
+}
+
+export interface QueryGetRevokedAccountRequest {
+  address: string
+}
+
+export interface QueryGetRevokedAccountResponse {
+  revokedAccount: RevokedAccount | undefined
+}
+
+export interface QueryAllRevokedAccountRequest {
+  pagination: PageRequest | undefined
+}
+
+export interface QueryAllRevokedAccountResponse {
+  revokedAccount: RevokedAccount[]
+  pagination: PageResponse | undefined
 }
 
 const baseQueryGetAccountRequest: object = { address: '' }
@@ -891,6 +909,250 @@ export const QueryGetAccountStatResponse = {
   }
 }
 
+const baseQueryGetRevokedAccountRequest: object = { address: '' }
+
+export const QueryGetRevokedAccountRequest = {
+  encode(message: QueryGetRevokedAccountRequest, writer: Writer = Writer.create()): Writer {
+    if (message.address !== '') {
+      writer.uint32(10).string(message.address)
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRevokedAccountRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetRevokedAccountRequest } as QueryGetRevokedAccountRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.address = reader.string()
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetRevokedAccountRequest {
+    const message = { ...baseQueryGetRevokedAccountRequest } as QueryGetRevokedAccountRequest
+    if (object.address !== undefined && object.address !== null) {
+      message.address = String(object.address)
+    } else {
+      message.address = ''
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetRevokedAccountRequest): unknown {
+    const obj: any = {}
+    message.address !== undefined && (obj.address = message.address)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetRevokedAccountRequest>): QueryGetRevokedAccountRequest {
+    const message = { ...baseQueryGetRevokedAccountRequest } as QueryGetRevokedAccountRequest
+    if (object.address !== undefined && object.address !== null) {
+      message.address = object.address
+    } else {
+      message.address = ''
+    }
+    return message
+  }
+}
+
+const baseQueryGetRevokedAccountResponse: object = {}
+
+export const QueryGetRevokedAccountResponse = {
+  encode(message: QueryGetRevokedAccountResponse, writer: Writer = Writer.create()): Writer {
+    if (message.revokedAccount !== undefined) {
+      RevokedAccount.encode(message.revokedAccount, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetRevokedAccountResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryGetRevokedAccountResponse } as QueryGetRevokedAccountResponse
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.revokedAccount = RevokedAccount.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryGetRevokedAccountResponse {
+    const message = { ...baseQueryGetRevokedAccountResponse } as QueryGetRevokedAccountResponse
+    if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+      message.revokedAccount = RevokedAccount.fromJSON(object.revokedAccount)
+    } else {
+      message.revokedAccount = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryGetRevokedAccountResponse): unknown {
+    const obj: any = {}
+    message.revokedAccount !== undefined && (obj.revokedAccount = message.revokedAccount ? RevokedAccount.toJSON(message.revokedAccount) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryGetRevokedAccountResponse>): QueryGetRevokedAccountResponse {
+    const message = { ...baseQueryGetRevokedAccountResponse } as QueryGetRevokedAccountResponse
+    if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+      message.revokedAccount = RevokedAccount.fromPartial(object.revokedAccount)
+    } else {
+      message.revokedAccount = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllRevokedAccountRequest: object = {}
+
+export const QueryAllRevokedAccountRequest = {
+  encode(message: QueryAllRevokedAccountRequest, writer: Writer = Writer.create()): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllRevokedAccountRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllRevokedAccountRequest } as QueryAllRevokedAccountRequest
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllRevokedAccountRequest {
+    const message = { ...baseQueryAllRevokedAccountRequest } as QueryAllRevokedAccountRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllRevokedAccountRequest): unknown {
+    const obj: any = {}
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllRevokedAccountRequest>): QueryAllRevokedAccountRequest {
+    const message = { ...baseQueryAllRevokedAccountRequest } as QueryAllRevokedAccountRequest
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
+const baseQueryAllRevokedAccountResponse: object = {}
+
+export const QueryAllRevokedAccountResponse = {
+  encode(message: QueryAllRevokedAccountResponse, writer: Writer = Writer.create()): Writer {
+    for (const v of message.revokedAccount) {
+      RevokedAccount.encode(v!, writer.uint32(10).fork()).ldelim()
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim()
+    }
+    return writer
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllRevokedAccountResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input
+    let end = length === undefined ? reader.len : reader.pos + length
+    const message = { ...baseQueryAllRevokedAccountResponse } as QueryAllRevokedAccountResponse
+    message.revokedAccount = []
+    while (reader.pos < end) {
+      const tag = reader.uint32()
+      switch (tag >>> 3) {
+        case 1:
+          message.revokedAccount.push(RevokedAccount.decode(reader, reader.uint32()))
+          break
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32())
+          break
+        default:
+          reader.skipType(tag & 7)
+          break
+      }
+    }
+    return message
+  },
+
+  fromJSON(object: any): QueryAllRevokedAccountResponse {
+    const message = { ...baseQueryAllRevokedAccountResponse } as QueryAllRevokedAccountResponse
+    message.revokedAccount = []
+    if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+      for (const e of object.revokedAccount) {
+        message.revokedAccount.push(RevokedAccount.fromJSON(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  },
+
+  toJSON(message: QueryAllRevokedAccountResponse): unknown {
+    const obj: any = {}
+    if (message.revokedAccount) {
+      obj.revokedAccount = message.revokedAccount.map((e) => (e ? RevokedAccount.toJSON(e) : undefined))
+    } else {
+      obj.revokedAccount = []
+    }
+    message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined)
+    return obj
+  },
+
+  fromPartial(object: DeepPartial<QueryAllRevokedAccountResponse>): QueryAllRevokedAccountResponse {
+    const message = { ...baseQueryAllRevokedAccountResponse } as QueryAllRevokedAccountResponse
+    message.revokedAccount = []
+    if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+      for (const e of object.revokedAccount) {
+        message.revokedAccount.push(RevokedAccount.fromPartial(e))
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination)
+    } else {
+      message.pagination = undefined
+    }
+    return message
+  }
+}
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a account by index. */
@@ -907,6 +1169,10 @@ export interface Query {
   PendingAccountRevocationAll(request: QueryAllPendingAccountRevocationRequest): Promise<QueryAllPendingAccountRevocationResponse>
   /** Queries a accountStat by index. */
   AccountStat(request: QueryGetAccountStatRequest): Promise<QueryGetAccountStatResponse>
+  /** Queries a RevokedAccount by index. */
+  RevokedAccount(request: QueryGetRevokedAccountRequest): Promise<QueryGetRevokedAccountResponse>
+  /** Queries a list of RevokedAccount items. */
+  RevokedAccountAll(request: QueryAllRevokedAccountRequest): Promise<QueryAllRevokedAccountResponse>
 }
 
 export class QueryClientImpl implements Query {
@@ -954,6 +1220,18 @@ export class QueryClientImpl implements Query {
     const data = QueryGetAccountStatRequest.encode(request).finish()
     const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'AccountStat', data)
     return promise.then((data) => QueryGetAccountStatResponse.decode(new Reader(data)))
+  }
+
+  RevokedAccount(request: QueryGetRevokedAccountRequest): Promise<QueryGetRevokedAccountResponse> {
+    const data = QueryGetRevokedAccountRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'RevokedAccount', data)
+    return promise.then((data) => QueryGetRevokedAccountResponse.decode(new Reader(data)))
+  }
+
+  RevokedAccountAll(request: QueryAllRevokedAccountRequest): Promise<QueryAllRevokedAccountResponse> {
+    const data = QueryAllRevokedAccountRequest.encode(request).finish()
+    const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'RevokedAccountAll', data)
+    return promise.then((data) => QueryAllRevokedAccountResponse.decode(new Reader(data)))
   }
 }
 

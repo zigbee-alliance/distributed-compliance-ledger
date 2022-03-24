@@ -12,10 +12,10 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-func CmdListPendingAccountRevocation() *cobra.Command {
+func CmdListRevokedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-proposed-accounts-to-revoke",
-		Short: "list all PendingAccountRevocation",
+		Use:   "all-revoked-accounts",
+		Short: "list all RevokedAccount",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
@@ -26,14 +26,11 @@ func CmdListPendingAccountRevocation() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryAllPendingAccountRevocationRequest{
+			params := &types.QueryAllRevokedAccountRequest{
 				Pagination: pageReq,
 			}
 
-			res, err := queryClient.PendingAccountRevocationAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
-				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
-			}
+			res, err := queryClient.RevokedAccountAll(context.Background(), params)
 			if err != nil {
 				return err
 			}
@@ -48,10 +45,10 @@ func CmdListPendingAccountRevocation() *cobra.Command {
 	return cmd
 }
 
-func CmdShowPendingAccountRevocation() *cobra.Command {
+func CmdShowRevokedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "proposed-account-to-revoke",
-		Short: "shows a PendingAccountRevocation",
+		Use:   "revoked-account",
+		Short: "shows a RevokedAccount",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -61,12 +58,12 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 				return err
 			}
 
-			var res types.PendingAccountRevocation
+			var res types.RevokedAccount
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,
-				types.PendingAccountRevocationKeyPrefix,
-				types.PendingAccountRevocationKey(argAddress),
+				types.RevokedAccountKeyPrefix,
+				types.RevokedAccountKey(argAddress),
 				&res,
 			)
 		},
