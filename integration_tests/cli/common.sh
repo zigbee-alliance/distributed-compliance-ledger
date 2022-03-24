@@ -137,16 +137,16 @@ create_new_vendor_account(){
   local _vid="$2"
 
   echo $passphrase | dcld keys add "$_name"
-  address=$(echo $passphrase | dcld keys show $_name -a)
-  pubkey=$(echo $passphrase | dcld keys show $_name -p)
+  _address=$(echo $passphrase | dcld keys show $_name -a)
+  _pubkey=$(echo $passphrase | dcld keys show $_name -p)
 
   echo "Jack proposes account for \"$_name\" with Vendor role"
-  result=$(echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
-  check_response "$result" "\"code\": 0"
+  _result=$(echo $passphrase | dcld tx auth propose-add-account --address="$_address" --pubkey="$_pubkey" --roles=Vendor --vid=$_vid --from jack --yes)
+  check_response "$_result" "\"code\": 0"
 
   echo "Alice approves account for \"$_name\" with Vendor role"
-  result=$(echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes)
-  check_response "$result" "\"code\": 0"
+  _result=$(echo $passphrase | dcld tx auth approve-add-account --address="$_address" --from alice --yes)
+  check_response "$_result" "\"code\": 0"
 
 }
 

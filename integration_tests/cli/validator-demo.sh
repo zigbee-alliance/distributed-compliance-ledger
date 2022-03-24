@@ -87,8 +87,8 @@ echo "Create account for $account and Assign NodeAdmin role"
 echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
 echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes
 
-test_divider
 
+test_divider
 vaddress=$(docker exec $container ./dcld tendermint show-address)
 vpubkey=$(docker exec $container ./dcld tendermint show-validator)
 
@@ -109,7 +109,9 @@ result="$(docker exec "$container" /bin/sh -c "echo test1234 | ./dcld tx validat
 check_response "$result" "\"code\": 0"
 echo "$result"
 
+
 test_divider
+
 
 echo "Locating the app to $DCL_DIR/cosmovisor/genesis/bin directory"
 docker exec $container mkdir -p "$DCL_DIR"/cosmovisor/genesis/bin
@@ -118,6 +120,7 @@ docker exec $container cp -f ./dcld "$DCL_DIR"/cosmovisor/genesis/bin/
 echo "$account Start Node \"$node_name\""
 docker exec -d $container cosmovisor start
 sleep 10
+
 
 test_divider
 
@@ -128,6 +131,12 @@ check_response "$result" "\"moniker\": \"$node_name\""
 check_response "$result" "\"pubKey\":$vpubkey" raw
 echo "$result"
 
+echo "******"
+echo "$address"
+result=$(dcld query validator node --address "$address")
+echo "$result"
+
+
 test_divider
 
 echo "Connect CLI to node \"$node_name\" and check status"
@@ -136,6 +145,7 @@ result=$(dcld status)
 check_response "$result" "\"moniker\": \"$node_name\""
 echo "$result"
 
+
 test_divider
 
 echo "Sent transactions using node \"$node_name\""
@@ -143,6 +153,7 @@ vid=$RANDOM
 pid=$RANDOM
 vendor_account=vendor_account_$vid
 create_new_vendor_account $vendor_account $vid
+
 
 test_divider
 
@@ -153,6 +164,7 @@ echo "Add Model with VID: $vid PID: $pid"
 result=$(echo 'test1234' | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productName" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
+
 
 test_divider
 
@@ -167,6 +179,7 @@ result=$(dcld status)
 check_response "$result" "\"id\": \"$node0id\""
 echo "$result"
 
+
 test_divider
 
 echo "Query Model using node0 node"
@@ -177,117 +190,100 @@ check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"product_label\": \"$productName\""
 echo "$result"
 
-test_divider
-
-
-echo "node admin disables validator"
-result=$(echo $passphrase | dcld tx validator propose-disable-validator --address="$vaddress" --from "$account" --yes)
-check_response "$result" "\"code\": 0"
-
 
 test_divider
 
 
 echo "node admin disables validator"
-result=$(echo $passphrase | dcld tx validator disable-validator --address="$vaddress" --from "$account" --yes)
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator disable-validator --from "$account" --yes")
 check_response "$result" "\"code\": 0"
+echo "$result"
 
 
 test_divider
 
-
-echo "Get a validator $vaddress from disabled-validator query"
-result=$(dcld query validator disabled-validator --address="$vaddress")
-check_response "$result" "\"owner\": \"$vaddress\""
-check_response "$result" "\"jailed\": true"
-
+echo "Get a validator $address from disabled-validator query"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-validator --address=$address")
+check_response "$result" "\"disabledByNodeAdmin\": true"
+echo "$result"
 
 test_divider
 
 
 echo "node admin enables validator"
-result=$(echo $passphrase | dcld tx validator enable-validator --address="$vaddress" --from "$account" --yes)
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld tx validator enable-validator --from "$account" --yes")
 check_response "$result" "\"code\": 0"
+echo "$result"
 
 
 test_divider
 
 
-echo "Get a validator $vaddress from disabled-validator query"
-result=$(dcld query validator disabled-validator --address="$vaddress")
+echo "Get a validator $address from disabled-validator query"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-validator --address="$address"")
+# check_response "$result" "\[\]"
 check_response "$result" "Not Found"
+echo "$result"
 
 
 test_divider
 
 
-echo "Alice proposes to disable validator $vaddress"
-result=$(echo $passphrase | dcld tx validator propose-disable-validator --address="$vaddress" --from alice --yes)
+echo "Alice proposes to disable validator $address"
+result=$(dcld tx validator propose-disable-validator --address="$address" --from alice --yes)
 check_response "$result" "\"code\": 0"
-
-
-test_divider
-
-echo "Get all validators. $vaddress still in the list because not enought approvals to disable received"
-result=$(dcld query validator all-nodes)
-check_response "$result" "\"owner\": \"$vaddress\""
+echo "$result"
 
 
 test_divider
 
 
-echo "Get all proposed validators to disable. $vaddress in the list"
-result=$(dcld query validator all-proposed-disable-validators)
-check_response "$result" "\"owner\": \"$vaddress\""
+echo "Get all proposed validators to disable. $address in the list"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-validators")
+echo "$result"
+
+test_divider
+
+
+echo "Get a proposed validator to disable $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-validator --address="$address"")
+echo "$result"
 
 
 test_divider
 
 
-echo "Get a proposed validator to disable $vaddress"
-result=$(dcld query validator proposed-disable-validator --address="vaddress")
-check_response "$result" "\"owner\": \"$vaddress\""
-
-
-test_divider
-
-
-echo "Bob approves to disable validator $vaddress"
-result=$(echo $passphrase | dcld tx validator approve-disable-validator --address="$vaddress" --from bob --yes)
+echo "Bob approves to disable validator $address"
+result=$(dcld tx validator approve-disable-validator --address="$address" --from bob --yes)
 check_response "$result" "\"code\": 0"
+echo "$result"
 
 
 test_divider
 
 
-echo "Get all proposed validators to disable. $vaddress not in the list"
-result=$(dcld query validator all-proposed-disable-validators)
-check_response "$result" "\[\]"
+echo "Get all proposed validators to disable. $address not in the list"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-validators")
+# check_response "$result" "\[\]"
+echo "$result"
 
 
 test_divider
 
 
-echo "Get a proposed validator to disable $vaddress is not found"
-result=$(dcld query validator proposed-disable-validator --address="$vaddress")
-check_response "$result" "Not Found"
+echo "Get a validator $address from disabled-validator query"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-validator --address="$address"")
+# check_response "$result" "\"creator\": \"$address\""
+check_response "$result" "\"disabledByNodeAdmin\": false"
 
 
 test_divider
 
 
-echo "Get a validator $vaddress from disabled-validator query"
-result=$(dcld query validator disabled-validator --address="$vaddress")
-check_response "$result" "\"owner\": \"$vaddress\""
+echo "Get $address"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator node --address=$address")
 check_response "$result" "\"jailed\": true"
-
-
-test_divider
-
-
-echo "Get $vaddress"
-result=$(dcld query validator node --address=$vaddress)
-check_response "$result" "\"jailed\": true"
+echo "$result"
 
 
 test_divider

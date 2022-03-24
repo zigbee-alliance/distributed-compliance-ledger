@@ -9,6 +9,7 @@ import (
 	clitestutil "github.com/cosmos/cosmos-sdk/testutil/cli"
 	"github.com/stretchr/testify/require"
 	tmcli "github.com/tendermint/tendermint/libs/cli"
+	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
 	cliutils "github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 
 	"github.com/zigbee-alliance/distributed-compliance-ledger/testutil/network"
@@ -26,13 +27,11 @@ func networkWithDisabledValidatorObjects(t *testing.T, n int) (*network.Network,
 	state := types.GenesisState{}
 	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
 
-	for i := 0; i < n; i++ {
-		disabledValidator := types.DisabledValidator{
-			Address: strconv.Itoa(i),
-		}
-		nullify.Fill(&disabledValidator)
-		state.DisabledValidatorList = append(state.DisabledValidatorList, disabledValidator)
+	disabledValidator := types.DisabledValidator{
+		Address: testconstants.ValidatorAddress1,
 	}
+	nullify.Fill(&disabledValidator)
+	state.DisabledValidatorList = append(state.DisabledValidatorList, disabledValidator)
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
@@ -62,7 +61,7 @@ func TestShowDisabledValidator(t *testing.T) {
 		},
 		{
 			desc:      "not found",
-			idAddress: strconv.Itoa(100000),
+			idAddress: testconstants.Address1.String(),
 
 			args: common,
 			obj:  nil,
