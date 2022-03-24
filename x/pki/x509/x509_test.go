@@ -84,3 +84,75 @@ func Test_VerifyRootCertificate(t *testing.T) {
 	err := certificate.Verify(certificate)
 	require.Nil(t, err)
 }
+
+func Test_FormatOID(t *testing.T) {
+	positiveTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=Matter PAA 1,O=Google,C=US,vid=0x6006",
+		},
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.2=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=Matter PAA 1,O=Google,C=US,pid=0x6006",
+		},
+		{
+			header: "CN=Matter Test PAA,1.3.6.1.4.1.37244.2.1=#130431323544",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=Matter Test PAA,vid=0x125D",
+		},
+		{
+			header: "CN=Matter Test PAA,1.3.6.1.4.1.37244.2.2=#130431323544",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=Matter Test PAA,pid=0x125D",
+		},
+		{
+			header: "CN=Matter Test PAA,1.3.6.1.4.1.37244.2.2=#130431323544,SomeWord",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=Matter Test PAA,pid=0x125D,SomeWord",
+		},
+	}
+
+	negativeTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		// set incorrect header
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=Matter PAA 1,O=Google,C=US,1.3.6=#130436303036",
+		},
+		// set incorrect oldKey
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "vid",
+			result: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
+		},
+	}
+
+	for _, tt := range positiveTests {
+		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Equal(t, result, tt.result)
+	}
+
+	for _, tt := range negativeTests {
+		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Equal(t, result, tt.result)
+	}
+}
