@@ -495,6 +495,11 @@ echo "Locating the genesis app version to $GENESIS_APP_DIR directory"
 mkdir -p "$GENESIS_APP_DIR"
 cp -f ./dcld "$GENESIS_APP_DIR"/
 sudo chown "$NODE_USER" "$GENESIS_APP_DIR"/dcld
+
+echo "Copying cosmovisor to /usr/bin"
+cp ./cosmovisor /usr/bin
+sudo chown "$NODE_USER" /usr/bin/cosmovisor
+
 # Execution permissions on `dcld` are granted to all (i.e. User, Group and Others classes)
 # because cosmovisor requires execution permission on the application binary to be granted to Others class:
 # https://github.com/cosmos/cosmos-sdk/blob/cosmovisor/v1.0.0/cosmovisor/upgrade.go#L164
