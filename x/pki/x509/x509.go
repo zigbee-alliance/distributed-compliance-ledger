@@ -58,6 +58,8 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
 	return &certificate, nil
 }
 
+// This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
+// https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
 func PatchCertificate(certificate X509Certificate) X509Certificate {
 	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
 	oldPIDKey := "1.3.6.1.4.1.37244.2.2"
