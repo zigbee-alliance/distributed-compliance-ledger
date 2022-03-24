@@ -13,28 +13,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: set dcld_home facts
-  set_fact:
-    dcld_home: "{{ dcld.home }}/.dcl"
-
 - name: prepare genesis node configuration
   include_tasks: prepare-genesis.yml
 
 - name: make node public
   lineinfile:
-    path: "{{ dcld_home }}/config/config.toml"
+    path: "{{ dcl_home }}/config/config.toml"
     regexp: '^laddr = "tcp://.*:26657"$'
     line: 'laddr = "tcp://0.0.0.0:26657"'
 
-- name: ensure user permissions on client config file
+- name: ensure user permissions
   file:
     recurse: true
     state: directory
-    owner: "{{ dcld.user }}"
-    path: "{{ dcld_home }}"
+    owner: "{{ cosmovisor.user }}"
+    path: "{{ dcl_home }}"
 
-- name: ensure DCL service is started and enabled
+- name: ensure cosmovisor service is started and enabled
   service:
-    name: dcld
+    name: cosmovisor
     state: started
     enabled: true

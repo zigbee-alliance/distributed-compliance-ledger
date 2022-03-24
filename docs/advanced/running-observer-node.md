@@ -87,7 +87,7 @@ and contains the genesis and persistent_peers files.
 
    - Add the following line to the end of `$HOME/.profile` file:
       - `export PATH=$PATH:$HOME/.dcl/cosmovisor/current/bin`
-   - Execute the following command to apply the updated PATH immediately:
+   - Execute the following command to apply the updated `$PATH` immediately:
       - `source $HOME/.profile`
 
    You should see the node trying to get all the blocks from the testnet. (p.s. It can take upto 12+ hrs for all the transactions to be downloaded depending on network speed)

@@ -197,17 +197,6 @@ check_response "$result" "\"productName\": \"$productName\""
 
 test_divider
 
-echo "Get $user account and confirm that alice and jack are set still present as approvers, also the sequence number should be 3 as we executed 3 txs"
-result=$(dcld query auth account --address=$user_address)
-check_response_and_report "$result" $user_address "json"
-check_response_and_report "$result"  $jack_address "json"
-check_response_and_report "$result"  $alice_address "json"
-check_response_and_report "$result"  '"info": "Alice is approving this account"' "json"
-check_response_and_report "$result"  '"info": "Jack is proposing this account"' "json"
-check_response_and_report "$result"  '"sequence": "3"' "json"
-
-test_divider
-
 echo "Alice proposes to revoke account for $user"
 result=$(echo $passphrase | dcld tx auth propose-revoke-account --address="$user_address" --info="Alice proposes to revoke account" --from alice --yes)
 check_response "$result" "\"code\": 0"

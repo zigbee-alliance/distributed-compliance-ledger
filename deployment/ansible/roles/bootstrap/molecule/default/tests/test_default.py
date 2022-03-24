@@ -24,7 +24,7 @@ DCLD_HOME = "/var/lib/dcl/.dcl/"
 
 
 def test_binary_version(host):
-    assert host.run_test("/usr/bin/dcld version").succeeded
+    assert host.run_test("/var/lib/dcl/.dcl/cosmovisor/genesis/bin/dcld version").succeeded
 
 
 def test_configuration(host):
@@ -32,7 +32,7 @@ def test_configuration(host):
     config = host.file(DCLD_HOME + "/config/")
     assert config.exists
     assert config.is_directory
-    assert config.user == "dcl"
+    assert config.user == "cosmovisor"
 
     config_files = host.file(DCLD_HOME + "/config").listdir()
     for filename in ["app", "client", "config"]:
@@ -46,9 +46,9 @@ def test_configuration(host):
 
 
 def test_service(host):
-    svc = host.file("/etc/systemd/system/dcld.service")
+    svc = host.file("/etc/systemd/system/cosmovisor.service")
     assert svc.exists
-    for prop in ["User=dcl", "Group=dcl", "ExecStart=/usr/bin/dcld start"]:
+    for prop in ["User=cosmovisor", "Group=dcl", 'Environment="DAEMON_HOME=/var/lib/dcl/.dcl" "DAEMON_NAME=dcld"', "ExecStart=/usr/bin/cosmovisor start"]:
         assert prop in svc.content_string
 
 
@@ -60,7 +60,7 @@ def test_accounts_creation(host):
         assert "name" in account
         cmd = host.run(
             f"echo {account['passphrase']}"
-            f" | /usr/bin/dcld keys show {account['name']}"
+            f" | /var/lib/dcl/.dcl/cosmovisor/genesis/bin/dcld keys show {account['name']}"
             f" --home {DCLD_HOME}"
         )
         assert cmd.succeeded

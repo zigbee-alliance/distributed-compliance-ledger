@@ -4,17 +4,20 @@
 #
 #    pip-compile --output-file=test-requirements.txt test-requirements.in
 #
-ansible==5.1.0
+ansible==5.5.0
     # via -r test-requirements.in
-ansible-compat==0.5.0
+ansible-compat==2.0.2
     # via
+    #   ansible-lint
     #   molecule
     #   molecule-docker
-ansible-core==2.12.1
-    # via ansible
-ansible-lint==5.3.1
+ansible-core==2.12.3
+    # via
+    #   ansible
+    #   ansible-lint
+ansible-lint==6.0.2
     # via -r test-requirements.in
-arrow==1.2.1
+arrow==1.2.2
     # via jinja2-time
 attrs==21.4.0
     # via pytest
@@ -35,30 +38,28 @@ cffi==1.15.0
     #   pynacl
 chardet==4.0.0
     # via binaryornot
-charset-normalizer==2.0.9
+charset-normalizer==2.0.12
     # via requests
-click==8.0.3
+click==8.0.4
     # via
     #   click-help-colors
     #   cookiecutter
     #   molecule
 click-help-colors==0.9.1
     # via molecule
-colorama==0.4.4
-    # via rich
 commonmark==0.9.1
     # via rich
 cookiecutter==1.7.3
     # via molecule
-cryptography==36.0.1
+cryptography==36.0.2
     # via
     #   ansible-core
     #   paramiko
-distro==1.6.0
+distro==1.7.0
     # via selinux
 docker==5.0.3
     # via molecule-docker
-enrich==1.2.6
+enrich==1.2.7
     # via
     #   ansible-lint
     #   molecule
@@ -74,11 +75,11 @@ jinja2==3.0.3
     #   molecule
 jinja2-time==0.2.0
     # via cookiecutter
-jmespath==0.10.0
+jmespath==1.0.0
     # via -r test-requirements.in
-markupsafe==2.0.1
+markupsafe==2.1.1
     # via jinja2
-molecule==3.5.2
+molecule==3.6.1
     # via
     #   -r test-requirements.in
     #   molecule-docker
@@ -90,7 +91,7 @@ packaging==21.3
     #   ansible-lint
     #   molecule
     #   pytest
-paramiko==2.9.1
+paramiko==2.10.3
     # via molecule
 pathspec==0.9.0
     # via yamllint
@@ -104,69 +105,67 @@ py==1.11.0
     # via pytest
 pycparser==2.21
     # via cffi
-pygments==2.11.1
+pygments==2.11.2
     # via rich
-pynacl==1.4.0
+pynacl==1.5.0
     # via paramiko
-pyparsing==3.0.6
+pyparsing==3.0.7
     # via packaging
-pytest==6.2.5
+pytest==7.1.1
     # via pytest-testinfra
-pytest-testinfra==6.5.0
+pytest-testinfra==6.6.0
     # via -r test-requirements.in
 python-dateutil==2.8.2
     # via arrow
-python-slugify==5.0.2
+python-slugify==6.1.1
     # via cookiecutter
-pyyaml==5.4.1
+pyyaml==6.0
     # via
     #   ansible-compat
     #   ansible-core
     #   ansible-lint
     #   molecule
     #   yamllint
-requests==2.26.0
+requests==2.27.1
     # via
     #   cookiecutter
     #   docker
     #   molecule-docker
 resolvelib==0.5.4
     # via ansible-core
-rich==10.16.1
+rich==12.0.1
     # via
     #   ansible-lint
     #   enrich
     #   molecule
-ruamel-yaml==0.17.20
+ruamel-yaml==0.17.21
     # via ansible-lint
 ruamel-yaml-clib==0.2.6
     # via ruamel-yaml
 selinux==0.2.1
-    # via
-    #   molecule
-    #   molecule-docker
+    # via molecule-docker
 six==1.16.0
     # via
     #   bcrypt
     #   cookiecutter
-    #   pynacl
+    #   paramiko
     #   python-dateutil
 subprocess-tee==0.3.5
-    # via molecule
-tenacity==8.0.1
-    # via ansible-lint
+    # via ansible-compat
 text-unidecode==1.3
     # via python-slugify
-toml==0.10.2
+tomli==2.0.1
     # via pytest
-urllib3==1.26.7
+urllib3==1.26.9
     # via requests
 wcmatch==8.3
     # via ansible-lint
-websocket-client==1.2.3
+websocket-client==1.3.1
     # via docker
 yamllint==1.26.3
-    # via -r test-requirements.in
+    # via
+    #   -r test-requirements.in
+    #   ansible-lint
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
