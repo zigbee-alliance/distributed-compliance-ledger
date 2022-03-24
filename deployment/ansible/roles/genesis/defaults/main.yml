@@ -15,8 +15,8 @@
 
 chain_id: dclchain
 moniker:
+dcl_home: /var/lib/dcl/.dcl
 dcld:
-  user: dcl
-  group: dcl
-  path: /usr/bin/dcld
-  home: /var/lib/dcl
+  path: "{{ dcl_home }}/cosmovisor/genesis/bin/dcld"
+cosmovisor:
+  user: cosmovisor

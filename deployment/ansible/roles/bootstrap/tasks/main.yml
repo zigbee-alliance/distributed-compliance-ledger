@@ -16,23 +16,19 @@
 - name: create DCL group
   become: true
   group:
-    name: "{{ dcld.user }}"
+    name: "{{ cosmovisor.group }}"
     state: present
 
 - name: create DCL user
   become: true
   user:
-    name: "{{ dcld.user }}"
-    groups: "{{ dcld.group }}"
+    name: "{{ cosmovisor.user }}"
+    groups: "{{ cosmovisor.group }}"
     shell: /sbin/nologin
     append: true
     state: present
     create_home: true
-    home: "{{ dcld.home }}"
-
-- name: set dcl_home facts
-  set_fact:
-    dcl_home: "{{ dcld.home }}/.dcl"
+    home: "{{ cosmovisor.home  }}"
 
 - name: setup DCL service
   import_tasks: setup-service.yml
@@ -68,9 +64,9 @@
     loop_var: account
   no_log: true
 
-- name: ensure user permissions on client config file
+- name: ensure user permissions
   file:
     recurse: true
     state: directory
-    owner: "{{ dcld.user }}"
+    owner: "{{ cosmovisor.user }}"
     path: "{{ dcl_home }}"

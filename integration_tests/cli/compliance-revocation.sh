@@ -83,7 +83,7 @@ result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --software
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type\""
+response_does_not_contain "$result" "\"certificationType\": \"$certification_type\""
 echo "$result"
 
 test_divider
@@ -93,7 +93,7 @@ result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --software
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""
+response_does_not_contain "$result" "\"certificationType\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
@@ -104,7 +104,7 @@ result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVe
 check_response "$result" "\"value\": true"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"certification_type\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
 echo "$result"
 
 test_divider
@@ -114,7 +114,7 @@ result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVe
 check_response "$result" "\"value\": true"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
@@ -124,10 +124,10 @@ echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for Z
 result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version_certification_status\": 3"
+check_response "$result" "\"softwareVersionCertificationStatus\": 3"
 check_response "$result" "\"date\": \"$revocation_date\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
-check_response "$result" "\"certification_type\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
 check_response "$result" "\"history\""
 echo "$result"
 
@@ -137,10 +137,10 @@ echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} for M
 result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type_matter)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version_certification_status\": 3"
+check_response "$result" "\"softwareVersionCertificationStatus\": 3"
 check_response "$result" "\"date\": \"$revocation_date\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
-check_response "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 check_response "$result" "\"history\""
 echo "$result"
 
@@ -150,10 +150,10 @@ echo "Get All Compliance Infos"
 result=$(dcld query compliance all-compliance-info)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version_certification_status\": 3"
+check_response "$result" "\"softwareVersionCertificationStatus\": 3"
 check_response "$result" "\"date\": \"$revocation_date\""
-check_response "$result" "\"certification_type\": \"$certification_type\""
-check_response "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
 echo "$result"
 
@@ -163,8 +163,8 @@ echo "Get All Revoked Models"
 result=$(dcld query compliance all-revoked-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certification_type\": \"$certification_type\""
-check_response "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
@@ -220,7 +220,7 @@ result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVe
 check_response "$result" "\"value\": false"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"certification_type\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
 echo "$result"
 
 test_divider
@@ -230,7 +230,7 @@ result=$(dcld query compliance revoked-model --vid=$vid --pid=$pid  --softwareVe
 check_response "$result" "\"value\": true"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
@@ -241,7 +241,7 @@ result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --software
 check_response "$result" "\"value\": true"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"certification_type\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
 echo "$result"
 
 test_divider
@@ -251,7 +251,7 @@ result=$(dcld query compliance certified-model --vid=$vid --pid=$pid  --software
 check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""
+response_does_not_contain "$result" "\"certificationType\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
@@ -260,10 +260,10 @@ echo "Get Compliance Info for Model with VID: ${vid} PID: ${pid} SV: ${sv} "
 result=$(dcld query compliance compliance-info --vid=$vid --pid=$pid --softwareVersion=$sv --certificationType=$certification_type)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version_certification_status\": 2"
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"reason\": \"$certification_reason\""
-check_response "$result" "\"certification_type\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
 check_response "$result" "\"history\""
 echo "$result"
 
@@ -273,14 +273,14 @@ echo "Get All Compliance Infos"
 result=$(dcld query compliance all-compliance-info)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"software_version_certification_status\": 2"
-check_response "$result" "\"software_version_certification_status\": 3"
+check_response "$result" "\"softwareVersionCertificationStatus\": 2"
+check_response "$result" "\"softwareVersionCertificationStatus\": 3"
 check_response "$result" "\"date\": \"$certification_date\""
 check_response "$result" "\"date\": \"$revocation_date\""
 check_response "$result" "\"reason\": \"$certification_reason\""
 check_response "$result" "\"reason\": \"$revocation_reason\""
-check_response "$result" "\"certification_type\": \"$certification_type\""
-check_response "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider
@@ -289,8 +289,8 @@ echo "Get All Revoked Models"
 result=$(dcld query compliance all-revoked-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certification_type\": \"$certification_type_matter\""
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type\""
+check_response "$result" "\"certificationType\": \"$certification_type_matter\""
+response_does_not_contain "$result" "\"certificationType\": \"$certification_type\""
 echo "$result"
 
 test_divider
@@ -299,8 +299,8 @@ echo "Get All Certified Models"
 result=$(dcld query compliance all-certified-models)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certification_type\": \"$certification_type\""
-response_does_not_contain "$result" "\"certification_type\": \"$certification_type_matter\""
+check_response "$result" "\"certificationType\": \"$certification_type\""
+response_does_not_contain "$result" "\"certificationType\": \"$certification_type_matter\""
 echo "$result"
 
 test_divider

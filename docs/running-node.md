@@ -107,6 +107,17 @@ curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-complia
 </details>
 <!-- markdownlint-enable MD033 -->
 
+> Note:
+>
+> * `run_dcl_node` script adds the cosmovisor-controlled directory containing
+the current version of `dcld` binary to `$PATH` of current user. To do this the
+script adds a line doing the corresponding `$PATH` assignment to
+`$HOME/.profile` file. If for some reason it is not effective for your
+environment, please modify the corresponding line in the script in the way you
+need or just comment out the corresponding line and manually add
+`$HOME/.dcl/cosmovisor/current/bin` to `$PATH` of current user after
+`run_dcl_node` script is executed (see below).
+
 ### Setup DCL binaries
 
 * put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
@@ -302,7 +313,10 @@ As a general guidance you may consider to use only the peers you own and/or trus
 
 ## Deployment Verification
 
-* Execute `source $HOME/.profile` to take the updated PATH into effect (it now contains the path to the current version of `dcld` binary):
+* Execute `source $HOME/.profile` to take the updated `$PATH` into effect, now
+  it includes the directory containing the current version of `dcld` binary (if
+  you have not modified or commented out the line doing the corresponding
+  `$PATH` assignment in `run_dcl_node` script):
   * `source $HOME/.profile`
 * Check the account:
   * `dcld query auth account --address="<address>"`

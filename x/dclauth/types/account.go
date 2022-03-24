@@ -62,7 +62,6 @@ type DCLAccountI interface {
 
 	GetRoles() []AccountRole
 	GetVendorID() int32
-	GetApprovals() []*Grant
 }
 
 // NewAccount creates a new Account object.
@@ -98,10 +97,6 @@ func (acc Account) Validate() error {
 
 func (acc Account) GetRoles() []AccountRole {
 	return acc.Roles
-}
-
-func (acc Account) GetApprovals() []*Grant {
-	return acc.Approvals
 }
 
 func (acc Account) GetVendorID() int32 {
@@ -142,6 +137,17 @@ func NewPendingAccount(acc *Account, approval sdk.AccAddress, info string, time 
 	}
 
 	return pendingAccount
+}
+
+// NewRevokedAccount creates a new RevokedAccount object.
+func NewRevokedAccount(acc *Account, approvals []*Grant) *RevokedAccount {
+	revokedAccount := &RevokedAccount{
+		Account: acc,
+	}
+
+	revokedAccount.RevokeApprovals = approvals
+
+	return revokedAccount
 }
 
 func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {

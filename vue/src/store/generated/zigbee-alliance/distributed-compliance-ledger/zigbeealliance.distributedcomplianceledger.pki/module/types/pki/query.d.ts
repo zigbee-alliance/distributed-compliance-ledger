@@ -75,12 +75,12 @@ export interface QueryAllRevokedCertificatesResponse {
 export interface QueryGetApprovedRootCertificatesRequest {
 }
 export interface QueryGetApprovedRootCertificatesResponse {
-    ApprovedRootCertificates: ApprovedRootCertificates | undefined;
+    approvedRootCertificates: ApprovedRootCertificates | undefined;
 }
 export interface QueryGetRevokedRootCertificatesRequest {
 }
 export interface QueryGetRevokedRootCertificatesResponse {
-    RevokedRootCertificates: RevokedRootCertificates | undefined;
+    revokedRootCertificates: RevokedRootCertificates | undefined;
 }
 export interface QueryGetApprovedCertificatesBySubjectRequest {
     subject: string;

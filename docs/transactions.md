@@ -983,7 +983,7 @@ If more than 1 Trustee signature is required to add the account, the account
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-  - address: `string` - account address; Bench32 encoded
+  - address: `string` - account address; Bech32 encoded
   - pub_key: `string` - account's Protobuf JSON encoded public key
   - vid: `optional(uint16)` - vendor ID (only needed for vendor role)
   - roles: `array<string>` - the list of roles, comma-separated, assigning to the account. Supported roles: `Vendor`, `TestHouse`, `CertificationCenter`, `Trustee`, `NodeAdmin`.
@@ -1004,7 +1004,7 @@ Approves the proposed account.
 The account is not active until sufficient number of Trustees approve it.
 
 - Parameters:
-  - address: `string` - account address; Bench32 encoded
+  - address: `string` - account address; Bech32 encoded
   - info: `optional(string)` - information/notes for the approval
   - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/Account/value/<address>`
@@ -1025,7 +1025,7 @@ If more than 1 Trustee signature is required to revoke the account, the revocati
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-  - address: `string` - account address; Bench32 encoded
+  - address: `string` - account address; Bech32 encoded
   - info: `optional(string)` - information/notes for the revocation proposal
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/Account/value/<address>`
@@ -1043,7 +1043,7 @@ Approves the proposed revocation of the account.
 The account is not revoked until sufficient number of Trustees approve it.
 
 - Parameters:
-  - address: `string` - account address; Bench32 encoded
+  - address: `string` - account address; Bech32 encoded
   - info: `optional(string)` - information/notes for the revocation approval
   - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
 - In State: `dclauth/Account/value/<address>`
@@ -1053,6 +1053,7 @@ The account is not revoked until sufficient number of Trustees approve it.
   - 2/3 of Trustees
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
+- Note: If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
 
 #### GET_ACCOUNT
 
@@ -1061,7 +1062,7 @@ The account is not revoked until sufficient number of Trustees approve it.
 Gets an accounts by the address. Revoked accounts are not returned.
 
 - Parameters:
-  - address: `string` - account address; Bench32 encoded
+  - address: `string` - account address; Bech32 encoded
 - CLI command:
   - `dcld query auth account --addres <bench32 encoded string>`
 - REST API:
@@ -1074,7 +1075,7 @@ Gets an accounts by the address. Revoked accounts are not returned.
 Gets a proposed but not approved accounts by its address
 
 - Parameters:
-  - address: `string` - account address; Bench32 encoded
+  - address: `string` - account address; Bech32 encoded
 - CLI command:
   - `dcld query auth proposed-account --address <bench32 encoded string>`
 - REST API:
@@ -1087,11 +1088,24 @@ Gets a proposed but not approved accounts by its address
 Gets a proposed but not approved accounts to be revoked by its address.
 
 - Parameters:
-  - address: `string` - account address; Bench32 encoded
+  - address: `string` - account address; Bech32 encoded
 - CLI command:
   - `dcld query auth proposed-account-to-revoke --address <bench32 encoded string>`
 - REST API:
   - GET `/dcl/auth/proposed-revocation-accounts/{address}`
+
+#### GET_REVOKED_ACCOUNT
+
+**Status: Implemented**
+
+Gets a revoked account by its address.
+
+- Parameters:
+  - address: `string` - account address; Bech32 encoded
+- CLI command:
+  - `dcld query auth revoked-account --address <bench32 encoded string>`
+- REST API:
+  - GET `/dcl/auth/revoked-accounts/{address}`
 
 #### GET_ALL_ACCOUNTS
 
@@ -1138,6 +1152,21 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/auth/proposed-revocation-accounts`
 
+#### GET_ALL_REVOKED_ACCOUNTS
+
+**Status: Implemented**
+
+Gets all revoked accounts.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query auth all-revoked-accounts`
+- REST API:
+  - GET `/dcl/auth/revoked-accounts`
+
 #### ROTATE_KEY
 
 **Status: Not Implemented**
@@ -1176,7 +1205,7 @@ Adds a new Validator node.
 Gets a validator node.
 
 - Parameters:
-  - address: `string` - Bench32 encoded validator address or owner account
+  - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
   - `dcld query validator node --address=<validator address|account>`
 - REST API:
@@ -1208,7 +1237,7 @@ Updates the Validator node by the owner.
 `address` is used to reference the node, but can not be changed.
 
 - Parameters:
-  - address: `string` - Bench32 encoded validator address or owner account
+  - address: `string` - Bech32 encoded validator address or owner account
   - moniker: `string` - The validator's human-readable name
   - identity: `optional(string)` - identity signature (ex. UPort or Keybase)
   - website: `optional(string)` - The validator's site link
@@ -1225,7 +1254,7 @@ Updates the Validator node by the owner.
 Disables the Validator node (removes from the validator set) by the owner.
 
 - Parameters:
-  - address: `string` - Bench32 encoded validator address or owner account
+  - address: `string` - Bech32 encoded validator address or owner account
 - Who can send:
   - NodeAdmin; owner
 
@@ -1239,7 +1268,7 @@ If more than 1 Trustee signature is required to disable a node, the disable
 will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
-  - address: `string` - Bench32 encoded validator address or owner account
+  - address: `string` - Bech32 encoded validator address or owner account
 - Who can send:
   - Trustee
 
@@ -1252,7 +1281,7 @@ Approves removing of the Validator node by a Trustee.
 The account is not removed until sufficient number of Trustees approve it.
 
 - Parameters:
-  - address: `string` - Bench32 encoded validator address or owner account
+  - address: `string` - Bech32 encoded validator address or owner account
 - Who can send:
   - Trustee
 - Number of required approvals:
@@ -1271,7 +1300,7 @@ If 1 Trustee approval is required to enable a node or sufficient number of appro
 the node will be enabled and returned to the active validator set.
 
 - Parameters:
-  - address: `string` - Bench32 encoded validator address or owner account
+  - address: `string` - Bech32 encoded validator address or owner account
 - Who can send:
   - Trustee
 - Number of required approvals:

@@ -40,7 +40,15 @@ func TestGenesis(t *testing.T) {
 		AccountStat: &types.AccountStat{
 			Number: 26,
 		},
-		// this line is used by starport scaffolding # genesis/test/state
+		RevokedAccountList: []types.RevokedAccount{
+		{
+			Address: "0",
+},
+		{
+			Address: "1",
+},
+	},
+	// this line is used by starport scaffolding # genesis/test/state
 	}
 
 	k, ctx := keepertest.DclauthKeeper(t)
@@ -52,6 +60,7 @@ func TestGenesis(t *testing.T) {
 	require.ElementsMatch(t, genesisState.PendingAccountList, got.PendingAccountList)
 	require.ElementsMatch(t, genesisState.PendingAccountRevocationList, got.PendingAccountRevocationList)
 	require.Equal(t, genesisState.AccountStat, got.AccountStat)
-	// this line is used by starport scaffolding # genesis/test/assert
+	require.ElementsMatch(t, genesisState.RevokedAccountList, got.RevokedAccountList)
+// this line is used by starport scaffolding # genesis/test/assert
 }
 */

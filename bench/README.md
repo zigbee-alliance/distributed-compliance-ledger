@@ -32,6 +32,7 @@ By that reason load test uses prepared load data which can be generated as follo
 
     # DCL_OBSERVERS=1 make localnet_init  # to initialize observers as well
     make localnet_init
+    
     # ./gentestaccounts.sh [<NUM-USERS>]
     ./gentestaccounts.sh
 

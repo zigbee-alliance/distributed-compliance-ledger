@@ -42,14 +42,16 @@ completed, the current scheduled upgrade plan is cleared. Please note, once an
 upgrade is approved, the approved upgrade entity remains in the store forever
 (no matter if the upgrade is later completed or cancelled).
 
-For the upgrade procedure to be feasible in an automated mode, the application
+For the upgrade procedure to be feasible in an automated mode, the node daemon
 process `dcld` is controlled as a sub-process by the parent process
-`cosmovisor`. Cosmovisor is a standard process manager for Cosmos SDK
-application binaries. `cosmovisor` uses a directory tree where for each next
-scheduled upgrade the node admin must in advance create a new directory with the
-name of this upgrade and put the new application version binary to its `bin`
-sub-directory. `cosmovisor` also maintains `current` symbolic link which points
-to the current application version directory. See [cosmovisor
+`cosmovisor`. (But when `dcld` is used as a client or for initialization steps,
+it should be launched directly.) Cosmovisor is a standard process manager for
+Cosmos SDK application binaries. `cosmovisor` uses a directory tree where for
+each next scheduled upgrade the node admin must in advance create a new
+directory with the name of this upgrade and put the new application version
+binary to its `bin` sub-directory. `cosmovisor` also maintains `current`
+symbolic link which points to the current application version directory. See
+[cosmovisor
 documentation](https://github.com/cosmos/cosmos-sdk/tree/cosmovisor/v1.0.0/cosmovisor)
 for details.
 

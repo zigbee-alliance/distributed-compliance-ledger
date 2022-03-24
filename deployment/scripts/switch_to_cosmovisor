@@ -140,8 +140,8 @@ echo "Use 'journalctl -u cosmovisor.service -f' to see node logs."
 
 echo -e "\nexport PATH=\$PATH:$CURRENT_APP_DIR" >> "$HOME"/.profile
 
-echo "Added '${CURRENT_APP_DIR}' to PATH to maintain 'dcld' command associated with the latest installed app binary."
-echo "Execute 'source ~/.profile' or restart shell to take the PATH change effective."
+echo "Added '${CURRENT_APP_DIR}' to \$PATH to maintain 'dcld' command associated with the latest installed app binary."
+echo "Execute 'source \$HOME/.profile' or restart shell to take the \$PATH change effective."
 
 wait_node_up
 echo "Done"

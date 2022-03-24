@@ -55,15 +55,15 @@ func request_Query_ApprovedCertificates_0(ctx context.Context, marshaler runtime
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := client.ApprovedCertificates(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -93,15 +93,15 @@ func local_request_Query_ApprovedCertificates_0(ctx context.Context, marshaler r
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := server.ApprovedCertificates(ctx, &protoReq)
@@ -167,15 +167,15 @@ func request_Query_ProposedCertificate_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := client.ProposedCertificate(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -205,15 +205,15 @@ func local_request_Query_ProposedCertificate_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := server.ProposedCertificate(ctx, &protoReq)
@@ -279,15 +279,15 @@ func request_Query_ChildCertificates_0(ctx context.Context, marshaler runtime.Ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "issuer", err)
 	}
 
-	val, ok = pathParams["authority_key_id"]
+	val, ok = pathParams["authorityKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "authority_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "authorityKeyId")
 	}
 
 	protoReq.AuthorityKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "authority_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "authorityKeyId", err)
 	}
 
 	msg, err := client.ChildCertificates(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -317,15 +317,15 @@ func local_request_Query_ChildCertificates_0(ctx context.Context, marshaler runt
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "issuer", err)
 	}
 
-	val, ok = pathParams["authority_key_id"]
+	val, ok = pathParams["authorityKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "authority_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "authorityKeyId")
 	}
 
 	protoReq.AuthorityKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "authority_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "authorityKeyId", err)
 	}
 
 	msg, err := server.ChildCertificates(ctx, &protoReq)
@@ -355,15 +355,15 @@ func request_Query_ProposedCertificateRevocation_0(ctx context.Context, marshale
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := client.ProposedCertificateRevocation(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -393,15 +393,15 @@ func local_request_Query_ProposedCertificateRevocation_0(ctx context.Context, ma
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := server.ProposedCertificateRevocation(ctx, &protoReq)
@@ -467,15 +467,15 @@ func request_Query_RevokedCertificates_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := client.RevokedCertificates(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -505,15 +505,15 @@ func local_request_Query_RevokedCertificates_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject", err)
 	}
 
-	val, ok = pathParams["subject_key_id"]
+	val, ok = pathParams["subjectKeyId"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subject_key_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "subjectKeyId")
 	}
 
 	protoReq.SubjectKeyId, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subject_key_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "subjectKeyId", err)
 	}
 
 	msg, err := server.RevokedCertificates(ctx, &protoReq)
@@ -1214,21 +1214,21 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ApprovedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_ApprovedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ProposedCertificate_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_ProposedCertificateAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "child-certificates", "issuer", "authority_key_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ChildCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "child-certificates", "issuer", "authorityKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-revocation-certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_ProposedCertificateRevocation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "proposed-revocation-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_ProposedCertificateRevocationAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "proposed-revocation-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-certificates", "subject", "subject_key_id"}, "", runtime.AssumeColonVerbOpt(false)))
+	pattern_Query_RevokedCertificates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"dcl", "pki", "revoked-certificates", "subject", "subjectKeyId"}, "", runtime.AssumeColonVerbOpt(false)))
 
 	pattern_Query_RevokedCertificatesAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "pki", "revoked-certificates"}, "", runtime.AssumeColonVerbOpt(false)))
 
