@@ -70,7 +70,6 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Equal(t, testconstants.TestSubject, certificate.Subject)
 	require.Equal(t, testconstants.TestSubjectKeyID, certificate.SubjectKeyID)
 	require.Equal(t, testconstants.TestAuthorityKeyID, certificate.AuthorityKeyID)
-
 }
 
 func Test_VerifyLeafCertificate(t *testing.T) {
