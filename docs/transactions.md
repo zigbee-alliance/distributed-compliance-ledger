@@ -1253,8 +1253,6 @@ Updates the Validator node by the owner.
 
 Disables the Validator node (removes from the validator set) by the owner.
 
-- Parameters:
-  - address: `string` - Bech32 encoded validator address or owner account
 - Who can send:
   - NodeAdmin; owner
 
@@ -1269,6 +1267,7 @@ will be in a pending state until sufficient number of approvals is received.
 
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
+  - info: `optional(string)` - information/notes for the proposal
 - Who can send:
   - Trustee
 
@@ -1282,6 +1281,7 @@ The validator node is not disabled until sufficient number of Trustees approve i
 
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
+  - info: `optional(string)` - information/notes for the approval
 - Who can send:
   - Trustee
 - Number of required approvals:
@@ -1291,20 +1291,12 @@ The validator node is not disabled until sufficient number of Trustees approve i
 
 **Status: Implemented**
 
-Approves enable of the Validator node from disabled state and returning to the active validator state.
+Enables the Validator node (returns to the validator set) by the owner.
 
-If more than 1 Trustee approval is required to enable a node, the node still
-will be in a disabled state until sufficient number of approvals is received.
-
-If 1 Trustee approval is required to enable a node or sufficient number of approvals is received,
 the node will be enabled and returned to the active validator set.
 
-- Parameters:
-  - address: `string` - Bech32 encoded validator address or owner account
 - Who can send:
-  - Trustee
-- Number of required approvals:
-  - 2/3 of Trustees
+  - NodeAdmin; owner
 
 ## UPGRADE
 
