@@ -83,6 +83,8 @@ docker exec $container /bin/sh -c "$cmd"
 
 address="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -a")"
 pubkey="$(docker exec $container /bin/sh -c "echo $passphrase | ./dcld keys show $account -p")"
+alice_address="$(dcld keys show alice -a)"
+bob_address="$(dcld keys show bob -a)"
 echo "Create account for $account and Assign NodeAdmin role"
 echo $passphrase | dcld tx auth propose-add-account --address="$address" --pubkey="$pubkey" --roles="NodeAdmin" --from jack --yes
 echo $passphrase | dcld tx auth approve-add-account --address="$address" --from alice --yes
@@ -131,8 +133,6 @@ check_response "$result" "\"moniker\": \"$node_name\""
 check_response "$result" "\"pubKey\":$vpubkey" raw
 echo "$result"
 
-echo "******"
-echo "$address"
 result=$(dcld query validator node --address "$address")
 echo "$result"
 
@@ -204,6 +204,7 @@ test_divider
 
 echo "Get a validator $address from disabled-validator query"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-validator --address=$address")
+check_response "$result" "\"approvals\": \[\]"
 check_response "$result" "\"disabledByNodeAdmin\": true"
 echo "$result"
 
@@ -221,7 +222,6 @@ test_divider
 
 echo "Get a validator $address from disabled-validator query"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-validator --address="$address"")
-# check_response "$result" "\[\]"
 check_response "$result" "Not Found"
 echo "$result"
 
@@ -240,6 +240,7 @@ test_divider
 
 echo "Get all proposed validators to disable. $address in the list"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-validators")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
 echo "$result"
 
 test_divider
@@ -247,6 +248,7 @@ test_divider
 
 echo "Get a proposed validator to disable $address"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator proposed-disable-validator --address="$address"")
+check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
 echo "$result"
 
 
@@ -264,7 +266,6 @@ test_divider
 
 echo "Get all proposed validators to disable. $address not in the list"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-validators")
-# check_response "$result" "\[\]"
 echo "$result"
 
 
@@ -273,8 +274,9 @@ test_divider
 
 echo "Get a validator $address from disabled-validator query"
 result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-validator --address="$address"")
-# check_response "$result" "\"creator\": \"$address\""
+check_response "$result" "\"creator\": \"$alice_address\""
 check_response "$result" "\"disabledByNodeAdmin\": false"
+echo "$result"
 
 
 test_divider
