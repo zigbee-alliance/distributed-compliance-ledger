@@ -15,13 +15,12 @@ chain_id: test-net
 The unique chain ID to identify the network.
 
 ```yaml
-dcld:
-  user: dcl
-  group: dcl
-  home: /var/lib/dcl
+dcl_home: /var/lib/dcl/.dcl
+cosmovisor:
+  user: cosmovisor
 ```
 
-The *user* and *group* to be used by OS to run the DCL service. The *home* var
+The *user* to be used by OS to run the cosmovisor service. The *dcl_home* var
 specifies the path to store DCL config information.
 
 ## Dependencies
