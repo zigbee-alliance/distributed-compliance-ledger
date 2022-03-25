@@ -959,3 +959,426 @@ response_does_not_contain "$result" "\"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
+
+# CHECK GOOGLE ROOT CERTIFICATE WHICH INCLUDE VID
+
+google_cert_subject="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
+google_cert_subject_key_id="B0:0:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:9:DE:93:21"
+google_cert_serial_number="1"
+
+# 9. QUERY ALL (EMPTY)
+
+echo "9. QUERY ALL EMPTY"
+test_divider
+
+echo "Request approved certificate must be empty"
+result=$(dcld query pki x509-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+echo $result | jq
+
+echo "Request all approved certificates must be empty"
+result=$(dcld query pki all-x509-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+echo $result | jq
+
+test_divider
+
+echo "Request proposed Root certificate must be empty"
+result=$(dcld query pki proposed-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+echo $result | jq
+
+test_divider
+
+echo "Request all proposed Root certificates must be empty"
+result=$(dcld query pki all-proposed-x509-root-certs)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+echo "Request revoked certificate must be empty"
+result=$(dcld query pki revoked-x509-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+echo $result | jq
+
+echo "Request all revoked certificates must be empty"
+result=$(dcld query pki all-revoked-x509-certs)
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+echo "Request all certificates by subject must not contain google certification"
+result=$(dcld query pki all-subject-x509-certs --subject="$google_cert_subject")
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+echo "Request all approved root certificates must not contain google certification"
+result=$(dcld query pki all-x509-root-certs)
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+echo "Request all revoked root certificates must not contain google certification"
+result=$(dcld query pki all-revoked-x509-root-certs)
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+echo "Request google root certificate proposed to revoke must be empty"
+result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+echo "Request all root certificates proposed to revoke must be empty"
+result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
+check_response "$result" "\[\]"
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+echo "Request all child certificates must be empty"
+result=$(dcld query pki all-child-x509-certs --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+# 10. PROPOSE GOOGLE ROOT
+
+echo "10. PROPOSE GOOGLE ROOT CERT"
+test_divider
+
+echo "$user_account (Not Trustee) propose Root certificate"
+google_root_path="integration_tests/constants/google_root_cert"
+result=$(echo "$passphrase" | dcld tx pki propose-add-x509-root-cert --certificate="$google_root_path" --from $user_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Request proposed Root certificate - there should be no Approval"
+result=$(dcld query pki proposed-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+echo $result | jq
+
+test_divider
+
+echo "Request all approved certificates must be empty"
+result=$(dcld query pki all-x509-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+
+test_divider
+
+echo "Approved certificate must be empty"
+result=$(dcld query pki x509-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+
+test_divider
+
+echo "Request all revoked certificates must not contain google certification"
+result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+
+
+
+
+echo "Request all approved root certificates must be empty"
+result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Request all revoked root certificates must not contain google certification"
+result=$(dcld query pki all-revoked-x509-root-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+
+test_divider
+
+echo "Request all certificates by subject must be empty"
+result=$(dcld query pki all-subject-x509-certs --subject="$google_cert_subject")
+echo $result | jq
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+# 11. APPROVE GOOGLE ROOT CERT
+
+echo "11. APPROVE GOOGLE ROOT CERT"
+test_divider
+
+echo "$trustee_account (Trustee) approve Root certificate"
+result=$(echo $passphrase | dcld tx pki approve-add-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Certificate must be still in Proposed state but with Approval from $trustee_account. Request proposed Root certificate"
+result=$(dcld query pki proposed-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+response_does_not_contain "$result" "\"address\": \"$second_trustee_account_address\""
+check_response "$result" "[\"$(echo "$passphrase" | dcld keys show jack -a)\"]"
+
+test_divider
+
+echo "Request all approved certificates must be empty, only 1 Trustee has approved so far"
+result=$(dcld query pki all-x509-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+
+test_divider
+
+echo "$second_trustee_account (Second Trustee) approves Root certificate"
+result=$(echo "$passphrase" | dcld tx pki approve-add-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $second_trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Certificate must be Approved and contain 2 approvals. Request Root certificate"
+result=$(dcld query pki x509-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+test_divider
+
+echo "Request all proposed Root certificates must be empty"
+result=$(dcld query pki all-proposed-x509-root-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+
+test_divider
+
+echo "Request all approved certificates. It should contain one certificate with 2 approvals"
+result=$(dcld query pki all-x509-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+test_divider
+
+echo "Request all approved root certificates."
+result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+
+echo "Request all revoked certificates must not contain google certification"
+result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+
+# 12. PROPOSE REVOCATION OF GOOGLE ROOT CERT
+
+echo "12. PROPOSE REVOCATION OF GOOGLE ROOT CERT"
+test_divider
+
+echo "$trustee_account (Trustee) proposes to revoke Root certificate"
+result=$(echo "$passphrase" | dcld tx pki propose-revoke-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Request root certificate proposed to revoke and verify that it contains approval from $trustee_account_address"
+result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"$google_cert_subject\""
+check_response "$result" "\"$google_cert_subject_key_id\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+
+echo "Request all root certificates proposed to revoke"
+result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Request all revoked certificates"
+result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Request all revoked root certificates"
+result=$(dcld query pki all-revoked-x509-root-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Request Root certificate proposed to revoke, it should have one approval from $trustee_account_address"
+result=$(dcld query pki proposed-x509-root-cert-to-revoke --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "[\"$(echo "$passphrase" | dcld keys show jack -a)\"]"  
+check_response "$result" "\"address\": \"$trustee_account_address\""
+
+test_divider
+
+echo "Request all approved certificates"
+result=$(dcld query pki all-x509-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Request all approved root certificates"
+result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Request all subject certificates"
+result=$(dcld query pki all-subject-x509-certs --subject="$google_cert_subject")
+echo $result | jq
+check_response "$result" "\"$google_cert_subject\""
+check_response "$result" "\"$google_cert_subject_key_id\""
+
+test_divider
+
+# 13. APPROVE REVOCATION OF GOOGLE ROOT CERT
+
+echo "13. APPROVE REVOCATION OF GOOGLE ROOT CERT"
+test_divider
+
+echo "$second_trustee_account (Second Trustee) approves to revoke Root certificate"
+result=$(echo "$passphrase" | dcld tx pki approve-revoke-x509-root-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id" --from $second_trustee_account --yes)
+check_response "$result" "\"code\": 0"
+
+test_divider
+
+echo "Request all root certificates proposed to revoke. Nothing left in list as the certficate is revoked"
+result=$(dcld query pki all-proposed-x509-root-certs-to-revoke)
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+echo $result | jq
+
+test_divider
+
+echo "Request all revoked certificates should contain approvals from both trustees"
+result=$(dcld query pki all-revoked-x509-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+test_divider
+
+echo "Request all revoked root certificates"
+result=$(dcld query pki all-revoked-x509-root-certs)
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Request revoked Root certificate and also check for approvals from both Trustees"
+result=$(dcld query pki revoked-x509-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "\"subject\": \"$google_cert_subject\""
+check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"address\": \"$second_trustee_account_address\""
+
+test_divider
+
+echo "Request all approved certificates must be empty"
+result=$(dcld query pki all-x509-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+echo "Request all approved root certificates must be empty"
+result=$(dcld query pki all-x509-root-certs)
+echo $result | jq
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+
+test_divider
+
+echo "Approved Root certificate must be empty"
+result=$(dcld query pki x509-cert --subject="$google_cert_subject" --subject-key-id="$google_cert_subject_key_id")
+echo $result | jq
+check_response "$result" "Not Found"
+response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
+response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
+response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+
+test_divider
+
+echo "Request all subject certificates must be empty"
+result=$(dcld query pki all-subject-x509-certs --subject="$google_cert_subject")
+echo $result | jq
+response_does_not_contain "$result" "\"$google_cert_subject\""
+response_does_not_contain "$result" "\"$google_cert_subject_key_id\""
