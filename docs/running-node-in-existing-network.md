@@ -1,6 +1,7 @@
 # Adding new full node to existing network
-Possible options when adding Validator, Observer, Sentry or Seed nodes to existing DCL network:
 > **_NOTE:_** Extra node specific configuration (out of scope of this section) may apply depending on node type or infrastructure
+
+Possible options when adding Validator, Observer, Sentry or Seed nodes to existing DCL network:
 
 1) State sync (recommended)
 - Prerequisites:
