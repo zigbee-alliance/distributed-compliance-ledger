@@ -331,8 +331,8 @@ dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=
 
 Validators are responsible for committing of new blocks to the ledger.
 
-A more detailed instruction on how to add a validator node to an existing DC Ledger network
-can be found here: [running-node.md](running-node.md).
+  - When running validator in a new fresh network [running-node.md](running-node.md).
+  - When running validator in an existing long-running network [running-node-in-existing-network.md](running-node-in-existing-network.md).
 
 - `dcld init node-name --chain-id dclchain`
 - `cp /source/genesis.json $HOME/.dcl/config/`
