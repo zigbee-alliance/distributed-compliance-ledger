@@ -33,6 +33,9 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
     ```
   - Enable state sync in config `$HOME/.dcl/config/config.toml`:
     ```
+    [statesync]
+    enable = true
+
     # RPC servers (comma-separated) for light client verification of the synced state machine and
     # retrieval of state data for node bootstrapping. Also needs a trusted height and corresponding
     # header hash obtained from a trusted source, and a period during which validators can be trusted.
