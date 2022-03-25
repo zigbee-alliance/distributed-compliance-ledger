@@ -91,9 +91,8 @@ func FormatOID(header, oldKey, newKey string) string {
 			value = value[len(value)-integerLengthToHexString:]
 
 			decoded, _ := hex.DecodeString(value)
-			hexStr := "=0x" + string(decoded)
+			value = fmt.Sprintf("%s=0x%s", newKey, decoded)
 
-			value = newKey + hexStr
 			subjectValues[index] = value
 		}
 	}
