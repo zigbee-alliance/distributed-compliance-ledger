@@ -1,4 +1,5 @@
 # Running a DCLedger Node
+> **_Note:_** If you are adding a new node to an existing long-running network, refer to [running-node-in-existing-network.md](./running-node-in-existing-network.md) for addtional instructions
 
 This document describes in how to:
 
