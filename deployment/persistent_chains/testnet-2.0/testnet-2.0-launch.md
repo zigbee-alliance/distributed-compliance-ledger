@@ -303,3 +303,13 @@ systemctl restart dcld
   * account status:
     * `dcld query auth account --address="<address>"`: to ensure that account is created and has assigned role
 <!-- markdownlint-enable MD029 -->
+
+## VII. Post-Ceremony: Adding new nodes to testnet
+When adding new nodes to testnet after a while, you might consider one of the options described in [running-node-in-existing-network](../../../docs/running-node-in-existing-network.md). <br>
+To configure recommended `state sync` option described in the document you can optionally use the following available `CSA Testnet2.0` endpoints:
+- `REST` - https://on.test-net.dcl.csa-iot.org
+- `RPC` - https://on.test-net.dcl.csa-iot.org:26657
+- `gRPC` - on.test-net.dcl.csa-iot.org:8443
+
+- `Sentry Node` - 34.199.197.239:26656
+- `Seed Node` - 100.25.175.140:26656
