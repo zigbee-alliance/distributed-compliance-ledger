@@ -84,10 +84,11 @@ func PatchCertificate(certificate X509Certificate) X509Certificate {
 func FormatOID(header, oldKey, newKey string) string {
 	subjectValues := strings.Split(header, ",")
 
+	integerLengthToHexString := 8
 	for index, value := range subjectValues {
 		if strings.HasPrefix(value, oldKey) {
 			// get value from header
-			value = value[len(value)-8:]
+			value = value[len(value)-integerLengthToHexString:]
 
 			decoded, _ := hex.DecodeString(value)
 			hexStr := "=0x" + string(decoded)
