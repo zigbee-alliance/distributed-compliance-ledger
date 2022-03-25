@@ -51,9 +51,11 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Equal(t, testconstants.RootSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.RootSubject, certificate.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, certificate.SubjectKeyID)
+}
 
+func Test_DecodeCertificatesWithVID(t *testing.T) {
 	// decode root google certificate with vid
-	certificate, err = DecodeX509Certificate(testconstants.GoogleCertPem)
+	certificate, err := DecodeX509Certificate(testconstants.GoogleCertPem)
 	require.Nil(t, err)
 	require.True(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.GoogleSubject, certificate.Issuer)
