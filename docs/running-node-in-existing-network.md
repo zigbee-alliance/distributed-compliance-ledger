@@ -1,13 +1,16 @@
-# Adding new full node to existing network
-> **_NOTE:_** Extra node specific configuration (out of scope of this section) may apply depending on node type or infrastructure
+# Running Nodes in an existing network
+> **_NOTE:_** Extra node specific configuration (out of scope of this section) may apply depending on node type or infrastructure.<br>
+> Refer to [running-node.md](./running-node.md) for more details
 
 Possible options when adding Validator, Observer, Sentry or Seed nodes to existing DCL network:
 
 1) State sync (recommended)
 - Prerequisites:
   - Latest binary version running in existing network
-  - State sync snapshots should be enabled in at least one node in the network
-    - The following parameters should be set in `$HOME/.dcl/config/app.toml`:
+  - State sync snapshots should be enabled in at least one node in the network.<br>
+  Perform the following steps to enable state sync snapshots in running node 
+    
+    - Edit the following attributes in `$HOME/.dcl/config/app.toml`
       ```
       # snapshot-interval specifies the block interval at which local state sync snapshots are
       # taken (0 to disable). Must be a multiple of pruning-keep-every.
@@ -18,9 +21,17 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
       ```
       > **_NOTE:_** Snapshot interval must currently be a multiple of the pruning-keep-every(default 100), to prevent heights from being pruned while taking snapshots. 
       > It’s also usually a good idea to keep at least 2 recent snapshots, such that the previous snapshot isn’t removed while a node is attempting to state sync using it.
-
+    - Restart the node
+    > **_NOTE:_** Nodes with snapshots should allow `tendermint p2p` connections to be able to share snapshots with synching peers.<br>
+    > - Do not forget to check firewall and security settings<br> 
+    > - We do not recommend enabling state sync for `Validator Nodes` for security reasons
 - Steps:
-  - Enable state sync in `$HOME/.dcl/config/config.toml`:
+  - Init node:
+
+    ```bash
+    ./dcld init "<node-name>" --chain-id "<chain-id>"
+    ```
+  - Enable state sync in config `$HOME/.dcl/config/config.toml`:
     ```
     # RPC servers (comma-separated) for light client verification of the synced state machine and
     # retrieval of state data for node bootstrapping. Also needs a trusted height and corresponding
@@ -43,7 +54,7 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
     - `<host>` - RPC endpoint host of the network being joined
     - `<port>` - RPC endpoint port of the network being joined
 
-  - Run the new node
+  - Run the new node (refer to [running-node.md](./running-node.md) for node specific instructions)
 
     > **_NOTE:_** State sync is not attempted if the node has any local state (LastBlockHeight > 0)
 
