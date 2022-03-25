@@ -960,7 +960,7 @@ response_does_not_contain "$result" "\"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
 
-# CHECK GOOGLE ROOT CERTIFICATE WHICH INCLUDE VID
+# CHECK GOOGLE ROOT CERTIFICATE WHICH INCLUDES VID
 
 google_cert_subject="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
 google_cert_subject_key_id="B0:0:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:9:DE:93:21"
