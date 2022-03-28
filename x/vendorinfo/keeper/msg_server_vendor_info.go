@@ -38,6 +38,7 @@ func (k msgServer) CreateVendorInfo(goCtx context.Context, msg *types.MsgCreateV
 		ctx,
 		vendorInfo,
 	)
+
 	return &types.MsgCreateVendorInfoResponse{}, nil
 }
 

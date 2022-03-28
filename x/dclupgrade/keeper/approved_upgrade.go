@@ -19,7 +19,6 @@ func (k Keeper) SetApprovedUpgrade(ctx sdk.Context, approvedUpgrade types.Approv
 func (k Keeper) GetApprovedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) (val types.ApprovedUpgrade, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedUpgradeKeyPrefix))
 
@@ -31,6 +30,7 @@ func (k Keeper) GetApprovedUpgrade(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -38,7 +38,6 @@ func (k Keeper) GetApprovedUpgrade(
 func (k Keeper) RemoveApprovedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ApprovedUpgradeKeyPrefix))
 	store.Delete(types.ApprovedUpgradeKey(
@@ -52,7 +51,6 @@ func (k Keeper) GetAllApprovedUpgrade(ctx sdk.Context) (list []types.ApprovedUpg
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
-
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ApprovedUpgrade
 		k.cdc.MustUnmarshal(iterator.Value(), &val)

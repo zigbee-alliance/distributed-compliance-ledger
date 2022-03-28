@@ -33,7 +33,6 @@ func (k Keeper) IsLastValidatorPowerPresent(ctx sdk.Context, owner sdk.ValAddres
 func (k Keeper) GetLastValidatorPower(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
-
 ) (val types.LastValidatorPower, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
 
@@ -45,6 +44,7 @@ func (k Keeper) GetLastValidatorPower(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -52,7 +52,6 @@ func (k Keeper) GetLastValidatorPower(
 func (k Keeper) RemoveLastValidatorPower(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LastValidatorPowerKeyPrefix))
 	store.Delete(types.LastValidatorPowerKey(

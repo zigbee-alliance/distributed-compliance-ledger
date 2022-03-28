@@ -317,7 +317,7 @@ func GetProvisionalModel(suite *utils.TestSuite, vid int32, pid int32, sv uint32
 	return &res, nil
 }
 
-func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
+func DemoTrackCompliance(suite *utils.TestSuite) {
 	// Query for unknown
 	_, err := GetComplianceInfo(suite, testconstants.Vid, testconstants.Pid, testconstants.SoftwareVersion, testconstants.CertificationType)
 	suite.AssertNotFound(err)
@@ -495,7 +495,7 @@ func ComplianceDemoTrackCompliance(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
 }
 
-func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
+func DemoTrackRevocation(suite *utils.TestSuite) {
 	inputAllComplianceInfo, _ := GetAllComplianceInfo(suite)
 	inputAllCertifiedModels, _ := GetAllCertifiedModels(suite)
 	inputAllRevokedModels, _ := GetAllRevokedModels(suite)
@@ -650,7 +650,7 @@ func ComplianceDemoTrackRevocation(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputAllProvisionalModels), len(provisionalModels))
 }
 
-func ComplianceDemoTrackProvision(suite *utils.TestSuite) {
+func DemoTrackProvision(suite *utils.TestSuite) {
 	inputAllComplianceInfo, _ := GetAllComplianceInfo(suite)
 	inputAllCertifiedModels, _ := GetAllCertifiedModels(suite)
 	inputAllRevokedModels, _ := GetAllRevokedModels(suite)

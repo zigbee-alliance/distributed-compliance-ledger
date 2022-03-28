@@ -39,6 +39,7 @@ type TestSetup struct {
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	k, ctx := testkeeper.DclauthKeeper(t)
 
 	setup := TestSetup{

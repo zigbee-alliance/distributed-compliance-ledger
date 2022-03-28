@@ -14,6 +14,7 @@ import (
 func createTestApprovedRootCertificates(keeper *keeper.Keeper, ctx sdk.Context) types.ApprovedRootCertificates {
 	item := types.ApprovedRootCertificates{}
 	keeper.SetApprovedRootCertificates(ctx, item)
+
 	return item
 }
 

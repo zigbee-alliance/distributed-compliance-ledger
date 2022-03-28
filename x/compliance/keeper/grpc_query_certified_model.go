@@ -35,6 +35,7 @@ func (k Keeper) CertifiedModelAll(c context.Context, req *types.QueryAllCertifie
 			if accumulate {
 				certifiedModels = append(certifiedModels, certifiedModel)
 			}
+
 			return true, nil
 		},
 	)

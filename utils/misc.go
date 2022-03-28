@@ -13,7 +13,7 @@ func ReadFromFile(target string) (string, error) {
 		}
 
 		return string(bytes), nil
-	} else { // else return as is
-		return target, nil
 	}
+
+	return target, nil
 }

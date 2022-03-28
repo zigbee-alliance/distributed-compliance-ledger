@@ -19,6 +19,7 @@ func NewMsgCreateValidator(
 	description *Description,
 ) (*MsgCreateValidator, error) {
 	var pkAny *codectypes.Any
+
 	if pubKey != nil {
 		var err error
 		if pkAny, err = codectypes.NewAnyWithValue(pubKey); err != nil {
@@ -46,11 +47,13 @@ func (msg *MsgCreateValidator) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{sdk.AccAddress(signer)}
 }
 
 func (msg *MsgCreateValidator) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
@@ -92,5 +95,6 @@ func (msg *MsgCreateValidator) ValidateBasic() error {
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces.
 func (msg MsgCreateValidator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pubKey cryptotypes.PubKey
+
 	return unpacker.UnpackAny(msg.PubKey, &pubKey)
 }

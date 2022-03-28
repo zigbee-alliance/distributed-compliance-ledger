@@ -88,6 +88,7 @@ func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, moniker string
 		cdc, appState,
 		func(account dclauthtypes.GenesisAccount) (stop bool) {
 			accountsMap[account.GetAddress().String()] = account
+
 			return false
 		},
 	)
@@ -146,6 +147,7 @@ func CollectTxs(cdc codec.JSONCodec, txJSONDecoder sdk.TxDecoder, moniker string
 			if ok {
 				fmt.Printf("CollectTxs-2, called from %s#%d - %s\n", file, no, sdk.AccAddress(valAddr).String())
 			}
+
 			return appGenTxs, persistentPeers, fmt.Errorf("account %s not in genesis state: %+v", valAddr, accountsMap)
 		}
 

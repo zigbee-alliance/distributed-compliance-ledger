@@ -34,6 +34,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := approvedCertificatesIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for approvedCertificates")
 		}
+
 		approvedCertificatesIndexMap[index] = struct{}{}
 	}
 	// Check for duplicated index in proposedCertificate
@@ -44,6 +45,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := proposedCertificateIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for proposedCertificate")
 		}
+
 		proposedCertificateIndexMap[index] = struct{}{}
 	}
 	// Check for duplicated index in childCertificates

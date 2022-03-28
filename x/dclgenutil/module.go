@@ -110,6 +110,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, gs json.Ra
 	if err != nil {
 		panic(err)
 	}
+
 	return validators
 }
 

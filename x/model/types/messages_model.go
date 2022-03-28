@@ -18,39 +18,39 @@ func NewMsgCreateModel(
 	creator string,
 	vid int32,
 	pid int32,
-	deviceTypeId int32,
+	deviceTypeID int32,
 	productName string,
 	productLabel string,
 	partNumber string,
 	commissioningCustomFlow int32,
-	commissioningCustomFlowUrl string,
+	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsHint uint32,
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsHint uint32,
 	commissioningModeSecondaryStepsInstruction string,
-	userManualUrl string,
-	supportUrl string,
-	productUrl string,
-	lsfUrl string,
+	userManualURL string,
+	supportURL string,
+	productURL string,
+	lsfURL string,
 ) *MsgCreateModel {
 	return &MsgCreateModel{
 		Creator:                                  creator,
 		Vid:                                      vid,
 		Pid:                                      pid,
-		DeviceTypeId:                             deviceTypeId,
+		DeviceTypeId:                             deviceTypeID,
 		ProductName:                              productName,
 		ProductLabel:                             productLabel,
 		PartNumber:                               partNumber,
 		CommissioningCustomFlow:                  commissioningCustomFlow,
-		CommissioningCustomFlowUrl:               commissioningCustomFlowUrl,
+		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        commissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      commissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl: userManualUrl,
-		SupportUrl:    supportUrl,
-		ProductUrl:    productUrl,
-		LsfUrl:        lsfUrl,
+		UserManualUrl: userManualURL,
+		SupportUrl:    supportURL,
+		ProductUrl:    productURL,
+		LsfUrl:        lsfURL,
 	}
 }
 
@@ -67,11 +67,13 @@ func (msg *MsgCreateModel) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgCreateModel) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
@@ -98,15 +100,14 @@ func NewMsgUpdateModel(
 	productName string,
 	productLabel string,
 	partNumber string,
-	commissioningCustomFlowUrl string,
+	commissioningCustomFlowURL string,
 	commissioningModeInitialStepsInstruction string,
 	commissioningModeSecondaryStepsInstruction string,
-	userManualUrl string,
-	supportUrl string,
-	productUrl string,
-	lsfUrl string,
+	userManualURL string,
+	supportURL string,
+	productURL string,
+	lsfURL string,
 	lsfRevision int32,
-
 ) *MsgUpdateModel {
 	return &MsgUpdateModel{
 		Creator:                                  creator,
@@ -115,13 +116,13 @@ func NewMsgUpdateModel(
 		ProductName:                              productName,
 		ProductLabel:                             productLabel,
 		PartNumber:                               partNumber,
-		CommissioningCustomFlowUrl:               commissioningCustomFlowUrl,
+		CommissioningCustomFlowUrl:               commissioningCustomFlowURL,
 		CommissioningModeInitialStepsInstruction: commissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsInstruction: commissioningModeSecondaryStepsInstruction,
-		UserManualUrl: userManualUrl,
-		SupportUrl:    supportUrl,
-		ProductUrl:    productUrl,
-		LsfUrl:        lsfUrl,
+		UserManualUrl: userManualURL,
+		SupportUrl:    supportURL,
+		ProductUrl:    productURL,
+		LsfUrl:        lsfURL,
 		LsfRevision:   lsfRevision,
 	}
 }
@@ -139,11 +140,13 @@ func (msg *MsgUpdateModel) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgUpdateModel) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
@@ -167,7 +170,6 @@ func NewMsgDeleteModel(
 	creator string,
 	vid int32,
 	pid int32,
-
 ) *MsgDeleteModel {
 	return &MsgDeleteModel{
 		Creator: creator,
@@ -189,11 +191,13 @@ func (msg *MsgDeleteModel) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgDeleteModel) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 

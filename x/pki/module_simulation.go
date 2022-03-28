@@ -86,6 +86,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 			weightMsgProposeAddX509RootCert = defaultWeightMsgProposeAddX509RootCert
 		},
 	)
+
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgProposeAddX509RootCert,
 		pkisimulation.SimulateMsgProposeAddX509RootCert(am.keeper),

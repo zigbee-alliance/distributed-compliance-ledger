@@ -30,6 +30,7 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
@@ -61,10 +62,12 @@ func (setup *TestSetup) AddAccount(
 
 func GenerateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
+
 	return accAddress
 }
 
 func Setup(t *testing.T) *TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.PkiKeeper(t, dclauthKeeper)
 
@@ -679,11 +682,11 @@ func TestHandler_AddX509Cert_EachChildCertRefersToTwoParentCerts(t *testing.T) {
 		uniqueCertificate(intermediateCertificate.Issuer, intermediateCertificate.SerialNumber),
 	)
 
-	childCertId := certificateIdentifier(intermediateCertificate.Subject, intermediateCertificate.SubjectKeyId)
+	childCertID := certificateIdentifier(intermediateCertificate.Subject, intermediateCertificate.SubjectKeyId)
 	rootChildCertificates := types.ChildCertificates{
 		Issuer:         intermediateCertificate.Issuer,
 		AuthorityKeyId: intermediateCertificate.AuthorityKeyId,
-		CertIds:        []*types.CertificateIdentifier{&childCertId},
+		CertIds:        []*types.CertificateIdentifier{&childCertID},
 	}
 	setup.Keeper.SetChildCertificates(setup.Ctx, rootChildCertificates)
 
@@ -747,7 +750,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeOwner(t *testing.T) {
 	require.NoError(t, err)
 
 	// query and check proposed certificate revocation
-	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedRevocation, _ := queryProposedCertificateRevocation(setup)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
 	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee.String()))
@@ -783,7 +786,7 @@ func TestHandler_ProposeRevokeX509RootCert_ByTrusteeNotOwner(t *testing.T) {
 	require.NoError(t, err)
 
 	// query and check proposed certificate revocation
-	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedRevocation, _ := queryProposedCertificateRevocation(setup)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
 	require.True(t, proposedRevocation.HasRevocationFrom(anotherTrustee.String()))
@@ -932,7 +935,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForNotEnoughApprovals(t *testing.T) {
 	require.NoError(t, err)
 
 	// query and check proposed certificate revocation
-	proposedRevocation, _ := queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	proposedRevocation, _ := queryProposedCertificateRevocation(setup)
 	require.Equal(t, testconstants.RootSubject, proposedRevocation.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, proposedRevocation.SubjectKeyId)
 	require.True(t, proposedRevocation.HasRevocationFrom(setup.Trustee.String()))
@@ -979,7 +982,7 @@ func TestHandler_ApproveRevokeX509RootCert_ForEnoughApprovals(t *testing.T) {
 	require.NoError(t, err)
 
 	// check that proposed certificate revocation does not exist anymore
-	_, err = queryProposedCertificateRevocation(setup, testconstants.RootSubject, testconstants.RootSubjectKeyID)
+	_, err = queryProposedCertificateRevocation(setup)
 	require.Error(t, err)
 	require.Equal(t, codes.NotFound, status.Code(err))
 
@@ -1348,21 +1351,23 @@ func proposeAndApproveRootCertificate(setup *TestSetup, ownerTrustee sdk.AccAddr
 func queryProposedCertificate(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.ProposedCertificate, error) {
 	// query proposed certificate
 	req := &types.QueryGetProposedCertificateRequest{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 
 	resp, err := setup.Keeper.ProposedCertificate(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ProposedCertificate, nil
 }
 
@@ -1373,19 +1378,21 @@ func queryAllApprovedCertificates(setup *TestSetup) ([]types.ApprovedCertificate
 	resp, err := setup.Keeper.ApprovedCertificatesAll(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return resp.ApprovedCertificates, nil
 }
 
 func querySingleApprovedCertificate(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.Certificate, error) {
-	certificates, err := queryApprovedCertificates(setup, subject, subjectKeyId)
+	certificates, err := queryApprovedCertificates(setup, subject, subjectKeyID)
 	if err != nil {
 		return nil, err
 	}
@@ -1400,21 +1407,23 @@ func querySingleApprovedCertificate(
 func queryApprovedCertificates(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.ApprovedCertificates, error) {
 	// query certificate
 	req := &types.QueryGetApprovedCertificatesRequest{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 
 	resp, err := setup.Keeper.ApprovedCertificates(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ApprovedCertificates, nil
 }
 
@@ -1425,31 +1434,33 @@ func queryAllProposedCertificateRevocations(setup *TestSetup) ([]types.ProposedC
 	resp, err := setup.Keeper.ProposedCertificateRevocationAll(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return resp.ProposedCertificateRevocation, nil
 }
 
 func queryProposedCertificateRevocation(
 	setup *TestSetup,
-	subject string,
-	subjectKeyId string,
 ) (*types.ProposedCertificateRevocation, error) {
 	// query proposed certificate revocation
 	req := &types.QueryGetProposedCertificateRevocationRequest{
-		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		Subject:      testconstants.RootSubject,
+		SubjectKeyId: testconstants.RootSubjectKeyID,
 	}
 
 	resp, err := setup.Keeper.ProposedCertificateRevocation(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ProposedCertificateRevocation, nil
 }
 
@@ -1460,19 +1471,21 @@ func queryAllRevokedCertificates(setup *TestSetup) ([]types.RevokedCertificates,
 	resp, err := setup.Keeper.RevokedCertificatesAll(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return resp.RevokedCertificates, nil
 }
 
 func querySingleRevokedCertificate(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.Certificate, error) {
-	certificates, err := queryRevokedCertificates(setup, subject, subjectKeyId)
+	certificates, err := queryRevokedCertificates(setup, subject, subjectKeyID)
 	if err != nil {
 		return nil, err
 	}
@@ -1487,42 +1500,46 @@ func querySingleRevokedCertificate(
 func queryRevokedCertificates(
 	setup *TestSetup,
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) (*types.RevokedCertificates, error) {
 	// query revoked certificate
 	req := &types.QueryGetRevokedCertificatesRequest{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 
 	resp, err := setup.Keeper.RevokedCertificates(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.RevokedCertificates, nil
 }
 
 func queryChildCertificates(
 	setup *TestSetup,
 	issuer string,
-	authorityKeyId string,
+	authorityKeyID string,
 ) (*types.ChildCertificates, error) {
 	// query certificate
 	req := &types.QueryGetChildCertificatesRequest{
 		Issuer:         issuer,
-		AuthorityKeyId: authorityKeyId,
+		AuthorityKeyId: authorityKeyID,
 	}
 
 	resp, err := setup.Keeper.ChildCertificates(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ChildCertificates, nil
 }
 
@@ -1559,9 +1576,9 @@ func uniqueCertificate(issuer string, serialNumber string) types.UniqueCertifica
 	}
 }
 
-func certificateIdentifier(subject string, subjectKeyId string) types.CertificateIdentifier {
+func certificateIdentifier(subject string, subjectKeyID string) types.CertificateIdentifier {
 	return types.CertificateIdentifier{
 		Subject:      subject,
-		SubjectKeyId: subjectKeyId,
+		SubjectKeyId: subjectKeyID,
 	}
 }

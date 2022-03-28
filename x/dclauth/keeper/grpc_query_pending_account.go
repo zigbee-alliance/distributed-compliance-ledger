@@ -29,6 +29,7 @@ func (k Keeper) PendingAccountAll(c context.Context, req *types.QueryAllPendingA
 		}
 
 		pendingAccounts = append(pendingAccounts, pendingAccount)
+
 		return nil
 	})
 	if err != nil {

@@ -26,6 +26,7 @@ func createNRevokedModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.
 
 		keeper.SetRevokedModel(ctx, items[i])
 	}
+
 	return items
 }
 

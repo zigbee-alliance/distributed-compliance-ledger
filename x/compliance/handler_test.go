@@ -31,6 +31,7 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
@@ -47,6 +48,7 @@ func (m *ModelKeeperMock) GetModelVersion(
 	softwareVersion uint32,
 ) (val modeltypes.ModelVersion, found bool) {
 	args := m.Called(ctx, vid, pid, softwareVersion)
+
 	return args.Get(0).(modeltypes.ModelVersion), args.Bool(1)
 }
 
@@ -104,6 +106,7 @@ func (setup *TestSetup) SetNoModelVersionForKey(
 }
 
 func Setup(t *testing.T) *TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	modelKeeper := &ModelKeeperMock{}
 	keeper, ctx := testkeeper.ComplianceKeeper(t, dclauthKeeper, modelKeeper)
@@ -1010,10 +1013,12 @@ func queryComplianceInfo(
 	resp, err := setup.Keeper.ComplianceInfo(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ComplianceInfo, nil
 }
 
@@ -1034,10 +1039,12 @@ func queryProvisionalModel(
 	resp, err := setup.Keeper.ProvisionalModel(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ProvisionalModel, nil
 }
 
@@ -1058,10 +1065,12 @@ func queryCertifiedModel(
 	resp, err := setup.Keeper.CertifiedModel(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.CertifiedModel, nil
 }
 
@@ -1082,10 +1091,12 @@ func queryRevokedModel(
 	resp, err := setup.Keeper.RevokedModel(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.RevokedModel, nil
 }
 
@@ -1094,6 +1105,7 @@ func checkProvisionalModelInfo(
 	provisionalModelMsg *types.MsgProvisionModel,
 	receivedComplianceInfo *types.ComplianceInfo,
 ) {
+	t.Helper()
 	require.Equal(t, provisionalModelMsg.Vid, receivedComplianceInfo.Vid)
 	require.Equal(t, provisionalModelMsg.Pid, receivedComplianceInfo.Pid)
 	require.Equal(t, types.CodeProvisional, receivedComplianceInfo.SoftwareVersionCertificationStatus)
@@ -1107,6 +1119,7 @@ func checkCertifiedModelInfo(
 	certifyModelMsg *types.MsgCertifyModel,
 	receivedComplianceInfo *types.ComplianceInfo,
 ) {
+	t.Helper()
 	require.Equal(t, certifyModelMsg.Vid, receivedComplianceInfo.Vid)
 	require.Equal(t, certifyModelMsg.Pid, receivedComplianceInfo.Pid)
 	require.Equal(t, types.CodeCertified, receivedComplianceInfo.SoftwareVersionCertificationStatus)
@@ -1120,6 +1133,7 @@ func checkRevokedModelInfo(
 	revokeModelMsg *types.MsgRevokeModel,
 	receivedComplianceInfo *types.ComplianceInfo,
 ) {
+	t.Helper()
 	require.Equal(t, revokeModelMsg.Vid, receivedComplianceInfo.Vid)
 	require.Equal(t, revokeModelMsg.Pid, receivedComplianceInfo.Pid)
 	require.Equal(t, types.CodeRevoked, receivedComplianceInfo.SoftwareVersionCertificationStatus)
@@ -1205,18 +1219,19 @@ func NewModelVersion(
 		CdVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl,
+		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
 		OtaChecksum:                  testconstants.OtaChecksum,
 		OtaChecksumType:              testconstants.OtaChecksumType,
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl,
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 		Creator:                      GenerateAccAddress().String(),
 	}
 }
 
 func GenerateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
+
 	return accAddress
 }

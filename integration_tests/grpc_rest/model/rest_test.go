@@ -30,7 +30,7 @@ import (
 
 func TestModelDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	model.ModelDemo(&suite)
+	model.Demo(&suite)
 }
 
 func TestAddModelByNonVendorREST(t *testing.T) {

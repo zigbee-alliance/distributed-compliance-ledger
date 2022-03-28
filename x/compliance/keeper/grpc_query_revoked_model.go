@@ -35,6 +35,7 @@ func (k Keeper) RevokedModelAll(c context.Context, req *types.QueryAllRevokedMod
 			if accumulate {
 				revokedModels = append(revokedModels, revokedModel)
 			}
+
 			return true, nil
 		},
 	)

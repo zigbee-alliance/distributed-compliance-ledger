@@ -19,9 +19,11 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		switch msg := msg.(type) {
 		case *types.MsgCreateVendorInfo:
 			res, err := msgServer.CreateVendorInfo(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgUpdateVendorInfo:
 			res, err := msgServer.UpdateVendorInfo(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 		// case *types.MsgDeleteVendorInfo:
 		// 	res, err := msgServer.DeleteVendorInfo(sdk.WrapSDKContext(ctx), msg)
@@ -29,6 +31,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		// this line is used by starport scaffolding # 1
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
+
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
 		}
 	}

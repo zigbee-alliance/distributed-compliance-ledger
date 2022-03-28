@@ -43,6 +43,7 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
@@ -52,6 +53,7 @@ func (m *DclauthKeeperMock) HasVendorID(
 	vid int32,
 ) bool {
 	args := m.Called(ctx, addr, vid)
+
 	return args.Bool(0)
 }
 
@@ -87,6 +89,7 @@ func (setup *TestSetup) AddAccount(
 }
 
 func Setup(t *testing.T) *TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.ModelKeeper(t, dclauthKeeper)
 
@@ -200,7 +203,7 @@ func TestHandler_OnlyOwnerAndVendorWithSameVidCanUpdateModel(t *testing.T) {
 	// update existing model by vendor with the same VendorID as owner's one
 	msgUpdateModel = NewMsgUpdateModel(vendorWithSameVid)
 	msgUpdateModel.ProductLabel += "-updated-once-more"
-	msgUpdateModel.LsfRevision += 1
+	msgUpdateModel.LsfRevision++
 	_, err = setup.Handler(setup.Ctx, msgUpdateModel)
 	require.NoError(t, err)
 }
@@ -874,10 +877,12 @@ func queryModel(
 	resp, err := setup.Keeper.Model(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.Model, nil
 }
 
@@ -896,10 +901,12 @@ func queryModelVersion(
 	resp, err := setup.Keeper.ModelVersion(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ModelVersion, nil
 }
 
@@ -916,10 +923,12 @@ func queryAllModelVersions(
 	resp, err := setup.Keeper.ModelVersions(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.ModelVersions, nil
 }
 
@@ -928,20 +937,20 @@ func NewMsgCreateModel(signer sdk.AccAddress) *types.MsgCreateModel {
 		Creator:                                  signer.String(),
 		Vid:                                      testconstants.VendorID1,
 		Pid:                                      testconstants.Pid,
-		DeviceTypeId:                             testconstants.DeviceTypeId,
+		DeviceTypeId:                             testconstants.DeviceTypeID,
 		ProductName:                              testconstants.ProductName,
 		ProductLabel:                             testconstants.ProductLabel,
 		PartNumber:                               testconstants.PartNumber,
 		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowUrl,
+		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: testconstants.UserManualUrl,
-		SupportUrl:    testconstants.SupportUrl,
-		ProductUrl:    testconstants.ProductUrl,
-		LsfUrl:        testconstants.LsfUrl,
+		UserManualUrl: testconstants.UserManualURL,
+		SupportUrl:    testconstants.SupportURL,
+		ProductUrl:    testconstants.ProductURL,
+		LsfUrl:        testconstants.LsfURL,
 	}
 }
 
@@ -953,13 +962,13 @@ func NewMsgUpdateModel(signer sdk.AccAddress) *types.MsgUpdateModel {
 		ProductName:                              testconstants.ProductName + "-updated",
 		ProductLabel:                             testconstants.ProductLabel + "-updated",
 		PartNumber:                               testconstants.PartNumber + "-updated",
-		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowUrl + "/updated",
+		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL + "/updated",
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction + "-updated",
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction + "-updated",
-		UserManualUrl: testconstants.UserManualUrl + "/updated",
-		SupportUrl:    testconstants.SupportUrl + "/updated",
-		ProductUrl:    testconstants.ProductUrl + "/updated",
-		LsfUrl:        testconstants.LsfUrl + "/updated",
+		UserManualUrl: testconstants.UserManualURL + "/updated",
+		SupportUrl:    testconstants.SupportURL + "/updated",
+		ProductUrl:    testconstants.ProductURL + "/updated",
+		LsfUrl:        testconstants.LsfURL + "/updated",
 		LsfRevision:   testconstants.LsfRevision + 1,
 	}
 }
@@ -982,13 +991,13 @@ func NewMsgCreateModelVersion(signer sdk.AccAddress, softwareVersion uint32) *ty
 		CdVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl,
+		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
 		OtaChecksum:                  testconstants.OtaChecksum,
 		OtaChecksumType:              testconstants.OtaChecksumType,
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl,
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 	}
 }
 
@@ -999,9 +1008,9 @@ func NewMsgUpdateModelVersion(signer sdk.AccAddress) *types.MsgUpdateModelVersio
 		Pid:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionValid:         !testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl + "/updated",
+		OtaUrl:                       testconstants.OtaURL + "/updated",
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion + 1,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion + 1,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl + "/updated",
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL + "/updated",
 	}
 }

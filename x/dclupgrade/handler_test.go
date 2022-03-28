@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//nolint:testpackage,lll, staticcheck
 package dclupgrade
 
 import (
@@ -55,6 +54,7 @@ func (setup *TestSetup) AddAccount(
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	upgradeKeeper := &UpgradeKeeperMock{}
 	keeper, ctx := testkeeper.DclupgradeKeeper(t, dclauthKeeper, upgradeKeeper)
@@ -499,11 +499,13 @@ func TestHandler_ApproveUpgradePlanHeightLessBlockHeight(t *testing.T) {
 
 func isContextWithCachedMultiStore(ctx sdk.Context) bool {
 	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
+
 	return ok // CacheMultiStore
 }
 
 func isContextWithNonCachedMultiStore(ctx sdk.Context) bool {
 	_, ok := ctx.MultiStore().(storetypes.CacheMultiStore)
+
 	return !ok // not CacheMultiStore
 }
 

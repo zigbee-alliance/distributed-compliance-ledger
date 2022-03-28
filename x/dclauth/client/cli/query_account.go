@@ -31,7 +31,7 @@ func CmdListAccount() *cobra.Command {
 			}
 
 			res, err := queryClient.AccountAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {
@@ -62,6 +62,7 @@ func CmdShowAccount() *cobra.Command {
 			}
 
 			var res types.Account
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

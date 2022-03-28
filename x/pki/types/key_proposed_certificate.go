@@ -12,7 +12,7 @@ const (
 // ProposedCertificateKey returns the store key to retrieve a ProposedCertificate from the index fields.
 func ProposedCertificateKey(
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) []byte {
 	var key []byte
 
@@ -20,8 +20,8 @@ func ProposedCertificateKey(
 	key = append(key, subjectBytes...)
 	key = append(key, []byte("/")...)
 
-	subjectKeyIdBytes := []byte(subjectKeyId)
-	key = append(key, subjectKeyIdBytes...)
+	subjectKeyIDBytes := []byte(subjectKeyID)
+	key = append(key, subjectKeyIDBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

@@ -46,10 +46,10 @@ const (
 	FlagMaxConn          = "max-open-connections"
 	FlagTrustPeriod      = "trusting-period"
 	FlagStartTimeout     = "start-timeout"
-	FlagTlsCertFile      = "tls-cert-file"
-	FlagTlsCertFileShort = "c"
-	FlagTlsKeyFile       = "tls-key-file"
-	FlagTlsKeyFileShort  = "k"
+	FlagTLSCertFile      = "tls-cert-file"
+	FlagTLSCertFileShort = "c"
+	FlagTLSKeyFile       = "tls-key-file"
+	FlagTLSKeyFileShort  = "k"
 )
 
 // LightCmd represents the base command when called without any subcommands.
@@ -135,8 +135,8 @@ func init() {
 	LightCmd.Flags().Int64Var(&startTimeout, FlagStartTimeout, 0,
 		"How many seconds to wait before starting the light client proxy. Mostly for test purposes when light client is started at the same time as the pool.")
 
-	LightCmd.Flags().StringVarP(&tlsCertFile, FlagTlsCertFile, FlagTlsCertFileShort, "", "Path to the TLS certificate file")
-	LightCmd.Flags().StringVarP(&tlsKeyFile, FlagTlsKeyFile, FlagTlsKeyFileShort, "", "Path to the TLS key file")
+	LightCmd.Flags().StringVarP(&tlsCertFile, FlagTLSCertFile, FlagTLSCertFileShort, "", "Path to the TLS certificate file")
+	LightCmd.Flags().StringVarP(&tlsKeyFile, FlagTLSKeyFile, FlagTLSKeyFileShort, "", "Path to the TLS key file")
 }
 
 func runProxy(cmd *cobra.Command, args []string) error {
@@ -288,6 +288,7 @@ func checkForExistingProviders(db dbm.DB) (string, []string, error) {
 		return "", []string{""}, err
 	}
 	witnessesAddrs := strings.Split(string(witnessesBytes), ",")
+
 	return string(primaryBytes), witnessesAddrs, nil
 }
 
@@ -300,6 +301,7 @@ func saveProviders(db dbm.DB, primaryAddr, witnessesAddrs string) error {
 	if err != nil {
 		return fmt.Errorf("failed to save witness providers: %w", err)
 	}
+
 	return nil
 }
 
@@ -307,12 +309,12 @@ func getTrustedHeightAndHash(primaryAddr string, witnessesAddrs []string) (int64
 	config := rpcserver.DefaultConfig()
 
 	// get height and hash from the primary
-	primaryRpcClient, err := rpchttp.NewWithTimeout(primaryAddr, "/websocket", uint(config.WriteTimeout.Seconds()))
+	primaryRPCClient, err := rpchttp.NewWithTimeout(primaryAddr, "/websocket", uint(config.WriteTimeout.Seconds()))
 	if err != nil {
 		return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
 	}
 
-	res, err := primaryRpcClient.Commit(context.Background(), nil)
+	res, err := primaryRPCClient.Commit(context.Background(), nil)
 	if err != nil {
 		return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
 	}
@@ -323,12 +325,12 @@ func getTrustedHeightAndHash(primaryAddr string, witnessesAddrs []string) (int64
 
 	// check that the hash for the given height is the same on all witnesses
 	for _, witnessesAddr := range witnessesAddrs {
-		witnessRpcClient, err := rpchttp.NewWithTimeout(witnessesAddr, "/websocket", uint(config.WriteTimeout.Seconds()))
+		witnessRPCClient, err := rpchttp.NewWithTimeout(witnessesAddr, "/websocket", uint(config.WriteTimeout.Seconds()))
 		if err != nil {
 			return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
 		}
 
-		res, err := witnessRpcClient.Commit(context.Background(), &primaryHeight)
+		res, err := witnessRPCClient.Commit(context.Background(), &primaryHeight)
 		if err != nil {
 			return 0, []byte{}, fmt.Errorf("not able to obtain trusted height and hash: %w", err)
 		}

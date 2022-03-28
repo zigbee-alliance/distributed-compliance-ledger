@@ -30,8 +30,7 @@ import (
 	TODO: provide tests for error cases
 */
 
-//nolint:funlen
 func TestPkiDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	pki.PKIDemo(&suite)
+	pki.Demo(&suite)
 }

@@ -25,7 +25,6 @@ func (k Keeper) GetCertifiedModel(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) (val types.CertifiedModel, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 
@@ -40,6 +39,7 @@ func (k Keeper) GetCertifiedModel(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -50,7 +50,6 @@ func (k Keeper) RemoveCertifiedModel(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.CertifiedModelKeyPrefix))
 	store.Delete(types.CertifiedModelKey(

@@ -27,6 +27,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := proposedUpgradeIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for proposedUpgrade")
 		}
+
 		proposedUpgradeIndexMap[index] = struct{}{}
 	}
 	// Check for duplicated index in approvedUpgrade
@@ -37,6 +38,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := approvedUpgradeIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for approvedUpgrade")
 		}
+
 		approvedUpgradeIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate

@@ -23,6 +23,7 @@ func createNUniqueCertificate(keeper *keeper.Keeper, ctx sdk.Context, n int) []t
 
 		keeper.SetUniqueCertificate(ctx, items[i])
 	}
+
 	return items
 }
 

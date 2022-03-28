@@ -22,7 +22,7 @@ func NewMsgCreateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgCreate
 		VendorName:           testconstants.VendorName,
 		CompanyLegalName:     testconstants.CompanyLegalName,
 		CompanyPrefferedName: testconstants.CompanyPreferredName,
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 }
 
@@ -33,7 +33,7 @@ func NewMsgUpdateVendorInfo(vid int32, signer string) *vendorinfotypes.MsgUpdate
 		VendorName:           testconstants.VendorName + "/new",
 		CompanyLegalName:     testconstants.CompanyLegalName + "/new",
 		CompanyPrefferedName: testconstants.CompanyPreferredName + "/new",
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl + "/new",
+		VendorLandingPageURL: testconstants.VendorLandingPageURL + "/new",
 	}
 }
 
@@ -44,6 +44,7 @@ func AddVendorInfo(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -106,7 +107,7 @@ func GetVendorInfos(suite *utils.TestSuite) (res []vendorinfotypes.VendorInfo, e
 	return res, nil
 }
 
-func VendorInfoDemo(suite *utils.TestSuite) {
+func Demo(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)

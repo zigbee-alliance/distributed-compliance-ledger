@@ -21,6 +21,7 @@ func createNVendorInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Ve
 
 		keeper.SetVendorInfo(ctx, items[i])
 	}
+
 	return items
 }
 

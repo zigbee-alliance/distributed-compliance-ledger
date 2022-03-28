@@ -19,8 +19,7 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth/types"
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	types "github.com/cosmos/cosmos-sdk/x/auth/types"
 )
 
 func TestAccountRole_Validate(t *testing.T) {
@@ -65,7 +64,7 @@ func TestAccountRole_Validate(t *testing.T) {
 
 func TestNewAccount(t *testing.T) {
 	type args struct {
-		ba        *authtypes.BaseAccount
+		ba        *types.BaseAccount
 		roles     AccountRoles
 		approvals []*Grant
 		vendorID  int32
@@ -78,13 +77,13 @@ func TestNewAccount(t *testing.T) {
 		{
 			name: "valid account all roles",
 			args: args{
-				ba:        &authtypes.BaseAccount{},
+				ba:        &types.BaseAccount{},
 				roles:     []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
 				approvals: []*Grant{},
 				vendorID:  1,
 			},
 			want: &Account{
-				BaseAccount: &authtypes.BaseAccount{},
+				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor, CertificationCenter, Trustee, NodeAdmin},
 				Approvals:   []*Grant{},
 				VendorID:    1,
@@ -93,13 +92,13 @@ func TestNewAccount(t *testing.T) {
 		{
 			name: "invalid account vendor role",
 			args: args{
-				ba:        &authtypes.BaseAccount{},
+				ba:        &types.BaseAccount{},
 				roles:     []AccountRole{Vendor},
 				approvals: []*Grant{},
 				vendorID:  2,
 			},
 			want: &Account{
-				BaseAccount: &authtypes.BaseAccount{},
+				BaseAccount: &types.BaseAccount{},
 				Roles:       []AccountRole{Vendor},
 				Approvals:   []*Grant{},
 				VendorID:    2,
@@ -358,6 +357,7 @@ func TestPendingAccount_HasApprovalFrom(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			acc := PendingAccount{

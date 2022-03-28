@@ -29,6 +29,7 @@ func (k Keeper) VendorInfoAll(c context.Context, req *types.QueryAllVendorInfoRe
 		}
 
 		vendorInfos = append(vendorInfos, vendorInfo)
+
 		return nil
 	})
 	if err != nil {

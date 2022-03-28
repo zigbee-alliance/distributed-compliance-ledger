@@ -12,7 +12,7 @@ const (
 // ChildCertificatesKey returns the store key to retrieve a ChildCertificates from the index fields.
 func ChildCertificatesKey(
 	issuer string,
-	authorityKeyId string,
+	authorityKeyID string,
 ) []byte {
 	var key []byte
 
@@ -20,8 +20,8 @@ func ChildCertificatesKey(
 	key = append(key, issuerBytes...)
 	key = append(key, []byte("/")...)
 
-	authorityKeyIdBytes := []byte(authorityKeyId)
-	key = append(key, authorityKeyIdBytes...)
+	authorityKeyIDBytes := []byte(authorityKeyID)
+	key = append(key, authorityKeyIDBytes...)
 	key = append(key, []byte("/")...)
 
 	return key

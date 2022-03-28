@@ -19,7 +19,6 @@ func (k Keeper) SetRevokedAccount(ctx sdk.Context, revokedAccount types.RevokedA
 func (k Keeper) GetRevokedAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) (val types.RevokedAccount, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedAccountKeyPrefix))
 
@@ -31,6 +30,7 @@ func (k Keeper) GetRevokedAccount(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -38,7 +38,6 @@ func (k Keeper) GetRevokedAccount(
 func (k Keeper) RemoveRevokedAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedAccountKeyPrefix))
 	store.Delete(types.RevokedAccountKey(

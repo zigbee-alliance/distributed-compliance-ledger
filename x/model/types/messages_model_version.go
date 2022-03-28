@@ -23,14 +23,13 @@ func NewMsgCreateModelVersion(
 	cdVersionNumber int32,
 	firmwareDigests string,
 	softwareVersionValid bool,
-	otaUrl string,
+	otaURL string,
 	otaFileSize uint64,
 	otaChecksum string,
 	otaChecksumType int32,
 	minApplicableSoftwareVersion uint32,
 	maxApplicableSoftwareVersion uint32,
-	releaseNotesUrl string,
-
+	releaseNotesURL string,
 ) *MsgCreateModelVersion {
 	return &MsgCreateModelVersion{
 		Creator:                      creator,
@@ -41,13 +40,13 @@ func NewMsgCreateModelVersion(
 		CdVersionNumber:              cdVersionNumber,
 		FirmwareDigests:              firmwareDigests,
 		SoftwareVersionValid:         softwareVersionValid,
-		OtaUrl:                       otaUrl,
+		OtaUrl:                       otaURL,
 		OtaFileSize:                  otaFileSize,
 		OtaChecksum:                  otaChecksum,
 		OtaChecksumType:              otaChecksumType,
 		MinApplicableSoftwareVersion: minApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: maxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              releaseNotesUrl,
+		ReleaseNotesUrl:              releaseNotesURL,
 	}
 }
 
@@ -64,11 +63,13 @@ func (msg *MsgCreateModelVersion) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgCreateModelVersion) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
@@ -94,11 +95,10 @@ func NewMsgUpdateModelVersion(
 	pid int32,
 	softwareVersion uint32,
 	softwareVersionValid bool,
-	otaUrl string,
+	otaURL string,
 	minApplicableSoftwareVersion uint32,
 	maxApplicableSoftwareVersion uint32,
-	releaseNotesUrl string,
-
+	releaseNotesURL string,
 ) *MsgUpdateModelVersion {
 	return &MsgUpdateModelVersion{
 		Creator:                      creator,
@@ -106,10 +106,10 @@ func NewMsgUpdateModelVersion(
 		Pid:                          pid,
 		SoftwareVersion:              softwareVersion,
 		SoftwareVersionValid:         softwareVersionValid,
-		OtaUrl:                       otaUrl,
+		OtaUrl:                       otaURL,
 		MinApplicableSoftwareVersion: minApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: maxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              releaseNotesUrl,
+		ReleaseNotesUrl:              releaseNotesURL,
 	}
 }
 
@@ -126,11 +126,13 @@ func (msg *MsgUpdateModelVersion) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgUpdateModelVersion) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 

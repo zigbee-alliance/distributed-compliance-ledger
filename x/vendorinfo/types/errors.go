@@ -8,7 +8,7 @@ import (
 
 // x/vendorinfo module sentinel errors.
 var (
-	DefaultCodespace string = ModuleName
+	DefaultCodespace = ModuleName
 
 	CodeVendorDoesNotExist              = sdkerrors.Register(ModuleName, 701, "Code vendor does not exist")
 	CodeMissingVendorIDForVendorAccount = sdkerrors.Register(ModuleName, 702, "Code missing vendor id for vendor account")

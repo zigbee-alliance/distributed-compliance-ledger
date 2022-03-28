@@ -60,6 +60,7 @@ func (k msgServer) RevokeModel(goCtx context.Context, msg *types.MsgRevokeModel)
 		if err != nil {
 			return nil, types.NewErrInvalidTestDateFormat(complianceInfo.Date)
 		}
+
 		if newDate.Before(oldDate) {
 			return nil, types.NewErrInconsistentDates(
 				fmt.Sprintf("The `revocation_date`:%v must be after the `certification_date`:%v to "+

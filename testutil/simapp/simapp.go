@@ -27,6 +27,7 @@ func New(dir string) cosmoscmd.App {
 		ConsensusParams: defaultConsensusParams,
 		AppStateBytes:   []byte("{}"),
 	})
+
 	return a
 }
 

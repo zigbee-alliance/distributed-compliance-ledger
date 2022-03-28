@@ -35,6 +35,7 @@ func (k Keeper) ProvisionalModelAll(c context.Context, req *types.QueryAllProvis
 			if accumulate {
 				provisionalModels = append(provisionalModels, provisionalModel)
 			}
+
 			return true, nil
 		},
 	)

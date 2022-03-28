@@ -34,6 +34,7 @@ func networkWithPreconditions(t *testing.T) *network.Network {
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
+
 	return network.New(t, cfg)
 }
 
@@ -47,13 +48,13 @@ func TestCreateModelVersion(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagCdVersionNumber, testconstants.CdVersionNumber),
 		fmt.Sprintf("--%s=%v", cli.FlagFirmwareDigests, testconstants.FirmwareDigests),
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, testconstants.SoftwareVersionValid),
-		fmt.Sprintf("--%s=%v", cli.FlagOtaUrl, testconstants.OtaUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaURL, testconstants.OtaURL),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaFileSize, testconstants.OtaFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksum, testconstants.OtaChecksum),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksumType, testconstants.OtaChecksumType),
 		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion),
 		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion),
-		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesUrl, testconstants.ReleaseNotesUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesURL, testconstants.ReleaseNotesURL),
 	}
 	common := []string{
 		fmt.Sprintf("--%s=%s", flags.FlagFrom, val.Address.String()),
@@ -114,13 +115,13 @@ func TestUpdateModelVersion(t *testing.T) {
 		fmt.Sprintf("--%s=%v", cli.FlagCdVersionNumber, testconstants.CdVersionNumber),
 		fmt.Sprintf("--%s=%v", cli.FlagFirmwareDigests, testconstants.FirmwareDigests),
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, testconstants.SoftwareVersionValid),
-		fmt.Sprintf("--%s=%v", cli.FlagOtaUrl, testconstants.OtaUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaURL, testconstants.OtaURL),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaFileSize, testconstants.OtaFileSize),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksum, testconstants.OtaChecksum),
 		fmt.Sprintf("--%s=%v", cli.FlagOtaChecksumType, testconstants.OtaChecksumType),
 		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion),
 		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion),
-		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesUrl, testconstants.ReleaseNotesUrl),
+		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesURL, testconstants.ReleaseNotesURL),
 	}
 	args = append(args, common...)
 	_, err := testcli.ExecTestCLITxCmd(t, ctx, cli.CmdCreateModelVersion(), args)
@@ -128,10 +129,10 @@ func TestUpdateModelVersion(t *testing.T) {
 
 	fields := []string{
 		fmt.Sprintf("--%s=%v", cli.FlagSoftwareVersionValid, !testconstants.SoftwareVersionValid),
-		fmt.Sprintf("--%s=%v", cli.FlagOtaUrl, testconstants.OtaUrl+"/updated"),
+		fmt.Sprintf("--%s=%v", cli.FlagOtaURL, testconstants.OtaURL+"/updated"),
 		fmt.Sprintf("--%s=%v", cli.FlagMinApplicableSoftwareVersion, testconstants.MinApplicableSoftwareVersion+1),
 		fmt.Sprintf("--%s=%v", cli.FlagMaxApplicableSoftwareVersion, testconstants.MaxApplicableSoftwareVersion+1),
-		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesUrl, testconstants.ReleaseNotesUrl+"/updated"),
+		fmt.Sprintf("--%s=%v", cli.FlagReleaseNotesURL, testconstants.ReleaseNotesURL+"/updated"),
 	}
 
 	for _, tc := range []struct {

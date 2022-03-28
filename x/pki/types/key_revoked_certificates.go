@@ -12,7 +12,7 @@ const (
 // RevokedCertificatesKey returns the store key to retrieve a RevokedCertificates from the index fields.
 func RevokedCertificatesKey(
 	subject string,
-	subjectKeyId string,
+	subjectKeyID string,
 ) []byte {
 	var key []byte
 
@@ -20,8 +20,8 @@ func RevokedCertificatesKey(
 	key = append(key, subjectBytes...)
 	key = append(key, []byte("/")...)
 
-	subjectKeyIdBytes := []byte(subjectKeyId)
-	key = append(key, subjectKeyIdBytes...)
+	subjectKeyIDBytes := []byte(subjectKeyID)
+	key = append(key, subjectKeyIDBytes...)
 	key = append(key, []byte("/")...)
 
 	return key
