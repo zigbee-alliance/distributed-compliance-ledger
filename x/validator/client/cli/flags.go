@@ -24,6 +24,7 @@ const (
 func FlagSetPublicKey() *flag.FlagSet {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
 	fs.String(FlagPubKey, "", "The validator's Protobuf JSON encoded public key")
+
 	return fs
 }
 

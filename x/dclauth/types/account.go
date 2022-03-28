@@ -115,6 +115,7 @@ func (acc Account) HasRole(targetRole AccountRole) bool {
 
 func (acc Account) String() string {
 	out, _ := acc.MarshalYAML()
+
 	return out.(string)
 }
 
@@ -167,7 +168,8 @@ func (acc PendingAccount) HasApprovalFrom(address sdk.AccAddress) bool {
 
 // NewPendingAccountRevocation creates a new PendingAccountRevocation object.
 func NewPendingAccountRevocation(address sdk.AccAddress,
-	info string, time int64, approval sdk.AccAddress) PendingAccountRevocation {
+	info string, time int64, approval sdk.AccAddress,
+) PendingAccountRevocation {
 	pendingAccountRevocation := PendingAccountRevocation{
 		Address: address.String(),
 	}
@@ -178,6 +180,7 @@ func NewPendingAccountRevocation(address sdk.AccAddress,
 			Info:    info,
 		},
 	}
+
 	return pendingAccountRevocation
 }
 

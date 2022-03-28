@@ -48,6 +48,7 @@ func ValidateGenesisCmd(mbm module.BasicManager) *cobra.Command {
 			}
 
 			fmt.Printf("File at %s is a valid genesis file\n", genesis)
+
 			return nil
 		},
 	}

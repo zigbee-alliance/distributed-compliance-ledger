@@ -25,7 +25,6 @@ func (k Keeper) GetProvisionalModel(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) (val types.ProvisionalModel, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProvisionalModelKeyPrefix))
 
@@ -40,6 +39,7 @@ func (k Keeper) GetProvisionalModel(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -50,7 +50,6 @@ func (k Keeper) RemoveProvisionalModel(
 	pid int32,
 	softwareVersion uint32,
 	certificationType string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProvisionalModelKeyPrefix))
 	store.Delete(types.ProvisionalModelKey(

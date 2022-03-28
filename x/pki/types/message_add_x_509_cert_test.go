@@ -12,7 +12,7 @@ import (
 )
 
 func TestMsgAddX509Cert_ValidateBasic(t *testing.T) {
-	negative_tests := []struct {
+	negativeTests := []struct {
 		name string
 		msg  MsgAddX509Cert
 		err  error
@@ -43,7 +43,7 @@ func TestMsgAddX509Cert_ValidateBasic(t *testing.T) {
 		},
 	}
 
-	positive_tests := []struct {
+	positiveTests := []struct {
 		name string
 		msg  MsgAddX509Cert
 	}{
@@ -56,7 +56,7 @@ func TestMsgAddX509Cert_ValidateBasic(t *testing.T) {
 		},
 	}
 
-	for _, tt := range negative_tests {
+	for _, tt := range negativeTests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			require.Error(t, err)
@@ -64,7 +64,7 @@ func TestMsgAddX509Cert_ValidateBasic(t *testing.T) {
 		})
 	}
 
-	for _, tt := range positive_tests {
+	for _, tt := range positiveTests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			require.NoError(t, err)

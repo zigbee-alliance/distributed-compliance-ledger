@@ -32,7 +32,7 @@ func CmdListProposedUpgrade() *cobra.Command {
 			}
 
 			res, err := queryClient.ProposedUpgradeAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {

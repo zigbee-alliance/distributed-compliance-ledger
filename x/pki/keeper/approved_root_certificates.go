@@ -23,6 +23,7 @@ func (k Keeper) GetApprovedRootCertificates(ctx sdk.Context) (val types.Approved
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -33,29 +34,31 @@ func (k Keeper) RemoveApprovedRootCertificates(ctx sdk.Context) {
 }
 
 // Add root certificate to the list.
-func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certId types.CertificateIdentifier) {
+func (k Keeper) AddApprovedRootCertificate(ctx sdk.Context, certID types.CertificateIdentifier) {
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
 
 	// Check if the root cert is already there
-	for _, existingCertId := range rootCertificates.Certs {
-		if *existingCertId == certId {
+	for _, existingCertID := range rootCertificates.Certs {
+		if *existingCertID == certID {
 			return
 		}
 	}
 
-	rootCertificates.Certs = append(rootCertificates.Certs, &certId)
+	rootCertificates.Certs = append(rootCertificates.Certs, &certID)
 
 	k.SetApprovedRootCertificates(ctx, rootCertificates)
 }
 
 // Remove root certificate from the list.
-func (k Keeper) RemoveApprovedRootCertificate(ctx sdk.Context, certId types.CertificateIdentifier) {
+func (k Keeper) RemoveApprovedRootCertificate(ctx sdk.Context, certID types.CertificateIdentifier) {
 	rootCertificates, _ := k.GetApprovedRootCertificates(ctx)
 
 	certIDIndex := -1
+
 	for i, existingIdentifier := range rootCertificates.Certs {
-		if *existingIdentifier == certId {
+		if *existingIdentifier == certID {
 			certIDIndex = i
+
 			break
 		}
 	}

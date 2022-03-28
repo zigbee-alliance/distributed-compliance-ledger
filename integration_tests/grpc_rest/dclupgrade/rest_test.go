@@ -24,7 +24,7 @@ import (
 
 func TestDCLUpgradeDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	dclupgrade.DCLUpgradeDemo(&suite)
+	dclupgrade.Demo(&suite)
 }
 
 func TestProposeUpgradeByNonTrusteeREST(t *testing.T) {

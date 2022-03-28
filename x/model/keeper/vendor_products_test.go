@@ -22,6 +22,7 @@ func createNVendorProducts(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 
 		keeper.SetVendorProducts(ctx, items[i])
 	}
+
 	return items
 }
 

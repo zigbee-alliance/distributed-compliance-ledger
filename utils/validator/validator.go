@@ -119,6 +119,7 @@ func Validate(s interface{}) error {
 		return ut.Add("startsnotwith", "Field {0} : {1} is not a valid url", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("startsnotwith", fe.Field(), fmt.Sprintf("%v", fe.Value()))
+
 		return t
 	})
 
@@ -126,6 +127,7 @@ func Validate(s interface{}) error {
 		return ut.Add("gtecsfield", "{0} must not be less than {1}", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		t, _ := ut.T("gtecsfield", fe.Field(), fe.Param())
+
 		return t
 	})
 

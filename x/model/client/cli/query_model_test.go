@@ -36,6 +36,7 @@ func networkWithModelObjects(t *testing.T, n int) (*network.Network, []types.Mod
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
+
 	return network.New(t, cfg), state.ModelList
 }
 
@@ -111,6 +112,7 @@ func TestListModel(t *testing.T) {
 		if total {
 			args = append(args, fmt.Sprintf("--%s", flags.FlagCountTotal))
 		}
+
 		return args
 	}
 	t.Run("ByOffset", func(t *testing.T) {

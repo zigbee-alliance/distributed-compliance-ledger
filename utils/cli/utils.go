@@ -26,10 +26,10 @@ func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string
 	resBytes, _, err := clientCtx.QueryStore(key, storeName)
 	// TODO: for some reasons EOF error can be returned sometimes.
 	// See https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/203
-	if isEofError(err) {
+	if isEOFError(err) {
 		return clientCtx.PrintString(fmt.Sprintf("Request failed: %s. Please re-try.", err.Error()))
 	}
-	if IsEmptySubtreeRpcError(err) {
+	if IsEmptySubtreeRPCError(err) {
 		// TODO: if no write requests has been sent for a module, an attempt to query a non-existent result will
 		// cause an error: verify absence proof: could not calculate root for proof: Nonexistence proof has empty Left and Right proof: invalid proof
 		// interpret as Not Found for now
@@ -43,6 +43,7 @@ func QueryWithProof(clientCtx client.Context, storeName string, keyPrefix string
 	}
 
 	clientCtx.Codec.MustUnmarshal(resBytes, res)
+
 	return clientCtx.PrintProto(res)
 }
 
@@ -51,10 +52,10 @@ func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix st
 	resBytes, _, err := clientCtx.QueryStore(key, storeName)
 	// TODO: for some reasons EOF error can be returned sometimes.
 	// See https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/203
-	if isEofError(err) {
+	if isEOFError(err) {
 		return clientCtx.PrintString(fmt.Sprintf("Request failed: %s. Please re-try.", err.Error()))
 	}
-	if IsEmptySubtreeRpcError(err) {
+	if IsEmptySubtreeRPCError(err) {
 		// TODO: if no write requests has been sent for a module, an attempt to query a non-existent result will
 		// cause an error: verify absence proof: could not calculate root for proof: Nonexistence proof has empty Left and Right proof: invalid proof
 		// interpret as Not Found for now
@@ -67,6 +68,7 @@ func QueryWithProofList(clientCtx client.Context, storeName string, keyPrefix st
 	if resBytes != nil {
 		clientCtx.Codec.MustUnmarshal(resBytes, res)
 	}
+
 	return clientCtx.PrintProto(res)
 }
 
@@ -78,27 +80,29 @@ func ReadFromFile(target string) (string, error) {
 		}
 
 		return string(bytes), nil
-	} else { // else return as is
-		return target, nil
 	}
+
+	return target, nil
 }
 
-func IsKeyNotFoundRpcError(err error) bool {
+func IsKeyNotFoundRPCError(err error) bool {
 	if err == nil {
 		return false
 	}
 	var rpcerror *rpctypes.RPCError
+
 	if !errors.As(err, &rpcerror) {
 		return false
 	}
+
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "empty key")
 }
 
-func IsWriteInsteadReadRpcError(err error) bool {
-	return isRpcError22(err) || IsKeyNotFoundRpcError(err)
+func IsWriteInsteadReadRPCError(err error) bool {
+	return isRPCError22(err) || IsKeyNotFoundRPCError(err)
 }
 
-func isRpcError22(err error) bool {
+func isRPCError22(err error) bool {
 	if err == nil {
 		return false
 	}
@@ -106,10 +110,11 @@ func isRpcError22(err error) bool {
 	if !errors.As(err, &rpcerror) {
 		return false
 	}
+
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "err response code: 22")
 }
 
-func IsEmptySubtreeRpcError(err error) bool {
+func IsEmptySubtreeRPCError(err error) bool {
 	if err == nil {
 		return false
 	}
@@ -117,13 +122,15 @@ func IsEmptySubtreeRpcError(err error) bool {
 	if !errors.As(err, &rpcerror) {
 		return false
 	}
+
 	return strings.Contains(rpcerror.Message, "Internal error") && strings.Contains(rpcerror.Data, "Nonexistence proof has empty Left and Right proof")
 }
 
-func isEofError(err error) bool {
+func isEOFError(err error) bool {
 	if err == nil {
 		return false
 	}
+
 	return strings.Contains(err.Error(), "EOF")
 }
 

@@ -29,6 +29,7 @@ func (k Keeper) PendingAccountRevocationAll(c context.Context, req *types.QueryA
 		}
 
 		pendingAccountRevocations = append(pendingAccountRevocations, pendingAccountRevocation)
+
 		return nil
 	})
 	if err != nil {

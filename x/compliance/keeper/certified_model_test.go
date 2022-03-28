@@ -26,6 +26,7 @@ func createNCertifiedModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 
 		keeper.SetCertifiedModel(ctx, items[i])
 	}
+
 	return items
 }
 

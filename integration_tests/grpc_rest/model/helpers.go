@@ -42,20 +42,20 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		Creator:                                  signer,
 		Vid:                                      vid,
 		Pid:                                      pid,
-		DeviceTypeId:                             testconstants.DeviceTypeId,
+		DeviceTypeId:                             testconstants.DeviceTypeID,
 		ProductName:                              utils.RandString(),
 		ProductLabel:                             utils.RandString(),
 		PartNumber:                               utils.RandString(),
 		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowUrl,
+		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: testconstants.UserManualUrl,
-		SupportUrl:    testconstants.SupportUrl,
-		ProductUrl:    testconstants.ProductUrl,
-		LsfUrl:        testconstants.LsfUrl,
+		UserManualUrl: testconstants.UserManualURL,
+		SupportUrl:    testconstants.SupportURL,
+		ProductUrl:    testconstants.ProductURL,
+		LsfUrl:        testconstants.LsfURL,
 	}
 }
 
@@ -65,11 +65,11 @@ func NewMsgUpdateModel(vid int32, pid int32, signer string) *modeltypes.MsgUpdat
 		Vid:                        vid,
 		Pid:                        pid,
 		ProductLabel:               utils.RandString(),
-		CommissioningCustomFlowUrl: testconstants.CommissioningCustomFlowUrl + "/new",
-		UserManualUrl:              testconstants.UserManualUrl + "/new",
-		SupportUrl:                 testconstants.SupportUrl + "/new",
-		ProductUrl:                 testconstants.ProductUrl + "/new",
-		LsfUrl:                     testconstants.LsfUrl + "/new",
+		CommissioningCustomFlowUrl: testconstants.CommissioningCustomFlowURL + "/new",
+		UserManualUrl:              testconstants.UserManualURL + "/new",
+		SupportUrl:                 testconstants.SupportURL + "/new",
+		ProductUrl:                 testconstants.ProductURL + "/new",
+		LsfUrl:                     testconstants.LsfURL + "/new",
 		LsfRevision:                testconstants.LsfRevision + 1,
 	}
 }
@@ -90,13 +90,13 @@ func NewMsgCreateModelVersion(
 		CdVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,
 		SoftwareVersionValid:         true,
-		OtaUrl:                       testconstants.OtaUrl,
+		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
 		OtaChecksum:                  testconstants.OtaChecksum,
 		OtaChecksumType:              testconstants.OtaChecksumType,
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl,
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 	}
 }
 
@@ -111,8 +111,8 @@ func NewMsgUpdateModelVersion(
 		Vid:             vid,
 		Pid:             pid,
 		SoftwareVersion: softwareVersion,
-		OtaUrl:          testconstants.OtaUrl + "/new",
-		ReleaseNotesUrl: testconstants.ReleaseNotesUrl + "/new",
+		OtaUrl:          testconstants.OtaURL + "/new",
+		ReleaseNotesUrl: testconstants.ReleaseNotesURL + "/new",
 	}
 }
 
@@ -123,6 +123,7 @@ func AddModel(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -133,6 +134,7 @@ func AddModelVersion(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -143,6 +145,7 @@ func UpdateModel(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -153,6 +156,7 @@ func UpdateModelVersion(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -282,7 +286,7 @@ func GetVendorModels(
 	return &res, nil
 }
 
-func ModelDemo(suite *utils.TestSuite) {
+func Demo(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)

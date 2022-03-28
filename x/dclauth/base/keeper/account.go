@@ -11,7 +11,6 @@ import (
 func (k Keeper) GetAccountO(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) (val types.Account, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 
@@ -23,6 +22,7 @@ func (k Keeper) GetAccountO(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -41,6 +41,7 @@ func (k Keeper) GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.Accou
 func (k Keeper) GetAllAccount(ctx sdk.Context) (list []types.Account) {
 	k.IterateAccounts(ctx, func(acc types.Account) (stop bool) {
 		list = append(list, acc)
+
 		return false
 	})
 
@@ -56,6 +57,7 @@ func (k Keeper) IterateAccounts(ctx sdk.Context, cb func(account types.Account) 
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Account
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
+
 		if cb(val) {
 			break
 		}

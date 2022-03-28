@@ -23,6 +23,7 @@ func createNRevokedCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) [
 
 		keeper.SetRevokedCertificates(ctx, items[i])
 	}
+
 	return items
 }
 

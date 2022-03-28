@@ -12,7 +12,7 @@ import (
 )
 
 func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
-	negative_tests := []struct {
+	negativeTests := []struct {
 		name string
 		msg  MsgCreateVendorInfo
 		err  error
@@ -25,7 +25,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -37,7 +37,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           "",
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -49,7 +49,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     "",
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -61,7 +61,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldLowerBoundViolated,
 		},
@@ -73,7 +73,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldLowerBoundViolated,
 		},
@@ -85,7 +85,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldUpperBoundViolated,
 		},
@@ -97,7 +97,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           tmrand.Str(129),
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -109,7 +109,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     tmrand.Str(257),
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -121,7 +121,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				CompanyPrefferedName: tmrand.Str(257),
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -151,7 +151,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 		},
 	}
 
-	positive_tests := []struct {
+	positiveTests := []struct {
 		name string
 		msg  MsgCreateVendorInfo
 	}{
@@ -163,18 +163,18 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 		},
 	}
-	for _, tt := range positive_tests {
+	for _, tt := range positiveTests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			require.NoError(t, err)
 		})
 	}
 
-	for _, tt := range negative_tests {
+	for _, tt := range negativeTests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			require.Error(t, err)
@@ -184,7 +184,7 @@ func TestMsgCreateVendorInfo_ValidateBasic(t *testing.T) {
 }
 
 func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
-	negative_tests := []struct {
+	negativeTests := []struct {
 		name string
 		msg  MsgUpdateVendorInfo
 		err  error
@@ -197,7 +197,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		},
@@ -209,7 +209,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           "",
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -221,7 +221,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     "",
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrRequiredFieldMissing,
 		},
@@ -233,7 +233,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldLowerBoundViolated,
 		},
@@ -245,7 +245,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldLowerBoundViolated,
 		},
@@ -257,7 +257,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldUpperBoundViolated,
 		},
@@ -269,7 +269,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           tmrand.Str(129),
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -281,7 +281,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     tmrand.Str(257),
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -293,7 +293,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyPreferredName,
 				CompanyPrefferedName: tmrand.Str(257),
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 			err: validator.ErrFieldMaxLengthExceeded,
 		},
@@ -323,7 +323,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 		},
 	}
 
-	positive_tests := []struct {
+	positiveTests := []struct {
 		name string
 		msg  MsgUpdateVendorInfo
 	}{
@@ -335,7 +335,7 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
 				CompanyPrefferedName: testconstants.CompanyPreferredName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 		},
 		{
@@ -345,18 +345,18 @@ func TestMsgUpdateVendorInfo_ValidateBasic(t *testing.T) {
 				VendorID:             testconstants.VendorID1,
 				VendorName:           testconstants.VendorName,
 				CompanyLegalName:     testconstants.CompanyLegalName,
-				VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+				VendorLandingPageURL: testconstants.VendorLandingPageURL,
 			},
 		},
 	}
-	for _, tt := range positive_tests {
+	for _, tt := range positiveTests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			require.NoError(t, err)
 		})
 	}
 
-	for _, tt := range negative_tests {
+	for _, tt := range negativeTests {
 		t.Run(tt.name, func(t *testing.T) {
 			err := tt.msg.ValidateBasic()
 			require.Error(t, err)

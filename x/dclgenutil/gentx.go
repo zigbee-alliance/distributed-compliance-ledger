@@ -29,6 +29,7 @@ func SetGenTxsInAppGenesisState(
 	}
 
 	genesisState.GenTxs = genTxsBz
+
 	return types.SetGenesisStateInAppState(cdc, appGenesisState, genesisState), nil
 }
 
@@ -49,6 +50,7 @@ func ValidateAccountInGenesis(
 			// ensure that account is in genesis
 			if accAddress.Equals(addr) {
 				accountIsInGenesis = true
+
 				return true
 			}
 

@@ -29,7 +29,7 @@ func CmdListVendorInfo() *cobra.Command {
 			}
 
 			res, err := queryClient.VendorInfoAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {
@@ -56,6 +56,7 @@ func CmdShowVendorInfo() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			var res types.VendorInfo
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

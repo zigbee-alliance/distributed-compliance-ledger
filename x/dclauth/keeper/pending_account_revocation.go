@@ -20,7 +20,6 @@ func (k Keeper) SetPendingAccountRevocation(ctx sdk.Context, pendingAccountRevoc
 func (k Keeper) GetPendingAccountRevocation(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) (val types.PendingAccountRevocation, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
 
@@ -32,6 +31,7 @@ func (k Keeper) GetPendingAccountRevocation(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -57,7 +57,6 @@ func (k Keeper) IsRevokedAccountPresent(ctx sdk.Context, address sdk.AccAddress)
 func (k Keeper) RemovePendingAccountRevocation(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.PendingAccountRevocationKeyPrefix))
 	store.Delete(types.PendingAccountRevocationKey(
@@ -69,6 +68,7 @@ func (k Keeper) RemovePendingAccountRevocation(
 func (k Keeper) GetAllPendingAccountRevocation(ctx sdk.Context) (list []types.PendingAccountRevocation) {
 	k.IteratePendingAccountRevocations(ctx, func(acc types.PendingAccountRevocation) (stop bool) {
 		list = append(list, acc)
+
 		return false
 	})
 

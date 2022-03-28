@@ -285,6 +285,7 @@ func ProposeAddAccount(
 	msg, err := dclauthtypes.NewMsgProposeAddAccount(
 		suite.GetAddress(signerName), accAddr, accKey, roles, vendorID, info)
 	require.NoError(suite.T, err)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -296,6 +297,7 @@ func ApproveAddAccount(
 	info string,
 ) (*sdk.TxResponse, error) {
 	msg := dclauthtypes.NewMsgApproveAddAccount(suite.GetAddress(signerName), accAddr, info)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -307,6 +309,7 @@ func ProposeRevokeAccount(
 	info string,
 ) (*sdk.TxResponse, error) {
 	msg := dclauthtypes.NewMsgProposeRevokeAccount(suite.GetAddress(signerName), accAddr, info)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -318,6 +321,7 @@ func ApproveRevokeAccount(
 	info string,
 ) (*sdk.TxResponse, error) {
 	msg := dclauthtypes.NewMsgApproveRevokeAccount(suite.GetAddress(signerName), accAddr, info)
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -338,7 +342,7 @@ func CreateAccount(
 	suite *utils.TestSuite,
 	accountName string,
 	roles dclauthtypes.AccountRoles,
-	vendorId int32,
+	vendorID int32,
 	proposerName string,
 	proposerAccount *dclauthtypes.Account,
 	approverName string,
@@ -352,7 +356,7 @@ func CreateAccount(
 		accountInfo.GetAddress(),
 		accountInfo.GetPubKey(),
 		roles,
-		vendorId,
+		vendorID,
 		proposerName,
 		proposerAccount,
 		info,
@@ -379,20 +383,20 @@ func NewMsgCreateModel(vid int32, pid int32, signer string) *modeltypes.MsgCreat
 		Creator:                                  signer,
 		Vid:                                      vid,
 		Pid:                                      pid,
-		DeviceTypeId:                             testconstants.DeviceTypeId,
+		DeviceTypeId:                             testconstants.DeviceTypeID,
 		ProductName:                              utils.RandString(),
 		ProductLabel:                             utils.RandString(),
 		PartNumber:                               utils.RandString(),
 		CommissioningCustomFlow:                  testconstants.CommissioningCustomFlow,
-		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowUrl,
+		CommissioningCustomFlowUrl:               testconstants.CommissioningCustomFlowURL,
 		CommissioningModeInitialStepsHint:        testconstants.CommissioningModeInitialStepsHint,
 		CommissioningModeInitialStepsInstruction: testconstants.CommissioningModeInitialStepsInstruction,
 		CommissioningModeSecondaryStepsHint:      testconstants.CommissioningModeSecondaryStepsHint,
 		CommissioningModeSecondaryStepsInstruction: testconstants.CommissioningModeSecondaryStepsInstruction,
-		UserManualUrl: testconstants.UserManualUrl,
-		SupportUrl:    testconstants.SupportUrl,
-		ProductUrl:    testconstants.ProductUrl,
-		LsfUrl:        testconstants.LsfUrl,
+		UserManualUrl: testconstants.UserManualURL,
+		SupportUrl:    testconstants.SupportURL,
+		ProductUrl:    testconstants.ProductURL,
+		LsfUrl:        testconstants.LsfURL,
 	}
 }
 

@@ -19,7 +19,6 @@ func (k Keeper) SetVendorProducts(ctx sdk.Context, vendorProducts types.VendorPr
 func (k Keeper) GetVendorProducts(
 	ctx sdk.Context,
 	vid int32,
-
 ) (val types.VendorProducts, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorProductsKeyPrefix))
 
@@ -31,6 +30,7 @@ func (k Keeper) GetVendorProducts(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -38,7 +38,6 @@ func (k Keeper) GetVendorProducts(
 func (k Keeper) RemoveVendorProducts(
 	ctx sdk.Context,
 	vid int32,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorProductsKeyPrefix))
 	store.Delete(types.VendorProductsKey(
@@ -103,6 +102,7 @@ func (k Keeper) RemoveVendorProduct(
 		for i, value := range vendorProducts.Products {
 			if value.Pid == pid {
 				vendorProducts.Products = append(vendorProducts.Products[:i], vendorProducts.Products[i+1:]...)
+
 				break
 			}
 		}

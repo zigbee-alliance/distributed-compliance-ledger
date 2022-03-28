@@ -105,7 +105,8 @@ func NewErrOtaURLCannotBeSet(vid interface{}, pid interface{}, softwareVersion i
 }
 
 func NewErrMaxSVLessThanMinSV(minApplicableSoftwareVersion interface{},
-	maxApplicableSoftwareVersion interface{}) error {
+	maxApplicableSoftwareVersion interface{},
+) error {
 	return sdkerrors.Wrapf(ErrMaxSVLessThanMinSV,
 		"MaxApplicableSoftwareVersion %v is less than MinApplicableSoftwareVersion %v",
 		maxApplicableSoftwareVersion, minApplicableSoftwareVersion)
@@ -117,7 +118,8 @@ func NewErrLsfRevisionIsNotAllowed() error {
 }
 
 func NewErrLsfRevisionIsNotValid(previousLsfVersion interface{},
-	currentLsfVersion interface{}) error {
+	currentLsfVersion interface{},
+) error {
 	return sdkerrors.Wrapf(ErrLsfRevisionIsNotValid,
 		"LsfRevision %v should be greater then existing lsfRevision %v by 1",
 		currentLsfVersion, previousLsfVersion)

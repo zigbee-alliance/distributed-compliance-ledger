@@ -23,6 +23,7 @@ func createNChildCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) []t
 
 		keeper.SetChildCertificates(ctx, items[i])
 	}
+
 	return items
 }
 

@@ -17,10 +17,11 @@ import (
 )
 
 func ComplianceKeeper(
-	t testing.TB,
+	tb testing.TB,
 	dclauthKeeper types.DclauthKeeper,
 	modelKeeper types.ModelKeeper,
 ) (*keeper.Keeper, sdk.Context) {
+	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -28,7 +29,7 @@ func ComplianceKeeper(
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, sdk.StoreTypeMemory, nil)
-	require.NoError(t, stateStore.LoadLatestVersion())
+	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	k := keeper.NewKeeper(
@@ -40,5 +41,6 @@ func ComplianceKeeper(
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

@@ -41,6 +41,7 @@ func ProposeUpgrade(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -51,6 +52,7 @@ func ApproveUpgrade(
 	signerAccount *dclauthtypes.Account,
 ) (*sdk.TxResponse, error) {
 	msg.Creator = suite.GetAddress(signerName).String()
+
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
 
@@ -172,7 +174,7 @@ func GetApprovedUpgrades(suite *utils.TestSuite) (res []dclupgradetypes.Approved
 	return res, nil
 }
 
-func DCLUpgradeDemo(suite *utils.TestSuite) {
+func Demo(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)

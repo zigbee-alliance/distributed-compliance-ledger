@@ -19,7 +19,6 @@ func (k Keeper) SetVendorInfo(ctx sdk.Context, vendorInfo types.VendorInfo) {
 func (k Keeper) GetVendorInfo(
 	ctx sdk.Context,
 	vendorID int32,
-
 ) (val types.VendorInfo, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorInfoKeyPrefix))
 
@@ -31,6 +30,7 @@ func (k Keeper) GetVendorInfo(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -38,7 +38,6 @@ func (k Keeper) GetVendorInfo(
 func (k Keeper) RemoveVendorInfo(
 	ctx sdk.Context,
 	vendorID int32,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.VendorInfoKeyPrefix))
 	store.Delete(types.VendorInfoKey(
@@ -52,7 +51,6 @@ func (k Keeper) GetAllVendorInfo(ctx sdk.Context) (list []types.VendorInfo) {
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
-
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.VendorInfo
 		k.cdc.MustUnmarshal(iterator.Value(), &val)

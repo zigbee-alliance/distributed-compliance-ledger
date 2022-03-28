@@ -30,7 +30,6 @@ import (
 	TODO: provide tests for error cases
 */
 
-//nolint:funlen
 func TestAuthDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	dclauth.AuthDemo(&suite)

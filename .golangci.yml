@@ -16,38 +16,33 @@
 linters:
   enable-all: true
   disable:
-    - golint
-    - unparam
+    - golint  # The linter 'golint' is deprecated (since v1.41.0) due to: The repository of the linter has been archived by the owner.  Replaced by revive.
     - gochecknoinits
     - gochecknoglobals
     - gomnd
-    - nolintlint
     - dupl
     - varnamelen
     - tagliatelle
     - wrapcheck
-    - thelper
     - testpackage
     - paralleltest
     - ireturn
-    - nlreturn
     - goerr113
     - exhaustivestruct
     - wsl
     - forcetypeassert
     - exhaustive
-    - scopelint
-    - revive
+    - scopelint  # The linter 'scopelint' is deprecated (since v1.39.0) due to: The repository of the linter has been deprecated by the owner.  Replaced by exportloopref.
     - lll
-    - interfacer
+    - interfacer  # The linter 'interfacer' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.
     - gosec
     - funlen
-    - stylecheck
     - cyclop
     - forbidigo
     - gocognit
     - godox
     - gomoddirectives
-    - maligned
+    - maligned  # The linter 'maligned' is deprecated (since v1.38.0) due to: The repository of the linter has been archived by the owner.  Replaced by govet 'fieldalignment'.
     - gci
-    - whitespace
+    - containedctx
+    - maintidx

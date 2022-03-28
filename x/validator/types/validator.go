@@ -70,6 +70,7 @@ func (v Validator) GetOwner() sdk.ValAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return addr
 }
 
@@ -135,6 +136,7 @@ func MustUnmarshalValidator(cdc codec.BinaryCodec, value []byte) Validator {
 // unmarshal a redelegation from a store value.
 func UnmarshalValidator(cdc codec.BinaryCodec, value []byte) (v Validator, err error) {
 	err = cdc.Unmarshal(value, &v)
+
 	return v, err
 }
 
@@ -166,6 +168,7 @@ func (v Validator) GetConsAddr() (sdk.ConsAddress, error) {
 // UnpackInterfaces implements UnpackInterfacesMessage.UnpackInterfaces.
 func (v Validator) UnpackInterfaces(unpacker codectypes.AnyUnpacker) error {
 	var pk cryptotypes.PubKey
+
 	return unpacker.UnpackAny(v.PubKey, &pk)
 }
 
@@ -226,6 +229,7 @@ func (d Description) Validate() error {
 
 func (d Description) String() string {
 	out, _ := yaml.Marshal(d)
+
 	return string(out)
 }
 
@@ -247,6 +251,7 @@ func (vp LastValidatorPower) GetOwner() sdk.ValAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return addr
 }
 
@@ -254,5 +259,6 @@ func (vp LastValidatorPower) GetPower() int32 { return vp.Power }
 
 func (vp LastValidatorPower) String() string {
 	out, _ := yaml.Marshal(vp)
+
 	return string(out)
 }

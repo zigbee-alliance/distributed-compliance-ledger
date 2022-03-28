@@ -40,7 +40,6 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	"github.com/tendermint/tendermint/node"
 	tmclient "github.com/tendermint/tendermint/rpc/client"
-	dbm "github.com/tendermint/tm-db"
 	tmdb "github.com/tendermint/tm-db"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/app"
 	testconstants "github.com/zigbee-alliance/distributed-compliance-ledger/integration_tests/constants"
@@ -53,6 +52,7 @@ import (
 // New creates instance with fully configured cosmos network.
 // Accepts optional config, that will be used in place of the DefaultConfig() if provided.
 func New(t *testing.T, configs ...Config) *Network {
+	t.Helper()
 	if len(configs) > 1 {
 		panic("at most one config should be provided")
 	}
@@ -64,6 +64,7 @@ func New(t *testing.T, configs ...Config) *Network {
 	}
 	net := newNetwork(t, cfg)
 	t.Cleanup(net.Cleanup)
+
 	return net
 }
 
@@ -71,6 +72,7 @@ func New(t *testing.T, configs ...Config) *Network {
 // genesis and single validator. All other parameters are inherited from cosmos-sdk/testutil/network.DefaultConfig.
 func DefaultConfig() Config {
 	encoding := cosmoscmd.MakeEncodingConfig(app.ModuleBasics)
+
 	return Config{
 		Codec:             encoding.Marshaler,
 		TxConfig:          encoding.TxConfig,
@@ -119,7 +121,7 @@ type AppConstructor = func(val Validator) servertypes.Application
 func NewAppConstructor(encodingCfg params.EncodingConfig) AppConstructor {
 	return func(val Validator) servertypes.Application {
 		return simapp.NewSimApp(
-			val.Ctx.Logger, dbm.NewMemDB(), nil, true, make(map[int64]bool), val.Ctx.Config.RootDir, 0,
+			val.Ctx.Logger, tmdb.NewMemDB(), nil, true, make(map[int64]bool), val.Ctx.Config.RootDir, 0,
 			encodingCfg,
 			simapp.EmptyAppOptions{},
 			baseapp.SetPruning(storetypes.NewPruningOptionsFromString(val.AppConfig.Pruning)),
@@ -200,6 +202,7 @@ type (
 
 // New creates a new Network for integration tests.
 func newNetwork(t *testing.T, cfg Config) *Network {
+	t.Helper()
 	// only one caller/test can create and use a network at a time
 	t.Log("acquiring test network lock")
 	lock.Lock()
@@ -460,6 +463,7 @@ func (n *Network) WaitForHeightWithTimeout(h int64, t time.Duration) (int64, err
 		select {
 		case <-timeout:
 			ticker.Stop()
+
 			return latestHeight, errors.New("timeout exceeded waiting for block")
 		case <-ticker.C:
 			status, err := val.RPCClient.Status(context.Background())

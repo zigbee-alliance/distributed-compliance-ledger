@@ -54,6 +54,7 @@ func SimulateMsgCreateModelVersion(
 			// AccountKeeper:   ak,
 			// Bankkeeper:      bk,
 		}
+
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
@@ -76,6 +77,7 @@ func SimulateMsgUpdateModelVersion(
 			simAccount, found = FindAccount(accs, obj.Creator)
 			if found {
 				modelVersion = obj
+
 				break
 			}
 		}
@@ -102,6 +104,7 @@ func SimulateMsgUpdateModelVersion(
 			// AccountKeeper:   ak,
 			// Bankkeeper:      bk,
 		}
+
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }
@@ -124,6 +127,7 @@ func SimulateMsgDeleteModelVersion(
 			simAccount, found = FindAccount(accs, obj.Creator)
 			if found {
 				modelVersion = obj
+
 				break
 			}
 		}
@@ -150,6 +154,7 @@ func SimulateMsgDeleteModelVersion(
 			// AccountKeeper:   ak,
 			// Bankkeeper:      bk,
 		}
+
 		return simulation.GenAndDeliverTxWithRandFees(txCtx)
 	}
 }

@@ -13,5 +13,6 @@ func NewInfiniteGasSetUpContextDecorator() InfiniteGasSetUpContextDecorator {
 
 func (sud InfiniteGasSetUpContextDecorator) AnteHandle(ctx sdk.Context, tx sdk.Tx, simulate bool, next sdk.AnteHandler) (newCtx sdk.Context, err error) {
 	newCtx = ctx.WithGasMeter(sdk.NewInfiniteGasMeter())
+
 	return next(newCtx, tx, simulate)
 }

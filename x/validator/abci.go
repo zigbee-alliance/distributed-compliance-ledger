@@ -52,5 +52,6 @@ func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
 	if err != nil {
 		k.Logger(ctx).Error(fmt.Sprintf("Error when applying a new validator set: %s", err.Error()))
 	}
+
 	return res
 }

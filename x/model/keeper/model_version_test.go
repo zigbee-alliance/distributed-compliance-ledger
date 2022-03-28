@@ -24,6 +24,7 @@ func createNModelVersion(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.
 
 		keeper.SetModelVersion(ctx, items[i])
 	}
+
 	return items
 }
 

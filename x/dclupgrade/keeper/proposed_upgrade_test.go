@@ -22,6 +22,7 @@ func createNProposedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []typ
 
 		keeper.SetProposedUpgrade(ctx, items[i])
 	}
+
 	return items
 }
 

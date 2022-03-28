@@ -38,7 +38,6 @@ func (k Keeper) SetAccount(ctx sdk.Context, account authtypes.AccountI) {
 func (k Keeper) GetAccountO(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) (val types.Account, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 
@@ -50,6 +49,7 @@ func (k Keeper) GetAccountO(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -77,7 +77,6 @@ func (k Keeper) IsAccountPresent(ctx sdk.Context, address sdk.AccAddress) bool {
 func (k Keeper) RemoveAccount(
 	ctx sdk.Context,
 	address sdk.AccAddress,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.AccountKeyPrefix))
 	store.Delete(types.AccountKey(
@@ -89,6 +88,7 @@ func (k Keeper) RemoveAccount(
 func (k Keeper) GetAllAccount(ctx sdk.Context) (list []types.Account) {
 	k.IterateAccounts(ctx, func(acc types.Account) (stop bool) {
 		list = append(list, acc)
+
 		return false
 	})
 
@@ -137,9 +137,9 @@ func (k Keeper) HasVendorID(ctx sdk.Context, addr sdk.AccAddress, vid int32) boo
 
 	if account.VendorID == vid {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
 // Count account with assigned role.

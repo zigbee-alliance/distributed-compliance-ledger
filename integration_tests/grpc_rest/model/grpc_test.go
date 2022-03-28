@@ -30,7 +30,7 @@ import (
 
 func TestModelDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	model.ModelDemo(&suite)
+	model.Demo(&suite)
 }
 
 func TestAddModelByNonVendorGRPC(t *testing.T) {

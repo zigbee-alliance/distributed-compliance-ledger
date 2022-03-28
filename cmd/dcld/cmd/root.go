@@ -54,6 +54,7 @@ type rootOptions struct {
 func newRootOptions(options ...Option) rootOptions {
 	opts := rootOptions{}
 	opts.apply(options...)
+
 	return opts
 }
 

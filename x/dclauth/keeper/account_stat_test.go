@@ -14,6 +14,7 @@ import (
 func createTestAccountStat(keeper *keeper.Keeper, ctx sdk.Context) types.AccountStat {
 	item := types.AccountStat{}
 	keeper.SetAccountStat(ctx, item)
+
 	return item
 }
 

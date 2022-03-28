@@ -59,6 +59,7 @@ func (setup *TestSetup) AddAccount(
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	dclauthKeeper := &DclauthKeeperMock{}
 	keeper, ctx := testkeeper.VendorinfoKeeper(t, dclauthKeeper)
 
@@ -113,10 +114,12 @@ func queryVendorInfo(
 	resp, err := setup.Keeper.VendorInfo(setup.Wctx, req)
 	if err != nil {
 		require.Nil(setup.T, resp)
+
 		return nil, err
 	}
 
 	require.NotNil(setup.T, resp)
+
 	return &resp.VendorInfo, nil
 }
 
@@ -245,7 +248,7 @@ func NewMsgCreateVendorInfo(signer sdk.AccAddress) *types.MsgCreateVendorInfo {
 		CompanyLegalName:     testconstants.CompanyLegalName,
 		CompanyPrefferedName: testconstants.CompanyPreferredName,
 		VendorName:           testconstants.VendorName,
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl,
+		VendorLandingPageURL: testconstants.VendorLandingPageURL,
 	}
 }
 
@@ -256,11 +259,12 @@ func NewMsgUpdateVendorInfo(signer sdk.AccAddress) *types.MsgUpdateVendorInfo {
 		CompanyLegalName:     testconstants.CompanyLegalName + "/updated",
 		CompanyPrefferedName: testconstants.CompanyPreferredName + "/updated",
 		VendorName:           testconstants.VendorName + "/updated",
-		VendorLandingPageURL: testconstants.VendorLandingPageUrl + "/updated",
+		VendorLandingPageURL: testconstants.VendorLandingPageURL + "/updated",
 	}
 }
 
 func GenerateAccAddress() sdk.AccAddress {
 	_, _, accAddress := testdata.KeyTestPubAddr()
+
 	return accAddress
 }
