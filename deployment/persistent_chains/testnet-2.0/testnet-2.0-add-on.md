@@ -43,10 +43,11 @@ as described in  [Runing Node in Existing Network](../../../docs/running-node-in
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<version>/dcld
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<version>/cosmovisor
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<version>/cosmovisor.service
+
     # helper script to automate running a node
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/run_dcl_node
     ```
-    `version` - DCL release version (ex: `v0.9.0`)
+    `<version>` - DCL release version (ex: `v0.9.0`)
 
     2.2. Download genesis file for Testnet 2.0
     ```bash
@@ -81,7 +82,8 @@ as described in  [Runing Node in Existing Network](../../../docs/running-node-in
     seeds = "8190bf7a220892165727896ddac6e71e735babe5@100.25.175.140:26656"
     ```
 
-    3.4. Create an empty `persistent_peers.txt` in the current path
+    3.4. Create an empty `persistent_peers.txt` in the current path because this file is required by `run_dcl_node` script. <br>
+    Your observer node will use `Seed Node` to discover peers (see 3.3)
     ```bash
     touch persistent_peers.txt
     ```
