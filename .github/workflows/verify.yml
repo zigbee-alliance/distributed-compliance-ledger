@@ -44,7 +44,7 @@ jobs:
               - 'go.mod'
               - 'go.sum'
             src:
-              - '!((**?(/*).md)|(.github/**))'
+              - '!((**/*.md)|(.github/**))'
   unit-tests:
     name: Check unit tests
     runs-on: ubuntu-latest
