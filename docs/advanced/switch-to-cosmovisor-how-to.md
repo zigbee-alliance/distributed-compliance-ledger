@@ -24,7 +24,8 @@ of the store.
     ```bash
     su - <USERNAME>
     ```
-    where `<USERNAME>` is the corresponding user name
+
+    where `<USERNAME>` is the corresponding username
 
     The command will ask for the user's password. Enter it.
 
@@ -32,6 +33,7 @@ of the store.
   [release page](https://github.com/zigbee-alliance/distributed-compliance-ledger/releases). *(To ensure that no old `dcld` binary remains in the current direcory, try to remove it at first.)*
 
     Example using curl:
+
     ```bash
     sudo rm -f ./dcld
     curl -L -O https://github.com/zigbee-alliance/distributed-compliance-ledger/releases/download/<release>/dcld
@@ -42,6 +44,7 @@ of the store.
 3. Download `switch_to_cosmovisor` script from [repository](../../deployment/scripts/)
 
     Example using curl:
+
     ```bash
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/scripts/switch_to_cosmovisor
     ```
@@ -70,6 +73,7 @@ of the store.
     ```
 
     When it is done, it will print:
-    ```
+
+    ```bash
     Done
     ```
