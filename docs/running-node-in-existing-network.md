@@ -4,7 +4,7 @@
 
 Possible options when adding Validator, Observer, Sentry or Seed nodes to existing DCL network:
 
-1) State sync (recommended)
+### 1) State sync (recommended)
 - Prerequisites:
   - Latest binary version running in existing network
   - State sync snapshots should be enabled in at least one node in the network.<br>
@@ -72,7 +72,7 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
 * References:
   - https://blog.cosmos.network/cosmos-sdk-state-sync-guide-99e4cf43be2f
 
-2) Take the data from another node
+### 2) Take the data from another node
 - Prerequisites:
   - Access to a machine running an up-to-date node to copy data from
 
@@ -89,19 +89,19 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
   - Node that data is copied from should be stopped (downtime)
   - Probably error prone due to manual operations
 
-3) Catchup from genesis:
-  - Prerequisites:
-    - All binary versions used for upgrading (using `cosmovisor`) existing network up to current state must be available
-  - Steps:
-    - Add a node with a binary version as was at the genesis state
-    - Let the nodes catch-up and play all updates/migrations
-  
-  - Pros:
-    - The new node contains all the blocks from blockchain (full history)
+### 3) Catchup from genesis:
+- Prerequisites:
+  - All binary versions used for upgrading (using `cosmovisor`) existing network up to current state must be available
+- Steps:
+  - Add a node with a binary version as was at the genesis state
+  - Let the nodes catch-up and play all updates/migrations
 
-  - Cons:
-    - Can take quite a lot of time (depends on blockchain size)
-    - Probably error-prone (if at least one migration has a bug, catchup fails)
-  
-  * References:
-  - https://docs.cosmos.network/master/core/upgrade.html#syncing-a-full-node-to-an-upgraded-blockchain
+- Pros:
+  - The new node contains all the blocks from blockchain (full history)
+
+- Cons:
+  - Can take quite a lot of time (depends on blockchain size)
+  - Probably error-prone (if at least one migration has a bug, catchup fails)
+
+* References:
+- https://docs.cosmos.network/master/core/upgrade.html#syncing-a-full-node-to-an-upgraded-blockchain
