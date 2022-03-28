@@ -864,4 +864,188 @@ func PKIDemo(suite *utils.TestSuite) {
 
 	_, err = GetAllX509CertsBySubject(suite, testconstants.LeafSubject)
 	suite.AssertNotFound(err)
+
+	// CHECK GOOGLE ROOT CERTIFICATE WHICH INCLUDES VID
+	_, err = GetRevokedX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetProposedRevocationX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	// User (Not Trustee) propose Google Root certificate
+	msgProposeAddX509GoogleRootcert := pkitypes.MsgProposeAddX509RootCert{
+		Cert:   testconstants.GoogleCertPem,
+		Signer: vendorAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeAddX509GoogleRootcert}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Request all proposed Root certificate
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 1, len(proposedCertificates))
+	require.Equal(suite.T, testconstants.GoogleSubject, proposedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedCertificates[0].SubjectKeyId)
+
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
+
+	// Request proposed Google Root certificate
+	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
+	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
+	require.True(suite.T, proposedCertificate.HasApprovalFrom(jackAccount.Address))
+
+	// Alice (Trustee) approve Google Root certificate
+	secondMsgApproveAddX509GoogleRootCert := pkitypes.MsgApproveAddX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509GoogleRootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Request all proposed Root certificates
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 0, len(proposedCertificates))
+
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 1, len(certificates))
+	require.Equal(suite.T, testconstants.GoogleSubject, certificates[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificates[0].SubjectKeyId)
+
+	// Request all approved Root certificates
+	rootCertificates, _ = GetAllRootX509Certs(suite)
+	require.Equal(suite.T, 1, len(rootCertificates.Certs))
+	require.Equal(suite.T, testconstants.GoogleSubject, rootCertificates.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, rootCertificates.Certs[0].SubjectKeyId)
+
+	// Request approved Google Root certificate
+	certificate, _ = GetX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	require.Equal(suite.T, testconstants.GoogleSubject, certificate.Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, 1, len(certificate.Certs))
+	require.Equal(suite.T, testconstants.GoogleCertPem, certificate.Certs[0].PemCert)
+	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
+	require.True(suite.T, certificate.Certs[0].IsRoot)
+
+	// Jack (Trustee) proposes to revoke Google Root certificate
+	msgProposeRevokeX509RootCert = pkitypes.MsgProposeRevokeX509RootCert{
+		Subject:      testconstants.GoogleSubject,
+		SubjectKeyId: testconstants.GoogleSubjectKeyID,
+		Signer:       jackAccount.Address,
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err)
+
+	// Request all Root certificates proposed to revoke
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 1, len(proposedRevocationCertificates))
+	require.Equal(suite.T, testconstants.GoogleSubject, proposedRevocationCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedRevocationCertificates[0].SubjectKeyId)
+
+	// Request all revoked certificates
+	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	require.Equal(suite.T, 3, len(revokedCertificates))
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[2].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[2].SubjectKeyId)
+
+	// Request all revoked Root certificates
+	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	require.Equal(suite.T, 1, len(revokedRootCertificates.Certs))
+	require.Equal(suite.T, testconstants.RootSubject, revokedRootCertificates.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedRootCertificates.Certs[0].SubjectKeyId)
+
+	// Request Google Root certificate proposed to revoke
+	proposedCertificateRevocation, _ = GetProposedRevocationX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	require.Equal(suite.T, testconstants.GoogleSubject, proposedCertificateRevocation.Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
+	require.True(suite.T, proposedCertificateRevocation.HasRevocationFrom(jackAccount.Address))
+
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 1, len(certificates))
+	require.Equal(suite.T, testconstants.GoogleSubject, certificates[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificates[0].SubjectKeyId)
+
+	// Alice (Trustee) approves to revoke Google Root certificate
+	msgApproveRevokeX509RootCert = pkitypes.MsgApproveRevokeX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
+	}
+
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveRevokeX509RootCert}, aliceName, aliceAccount)
+	require.NoError(suite.T, err)
+
+	// Request all Root certificates proposed to revoke
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
+
+	// Request all revoked certificates
+	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
+	require.Equal(suite.T, 4, len(revokedCertificates))
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[2].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[2].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificates[3].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificates[3].SubjectKeyId)
+
+	// Request all revoked Root certificates
+	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
+	require.Equal(suite.T, 1, len(revokedRootCertificates.Certs))
+	require.Equal(suite.T, testconstants.RootSubject, revokedRootCertificates.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedRootCertificates.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubject, revokedRootCertificates.Certs[1].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+
+	// Request revoked Google Root certificate
+	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	require.Equal(suite.T, 2, len(revokedCertificate.Certs))
+	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootCertPem, revokedCertificate.Certs[0].PemCert)
+	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
+	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
+	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Certs[1].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.Certs[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleCertPem, revokedCertificate.Certs[1].PemCert)
+	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[1].Owner)
+	require.True(suite.T, revokedCertificate.Certs[1].IsRoot)
+
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
+
+	_, err = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	proposedRevocationCertificates, _ = GetAllProposedRevocationX509Certs(suite)
+	require.Equal(suite.T, 0, len(proposedRevocationCertificates))
+
+	_, err = GetProposedRevocationX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	rootCertificates, _ = GetAllRootX509Certs(suite)
+	require.Equal(suite.T, 0, len(rootCertificates.Certs))
+
+	_, err = GetAllChildX509Certs(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	suite.AssertNotFound(err)
+
+	_, err = GetAllX509CertsBySubject(suite, testconstants.GoogleSubject)
+	suite.AssertNotFound(err)
 }
