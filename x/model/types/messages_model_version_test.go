@@ -21,6 +21,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Creator is omitted",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Creator = ""
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -29,6 +30,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Creator is not valid address",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Creator = "not valid address"
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -37,6 +39,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid < 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Vid = -1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -45,6 +48,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid == 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Vid = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -53,6 +57,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid > 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Vid = 65536
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -61,6 +66,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid < 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Pid = -1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -69,6 +75,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Pid = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -77,6 +84,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid > 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Pid = 65536
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -85,6 +93,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "SoftwareVersionString is omitted",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.SoftwareVersionString = ""
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrRequiredFieldMissing,
@@ -93,6 +102,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "SoftwareVersionString length > 64",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.SoftwareVersionString = tmrand.Str(65)
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -101,6 +111,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "CdVersionNumber < 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.CdVersionNumber = -1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -109,6 +120,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "CdVersionNumber > 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.CdVersionNumber = 65536
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -117,6 +129,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "FirmwareDigests length > 512",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.FirmwareDigests = tmrand.Str(513)
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -125,6 +138,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl is not valid URL",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "not valid URL"
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -133,6 +147,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl starts with http:",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -141,6 +156,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl length > 256",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -150,6 +166,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
 				msg.OtaFileSize = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrRequiredFieldMissing,
@@ -159,6 +176,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
 				msg.OtaChecksum = ""
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrRequiredFieldMissing,
@@ -167,6 +185,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum length > 64",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaChecksum = tmrand.Str(65)
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -176,6 +195,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
 				msg.OtaChecksumType = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrRequiredFieldMissing,
@@ -184,6 +204,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksumType < 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaChecksumType = -1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -192,6 +213,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksumType > 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaChecksumType = 65536
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -202,6 +224,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 1
 				msg.MaxApplicableSoftwareVersion = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -212,6 +235,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 8
 				msg.MaxApplicableSoftwareVersion = 7
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -220,6 +244,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl is not valid URL",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.ReleaseNotesUrl = "not valid URL"
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -228,6 +253,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl starts with http:",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.ReleaseNotesUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -236,6 +262,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl length > 256",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.ReleaseNotesUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgCreateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -254,6 +281,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Creator is valid address",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Creator = sample.AccAddress()
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -261,6 +289,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid == 1",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Vid = 1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -268,6 +297,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid == 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Vid = 65535
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -275,6 +305,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 1",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Pid = 1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -282,6 +313,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.Pid = 65535
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -289,6 +321,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "SoftwareVersion == 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.SoftwareVersion = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -296,6 +329,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "SoftwareVersion > 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.SoftwareVersion = 1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -303,6 +337,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "SoftwareVersionString length == 64",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.SoftwareVersionString = tmrand.Str(64)
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -310,6 +345,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "CdVersionNumber == 0",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.CdVersionNumber = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -317,6 +353,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "CdVersionNumber == 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.CdVersionNumber = 65535
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -324,6 +361,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "FirmwareDigests is omitted",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.FirmwareDigests = ""
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -331,6 +369,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "FirmwareDigests length == 512",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.FirmwareDigests = tmrand.Str(512)
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -338,6 +377,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl is omitted",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = ""
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -345,6 +385,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl length == 256",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -353,6 +394,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = ""
 				msg.OtaFileSize = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -361,6 +403,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
 				msg.OtaFileSize = 1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -369,6 +412,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = ""
 				msg.OtaChecksum = ""
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -377,6 +421,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
 				msg.OtaChecksum = tmrand.Str(32)
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -384,6 +429,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksum length == 64",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaChecksum = tmrand.Str(64)
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -392,6 +438,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = ""
 				msg.OtaChecksumType = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -400,6 +447,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclmodel"
 				msg.OtaChecksumType = 1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -407,6 +455,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksumType == 1",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaChecksumType = 1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -414,6 +463,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaChecksumType == 65535",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.OtaChecksumType = 65535
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -422,6 +472,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 0
 				msg.MaxApplicableSoftwareVersion = 0
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -430,6 +481,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 0
 				msg.MaxApplicableSoftwareVersion = 1
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -439,6 +491,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 5
 				msg.MaxApplicableSoftwareVersion = 10
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -448,6 +501,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.MinApplicableSoftwareVersion = 7
 				msg.MaxApplicableSoftwareVersion = 7
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -455,6 +509,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl is omitted",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.ReleaseNotesUrl = ""
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -462,6 +517,7 @@ func TestMsgCreateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl length == 256",
 			msg: func(msg *MsgCreateModelVersion) *MsgCreateModelVersion {
 				msg.ReleaseNotesUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgCreateModelVersion()),
 		},
@@ -493,6 +549,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Creator is omitted",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Creator = ""
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -501,6 +558,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Creator is not valid address",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Creator = "not valid address"
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: sdkerrors.ErrInvalidAddress,
@@ -509,6 +567,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid < 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Vid = -1
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -517,6 +576,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid == 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Vid = 0
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -525,6 +585,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid > 65535",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Vid = 65536
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -533,6 +594,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid < 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Pid = -1
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -541,6 +603,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Pid = 0
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldLowerBoundViolated,
@@ -549,6 +612,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid > 65535",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Pid = 65536
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldUpperBoundViolated,
@@ -557,6 +621,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl is not valid URL",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "not valid URL"
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -565,6 +630,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl starts with http:",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -573,6 +639,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl length > 256",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -583,6 +650,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.MinApplicableSoftwareVersion = 8
 				msg.MaxApplicableSoftwareVersion = 7
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -591,6 +659,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl is not valid URL",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.ReleaseNotesUrl = "not valid URL"
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -599,6 +668,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl starts with http:",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.ReleaseNotesUrl = "http://sampleflowurl.dclmodel"
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldNotValid,
@@ -607,6 +677,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl length > 256",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.ReleaseNotesUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(257-30) // length = 257
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 			err: validator.ErrFieldMaxLengthExceeded,
@@ -625,6 +696,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Creator is valid address",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Creator = sample.AccAddress()
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -632,6 +704,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid == 1",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Vid = 1
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -639,6 +712,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Vid == 65535",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Vid = 65535
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -646,6 +720,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 1",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Pid = 1
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -653,6 +728,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "Pid == 65535",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.Pid = 65535
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -660,6 +736,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "SoftwareVersion == 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.SoftwareVersion = 0
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -667,6 +744,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "SoftwareVersion > 0",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.SoftwareVersion = 1
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -674,6 +752,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl is omitted",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = ""
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -681,6 +760,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "OtaUrl length == 256",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.OtaUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -689,6 +769,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.MinApplicableSoftwareVersion = 0
 				msg.MaxApplicableSoftwareVersion = 0
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -697,6 +778,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.MinApplicableSoftwareVersion = 1
 				msg.MaxApplicableSoftwareVersion = 0
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -705,6 +787,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.MinApplicableSoftwareVersion = 0
 				msg.MaxApplicableSoftwareVersion = 1
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -714,6 +797,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.MinApplicableSoftwareVersion = 5
 				msg.MaxApplicableSoftwareVersion = 10
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -723,6 +807,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.MinApplicableSoftwareVersion = 7
 				msg.MaxApplicableSoftwareVersion = 7
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -730,6 +815,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl is omitted",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.ReleaseNotesUrl = ""
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -737,6 +823,7 @@ func TestMsgUpdateModelVersion_ValidateBasic(t *testing.T) {
 			name: "ReleaseNotesUrl length == 256",
 			msg: func(msg *MsgUpdateModelVersion) *MsgUpdateModelVersion {
 				msg.ReleaseNotesUrl = "https://sampleflowurl.dclauth/" + tmrand.Str(256-30) // length = 256
+
 				return msg
 			}(validMsgUpdateModelVersion()),
 		},
@@ -768,13 +855,13 @@ func validMsgCreateModelVersion() *MsgCreateModelVersion {
 		CdVersionNumber:              testconstants.CdVersionNumber,
 		FirmwareDigests:              testconstants.FirmwareDigests,
 		SoftwareVersionValid:         testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl,
+		OtaUrl:                       testconstants.OtaURL,
 		OtaFileSize:                  testconstants.OtaFileSize,
 		OtaChecksum:                  testconstants.OtaChecksum,
 		OtaChecksumType:              testconstants.OtaChecksumType,
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl,
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL,
 	}
 }
 
@@ -785,9 +872,9 @@ func validMsgUpdateModelVersion() *MsgUpdateModelVersion {
 		Pid:                          testconstants.Pid,
 		SoftwareVersion:              testconstants.SoftwareVersion,
 		SoftwareVersionValid:         !testconstants.SoftwareVersionValid,
-		OtaUrl:                       testconstants.OtaUrl + "/updated",
+		OtaUrl:                       testconstants.OtaURL + "/updated",
 		MinApplicableSoftwareVersion: testconstants.MinApplicableSoftwareVersion + 1,
 		MaxApplicableSoftwareVersion: testconstants.MaxApplicableSoftwareVersion + 1,
-		ReleaseNotesUrl:              testconstants.ReleaseNotesUrl + "/updated",
+		ReleaseNotesUrl:              testconstants.ReleaseNotesURL + "/updated",
 	}
 }

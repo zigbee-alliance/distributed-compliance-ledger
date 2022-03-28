@@ -33,6 +33,7 @@ func NewGenesisState(genTxs []json.RawMessage) *GenesisState {
 	if len(genTxs) == 0 {
 		genTxs = make([]json.RawMessage, 0)
 	}
+
 	return &GenesisState{
 		GenTxs: genTxs,
 	}
@@ -50,6 +51,7 @@ func NewGenesisStateFromTx(txJSONEncoder sdk.TxEncoder, genTxs []sdk.Tx) *Genesi
 			panic(err)
 		}
 	}
+
 	return NewGenesisState(genTxsBz)
 }
 
@@ -59,6 +61,7 @@ func GetGenesisStateFromAppState(cdc codec.JSONCodec, appState map[string]json.R
 	if appState[ModuleName] != nil {
 		cdc.MustUnmarshalJSON(appState[ModuleName], &genesisState)
 	}
+
 	return &genesisState
 }
 
@@ -68,6 +71,7 @@ func SetGenesisStateInAppState(
 ) map[string]json.RawMessage {
 	genesisStateBz := cdc.MustMarshalJSON(genesisState)
 	appState[ModuleName] = genesisStateBz
+
 	return appState
 }
 
@@ -79,6 +83,7 @@ func GenesisStateFromGenDoc(genDoc tmtypes.GenesisDoc) (genesisState map[string]
 	if err = json.Unmarshal(genDoc.AppState, &genesisState); err != nil {
 		return genesisState, err
 	}
+
 	return genesisState, nil
 }
 
@@ -99,6 +104,7 @@ func GenesisStateFromGenFile(genFile string) (genesisState map[string]json.RawMe
 	}
 
 	genesisState, err = GenesisStateFromGenDoc(*genDoc)
+
 	return genesisState, genDoc, err
 }
 
@@ -122,5 +128,6 @@ func ValidateGenesis(genesisState *GenesisState, txJSONDecoder sdk.TxDecoder) er
 				"genesis transaction %v does not contain a MsgCreateValidator", i)
 		}
 	}
+
 	return nil
 }

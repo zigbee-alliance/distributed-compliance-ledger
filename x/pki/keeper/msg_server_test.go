@@ -11,7 +11,9 @@ import (
 )
 
 //nolint:deadcode,unused
-func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
-	k, ctx := keepertest.PkiKeeper(t, nil)
+func setupMsgServer(tb testing.TB) (types.MsgServer, context.Context) {
+	tb.Helper()
+	k, ctx := keepertest.PkiKeeper(tb, nil)
+
 	return keeper.NewMsgServerImpl(*k), sdk.WrapSDKContext(ctx)
 }

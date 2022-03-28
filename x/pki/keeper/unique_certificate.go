@@ -21,7 +21,6 @@ func (k Keeper) GetUniqueCertificate(
 	ctx sdk.Context,
 	issuer string,
 	serialNumber string,
-
 ) (val types.UniqueCertificate, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
 
@@ -34,6 +33,7 @@ func (k Keeper) GetUniqueCertificate(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -42,7 +42,6 @@ func (k Keeper) RemoveUniqueCertificate(
 	ctx sdk.Context,
 	issuer string,
 	serialNumber string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
 	store.Delete(types.UniqueCertificateKey(
@@ -72,9 +71,9 @@ func (k Keeper) IsUniqueCertificatePresent(
 	ctx sdk.Context,
 	issuer string,
 	serialNumber string,
-
 ) bool {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.UniqueCertificateKeyPrefix))
+
 	return store.Has(types.UniqueCertificateKey(
 		issuer,
 		serialNumber,

@@ -24,7 +24,6 @@ func NewKeeper(
 	cdc codec.BinaryCodec,
 	storeKey,
 	memKey sdk.StoreKey,
-
 ) *Keeper {
 	return &Keeper{
 		cdc:      cdc,
@@ -42,6 +41,7 @@ func (k Keeper) decodeAccount(bz []byte) basetypes.AccountI {
 	if err != nil {
 		panic(err)
 	}
+
 	return acc
 }
 
@@ -49,5 +49,6 @@ func (k Keeper) decodeAccount(bz []byte) basetypes.AccountI {
 // bytes of a Proto-based Account type.
 func (k Keeper) UnmarshalAccount(bz []byte) (basetypes.AccountI, error) {
 	var acc basetypes.AccountI
+
 	return acc, k.cdc.UnmarshalInterface(bz, &acc)
 }

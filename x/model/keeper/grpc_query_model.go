@@ -29,6 +29,7 @@ func (k Keeper) ModelAll(c context.Context, req *types.QueryAllModelRequest) (*t
 		}
 
 		models = append(models, model)
+
 		return nil
 	})
 	if err != nil {

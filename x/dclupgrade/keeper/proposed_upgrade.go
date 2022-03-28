@@ -19,7 +19,6 @@ func (k Keeper) SetProposedUpgrade(ctx sdk.Context, proposedUpgrade types.Propos
 func (k Keeper) GetProposedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) (val types.ProposedUpgrade, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedUpgradeKeyPrefix))
 
@@ -31,6 +30,7 @@ func (k Keeper) GetProposedUpgrade(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -38,7 +38,6 @@ func (k Keeper) GetProposedUpgrade(
 func (k Keeper) RemoveProposedUpgrade(
 	ctx sdk.Context,
 	name string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedUpgradeKeyPrefix))
 	store.Delete(types.ProposedUpgradeKey(
@@ -52,7 +51,6 @@ func (k Keeper) GetAllProposedUpgrade(ctx sdk.Context) (list []types.ProposedUpg
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
-
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.ProposedUpgrade
 		k.cdc.MustUnmarshal(iterator.Value(), &val)

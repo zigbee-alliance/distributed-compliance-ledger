@@ -34,11 +34,13 @@ func (msg *MsgApproveUpgrade) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgApproveUpgrade) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 

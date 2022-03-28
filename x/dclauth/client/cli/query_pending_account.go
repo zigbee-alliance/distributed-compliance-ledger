@@ -31,7 +31,7 @@ func CmdListPendingAccount() *cobra.Command {
 			}
 
 			res, err := queryClient.PendingAccountAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {
@@ -62,6 +62,7 @@ func CmdShowPendingAccount() *cobra.Command {
 			}
 
 			var res types.PendingAccount
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,
@@ -72,7 +73,7 @@ func CmdShowPendingAccount() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagAddress)

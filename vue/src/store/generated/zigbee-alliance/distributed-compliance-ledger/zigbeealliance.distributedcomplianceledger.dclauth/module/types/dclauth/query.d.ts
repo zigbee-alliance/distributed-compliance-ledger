@@ -4,6 +4,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { PendingAccount } from '../dclauth/pending_account';
 import { PendingAccountRevocation } from '../dclauth/pending_account_revocation';
 import { AccountStat } from '../dclauth/account_stat';
+import { RevokedAccount } from '../dclauth/revoked_account';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 export interface QueryGetAccountRequest {
     address: string;
@@ -48,6 +49,19 @@ export interface QueryGetAccountStatRequest {
 }
 export interface QueryGetAccountStatResponse {
     AccountStat: AccountStat | undefined;
+}
+export interface QueryGetRevokedAccountRequest {
+    address: string;
+}
+export interface QueryGetRevokedAccountResponse {
+    revokedAccount: RevokedAccount | undefined;
+}
+export interface QueryAllRevokedAccountRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllRevokedAccountResponse {
+    revokedAccount: RevokedAccount[];
+    pagination: PageResponse | undefined;
 }
 export declare const QueryGetAccountRequest: {
     encode(message: QueryGetAccountRequest, writer?: Writer): Writer;
@@ -147,6 +161,34 @@ export declare const QueryGetAccountStatResponse: {
     toJSON(message: QueryGetAccountStatResponse): unknown;
     fromPartial(object: DeepPartial<QueryGetAccountStatResponse>): QueryGetAccountStatResponse;
 };
+export declare const QueryGetRevokedAccountRequest: {
+    encode(message: QueryGetRevokedAccountRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRevokedAccountRequest;
+    fromJSON(object: any): QueryGetRevokedAccountRequest;
+    toJSON(message: QueryGetRevokedAccountRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetRevokedAccountRequest>): QueryGetRevokedAccountRequest;
+};
+export declare const QueryGetRevokedAccountResponse: {
+    encode(message: QueryGetRevokedAccountResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetRevokedAccountResponse;
+    fromJSON(object: any): QueryGetRevokedAccountResponse;
+    toJSON(message: QueryGetRevokedAccountResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetRevokedAccountResponse>): QueryGetRevokedAccountResponse;
+};
+export declare const QueryAllRevokedAccountRequest: {
+    encode(message: QueryAllRevokedAccountRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRevokedAccountRequest;
+    fromJSON(object: any): QueryAllRevokedAccountRequest;
+    toJSON(message: QueryAllRevokedAccountRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllRevokedAccountRequest>): QueryAllRevokedAccountRequest;
+};
+export declare const QueryAllRevokedAccountResponse: {
+    encode(message: QueryAllRevokedAccountResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllRevokedAccountResponse;
+    fromJSON(object: any): QueryAllRevokedAccountResponse;
+    toJSON(message: QueryAllRevokedAccountResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllRevokedAccountResponse>): QueryAllRevokedAccountResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a account by index. */
@@ -163,6 +205,10 @@ export interface Query {
     PendingAccountRevocationAll(request: QueryAllPendingAccountRevocationRequest): Promise<QueryAllPendingAccountRevocationResponse>;
     /** Queries a accountStat by index. */
     AccountStat(request: QueryGetAccountStatRequest): Promise<QueryGetAccountStatResponse>;
+    /** Queries a RevokedAccount by index. */
+    RevokedAccount(request: QueryGetRevokedAccountRequest): Promise<QueryGetRevokedAccountResponse>;
+    /** Queries a list of RevokedAccount items. */
+    RevokedAccountAll(request: QueryAllRevokedAccountRequest): Promise<QueryAllRevokedAccountResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -174,6 +220,8 @@ export declare class QueryClientImpl implements Query {
     PendingAccountRevocation(request: QueryGetPendingAccountRevocationRequest): Promise<QueryGetPendingAccountRevocationResponse>;
     PendingAccountRevocationAll(request: QueryAllPendingAccountRevocationRequest): Promise<QueryAllPendingAccountRevocationResponse>;
     AccountStat(request: QueryGetAccountStatRequest): Promise<QueryGetAccountStatResponse>;
+    RevokedAccount(request: QueryGetRevokedAccountRequest): Promise<QueryGetRevokedAccountResponse>;
+    RevokedAccountAll(request: QueryAllRevokedAccountRequest): Promise<QueryAllRevokedAccountResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

@@ -16,7 +16,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclupgrade/types"
 )
 
-func DclupgradeKeeper(t testing.TB, dclAuthKeeper types.DclauthKeeper, upgradeKeeper types.UpgradeKeeper) (*keeper.Keeper, sdk.Context) {
+func DclupgradeKeeper(tb testing.TB, dclAuthKeeper types.DclauthKeeper, upgradeKeeper types.UpgradeKeeper) (*keeper.Keeper, sdk.Context) {
+	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -24,7 +25,7 @@ func DclupgradeKeeper(t testing.TB, dclAuthKeeper types.DclauthKeeper, upgradeKe
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, sdk.StoreTypeMemory, nil)
-	require.NoError(t, stateStore.LoadLatestVersion())
+	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	k := keeper.NewKeeper(
@@ -36,5 +37,6 @@ func DclupgradeKeeper(t testing.TB, dclAuthKeeper types.DclauthKeeper, upgradeKe
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

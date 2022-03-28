@@ -16,7 +16,8 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/model/types"
 )
 
-func ModelKeeper(t testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keeper, sdk.Context) {
+func ModelKeeper(tb testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keeper, sdk.Context) {
+	tb.Helper()
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -24,7 +25,7 @@ func ModelKeeper(t testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keepe
 	stateStore := store.NewCommitMultiStore(db)
 	stateStore.MountStoreWithDB(storeKey, sdk.StoreTypeIAVL, db)
 	stateStore.MountStoreWithDB(memStoreKey, sdk.StoreTypeMemory, nil)
-	require.NoError(t, stateStore.LoadLatestVersion())
+	require.NoError(tb, stateStore.LoadLatestVersion())
 
 	registry := codectypes.NewInterfaceRegistry()
 	k := keeper.NewKeeper(
@@ -35,5 +36,6 @@ func ModelKeeper(t testing.TB, dclauthKeeper types.DclauthKeeper) (*keeper.Keepe
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
+
 	return k, ctx
 }

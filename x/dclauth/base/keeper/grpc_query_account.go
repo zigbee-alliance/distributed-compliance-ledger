@@ -26,12 +26,13 @@ func (k Keeper) Accounts(c context.Context, req *types.QueryAccountsRequest) (*t
 
 	pageRes, err := query.Paginate(accountStore, req.Pagination, func(key []byte, value []byte) error {
 		account := k.decodeAccount(value)
-		any, err := codectypes.NewAnyWithValue(account)
+		anyWithValue, err := codectypes.NewAnyWithValue(account)
 		if err != nil {
 			return err
 		}
 
-		accounts = append(accounts, any)
+		accounts = append(accounts, anyWithValue)
+
 		return nil
 	})
 	if err != nil {
@@ -56,12 +57,12 @@ func (k Keeper) Account(c context.Context, req *types.QueryAccountRequest) (*typ
 	if account == nil {
 		return nil, status.Errorf(codes.NotFound, "account %s not found", req.Address)
 	}
-	any, err := codectypes.NewAnyWithValue(account)
+	anyWithValue, err := codectypes.NewAnyWithValue(account)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &types.QueryAccountResponse{Account: any}, nil
+	return &types.QueryAccountResponse{Account: anyWithValue}, nil
 }
 
 // Params returns parameters of auth module.

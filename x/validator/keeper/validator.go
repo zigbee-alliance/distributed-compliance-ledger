@@ -26,7 +26,6 @@ func (k Keeper) IsValidatorPresent(ctx sdk.Context, owner sdk.ValAddress) bool {
 func (k Keeper) GetValidator(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
-
 ) (val types.Validator, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ValidatorKeyPrefix))
 
@@ -38,6 +37,7 @@ func (k Keeper) GetValidator(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -54,7 +54,6 @@ func (k Keeper) GetValidator(
 func (k Keeper) RemoveValidator(
 	ctx sdk.Context,
 	owner sdk.ValAddress,
-
 ) {
 	validator, found := k.GetValidator(ctx, owner)
 	if !found {

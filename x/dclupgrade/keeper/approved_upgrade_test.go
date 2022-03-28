@@ -22,6 +22,7 @@ func createNApprovedUpgrade(keeper *keeper.Keeper, ctx sdk.Context, n int) []typ
 
 		keeper.SetApprovedUpgrade(ctx, items[i])
 	}
+
 	return items
 }
 

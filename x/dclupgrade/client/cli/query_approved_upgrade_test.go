@@ -38,6 +38,7 @@ func networkWithApprovedUpgradeObjects(t *testing.T, n int) (*network.Network, [
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
+
 	return network.New(t, cfg), state.ApprovedUpgradeList
 }
 
@@ -109,6 +110,7 @@ func TestListApprovedUpgrade(t *testing.T) {
 		if total {
 			args = append(args, fmt.Sprintf("--%s", flags.FlagCountTotal))
 		}
+
 		return args
 	}
 	t.Run("ByOffset", func(t *testing.T) {

@@ -32,18 +32,30 @@
   when:
     - ansible_facts.services["ufw.service"] is defined
 
-- name: setup-service | recreate DCL service
+- name: setup-service | recreate cosmovisor service
   become: true
   template:
     mode: preserve
-    src: dcld.service.j2
-    dest: /etc/systemd/system/dcld.service
+    src: cosmovisor.service.j2
+    dest: /etc/systemd/system/cosmovisor.service
+
+- name: create destination directories
+  file:
+    state: directory
+    recurse: true
+    path: "{{ item }}"
+  loop:
+    - "{{ dcld.path | dirname }}"
+    - "{{ cosmovisor.path | dirname }}"
 
 - name: setup-service | download binary
   get_url:
-    url: "{{ dcld_download_url }}"
-    dest: "{{ dcld.path }}"
-    checksum: "{{ dcld_binary_checksum }}"
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    checksum: "{{ item.checksum }}"
     mode: '0755'
     force: false
   become: true
+  loop:
+    - {url: "{{ dcld_download_url }}", dest: "{{ dcld.path }}", checksum: "{{ dcld_binary_checksum }}"}
+    - {url: "{{ cosmovisor_download_url }}", dest: "{{ cosmovisor.path }}", checksum: "{{ cosmovisor_binary_checksum }}"}

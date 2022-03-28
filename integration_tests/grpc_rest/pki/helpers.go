@@ -64,14 +64,14 @@ func GetAllProposedX509RootCerts(suite *utils.TestSuite) (res []pkitypes.Propose
 	return res, nil
 }
 
-func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ProposedCertificate, error) {
+func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ProposedCertificate, error) {
 	var res pkitypes.ProposedCertificate
 	if suite.Rest {
 		var resp pkitypes.QueryGetProposedCertificateResponse
 		err := suite.QueryREST(
 			fmt.Sprintf(
 				"/dcl/pki/proposed-certificates/%s/%s",
-				url.QueryEscape(subject), url.QueryEscape(subjectKeyId),
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
 			),
 			&resp,
 		)
@@ -89,7 +89,7 @@ func GetProposedX509RootCert(suite *utils.TestSuite, subject string, subjectKeyI
 			context.Background(),
 			&pkitypes.QueryGetProposedCertificateRequest{
 				Subject:      subject,
-				SubjectKeyId: subjectKeyId,
+				SubjectKeyId: subjectKeyID,
 			},
 		)
 		if err != nil {
@@ -128,14 +128,14 @@ func GetAllX509Certs(suite *utils.TestSuite) (res []pkitypes.ApprovedCertificate
 	return res, nil
 }
 
-func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ApprovedCertificates, error) {
+func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ApprovedCertificates, error) {
 	var res pkitypes.ApprovedCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetApprovedCertificatesResponse
 		err := suite.QueryREST(
 			fmt.Sprintf(
 				"/dcl/pki/certificates/%s/%s",
-				url.QueryEscape(subject), url.QueryEscape(subjectKeyId),
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
 			),
 			&resp,
 		)
@@ -153,7 +153,7 @@ func GetX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (*
 			context.Background(),
 			&pkitypes.QueryGetApprovedCertificatesRequest{
 				Subject:      subject,
-				SubjectKeyId: subjectKeyId,
+				SubjectKeyId: subjectKeyID,
 			},
 		)
 		if err != nil {
@@ -192,14 +192,14 @@ func GetAllRevokedX509Certs(suite *utils.TestSuite) (res []pkitypes.RevokedCerti
 	return res, nil
 }
 
-func GetRevokedX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.RevokedCertificates, error) {
+func GetRevokedX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.RevokedCertificates, error) {
 	var res pkitypes.RevokedCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetRevokedCertificatesResponse
 		err := suite.QueryREST(
 			fmt.Sprintf(
 				"/dcl/pki/revoked-certificates/%s/%s",
-				url.QueryEscape(subject), url.QueryEscape(subjectKeyId),
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
 			),
 			&resp,
 		)
@@ -217,7 +217,7 @@ func GetRevokedX509Cert(suite *utils.TestSuite, subject string, subjectKeyId str
 			context.Background(),
 			&pkitypes.QueryGetRevokedCertificatesRequest{
 				Subject:      subject,
-				SubjectKeyId: subjectKeyId,
+				SubjectKeyId: subjectKeyID,
 			},
 		)
 		if err != nil {
@@ -256,14 +256,14 @@ func GetAllProposedRevocationX509Certs(suite *utils.TestSuite) (res []pkitypes.P
 	return res, nil
 }
 
-func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ProposedCertificateRevocation, error) {
+func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ProposedCertificateRevocation, error) {
 	var res pkitypes.ProposedCertificateRevocation
 	if suite.Rest {
 		var resp pkitypes.QueryGetProposedCertificateRevocationResponse
 		err := suite.QueryREST(
 			fmt.Sprintf(
 				"/dcl/pki/proposed-revocation-certificates/%s/%s",
-				url.QueryEscape(subject), url.QueryEscape(subjectKeyId),
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
 			),
 			&resp,
 		)
@@ -281,7 +281,7 @@ func GetProposedRevocationX509Cert(suite *utils.TestSuite, subject string, subje
 			context.Background(),
 			&pkitypes.QueryGetProposedCertificateRevocationRequest{
 				Subject:      subject,
-				SubjectKeyId: subjectKeyId,
+				SubjectKeyId: subjectKeyID,
 			},
 		)
 		if err != nil {
@@ -383,14 +383,14 @@ func GetAllX509CertsBySubject(suite *utils.TestSuite, subject string) (*pkitypes
 	return &res, nil
 }
 
-func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyId string) (*pkitypes.ChildCertificates, error) {
+func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyID string) (*pkitypes.ChildCertificates, error) {
 	var res pkitypes.ChildCertificates
 	if suite.Rest {
 		var resp pkitypes.QueryGetChildCertificatesResponse
 		err := suite.QueryREST(
 			fmt.Sprintf(
 				"/dcl/pki/child-certificates/%s/%s",
-				url.QueryEscape(subject), url.QueryEscape(subjectKeyId),
+				url.QueryEscape(subject), url.QueryEscape(subjectKeyID),
 			),
 			&resp,
 		)
@@ -408,7 +408,7 @@ func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyId s
 			context.Background(),
 			&pkitypes.QueryGetChildCertificatesRequest{
 				Issuer:         subject,
-				AuthorityKeyId: subjectKeyId,
+				AuthorityKeyId: subjectKeyID,
 			},
 		)
 		if err != nil {
@@ -421,7 +421,7 @@ func GetAllChildX509Certs(suite *utils.TestSuite, subject string, subjectKeyId s
 }
 
 //nolint:funlen
-func PKIDemo(suite *utils.TestSuite) {
+func Demo(suite *utils.TestSuite) {
 	// All requests return empty or 404 value
 	proposedCertificates, _ := GetAllProposedX509RootCerts(suite)
 	require.Equal(suite.T, 0, len(proposedCertificates))

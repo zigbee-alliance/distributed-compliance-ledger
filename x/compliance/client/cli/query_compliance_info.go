@@ -29,7 +29,7 @@ func CmdListComplianceInfo() *cobra.Command {
 			}
 
 			res, err := queryClient.ComplianceInfoAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {
@@ -61,6 +61,7 @@ func CmdShowComplianceInfo() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			var res types.ComplianceInfo
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

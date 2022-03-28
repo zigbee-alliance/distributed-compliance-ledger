@@ -18,6 +18,7 @@ func CmdShowApprovedCertificatesBySubject() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 			var res types.ApprovedCertificatesBySubject
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,

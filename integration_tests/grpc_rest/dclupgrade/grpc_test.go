@@ -24,7 +24,7 @@ import (
 
 func TestDCLUpgradeDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	dclupgrade.DCLUpgradeDemo(&suite)
+	dclupgrade.Demo(&suite)
 }
 
 func TestProposeUpgradeByNonTrusteeGRPC(t *testing.T) {

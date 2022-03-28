@@ -20,7 +20,6 @@ func IsValidCertificationType(certificationType string) bool {
 	return false
 }
 
-//nolint:godot
 const (
 	CodeProvisional uint32 = 1
 	CodeCertified   uint32 = 2

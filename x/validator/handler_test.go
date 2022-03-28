@@ -41,6 +41,7 @@ type TestSetup struct {
 }
 
 func Setup(t *testing.T) TestSetup {
+	t.Helper()
 	dclauthK, _ := testkeeper.DclauthKeeper(t)
 	k, ctx := testkeeper.ValidatorKeeper(t, dclauthK)
 
@@ -175,5 +176,6 @@ func queryValidator(setup TestSetup, owner string) (*types.Validator, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &resp.Validator, nil
 }

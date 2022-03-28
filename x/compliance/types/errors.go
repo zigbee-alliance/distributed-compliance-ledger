@@ -59,7 +59,8 @@ func NewErrComplianceInfoAlreadyExist(vid interface{}, pid interface{}, sv inter
 }
 
 func NewErrModelVersionStringDoesNotMatch(vid interface{}, pid interface{},
-	softwareVersion interface{}, softwareVersionString interface{}) error {
+	softwareVersion interface{}, softwareVersionString interface{},
+) error {
 	return sdkerrors.Wrapf(
 		ErrModelVersionStringDoesNotMatch,
 		"Model with vid=%v, pid=%v, softwareVersion=%v present on the ledger does not have"+

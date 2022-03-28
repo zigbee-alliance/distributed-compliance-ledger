@@ -24,7 +24,7 @@ import (
 
 func TestVendorInfoDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	vendorinfo.VendorInfoDemo(&suite)
+	vendorinfo.Demo(&suite)
 }
 
 func TestAddVendorInfoByNonVendorREST(t *testing.T) {

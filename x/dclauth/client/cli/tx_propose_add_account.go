@@ -74,14 +74,15 @@ func CmdProposeAddAccount() *cobra.Command {
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-			if cli.IsWriteInsteadReadRpcError(err) {
+			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
 	cmd.Flags().String(FlagPubKey, "", "The account's Protobuf JSON encoded public key")
 	cmd.Flags().String(FlagRoles, "",
 		fmt.Sprintf("The list of roles, comma-separated, assigning to the account (supported roles: %v)",

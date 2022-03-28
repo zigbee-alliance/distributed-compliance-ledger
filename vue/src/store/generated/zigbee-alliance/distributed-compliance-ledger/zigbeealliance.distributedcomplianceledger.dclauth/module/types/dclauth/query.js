@@ -5,6 +5,7 @@ import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/paginati
 import { PendingAccount } from '../dclauth/pending_account';
 import { PendingAccountRevocation } from '../dclauth/pending_account_revocation';
 import { AccountStat } from '../dclauth/account_stat';
+import { RevokedAccount } from '../dclauth/revoked_account';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
 const baseQueryGetAccountRequest = { address: '' };
 export const QueryGetAccountRequest = {
@@ -777,6 +778,235 @@ export const QueryGetAccountStatResponse = {
         return message;
     }
 };
+const baseQueryGetRevokedAccountRequest = { address: '' };
+export const QueryGetRevokedAccountRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.address !== '') {
+            writer.uint32(10).string(message.address);
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRevokedAccountRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.address = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRevokedAccountRequest };
+        if (object.address !== undefined && object.address !== null) {
+            message.address = String(object.address);
+        }
+        else {
+            message.address = '';
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.address !== undefined && (obj.address = message.address);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRevokedAccountRequest };
+        if (object.address !== undefined && object.address !== null) {
+            message.address = object.address;
+        }
+        else {
+            message.address = '';
+        }
+        return message;
+    }
+};
+const baseQueryGetRevokedAccountResponse = {};
+export const QueryGetRevokedAccountResponse = {
+    encode(message, writer = Writer.create()) {
+        if (message.revokedAccount !== undefined) {
+            RevokedAccount.encode(message.revokedAccount, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryGetRevokedAccountResponse };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.revokedAccount = RevokedAccount.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryGetRevokedAccountResponse };
+        if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+            message.revokedAccount = RevokedAccount.fromJSON(object.revokedAccount);
+        }
+        else {
+            message.revokedAccount = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.revokedAccount !== undefined && (obj.revokedAccount = message.revokedAccount ? RevokedAccount.toJSON(message.revokedAccount) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryGetRevokedAccountResponse };
+        if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+            message.revokedAccount = RevokedAccount.fromPartial(object.revokedAccount);
+        }
+        else {
+            message.revokedAccount = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllRevokedAccountRequest = {};
+export const QueryAllRevokedAccountRequest = {
+    encode(message, writer = Writer.create()) {
+        if (message.pagination !== undefined) {
+            PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllRevokedAccountRequest };
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.pagination = PageRequest.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllRevokedAccountRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllRevokedAccountRequest };
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageRequest.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
+const baseQueryAllRevokedAccountResponse = {};
+export const QueryAllRevokedAccountResponse = {
+    encode(message, writer = Writer.create()) {
+        for (const v of message.revokedAccount) {
+            RevokedAccount.encode(v, writer.uint32(10).fork()).ldelim();
+        }
+        if (message.pagination !== undefined) {
+            PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+        }
+        return writer;
+    },
+    decode(input, length) {
+        const reader = input instanceof Uint8Array ? new Reader(input) : input;
+        let end = length === undefined ? reader.len : reader.pos + length;
+        const message = { ...baseQueryAllRevokedAccountResponse };
+        message.revokedAccount = [];
+        while (reader.pos < end) {
+            const tag = reader.uint32();
+            switch (tag >>> 3) {
+                case 1:
+                    message.revokedAccount.push(RevokedAccount.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.pagination = PageResponse.decode(reader, reader.uint32());
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+            }
+        }
+        return message;
+    },
+    fromJSON(object) {
+        const message = { ...baseQueryAllRevokedAccountResponse };
+        message.revokedAccount = [];
+        if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+            for (const e of object.revokedAccount) {
+                message.revokedAccount.push(RevokedAccount.fromJSON(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromJSON(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    },
+    toJSON(message) {
+        const obj = {};
+        if (message.revokedAccount) {
+            obj.revokedAccount = message.revokedAccount.map((e) => (e ? RevokedAccount.toJSON(e) : undefined));
+        }
+        else {
+            obj.revokedAccount = [];
+        }
+        message.pagination !== undefined && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+        return obj;
+    },
+    fromPartial(object) {
+        const message = { ...baseQueryAllRevokedAccountResponse };
+        message.revokedAccount = [];
+        if (object.revokedAccount !== undefined && object.revokedAccount !== null) {
+            for (const e of object.revokedAccount) {
+                message.revokedAccount.push(RevokedAccount.fromPartial(e));
+            }
+        }
+        if (object.pagination !== undefined && object.pagination !== null) {
+            message.pagination = PageResponse.fromPartial(object.pagination);
+        }
+        else {
+            message.pagination = undefined;
+        }
+        return message;
+    }
+};
 export class QueryClientImpl {
     constructor(rpc) {
         this.rpc = rpc;
@@ -815,5 +1045,15 @@ export class QueryClientImpl {
         const data = QueryGetAccountStatRequest.encode(request).finish();
         const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'AccountStat', data);
         return promise.then((data) => QueryGetAccountStatResponse.decode(new Reader(data)));
+    }
+    RevokedAccount(request) {
+        const data = QueryGetRevokedAccountRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'RevokedAccount', data);
+        return promise.then((data) => QueryGetRevokedAccountResponse.decode(new Reader(data)));
+    }
+    RevokedAccountAll(request) {
+        const data = QueryAllRevokedAccountRequest.encode(request).finish();
+        const promise = this.rpc.request('zigbeealliance.distributedcomplianceledger.dclauth.Query', 'RevokedAccountAll', data);
+        return promise.then((data) => QueryAllRevokedAccountResponse.decode(new Reader(data)));
     }
 }

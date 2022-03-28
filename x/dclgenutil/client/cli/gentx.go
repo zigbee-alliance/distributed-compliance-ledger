@@ -174,6 +174,7 @@ $ %s gentx my-key-name --home=/path/to/home/dir --keyring-backend=os --chain-id=
 			}
 
 			cmd.PrintErrf("Genesis transaction written to %q\n", outputDocument)
+
 			return nil
 		},
 	}

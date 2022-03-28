@@ -24,7 +24,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/pki/types"
 )
 
-type X509Certificate struct {
+type Certificate struct {
 	Issuer         string
 	SerialNumber   string
 	Subject        string
@@ -33,7 +33,7 @@ type X509Certificate struct {
 	Certificate    *x509.Certificate
 }
 
-func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
+func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 	block, _ := pem.Decode([]byte(pemCertificate))
 	if block == nil {
 		return nil, types.NewErrInvalidCertificate("Could not decode pem certificate")
@@ -44,7 +44,7 @@ func DecodeX509Certificate(pemCertificate string) (*X509Certificate, error) {
 		return nil, types.NewErrInvalidCertificate(fmt.Sprintf("Could not parse certificate: %v", err.Error()))
 	}
 
-	certificate := X509Certificate{
+	certificate := Certificate{
 		Issuer:         cert.Issuer.String(),
 		SerialNumber:   cert.SerialNumber.String(),
 		Subject:        cert.Subject.String(),
@@ -114,7 +114,7 @@ func BytesToHex(bytes []byte) string {
 	return strings.Join(bytesHex, ":")
 }
 
-func (c X509Certificate) Verify(parent *X509Certificate) error {
+func (c Certificate) Verify(parent *Certificate) error {
 	roots := x509.NewCertPool()
 	roots.AddCert(parent.Certificate)
 
@@ -127,10 +127,10 @@ func (c X509Certificate) Verify(parent *X509Certificate) error {
 	return nil
 }
 
-func (c X509Certificate) IsSelfSigned() bool {
+func (c Certificate) IsSelfSigned() bool {
 	if len(c.AuthorityKeyID) > 0 {
 		return c.Issuer == c.Subject && c.AuthorityKeyID == c.SubjectKeyID
-	} else {
-		return c.Issuer == c.Subject
 	}
+
+	return c.Issuer == c.Subject
 }

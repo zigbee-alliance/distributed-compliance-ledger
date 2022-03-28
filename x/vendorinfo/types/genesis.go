@@ -26,6 +26,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := vendorInfoIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for vendorInfo")
 		}
+
 		vendorInfoIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate

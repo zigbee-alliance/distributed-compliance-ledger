@@ -9,5 +9,6 @@ import (
 func AccAddress() string {
 	pk := ed25519.GenPrivKey().PubKey()
 	addr := pk.Address()
+
 	return sdk.AccAddress(addr).String()
 }

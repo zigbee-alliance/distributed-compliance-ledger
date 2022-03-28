@@ -26,6 +26,7 @@ func createNProvisionalModel(keeper *keeper.Keeper, ctx sdk.Context, n int) []ty
 
 		keeper.SetProvisionalModel(ctx, items[i])
 	}
+
 	return items
 }
 

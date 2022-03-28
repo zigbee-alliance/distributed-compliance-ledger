@@ -17,6 +17,7 @@ func (m *DclauthKeeperMock) HasRole(
 	roleToCheck dclauthtypes.AccountRole,
 ) bool {
 	args := m.Called(ctx, addr, roleToCheck)
+
 	return args.Bool(0)
 }
 
@@ -26,6 +27,7 @@ func (m *DclauthKeeperMock) HasVendorID(
 	vid int32,
 ) bool {
 	args := m.Called(ctx, addr, vid)
+
 	return args.Bool(0)
 }
 

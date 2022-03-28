@@ -31,7 +31,7 @@ func CmdListPendingAccountRevocation() *cobra.Command {
 			}
 
 			res, err := queryClient.PendingAccountRevocationAll(context.Background(), params)
-			if cli.IsKeyNotFoundRpcError(err) {
+			if cli.IsKeyNotFoundRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForListQueries)
 			}
 			if err != nil {
@@ -62,6 +62,7 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 			}
 
 			var res types.PendingAccountRevocation
+
 			return cli.QueryWithProof(
 				clientCtx,
 				types.StoreKey,
@@ -72,7 +73,7 @@ func CmdShowPendingAccountRevocation() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().String(FlagAddress, "", "Bench32 encoded account address")
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
 	flags.AddQueryFlagsToCmd(cmd)
 
 	_ = cmd.MarkFlagRequired(FlagAddress)

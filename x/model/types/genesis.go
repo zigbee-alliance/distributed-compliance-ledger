@@ -39,6 +39,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := modelIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for model")
 		}
+
 		modelIndexMap[index] = struct{}{}
 	}
 	// Check for duplicated index in modelVersion
@@ -49,6 +50,7 @@ func (gs GenesisState) Validate() error {
 		if _, ok := modelVersionIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for modelVersion")
 		}
+
 		modelVersionIndexMap[index] = struct{}{}
 	}
 	// Check for duplicated index in modelVersions

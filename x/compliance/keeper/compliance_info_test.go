@@ -25,6 +25,7 @@ func createNComplianceInfo(keeper *keeper.Keeper, ctx sdk.Context, n int) []type
 
 		keeper.SetComplianceInfo(ctx, items[i])
 	}
+
 	return items
 }
 

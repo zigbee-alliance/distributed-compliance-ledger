@@ -23,6 +23,7 @@ func createNApprovedCertificates(keeper *keeper.Keeper, ctx sdk.Context, n int) 
 
 		keeper.SetApprovedCertificates(ctx, items[i])
 	}
+
 	return items
 }
 

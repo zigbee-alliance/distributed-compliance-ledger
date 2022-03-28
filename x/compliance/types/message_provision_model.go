@@ -39,11 +39,13 @@ func (msg *MsgProvisionModel) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{signer}
 }
 
 func (msg *MsgProvisionModel) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 

@@ -15,7 +15,6 @@ func NewMsgCreateVendorInfo(
 	companyLegalName string,
 	companyPrefferedName string,
 	vendorLandingPageURL string,
-
 ) *MsgCreateVendorInfo {
 	return &MsgCreateVendorInfo{
 		Creator:              creator,
@@ -40,11 +39,13 @@ func (msg *MsgCreateVendorInfo) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgCreateVendorInfo) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
@@ -71,7 +72,6 @@ func NewMsgUpdateVendorInfo(
 	companyLegalName string,
 	companyPrefferedName string,
 	vendorLandingPageURL string,
-
 ) *MsgUpdateVendorInfo {
 	return &MsgUpdateVendorInfo{
 		Creator:              creator,
@@ -96,11 +96,13 @@ func (msg *MsgUpdateVendorInfo) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{creator}
 }
 
 func (msg *MsgUpdateVendorInfo) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
