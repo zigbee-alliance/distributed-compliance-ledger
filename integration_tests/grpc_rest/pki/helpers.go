@@ -894,6 +894,31 @@ func PKIDemo(suite *utils.TestSuite) {
 	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
 	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
+	require.Equal(suite.T, 0, len(proposedCertificate.Approvals))
+
+	// Jack (Trustee) approve Root certificate
+	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       jackAccount.Address,
+	}
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
+	require.NoError(suite.T, err) //
+
+	// Request all proposed Root certificates
+	proposedCertificates, _ = GetAllProposedX509RootCerts(suite)
+	require.Equal(suite.T, 1, len(proposedCertificates))
+	require.Equal(suite.T, testconstants.GoogleSubject, proposedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedCertificates[0].SubjectKeyId)
+
+	// Request all approved certificates
+	certificates, _ = GetAllX509Certs(suite)
+	require.Equal(suite.T, 0, len(certificates))
+
+	// Request proposed Root certificate
+	proposedCertificate, _ = GetProposedX509RootCert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
+	require.Equal(suite.T, testconstants.GoogleCertPem, proposedCertificate.PemCert)
+	require.Equal(suite.T, vendorAccount.Address, proposedCertificate.Owner)
 	require.True(suite.T, proposedCertificate.HasApprovalFrom(jackAccount.Address))
 
 	// Alice (Trustee) approve Google Root certificate
@@ -951,8 +976,8 @@ func PKIDemo(suite *utils.TestSuite) {
 	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
 	require.Equal(suite.T, 3, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
-	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].Subject)
-	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[2].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[2].SubjectKeyId)
@@ -992,38 +1017,33 @@ func PKIDemo(suite *utils.TestSuite) {
 	// Request all revoked certificates
 	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
 	require.Equal(suite.T, 4, len(revokedCertificates))
-	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
-	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
-	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
-	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
-	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[2].Subject)
-	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[2].SubjectKeyId)
-	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificates[3].Subject)
-	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificates[3].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificates[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[1].Subject)
+	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[2].Subject)
+	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[2].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[3].Subject)
+	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[3].SubjectKeyId)
 
 	// Request all revoked Root certificates
 	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
-	require.Equal(suite.T, 1, len(revokedRootCertificates.Certs))
+	require.Equal(suite.T, 2, len(revokedRootCertificates.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, revokedRootCertificates.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedRootCertificates.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.GoogleSubject, revokedRootCertificates.Certs[1].Subject)
-	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedRootCertificates.Certs[1].SubjectKeyId)
 
 	// Request revoked Google Root certificate
 	revokedCertificate, _ = GetRevokedX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
-	require.Equal(suite.T, 2, len(revokedCertificate.Certs))
+	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.SubjectKeyId)
-	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Certs[0].Subject)
-	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
-	require.Equal(suite.T, testconstants.RootCertPem, revokedCertificate.Certs[0].PemCert)
+	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Certs[0].Subject)
+	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleCertPem, revokedCertificate.Certs[0].PemCert)
 	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[0].Owner)
 	require.True(suite.T, revokedCertificate.Certs[0].IsRoot)
-	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Certs[1].Subject)
-	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.Certs[1].SubjectKeyId)
-	require.Equal(suite.T, testconstants.GoogleCertPem, revokedCertificate.Certs[1].PemCert)
-	require.Equal(suite.T, vendorAccount.Address, revokedCertificate.Certs[1].Owner)
-	require.True(suite.T, revokedCertificate.Certs[1].IsRoot)
 
 	certificates, _ = GetAllX509Certs(suite)
 	require.Equal(suite.T, 0, len(certificates))
