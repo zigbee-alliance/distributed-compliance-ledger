@@ -32,6 +32,7 @@ jobs:
       go: ${{ steps.filter.outputs.go }}
       src: ${{ steps.filter.outputs.src }}
       docs: ${{ steps.filter.outputs.docs }}
+      workflows: ${{ steps.filter.outputs.workflows }}
     steps:
       - uses: actions/checkout@v3
       - uses: dorny/paths-filter@v2
@@ -49,6 +50,17 @@ jobs:
             docs:
               - '**.md'
               - '**/*.md'
+            workflows:
+              - '.github/**'
+  gh-actions:
+    if: needs.changes.outputs.workflows == 'true'
+    name: Run actionlint tool to verify lint issues in GitHub actions
+    runs-on: ubuntu-latest
+    needs:
+      - changes
+    steps:
+      - uses: actions/checkout@master
+      - uses: reviewdog/action-actionlint@v1
   links:
     if: needs.changes.outputs.docs == 'true'
     name: Run markdown-link-check tool to verify link issues
@@ -134,10 +146,11 @@ jobs:
       - lint
       - links
       - spell
+      - gh-actions
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: lint, unit-tests, integration-tests, links, spell
+          allowed-skips: lint, unit-tests, integration-tests, links, spell, gh-actions
           jobs: ${{ toJSON(needs) }}
