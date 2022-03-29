@@ -57,11 +57,13 @@ as described in  [Runing Node in Existing Network](../../../docs/running-node-in
     2.3. Put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
     ```bash
     sudo cp ./cosmovisor /usr/bin/
+    sudo a+x /usr/bin/cosmovisor
     ```
 
 3. ### Run Observer Node
     3.1. Initialize node
     ```bash
+    chmod u+x ./dcld
     ./dcld init "<node-name>" --chain-id "testnet-2.0"
     ```
 
@@ -95,6 +97,7 @@ as described in  [Runing Node in Existing Network](../../../docs/running-node-in
 
     3.5. Run Observer Node
     ```bash
+    chmod u+x ./run_dcl_node
     ./run_dcl_node -t observer -c "testnet-2.0" "<node-name>"
     ```
 
