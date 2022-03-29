@@ -122,7 +122,7 @@ need or just comment out the corresponding line and manually add
 
 * put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
 * set owner of `cosmovisor` binary to the user who will be used for `cosmovisor` service to run as
-* set executable permission on `cosmovisor` binary for owner 
+* set executable permission on `cosmovisor` binary for owner
 
 <!-- markdownlint-disable MD033 -->
 <details>

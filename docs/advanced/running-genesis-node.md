@@ -39,8 +39,8 @@ The following components will be needed:
 1. Put `cosmovisor` binary to `/usr/bin/`, set proper owner and execution permissions.
 
 2. Locate the genesis app version to genesis application version directory:
-  * Create `$HOME/.dcl/cosmovisor/genesis/bin` directory.
-  * Copy `dcld` binary to it, set proper owner and execution permissions.
+    - Create `$HOME/.dcl/cosmovisor/genesis/bin` directory.
+    - Copy `dcld` binary to it, set proper owner and execution permissions.
       Please note that execution permissions on `dcld` should be granted to all (i.e. User, Group and Others classes)
       because cosmovisor requires execution permission on the application binary to be granted to Others class.
 
