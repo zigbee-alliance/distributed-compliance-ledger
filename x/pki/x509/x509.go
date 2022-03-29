@@ -16,6 +16,7 @@ package x509
 
 import (
 	"crypto/x509"
+	"encoding/hex"
 	"encoding/pem"
 	"fmt"
 	"strings"
@@ -52,7 +53,52 @@ func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 		Certificate:    cert,
 	}
 
+	certificate = PatchCertificate(certificate)
+
 	return &certificate, nil
+}
+
+// This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
+// https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
+func PatchCertificate(certificate Certificate) Certificate {
+	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
+	oldPIDKey := "1.3.6.1.4.1.37244.2.2"
+
+	newVIDKey := "vid"
+	newPIDKey := "pid"
+
+	issuer := certificate.Issuer
+	issuer = FormatOID(issuer, oldVIDKey, newVIDKey)
+	issuer = FormatOID(issuer, oldPIDKey, newPIDKey)
+
+	subject := certificate.Subject
+	subject = FormatOID(subject, oldVIDKey, newVIDKey)
+	subject = FormatOID(subject, oldPIDKey, newPIDKey)
+
+	certificate.Issuer = issuer
+	certificate.Subject = subject
+
+	return certificate
+}
+
+func FormatOID(header, oldKey, newKey string) string {
+	subjectValues := strings.Split(header, ",")
+
+	// When translating a string number into a hexadecimal number,
+	// we must take 8 numbers of this string number from the end so that it needs to fit into an integer number.
+	hexStringIntegerLength := 8
+	for index, value := range subjectValues {
+		if strings.HasPrefix(value, oldKey) {
+			// get value from header
+			value = value[len(value)-hexStringIntegerLength:]
+
+			decoded, _ := hex.DecodeString(value)
+
+			subjectValues[index] = fmt.Sprintf("%s=0x%s", newKey, decoded)
+		}
+	}
+
+	return strings.Join(subjectValues, ",")
 }
 
 func BytesToHex(bytes []byte) string {
