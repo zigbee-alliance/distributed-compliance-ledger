@@ -138,7 +138,7 @@ func (c Certificate) Verify(parent *Certificate) error {
 
 func (c Certificate) IsSelfSigned() bool {
 	if len(c.AuthorityKeyID) > 0 {
-		return c.Issuer == c.Subject && c.AuthorityKeyID == c.SubjectKeyID
+		return c.Issuer == c.SubjectAsText && c.AuthorityKeyID == c.SubjectKeyID
 	}
 
 	return c.Issuer == c.Subject
