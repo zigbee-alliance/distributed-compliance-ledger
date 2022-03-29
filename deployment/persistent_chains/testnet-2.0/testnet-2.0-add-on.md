@@ -54,6 +54,11 @@ as described in  [Runing Node in Existing Network](../../../docs/running-node-in
     curl -L -O https://raw.githubusercontent.com/zigbee-alliance/distributed-compliance-ledger/master/deployment/persistent_chains/testnet-2.0/genesis.json
     ```
 
+    2.3. Put `cosmovisor` binary in a folder listed in `$PATH` (e.g. `/usr/bin/`)
+    ```bash
+    sudo cp ./cosmovisor /usr/bin/
+    ```
+
 3. ### Run Observer Node
     3.1. Initialize node
     ```bash
