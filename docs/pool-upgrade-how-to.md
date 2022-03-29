@@ -20,7 +20,7 @@ application version:
    1. Calculates SHA-256 or SHA-512 checksums of the new application version
       binaries (for the supported platforms) taken from the project release.
       This can be done using `sha256sum` or `sha512sum` tool.
-      
+
       For example:
 
       ```bash
@@ -31,7 +31,7 @@ application version:
       with the name of the new upgrade handler, the chosen ledger height and the
       info containing URLs of the new application version binaries for supported
       platforms with the calculated checksums.
-      
+
       For example:
 
       ```bash
@@ -46,7 +46,7 @@ application version:
    1. Re-calculates checksums of the new application version binaries (for the
       supported platforms) taken from the project release. This can be done
       using `sha256sum` / `sha512sum` tool.
-      
+
       For example:
 
       ```bash
@@ -55,7 +55,7 @@ application version:
 
    2. Ensures that the re-calculated values are equal to the checksums specified
       in the proposed upgrade plan `Info` field.
-      
+
       Example how to view the proposed upgrade plan:
 
       ```bash
@@ -71,7 +71,7 @@ application version:
 
    5. Sends [`ApproveUpgrade`](./transactions.md#approve_upgrade) transaction
       with the name of the proposed upgrade.
-      
+
       For example:
 
       ```bash
@@ -80,7 +80,7 @@ application version:
 
 5. **[Anyone] Ensure That Upgrade Has Been Scheduled**: It makes sense to ensure
    that the upgrade has been approved and scheduled.
-   
+
    Example how to view the approved upgrade plan:
 
    ```bash
@@ -104,13 +104,14 @@ application version:
        ```bash
        su - <USERNAME>
        ```
-       where `<USERNAME>` is the corresponding user name
+
+       where `<USERNAME>` is the corresponding username
 
        The command will ask for the user's password. Enter it.
 
     2. Downloads the application binary from the URL specified in the upgrade
        plan `Info` field and corresponding to the node platform.
-       
+
        Command to view the current scheduled upgrade plan:
 
        ```bash
@@ -122,7 +123,7 @@ application version:
        previous step by [`go-getter`](https://github.com/hashicorp/go-getter)
        download tool (its executable binaries for various platforms can be
        downloaded from <https://github.com/hashicorp/go-getter/releases>).
-       
+
        For example:
 
        ```bash
@@ -138,7 +139,7 @@ application version:
        `$HOME/.dcl/cosmovisor/upgrades`, creates `bin` sub-directory within the
        created directory, and puts the new application binary into `bin`
        sub-directory.
-       
+
        For example:
 
        ```bash
@@ -153,9 +154,9 @@ application version:
        ```
 
     5. Sets proper owner and permissions for the new application binary.
-    
+
        For example:
-       
+
        ```bash
        sudo chown $(whoami) $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
        sudo chmod a+x $HOME/.dcl/cosmovisor/upgrades/vX.X.X/bin/dcld
