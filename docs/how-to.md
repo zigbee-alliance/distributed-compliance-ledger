@@ -331,18 +331,22 @@ dcld tx compliance revoke-model --vid=<uint16> --pid=<uint16> --softwareVersion=
 
 Validators are responsible for committing of new blocks to the ledger.
 
-A more detailed instruction on how to add a validator node to an existing DC Ledger network
-can be found here: [running-node.md](running-node.md).
+More detailed instructions on how to add a validator node to an existing DC Ledger network
+can be found here: 
+  - When running validator in a new fresh network [running-node.md](running-node.md).
+  - When running validator in an existing long-running network [running-node-in-existing-network.md](running-node-in-existing-network.md).
 
-- `dcld init node-name --chain-id dclchain`
-- `cp /source/genesis.json $HOME/.dcl/config/`
-- `sed -i "s/persistent_peers = \"\"/<node id>@<node ip>,<node2 id>@<node2 ip>/g" $HOME/.dcl/config/config.toml`
-- `sudo ufw allow 26656/tcp`
-- `sudo ufw allow 26657/tcp`
-- `cosmovisor start`
-- `dcld status`
-- `dcld tx validator add-node --pubkey=(dcld tendermint show-validator) --moniker=<string> --from=<account>`
-- `dcld query validator all-nodes`
+``` bash
+dcld init node-name --chain-id "dclchain"
+cp /source/genesis.json $HOME/.dcl/config/
+sed -i "s/persistent_peers = \"\"/<node id>@<node ip>,<node2 id>@<node2 ip>/g" $HOME/.dcl/config/config.toml
+sudo ufw allow 26656/tcp
+sudo ufw allow 26657/tcp
+cosmovisor start
+dcld status
+dcld tx validator add-node --pubkey=(dcld tendermint show-validator) --moniker=<string> --from=<account>
+dcld query validator all-nodes
+```
 
 ### Policy
 

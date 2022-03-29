@@ -1,4 +1,5 @@
 # Running a DCLedger Node
+> **_Note:_** If you are adding a new node to an existing long-running network, refer to [running-node-in-existing-network.md](./running-node-in-existing-network.md) for addtional instructions
 
 This document describes in how to:
 
@@ -342,3 +343,4 @@ As a general guidance you may consider to use only the peers you own and/or trus
   * *Notes*
     * `cosmovisor` service should be restarted on any configuration changes
     * in case of any IP filtering firewall rules they should be updated as well
+    
