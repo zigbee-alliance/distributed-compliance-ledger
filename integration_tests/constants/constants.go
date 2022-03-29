@@ -227,17 +227,17 @@ tpcQ/mhg7DECwutZLCxKyA==
 
 	RootIssuer       = "O=root-ca,ST=some-state,C=AU"
 	RootSubject      = "O=root-ca,ST=some-state,C=AU"
-	RootSubjectKeyID = "5A:88:E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:9:30:E6:2B:DB"
+	RootSubjectKeyID = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
 	RootSerialNumber = "442314047376310867378175982234956458728610743315"
 
 	IntermediateIssuer         = "O=root-ca,ST=some-state,C=AU"
-	IntermediateAuthorityKeyID = "5A:88:E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:9:30:E6:2B:DB"
+	IntermediateAuthorityKeyID = "5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
 	IntermediateSubject        = "O=intermediate-ca,ST=some-state,C=AU"
-	IntermediateSubjectKeyID   = "4E:3B:73:F4:70:4D:C2:98:D:DB:C8:5A:5F:2:3B:BF:86:25:56:2B"
+	IntermediateSubjectKeyID   = "4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
 	IntermediateSerialNumber   = "169917617234879872371588777545667947720450185023"
 
 	LeafIssuer         = "O=intermediate-ca,ST=some-state,C=AU"
-	LeafAuthorityKeyID = "4E:3B:73:F4:70:4D:C2:98:D:DB:C8:5A:5F:2:3B:BF:86:25:56:2B"
+	LeafAuthorityKeyID = "4E:3B:73:F4:70:4D:C2:98:D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
 	LeafSubject        = "O=leaf,ST=some-state,C=AU"
 	LeafSubjectKeyID   = "30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
 	LeafSerialNumber   = "143290473708569835418599774898811724528308722063"
@@ -249,7 +249,7 @@ tpcQ/mhg7DECwutZLCxKyA==
 	GoogleSerialNumber   = "1"
 
 	TestIssuer         = "CN=Matter Test PAA,vid=0x125D"
-	TestAuthorityKeyID = "E2:90:8D:36:9C:3C:A3:C1:13:BB:9:E2:4D:C1:CC:C5:A6:66:91:D4"
+	TestAuthorityKeyID = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSubject        = "CN=Matter Test PAA,vid=0x125D"
 	TestSubjectKeyID   = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSerialNumber   = "1647312298631"
