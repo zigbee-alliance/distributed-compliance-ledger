@@ -16,6 +16,7 @@ package x509
 
 import (
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
 	"fmt"
@@ -28,6 +29,7 @@ type Certificate struct {
 	Issuer         string
 	SerialNumber   string
 	Subject        string
+	SubjectAsText  string
 	SubjectKeyID   string
 	AuthorityKeyID string
 	Certificate    *x509.Certificate
@@ -48,6 +50,7 @@ func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 		Issuer:         cert.Issuer.String(),
 		SerialNumber:   cert.SerialNumber.String(),
 		Subject:        cert.Subject.String(),
+		SubjectAsText:  cert.Subject.String(),
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
@@ -76,7 +79,9 @@ func PatchCertificate(certificate Certificate) Certificate {
 	subject = FormatOID(subject, oldPIDKey, newPIDKey)
 
 	certificate.Issuer = issuer
-	certificate.Subject = subject
+	certificate.SubjectAsText = subject
+
+	certificate.Subject = StringtoBase64(certificate.Subject)
 
 	return certificate
 }
@@ -99,6 +104,10 @@ func FormatOID(header, oldKey, newKey string) string {
 	}
 
 	return strings.Join(subjectValues, ",")
+}
+
+func StringtoBase64(subject string) string {
+	return base64.StdEncoding.EncodeToString([]byte(subject))
 }
 
 func BytesToHex(bytes []byte) string {
