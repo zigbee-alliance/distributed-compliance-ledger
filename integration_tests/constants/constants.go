@@ -245,12 +245,12 @@ tpcQ/mhg7DECwutZLCxKyA==
 	GoogleIssuer         = "CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
 	GoogleAuthorityKeyID = ""
 	GoogleSubject        = "CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
-	GoogleSubjectKeyID   = "B0:0:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:9:DE:93:21"
+	GoogleSubjectKeyID   = "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
 	GoogleSerialNumber   = "1"
 
 	TestIssuer         = "CN=Matter Test PAA,vid=0x125D"
 	TestAuthorityKeyID = "E2:90:8D:36:9C:3C:A3:C1:13:BB:9:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSubject        = "CN=Matter Test PAA,vid=0x125D"
-	TestSubjectKeyID   = "E2:90:8D:36:9C:3C:A3:C1:13:BB:9:E2:4D:C1:CC:C5:A6:66:91:D4"
+	TestSubjectKeyID   = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSerialNumber   = "1647312298631"
 )

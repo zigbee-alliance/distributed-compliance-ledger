@@ -108,7 +108,7 @@ func BytesToHex(bytes []byte) string {
 
 	bytesHex := make([]string, len(bytes))
 	for i, b := range bytes {
-		bytesHex[i] = fmt.Sprintf("%X", b)
+		bytesHex[i] = fmt.Sprintf("%02X", b)
 	}
 
 	return strings.Join(bytesHex, ":")
