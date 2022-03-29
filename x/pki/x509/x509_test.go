@@ -53,6 +53,27 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Equal(t, testconstants.RootSubjectKeyID, certificate.SubjectKeyID)
 }
 
+func Test_DecodeCertificatesWithVID(t *testing.T) {
+	// decode root google certificate with vid
+	certificate, err := DecodeX509Certificate(testconstants.GoogleCertPem)
+	require.Nil(t, err)
+	require.True(t, certificate.IsSelfSigned())
+	require.Equal(t, testconstants.GoogleSubject, certificate.Issuer)
+	require.Equal(t, testconstants.GoogleSerialNumber, certificate.SerialNumber)
+	require.Equal(t, testconstants.GoogleSubject, certificate.Subject)
+	require.Equal(t, testconstants.GoogleSubjectKeyID, certificate.SubjectKeyID)
+
+	// decode root test certificate with vid
+	certificate, err = DecodeX509Certificate(testconstants.TestCertPem)
+	require.Nil(t, err)
+	require.True(t, certificate.IsSelfSigned())
+	require.Equal(t, testconstants.TestSubject, certificate.Issuer)
+	require.Equal(t, testconstants.TestSerialNumber, certificate.SerialNumber)
+	require.Equal(t, testconstants.TestSubject, certificate.Subject)
+	require.Equal(t, testconstants.TestSubjectKeyID, certificate.SubjectKeyID)
+	require.Equal(t, testconstants.TestAuthorityKeyID, certificate.AuthorityKeyID)
+}
+
 func Test_VerifyLeafCertificate(t *testing.T) {
 	certificate, _ := DecodeX509Certificate(testconstants.LeafCertPem)
 	parentCertificate, _ := DecodeX509Certificate(testconstants.IntermediateCertPem)
@@ -64,4 +85,104 @@ func Test_VerifyRootCertificate(t *testing.T) {
 	certificate, _ := DecodeX509Certificate(testconstants.RootCertPem)
 	err := certificate.Verify(certificate)
 	require.Nil(t, err)
+}
+
+func Test_FormatVID(t *testing.T) {
+	positiveTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=Matter PAA 1,O=Google,C=US,vid=0x6006",
+		},
+		{
+			header: "CN=Matter Test PAA,1.3.6.1.4.1.37244.2.1=#130431323544",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=Matter Test PAA,vid=0x125D",
+		},
+	}
+
+	negativeTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		// set incorrect header
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.1",
+			newKey: "vid",
+			result: "CN=Matter PAA 1,O=Google,C=US,1.3.6=#130436303036",
+		},
+	}
+
+	for _, tt := range positiveTests {
+		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Equal(t, result, tt.result)
+	}
+
+	for _, tt := range negativeTests {
+		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Equal(t, result, tt.result)
+	}
+}
+
+func Test_FormatPID(t *testing.T) {
+	positiveTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.2=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=Matter PAA 1,O=Google,C=US,pid=0x6006",
+		},
+		{
+			header: "CN=Matter Test PAA,1.3.6.1.4.1.37244.2.2=#130431323544",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=Matter Test PAA,pid=0x125D",
+		},
+		{
+			header: "CN=Matter Test PAA,1.3.6.1.4.1.37244.2.2=#130431323544,SomeWord",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "pid",
+			result: "CN=Matter Test PAA,pid=0x125D,SomeWord",
+		},
+	}
+
+	negativeTests := []struct {
+		header string
+		oldKey string
+		newKey string
+		result string
+	}{
+		// set incorrect oldKey
+		{
+			header: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
+			oldKey: "1.3.6.1.4.1.37244.2.2",
+			newKey: "vid",
+			result: "CN=Matter PAA 1,O=Google,C=US,1.3.6.1.4.1.37244.2.1=#130436303036",
+		},
+	}
+
+	for _, tt := range positiveTests {
+		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Equal(t, result, tt.result)
+	}
+
+	for _, tt := range negativeTests {
+		result := FormatOID(tt.header, tt.oldKey, tt.newKey)
+		require.Equal(t, result, tt.result)
+	}
 }
