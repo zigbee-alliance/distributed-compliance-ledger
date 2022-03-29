@@ -87,6 +87,27 @@ func Test_VerifyRootCertificate(t *testing.T) {
 	require.Nil(t, err)
 }
 
+func Test_BytesToHex(t *testing.T) {
+	tests := []struct {
+		subjectKeyID []byte
+		result       string
+	}{
+		{
+			subjectKeyID: []byte("\xb0\x00V\x81\xb8\x88b\x89b\x80\xe1!\x18\xa1\xa8\xbe\tޓ!"),
+			result:       "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21",
+		},
+		{
+			subjectKeyID: []byte("␍6\x9c<\xa3\xc1\x13\xbb\t\xe2M\xc1\xccŦf\x91\xd4"),
+			result:       "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4",
+		},
+	}
+
+	for _, tt := range tests {
+		result := BytesToHex(tt.subjectKeyID)
+		require.Equal(t, result, tt.result)
+	}
+}
+
 func Test_FormatVID(t *testing.T) {
 	positiveTests := []struct {
 		header string
