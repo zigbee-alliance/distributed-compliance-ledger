@@ -24,7 +24,9 @@ DCLD_HOME = "/var/lib/dcl/.dcl/"
 
 
 def test_binary_version(host):
-    assert host.run_test("/var/lib/dcl/.dcl/cosmovisor/genesis/bin/dcld version").succeeded
+    assert host.run_test(
+        "/var/lib/dcl/.dcl/cosmovisor/genesis/bin/dcld version"
+    ).succeeded
 
 
 def test_configuration(host):
@@ -48,7 +50,12 @@ def test_configuration(host):
 def test_service(host):
     svc = host.file("/etc/systemd/system/cosmovisor.service")
     assert svc.exists
-    for prop in ["User=cosmovisor", "Group=dcl", 'Environment="DAEMON_HOME=/var/lib/dcl/.dcl" "DAEMON_NAME=dcld"', "ExecStart=/usr/bin/cosmovisor start"]:
+    for prop in [
+        "User=cosmovisor",
+        "Group=dcl",
+        'Environment="DAEMON_HOME=/var/lib/dcl/.dcl" "DAEMON_NAME=dcld"',
+        "ExecStart=/usr/bin/cosmovisor start",
+    ]:
         assert prop in svc.content_string
 
 
