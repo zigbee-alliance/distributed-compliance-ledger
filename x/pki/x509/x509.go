@@ -47,15 +47,14 @@ func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 	}
 
 	certificate := Certificate{
-		Issuer:         cert.Issuer.String(),
+		Issuer:         ToBase64String(cert.Issuer.String()),
 		SerialNumber:   cert.SerialNumber.String(),
+		Subject:        ToBase64String(cert.Subject.String()),
 		SubjectAsText:  ToSubjectAsText(cert.Subject.String()),
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
 	}
-
-	certificate = PatchCertificate(certificate)
 
 	return &certificate, nil
 }
@@ -74,6 +73,8 @@ func ToSubjectAsText(subject string) string {
 	return subjectAsText
 }
 
+// This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
+// https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
 func FormatOID(header, oldKey, newKey string) string {
 	subjectValues := strings.Split(header, ",")
 
@@ -94,7 +95,7 @@ func FormatOID(header, oldKey, newKey string) string {
 	return strings.Join(subjectValues, ",")
 }
 
-func StringtoBase64(subject string) string {
+func ToBase64String(subject string) string {
 	return base64.StdEncoding.EncodeToString([]byte(subject))
 }
 
