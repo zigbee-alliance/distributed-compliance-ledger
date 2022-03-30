@@ -8,9 +8,10 @@ export interface ProposedCertificateRevocation {
   subject: string
   subjectKeyId: string
   approvals: Grant[]
+  subjectAsText: string
 }
 
-const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '' }
+const baseProposedCertificateRevocation: object = { subject: '', subjectKeyId: '', subjectAsText: '' }
 
 export const ProposedCertificateRevocation = {
   encode(message: ProposedCertificateRevocation, writer: Writer = Writer.create()): Writer {
@@ -22,6 +23,9 @@ export const ProposedCertificateRevocation = {
     }
     for (const v of message.approvals) {
       Grant.encode(v!, writer.uint32(26).fork()).ldelim()
+    }
+    if (message.subjectAsText !== '') {
+      writer.uint32(34).string(message.subjectAsText)
     }
     return writer
   },
@@ -42,6 +46,9 @@ export const ProposedCertificateRevocation = {
           break
         case 3:
           message.approvals.push(Grant.decode(reader, reader.uint32()))
+          break
+        case 4:
+          message.subjectAsText = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -69,6 +76,11 @@ export const ProposedCertificateRevocation = {
         message.approvals.push(Grant.fromJSON(e))
       }
     }
+    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+      message.subjectAsText = String(object.subjectAsText)
+    } else {
+      message.subjectAsText = ''
+    }
     return message
   },
 
@@ -81,6 +93,7 @@ export const ProposedCertificateRevocation = {
     } else {
       obj.approvals = []
     }
+    message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
     return obj
   },
 
@@ -101,6 +114,11 @@ export const ProposedCertificateRevocation = {
       for (const e of object.approvals) {
         message.approvals.push(Grant.fromPartial(e))
       }
+    }
+    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+      message.subjectAsText = object.subjectAsText
+    } else {
+      message.subjectAsText = ''
     }
     return message
   }

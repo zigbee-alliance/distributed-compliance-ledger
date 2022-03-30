@@ -13,6 +13,7 @@ export interface PkiApprovedCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+  subjectAsText?: string;
 }
 
 export interface PkiApprovedCertificatesBySubject {
@@ -36,6 +37,7 @@ export interface PkiCertificate {
   subject?: string;
   subjectKeyId?: string;
   approvals?: PkiGrant[];
+  subjectAsText?: string;
 }
 
 export interface PkiCertificateIdentifier {
@@ -76,12 +78,14 @@ export interface PkiProposedCertificate {
   serialNumber?: string;
   owner?: string;
   approvals?: PkiGrant[];
+  subjectAsText?: string;
 }
 
 export interface PkiProposedCertificateRevocation {
   subject?: string;
   subjectKeyId?: string;
   approvals?: PkiGrant[];
+  subjectAsText?: string;
 }
 
 export interface PkiQueryAllApprovedCertificatesResponse {
@@ -180,6 +184,7 @@ export interface PkiRevokedCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
+  subjectAsText?: string;
 }
 
 export interface PkiRevokedRootCertificates {

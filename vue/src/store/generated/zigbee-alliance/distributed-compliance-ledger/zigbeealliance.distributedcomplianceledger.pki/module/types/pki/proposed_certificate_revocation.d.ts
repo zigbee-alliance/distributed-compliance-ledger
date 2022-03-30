@@ -5,6 +5,7 @@ export interface ProposedCertificateRevocation {
     subject: string;
     subjectKeyId: string;
     approvals: Grant[];
+    subjectAsText: string;
 }
 export declare const ProposedCertificateRevocation: {
     encode(message: ProposedCertificateRevocation, writer?: Writer): Writer;
