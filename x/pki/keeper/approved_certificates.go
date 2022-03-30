@@ -81,9 +81,10 @@ func (k Keeper) AddApprovedCertificate(ctx sdk.Context, approvedCertificate type
 
 	if approvedCertificatesBytes == nil {
 		approvedCertificates = types.ApprovedCertificates{
-			Subject:      approvedCertificate.Subject,
-			SubjectKeyId: approvedCertificate.SubjectKeyId,
-			Certs:        []*types.Certificate{},
+			Subject:       approvedCertificate.Subject,
+			SubjectAsText: approvedCertificate.SubjectAsText,
+			SubjectKeyId:  approvedCertificate.SubjectKeyId,
+			Certs:         []*types.Certificate{},
 		}
 	} else {
 		k.cdc.MustUnmarshal(approvedCertificatesBytes, &approvedCertificates)

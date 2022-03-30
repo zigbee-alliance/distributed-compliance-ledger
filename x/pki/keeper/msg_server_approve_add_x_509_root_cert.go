@@ -53,6 +53,7 @@ func (k msgServer) ApproveAddX509RootCert(goCtx context.Context, msg *types.MsgA
 		rootCertificate := types.NewRootCertificate(
 			proposedCertificate.PemCert,
 			proposedCertificate.Subject,
+			proposedCertificate.SubjectAsText,
 			proposedCertificate.SubjectKeyId,
 			proposedCertificate.SerialNumber,
 			proposedCertificate.Owner,
