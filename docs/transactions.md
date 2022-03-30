@@ -837,7 +837,7 @@ Revoked certificates are not returned.
   - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
 - CLI command:
-  - `dcld query pki all-child-x509-certs ((--subject=<string(Base64)> --subject-key-id=<hex string>`
+  - `dcld query pki all-child-x509-certs (--subject=<string(Base64)> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/child-certificates/{subject}/{subject_key_id}`
 
