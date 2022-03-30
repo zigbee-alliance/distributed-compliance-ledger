@@ -685,7 +685,7 @@ Approves the proposed root certificate.
 The certificate is not active until sufficient number of Trustees approve it.
 
 - Parameters:
-  - subject: `string`  - proposed certificates's `Subject`
+  - subject: `string(Base64)`  - proposed certificates's `Subject`
   - subject_key_id: `string`  - proposed certificates's `Subject Key Id`
   - info: `optional(string)` - information/notes for the approval
   - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -695,7 +695,7 @@ The certificate is not active until sufficient number of Trustees approve it.
 - Number of required approvals:
   - 2/3 of Trustees
 - CLI command:
-  - `dcld tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+  - `dcld tx pki approve-add-x509-root-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>`
 - Validation:
   - the proposed certificate hasn't been approved by the signer yet
 
@@ -740,7 +740,7 @@ Only the owner (sender) can revoke the certificate.
 Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` and `APPROVE_X509_ROOT_CERT_REVOC` instead.  
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
   - info: `optional(string)` - information/notes for the revocation
   - time: `optional(int64)` - revocation time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -748,7 +748,7 @@ Root certificates can not be revoked this way, use  `PROPOSE_X509_CERT_REVOC` an
 - Who can send:
   - Any role; owner
 - CLI command:
-  - `dcld tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+  - `dcld tx pki revoke-x509-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>`
 
 #### PROPOSE_REVOKE_X509_ROOT_CERT
 
@@ -762,7 +762,7 @@ If more than 1 Trustee signature is required to revoke a root certificate,
 then the certificate will be in a pending state until sufficient number of other Trustee's approvals is received.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
   - info: `optional(string)` - information/notes for the revocation proposal
   - time: `optional(int64)` - revocation proposal time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -770,7 +770,7 @@ then the certificate will be in a pending state until sufficient number of other
 - Who can send:
   - Trustee
 - CLI command:
-  - `dcld tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+  - `dcld tx pki propose-revoke-x509-root-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>`
 
 #### APPROVE_REVOKE_X509_ROOT_CERT
 
@@ -782,7 +782,7 @@ All the certificates in the chain signed by the revoked certificate will be revo
 The revocation is not applied until sufficient number of Trustees approve it.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
   - info: `optional(string)` - information/notes for the revocation approval
   - time: `optional(int64)` - revocation approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
@@ -792,7 +792,7 @@ The revocation is not applied until sufficient number of Trustees approve it.
 - Number of required approvals:
   - 2/3 of Trustees
 - CLI command:
-  - `dcld tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>`
+  - `dcld tx pki approve-revoke-x509-root-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>`
 
 #### GET_X509_CERT
 
@@ -803,10 +803,10 @@ Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
 - CLI command:
-  - `dcld query pki x509-cert --subject=<string> --subject-key-id=<hex string>`
+  - `dcld query pki x509-cert --subject=<string(Base64)> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/certificates/{subject}/{subject_key_id}`
 
@@ -820,9 +820,9 @@ Revoked certificates are not returned.
 Use `GET_ALL_REVOKED_X509_CERTS` to get a list of all revoked certificates.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
 - CLI command:
-  - `dcld query pki all-subject-x509-certs --subject=<string>`
+  - `dcld query pki all-subject-x509-certs (--subject=<string(Base64)>`
 - REST API:
   - GET `/dcl/pki/certificates/{subject}`
 
@@ -834,10 +834,10 @@ Gets all child certificates for the given certificate.
 Revoked certificates are not returned.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
 - CLI command:
-  - `dcld query pki all-child-x509-certs --subject=<string> --subject-key-id=<hex string>`
+  - `dcld query pki all-child-x509-certs ((--subject=<string(Base64)> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/child-certificates/{subject}/{subject_key_id}`
 
@@ -848,10 +848,10 @@ Revoked certificates are not returned.
 Gets a proposed but not approved root certificate with the given subject and subject key ID attributes.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
 - CLI command:
-  - `dcld query pki proposed-x509-root-cert --subject=<string> --subject-key-id=<hex string>`
+  - `dcld query pki proposed-x509-root-cert --subject=<string(Base64)> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/proposed-certificates/{subject}/{subject_key_id}`
 
@@ -862,10 +862,10 @@ Gets a proposed but not approved root certificate with the given subject and sub
 Gets a revoked certificate (either root, intermediate or leaf) by the given subject and subject key ID attributes.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
 - CLI command:
-  - `dcld query pki revoked-x509-cert --subject=<string> --subject-key-id=<hex string>`
+  - `dcld query pki revoked-x509-cert --subject=<string(Base64)> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/revoked-certificates/{subject}/{subject_key_id}`
 
@@ -876,10 +876,10 @@ Gets a revoked certificate (either root, intermediate or leaf) by the given subj
 Gets a proposed but not approved root certificate to be revoked.
 
 - Parameters:
-  - subject: `string`  - certificates's `Subject`
+  - subject: `string(Base64)`  - certificates's `Subject`
   - subject_key_id: `string`  - certificates's `Subject Key Id`
 - CLI command:
-  - `dcld query pki proposed-x509-root-cert-to-revoke --subject=<string> --subject-key-id=<hex string>`
+  - `dcld query pki proposed-x509-root-cert-to-revoke --subject=<string(Base64)> --subject-key-id=<hex string>`
 - REST API:
   - GET `/dcl/pki/proposed-revocation-certificates/{subject}/{subject_key_id}`
 
