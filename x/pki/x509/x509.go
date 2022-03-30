@@ -70,16 +70,11 @@ func PatchCertificate(certificate Certificate) Certificate {
 	newVIDKey := "vid"
 	newPIDKey := "pid"
 
-	subject := certificate.Subject
-	subject = FormatOID(subject, oldVIDKey, newVIDKey)
-	subject = FormatOID(subject, oldPIDKey, newPIDKey)
+	subjectAsText := subject
+	subjectAsText = FormatOID(subjectAsText, oldVIDKey, newVIDKey)
+	subjectAsText = FormatOID(subjectAsText, oldPIDKey, newPIDKey)
 
-	certificate.SubjectAsText = subject
-
-	certificate.Issuer = StringtoBase64(certificate.Issuer)
-	certificate.Subject = StringtoBase64(certificate.Subject)
-
-	return certificate
+	return subjectAsText
 }
 
 func FormatOID(header, oldKey, newKey string) string {
