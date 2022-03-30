@@ -6565,6 +6565,10 @@ paths:
                                   format: int64
                                 info:
                                   type: string
+                          subjectAsText:
+                            type: string
+                    subjectAsText:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -6775,6 +6779,10 @@ paths:
                                 format: int64
                               info:
                                 type: string
+                        subjectAsText:
+                          type: string
+                  subjectAsText:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -6904,6 +6912,8 @@ paths:
                             format: int64
                           info:
                             type: string
+                    subjectAsText:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -7047,6 +7057,8 @@ paths:
                           format: int64
                         info:
                           type: string
+                  subjectAsText:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -7111,6 +7123,8 @@ paths:
                             format: int64
                           info:
                             type: string
+                    subjectAsText:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -7248,6 +7262,8 @@ paths:
                           format: int64
                         info:
                           type: string
+                  subjectAsText:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -7337,6 +7353,10 @@ paths:
                                   format: int64
                                 info:
                                   type: string
+                          subjectAsText:
+                            type: string
+                    subjectAsText:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -7499,6 +7519,10 @@ paths:
                                 format: int64
                               info:
                                 type: string
+                        subjectAsText:
+                          type: string
+                  subjectAsText:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -13888,6 +13912,10 @@ definitions:
                     format: int64
                   info:
                     type: string
+            subjectAsText:
+              type: string
+      subjectAsText:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificatesBySubject:
     type: object
     properties:
@@ -13944,6 +13972,8 @@ definitions:
               format: int64
             info:
               type: string
+      subjectAsText:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.CertificateIdentifier:
     type: object
     properties:
@@ -14002,6 +14032,8 @@ definitions:
               format: int64
             info:
               type: string
+      subjectAsText:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.ProposedCertificateRevocation:
     type: object
     properties:
@@ -14021,6 +14053,8 @@ definitions:
               format: int64
             info:
               type: string
+      subjectAsText:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryAllApprovedCertificatesResponse:
     type: object
     properties:
@@ -14070,6 +14104,10 @@ definitions:
                           format: int64
                         info:
                           type: string
+                  subjectAsText:
+                    type: string
+            subjectAsText:
+              type: string
       pagination:
         type: object
         properties:
@@ -14125,6 +14163,8 @@ definitions:
                     format: int64
                   info:
                     type: string
+            subjectAsText:
+              type: string
       pagination:
         type: object
         properties:
@@ -14174,6 +14214,8 @@ definitions:
                     format: int64
                   info:
                     type: string
+            subjectAsText:
+              type: string
       pagination:
         type: object
         properties:
@@ -14248,6 +14290,10 @@ definitions:
                           format: int64
                         info:
                           type: string
+                  subjectAsText:
+                    type: string
+            subjectAsText:
+              type: string
       pagination:
         type: object
         properties:
@@ -14332,6 +14378,10 @@ definitions:
                         format: int64
                       info:
                         type: string
+                subjectAsText:
+                  type: string
+          subjectAsText:
+            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
@@ -14394,6 +14444,8 @@ definitions:
                   format: int64
                 info:
                   type: string
+          subjectAsText:
+            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetProposedCertificateRevocationResponse:
     type: object
     properties:
@@ -14416,6 +14468,8 @@ definitions:
                   format: int64
                 info:
                   type: string
+          subjectAsText:
+            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedCertificatesResponse:
     type: object
     properties:
@@ -14463,6 +14517,10 @@ definitions:
                         format: int64
                       info:
                         type: string
+                subjectAsText:
+                  type: string
+          subjectAsText:
+            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
@@ -14522,6 +14580,10 @@ definitions:
                     format: int64
                   info:
                     type: string
+            subjectAsText:
+              type: string
+      subjectAsText:
+        type: string
   zigbeealliance.distributedcomplianceledger.pki.RevokedRootCertificates:
     type: object
     properties:
