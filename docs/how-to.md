@@ -161,19 +161,19 @@ Example: `dcld tx pki propose-add-x509-root-cert --certificate="----BEGIN CERTIF
 ### 6. Approve proposed X509 root certificate
 
 ```bash
-dcld tx pki approve-add-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>
+dcld tx pki approve-add-x509-root-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>
 ```
 
 ### 7. Propose revocation of an X509 root certificate
 
 ```bash
-dcld tx pki propose-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>
+dcld tx pki propose-revoke-x509-root-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>
 ```
   
 ### 8. Approve revocation of an X509 root certificate  
 
 ```bash
-dcld tx pki approve-revoke-x509-root-cert --subject=<string> --subject-key-id=<hex string> --from=<account>
+dcld tx pki approve-revoke-x509-root-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>
 ```
 
 ### 9. Propose a pool upgrade
@@ -218,7 +218,7 @@ The certificate must be signed by a chain of certificates which must be already 
 ### 3. Revoke an intermediate or leaf X509 certificate
 
 ```bash
-dcld tx pki revoke-x509-cert --subject=<string> --subject-key-id=<hex string> --from=<account>
+dcld tx pki revoke-x509-cert --subject=<string(Base64)> --subject-key-id=<hex string> --from=<account>
 ```
 
 Can be done by the certificate's issuer only.
