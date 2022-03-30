@@ -70,17 +70,13 @@ func PatchCertificate(certificate Certificate) Certificate {
 	newVIDKey := "vid"
 	newPIDKey := "pid"
 
-	issuer := certificate.Issuer
-	issuer = FormatOID(issuer, oldVIDKey, newVIDKey)
-	issuer = FormatOID(issuer, oldPIDKey, newPIDKey)
-
 	subject := certificate.Subject
 	subject = FormatOID(subject, oldVIDKey, newVIDKey)
 	subject = FormatOID(subject, oldPIDKey, newPIDKey)
 
-	certificate.Issuer = issuer
 	certificate.SubjectAsText = subject
 
+	certificate.Issuer = StringtoBase64(certificate.Issuer)
 	certificate.Subject = StringtoBase64(certificate.Subject)
 
 	return certificate
@@ -138,7 +134,7 @@ func (c Certificate) Verify(parent *Certificate) error {
 
 func (c Certificate) IsSelfSigned() bool {
 	if len(c.AuthorityKeyID) > 0 {
-		return c.Issuer == c.SubjectAsText && c.AuthorityKeyID == c.SubjectKeyID
+		return c.Issuer == c.Subject && c.AuthorityKeyID == c.SubjectKeyID
 	}
 
 	return c.Issuer == c.Subject
