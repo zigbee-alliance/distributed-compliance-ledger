@@ -501,6 +501,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, proposedCertificates[0].SubjectAsText)
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)
@@ -526,6 +527,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(proposedCertificates))
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, proposedCertificates[0].SubjectAsText)
 
 	// Request all approved certificates
 	certificates, _ = GetAllX509Certs(suite)
@@ -555,6 +557,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(certificates))
 	require.Equal(suite.T, testconstants.RootSubject, certificates[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, certificates[0].SubjectAsText)
 
 	// Request all approved Root certificates
 	rootCertificates, _ = GetAllRootX509Certs(suite)
@@ -566,6 +569,7 @@ func Demo(suite *utils.TestSuite) {
 	certificate, _ := GetX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, certificate.SubjectAsText)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.RootCertPem, certificate.Certs[0].PemCert)
 	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
@@ -588,8 +592,10 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 2, len(certificates))
 	require.Equal(suite.T, testconstants.IntermediateSubject, certificates[0].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, certificates[0].SubjectAsText)
 	require.Equal(suite.T, testconstants.RootSubject, certificates[1].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, certificates[1].SubjectAsText)
 
 	// Request all approved Root certificates
 	rootCertificates, _ = GetAllRootX509Certs(suite)
@@ -601,6 +607,7 @@ func Demo(suite *utils.TestSuite) {
 	certificate, _ = GetX509Cert(suite, testconstants.IntermediateSubject, testconstants.IntermediateSubjectKeyID)
 	require.Equal(suite.T, testconstants.IntermediateSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, certificate.SubjectAsText)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.IntermediateCertPem, certificate.Certs[0].PemCert)
 	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
@@ -623,10 +630,13 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 3, len(certificates))
 	require.Equal(suite.T, testconstants.IntermediateSubject, certificates[0].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, certificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, certificates[0].SubjectAsText)
 	require.Equal(suite.T, testconstants.LeafSubject, certificates[1].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubjectAsText, certificates[1].SubjectAsText)
 	require.Equal(suite.T, testconstants.RootSubject, certificates[2].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, certificates[2].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, certificates[2].SubjectAsText)
 
 	// Request all approved Root certificates
 	rootCertificates, _ = GetAllRootX509Certs(suite)
@@ -638,6 +648,7 @@ func Demo(suite *utils.TestSuite) {
 	certificate, _ = GetX509Cert(suite, testconstants.LeafSubject, testconstants.LeafSubjectKeyID)
 	require.Equal(suite.T, testconstants.LeafSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubjectAsText, certificate.SubjectAsText)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.LeafCertPem, certificate.Certs[0].PemCert)
 	require.Equal(suite.T, aliceAccount.Address, certificate.Certs[0].Owner)
@@ -677,7 +688,6 @@ func Demo(suite *utils.TestSuite) {
 	childCertificates, _ := GetAllChildX509Certs(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, childCertificates.Issuer)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, childCertificates.AuthorityKeyId)
-	require.Equal(suite.T, 1, len(childCertificates.CertIds))
 	require.Equal(suite.T, testconstants.IntermediateSubject, childCertificates.CertIds[0].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, childCertificates.CertIds[0].SubjectKeyId)
 
@@ -709,8 +719,10 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 2, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, revokedCertificates[0].SubjectAsText)
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubjectAsText, revokedCertificates[1].SubjectAsText)
 
 	// Request all revoked Root certificates
 	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
@@ -721,6 +733,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, revokedCertificate.SubjectAsText)
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.IntermediateCertPem, revokedCertificate.Certs[0].PemCert)
@@ -732,6 +745,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubjectAsText, revokedCertificate.SubjectAsText)
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.LeafCertPem, revokedCertificate.Certs[0].PemCert)
@@ -775,6 +789,7 @@ func Demo(suite *utils.TestSuite) {
 	proposedCertificateRevocation, _ := GetProposedRevocationX509Cert(suite, testconstants.RootSubject, testconstants.RootSubjectKeyID)
 	require.Equal(suite.T, testconstants.RootSubject, proposedCertificateRevocation.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, proposedCertificateRevocation.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, proposedCertificateRevocation.SubjectAsText)
 	require.True(suite.T, proposedCertificateRevocation.HasRevocationFrom(jackAccount.Address))
 
 	// Request all approved certificates
@@ -817,6 +832,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, revokedCertificate.SubjectAsText)
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.RootCertPem, revokedCertificate.Certs[0].PemCert)
@@ -951,6 +967,7 @@ func Demo(suite *utils.TestSuite) {
 	certificate, _ = GetX509Cert(suite, testconstants.GoogleSubject, testconstants.GoogleSubjectKeyID)
 	require.Equal(suite.T, testconstants.GoogleSubject, certificate.Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubjectAsText, certificate.SubjectAsText)
 	require.Equal(suite.T, 1, len(certificate.Certs))
 	require.Equal(suite.T, testconstants.GoogleCertPem, certificate.Certs[0].PemCert)
 	require.Equal(suite.T, vendorAccount.Address, certificate.Certs[0].Owner)
@@ -971,16 +988,20 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(proposedRevocationCertificates))
 	require.Equal(suite.T, testconstants.GoogleSubject, proposedRevocationCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedRevocationCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubjectAsText, proposedRevocationCertificates[0].SubjectAsText)
 
 	// Request all revoked certificates
 	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
 	require.Equal(suite.T, 3, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, revokedCertificates[0].SubjectAsText)
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[1].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubjectAsText, revokedCertificates[1].SubjectAsText)
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[2].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[2].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, revokedCertificates[2].SubjectAsText)
 
 	// Request all revoked Root certificates
 	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
@@ -999,6 +1020,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(certificates))
 	require.Equal(suite.T, testconstants.GoogleSubject, certificates[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, certificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubjectAsText, certificates[0].SubjectAsText)
 
 	// Alice (Trustee) approves to revoke Google Root certificate
 	msgApproveRevokeX509RootCert = pkitypes.MsgApproveRevokeX509RootCert{
@@ -1019,12 +1041,16 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 4, len(revokedCertificates))
 	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificates[0].SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubjectAsText, revokedCertificates[0].SubjectAsText)
 	require.Equal(suite.T, testconstants.IntermediateSubject, revokedCertificates[1].Subject)
 	require.Equal(suite.T, testconstants.IntermediateSubjectKeyID, revokedCertificates[1].SubjectKeyId)
+	require.Equal(suite.T, testconstants.IntermediateSubjectAsText, revokedCertificates[1].SubjectAsText)
 	require.Equal(suite.T, testconstants.LeafSubject, revokedCertificates[2].Subject)
 	require.Equal(suite.T, testconstants.LeafSubjectKeyID, revokedCertificates[2].SubjectKeyId)
+	require.Equal(suite.T, testconstants.LeafSubjectAsText, revokedCertificates[2].SubjectAsText)
 	require.Equal(suite.T, testconstants.RootSubject, revokedCertificates[3].Subject)
 	require.Equal(suite.T, testconstants.RootSubjectKeyID, revokedCertificates[3].SubjectKeyId)
+	require.Equal(suite.T, testconstants.RootSubjectAsText, revokedCertificates[3].SubjectAsText)
 
 	// Request all revoked Root certificates
 	revokedRootCertificates, _ = GetAllRevokedRootX509Certs(suite)
@@ -1039,6 +1065,7 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(revokedCertificate.Certs))
 	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.SubjectKeyId)
+	require.Equal(suite.T, testconstants.GoogleSubjectAsText, revokedCertificate.SubjectAsText)
 	require.Equal(suite.T, testconstants.GoogleSubject, revokedCertificate.Certs[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, revokedCertificate.Certs[0].SubjectKeyId)
 	require.Equal(suite.T, testconstants.GoogleCertPem, revokedCertificate.Certs[0].PemCert)
