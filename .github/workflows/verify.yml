@@ -140,7 +140,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v3.0.0
+          version: v1.45.2
           args: --timeout 5m0s
   check:
     if: always()
