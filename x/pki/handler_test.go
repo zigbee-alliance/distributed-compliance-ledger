@@ -38,6 +38,7 @@ func (m *DclauthKeeperMock) HasRole(
 
 func (m *DclauthKeeperMock) CountAccountsWithRole(ctx sdk.Context, roleToCount dclauthtypes.AccountRole) int {
 	args := m.Called(ctx, roleToCount)
+
 	return args.Int(0)
 }
 

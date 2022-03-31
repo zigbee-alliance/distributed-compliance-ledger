@@ -59,5 +59,6 @@ func (cert Certificate) HasApprovalFrom(address string) bool {
 			return true
 		}
 	}
+
 	return false
 }
