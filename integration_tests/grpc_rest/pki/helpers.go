@@ -987,7 +987,6 @@ func Demo(suite *utils.TestSuite) {
 	require.Equal(suite.T, 1, len(proposedRevocationCertificates))
 	require.Equal(suite.T, testconstants.GoogleSubject, proposedRevocationCertificates[0].Subject)
 	require.Equal(suite.T, testconstants.GoogleSubjectKeyID, proposedRevocationCertificates[0].SubjectKeyId)
-	require.Equal(suite.T, testconstants.GoogleSubjectAsText, proposedRevocationCertificates[0].SubjectAsText)
 
 	// Request all revoked certificates
 	revokedCertificates, _ = GetAllRevokedX509Certs(suite)
