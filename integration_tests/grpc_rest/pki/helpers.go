@@ -515,10 +515,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Jack (Trustee) approve Root certificate
 	msgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
-		Subject:       proposedCertificate.Subject,
-		SubjectKeyId:  proposedCertificate.SubjectKeyId,
-		Signer:        jackAccount.Address,
-		SubjectAsText: proposedCertificate.SubjectAsText,
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       jackAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
@@ -542,10 +541,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Alice (Trustee) approve Root certificate
 	secondMsgApproveAddX509RootCert := pkitypes.MsgApproveAddX509RootCert{
-		Subject:       proposedCertificate.Subject,
-		SubjectKeyId:  proposedCertificate.SubjectKeyId,
-		Signer:        aliceAccount.Address,
-		SubjectAsText: proposedCertificate.SubjectAsText,
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509RootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
@@ -705,10 +703,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// User (Not Trustee) revokes Intermediate certificate. This must also revoke its child - Leaf certificate.
 	msgRevokeX509Cert := pkitypes.MsgRevokeX509Cert{
-		Subject:       testconstants.IntermediateSubject,
-		SubjectKeyId:  testconstants.IntermediateSubjectKeyID,
-		Signer:        vendorAccount.Address,
-		SubjectAsText: testconstants.IntermediateSubjectAsText,
+		Subject:      testconstants.IntermediateSubject,
+		SubjectKeyId: testconstants.IntermediateSubjectKeyID,
+		Signer:       vendorAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgRevokeX509Cert}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -763,10 +760,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Jack (Trustee) proposes to revoke Root certificate
 	msgProposeRevokeX509RootCert := pkitypes.MsgProposeRevokeX509RootCert{
-		Subject:       testconstants.RootSubject,
-		SubjectKeyId:  testconstants.RootSubjectKeyID,
-		Signer:        jackAccount.Address,
-		SubjectAsText: testconstants.RootSubjectAsText,
+		Subject:      testconstants.RootSubject,
+		SubjectKeyId: testconstants.RootSubjectKeyID,
+		Signer:       jackAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err)
@@ -804,10 +800,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Alice (Trustee) approves to revoke Root certificate
 	msgApproveRevokeX509RootCert := pkitypes.MsgApproveRevokeX509RootCert{
-		Subject:       proposedCertificate.Subject,
-		SubjectKeyId:  proposedCertificate.SubjectKeyId,
-		Signer:        aliceAccount.Address,
-		SubjectAsText: proposedCertificate.SubjectAsText,
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveRevokeX509RootCert}, aliceName, aliceAccount)
 	require.NoError(suite.T, err)
@@ -919,10 +914,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Jack (Trustee) approve Root certificate
 	msgApproveAddX509RootCert = pkitypes.MsgApproveAddX509RootCert{
-		Subject:       proposedCertificate.Subject,
-		SubjectKeyId:  proposedCertificate.SubjectKeyId,
-		Signer:        jackAccount.Address,
-		SubjectAsText: proposedCertificate.SubjectAsText,
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       jackAccount.Address,
 	}
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveAddX509RootCert}, jackName, jackAccount)
 	require.NoError(suite.T, err) //
@@ -945,10 +939,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Alice (Trustee) approve Google Root certificate
 	secondMsgApproveAddX509GoogleRootCert := pkitypes.MsgApproveAddX509RootCert{
-		Subject:       proposedCertificate.Subject,
-		SubjectKeyId:  proposedCertificate.SubjectKeyId,
-		Signer:        aliceAccount.Address,
-		SubjectAsText: proposedCertificate.SubjectAsText,
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
 	}
 
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&secondMsgApproveAddX509GoogleRootCert}, aliceName, aliceAccount)
@@ -982,10 +975,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Jack (Trustee) proposes to revoke Google Root certificate
 	msgProposeRevokeX509RootCert = pkitypes.MsgProposeRevokeX509RootCert{
-		Subject:       testconstants.GoogleSubject,
-		SubjectKeyId:  testconstants.GoogleSubjectKeyID,
-		Signer:        jackAccount.Address,
-		SubjectAsText: testconstants.GoogleSubjectAsText,
+		Subject:      testconstants.GoogleSubject,
+		SubjectKeyId: testconstants.GoogleSubjectKeyID,
+		Signer:       jackAccount.Address,
 	}
 
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgProposeRevokeX509RootCert}, jackName, jackAccount)
@@ -1032,10 +1024,9 @@ func Demo(suite *utils.TestSuite) {
 
 	// Alice (Trustee) approves to revoke Google Root certificate
 	msgApproveRevokeX509RootCert = pkitypes.MsgApproveRevokeX509RootCert{
-		Subject:       proposedCertificate.Subject,
-		SubjectKeyId:  proposedCertificate.SubjectKeyId,
-		Signer:        aliceAccount.Address,
-		SubjectAsText: proposedCertificate.SubjectAsText,
+		Subject:      proposedCertificate.Subject,
+		SubjectKeyId: proposedCertificate.SubjectKeyId,
+		Signer:       aliceAccount.Address,
 	}
 
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{&msgApproveRevokeX509RootCert}, aliceName, aliceAccount)
