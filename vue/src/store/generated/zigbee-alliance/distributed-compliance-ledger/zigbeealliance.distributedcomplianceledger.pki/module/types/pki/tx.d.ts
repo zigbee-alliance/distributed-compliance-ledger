@@ -14,7 +14,6 @@ export interface MsgApproveAddX509RootCert {
     subjectKeyId: string;
     info: string;
     time: number;
-    subjectAsText: string;
 }
 export interface MsgApproveAddX509RootCertResponse {
 }
@@ -32,7 +31,6 @@ export interface MsgProposeRevokeX509RootCert {
     subjectKeyId: string;
     info: string;
     time: number;
-    subjectAsText: string;
 }
 export interface MsgProposeRevokeX509RootCertResponse {
 }
@@ -42,7 +40,6 @@ export interface MsgApproveRevokeX509RootCert {
     subjectKeyId: string;
     info: string;
     time: number;
-    subjectAsText: string;
 }
 export interface MsgApproveRevokeX509RootCertResponse {
 }
@@ -52,7 +49,6 @@ export interface MsgRevokeX509Cert {
     subjectKeyId: string;
     info: string;
     time: number;
-    subjectAsText: string;
 }
 export interface MsgRevokeX509CertResponse {
 }

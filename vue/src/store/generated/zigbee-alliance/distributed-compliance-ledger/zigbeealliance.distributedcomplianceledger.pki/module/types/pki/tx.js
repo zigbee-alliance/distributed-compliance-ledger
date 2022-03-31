@@ -142,7 +142,7 @@ export const MsgProposeAddX509RootCertResponse = {
         return message;
     }
 };
-const baseMsgApproveAddX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, subjectAsText: '' };
+const baseMsgApproveAddX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgApproveAddX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -159,9 +159,6 @@ export const MsgApproveAddX509RootCert = {
         }
         if (message.time !== 0) {
             writer.uint32(40).int64(message.time);
-        }
-        if (message.subjectAsText !== '') {
-            writer.uint32(50).string(message.subjectAsText);
         }
         return writer;
     },
@@ -186,9 +183,6 @@ export const MsgApproveAddX509RootCert = {
                     break;
                 case 5:
                     message.time = longToNumber(reader.int64());
-                    break;
-                case 6:
-                    message.subjectAsText = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -229,12 +223,6 @@ export const MsgApproveAddX509RootCert = {
         else {
             message.time = 0;
         }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = String(object.subjectAsText);
-        }
-        else {
-            message.subjectAsText = '';
-        }
         return message;
     },
     toJSON(message) {
@@ -244,7 +232,6 @@ export const MsgApproveAddX509RootCert = {
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
         message.info !== undefined && (obj.info = message.info);
         message.time !== undefined && (obj.time = message.time);
-        message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText);
         return obj;
     },
     fromPartial(object) {
@@ -278,12 +265,6 @@ export const MsgApproveAddX509RootCert = {
         }
         else {
             message.time = 0;
-        }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = object.subjectAsText;
-        }
-        else {
-            message.subjectAsText = '';
         }
         return message;
     }
@@ -460,7 +441,7 @@ export const MsgAddX509CertResponse = {
         return message;
     }
 };
-const baseMsgProposeRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, subjectAsText: '' };
+const baseMsgProposeRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgProposeRevokeX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -477,9 +458,6 @@ export const MsgProposeRevokeX509RootCert = {
         }
         if (message.time !== 0) {
             writer.uint32(40).int64(message.time);
-        }
-        if (message.subjectAsText !== '') {
-            writer.uint32(50).string(message.subjectAsText);
         }
         return writer;
     },
@@ -504,9 +482,6 @@ export const MsgProposeRevokeX509RootCert = {
                     break;
                 case 5:
                     message.time = longToNumber(reader.int64());
-                    break;
-                case 6:
-                    message.subjectAsText = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -547,12 +522,6 @@ export const MsgProposeRevokeX509RootCert = {
         else {
             message.time = 0;
         }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = String(object.subjectAsText);
-        }
-        else {
-            message.subjectAsText = '';
-        }
         return message;
     },
     toJSON(message) {
@@ -562,7 +531,6 @@ export const MsgProposeRevokeX509RootCert = {
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
         message.info !== undefined && (obj.info = message.info);
         message.time !== undefined && (obj.time = message.time);
-        message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText);
         return obj;
     },
     fromPartial(object) {
@@ -596,12 +564,6 @@ export const MsgProposeRevokeX509RootCert = {
         }
         else {
             message.time = 0;
-        }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = object.subjectAsText;
-        }
-        else {
-            message.subjectAsText = '';
         }
         return message;
     }
@@ -638,7 +600,7 @@ export const MsgProposeRevokeX509RootCertResponse = {
         return message;
     }
 };
-const baseMsgApproveRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, subjectAsText: '' };
+const baseMsgApproveRevokeX509RootCert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgApproveRevokeX509RootCert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -655,9 +617,6 @@ export const MsgApproveRevokeX509RootCert = {
         }
         if (message.time !== 0) {
             writer.uint32(48).int64(message.time);
-        }
-        if (message.subjectAsText !== '') {
-            writer.uint32(58).string(message.subjectAsText);
         }
         return writer;
     },
@@ -682,9 +641,6 @@ export const MsgApproveRevokeX509RootCert = {
                     break;
                 case 6:
                     message.time = longToNumber(reader.int64());
-                    break;
-                case 7:
-                    message.subjectAsText = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -725,12 +681,6 @@ export const MsgApproveRevokeX509RootCert = {
         else {
             message.time = 0;
         }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = String(object.subjectAsText);
-        }
-        else {
-            message.subjectAsText = '';
-        }
         return message;
     },
     toJSON(message) {
@@ -740,7 +690,6 @@ export const MsgApproveRevokeX509RootCert = {
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
         message.info !== undefined && (obj.info = message.info);
         message.time !== undefined && (obj.time = message.time);
-        message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText);
         return obj;
     },
     fromPartial(object) {
@@ -774,12 +723,6 @@ export const MsgApproveRevokeX509RootCert = {
         }
         else {
             message.time = 0;
-        }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = object.subjectAsText;
-        }
-        else {
-            message.subjectAsText = '';
         }
         return message;
     }
@@ -816,7 +759,7 @@ export const MsgApproveRevokeX509RootCertResponse = {
         return message;
     }
 };
-const baseMsgRevokeX509Cert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0, subjectAsText: '' };
+const baseMsgRevokeX509Cert = { signer: '', subject: '', subjectKeyId: '', info: '', time: 0 };
 export const MsgRevokeX509Cert = {
     encode(message, writer = Writer.create()) {
         if (message.signer !== '') {
@@ -833,9 +776,6 @@ export const MsgRevokeX509Cert = {
         }
         if (message.time !== 0) {
             writer.uint32(40).int64(message.time);
-        }
-        if (message.subjectAsText !== '') {
-            writer.uint32(50).string(message.subjectAsText);
         }
         return writer;
     },
@@ -860,9 +800,6 @@ export const MsgRevokeX509Cert = {
                     break;
                 case 5:
                     message.time = longToNumber(reader.int64());
-                    break;
-                case 6:
-                    message.subjectAsText = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -903,12 +840,6 @@ export const MsgRevokeX509Cert = {
         else {
             message.time = 0;
         }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = String(object.subjectAsText);
-        }
-        else {
-            message.subjectAsText = '';
-        }
         return message;
     },
     toJSON(message) {
@@ -918,7 +849,6 @@ export const MsgRevokeX509Cert = {
         message.subjectKeyId !== undefined && (obj.subjectKeyId = message.subjectKeyId);
         message.info !== undefined && (obj.info = message.info);
         message.time !== undefined && (obj.time = message.time);
-        message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText);
         return obj;
     },
     fromPartial(object) {
@@ -952,12 +882,6 @@ export const MsgRevokeX509Cert = {
         }
         else {
             message.time = 0;
-        }
-        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-            message.subjectAsText = object.subjectAsText;
-        }
-        else {
-            message.subjectAsText = '';
         }
         return message;
     }
