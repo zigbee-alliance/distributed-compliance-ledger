@@ -35,7 +35,6 @@ message MsgApproveAddX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
-  string subjectAsText = 6 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
 }
 
 message MsgApproveAddX509RootCertResponse {
@@ -57,7 +56,6 @@ message MsgProposeRevokeX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
-  string subjectAsText = 6 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
 }
 
 message MsgProposeRevokeX509RootCertResponse {
@@ -69,7 +67,6 @@ message MsgApproveRevokeX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 6;
-  string subjectAsText = 7 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
 }
 
 message MsgApproveRevokeX509RootCertResponse {
@@ -81,7 +78,6 @@ message MsgRevokeX509Cert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 4 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 5;
-  string subjectAsText = 6 [(gogoproto.moretags) = "validate:\"required,max=1024\""];
 }
 
 message MsgRevokeX509CertResponse {
