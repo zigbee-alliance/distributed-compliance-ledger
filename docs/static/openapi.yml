@@ -6567,8 +6567,6 @@ paths:
                                   type: string
                           subjectAsText:
                             type: string
-                    subjectAsText:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -6781,8 +6779,6 @@ paths:
                                 type: string
                         subjectAsText:
                           type: string
-                  subjectAsText:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -7355,8 +7351,6 @@ paths:
                                   type: string
                           subjectAsText:
                             type: string
-                    subjectAsText:
-                      type: string
               pagination:
                 type: object
                 properties:
@@ -7521,8 +7515,6 @@ paths:
                                 type: string
                         subjectAsText:
                           type: string
-                  subjectAsText:
-                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -13914,8 +13906,6 @@ definitions:
                     type: string
             subjectAsText:
               type: string
-      subjectAsText:
-        type: string
   zigbeealliance.distributedcomplianceledger.pki.ApprovedCertificatesBySubject:
     type: object
     properties:
@@ -14106,8 +14096,6 @@ definitions:
                           type: string
                   subjectAsText:
                     type: string
-            subjectAsText:
-              type: string
       pagination:
         type: object
         properties:
@@ -14292,8 +14280,6 @@ definitions:
                           type: string
                   subjectAsText:
                     type: string
-            subjectAsText:
-              type: string
       pagination:
         type: object
         properties:
@@ -14380,8 +14366,6 @@ definitions:
                         type: string
                 subjectAsText:
                   type: string
-          subjectAsText:
-            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetApprovedRootCertificatesResponse:
     type: object
     properties:
@@ -14519,8 +14503,6 @@ definitions:
                         type: string
                 subjectAsText:
                   type: string
-          subjectAsText:
-            type: string
   zigbeealliance.distributedcomplianceledger.pki.QueryGetRevokedRootCertificatesResponse:
     type: object
     properties:
@@ -14582,8 +14564,6 @@ definitions:
                     type: string
             subjectAsText:
               type: string
-      subjectAsText:
-        type: string
   zigbeealliance.distributedcomplianceledger.pki.RevokedRootCertificates:
     type: object
     properties:
