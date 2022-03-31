@@ -8,4 +8,5 @@ import (
 type DclauthKeeper interface {
 	// Methods imported from dclauth should be defined here
 	HasRole(ctx sdk.Context, addr sdk.AccAddress, roleToCheck types.AccountRole) bool
+	CountAccountsWithRole(ctx sdk.Context, roleToCount types.AccountRole) int
 }
