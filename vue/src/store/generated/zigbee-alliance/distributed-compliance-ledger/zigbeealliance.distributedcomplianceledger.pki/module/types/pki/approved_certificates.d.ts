@@ -5,7 +5,6 @@ export interface ApprovedCertificates {
     subject: string;
     subjectKeyId: string;
     certs: Certificate[];
-    subjectAsText: string;
 }
 export declare const ApprovedCertificates: {
     encode(message: ApprovedCertificates, writer?: Writer): Writer;

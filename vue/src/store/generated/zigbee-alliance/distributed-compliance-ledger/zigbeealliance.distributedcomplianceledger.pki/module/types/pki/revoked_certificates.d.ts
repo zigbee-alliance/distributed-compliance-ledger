@@ -5,7 +5,6 @@ export interface RevokedCertificates {
     subject: string;
     subjectKeyId: string;
     certs: Certificate[];
-    subjectAsText: string;
 }
 export declare const RevokedCertificates: {
     encode(message: RevokedCertificates, writer?: Writer): Writer;

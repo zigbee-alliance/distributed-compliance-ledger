@@ -8,10 +8,9 @@ export interface RevokedCertificates {
   subject: string
   subjectKeyId: string
   certs: Certificate[]
-  subjectAsText: string
 }
 
-const baseRevokedCertificates: object = { subject: '', subjectKeyId: '', subjectAsText: '' }
+const baseRevokedCertificates: object = { subject: '', subjectKeyId: '' }
 
 export const RevokedCertificates = {
   encode(message: RevokedCertificates, writer: Writer = Writer.create()): Writer {
@@ -23,9 +22,6 @@ export const RevokedCertificates = {
     }
     for (const v of message.certs) {
       Certificate.encode(v!, writer.uint32(26).fork()).ldelim()
-    }
-    if (message.subjectAsText !== '') {
-      writer.uint32(34).string(message.subjectAsText)
     }
     return writer
   },
@@ -46,9 +42,6 @@ export const RevokedCertificates = {
           break
         case 3:
           message.certs.push(Certificate.decode(reader, reader.uint32()))
-          break
-        case 4:
-          message.subjectAsText = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -76,11 +69,6 @@ export const RevokedCertificates = {
         message.certs.push(Certificate.fromJSON(e))
       }
     }
-    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-      message.subjectAsText = String(object.subjectAsText)
-    } else {
-      message.subjectAsText = ''
-    }
     return message
   },
 
@@ -93,7 +81,6 @@ export const RevokedCertificates = {
     } else {
       obj.certs = []
     }
-    message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
     return obj
   },
 
@@ -114,11 +101,6 @@ export const RevokedCertificates = {
       for (const e of object.certs) {
         message.certs.push(Certificate.fromPartial(e))
       }
-    }
-    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
-      message.subjectAsText = object.subjectAsText
-    } else {
-      message.subjectAsText = ''
     }
     return message
   }

@@ -13,7 +13,6 @@ export interface PkiApprovedCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
-  subjectAsText?: string;
 }
 
 export interface PkiApprovedCertificatesBySubject {
@@ -184,7 +183,6 @@ export interface PkiRevokedCertificates {
   subject?: string;
   subjectKeyId?: string;
   certs?: PkiCertificate[];
-  subjectAsText?: string;
 }
 
 export interface PkiRevokedRootCertificates {
