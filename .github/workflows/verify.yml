@@ -135,7 +135,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@1.45.2
+        uses: golangci/golangci-lint-action@v2
         with:
           args: --timeout 5m0s
   check:
