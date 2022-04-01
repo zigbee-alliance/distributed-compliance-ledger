@@ -46,3 +46,4 @@ linters:
     - gci
     - containedctx
     - maintidx
+    - staticcheck
