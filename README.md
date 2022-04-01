@@ -202,8 +202,12 @@ One can either deploy its own network of validator nodes or join one of the pers
 you can use the provided Ansible Playbook: [ansible/readme.md](deployment/ansible/README.md).
 - If you want to join an existing network (either a custom or persistent) as a validator node,
 please follow the [Running Node](docs/running-node.md) or a more detailed [Running a Validator Node](docs/advanced/running-validator-node.md) instructions.
-- If you want to join an existing network  as an observer node,
+  > **_NOTE:_** If you are joining a `long-running` network,
+  consider the following additional instructions [Running Node in existing network](docs/running-node-in-existing-network.md)
+- If you want to join an existing new network as an observer node,
 please follow the [Running Node](docs/running-node.md) or a more detailed [Running an Observer Node](docs/advanced/running-observer-node.md) instructions.
+  > **_NOTE:_** If you are joining a `long-running` network,
+  consider the following additional instructions [Running Node in existing network](docs/running-node-in-existing-network.md)
 - If you want to deploy your own persistent network,
 you will need to create a genesis node and a genesis file first as described in
 [Running Node](docs/running-node.md) or a more detailed [Running a Genesis Validator Node](docs/advanced/running-genesis-node.md).
@@ -233,10 +237,11 @@ See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upg
 - [Deployment Pattern](docs/deployment.png)
 - [Deployment Pattern Detailed](docs/deployment-detailed.png)
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
-- [Running a Node](docs/running-node.md)
-  - [Running a Genesis Validator Node](docs/advanced/running-genesis-node.md)
-  - [Running a Validator Node](docs/advanced/running-validator-node.md)
-  - [Running an Observer Node](docs/advanced/running-observer-node.md)
+- [Running Node in a new network](docs/running-node.md)
+  - [Running Genesis Validator Node](docs/advanced/running-genesis-node.md)
+  - [Running Validator Node](docs/advanced/running-validator-node.md)
+  - [Running Observer Node](docs/advanced/running-observer-node.md)
+- [Running Node in an existing network](docs/running-node-in-existing-network.md)
 - [Pool Upgrade](docs/pool-upgrade.md)
 - [Pool Upgrade How To Guide](docs/pool-upgrade-how-to.md)
 - [Tendermint](https://tendermint.com/)
