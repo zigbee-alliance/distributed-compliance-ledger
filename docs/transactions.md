@@ -685,7 +685,7 @@ Approves the proposed root certificate.
 The certificate is not active until sufficient number of Trustees approve it.
 
 - Parameters:
-  - subject: `string`  - proposed certificates's `Subject`in base64 format
+  - subject: `string`  - proposed certificates's `Subject` in base64 format
   - subject_key_id: `string`  - proposed certificates's `Subject Key Id` in hex string format
   - info: `optional(string)` - information/notes for the approval
   - time: `optional(int64)` - approval time (number of nanoseconds elapsed since January 1, 1970 UTC). CLI uses the current time for that field.
