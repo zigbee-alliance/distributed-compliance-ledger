@@ -519,3 +519,46 @@ func GetModelForInvalidVidPid(suite *utils.TestSuite) {
 	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
 	suite.AssertNotFound(err)
 }
+
+func AddModelInHexFormat(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// register new Vendor account
+	vendorName := utils.RandString()
+	var vid int32 = 0xA13
+	vendorAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+
+	// Add third model
+	createThirdModelMsg := NewMsgCreateModel(0xA13, 0xA11, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createThirdModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check third model is added
+	receivedModel, err := GetModel(suite, 0xA13, 0xA11)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, createThirdModelMsg.Vid, receivedModel.Vid)
+	require.Equal(suite.T, createThirdModelMsg.Pid, receivedModel.Pid)
+	require.Equal(suite.T, createThirdModelMsg.ProductName, receivedModel.ProductName)
+	require.Equal(suite.T, createThirdModelMsg.ProductLabel, receivedModel.ProductLabel)
+}
