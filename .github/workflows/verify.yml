@@ -138,6 +138,7 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           args: --timeout 5m0s
+          annotations: false
   check:
     if: always()
     needs:
