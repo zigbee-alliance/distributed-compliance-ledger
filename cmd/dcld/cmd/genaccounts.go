@@ -43,6 +43,7 @@ the address will be looked up in the local Keybase.
 		Args: cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
+
 			//nolint:staticcheck
 			depCdc := clientCtx.JSONCodec
 			cdc := depCdc.(codec.Codec)
