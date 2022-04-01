@@ -32,6 +32,7 @@ const (
 )
 
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
+//nolint:staticcheck
 func AddGenesisAccountCmd(defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-genesis-account ",
@@ -44,7 +45,6 @@ the address will be looked up in the local Keybase.
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			//nolint:staticcheck
 			depCdc := clientCtx.JSONCodec
 			cdc := depCdc.(codec.Codec)
 
