@@ -54,8 +54,10 @@ func Setup(t *testing.T) TestSetup {
 	)
 	dclauthK.SetAccount(ctx, account)
 
+	valAddress, _ := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+
 	validator1, _ := types.NewValidator(
-		sdk.ValAddress(testconstants.ValidatorAddress1),
+		valAddress,
 		testconstants.ValidatorPubKey1,
 		types.Description{Moniker: "Validator 1"},
 	)
@@ -209,8 +211,11 @@ func TestHandler_ProposedDisableValidatorExists(t *testing.T) {
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
 	// propose new disablevalidator
-	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
 	require.NoError(t, err)
 
 	msgProposeDisableValidator.Creator = account2.GetAddress().String()
