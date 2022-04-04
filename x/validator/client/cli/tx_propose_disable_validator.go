@@ -34,11 +34,7 @@ func CmdProposeDisableValidator() *cobra.Command {
 
 			addr, err := sdk.ValAddressFromBech32(address)
 			if err != nil {
-				owner, err2 := sdk.AccAddressFromBech32(address)
-				if err2 != nil {
-					return err2
-				}
-				addr = sdk.ValAddress(owner)
+				return err
 			}
 
 			msg := types.NewMsgProposeDisableValidator(
