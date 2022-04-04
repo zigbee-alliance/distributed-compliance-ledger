@@ -16,7 +16,7 @@ var _ = strconv.Itoa(0)
 
 func CmdEnableValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "enable-validator",
+		Use:   "enable-validator [flags]",
 		Short: "Enables the Validator node by a NodeAdmin.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

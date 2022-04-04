@@ -20,7 +20,7 @@ var _ = strconv.Itoa(0)
 
 func CmdCreateValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-node",
+		Use:   "add-node [flags]",
 		Short: "create new validator",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
