@@ -32,9 +32,10 @@ func CmdDisableValidator() *cobra.Command {
 
 			// validate basic will be called in GenerateOrBroadcastTxCLI
 			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
-			if cli.IsWriteInsteadReadRpcError(err) {
+			if cli.IsWriteInsteadReadRPCError(err) {
 				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
+
 			return err
 		},
 	}
