@@ -24,9 +24,3 @@ starport scaffold --module validator map ProposedDisableValidator approvals:arra
 
 #change approvals from repeated string to repeated Grant after scaffolding
 starport scaffold --module validator map DisabledValidator approvals:array.string disabledByNodeAdmin:bool --index address:string --no-message
-
-#change time int32 to int64 after scaffolding
-starport scaffold --module validator message DisableValidator address:string info:string time:int
-
-#change time int32 to int64 after scaffolding
-starport scaffold --module validator message EnableValidator address:string info:string time:int
