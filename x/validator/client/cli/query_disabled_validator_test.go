@@ -21,7 +21,7 @@ import (
 // Prevent strconv unused error.
 var _ = strconv.IntSize
 
-func networkWithDisabledValidatorObjects(t *testing.T, n int) (*network.Network, []types.DisabledValidator) {
+func networkWithDisabledValidatorObjects(t *testing.T) (*network.Network, []types.DisabledValidator) {
 	t.Helper()
 	cfg := network.DefaultConfig()
 	state := types.GenesisState{}
@@ -35,11 +35,12 @@ func networkWithDisabledValidatorObjects(t *testing.T, n int) (*network.Network,
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
+
 	return network.New(t, cfg), state.DisabledValidatorList
 }
 
 func TestShowDisabledValidator(t *testing.T) {
-	net, objs := networkWithDisabledValidatorObjects(t, 2)
+	net, objs := networkWithDisabledValidatorObjects(t)
 
 	ctx := net.Validators[0].ClientCtx
 	common := []string{
@@ -90,7 +91,7 @@ func TestShowDisabledValidator(t *testing.T) {
 }
 
 func TestListDisabledValidator(t *testing.T) {
-	net, objs := networkWithDisabledValidatorObjects(t, 5)
+	net, objs := networkWithDisabledValidatorObjects(t)
 
 	ctx := net.Validators[0].ClientCtx
 	request := func(next []byte, offset, limit uint64, total bool) []string {
@@ -106,6 +107,7 @@ func TestListDisabledValidator(t *testing.T) {
 		if total {
 			args = append(args, fmt.Sprintf("--%s", flags.FlagCountTotal))
 		}
+
 		return args
 	}
 	t.Run("ByOffset", func(t *testing.T) {
