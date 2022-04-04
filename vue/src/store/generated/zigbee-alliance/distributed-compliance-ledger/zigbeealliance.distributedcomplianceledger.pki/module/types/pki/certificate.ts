@@ -16,6 +16,7 @@ export interface Certificate {
   subject: string
   subjectKeyId: string
   approvals: Grant[]
+  subjectAsText: string
 }
 
 const baseCertificate: object = {
@@ -28,7 +29,8 @@ const baseCertificate: object = {
   isRoot: false,
   owner: '',
   subject: '',
-  subjectKeyId: ''
+  subjectKeyId: '',
+  subjectAsText: ''
 }
 
 export const Certificate = {
@@ -65,6 +67,9 @@ export const Certificate = {
     }
     for (const v of message.approvals) {
       Grant.encode(v!, writer.uint32(90).fork()).ldelim()
+    }
+    if (message.subjectAsText !== '') {
+      writer.uint32(98).string(message.subjectAsText)
     }
     return writer
   },
@@ -109,6 +114,9 @@ export const Certificate = {
           break
         case 11:
           message.approvals.push(Grant.decode(reader, reader.uint32()))
+          break
+        case 12:
+          message.subjectAsText = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -176,6 +184,11 @@ export const Certificate = {
         message.approvals.push(Grant.fromJSON(e))
       }
     }
+    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+      message.subjectAsText = String(object.subjectAsText)
+    } else {
+      message.subjectAsText = ''
+    }
     return message
   },
 
@@ -196,6 +209,7 @@ export const Certificate = {
     } else {
       obj.approvals = []
     }
+    message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
     return obj
   },
 
@@ -256,6 +270,11 @@ export const Certificate = {
       for (const e of object.approvals) {
         message.approvals.push(Grant.fromPartial(e))
       }
+    }
+    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+      message.subjectAsText = object.subjectAsText
+    } else {
+      message.subjectAsText = ''
     }
     return message
   }

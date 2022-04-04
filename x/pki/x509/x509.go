@@ -16,6 +16,7 @@ package x509
 
 import (
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
 	"fmt"
@@ -28,6 +29,7 @@ type Certificate struct {
 	Issuer         string
 	SerialNumber   string
 	Subject        string
+	SubjectAsText  string
 	SubjectKeyID   string
 	AuthorityKeyID string
 	Certificate    *x509.Certificate
@@ -45,42 +47,34 @@ func DecodeX509Certificate(pemCertificate string) (*Certificate, error) {
 	}
 
 	certificate := Certificate{
-		Issuer:         cert.Issuer.String(),
+		Issuer:         ToBase64String(cert.Issuer.String()),
 		SerialNumber:   cert.SerialNumber.String(),
-		Subject:        cert.Subject.String(),
+		Subject:        ToBase64String(cert.Subject.String()),
+		SubjectAsText:  ToSubjectAsText(cert.Subject.String()),
 		SubjectKeyID:   BytesToHex(cert.SubjectKeyId),
 		AuthorityKeyID: BytesToHex(cert.AuthorityKeyId),
 		Certificate:    cert,
 	}
 
-	certificate = PatchCertificate(certificate)
-
 	return &certificate, nil
 }
 
-// This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
-// https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
-func PatchCertificate(certificate Certificate) Certificate {
+func ToSubjectAsText(subject string) string {
 	oldVIDKey := "1.3.6.1.4.1.37244.2.1"
 	oldPIDKey := "1.3.6.1.4.1.37244.2.2"
 
 	newVIDKey := "vid"
 	newPIDKey := "pid"
 
-	issuer := certificate.Issuer
-	issuer = FormatOID(issuer, oldVIDKey, newVIDKey)
-	issuer = FormatOID(issuer, oldPIDKey, newPIDKey)
+	subjectAsText := subject
+	subjectAsText = FormatOID(subjectAsText, oldVIDKey, newVIDKey)
+	subjectAsText = FormatOID(subjectAsText, oldPIDKey, newPIDKey)
 
-	subject := certificate.Subject
-	subject = FormatOID(subject, oldVIDKey, newVIDKey)
-	subject = FormatOID(subject, oldPIDKey, newPIDKey)
-
-	certificate.Issuer = issuer
-	certificate.Subject = subject
-
-	return certificate
+	return subjectAsText
 }
 
+// This function is needed to patch the Issuer/Subject(vid/pid) field of certificate to hex format.
+// https://github.com/zigbee-alliance/distributed-compliance-ledger/issues/270
 func FormatOID(header, oldKey, newKey string) string {
 	subjectValues := strings.Split(header, ",")
 
@@ -101,6 +95,10 @@ func FormatOID(header, oldKey, newKey string) string {
 	return strings.Join(subjectValues, ",")
 }
 
+func ToBase64String(subject string) string {
+	return base64.StdEncoding.EncodeToString([]byte(subject))
+}
+
 func BytesToHex(bytes []byte) string {
 	if bytes == nil {
 		return ""
@@ -108,7 +106,7 @@ func BytesToHex(bytes []byte) string {
 
 	bytesHex := make([]string, len(bytes))
 	for i, b := range bytes {
-		bytesHex[i] = fmt.Sprintf("%X", b)
+		bytesHex[i] = fmt.Sprintf("%02X", b)
 	}
 
 	return strings.Join(bytesHex, ":")

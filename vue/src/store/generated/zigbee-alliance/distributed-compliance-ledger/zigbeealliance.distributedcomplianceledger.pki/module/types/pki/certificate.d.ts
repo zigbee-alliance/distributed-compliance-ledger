@@ -13,6 +13,7 @@ export interface Certificate {
     subject: string;
     subjectKeyId: string;
     approvals: Grant[];
+    subjectAsText: string;
 }
 export declare const Certificate: {
     encode(message: Certificate, writer?: Writer): Writer;

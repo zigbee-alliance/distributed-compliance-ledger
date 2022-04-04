@@ -134,8 +134,11 @@ jobs:
       - changes
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ^1.16
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           args: --timeout 5m0s
   check:

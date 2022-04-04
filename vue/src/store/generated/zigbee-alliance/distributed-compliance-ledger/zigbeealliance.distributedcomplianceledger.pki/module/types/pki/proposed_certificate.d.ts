@@ -8,6 +8,7 @@ export interface ProposedCertificate {
     serialNumber: string;
     owner: string;
     approvals: Grant[];
+    subjectAsText: string;
 }
 export declare const ProposedCertificate: {
     encode(message: ProposedCertificate, writer?: Writer): Writer;

@@ -28,6 +28,7 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Nil(t, err)
 	require.False(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.IntermediateSubject, certificate.Issuer)
+	require.Equal(t, testconstants.LeafSubjectAsText, certificate.SubjectAsText)
 	require.Equal(t, testconstants.IntermediateSubjectKeyID, certificate.AuthorityKeyID)
 	require.Equal(t, testconstants.LeafSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.LeafSubject, certificate.Subject)
@@ -38,6 +39,7 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Nil(t, err)
 	require.False(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.RootSubject, certificate.Issuer)
+	require.Equal(t, testconstants.IntermediateSubjectAsText, certificate.SubjectAsText)
 	require.Equal(t, testconstants.RootSubjectKeyID, certificate.AuthorityKeyID)
 	require.Equal(t, testconstants.IntermediateSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.IntermediateSubject, certificate.Subject)
@@ -48,6 +50,7 @@ func Test_DecodeCertificates(t *testing.T) {
 	require.Nil(t, err)
 	require.True(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.RootSubject, certificate.Issuer)
+	require.Equal(t, testconstants.RootSubjectAsText, certificate.SubjectAsText)
 	require.Equal(t, testconstants.RootSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.RootSubject, certificate.Subject)
 	require.Equal(t, testconstants.RootSubjectKeyID, certificate.SubjectKeyID)
@@ -59,6 +62,7 @@ func Test_DecodeCertificatesWithVID(t *testing.T) {
 	require.Nil(t, err)
 	require.True(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.GoogleSubject, certificate.Issuer)
+	require.Equal(t, testconstants.GoogleSubjectAsText, certificate.SubjectAsText)
 	require.Equal(t, testconstants.GoogleSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.GoogleSubject, certificate.Subject)
 	require.Equal(t, testconstants.GoogleSubjectKeyID, certificate.SubjectKeyID)
@@ -68,6 +72,7 @@ func Test_DecodeCertificatesWithVID(t *testing.T) {
 	require.Nil(t, err)
 	require.True(t, certificate.IsSelfSigned())
 	require.Equal(t, testconstants.TestSubject, certificate.Issuer)
+	require.Equal(t, testconstants.TestSubjectAsText, testconstants.TestSubjectAsText)
 	require.Equal(t, testconstants.TestSerialNumber, certificate.SerialNumber)
 	require.Equal(t, testconstants.TestSubject, certificate.Subject)
 	require.Equal(t, testconstants.TestSubjectKeyID, certificate.SubjectKeyID)
@@ -85,6 +90,27 @@ func Test_VerifyRootCertificate(t *testing.T) {
 	certificate, _ := DecodeX509Certificate(testconstants.RootCertPem)
 	err := certificate.Verify(certificate)
 	require.Nil(t, err)
+}
+
+func Test_BytesToHex(t *testing.T) {
+	tests := []struct {
+		subjectKeyID []byte
+		result       string
+	}{
+		{
+			subjectKeyID: []byte("\xb0\x00V\x81\xb8\x88b\x89b\x80\xe1!\x18\xa1\xa8\xbe\tޓ!"),
+			result:       "B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21",
+		},
+		{
+			subjectKeyID: []byte("␍6\x9c<\xa3\xc1\x13\xbb\t\xe2M\xc1\xccŦf\x91\xd4"),
+			result:       "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4",
+		},
+	}
+
+	for _, tt := range tests {
+		result := BytesToHex(tt.subjectKeyID)
+		require.Equal(t, result, tt.result)
+	}
 }
 
 func Test_FormatVID(t *testing.T) {
