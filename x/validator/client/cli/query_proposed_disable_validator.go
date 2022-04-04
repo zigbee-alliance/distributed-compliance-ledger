@@ -61,11 +61,11 @@ func CmdShowProposedDisableValidator() *cobra.Command {
 
 			addr, err := sdk.ValAddressFromBech32(address)
 			if err != nil {
-				addr2, err2 := sdk.AccAddressFromBech32(address)
+				owner, err2 := sdk.AccAddressFromBech32(address)
 				if err2 != nil {
 					return err2
 				}
-				addr = sdk.ValAddress(addr2)
+				addr = sdk.ValAddress(owner)
 			}
 
 			return cli.QueryWithProof(
