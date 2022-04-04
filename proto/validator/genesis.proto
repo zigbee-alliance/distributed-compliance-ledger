@@ -3,6 +3,8 @@ package zigbeealliance.distributedcomplianceledger.validator;
 
 import "validator/validator.proto";
 import "validator/last_validator_power.proto";
+import "validator/proposed_disable_validator.proto";
+import "validator/disabled_validator.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 import "gogoproto/gogo.proto";
 
@@ -12,5 +14,7 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 message GenesisState {
     repeated Validator validatorList = 1 [(gogoproto.nullable) = false];
   repeated LastValidatorPower lastValidatorPowerList = 2 [(gogoproto.nullable) = false];
+  repeated ProposedDisableValidator proposedDisableValidatorList = 3 [(gogoproto.nullable) = false];
+  repeated DisabledValidator disabledValidatorList = 4 [(gogoproto.nullable) = false];
   // this line is used by starport scaffolding # genesis/proto/state
 }

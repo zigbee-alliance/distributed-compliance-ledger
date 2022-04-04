@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -37,4 +38,8 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k Keeper) DisableValidatorApprovalsCount(ctx sdk.Context) int {
+	return int(math.Round(types.DisableValidatorPercent * float64(k.dclauthKeeper.CountAccountsWithRole(ctx, types.VoteForDisableValidatorRole))))
 }

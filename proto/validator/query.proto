@@ -5,6 +5,8 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "validator/validator.proto";
 import "validator/last_validator_power.proto";
+import "validator/proposed_disable_validator.proto";
+import "validator/disabled_validator.proto";
 // this line is used by starport scaffolding # 1
 import "gogoproto/gogo.proto";
 
@@ -32,6 +34,26 @@ service Query {
 	// Queries a list of lastValidatorPower items.
 	rpc LastValidatorPowerAll(QueryAllLastValidatorPowerRequest) returns (QueryAllLastValidatorPowerResponse) {
 		option (google.api.http).get = "/dcl/validator/last-powers";
+	}
+
+// Queries a ProposedDisableValidator by index.
+	rpc ProposedDisableValidator(QueryGetProposedDisableValidatorRequest) returns (QueryGetProposedDisableValidatorResponse) {
+		option (google.api.http).get = "/dcl/validator/proposed-disable-validators/{address}";
+	}
+
+	// Queries a list of ProposedDisableValidator items.
+	rpc ProposedDisableValidatorAll(QueryAllProposedDisableValidatorRequest) returns (QueryAllProposedDisableValidatorResponse) {
+		option (google.api.http).get = "/dcl/validator/proposed-disable-validators";
+	}
+
+// Queries a DisabledValidator by index.
+	rpc DisabledValidator(QueryGetDisabledValidatorRequest) returns (QueryGetDisabledValidatorResponse) {
+		option (google.api.http).get = "/dcl/validator/disabled-validators/{address}";
+	}
+
+	// Queries a list of DisabledValidator items.
+	rpc DisabledValidatorAll(QueryAllDisabledValidatorRequest) returns (QueryAllDisabledValidatorResponse) {
+		option (google.api.http).get = "/dcl/validator/disabled-validators";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -69,6 +91,42 @@ message QueryAllLastValidatorPowerRequest {
 
 message QueryAllLastValidatorPowerResponse {
 	repeated LastValidatorPower lastValidatorPower = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetProposedDisableValidatorRequest {
+	  string address = 1;
+
+}
+
+message QueryGetProposedDisableValidatorResponse {
+	ProposedDisableValidator proposedDisableValidator = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllProposedDisableValidatorRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllProposedDisableValidatorResponse {
+	repeated ProposedDisableValidator proposedDisableValidator = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetDisabledValidatorRequest {
+	  string address = 1;
+
+}
+
+message QueryGetDisabledValidatorResponse {
+	DisabledValidator disabledValidator = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllDisabledValidatorRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllDisabledValidatorResponse {
+	repeated DisabledValidator disabledValidator = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

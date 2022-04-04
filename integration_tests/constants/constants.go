@@ -140,8 +140,8 @@ var (
 		`{"@type":"/cosmos.crypto.ed25519.PubKey","key":"NB8hcdxKYDCaPWR67OiUXUSltZfYYOWYryPDUdbWRlA="}`,
 		defEncConfig.Marshaler,
 	)
-	ValidatorAddress1 = "cosmosvalcons1uks7yvlwqsfyp730w6da64g5fw20d9ynh00k53"
-	ValidatorAddress2 = "cosmosvalcons12tg2p3rjsaczddufmsjjrw9nvhg8wkc4hcz3zw"
+	ValidatorAddress1 = "cosmosvaloper156dzj776tf3lmsahgmtnrphflaqf7n58kug5qe"
+	ValidatorAddress2 = "cosmosvaloper12tg2p3rjsaczddufmsjjrw9nvhg8wkc4hcz3zw"
 	ValidHTTPSURL     = "https://valid.url.com"
 	ValidHTTPURL      = "http://valid.url.com"
 	NotAValidURL      = "not a valid url"
