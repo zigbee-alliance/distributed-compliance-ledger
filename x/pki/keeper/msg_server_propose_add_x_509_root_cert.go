@@ -65,12 +65,13 @@ func (k msgServer) ProposeAddX509RootCert(goCtx context.Context, msg *types.MsgP
 
 	// create a new proposed certificate with empty approvals list
 	proposedCertificate := types.ProposedCertificate{
-		Subject:      x509Certificate.Subject,
-		SubjectKeyId: x509Certificate.SubjectKeyID,
-		PemCert:      msg.Cert,
-		SerialNumber: x509Certificate.SerialNumber,
-		Owner:        msg.Signer,
-		Approvals:    []*types.Grant{},
+		Subject:       x509Certificate.Subject,
+		SubjectAsText: x509Certificate.SubjectAsText,
+		SubjectKeyId:  x509Certificate.SubjectKeyID,
+		PemCert:       msg.Cert,
+		SerialNumber:  x509Certificate.SerialNumber,
+		Owner:         msg.Signer,
+		Approvals:     []*types.Grant{},
 	}
 
 	// if signer has `RootCertificateApprovalRole` append approval

@@ -17,17 +17,20 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-root_cert_subject="O=root-ca,ST=some-state,C=AU"
-root_cert_subject_key_id="5A:88:E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:9:30:E6:2B:DB"
+root_cert_subject="Tz1yb290LWNhLFNUPXNvbWUtc3RhdGUsQz1BVQ=="
+root_cert_subject_key_id="5A:88:0E:6C:36:53:D0:7F:B0:89:71:A3:F4:73:79:09:30:E6:2B:DB"
 root_cert_serial_number="442314047376310867378175982234956458728610743315"
+root_cert_subject_as_text="O=root-ca,ST=some-state,C=AU"
 
-intermediate_cert_subject="O=intermediate-ca,ST=some-state,C=AU"
-intermediate_cert_subject_key_id="4E:3B:73:F4:70:4D:C2:98:D:DB:C8:5A:5F:2:3B:BF:86:25:56:2B"
+intermediate_cert_subject="Tz1pbnRlcm1lZGlhdGUtY2EsU1Q9c29tZS1zdGF0ZSxDPUFV"
+intermediate_cert_subject_key_id="4E:3B:73:F4:70:4D:C2:98:0D:DB:C8:5A:5F:02:3B:BF:86:25:56:2B"
 intermediate_cert_serial_number="169917617234879872371588777545667947720450185023"
+intermediate_cert_subject_as_text="O=intermediate-ca,ST=some-state,C=AU"
 
-leaf_cert_subject="O=leaf,ST=some-state,C=AU"
+leaf_cert_subject="Tz1sZWFmLFNUPXNvbWUtc3RhdGUsQz1BVQ=="
 leaf_cert_subject_key_id="30:F4:65:75:14:20:B2:AF:3D:14:71:17:AC:49:90:93:3E:24:A0:1F"
 leaf_cert_serial_number="143290473708569835418599774898811724528308722063"
+leaf_cert_subject_as_text="O=leaf,ST=some-state,C=AU"
 
 # Preparation of Actors
 
@@ -54,6 +57,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 echo $result | jq
 
 echo "Request all approved certificates must be empty"
@@ -62,6 +66,7 @@ check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 echo $result | jq
 
 test_divider
@@ -72,6 +77,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 echo $result | jq
 
 test_divider
@@ -98,6 +104,7 @@ check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 echo $result | jq
 
 echo "Request all certificates by subject must be empty"
@@ -184,6 +191,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 echo $result | jq
 
 test_divider
@@ -194,6 +202,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 
 
 test_divider
@@ -205,6 +214,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 
 
 test_divider
@@ -215,6 +225,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 
 
 
@@ -265,6 +276,7 @@ check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
+check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 response_does_not_contain "$result" "\"address\": \"$second_trustee_account_address\""
 check_response "$result" "[\"$(echo "$passphrase" | dcld keys show jack -a)\"]"
 
@@ -277,6 +289,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 
 
 test_divider
@@ -294,6 +307,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$root_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
@@ -306,6 +320,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 
 
 test_divider
@@ -356,6 +371,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$intermediate_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
 check_response "$result" "\"approvals\": \\[\\]"
 
 test_divider
@@ -366,9 +382,11 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
 
 
 test_divider
@@ -412,6 +430,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$leaf_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
 check_response "$result" "\"approvals\": \\[\\]"
 
 
@@ -453,12 +472,15 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
 
 test_divider
 
@@ -528,12 +550,15 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
 
 test_divider
 
@@ -543,12 +568,15 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
 
 test_divider
 
@@ -601,12 +629,15 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
 
 
 test_divider
@@ -925,6 +956,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$intermediate_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$intermediate_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$intermediate_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$intermediate_cert_subject_as_text\""
 
 
 test_divider
@@ -936,6 +968,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$leaf_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$leaf_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$leaf_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$leaf_cert_subject_as_text\""
 
 
 test_divider
@@ -947,6 +980,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$root_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$root_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$root_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$root_cert_subject_as_text\""
 
 test_divider
 
@@ -962,9 +996,10 @@ response_does_not_contain "$result" "\"$leaf_cert_subject_key_id\""
 
 # CHECK GOOGLE ROOT CERTIFICATE WHICH INCLUDES VID
 
-google_cert_subject="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
-google_cert_subject_key_id="B0:0:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:9:DE:93:21"
+google_cert_subject="Q049TWF0dGVyIFBBQSAxLE89R29vZ2xlLEM9VVMsMS4zLjYuMS40LjEuMzcyNDQuMi4xPSMxMzA0MzYzMDMwMzY="
+google_cert_subject_key_id="B0:00:56:81:B8:88:62:89:62:80:E1:21:18:A1:A8:BE:09:DE:93:21"
 google_cert_serial_number="1"
+google_cert_subject_as_text="CN=Matter PAA 1,O=Google,C=US,vid=0x6006"
 
 # 9. QUERY ALL (EMPTY)
 
@@ -977,6 +1012,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 echo $result | jq
 
 echo "Request all approved certificates must be empty"
@@ -985,6 +1021,7 @@ check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 echo $result | jq
 
 test_divider
@@ -995,6 +1032,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 echo $result | jq
 
 test_divider
@@ -1088,6 +1126,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$google_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 echo $result | jq
 
 test_divider
@@ -1098,6 +1137,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 
 test_divider
 
@@ -1108,6 +1148,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 
 test_divider
 
@@ -1117,6 +1158,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 
 
 
@@ -1164,6 +1206,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$google_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 response_does_not_contain "$result" "\"address\": \"$second_trustee_account_address\""
 check_response "$result" "[\"$(echo "$passphrase" | dcld keys show jack -a)\"]"
@@ -1176,6 +1219,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 
 test_divider
 
@@ -1191,6 +1235,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$google_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
@@ -1202,6 +1247,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 
 test_divider
 
@@ -1228,6 +1274,7 @@ echo $result | jq
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 
 # 12. PROPOSE REVOCATION OF GOOGLE ROOT CERT
 
@@ -1348,6 +1395,7 @@ echo $result | jq
 check_response "$result" "\"subject\": \"$google_cert_subject\""
 check_response "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 check_response "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+check_response "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 check_response "$result" "\"address\": \"$trustee_account_address\""
 check_response "$result" "\"address\": \"$second_trustee_account_address\""
 
@@ -1374,6 +1422,7 @@ check_response "$result" "Not Found"
 response_does_not_contain "$result" "\"subject\": \"$google_cert_subject\""
 response_does_not_contain "$result" "\"subjectKeyId\": \"$google_cert_subject_key_id\""
 response_does_not_contain "$result" "\"serialNumber\": \"$google_cert_serial_number\""
+response_does_not_contain "$result" "\"subjectAsText\": \"$google_cert_subject_as_text\""
 
 test_divider
 

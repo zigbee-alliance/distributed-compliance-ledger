@@ -66,6 +66,7 @@ func (k msgServer) AddX509Cert(goCtx context.Context, msg *types.MsgAddX509Cert)
 	certificate := types.NewNonRootCertificate(
 		msg.Cert,
 		x509Certificate.Subject,
+		x509Certificate.SubjectAsText,
 		x509Certificate.SubjectKeyID,
 		x509Certificate.SerialNumber,
 		x509Certificate.Issuer,

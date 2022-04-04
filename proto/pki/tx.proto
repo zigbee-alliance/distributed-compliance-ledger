@@ -67,7 +67,6 @@ message MsgApproveRevokeX509RootCert {
   string subjectKeyId = 3 [(gogoproto.moretags) = "validate:\"required,max=256\""];
   string info = 5 [(gogoproto.moretags) = "validate:\"max=4096\""];
   int64 time = 6;
-
 }
 
 message MsgApproveRevokeX509RootCertResponse {

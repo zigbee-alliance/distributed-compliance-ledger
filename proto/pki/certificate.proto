@@ -20,4 +20,5 @@ message Certificate {
   string subject = 9; 
   string subjectKeyId = 10; 
   repeated Grant approvals = 11;
+  string subjectAsText = 12; 
 }

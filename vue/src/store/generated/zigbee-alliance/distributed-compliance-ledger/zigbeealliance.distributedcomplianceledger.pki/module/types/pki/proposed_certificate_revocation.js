@@ -2,7 +2,7 @@
 import { Grant } from '../pki/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.pki';
-const baseProposedCertificateRevocation = { subject: '', subjectKeyId: '' };
+const baseProposedCertificateRevocation = { subject: '', subjectKeyId: '', subjectAsText: '' };
 export const ProposedCertificateRevocation = {
     encode(message, writer = Writer.create()) {
         if (message.subject !== '') {
@@ -13,6 +13,9 @@ export const ProposedCertificateRevocation = {
         }
         for (const v of message.approvals) {
             Grant.encode(v, writer.uint32(26).fork()).ldelim();
+        }
+        if (message.subjectAsText !== '') {
+            writer.uint32(34).string(message.subjectAsText);
         }
         return writer;
     },
@@ -32,6 +35,9 @@ export const ProposedCertificateRevocation = {
                     break;
                 case 3:
                     message.approvals.push(Grant.decode(reader, reader.uint32()));
+                    break;
+                case 4:
+                    message.subjectAsText = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -60,6 +66,12 @@ export const ProposedCertificateRevocation = {
                 message.approvals.push(Grant.fromJSON(e));
             }
         }
+        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+            message.subjectAsText = String(object.subjectAsText);
+        }
+        else {
+            message.subjectAsText = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -72,6 +84,7 @@ export const ProposedCertificateRevocation = {
         else {
             obj.approvals = [];
         }
+        message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText);
         return obj;
     },
     fromPartial(object) {
@@ -93,6 +106,12 @@ export const ProposedCertificateRevocation = {
             for (const e of object.approvals) {
                 message.approvals.push(Grant.fromPartial(e));
             }
+        }
+        if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+            message.subjectAsText = object.subjectAsText;
+        }
+        else {
+            message.subjectAsText = '';
         }
         return message;
     }

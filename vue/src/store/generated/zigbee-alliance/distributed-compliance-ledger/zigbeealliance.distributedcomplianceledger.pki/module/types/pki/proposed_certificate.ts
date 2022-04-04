@@ -11,9 +11,10 @@ export interface ProposedCertificate {
   serialNumber: string
   owner: string
   approvals: Grant[]
+  subjectAsText: string
 }
 
-const baseProposedCertificate: object = { subject: '', subjectKeyId: '', pemCert: '', serialNumber: '', owner: '' }
+const baseProposedCertificate: object = { subject: '', subjectKeyId: '', pemCert: '', serialNumber: '', owner: '', subjectAsText: '' }
 
 export const ProposedCertificate = {
   encode(message: ProposedCertificate, writer: Writer = Writer.create()): Writer {
@@ -34,6 +35,9 @@ export const ProposedCertificate = {
     }
     for (const v of message.approvals) {
       Grant.encode(v!, writer.uint32(50).fork()).ldelim()
+    }
+    if (message.subjectAsText !== '') {
+      writer.uint32(58).string(message.subjectAsText)
     }
     return writer
   },
@@ -63,6 +67,9 @@ export const ProposedCertificate = {
           break
         case 6:
           message.approvals.push(Grant.decode(reader, reader.uint32()))
+          break
+        case 7:
+          message.subjectAsText = reader.string()
           break
         default:
           reader.skipType(tag & 7)
@@ -105,6 +112,11 @@ export const ProposedCertificate = {
         message.approvals.push(Grant.fromJSON(e))
       }
     }
+    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+      message.subjectAsText = String(object.subjectAsText)
+    } else {
+      message.subjectAsText = ''
+    }
     return message
   },
 
@@ -120,6 +132,7 @@ export const ProposedCertificate = {
     } else {
       obj.approvals = []
     }
+    message.subjectAsText !== undefined && (obj.subjectAsText = message.subjectAsText)
     return obj
   },
 
@@ -155,6 +168,11 @@ export const ProposedCertificate = {
       for (const e of object.approvals) {
         message.approvals.push(Grant.fromPartial(e))
       }
+    }
+    if (object.subjectAsText !== undefined && object.subjectAsText !== null) {
+      message.subjectAsText = object.subjectAsText
+    } else {
+      message.subjectAsText = ''
     }
     return message
   }
