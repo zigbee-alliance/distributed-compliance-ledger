@@ -57,8 +57,7 @@ func CmdProposeDisableValidator() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringVar(&address, FlagAddress, "", "Bench32 encoded validator address or owner account")
-	cmd.Flags().StringVar(&info, FlagInfo, "", "Optional information/notes for approval, proposal, disable or enable validator")
+	cmd.Flags().StringVar(&address, FlagAddress, "", "Bech32 encoded validator address")
 
 	flags.AddTxFlagsToCmd(cmd)
 
