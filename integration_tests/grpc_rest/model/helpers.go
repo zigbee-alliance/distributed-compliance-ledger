@@ -193,6 +193,25 @@ func GetModel(
 	return &res, nil
 }
 
+func GetModelWithPathString(
+	suite *utils.TestSuite,
+	vid string,
+	pid string,
+) (*modeltypes.Model, error) {
+	var res modeltypes.Model
+
+	if suite.Rest {
+		var resp modeltypes.QueryGetModelResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%s/%s", vid, pid), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetModel()
+	}
+
+	return &res, nil
+}
+
 func GetModelVersion(
 	suite *utils.TestSuite,
 	vid int32,
@@ -554,8 +573,11 @@ func AddModelInHexFormat(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createThirdModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
+	testVIDString := "0xA13"
+	testPIDString := "0xA11"
+
 	// Check third model is added
-	receivedModel, err := GetModel(suite, 0xA13, 0xA11)
+	receivedModel, err := GetModelWithPathString(suite, testVIDString, testPIDString)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, createThirdModelMsg.Vid, receivedModel.Vid)
 	require.Equal(suite.T, createThirdModelMsg.Pid, receivedModel.Pid)
