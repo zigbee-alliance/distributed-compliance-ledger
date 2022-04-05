@@ -193,7 +193,7 @@ func GetModel(
 	return &res, nil
 }
 
-func GetModelWithPathString(
+func GetModelByHexVidPid(
 	suite *utils.TestSuite,
 	vid string,
 	pid string,
@@ -577,7 +577,7 @@ func AddModelInHexFormat(suite *utils.TestSuite) {
 	testPIDString := "0xA11"
 
 	// Check third model is added
-	receivedModel, err := GetModelWithPathString(suite, testVIDString, testPIDString)
+	receivedModel, err := GetModelByHexVidPid(suite, testVIDString, testPIDString)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, createThirdModelMsg.Vid, receivedModel.Vid)
 	require.Equal(suite.T, createThirdModelMsg.Pid, receivedModel.Pid)
