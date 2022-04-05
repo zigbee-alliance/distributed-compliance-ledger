@@ -1,5 +1,6 @@
 # Recommended design for DCL MainNet deployment on AWS
-![](./deployment-aws.png)
+## AWS deployment diagram
+![AWS deployment diagram](./deployment-aws.png)
 
 ## Recommended IaC frameworks
 - [Terraform](https://www.terraform.io) - for setting up AWS infrastructure
@@ -85,7 +86,7 @@
         - Public IPv4 = not assigned
     - Security:
         - inbound:
-            - allow gRPC / REST / RPC ports the same VPC CIDR
+            - allow gRPC / REST / RPC ports from the same VPC CIDR
         - outbound:
             - all
 
@@ -111,8 +112,8 @@
         - Public IPv4 = Elastic IP
     - Security:
         - inbound:
-            - allow `Tendermint p2p` port from everywhere
-            - allow `Tendermint RPC` port from everywhere
+            - allow `Tendermint p2p` port from anywhere
+            - allow `Tendermint RPC` port from anywhere
         - outbound:
             - all
 
