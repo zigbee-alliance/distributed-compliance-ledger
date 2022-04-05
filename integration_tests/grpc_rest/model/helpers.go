@@ -591,8 +591,10 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	inputModels, err := GetModels(suite)
 	require.NoError(suite.T, err)
 
+	var pid int32 = 0xA11
+
 	// New vendor adds first model
-	createFirstModelMsg := NewMsgCreateModel(0xA13, 0xA11, vendorAccount.Address)
+	createFirstModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
