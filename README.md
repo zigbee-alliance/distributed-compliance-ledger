@@ -45,6 +45,7 @@ In order to send write transactions to the ledger you need:
 - A network of Tendermint-based validator nodes (Validators and Observers) maintaining the ledger.
 - Every validator node (`dcld` binary) runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
 - See the proposed deployment in [deployment](docs/deployment.png) and [deployment-detailed](docs/deployment-detailed.png).
+- See recommended design for DCL MainNet deployment on AWS in [aws deployment](./docs/deployment-design-aws.md)
 
 ### Node Types
 
@@ -64,6 +65,7 @@ See
 - [Deployment](docs/deployment.png)
 - [Deployment-detailed](docs/deployment-detailed.png).
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
+- [Deployment Recommendations for AWS](./docs/deployment-design-aws.md)
 - <https://docs.tendermint.com/master/nodes/validators.html>
 - [Run Light Client Proxy](docs/running-light-client-proxy.md)
 
@@ -194,7 +196,7 @@ See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](RE
 
 ### Deploy a persistent pool of nodes
 
-A recommended way for deployment and client connection: [diagram](docs/deployment.png) and [diagram-detailed](docs/deployment-detailed.png).
+A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-aws.png).
 
 One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks.
 
@@ -237,6 +239,7 @@ See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upg
 - [Deployment Pattern](docs/deployment.png)
 - [Deployment Pattern Detailed](docs/deployment-detailed.png)
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
+- [Deployment Recommendations for AWS](./docs/deployment-design-aws.md)
 - [Running Node in a new network](docs/running-node.md)
   - [Running Genesis Validator Node](docs/advanced/running-genesis-node.md)
   - [Running Validator Node](docs/advanced/running-validator-node.md)
