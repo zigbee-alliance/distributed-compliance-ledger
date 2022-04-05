@@ -227,8 +227,11 @@ func ValidatorDemo(suite *utils.TestSuite) {
 	// require.NoError(suite.T, err)
 	// require.Equal(suite.T, 0, len(proposedDisableValidators))
 
-	// // Query unknown disable validator
-	// _, err = GetDisabledValidator(suite, sdk.ValAddress(testconstants.ValidatorAddress1))
+	// Query unknown disable validator
+	// valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	// require.NoError(suite.T, err)
+
+	// _, err = GetDisabledValidator(suite, valAddress)
 	// suite.AssertNotFound(err)
 
 	// // Query unknown proposed disable validator

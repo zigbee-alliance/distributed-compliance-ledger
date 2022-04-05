@@ -234,9 +234,12 @@ func TestHandler_OnlyTrusteeCanProposeDisableValidator(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.CertificationCenter, dclauthtypes.Vendor, dclauthtypes.NodeAdmin}, nil, testconstants.VendorID1)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
 	// propose new disablevalidator
-	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
 	require.Error(t, err)
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
@@ -260,9 +263,12 @@ func TestHandler_ProposeDisableValidatorWhenSeveralVotesNeeded(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID3)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
+
 	// propose new disablevalidator
-	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
 	require.NoError(t, err)
 
 	proposedDisableValidator, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, msgProposeDisableValidator.Address)
@@ -296,11 +302,12 @@ func TestHandler_DisabledValidator(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID3)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
-	valAddr := sdk.ValAddress(testconstants.ValidatorAddress1)
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
 
 	// propose and approve new disablevalidators
-	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress(), valAddr)
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator1)
+	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator1)
 	require.NoError(t, err)
 
 	proposedDisableValidator, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddr.String())
@@ -309,17 +316,17 @@ func TestHandler_DisabledValidator(t *testing.T) {
 	require.Equal(t, msgProposeDisableValidator1.Creator, proposedDisableValidator.Creator)
 	require.Equal(t, msgProposeDisableValidator1.Creator, proposedDisableValidator.Approvals[0].Address)
 
-	_, isFound = setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, valAddr.String())
+	_, isFound = setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, valAddress.String())
 	require.False(t, isFound)
 
-	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress(), valAddr)
+	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress(), valAddress)
 	_, err = setup.Handler(setup.Ctx, msgApproveDisableValidator)
 	require.NoError(t, err)
 
-	_, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddr.String())
+	_, isFound = setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
 	require.False(t, isFound)
 
-	disabledValidator, isFound := setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, valAddr.String())
+	disabledValidator, isFound := setup.ValidatorKeeper.GetDisabledValidator(setup.Ctx, valAddress.String())
 	require.True(t, isFound)
 	require.Equal(t, msgProposeDisableValidator1.Address, disabledValidator.Address)
 	require.Equal(t, msgProposeDisableValidator1.Creator, disabledValidator.Creator)
@@ -328,7 +335,7 @@ func TestHandler_DisabledValidator(t *testing.T) {
 	require.Equal(t, msgProposeDisableValidator1.Time, disabledValidator.Approvals[0].Time)
 	require.False(t, disabledValidator.DisabledByNodeAdmin)
 
-	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, valAddr)
+	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, valAddress)
 	require.True(t, isFound)
 	require.True(t, validator.Jailed)
 }
@@ -352,11 +359,12 @@ func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin, dclauthtypes.CertificationCenter, dclauthtypes.Vendor}, nil, testconstants.VendorID3)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
-	valAddr := sdk.ValAddress(testconstants.ValidatorAddress1)
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+	require.NoError(t, err)
 
 	// propose new disablevalidator
-	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress(), valAddr)
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator1)
+	msgProposeDisableValidator1 := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator1)
 	require.NoError(t, err)
 
 	_, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, msgProposeDisableValidator1.Address)
@@ -371,7 +379,7 @@ func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
 	require.Equal(t, msgProposeDisableValidator1.Time, disabledValidator.Approvals[0].Time)
 	require.False(t, disabledValidator.DisabledByNodeAdmin)
 
-	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, valAddr)
+	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, valAddress)
 	require.True(t, isFound)
 	require.True(t, validator.Jailed)
 }
@@ -395,12 +403,15 @@ func TestHandler_OnlyTrusteeCanApproveDisableValidator(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID3)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
-	// propose and approve new disablevalidator
-	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
 	require.NoError(t, err)
 
-	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
+	// propose and approve new disablevalidator
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	require.NoError(t, err)
+
+	msgApproveDisableValidator := NewMsgApproveDisableValidator(account2.GetAddress(), valAddress)
 	_, err = setup.Handler(setup.Ctx, msgApproveDisableValidator)
 	require.Error(t, err)
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
@@ -440,12 +451,15 @@ func TestHandler_MessageCreatorAlreadyApprovedDisableValidator(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID3)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account3)
 
-	// propose and approve new disablevalidator
-	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
 	require.NoError(t, err)
 
-	msgApproveDisableValidator := NewMsgApproveDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
+	// propose and approve new disablevalidator
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	require.NoError(t, err)
+
+	msgApproveDisableValidator := NewMsgApproveDisableValidator(account1.GetAddress(), valAddress)
 	_, err = setup.Handler(setup.Ctx, msgApproveDisableValidator)
 	require.Error(t, err)
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
@@ -479,9 +493,12 @@ func TestHandler_DisabledValidatorDoesNotExist(t *testing.T) {
 // 		dclauthtypes.AccountRoles{dclauthtypes.NodeAdmin}, nil, testconstants.VendorID2)
 // 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
+//  valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
+//	require.NoError(t, err)
+
 // 	// propose and approve new disablevalidator (will be approved because of 1 trustee)
-// 	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
-// 	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator)
+// 	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+// 	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
 // 	require.NoError(t, err)
 
 // 	msgEnableValidator := types.NewMsgEnableValidator(sdk.ValAddress(account2.GetAddress()))
@@ -504,12 +521,15 @@ func TestHandler_DisabledValidatorAlreadyExistsPropose(t *testing.T) {
 		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID2)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account2)
 
-	// propose and approve new disablevalidator (will be approved because of 2 trustees)
-	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
-	_, err := setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	valAddress, err := sdk.ValAddressFromBech32(testconstants.ValidatorAddress1)
 	require.NoError(t, err)
 
-	msgProposeDisableValidator = NewMsgProposeDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
+	// propose and approve new disablevalidator (will be approved because of 2 trustees)
+	msgProposeDisableValidator := NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	require.NoError(t, err)
+
+	msgProposeDisableValidator = NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
 	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
 	require.Error(t, err)
 	require.ErrorIs(t, err, types.ErrDisabledValidatorAlreadytExists)
