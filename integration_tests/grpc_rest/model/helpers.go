@@ -305,6 +305,24 @@ func GetVendorModels(
 	return &res, nil
 }
 
+func GetVendorModelsByHexVid(
+	suite *utils.TestSuite,
+	vid string,
+) (*modeltypes.VendorProducts, error) {
+	var res modeltypes.VendorProducts
+
+	if suite.Rest {
+		var resp modeltypes.QueryGetVendorProductsResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%s", vid), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetVendorProducts()
+	}
+
+	return &res, nil
+}
+
 func Demo(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
@@ -553,7 +571,7 @@ func AddModelInHexFormat(suite *utils.TestSuite) {
 	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
 	require.NoError(suite.T, err)
 
-	// register new Vendor account
+	// Register new Vendor account
 	vendorName := utils.RandString()
 	var vid int32 = 0xA13
 	vendorAccount := test_dclauth.CreateAccount(
@@ -567,20 +585,36 @@ func AddModelInHexFormat(suite *utils.TestSuite) {
 		bobAccount,
 		testconstants.Info,
 	)
+	require.NotNil(suite.T, vendorAccount)
 
-	// Add third model
-	createThirdModelMsg := NewMsgCreateModel(0xA13, 0xA11, vendorAccount.Address)
-	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createThirdModelMsg}, vendorName, vendorAccount)
+	// Get all models
+	inputModels, err := GetModels(suite)
+	require.NoError(suite.T, err)
+
+	// New vendor adds first model
+	createFirstModelMsg := NewMsgCreateModel(0xA13, 0xA11, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
 	testVIDString := "0xA13"
 	testPIDString := "0xA11"
 
-	// Check third model is added
+	// Check first model is added
 	receivedModel, err := GetModelByHexVidPid(suite, testVIDString, testPIDString)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, createThirdModelMsg.Vid, receivedModel.Vid)
-	require.Equal(suite.T, createThirdModelMsg.Pid, receivedModel.Pid)
-	require.Equal(suite.T, createThirdModelMsg.ProductName, receivedModel.ProductName)
-	require.Equal(suite.T, createThirdModelMsg.ProductLabel, receivedModel.ProductLabel)
+	require.Equal(suite.T, createFirstModelMsg.Vid, receivedModel.Vid)
+	require.Equal(suite.T, createFirstModelMsg.Pid, receivedModel.Pid)
+	require.Equal(suite.T, createFirstModelMsg.ProductName, receivedModel.ProductName)
+	require.Equal(suite.T, createFirstModelMsg.ProductLabel, receivedModel.ProductLabel)
+
+	// Get all models
+	receivedModels, err := GetModels(suite)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, len(inputModels)+1, len(receivedModels))
+
+	// Get models of new vendor
+	vendorModels, err := GetVendorModelsByHexVid(suite, testVIDString)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, 1, len(vendorModels.Products))
+	require.Equal(suite.T, createFirstModelMsg.Pid, vendorModels.Products[0].Pid)
 }
