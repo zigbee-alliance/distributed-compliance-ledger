@@ -127,7 +127,8 @@ check_response "$result" "Not Found"
 echo "$result"
 
 
-# Chech how to work model with vid/pid in hex format
+# Check add model with fieds VID/PID in hex format and 
+# get model with fields VID/PID in hex format
 
 # Preperation of Actors
 
