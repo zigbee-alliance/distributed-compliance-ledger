@@ -16,27 +16,32 @@
 set -euo pipefail
 source integration_tests/cli/common.sh
 
-# Preparation of Actors
+# Check add model with fieds VID/PID in hex format and 
+# get model with fields VID/PID in hex format
 
-vid=$RANDOM
-pid=$RANDOM
-vendor_account=vendor_account_$vid
+# Preperation of Actors
+
+vid_in_hex_format=0xA13
+pid_in_hex_format=0xA11
+vid=2579
+pid=2577
+vendor_account=vendor_account_$vid_in_hex_format
 echo "Create Vendor account - $vendor_account"
-create_new_vendor_account $vendor_account $vid
+create_new_vendor_account $vendor_account $vid_in_hex_format
 
 test_divider
 
 # Body
 
 echo "Query non existent model"
-result=$(dcld query model get-model --vid=$vid --pid=$pid)
+result=$(dcld query model get-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format)
 check_response "$result" "Not Found"
 echo "$result"
 
 test_divider
 
 echo "Query non existent Vendor Models"
-result=$(dcld query model vendor-models --vid=$vid)
+result=$(dcld query model vendor-models --vid=$vid_in_hex_format)
 check_response "$result" "Not Found"
 echo "$result"
 
@@ -50,15 +55,15 @@ echo "$result"
 test_divider
 
 productLabel="Device #1"
-echo "Add Model with VID: $vid PID: $pid"
-result=$(echo "test1234" | dcld tx model add-model --vid=$vid --pid=$pid --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
+echo "Add Model with VID: $vid_in_hex_format PID: $pid_in_hex_format"
+result=$(echo "test1234" | dcld tx model add-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --deviceTypeID=1 --productName=TestProduct --productLabel="$productLabel" --partNumber=1 --commissioningCustomFlow=0 --from=$vendor_account --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "Get Model with VID: $vid PID: $pid"
-result=$(dcld query model get-model --vid=$vid --pid=$pid)
+echo "Get Model with VID: $vid_in_hex_format PID: $pid_in_hex_format"
+result=$(dcld query model get-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$productLabel\""
@@ -74,23 +79,23 @@ echo "$result"
 
 test_divider
 
-echo "Get Vendor Models with VID: ${vid}"
-result=$(dcld query model vendor-models --vid=$vid)
+echo "Get Vendor Models with VID: ${vid_in_hex_format}"
+result=$(dcld query model vendor-models --vid=$vid_in_hex_format)
 check_response "$result" "\"pid\": $pid"
 echo "$result"
 
 test_divider
 
-echo "Update Model with VID: ${vid} PID: ${pid} with new description"
+echo "Update Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} with new description"
 description="New Device Description"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --productLabel "$description")
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --from $vendor_account --yes --productLabel "$description")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "Get Model with VID: ${vid} PID: ${pid}"
-result=$(dcld query model get-model --vid=$vid --pid=$pid)
+echo "Get Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format}"
+result=$(dcld query model get-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"productLabel\": \"$description\""
@@ -98,16 +103,16 @@ echo "$result"
 
 test_divider
 
-echo "Update Model with VID: ${vid} PID: ${pid} modifying supportURL"
+echo "Update Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} modifying supportURL"
 supportURL="https://newsupporturl.test"
-result=$(echo "test1234" | dcld tx model update-model --vid=$vid --pid=$pid --from $vendor_account --yes --supportURL "$supportURL")
+result=$(echo "test1234" | dcld tx model update-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --from $vendor_account --yes --supportURL "$supportURL")
 check_response "$result" "\"code\": 0"
 echo "$result"
 
 test_divider
 
-echo "Get Model with VID: ${vid} PID: ${pid}"
-result=$(dcld query model get-model --vid=$vid --pid=$pid)
+echo "Get Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format}"
+result=$(dcld query model get-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format)
 check_response "$result" "\"vid\": $vid"
 check_response "$result" "\"pid\": $pid"
 check_response "$result" "\"supportUrl\": \"$supportURL\""
@@ -115,14 +120,14 @@ echo "$result"
 
 test_divider
 
-echo "Delete Model with VID: ${vid} PID: ${pid}"
-result=$(dcld tx model delete-model --vid=$vid --pid=$pid --from=$vendor_account --yes)
+echo "Delete Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format}"
+result=$(dcld tx model delete-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --from=$vendor_account --yes)
 echo "$result"
 
 test_divider
 
 echo "Query non existent model"
-result=$(dcld query model get-model --vid=$vid --pid=$pid)
+result=$(dcld query model get-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format)
 check_response "$result" "Not Found"
 echo "$result"
 
