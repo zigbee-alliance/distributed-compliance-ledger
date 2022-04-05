@@ -436,7 +436,7 @@ func TestHandler_ProposedDisableValidatorDoesNotExist(t *testing.T) {
 	// create Trustees
 	ba1 := authtypes.NewBaseAccount(testconstants.Address1, testconstants.PubKey1, 0, 0)
 	account1 := dclauthtypes.NewAccount(ba1,
-		dclauthtypes.AccountRoles{dclauthtypes.Trustee, dclauthtypes.CertificationCenter, dclauthtypes.Vendor}, nil, testconstants.VendorID1)
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID1)
 	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
 
 	msgApproveDisableValidator := NewMsgApproveDisableValidator(account1.GetAddress(), sdk.ValAddress(testconstants.ValidatorAddress1))
