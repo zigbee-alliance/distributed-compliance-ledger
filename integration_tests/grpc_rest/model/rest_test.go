@@ -60,5 +60,5 @@ func TestGetModelForInvalidVidPidREST(t *testing.T) {
 
 func TestAddModelInHexFormat(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	model.AddModelInHexFormat(&suite)
+	model.DemoWithHexVidAndPid(&suite)
 }

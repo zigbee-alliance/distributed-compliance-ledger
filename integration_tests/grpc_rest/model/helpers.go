@@ -557,7 +557,7 @@ func GetModelForInvalidVidPid(suite *utils.TestSuite) {
 	suite.AssertNotFound(err)
 }
 
-func AddModelInHexFormat(suite *utils.TestSuite) {
+func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	// Alice and Bob are predefined Trustees
 	aliceName := testconstants.AliceAccount
 	aliceKeyInfo, err := suite.Kr.Key(aliceName)
