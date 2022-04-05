@@ -22,8 +22,8 @@ import (
 
 var (
 	PoolIsFull                               = sdkerrors.Register(ModuleName, 601, "maximum number of active nodes reached")
-	ErrProposedDisableValidatorAlreadyExists = sdkerrors.Register(ModuleName, 801, "disable validator propose already exists")
-	ErrProposedDisableValidatorDoesNotExist  = sdkerrors.Register(ModuleName, 802, "disable validator propose does not exist")
+	ErrProposedDisableValidatorAlreadyExists = sdkerrors.Register(ModuleName, 801, "disable validator proposal already exists")
+	ErrProposedDisableValidatorDoesNotExist  = sdkerrors.Register(ModuleName, 802, "disable validator proposal does not exist")
 	ErrDisabledValidatorAlreadytExists       = sdkerrors.Register(ModuleName, 803, "disabled validator already exist")
 	ErrDisabledValidatorDoesNotExist         = sdkerrors.Register(ModuleName, 804, "disabled validator does not exist")
 )
