@@ -351,6 +351,8 @@ func TestHandler_DisabledValidator(t *testing.T) {
 	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, valAddress)
 	require.True(t, isFound)
 	require.True(t, validator.Jailed)
+	require.Equal(t, int32(0), validator.Power)
+	require.Equal(t, testconstants.Info, validator.JailedReason)
 }
 
 func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
@@ -395,6 +397,8 @@ func TestHandler_DisabledValidatorOnPropose(t *testing.T) {
 	validator, isFound := setup.ValidatorKeeper.GetValidator(setup.Ctx, valAddress)
 	require.True(t, isFound)
 	require.True(t, validator.Jailed)
+	require.Equal(t, int32(0), validator.Power)
+	require.Equal(t, testconstants.Info, validator.JailedReason)
 }
 
 func TestHandler_OnlyTrusteeCanApproveDisableValidator(t *testing.T) {
