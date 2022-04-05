@@ -322,7 +322,7 @@ func TestHandler_DisabledValidator(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator1)
 	require.NoError(t, err)
 
-	proposedDisableValidator, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddr.String())
+	proposedDisableValidator, isFound := setup.ValidatorKeeper.GetProposedDisableValidator(setup.Ctx, valAddress.String())
 	require.True(t, isFound)
 	require.Equal(t, msgProposeDisableValidator1.Address, proposedDisableValidator.Address)
 	require.Equal(t, msgProposeDisableValidator1.Creator, proposedDisableValidator.Creator)
