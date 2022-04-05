@@ -29,11 +29,13 @@ func (msg *MsgEnableValidator) GetSigners() []sdk.AccAddress {
 	if err != nil {
 		panic(err)
 	}
+
 	return []sdk.AccAddress{sdk.AccAddress(creator)}
 }
 
 func (msg *MsgEnableValidator) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
+
 	return sdk.MustSortJSON(bz)
 }
 
