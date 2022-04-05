@@ -25,6 +25,7 @@ vid_in_hex_format=0xA13
 pid_in_hex_format=0xA11
 vid=2579
 pid=2577
+
 vendor_account=vendor_account_$vid_in_hex_format
 echo "Create Vendor account - $vendor_account"
 create_new_vendor_account $vendor_account $vid_in_hex_format
