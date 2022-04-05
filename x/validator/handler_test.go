@@ -242,6 +242,17 @@ func TestHandler_OnlyTrusteeCanProposeDisableValidator(t *testing.T) {
 	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
 	require.Error(t, err)
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
+
+	// create account with trustee roles
+	ba1 = authtypes.NewBaseAccount(testconstants.Address2, testconstants.PubKey2, 0, 0)
+	account1 = dclauthtypes.NewAccount(ba1,
+		dclauthtypes.AccountRoles{dclauthtypes.Trustee}, nil, testconstants.VendorID2)
+	setup.DclauthKeeper.SetAccount(setup.Ctx, account1)
+
+	// propose new disablevalidator
+	msgProposeDisableValidator = NewMsgProposeDisableValidator(account1.GetAddress(), valAddress)
+	_, err = setup.Handler(setup.Ctx, msgProposeDisableValidator)
+	require.NoError(t, err)
 }
 
 func TestHandler_ProposeDisableValidatorWhenSeveralVotesNeeded(t *testing.T) {
