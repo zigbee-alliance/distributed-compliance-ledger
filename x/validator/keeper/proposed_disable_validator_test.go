@@ -22,6 +22,7 @@ func createNProposedDisableValidator(keeper *keeper.Keeper, ctx sdk.Context, n i
 
 		keeper.SetProposedDisableValidator(ctx, items[i])
 	}
+
 	return items
 }
 

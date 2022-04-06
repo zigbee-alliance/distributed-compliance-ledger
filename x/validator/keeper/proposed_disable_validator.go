@@ -19,7 +19,6 @@ func (k Keeper) SetProposedDisableValidator(ctx sdk.Context, proposedDisableVali
 func (k Keeper) GetProposedDisableValidator(
 	ctx sdk.Context,
 	address string,
-
 ) (val types.ProposedDisableValidator, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedDisableValidatorKeyPrefix))
 
@@ -31,6 +30,7 @@ func (k Keeper) GetProposedDisableValidator(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
@@ -38,7 +38,6 @@ func (k Keeper) GetProposedDisableValidator(
 func (k Keeper) RemoveProposedDisableValidator(
 	ctx sdk.Context,
 	address string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ProposedDisableValidatorKeyPrefix))
 	store.Delete(types.ProposedDisableValidatorKey(

@@ -23,15 +23,19 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgProposeDisableValidator:
 			res, err := msgServer.ProposeDisableValidator(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgApproveDisableValidator:
 			res, err := msgServer.ApproveDisableValidator(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgDisableValidator:
 			res, err := msgServer.DisableValidator(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgEnableValidator:
 			res, err := msgServer.EnableValidator(sdk.WrapSDKContext(ctx), msg)
+
 			return sdk.WrapServiceResult(ctx, res, err)
 			// this line is used by starport scaffolding # 1
 		default:

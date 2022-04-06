@@ -29,6 +29,7 @@ func (k Keeper) ProposedDisableValidatorAll(c context.Context, req *types.QueryA
 		}
 
 		proposedDisableValidators = append(proposedDisableValidators, proposedDisableValidator)
+
 		return nil
 	})
 	if err != nil {
