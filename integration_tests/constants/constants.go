@@ -116,9 +116,11 @@ var (
 	Address1, _       = sdk.AccAddressFromBech32("cosmos1s5xf3aanx7w84hgplk9z3l90qfpantg6nsmhpf")
 	Address2, _       = sdk.AccAddressFromBech32("cosmos1nl4uaesk9gtu7su3n89lne6xpa6lq8gljn79rq")
 	Address3, _       = sdk.AccAddressFromBech32("cosmos12r9vsus5js32pvnayt33zhcd4y9wcqcly45gr9")
+	Address4, _       = sdk.AccAddressFromBech32("cosmos1vvwldfef3yuggm7ge9p34d6dvpz5s74nus6n7g")
 	VendorID1   int32 = 1000
 	VendorID2   int32 = 2000
 	VendorID3   int32 = 3000
+	VendorID4   int32 = 4000
 	PubKey1           = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Aw1XXHQ8i6JVNKsFQ9eQArJVt2GXEO0EBFsQL6XJ5BxY"}`,
 		defEncConfig.Marshaler,
@@ -129,6 +131,10 @@ var (
 	)
 	PubKey3 = strToPubKey(
 		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"A0GnKr6hItYE1A7dzoxNSMwMZuu1zauOLWAqJWen1RzF"}`,
+		defEncConfig.Marshaler,
+	)
+	PubKey4 = strToPubKey(
+		`{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AnQC2MkMN1TOQyAJ0zjakPDcak+5FLtEoL4yBsgFO8Xe"}`,
 		defEncConfig.Marshaler,
 	)
 	Signer           = Address1
