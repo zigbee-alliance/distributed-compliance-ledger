@@ -57,3 +57,8 @@ func TestGetModelForInvalidVidPidREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	model.GetModelForInvalidVidPid(&suite)
 }
+
+func TestAddModelInHexFormat(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	model.DemoWithHexVidAndPid(&suite)
+}
