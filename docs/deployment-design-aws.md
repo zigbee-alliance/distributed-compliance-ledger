@@ -2,9 +2,25 @@
 ## AWS deployment diagram
 ![AWS deployment diagram](./deployment-aws.png)
 
-## Recommended IaC frameworks
-- [Terraform](https://www.terraform.io) - for setting up AWS infrastructure
-- [Ansible](https://www.ansible.com) - for provisioning DCL nodes
+## Recommended IaC structure and frameworks
+
+- [Ansible](https://www.ansible.com) - provision of the following node types:
+    - `Genesis Validator` - Validator Node created at the beginning of a network
+    - `Non-genesis Validator` - Validator Node joined a network after a significant time period
+    - `Private Sentry` - Full Node for connecting of other(external) Validator Nodes ([Sentry Node Architecture](https://forum.cosmos.network/t/sentry-node-architecture-overview/454))
+    - `Public Sentry` - Full Node for connecting of other(external) Full Nodes
+    - `Observer` - Full Node for serving gRPC / REST / RPC clients
+    - `Seed` - Full Node for sharing IP addresses of `Public Sentry` Nodes ([Seed Node](https://docs.tendermint.com/master/nodes/#seed-nodes))
+
+    > **_Note:_** Most of the nodes should enable `state sync` to avoid catching up with a network from scratch. Refer to [running-node-in-existing-netwrok.md](./running-node-in-existing-network.md) for details.
+
+- [Terraform](https://www.terraform.io) - deploy an AWS infrastructure from one or more of the following modules:
+    - Validator - `Validator` node instance
+    - Private Sentries - Cluster of `Private Sentry` node instances
+    - Public Sentries - Cluster of `Public Sentry` node instances with a collocated `Seed` node
+    - Observers - Cluster of `Observer` node instances
+    - Load Balancers - AWS Network Load Balancers for load balancing between `Observer` clusters
+  
 
 ## Node specific AWS and DCL configurations
 
@@ -13,8 +29,13 @@
     - [config.toml]
         - [p2p]
             - `pex` = false
-            - `persistent_peers` = [private sentry nodes with private IPs]
+            - `persistent_peers` = [`Private Sentry` nodes with private IPs]
             - `addr_book_strict` = false
+        - [statesync] (only for `Non-genesis Validator` nodes)
+            - `enable` = true
+            - `rpc_servers` = [existing `Genesis Validator` / `Sentry` nodes' RPC endpoints]
+            - `trust_height` = trust-height
+            - `trust_hash` = trust-hash
     - [app.toml]
         - [state-sync]
             - `snapshot-interval` = snapshot-interval
@@ -27,8 +48,8 @@
         - Public IPv4 = not assigned
     - Security:
         - inbound:
-            - allow `Tendermint p2p` port from Private Sentry Nodes' VPC CIDR
-            - allow `RPC` port from Private Sentry Nodes' VPC CIDR
+            - allow `Tendermint p2p` port from `Private Sentry` Nodes' VPC CIDR
+            - allow `RPC` port from `Private Sentry` Nodes' VPC CIDR
         - outbound:
             - all
 
@@ -38,13 +59,13 @@
     - [config.toml]
         - [p2p]
             - `pex` = true
-            - `persistent_peers` = [validator node with private IP + other orgs' validator/sentry nodes with public IPs] 
-            - `private_peer_ids` = [validator node id]
-            - `unconditional_peers` = [validator node id]
+            - `persistent_peers` = [`Validator` node with private IP + other orgs' validator/sentry nodes with public IPs] 
+            - `private_peer_ids` = [`Validator` node id]
+            - `unconditional_peers` = [`Validator` node id]
             - `addr_book_strict` = false
         - [statesync]
             - `enable` = true
-            - `rpc_servers` = [validator node's RPC endpoint]
+            - `rpc_servers` = [`Validator` node's RPC endpoint]
             - `trust_height` = trust-height
             - `trust_hash` = trust-hash
     - [app.toml]
@@ -59,8 +80,8 @@
     - Security:
         - inbound:
             - allow `Tendermint p2p` port for whitelist IPs
-            - allow `RPC` port from Observer Nodes' VPC CIDR
-            - allow `RPC` port from Public Sentry Nodes' VPC CIDR
+            - allow `RPC` port from `Observer` Nodes' VPC CIDR
+            - allow `RPC` port from `Public Sentry` Nodes' VPC CIDR
         - outbound:
             - all
 
@@ -69,11 +90,11 @@
     - [config.toml]
         - [p2p]
             - `pex` = true
-            - `persistent_peers` = [private sentry nodes with private IPs]
+            - `persistent_peers` = [`Private Sentry` nodes with private IPs]
             - `addr_book_strict` = false
         - [statesync]
             - `enable` = true
-            - `rpc_servers` = [private sentry nodes' RPC endpoints]
+            - `rpc_servers` = [`Private Sentry` nodes' RPC endpoints]
             - `trust_height` = trust-height
             - `trust_hash` = trust-hash
     - [app.toml]
@@ -95,10 +116,10 @@
     - [config.toml]
         - [p2p]
             - `pex` = true
-            - `persistent_peers` = [private sentry nodes with private IPs]
+            - `persistent_peers` = [`Private Sentry` nodes with private IPs]
         - [statesync]
             - `enable` = true
-            - `rpc_servers` = [private sentry nodes' RPC endpoints]
+            - `rpc_servers` = [`Private Sentry` nodes' RPC endpoints]
             - `trust_height` = trust-height
             - `trust_hash` = trust-hash
     - [app.toml]
@@ -124,10 +145,10 @@
         - [p2p]
             - `pex` = true
             - `seed_mode` = true
-            - `persistent_peers` = [public sentry nodes with public IP]
+            - `persistent_peers` = [`Public Sentry` nodes with public IP]
         - [statesync]
             - `enable` = true
-            - `rpc_servers` = [private sentry nodes' RPC endpoints]
+            - `rpc_servers` = [`Private Sentry` nodes' RPC endpoints]
             - `trust_height` = trust-height
             - `trust_hash` = trust-hash
 - AWS:
