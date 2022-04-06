@@ -20,7 +20,7 @@ docker build -t <name[:tag]> ./scripts
 Run docker container (from the root of the project) in an interactive mode:
 
 ```bash
-docker run -it -v "$PWD":/dcl <name[:tag]> /bin/bash
+docker run -it --rm -v "$PWD":/dcl <name[:tag]> /bin/bash
 ```
 
 ## Scripts

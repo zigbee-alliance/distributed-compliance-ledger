@@ -13,6 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -o pipefail
+set -o errexit
+set -o nounset
+if [[ "${DEBUG:-false}" == "true" ]]; then
+    set -o xtrace
+fi
+
 TYPE=${1:-tx}
 valid_values=(base tx)
 if ! printf '%s\0' "${valid_values[@]}" | grep -qxFe "$TYPE"; then
