@@ -7,6 +7,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
+	revokedAccountConstants "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/keeper"
 	dclauthTypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
@@ -47,7 +48,7 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 
 	disabledValidator := types.DisabledValidator{
 		Address:             msg.Creator,
-		Creator:             string(creator),
+		Creator:             sdk.AccAddress(creator).String(),
 		DisabledByNodeAdmin: true,
 	}
 
@@ -73,6 +74,7 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 
 	// create revoked account record
 	revokedAccount := dclauthTypes.NewRevokedAccount(&account, account.Approvals)
+	revokedAccount.RevokedReason = revokedAccountConstants.RevokedReasonIsValidatorDisabled
 	k.dclauthKeeper.SetRevokedAccount(ctx, *revokedAccount)
 
 	// delete account record

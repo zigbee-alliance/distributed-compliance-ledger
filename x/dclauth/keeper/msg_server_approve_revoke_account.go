@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -65,6 +66,7 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 		// create revoked account record
 		revokedAccount := types.NewRevokedAccount(&account, revoc.Approvals)
+		revokedAccount.RevokedReason = RevokedReasonIsRevokedAccount
 		k.SetRevokedAccount(ctx, *revokedAccount)
 
 		// delete account record
