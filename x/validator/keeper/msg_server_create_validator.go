@@ -8,6 +8,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	tmstrings "github.com/tendermint/tendermint/libs/strings"
+	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -20,7 +21,7 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	}
 
 	// check if sender has enough rights to create a validator node
-	if !k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(valAddr), types.EnableDisableValidatorRole) {
+	if !k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(valAddr), dclauthtypes.NodeAdmin) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"CreateValidator transaction should be signed by an account with the \"%s\" role",
 			types.EnableDisableValidatorRole,
