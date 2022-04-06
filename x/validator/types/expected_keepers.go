@@ -9,4 +9,7 @@ type DclauthKeeper interface {
 	// Methods imported from dclauth should be defined here
 	HasRole(ctx sdk.Context, addr sdk.AccAddress, roleToCheck dclauthtypes.AccountRole) bool
 	CountAccountsWithRole(ctx sdk.Context, roleToCount dclauthtypes.AccountRole) int
+	GetAccountO(ctx sdk.Context, address sdk.AccAddress) (val dclauthtypes.Account, found bool)
+	SetRevokedAccount(ctx sdk.Context, revokedAccount dclauthtypes.RevokedAccount)
+	RemoveAccount(ctx sdk.Context, address sdk.AccAddress)
 }
