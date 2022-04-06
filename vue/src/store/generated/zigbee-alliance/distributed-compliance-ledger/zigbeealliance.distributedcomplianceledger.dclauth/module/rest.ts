@@ -136,6 +136,7 @@ export interface DclauthQueryGetRevokedAccountResponse {
 export interface DclauthRevokedAccount {
   account?: DclauthAccount;
   revokeApprovals?: DclauthGrant[];
+  revokedReason?: string;
 }
 
 /**

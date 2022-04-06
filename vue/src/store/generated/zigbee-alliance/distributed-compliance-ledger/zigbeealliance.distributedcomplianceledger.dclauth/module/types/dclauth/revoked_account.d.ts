@@ -5,6 +5,7 @@ export declare const protobufPackage = "zigbeealliance.distributedcomplianceledg
 export interface RevokedAccount {
     account: Account | undefined;
     revokeApprovals: Grant[];
+    revokedReason: string;
 }
 export declare const RevokedAccount: {
     encode(message: RevokedAccount, writer?: Writer): Writer;

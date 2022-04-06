@@ -101,6 +101,7 @@ export interface DclauthQueryGetRevokedAccountResponse {
 export interface DclauthRevokedAccount {
     account?: DclauthAccount;
     revokeApprovals?: DclauthGrant[];
+    revokedReason?: string;
 }
 /**
 * `Any` contains an arbitrary serialized protocol buffer message along with a

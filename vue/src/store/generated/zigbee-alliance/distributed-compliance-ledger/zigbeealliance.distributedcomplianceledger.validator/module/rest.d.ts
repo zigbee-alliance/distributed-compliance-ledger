@@ -186,14 +186,61 @@ export interface ValidatorDescription {
     /** optional details. */
     details?: string;
 }
+export interface ValidatorDisabledValidator {
+    address?: string;
+    creator?: string;
+    approvals?: ValidatorGrant[];
+    disabledByNodeAdmin?: boolean;
+}
+export interface ValidatorGrant {
+    address?: string;
+    /** @format int64 */
+    time?: string;
+    info?: string;
+}
 export interface ValidatorLastValidatorPower {
     owner?: string;
     /** @format int32 */
     power?: number;
 }
+export declare type ValidatorMsgApproveDisableValidatorResponse = object;
 export declare type ValidatorMsgCreateValidatorResponse = object;
+export declare type ValidatorMsgDisableValidatorResponse = object;
+export declare type ValidatorMsgEnableValidatorResponse = object;
+export declare type ValidatorMsgProposeDisableValidatorResponse = object;
+export interface ValidatorProposedDisableValidator {
+    address?: string;
+    creator?: string;
+    approvals?: ValidatorGrant[];
+}
+export interface ValidatorQueryAllDisabledValidatorResponse {
+    disabledValidator?: ValidatorDisabledValidator[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
 export interface ValidatorQueryAllLastValidatorPowerResponse {
     lastValidatorPower?: ValidatorLastValidatorPower[];
+    /**
+     * PageResponse is to be embedded in gRPC response messages where the
+     * corresponding request message has used PageRequest.
+     *
+     *  message SomeResponse {
+     *          repeated Bar results = 1;
+     *          PageResponse page = 2;
+     *  }
+     */
+    pagination?: V1Beta1PageResponse;
+}
+export interface ValidatorQueryAllProposedDisableValidatorResponse {
+    proposedDisableValidator?: ValidatorProposedDisableValidator[];
     /**
      * PageResponse is to be embedded in gRPC response messages where the
      * corresponding request message has used PageRequest.
@@ -218,8 +265,14 @@ export interface ValidatorQueryAllValidatorResponse {
      */
     pagination?: V1Beta1PageResponse;
 }
+export interface ValidatorQueryGetDisabledValidatorResponse {
+    disabledValidator?: ValidatorDisabledValidator;
+}
 export interface ValidatorQueryGetLastValidatorPowerResponse {
     lastValidatorPower?: ValidatorLastValidatorPower;
+}
+export interface ValidatorQueryGetProposedDisableValidatorResponse {
+    proposedDisableValidator?: ValidatorProposedDisableValidator;
 }
 export interface ValidatorQueryGetValidatorResponse {
     validator?: ValidatorValidator;
@@ -379,6 +432,30 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * No description
      *
      * @tags Query
+     * @name QueryDisabledValidatorAll
+     * @summary Queries a list of DisabledValidator items.
+     * @request GET:/dcl/validator/disabled-validators
+     */
+    queryDisabledValidatorAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryAllDisabledValidatorResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryDisabledValidator
+     * @summary Queries a DisabledValidator by index.
+     * @request GET:/dcl/validator/disabled-validators/{address}
+     */
+    queryDisabledValidator: (address: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetDisabledValidatorResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
      * @name QueryLastValidatorPowerAll
      * @summary Queries a list of lastValidatorPower items.
      * @request GET:/dcl/validator/last-powers
@@ -423,5 +500,29 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @request GET:/dcl/validator/nodes/{owner}
      */
     queryValidator: (owner: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetValidatorResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryProposedDisableValidatorAll
+     * @summary Queries a list of ProposedDisableValidator items.
+     * @request GET:/dcl/validator/proposed-disable-validators
+     */
+    queryProposedDisableValidatorAll: (query?: {
+        "pagination.key"?: string;
+        "pagination.offset"?: string;
+        "pagination.limit"?: string;
+        "pagination.countTotal"?: boolean;
+        "pagination.reverse"?: boolean;
+    }, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryAllProposedDisableValidatorResponse, RpcStatus>>;
+    /**
+     * No description
+     *
+     * @tags Query
+     * @name QueryProposedDisableValidator
+     * @summary Queries a ProposedDisableValidator by index.
+     * @request GET:/dcl/validator/proposed-disable-validators/{address}
+     */
+    queryProposedDisableValidator: (address: string, params?: RequestParams) => Promise<HttpResponse<ValidatorQueryGetProposedDisableValidatorResponse, RpcStatus>>;
 }
 export {};

@@ -3,7 +3,7 @@ import { Account } from '../dclauth/account';
 import { Grant } from '../dclauth/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclauth';
-const baseRevokedAccount = {};
+const baseRevokedAccount = { revokedReason: '' };
 export const RevokedAccount = {
     encode(message, writer = Writer.create()) {
         if (message.account !== undefined) {
@@ -11,6 +11,9 @@ export const RevokedAccount = {
         }
         for (const v of message.revokeApprovals) {
             Grant.encode(v, writer.uint32(18).fork()).ldelim();
+        }
+        if (message.revokedReason !== '') {
+            writer.uint32(26).string(message.revokedReason);
         }
         return writer;
     },
@@ -27,6 +30,9 @@ export const RevokedAccount = {
                     break;
                 case 2:
                     message.revokeApprovals.push(Grant.decode(reader, reader.uint32()));
+                    break;
+                case 3:
+                    message.revokedReason = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -49,6 +55,12 @@ export const RevokedAccount = {
                 message.revokeApprovals.push(Grant.fromJSON(e));
             }
         }
+        if (object.revokedReason !== undefined && object.revokedReason !== null) {
+            message.revokedReason = String(object.revokedReason);
+        }
+        else {
+            message.revokedReason = '';
+        }
         return message;
     },
     toJSON(message) {
@@ -60,6 +72,7 @@ export const RevokedAccount = {
         else {
             obj.revokeApprovals = [];
         }
+        message.revokedReason !== undefined && (obj.revokedReason = message.revokedReason);
         return obj;
     },
     fromPartial(object) {
@@ -75,6 +88,12 @@ export const RevokedAccount = {
             for (const e of object.revokeApprovals) {
                 message.revokeApprovals.push(Grant.fromPartial(e));
             }
+        }
+        if (object.revokedReason !== undefined && object.revokedReason !== null) {
+            message.revokedReason = object.revokedReason;
+        }
+        else {
+            message.revokedReason = '';
         }
         return message;
     }
