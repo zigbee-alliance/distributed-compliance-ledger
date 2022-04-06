@@ -37,9 +37,15 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 		return nil, types.NewErrDisabledValidatorAlreadyExists(msg.Creator)
 	}
 
+	creator, err := sdk.ValAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress,
+			"Don't convert validator address to ValAddress")
+	}
+
 	disabledValidator := types.DisabledValidator{
 		Address:             msg.Creator,
-		Creator:             msg.Creator,
+		Creator:             string(creator),
 		DisabledByNodeAdmin: true,
 	}
 
