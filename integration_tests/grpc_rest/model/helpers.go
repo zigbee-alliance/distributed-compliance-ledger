@@ -193,6 +193,25 @@ func GetModel(
 	return &res, nil
 }
 
+func GetModelByHexVidPid(
+	suite *utils.TestSuite,
+	vid string,
+	pid string,
+) (*modeltypes.Model, error) {
+	var res modeltypes.Model
+
+	if suite.Rest {
+		var resp modeltypes.QueryGetModelResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%s/%s", vid, pid), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetModel()
+	}
+
+	return &res, nil
+}
+
 func GetModelVersion(
 	suite *utils.TestSuite,
 	vid int32,
@@ -277,6 +296,24 @@ func GetVendorModels(
 			context.Background(),
 			&modeltypes.QueryGetVendorProductsRequest{Vid: vid},
 		)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetVendorProducts()
+	}
+
+	return &res, nil
+}
+
+func GetVendorModelsByHexVid(
+	suite *utils.TestSuite,
+	vid string,
+) (*modeltypes.VendorProducts, error) {
+	var res modeltypes.VendorProducts
+
+	if suite.Rest {
+		var resp modeltypes.QueryGetVendorProductsResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/model/models/%s", vid), &resp)
 		if err != nil {
 			return nil, err
 		}
@@ -518,4 +555,68 @@ func GetModelForInvalidVidPid(suite *utils.TestSuite) {
 	// FIXME: Consider adding validation for queries.
 	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
 	suite.AssertNotFound(err)
+}
+
+func DemoWithHexVidAndPid(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	vendorName := utils.RandString()
+	var vid int32 = 0xA13
+	vendorAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// Get all models
+	inputModels, err := GetModels(suite)
+	require.NoError(suite.T, err)
+
+	var pid int32 = 0xA11
+
+	// New vendor adds first model
+	createFirstModelMsg := NewMsgCreateModel(vid, pid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstModelMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	testVIDString := "0xA13"
+	testPIDString := "0xA11"
+
+	// Check first model is added
+	receivedModel, err := GetModelByHexVidPid(suite, testVIDString, testPIDString)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, createFirstModelMsg.Vid, receivedModel.Vid)
+	require.Equal(suite.T, createFirstModelMsg.Pid, receivedModel.Pid)
+	require.Equal(suite.T, createFirstModelMsg.ProductName, receivedModel.ProductName)
+	require.Equal(suite.T, createFirstModelMsg.ProductLabel, receivedModel.ProductLabel)
+
+	// Get all models
+	receivedModels, err := GetModels(suite)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, len(inputModels)+1, len(receivedModels))
+
+	// Get models of new vendor
+	vendorModels, err := GetVendorModelsByHexVid(suite, testVIDString)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, 1, len(vendorModels.Products))
+	require.Equal(suite.T, createFirstModelMsg.Pid, vendorModels.Products[0].Pid)
 }
