@@ -69,7 +69,7 @@
     - [config.toml]
         - [p2p]
             - `pex` = true
-            - `persistent_peers` = [private sentry nodes private with IPs]
+            - `persistent_peers` = [private sentry nodes with private IPs]
             - `addr_book_strict` = false
         - [statesync]
             - `enable` = true
@@ -153,13 +153,13 @@
 
     - Target groups:
         - gRPC
-            - Registered targets = [observer nodes from all availability zones the same region]
+            - Registered targets = [observer nodes from all availability zones in the same region]
             - Attributes:
                 - `Preserve client IP addresses` = disabled
             - Health checks:
                 - protocol = TCP
         - REST
-            - Registered targets = [observer nodes from all availability zones the same region]
+            - Registered targets = [observer nodes from all availability zones in the same region]
             - Attributes:
                 - `Preserve client IP addresses` = disabled
             - Health checks:
