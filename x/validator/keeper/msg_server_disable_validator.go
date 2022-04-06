@@ -6,6 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	sdkstakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
+
+	dclauthTypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -55,6 +57,26 @@ func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisable
 
 	// store disabled validator
 	k.SetDisabledValidator(ctx, disabledValidator)
+
+	accAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
+	}
+
+	// get account
+	account, ok := k.dclauthKeeper.GetAccountO(ctx, accAddr)
+
+	// check we can get that account or can not
+	if !ok {
+		return nil, dclauthTypes.ErrAccountDoesNotExist(accAddr)
+	}
+
+	// create revoked account record
+	revokedAccount := dclauthTypes.NewRevokedAccount(&account, account.Approvals)
+	k.dclauthKeeper.SetRevokedAccount(ctx, *revokedAccount)
+
+	// delete account record
+	k.dclauthKeeper.RemoveAccount(ctx, accAddr)
 
 	return &types.MsgDisableValidatorResponse{}, nil
 }
