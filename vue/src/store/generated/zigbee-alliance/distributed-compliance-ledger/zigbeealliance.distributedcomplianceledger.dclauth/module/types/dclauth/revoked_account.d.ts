@@ -5,8 +5,15 @@ export declare const protobufPackage = "zigbeealliance.distributedcomplianceledg
 export interface RevokedAccount {
     account: Account | undefined;
     revokeApprovals: Grant[];
-    revokedReason: string;
+    reason: RevokedAccount_Reason;
 }
+export declare enum RevokedAccount_Reason {
+    TrusteeVoting = 0,
+    MaliciousValidator = 1,
+    UNRECOGNIZED = -1
+}
+export declare function revokedAccount_ReasonFromJSON(object: any): RevokedAccount_Reason;
+export declare function revokedAccount_ReasonToJSON(object: RevokedAccount_Reason): string;
 export declare const RevokedAccount: {
     encode(message: RevokedAccount, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): RevokedAccount;

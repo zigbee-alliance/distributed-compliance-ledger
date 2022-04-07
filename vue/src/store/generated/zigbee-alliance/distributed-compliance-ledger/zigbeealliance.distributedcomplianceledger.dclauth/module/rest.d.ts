@@ -1,3 +1,7 @@
+export declare enum RevokedAccountReason {
+    TrusteeVoting = "TrusteeVoting",
+    MaliciousValidator = "MaliciousValidator"
+}
 export interface DclauthAccount {
     /**
      * BaseAccount defines a base account type. It contains all the necessary fields
@@ -101,7 +105,7 @@ export interface DclauthQueryGetRevokedAccountResponse {
 export interface DclauthRevokedAccount {
     account?: DclauthAccount;
     revokeApprovals?: DclauthGrant[];
-    revokedReason?: string;
+    reason?: RevokedAccountReason;
 }
 /**
 * `Any` contains an arbitrary serialized protocol buffer message along with a
