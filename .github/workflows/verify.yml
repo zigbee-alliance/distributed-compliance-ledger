@@ -46,7 +46,7 @@ jobs:
               - 'go.mod'
               - 'go.sum'
             src:
-              - '!((**.md)|(**/*.md)|(.github/**))'
+              - '!((**.md)|(**/*.md)|(.github/**)|(docs/**)|(vue/**))'
             docs:
               - '**.md'
               - '**/*.md'
