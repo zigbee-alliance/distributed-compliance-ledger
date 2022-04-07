@@ -6,11 +6,6 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-const (
-	RevokedReasonIsRevokedAccount    = "Revoked account"
-	RevokedReasonIsValidatorDisabled = "Validator disabled"
-)
-
 // SetRevokedAccount set a specific revokedAccount in the store from its index.
 func (k Keeper) SetRevokedAccount(ctx sdk.Context, revokedAccount types.RevokedAccount) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RevokedAccountKeyPrefix))
