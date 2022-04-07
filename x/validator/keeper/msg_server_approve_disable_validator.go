@@ -66,7 +66,7 @@ func (k msgServer) ApproveDisableValidator(goCtx context.Context, msg *types.Msg
 
 		// Disable validator
 		validator, _ := k.GetValidator(ctx, validatorAddr)
-		k.Jail(ctx, validator, msg.Info)
+		k.Jail(ctx, validator, proposedDisableValidator.Approvals[0].Info)
 
 		k.SetDisabledValidator(ctx, approvedDisableValidator)
 	} else {
