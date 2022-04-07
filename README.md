@@ -53,9 +53,9 @@ In order to send write transactions to the ledger you need:
   - **Validator Node (VN)**: a full node participating in consensus protocol (ordering transactions).
   - **Sentry Node:** a full nodes that doesn't participate in consensus and wraps the validator node representing it for the rest of the network
     as one of the ways for DDoS protection.
-    - **Private Sentry Node:** connected to other Validators or Sentry nodes only; should not be accessed by clients.
-    - **Public Sentry Node:** clients and other nodes can access it; basically the same as an Observer node.
-  - **Observer Node (ON):** a full node that doesn't participate in consensus. Should be used to receive read/write requests from the clients. Technically can be a Public Sentry node.
+    - **Private Sentry Node:** a full node to connect other Validator or Sentry nodes only; should not be accessed by clients.
+    - **Public Sentry Node:** a full node to connect other external full nodes (possibly observer nodes).
+  - **Observer Node (ON):** a full node that doesn't participate in consensus. Should be used to receive read/write requests from the clients.
 - **Light Client Proxy Node**: doesn't contain a full replication of data. Can be used as a proxy to untrusted Full nodes for single-value query requests sent via CLI or Tendermint RPC.
   It will verify all state proofs automatically.
 - **Seed Node**: provides a list of peers which a node can connect to.
