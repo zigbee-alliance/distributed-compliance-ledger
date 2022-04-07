@@ -68,18 +68,18 @@ Please make sure that TLS is enabled in gRPC, REST or Light Client Proxy for sec
   - If there are no trusted Observer or Validator nodes to connect a CLI, then a [Light Client Proxy](running-light-client-proxy.md) can be used.
 - REST API
   - OpenAPI specification: <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
-  - Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/master/core/grpc_rest.html>.
+  - Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
   - See `REST API` section for every read request.
   - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
   - There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.
 - gRPC
-  - Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/master/core/grpc_rest.html>.
+  - Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
   - Generate a client code from the proto files [proto](../proto) for the client language (see <https://grpc.io/docs/languages/>).
   - See [grpc/rest integration tests](../integration_tests/grpc_rest) as an example.
   - There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.
 - Tendermint RPC
   - Tendermint RPC OpenAPI specification can be found in <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
-  - Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc>.
+  - Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html#tendermint-rpc>.
   - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
   - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.

@@ -45,6 +45,7 @@ In order to send write transactions to the ledger you need:
 - A network of Tendermint-based validator nodes (Validators and Observers) maintaining the ledger.
 - Every validator node (`dcld` binary) runs DC Ledger application code (based on Cosmos SDK) implementing the use cases.
 - See the proposed deployment in [deployment](docs/deployment.png) and [deployment-detailed](docs/deployment-detailed.png).
+- See recommended design for DCL MainNet deployment on AWS in [aws deployment](./docs/deployment-design-aws.md)
 
 ### Node Types
 
@@ -52,9 +53,9 @@ In order to send write transactions to the ledger you need:
   - **Validator Node (VN)**: a full node participating in consensus protocol (ordering transactions).
   - **Sentry Node:** a full nodes that doesn't participate in consensus and wraps the validator node representing it for the rest of the network
     as one of the ways for DDoS protection.
-    - **Private Sentry Node:** connected to other Validators or Sentry nodes only; should not be accessed by clients.
-    - **Public Sentry Node:** clients and other nodes can access it; basically the same as an Observer node.
-  - **Observer Node (ON):** a full node that doesn't participate in consensus. Should be used to receive read/write requests from the clients. Technically can be a Public Sentry node.
+    - **Private Sentry Node:** a full node to connect other Validator or Sentry nodes only; should not be accessed by clients.
+    - **Public Sentry Node:** a full node to connect other external full nodes (possibly observer nodes).
+  - **Observer Node (ON):** a full node that doesn't participate in consensus. Should be used to receive read/write requests from the clients.
 - **Light Client Proxy Node**: doesn't contain a full replication of data. Can be used as a proxy to untrusted Full nodes for single-value query requests sent via CLI or Tendermint RPC.
   It will verify all state proofs automatically.
 - **Seed Node**: provides a list of peers which a node can connect to.
@@ -64,6 +65,7 @@ See
 - [Deployment](docs/deployment.png)
 - [Deployment-detailed](docs/deployment-detailed.png).
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
+- [Deployment Recommendations for AWS](./docs/deployment-design-aws.md)
 - <https://docs.tendermint.com/master/nodes/validators.html>
 - [Run Light Client Proxy](docs/running-light-client-proxy.md)
 
@@ -121,7 +123,7 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 
 - **There are no state proofs in REST, so REST queries should be sent to trusted Validator or Observer nodes only.**
 - OpenAPI specification: <https://zigbee-alliance.github.io/distributed-compliance-ledger/>.
-- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/master/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `1317`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
 - See [transactions](docs/transactions.md) for a full list of endpoints.
 - REST HTTP(S) queries can be directly used for read requests.
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger).
@@ -132,14 +134,14 @@ See [Run Light Client Proxy](docs/running-light-client-proxy.md) for details how
 ### gRPC
 
 - **There are no state proofs in gRPC, so gRPC queries should be sent to trusted Validator or Observer nodes only.**
-- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/master/core/grpc_rest.html>.
+- Any running node exposes a REST API at port `9090`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html>.
 - A client code can be generated for all popular languages from the proto files [proto](proto), see <https://grpc.io/docs/languages/>.
 - The generated client code can be used for read and write requests, i.e. generation and signing of transactions
   See [How to read from the Ledger](docs/transactions.md#how-to-read-from-the-ledger) and [How to write to the Ledger](docs/transactions.md#how-to-write-to-the-ledger) for details.
 
 ### Tendermint RPC and Light Client
 
-- Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/master/core/grpc_rest.html#tendermint-rpc>.
+- Tendermint RPC is exposed by every running node  at port `26657`. See <https://docs.cosmos.network/v0.44/core/grpc_rest.html#tendermint-rpc>.
 - Tendermint RPC supports state proofs. Tendermint's Light Client library can be used to verify the state proofs.
     So, if Light Client API is used, then it's possible to communicate with non-trusted nodes.
 - Please note, that multi-value queries don't have state proofs support and should be sent to trusted nodes only.
@@ -194,7 +196,7 @@ See [Run local pool](README-DEV.md#run-local-pool) section in [README-DEV.md](RE
 
 ### Deploy a persistent pool of nodes
 
-A recommended way for deployment and client connection: [diagram](docs/deployment.png) and [diagram-detailed](docs/deployment-detailed.png).
+A recommended way for deployment and client connection: [diagram](docs/deployment.png), [diagram-detailed](docs/deployment-detailed.png) and [diagram-aws](docs/deployment-aws.png).
 
 One can either deploy its own network of validator nodes or join one of the persistent DC Ledger Networks.
 
@@ -237,6 +239,7 @@ See [Pool Upgrade](docs/pool-upgrade.md) and [Pool Upgrade How To](docs/pool-upg
 - [Deployment Pattern](docs/deployment.png)
 - [Deployment Pattern Detailed](docs/deployment-detailed.png)
 - [Deployment Recommendations](https://github.com/zigbee-alliance/distributed-compliance-ledger/wiki/DCL-MainNet-Deployment)
+- [Deployment Recommendations for AWS](./docs/deployment-design-aws.md)
 - [Running Node in a new network](docs/running-node.md)
   - [Running Genesis Validator Node](docs/advanced/running-genesis-node.md)
   - [Running Validator Node](docs/advanced/running-validator-node.md)
