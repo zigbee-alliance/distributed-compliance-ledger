@@ -66,7 +66,7 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 		// create revoked account record
 		revokedAccount := types.NewRevokedAccount(&account, revoc.Approvals)
-		revokedAccount.RevokedReason = RevokedReasonIsRevokedAccount
+		revokedAccount.Reason = types.RevokedAccount_TrusteeVoting
 		k.SetRevokedAccount(ctx, *revokedAccount)
 
 		// delete account record
