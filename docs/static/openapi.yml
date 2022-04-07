@@ -3765,8 +3765,12 @@ paths:
                             format: int64
                           info:
                             type: string
-                    revokedReason:
+                    reason:
                       type: string
+                      enum:
+                        - TrusteeVoting
+                        - MaliciousValidator
+                      default: TrusteeVoting
               pagination:
                 type: object
                 properties:
@@ -4292,8 +4296,12 @@ paths:
                           format: int64
                         info:
                           type: string
-                  revokedReason:
+                  reason:
                     type: string
+                    enum:
+                      - TrusteeVoting
+                      - MaliciousValidator
+                    default: TrusteeVoting
         default:
           description: An unexpected error response.
           schema:
@@ -12585,8 +12593,12 @@ definitions:
                     format: int64
                   info:
                     type: string
-            revokedReason:
+            reason:
               type: string
+              enum:
+                - TrusteeVoting
+                - MaliciousValidator
+              default: TrusteeVoting
       pagination:
         type: object
         properties:
@@ -13327,8 +13339,12 @@ definitions:
                   format: int64
                 info:
                   type: string
-          revokedReason:
+          reason:
             type: string
+            enum:
+              - TrusteeVoting
+              - MaliciousValidator
+            default: TrusteeVoting
   zigbeealliance.distributedcomplianceledger.dclauth.RevokedAccount:
     type: object
     properties:
@@ -13561,8 +13577,18 @@ definitions:
               format: int64
             info:
               type: string
-      revokedReason:
+      reason:
         type: string
+        enum:
+          - TrusteeVoting
+          - MaliciousValidator
+        default: TrusteeVoting
+  zigbeealliance.distributedcomplianceledger.dclauth.RevokedAccount.Reason:
+    type: string
+    enum:
+      - TrusteeVoting
+      - MaliciousValidator
+    default: TrusteeVoting
   cosmos.upgrade.v1beta1.Plan:
     type: object
     properties:
