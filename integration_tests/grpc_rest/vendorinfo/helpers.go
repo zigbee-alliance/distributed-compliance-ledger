@@ -340,10 +340,8 @@ func DemoWithHexVid(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstVendorInfoMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	testVIDString := "0xA13"
-
 	// Check first vendorinfo is added
-	receivedVendorInfo, err := GetVindorInfoByHexVID(suite, testVIDString)
+	receivedVendorInfo, err := GetVindorInfoByHexVID(suite, testconstants.TestVIDString)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, createFirstVendorInfoMsg.VendorID, receivedVendorInfo.VendorID)
 	require.Equal(suite.T, createFirstVendorInfoMsg.VendorName, receivedVendorInfo.VendorName)

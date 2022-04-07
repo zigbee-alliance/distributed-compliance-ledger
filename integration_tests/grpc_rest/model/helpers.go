@@ -598,11 +598,8 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstModelMsg}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
 
-	testVIDString := "0xA13"
-	testPIDString := "0xA11"
-
 	// Check first model is added
-	receivedModel, err := GetModelByHexVidPid(suite, testVIDString, testPIDString)
+	receivedModel, err := GetModelByHexVidPid(suite, testconstants.TestVIDString, testconstants.TestPIDString)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, createFirstModelMsg.Vid, receivedModel.Vid)
 	require.Equal(suite.T, createFirstModelMsg.Pid, receivedModel.Pid)
@@ -615,7 +612,7 @@ func DemoWithHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, len(inputModels)+1, len(receivedModels))
 
 	// Get models of new vendor
-	vendorModels, err := GetVendorModelsByHexVid(suite, testVIDString)
+	vendorModels, err := GetVendorModelsByHexVid(suite, testconstants.TestVIDString)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, 1, len(vendorModels.Products))
 	require.Equal(suite.T, createFirstModelMsg.Pid, vendorModels.Products[0].Pid)
