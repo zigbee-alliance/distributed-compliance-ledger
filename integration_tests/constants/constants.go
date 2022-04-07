@@ -258,4 +258,7 @@ tpcQ/mhg7DECwutZLCxKyA==
 	TestSubjectAsText  = "CN=Matter Test PAA,vid=0x125D"
 	TestSubjectKeyID   = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSerialNumber   = "1647312298631"
+
+	TestVIDString = "0xA13"
+	TestPIDString = "0xA11"
 )
