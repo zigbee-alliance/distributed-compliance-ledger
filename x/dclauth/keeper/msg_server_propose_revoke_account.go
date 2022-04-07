@@ -54,7 +54,12 @@ func (k msgServer) ProposeRevokeAccount(goCtx context.Context, msg *types.MsgPro
 		}
 
 		// create revoked account record
-		revokedAccount := types.NewRevokedAccount(&account, nil)
+		revokedApproval := []*types.Grant{
+			{
+				Address: msg.Signer,
+			},
+		}
+		revokedAccount := types.NewRevokedAccount(&account, revokedApproval)
 		revokedAccount.Reason = types.RevokedAccount_TrusteeVoting
 		k.SetRevokedAccount(ctx, *revokedAccount)
 
