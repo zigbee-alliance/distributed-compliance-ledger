@@ -50,11 +50,11 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 
 	if k.DisableValidatorApprovalsCount(ctx) > 1 {
 		proposedDisableValidator := types.ProposedDisableValidator{
-			Address: msg.Address,
-			Creator: msg.Creator,
+			Address: validatorAddr.String(),
+			Creator: creatorAddr.String(),
 			Approvals: []*types.Grant{
 				{
-					Address: msg.Creator,
+					Address: creatorAddr.String(),
 					Time:    msg.Time,
 					Info:    msg.Info,
 				},
@@ -65,11 +65,11 @@ func (k msgServer) ProposeDisableValidator(goCtx context.Context, msg *types.Msg
 		k.SetProposedDisableValidator(ctx, proposedDisableValidator)
 	} else {
 		disabledValidator := types.DisabledValidator{
-			Address: msg.Address,
-			Creator: msg.Creator,
+			Address: validatorAddr.String(),
+			Creator: creatorAddr.String(),
 			Approvals: []*types.Grant{
 				{
-					Address: msg.Creator,
+					Address: creatorAddr.String(),
 					Time:    msg.Time,
 					Info:    msg.Info,
 				},
