@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+	dclauthTypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
 )
 
@@ -86,4 +88,25 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 	if !validator.IsJailed() {
 		k.Jail(ctx, validator, reason)
 	}
+	// Revoked Account
+	accAddr, err := sdk.AccAddressFromBech32(validator.Owner)
+	if err != nil {
+		panic(sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
+	}
+
+	// get account
+	account, ok := k.dclauthKeeper.GetAccountO(ctx, accAddr)
+
+	// check we can get that account or can not
+	if !ok {
+		panic(dclauthTypes.ErrAccountDoesNotExist(accAddr))
+	}
+
+	// create revoked account record
+	revokedAccount := dclauthTypes.NewRevokedAccount(&account, account.Approvals)
+	revokedAccount.Reason = dclauthTypes.RevokedAccount_MaliciousValidator
+	k.dclauthKeeper.SetRevokedAccount(ctx, *revokedAccount)
+
+	// delete account record
+	k.dclauthKeeper.RemoveAccount(ctx, accAddr)
 }
