@@ -1,18 +1,18 @@
 provider "aws" {
-    alias   = "usw1"
-    region  = "us-west-1"
+    alias   = "reg1"
+    region  = var.region_1
 }
 
 provider "aws" {
-    alias  = "euw1"
-    region = "eu-west-1"
+    alias  = "reg2"
+    region = var.region_2
 }
 
 # Validator
 module "validator" {
     source    = "./validator"
     providers = {
-        aws = aws.usw1
+        aws = aws.reg1
     }
 }
 
@@ -21,8 +21,10 @@ module "private_sentries" {
     source      = "./private-sentries"
     # node_count  = 2
     providers   = {
-        aws = aws.usw1
+        aws = aws.reg1
     }
+
+    validator_vpc_id = module.validator.vpc_id
 }
 
 # Public Sentries
@@ -30,7 +32,7 @@ module "public_sentries" {
     source      = "./public-sentries"
     # node_count  = 3
     providers   = {
-        aws = aws.usw1
+        aws = aws.reg1
     }
 }
 
@@ -38,7 +40,7 @@ module "public_sentries" {
 module "observers_region_1" {
     source      = "./observers"
     providers   = {
-        aws = aws.usw1
+        aws = aws.reg1
     }
 }
 
@@ -46,6 +48,6 @@ module "observers_region_1" {
 module "observers_region_2" {
     source      = "./observers"
     providers   = {
-        aws = aws.euw1
+        aws = aws.reg2
     }
 }
