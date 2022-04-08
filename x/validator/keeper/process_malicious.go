@@ -91,7 +91,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 	// Revoked Account
 	accAddr, err := sdk.AccAddressFromBech32(validator.Owner)
 	if err != nil {
-		panic(sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
+		logger.Info("Error:", sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
 	}
 
 	// get account
@@ -99,7 +99,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 
 	// check we can get that account or can not
 	if !ok {
-		panic(dclauthTypes.ErrAccountDoesNotExist(accAddr))
+		logger.Info("Error:", dclauthTypes.ErrAccountDoesNotExist(accAddr))
 	}
 
 	// create revoked account record
