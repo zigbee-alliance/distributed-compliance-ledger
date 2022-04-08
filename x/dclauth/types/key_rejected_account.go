@@ -5,11 +5,11 @@ import "encoding/binary"
 var _ binary.ByteOrder
 
 const (
-	// RejectedAccountKeyPrefix is the prefix to retrieve all RejectedAccount
+	// RejectedAccountKeyPrefix is the prefix to retrieve all RejectedAccount.
 	RejectedAccountKeyPrefix = "RejectedAccount/value/"
 )
 
-// RejectedAccountKey returns the store key to retrieve a RejectedAccount from the index fields
+// RejectedAccountKey returns the store key to retrieve a RejectedAccount from the index fields.
 func RejectedAccountKey(
 	address string,
 ) []byte {
