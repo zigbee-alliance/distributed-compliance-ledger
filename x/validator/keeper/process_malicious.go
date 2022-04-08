@@ -94,17 +94,13 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 		logger.Info("Error:", sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
 	}
 
-	// get account
-	account, ok := k.dclauthKeeper.GetAccountO(ctx, accAddr)
-
-	// check we can get that account or can not
-	if !ok {
-		logger.Info("Error:", dclauthTypes.ErrAccountDoesNotExist(accAddr))
+	// Move account to entity revoked account
+	revokedAccount, err := k.dclauthKeeper.MoveAccountToRevokeAccount(
+		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator)
+	if err != nil {
+		logger.Info("Error:", err)
 	}
 
-	// create revoked account record
-	revokedAccount := dclauthTypes.NewRevokedAccount(&account, account.Approvals)
-	revokedAccount.Reason = dclauthTypes.RevokedAccount_MaliciousValidator
 	k.dclauthKeeper.SetRevokedAccount(ctx, *revokedAccount)
 
 	// delete account record

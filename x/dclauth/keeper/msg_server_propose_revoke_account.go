@@ -45,22 +45,20 @@ func (k msgServer) ProposeRevokeAccount(goCtx context.Context, msg *types.MsgPro
 		revoc := types.NewPendingAccountRevocation(accAddr, msg.Info, msg.Time, signerAddr)
 		k.SetPendingAccountRevocation(ctx, revoc)
 	} else {
-		// get account
-		account, ok := k.GetAccountO(ctx, accAddr)
-
-		// check we can get that account or can not
-		if !ok {
-			return nil, types.ErrAccountDoesNotExist(msg.Address)
-		}
-
-		// create revoked account record
+		// create revoked approval
 		revokedApproval := []*types.Grant{
 			{
 				Address: msg.Signer,
 			},
 		}
-		revokedAccount := types.NewRevokedAccount(&account, revokedApproval)
-		revokedAccount.Reason = types.RevokedAccount_TrusteeVoting
+
+		// Move account to entity revoked account
+		revokedAccount, err := k.MoveAccountToRevokeAccount(
+			ctx, accAddr, revokedApproval, types.RevokedAccount_TrusteeVoting)
+		if err != nil {
+			return nil, err
+		}
+
 		k.SetRevokedAccount(ctx, *revokedAccount)
 
 		// delete account record
