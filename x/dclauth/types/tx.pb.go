@@ -473,6 +473,8 @@ var xxx_messageInfo_MsgApproveRevokeAccountResponse proto.InternalMessageInfo
 type MsgRejectAddAccount struct {
 	Signer  string `protobuf:"bytes,1,opt,name=signer,proto3" json:"signer,omitempty"`
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	Info    string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time    int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
 }
 
 func (m *MsgRejectAddAccount) Reset()         { *m = MsgRejectAddAccount{} }
