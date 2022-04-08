@@ -6,7 +6,10 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -14,29 +17,44 @@ var _ = strconv.Itoa(0)
 
 func CmdRejectAddAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "reject-add-account [address]",
+		Use:   "reject-add-account",
 		Short: "Broadcast message RejectAddAccount",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argAddress := args[0]
+			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgRejectAddAccount(
-				clientCtx.GetFromAddress().String(),
+			argInfo := viper.GetString(FlagInfo)
+
+			msg := types.NewMsgApproveAddAccount(
+				clientCtx.GetFromAddress(),
 				argAddress,
+				argInfo,
 			)
-			if err := msg.ValidateBasic(); err != nil {
-				return err
+
+			// validate basic will be called in GenerateOrBroadcastTxCLI
+			err = tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+			if cli.IsWriteInsteadReadRPCError(err) {
+				return clientCtx.PrintString(cli.LightClientProxyForWriteRequests)
 			}
-			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+
+			return err
 		},
 	}
 
-	flags.AddTxFlagsToCmd(cmd)
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
+	cmd.Flags().String(FlagInfo, "", FlagInfoUsage)
+	cli.AddTxFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(flags.FlagFrom)
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }
