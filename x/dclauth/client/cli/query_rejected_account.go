@@ -11,7 +11,7 @@ import (
 
 func CmdListRejectedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list-rejected-account",
+		Use:   "all-rejected-account",
 		Short: "list all RejectedAccount",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -44,7 +44,7 @@ func CmdListRejectedAccount() *cobra.Command {
 
 func CmdShowRejectedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-rejected-account [address]",
+		Use:   "rejected-account [address]",
 		Short: "shows a RejectedAccount",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
