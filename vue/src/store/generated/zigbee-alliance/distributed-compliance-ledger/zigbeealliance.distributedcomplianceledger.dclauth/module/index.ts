@@ -7,6 +7,7 @@ import { Api } from "./rest";
 import { MsgApproveAddAccount } from "./types/dclauth/tx";
 import { MsgProposeRevokeAccount } from "./types/dclauth/tx";
 import { MsgProposeAddAccount } from "./types/dclauth/tx";
+import { MsgRejectAddAccount } from "./types/dclauth/tx";
 import { MsgApproveRevokeAccount } from "./types/dclauth/tx";
 
 
@@ -14,6 +15,7 @@ const types = [
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", MsgApproveAddAccount],
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", MsgProposeRevokeAccount],
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", MsgProposeAddAccount],
+  ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgRejectAddAccount", MsgRejectAddAccount],
   ["/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", MsgApproveRevokeAccount],
   
 ];
@@ -50,6 +52,7 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
     msgApproveAddAccount: (data: MsgApproveAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveAddAccount", value: MsgApproveAddAccount.fromPartial( data ) }),
     msgProposeRevokeAccount: (data: MsgProposeRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeRevokeAccount", value: MsgProposeRevokeAccount.fromPartial( data ) }),
     msgProposeAddAccount: (data: MsgProposeAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgProposeAddAccount", value: MsgProposeAddAccount.fromPartial( data ) }),
+    msgRejectAddAccount: (data: MsgRejectAddAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgRejectAddAccount", value: MsgRejectAddAccount.fromPartial( data ) }),
     msgApproveRevokeAccount: (data: MsgApproveRevokeAccount): EncodeObject => ({ typeUrl: "/zigbeealliance.distributedcomplianceledger.dclauth.MsgApproveRevokeAccount", value: MsgApproveRevokeAccount.fromPartial( data ) }),
     
   };

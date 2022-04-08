@@ -6,8 +6,9 @@ import { AccountStat } from "./module/types/dclauth/account_stat";
 import { Grant } from "./module/types/dclauth/grant";
 import { PendingAccount } from "./module/types/dclauth/pending_account";
 import { PendingAccountRevocation } from "./module/types/dclauth/pending_account_revocation";
+import { RejectedAccount } from "./module/types/dclauth/rejected_account";
 import { RevokedAccount } from "./module/types/dclauth/revoked_account";
-export { Account, AccountStat, Grant, PendingAccount, PendingAccountRevocation, RevokedAccount };
+export { Account, AccountStat, Grant, PendingAccount, PendingAccountRevocation, RejectedAccount, RevokedAccount };
 async function initTxClient(vuexGetters) {
     return await txClient(vuexGetters['common/wallet/signer'], {
         addr: vuexGetters['common/env/apiTendermint']
@@ -50,12 +51,15 @@ const getDefaultState = () => {
         AccountStat: {},
         RevokedAccount: {},
         RevokedAccountAll: {},
+        RejectedAccount: {},
+        RejectedAccountAll: {},
         _Structure: {
             Account: getStructure(Account.fromPartial({})),
             AccountStat: getStructure(AccountStat.fromPartial({})),
             Grant: getStructure(Grant.fromPartial({})),
             PendingAccount: getStructure(PendingAccount.fromPartial({})),
             PendingAccountRevocation: getStructure(PendingAccountRevocation.fromPartial({})),
+            RejectedAccount: getStructure(RejectedAccount.fromPartial({})),
             RevokedAccount: getStructure(RevokedAccount.fromPartial({})),
         },
         _Registry: registry,
@@ -135,6 +139,18 @@ export default {
                 params.query = null;
             }
             return state.RevokedAccountAll[JSON.stringify(params)] ?? {};
+        },
+        getRejectedAccount: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.RejectedAccount[JSON.stringify(params)] ?? {};
+        },
+        getRejectedAccountAll: (state) => (params = { params: {} }) => {
+            if (!params.query) {
+                params.query = null;
+            }
+            return state.RejectedAccountAll[JSON.stringify(params)] ?? {};
         },
         getTypeStructure: (state) => (type) => {
             return state._Structure[type].fields;
@@ -311,6 +327,38 @@ export default {
                 throw new SpVuexError('QueryClient:QueryRevokedAccountAll', 'API Node Unavailable. Could not perform query: ' + e.message);
             }
         },
+        async QueryRejectedAccount({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
+            try {
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryRejectedAccount(key.address)).data;
+                commit('QUERY', { query: 'RejectedAccount', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryRejectedAccount', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getRejectedAccount']({ params: { ...key }, query }) ?? {};
+            }
+            catch (e) {
+                throw new SpVuexError('QueryClient:QueryRejectedAccount', 'API Node Unavailable. Could not perform query: ' + e.message);
+            }
+        },
+        async QueryRejectedAccountAll({ commit, rootGetters, getters }, { options: { subscribe, all } = { subscribe: false, all: false }, params, query = null }) {
+            try {
+                const key = params ?? {};
+                const queryClient = await initQueryClient(rootGetters);
+                let value = (await queryClient.queryRejectedAccountAll(query)).data;
+                while (all && value.pagination && value.pagination.next_key != null) {
+                    let next_values = (await queryClient.queryRejectedAccountAll({ ...query, 'pagination.key': value.pagination.next_key })).data;
+                    value = mergeResults(value, next_values);
+                }
+                commit('QUERY', { query: 'RejectedAccountAll', key: { params: { ...key }, query }, value });
+                if (subscribe)
+                    commit('SUBSCRIBE', { action: 'QueryRejectedAccountAll', payload: { options: { all }, params: { ...key }, query } });
+                return getters['getRejectedAccountAll']({ params: { ...key }, query }) ?? {};
+            }
+            catch (e) {
+                throw new SpVuexError('QueryClient:QueryRejectedAccountAll', 'API Node Unavailable. Could not perform query: ' + e.message);
+            }
+        },
         async sendMsgApproveAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
             try {
                 const txClient = await initTxClient(rootGetters);
@@ -359,6 +407,23 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgProposeAddAccount:Send', 'Could not broadcast Tx: ' + e.message);
+                }
+            }
+        },
+        async sendMsgRejectAddAccount({ rootGetters }, { value, fee = [], memo = '' }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgRejectAddAccount(value);
+                const result = await txClient.signAndBroadcast([msg], { fee: { amount: fee,
+                        gas: "200000" }, memo });
+                return result;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgRejectAddAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgRejectAddAccount:Send', 'Could not broadcast Tx: ' + e.message);
                 }
             }
         },
@@ -421,6 +486,21 @@ export default {
                 }
                 else {
                     throw new SpVuexError('TxClient:MsgProposeAddAccount:Create', 'Could not create message: ' + e.message);
+                }
+            }
+        },
+        async MsgRejectAddAccount({ rootGetters }, { value }) {
+            try {
+                const txClient = await initTxClient(rootGetters);
+                const msg = await txClient.msgRejectAddAccount(value);
+                return msg;
+            }
+            catch (e) {
+                if (e == MissingWalletError) {
+                    throw new SpVuexError('TxClient:MsgRejectAddAccount:Init', 'Could not initialize signing client. Wallet is required.');
+                }
+                else {
+                    throw new SpVuexError('TxClient:MsgRejectAddAccount:Create', 'Could not create message: ' + e.message);
                 }
             }
         },

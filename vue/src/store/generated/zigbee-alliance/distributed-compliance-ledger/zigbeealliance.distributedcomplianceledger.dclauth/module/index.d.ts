@@ -4,6 +4,7 @@ import { Api } from "./rest";
 import { MsgApproveAddAccount } from "./types/dclauth/tx";
 import { MsgProposeRevokeAccount } from "./types/dclauth/tx";
 import { MsgProposeAddAccount } from "./types/dclauth/tx";
+import { MsgRejectAddAccount } from "./types/dclauth/tx";
 import { MsgApproveRevokeAccount } from "./types/dclauth/tx";
 export declare const MissingWalletError: Error;
 export declare const registry: Registry;
@@ -19,6 +20,7 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     msgApproveAddAccount: (data: MsgApproveAddAccount) => EncodeObject;
     msgProposeRevokeAccount: (data: MsgProposeRevokeAccount) => EncodeObject;
     msgProposeAddAccount: (data: MsgProposeAddAccount) => EncodeObject;
+    msgRejectAddAccount: (data: MsgRejectAddAccount) => EncodeObject;
     msgApproveRevokeAccount: (data: MsgApproveRevokeAccount) => EncodeObject;
 }>;
 interface QueryClientOptions {
