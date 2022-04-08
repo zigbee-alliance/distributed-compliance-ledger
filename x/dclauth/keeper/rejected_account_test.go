@@ -12,7 +12,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// Prevent strconv unused error
+// Prevent strconv unused error.
 var _ = strconv.IntSize
 
 func createNRejectedAccount(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.RejectedAccount {
@@ -22,6 +22,7 @@ func createNRejectedAccount(keeper *keeper.Keeper, ctx sdk.Context, n int) []typ
 
 		keeper.SetRejectedAccount(ctx, items[i])
 	}
+
 	return items
 }
 
@@ -39,6 +40,7 @@ func TestRejectedAccountGet(t *testing.T) {
 		)
 	}
 }
+
 func TestRejectedAccountRemove(t *testing.T) {
 	keeper, ctx := keepertest.DclauthKeeper(t)
 	items := createNRejectedAccount(keeper, ctx, 10)

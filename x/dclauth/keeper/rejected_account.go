@@ -6,7 +6,7 @@ import (
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
-// SetRejectedAccount set a specific rejectedAccount in the store from its index
+// SetRejectedAccount set a specific rejectedAccount in the store from its index.
 func (k Keeper) SetRejectedAccount(ctx sdk.Context, rejectedAccount types.RejectedAccount) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedAccountKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedAccount)
@@ -15,11 +15,10 @@ func (k Keeper) SetRejectedAccount(ctx sdk.Context, rejectedAccount types.Reject
 	), b)
 }
 
-// GetRejectedAccount returns a rejectedAccount from its index
+// GetRejectedAccount returns a rejectedAccount from its index.
 func (k Keeper) GetRejectedAccount(
 	ctx sdk.Context,
 	address string,
-
 ) (val types.RejectedAccount, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedAccountKeyPrefix))
 
@@ -31,14 +30,14 @@ func (k Keeper) GetRejectedAccount(
 	}
 
 	k.cdc.MustUnmarshal(b, &val)
+
 	return val, true
 }
 
-// RemoveRejectedAccount removes a rejectedAccount from the store
+// RemoveRejectedAccount removes a rejectedAccount from the store.
 func (k Keeper) RemoveRejectedAccount(
 	ctx sdk.Context,
 	address string,
-
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedAccountKeyPrefix))
 	store.Delete(types.RejectedAccountKey(
@@ -46,7 +45,7 @@ func (k Keeper) RemoveRejectedAccount(
 	))
 }
 
-// GetAllRejectedAccount returns all rejectedAccount
+// GetAllRejectedAccount returns all rejectedAccount.
 func (k Keeper) GetAllRejectedAccount(ctx sdk.Context) (list []types.RejectedAccount) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedAccountKeyPrefix))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
