@@ -1,10 +1,8 @@
 import { Account } from '../dclauth/account';
-import { Grant } from '../dclauth/grant';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.dclauth";
 export interface RejectedAccount {
     account: Account | undefined;
-    rejectApprovals: Grant[];
 }
 export declare const RejectedAccount: {
     encode(message: RejectedAccount, writer?: Writer): Writer;

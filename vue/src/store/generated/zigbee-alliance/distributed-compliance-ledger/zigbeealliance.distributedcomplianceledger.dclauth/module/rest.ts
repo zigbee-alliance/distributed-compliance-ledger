@@ -26,6 +26,7 @@ export interface DclauthAccount {
 
   /** @format int32 */
   vendorID?: number;
+  rejectApprovals?: DclauthGrant[];
 }
 
 export interface DclauthAccountStat {
@@ -161,7 +162,6 @@ export interface DclauthQueryGetRevokedAccountResponse {
 
 export interface DclauthRejectedAccount {
   account?: DclauthAccount;
-  rejectApprovals?: DclauthGrant[];
 }
 
 export interface DclauthRevokedAccount {

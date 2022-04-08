@@ -12,6 +12,7 @@ export interface Account {
     roles: string[];
     approvals: Grant[];
     vendorID: number;
+    rejectApprovals: Grant[];
 }
 export declare const Account: {
     encode(message: Account, writer?: Writer): Writer;
