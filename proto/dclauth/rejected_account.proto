@@ -9,6 +9,5 @@ import "dclauth/grant.proto";
 
 message RejectedAccount {
   Account account = 1 [(gogoproto.embed) = true];
-  repeated Grant rejectApprovals = 2;
 }
 
