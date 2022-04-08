@@ -259,6 +259,10 @@ tpcQ/mhg7DECwutZLCxKyA==
 	TestSubjectKeyID   = "E2:90:8D:36:9C:3C:A3:C1:13:BB:09:E2:4D:C1:CC:C5:A6:66:91:D4"
 	TestSerialNumber   = "1647312298631"
 
-	TestVIDString = "0xA13"
-	TestPIDString = "0xA11"
+	TestVID1String = "0xA13"
+	TestPID1String = "0xA11"
+	TestVID2String = "0xA14"
+	TestPID2String = "0xA15"
+	TestVID3String = "0xA16"
+	TestPID3String = "0xA17"
 )

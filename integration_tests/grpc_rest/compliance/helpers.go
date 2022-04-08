@@ -983,13 +983,13 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check if model either certified or revoked before Compliance record was created
-	_, err = GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	_, err = GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID1String, testconstants.TestPID1String, sv, compliancetypes.ZigbeeCertificationType)
 	suite.AssertNotFound(err)
-	_, err = GetRevokedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	_, err = GetRevokedModelByHexVidAndPid(suite, testconstants.TestVID1String, testconstants.TestPID1String, sv, compliancetypes.ZigbeeCertificationType)
 	suite.AssertNotFound(err)
-	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID1String, testconstants.TestPID1String, sv, compliancetypes.ZigbeeCertificationType)
 	suite.AssertNotFound(err)
-	_, err = GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	_, err = GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVID1String, testconstants.TestPID1String, sv, compliancetypes.ZigbeeCertificationType)
 	suite.AssertNotFound(err)
 
 	// Certify model
@@ -1014,7 +1014,7 @@ func DemoTrackComplianceWithHexVidAndPid(suite *utils.TestSuite) {
 	require.True(suite.T, compliancetypes.ErrAlreadyCertified.Is(err))
 
 	// Check model is certified
-	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID1String, testconstants.TestPID1String, sv, compliancetypes.ZigbeeCertificationType)
 	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, complianceInfo.CertificationType)
 	require.Equal(suite.T, uint32(2), complianceInfo.SoftwareVersionCertificationStatus)
 	require.Equal(suite.T, vid, complianceInfo.Vid)
@@ -1045,7 +1045,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
-	var vid int32 = 0xA13
+	var vid int32 = 0xA14
 	vendorName := utils.RandString()
 	vendorAccount := test_dclauth.CreateAccount(
 		suite,
@@ -1077,7 +1077,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NotNil(suite.T, certCenterAccount)
 
 	// Publish model info
-	var pid int32 = 0xA11
+	var pid int32 = 0xA15
 	firstModel := test_model.NewMsgCreateModel(vid, pid, vendorAccount.Address)
 	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{firstModel}, vendorName, vendorAccount)
 	require.NoError(suite.T, err)
@@ -1111,7 +1111,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.True(suite.T, compliancetypes.ErrAlreadyRevoked.Is(err))
 
 	// Check non-certified model is revoked
-	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, complianceInfo.CertificationType)
 	require.Equal(suite.T, uint32(3), complianceInfo.SoftwareVersionCertificationStatus)
 	require.Equal(suite.T, vid, complianceInfo.Vid)
@@ -1119,11 +1119,11 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
 	require.Equal(suite.T, revocReason, complianceInfo.Reason)
 	require.Equal(suite.T, revocDate, complianceInfo.Date)
-	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	suite.AssertNotFound(err)
-	modelIsRevoked, _ := GetRevokedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	modelIsRevoked, _ := GetRevokedModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	require.True(suite.T, modelIsRevoked.Value)
-	_, err = GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	_, err = GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	suite.AssertNotFound(err)
 
 	// Certify model
@@ -1143,7 +1143,7 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check model is certified
-	complianceInfo, _ = GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	complianceInfo, _ = GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	require.Equal(suite.T, compliancetypes.ZigbeeCertificationType, complianceInfo.CertificationType)
 	require.Equal(suite.T, uint32(2), complianceInfo.SoftwareVersionCertificationStatus)
 	require.Equal(suite.T, vid, complianceInfo.Vid)
@@ -1151,11 +1151,11 @@ func DemoTrackRevocationWithHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
-	certifiedModel, _ := GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	certifiedModel, _ := GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	require.True(suite.T, certifiedModel.Value)
-	revokedModel, _ := GetRevokedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	revokedModel, _ := GetRevokedModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	require.False(suite.T, revokedModel.Value)
-	provisionalModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.ZigbeeCertificationType)
+	provisionalModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVID2String, testconstants.TestPID2String, sv, compliancetypes.ZigbeeCertificationType)
 	require.False(suite.T, provisionalModel.Value)
 }
 
@@ -1174,7 +1174,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Register new Vendor account
-	var vid int32 = 0xA13
+	var vid int32 = 0xA16
 	vendorName := utils.RandString()
 	vendorAccount := test_dclauth.CreateAccount(
 		suite,
@@ -1204,7 +1204,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	)
 	require.NotNil(suite.T, certCenterAccount)
 
-	var pid int32 = 0xA11
+	var pid int32 = 0xA17
 	sv := tmrand.Uint32()
 	svs := utils.RandString()
 
@@ -1230,7 +1230,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.True(suite.T, compliancetypes.ErrAlreadyProvisional.Is(err))
 
 	// Check non-existent model is provisioned
-	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	complianceInfo, _ := GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	require.Equal(suite.T, compliancetypes.MatterCertificationType, complianceInfo.CertificationType)
 	require.Equal(suite.T, uint32(1), complianceInfo.SoftwareVersionCertificationStatus)
 	require.Equal(suite.T, vid, complianceInfo.Vid)
@@ -1238,11 +1238,11 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
 	require.Equal(suite.T, provReason, complianceInfo.Reason)
 	require.Equal(suite.T, provDate, complianceInfo.Date)
-	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	_, err = GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	suite.AssertNotFound(err)
-	_, err = GetRevokedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	_, err = GetRevokedModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	suite.AssertNotFound(err)
-	provisionModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	provisionModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	require.True(suite.T, provisionModel.Value)
 
 	// Publish model info
@@ -1272,7 +1272,7 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check model is certified
-	complianceInfo, _ = GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	complianceInfo, _ = GetComplianceInfoByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	require.Equal(suite.T, compliancetypes.MatterCertificationType, complianceInfo.CertificationType)
 	require.Equal(suite.T, uint32(2), complianceInfo.SoftwareVersionCertificationStatus)
 	require.Equal(suite.T, vid, complianceInfo.Vid)
@@ -1280,11 +1280,11 @@ func DemoTrackProvisionByHexVidAndPid(suite *utils.TestSuite) {
 	require.Equal(suite.T, sv, complianceInfo.SoftwareVersion)
 	require.Equal(suite.T, certReason, complianceInfo.Reason)
 	require.Equal(suite.T, certDate, complianceInfo.Date)
-	certifiedModel, _ := GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	certifiedModel, _ := GetCertifiedModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	require.True(suite.T, certifiedModel.Value)
-	revokedModel, _ := GetRevokedModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	revokedModel, _ := GetRevokedModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	require.False(suite.T, revokedModel.Value)
-	provisionalModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVIDString, testconstants.TestPIDString, sv, compliancetypes.MatterCertificationType)
+	provisionalModel, _ := GetProvisionalModelByHexVidAndPid(suite, testconstants.TestVID3String, testconstants.TestPID3String, sv, compliancetypes.MatterCertificationType)
 	require.False(suite.T, provisionalModel.Value)
 
 	// Can not provision certified model

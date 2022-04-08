@@ -341,7 +341,7 @@ func DemoWithHexVid(suite *utils.TestSuite) {
 	require.NoError(suite.T, err)
 
 	// Check first vendorinfo is added
-	receivedVendorInfo, err := GetVindorInfoByHexVID(suite, testconstants.TestVIDString)
+	receivedVendorInfo, err := GetVindorInfoByHexVID(suite, testconstants.TestVID1String)
 	require.NoError(suite.T, err)
 	require.Equal(suite.T, createFirstVendorInfoMsg.VendorID, receivedVendorInfo.VendorID)
 	require.Equal(suite.T, createFirstVendorInfoMsg.VendorName, receivedVendorInfo.VendorName)
