@@ -30,21 +30,6 @@ create_new_vendor_account $second_vendor_account $vid2_in_hex_format
 
 test_divider
 
-# Query non existent
-echo "Query non existent vendorinfo"
-result=$(dcld query vendorinfo vendor --vid=$vid_in_hex_format)
-check_response "$result" "Not Found"
-echo "$result"
-
-test_divider
-
-echo "Request all vendor info must be empty"
-result=$(dcld query vendorinfo all-vendors)
-check_response "$result" "\[\]"
-echo "$result"
-
-test_divider
-
 # Create a vendor info record
 echo "Create VendorInfo Record for VID: $vid_in_hex_format"
 companyLegalName="XYZ IOT Devices Inc"
@@ -58,15 +43,6 @@ test_divider
 # Query vendor info record
 echo "Verify if VendorInfo Record for VID: $vid_in_hex_format is present or not"
 result=$(dcld query vendorinfo vendor --vid=$vid_in_hex_format)
-check_response "$result" "\"vendorID\": $vid"
-check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
-check_response "$result" "\"vendorName\": \"$vendorName\""
-echo "$result"
-
-test_divider
-
-echo "Request all vendor info"
-result=$(dcld query vendorinfo all-vendors)
 check_response "$result" "\"vendorID\": $vid"
 check_response "$result" "\"companyLegalName\": \"$companyLegalName\""
 check_response "$result" "\"vendorName\": \"$vendorName\""

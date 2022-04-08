@@ -45,14 +45,6 @@ certification_date="2020-01-01T00:00:01Z"
 zigbee_certification_type="zigbee"
 matter_certification_type="matter"
 
-echo "Certify unknown Model with VID: $pid_in_hex_format PID: $pid_in_hex_format  SV: ${sv} with zigbee certification"
-result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
-echo "$result"
-check_response "$result" "\"code\": 517"
-check_response "$result" "No model version"
-
-test_divider
-
 echo "Add Model with VID: $vid_in_hex_format PID: $pid_in_hex_format"
 result=$(echo "$passphrase" | dcld tx model add-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --deviceTypeID=1 --productName=TestProduct --productLabel=TestingProductLabel --partNumber=1 --commissioningCustomFlow=0  --from $vendor_account --yes)
 echo $result
@@ -105,42 +97,6 @@ test_divider
 echo "Get Provisional Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} SV: ${sv} before compliance record was created"
 result=$(dcld query compliance provisional-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType="zigbee")
 check_response "$result" "Not Found"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Get All Compliance Info empty"
-result=$(dcld query compliance all-compliance-info)
-check_response "$result" "\[\]"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Get All Certified Models empty"
-result=$(dcld query compliance all-certified-models)
-check_response "$result" "\[\]"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Get All Revoked Models empty"
-result=$(dcld query compliance all-revoked-models)
-check_response "$result" "\[\]"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Get All Provisional Models empty"
-result=$(dcld query compliance all-provisional-models)
-check_response "$result" "\[\]"
 response_does_not_contain "$result" "\"pid\": $pid"
 response_does_not_contain "$result" "\"vid\": $vid"
 echo "$result"
@@ -264,45 +220,6 @@ echo "$result"
 
 test_divider
 
-echo "Get All Certified Models"
-result=$(dcld query compliance all-certified-models)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
-check_response "$result" "\"certificationType\": \"$matter_certification_type\""
-echo "$result"
-
-test_divider
-
-echo "Get All Revoked Models empty"
-result=$(dcld query compliance all-revoked-models)
-check_response "$result" "\[\]"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Get All Provisional Models empty"
-result=$(dcld query compliance all-provisional-models)
-check_response "$result" "\[\]"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Get All Compliance Info Recordss"
-result=$(dcld query compliance all-compliance-info)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
-check_response "$result" "\"certificationType\": \"$matter_certification_type\""
-check_response "$result" "\"date\": \"$certification_date\""
-echo "$result"
-
-test_divider
-
 revocation_reason="some reason"
 
 echo "Revoke Certification for Model with VID: $vid_in_hex_format PID: $pid_in_hex_format SV: ${sv} from the past"
@@ -357,26 +274,6 @@ echo "$result"
 
 test_divider
 
-echo "Get All Revoked Models"
-result=$(dcld query compliance all-revoked-models)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
-echo "$result"
-
-test_divider
-
-echo "Get All Certified Models"
-result=$(dcld query compliance all-certified-models)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certificationType\": \"$matter_certification_type\""
-response_does_not_contain "$result" "\"certificationType\": \"$zigbee_certification_type\""
-echo "$result"
-
-test_divider
-
-
 echo "Again Certify Model with VID: $vid_in_hex_format PID: $pid_in_hex_format SV: ${sv}"
 certification_date="2020-03-03T00:00:00Z"
 result=$(echo "$passphrase" | dcld tx compliance certify-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --softwareVersionString=$svs --certificationType="$zigbee_certification_type" --certificationDate="$certification_date" --from $zb_account --yes)
@@ -400,30 +297,6 @@ echo "$result"
 echo "Get Revoked Model with VID: ${vid_in_hex_format} PID: ${pid_in_hex_format} SV: ${sv}"
 result=$(dcld query compliance revoked-model --vid=$vid_in_hex_format --pid=$pid_in_hex_format --softwareVersion=$sv --certificationType=$zigbee_certification_type)
 check_response "$result" "\"value\": false"
-echo "$result"
-
-echo "Get All Compliance Infos"
-result=$(dcld query compliance all-compliance-info)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"softwareVersionCertificationStatus\": 2"
-echo "$result"
-
-echo "Get All Revoked Models"
-result=$(dcld query compliance all-revoked-models)
-check_response "$result" "\[\]"
-response_does_not_contain "$result" "\"pid\": $pid"
-response_does_not_contain "$result" "\"vid\": $vid"
-echo "$result"
-
-test_divider
-
-echo "Get All Certified Models"
-result=$(dcld query compliance all-certified-models)
-check_response "$result" "\"vid\": $vid"
-check_response "$result" "\"pid\": $pid"
-check_response "$result" "\"certificationType\": \"$matter_certification_type\""
-check_response "$result" "\"certificationType\": \"$zigbee_certification_type\""
 echo "$result"
 
 test_divider

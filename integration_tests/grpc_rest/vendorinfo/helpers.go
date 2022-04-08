@@ -348,8 +348,4 @@ func DemoWithHexVid(suite *utils.TestSuite) {
 	require.Equal(suite.T, createFirstVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
 	require.Equal(suite.T, createFirstVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
 	require.Equal(suite.T, createFirstVendorInfoMsg.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
-
-	// Get all vendorinfos
-	_, err = GetVendorInfos(suite)
-	require.NoError(suite.T, err)
 }
