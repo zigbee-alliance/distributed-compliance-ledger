@@ -12,7 +12,7 @@ type DclauthKeeper interface {
 	GetAccountO(ctx sdk.Context, address sdk.AccAddress) (val dclauthtypes.Account, found bool)
 	SetRevokedAccount(ctx sdk.Context, revokedAccount dclauthtypes.RevokedAccount)
 	RemoveAccount(ctx sdk.Context, address sdk.AccAddress)
-	MoveAccountToRevokeAccount(
+	AddAccountToRevokeAccount(
 		ctx sdk.Context, accAddr sdk.AccAddress, approvals []*dclauthtypes.Grant, reason dclauthtypes.RevokedAccount_Reason,
 	) (*dclauthtypes.RevokedAccount, error)
 }

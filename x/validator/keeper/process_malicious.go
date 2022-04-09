@@ -95,7 +95,7 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 	}
 
 	// Move account to entity revoked account
-	revokedAccount, err := k.dclauthKeeper.MoveAccountToRevokeAccount(
+	revokedAccount, err := k.dclauthKeeper.AddAccountToRevokeAccount(
 		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator)
 	if err != nil {
 		logger.Info("Error:", err)
