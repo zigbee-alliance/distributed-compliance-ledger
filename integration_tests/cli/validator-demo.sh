@@ -225,6 +225,11 @@ result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validat
 check_response "$result" "Not Found"
 echo "$result"
 
+echo "Get a validator $address from node query"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator node --address="$address"")
+check_response "$result" "\"moniker\": \"$node_name\""
+check_response "$result" "\"pubKey\":$vpubkey" raw
+echo "$result"
 
 test_divider
 
