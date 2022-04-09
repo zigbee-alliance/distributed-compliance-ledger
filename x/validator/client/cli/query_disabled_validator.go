@@ -13,7 +13,7 @@ import (
 
 func CmdListDisabledValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-disabled-validators",
+		Use:   "all-disabled-nodes",
 		Short: "Query the list of all disabled validators",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
