@@ -13,7 +13,7 @@ import (
 func (k msgServer) DisableValidator(goCtx context.Context, msg *types.MsgDisableValidator) (*types.MsgDisableValidatorResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	creatorAddr, err := sdk.ValAddressFromBech32(msg.Creator)
+	valAddr, err := sdk.ValAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
