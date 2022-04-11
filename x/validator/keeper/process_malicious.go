@@ -89,13 +89,15 @@ func (k Keeper) HandleDoubleSign(ctx sdk.Context, evidence *evidencetypes.Equivo
 		k.Jail(ctx, validator, reason)
 	}
 	// Revoked Account
-	accAddr, err := sdk.AccAddressFromBech32(validator.Owner)
+	valAddr, err := sdk.ValAddressFromBech32(validator.Owner)
 	if err != nil {
 		logger.Info("Error:", sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err))
 	}
 
+	accAddr := sdk.AccAddress(valAddr)
+
 	// Move account to entity revoked account
-	revokedAccount, err := k.dclauthKeeper.AddAccountToRevokeAccount(
+	revokedAccount, err := k.dclauthKeeper.AddAccountToRevokedAccount(
 		ctx, accAddr, nil, dclauthTypes.RevokedAccount_MaliciousValidator)
 	if err != nil {
 		logger.Info("Error:", err)

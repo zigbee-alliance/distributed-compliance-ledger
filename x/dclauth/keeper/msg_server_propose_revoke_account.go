@@ -53,7 +53,7 @@ func (k msgServer) ProposeRevokeAccount(goCtx context.Context, msg *types.MsgPro
 		}
 
 		// Move account to entity revoked account
-		revokedAccount, err := k.AddAccountToRevokeAccount(
+		revokedAccount, err := k.AddAccountToRevokedAccount(
 			ctx, accAddr, revokedApproval, types.RevokedAccount_TrusteeVoting)
 		if err != nil {
 			return nil, err
