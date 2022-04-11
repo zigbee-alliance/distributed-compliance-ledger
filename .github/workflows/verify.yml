@@ -85,7 +85,7 @@ jobs:
     needs:
       - lint
     steps:
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: ^1.16
       - uses: actions/checkout@v3
@@ -111,7 +111,7 @@ jobs:
     needs:
       - changes
     steps:
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
         with:
           go-version: ^1.16
       - uses: actions/checkout@v3
