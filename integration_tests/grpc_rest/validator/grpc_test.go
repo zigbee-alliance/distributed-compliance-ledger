@@ -24,5 +24,5 @@ import (
 
 func TestValidatorDemoGRPC(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, false)
-	validator.ValidatorDemo(&suite)
+	validator.Demo(&suite)
 }
