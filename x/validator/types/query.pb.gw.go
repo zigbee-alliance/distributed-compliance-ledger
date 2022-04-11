@@ -796,13 +796,13 @@ var (
 
 	pattern_Query_LastValidatorPowerAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "last-powers"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedDisableValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "proposed-disable-validators", "address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedDisableValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "proposed-disable-nodes", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_ProposedDisableValidatorAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "proposed-disable-validators"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_ProposedDisableValidatorAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "proposed-disable-nodes"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DisabledValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "disabled-validators", "address"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DisabledValidator_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"dcl", "validator", "disabled-nodes", "address"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_DisabledValidatorAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "disabled-validators"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_DisabledValidatorAll_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"dcl", "validator", "disabled-nodes"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
