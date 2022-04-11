@@ -338,6 +338,34 @@ echo "$result"
 
 test_divider
 
+echo "Alice proposes to revoke NodeAdmin $address"
+result=$(dcld tx auth propose-revoke-account --address="$address" --from alice --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "Bob approves to revoke NodeAdmin $address"
+result=$(dcld tx auth approve-revoke-account --address="$address" --from bob --yes)
+check_response "$result" "\"code\": 0"
+echo "$result"
+
+test_divider
+
+echo "node admin can not enable validator"
+result=$(dcld tx validator enable-node --from "$account" --yes 2>&1 || true)
+check_response "$result" "key not found" raw
+
+test_divider
+
+echo "Get a validator $address from disabled-validator query"
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator disabled-node --address=$address")
+check_response "$result" "\"creator\": \"$alice_address\""
+check_response "$result" "\"disabledByNodeAdmin\": false"
+echo "$result"
+
+test_divider
+
 echo "PASSED"
 
 cleanup
