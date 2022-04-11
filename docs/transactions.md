@@ -1229,6 +1229,90 @@ Should be sent to trusted nodes only.
 - REST API:
   - GET `/dcl/validator/nodes`
 
+#### GET_PROPOSED_DISABLE_VALIDATOR
+
+**Status: Implemented**
+
+Gets a proposed validator node.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator proposed-disable-node --address=<validator address|account>`
+- REST API:
+  - GET `/dcl/validator/proposed-disable-nodes/{owner}`
+
+#### GET_ALL_PROPOSED_DISABLE_VALIDATORS
+
+**Status: Implemented**
+
+Gets the list of all proposed disable validator nodes from the store.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-proposed-disable-nodes`
+- REST API:
+  - GET `/dcl/validator/proposed-disable-nodes`
+
+#### GET_DISABLED_VALIDATOR
+
+**Status: Implemented**
+
+Gets a disabled validator node.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator disabled-node --address=<validator address|account>`
+- REST API:
+  - GET `/dcl/validator/disabled-nodes/{owner}`
+
+#### GET_ALL_DISABLED_VALIDATORS
+
+**Status: Implemented**
+
+Gets the list of all disabled validator nodes from the store.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-disabled-nodes`
+- REST API:
+  - GET `/dcl/validator/disabled-nodes`
+
+#### GET_LAST_VALIDATOR_POWER
+
+**Status: Implemented**
+
+Gets a last validator node power.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator last-power --address=<validator address|account>`
+- REST API:
+  - GET `/dcl/validator/last-powers/{owner}`
+
+#### GET_ALL_LAST_VALIDATORS_POWER
+
+**Status: Implemented**
+
+Gets the list of all last validator nodes power from the store.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-last-powers`
+- REST API:
+  - GET `/dcl/validator/last-powers`
+
 #### UPDATE_VALIDATOR_NODE
 
 **Status: Not Implemented**
