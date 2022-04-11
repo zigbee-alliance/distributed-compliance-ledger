@@ -244,7 +244,7 @@ test_divider
 
 
 echo "Get all proposed validators to disable. $address in the list"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-validators")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
 check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
 echo "$result"
 
@@ -270,7 +270,7 @@ test_divider
 
 
 echo "Get all proposed validators to disable. $address not in the list"
-result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-validators")
+result=$(docker exec "$container" /bin/sh -c "echo test1234 | dcld query validator all-proposed-disable-nodes")
 response_does_not_contain "$result" "\"address\": \"$address\""
 echo "$result"
 
