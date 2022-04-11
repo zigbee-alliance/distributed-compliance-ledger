@@ -13,29 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: create DCL group
-  become: true
-  group:
-    name: "{{ cosmovisor.group }}"
-    state: present
+- name: setup validators
+  hosts: validators
+  roles:
+    - role: configure
+      type: validator
 
-- name: create DCL user
-  become: true
-  user:
-    name: "{{ cosmovisor.user }}"
-    groups: "{{ cosmovisor.group }}"
-    shell: /sbin/nologin
-    append: true
-    state: present
-    create_home: true
-    home: "{{ cosmovisor.home  }}"
+- name: setup private sentries
+  hosts: private-sentries
+  roles:
+    - role: configure
+      type: private-sentry
 
-- name: setup DCL service
-  import_tasks: setup-service.yml
+- name: setup public sentries
+  hosts: public-sentries
+  roles:
+    - role: configure
+      type: public-sentry
 
-- name: ensure user permissions
-  file:
-    recurse: true
-    state: directory
-    owner: "{{ cosmovisor.user }}"
-    path: "{{ dcl_home }}"
+- name: setup observers
+  hosts: observers
+  roles:
+    - role: configure
+      type: observer
+
+- name: setup seeds
+  hosts: seeds
+  roles:
+    - role: configure
+      type: seed

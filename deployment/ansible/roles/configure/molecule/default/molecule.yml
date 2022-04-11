@@ -34,22 +34,61 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
-      - genesis
+      - validators
+  - name: node1
+    image: geerlingguy/docker-ubuntu2004-ansible:latest
+    pre_build_image: true
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - private-sentries
+  - name: node2
+    image: geerlingguy/docker-ubuntu2004-ansible:latest
+    pre_build_image: true
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - observers
+  - name: node3
+    image: geerlingguy/docker-ubuntu2004-ansible:latest
+    pre_build_image: true
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - public-sentries
+  - name: node4
+    image: geerlingguy/docker-ubuntu2004-ansible:latest
+    pre_build_image: true
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - seeds
 provisioner:
   name: ansible
   inventory:
     group_vars:
       all:
         chain_id: test-net
-        moniker: test-node0
-    host_vars:
-      node0:
-        accounts:
-          - name: jack
-            passphrase: test1234
-            roles:
-              - NodeAdmin
-              - Trustee
 verifier:
   name: testinfra
   lint:

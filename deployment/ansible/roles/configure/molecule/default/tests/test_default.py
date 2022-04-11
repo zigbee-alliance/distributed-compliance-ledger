@@ -23,17 +23,18 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 DCLD_HOME = "/var/lib/dcl/.dcl/"
 
 
-def test_binary_version(host):
-    assert host.run_test(DCLD_HOME + "cosmovisor/genesis/bin/dcld version").succeeded
+def test_configuration(host):
+    all_variables = host.ansible.get_variables()
+    config = host.file(DCLD_HOME + "/config/")
+    assert config.exists
+    assert config.is_directory
 
+    config_files = host.file(DCLD_HOME + "/config").listdir()
+    for filename in ["app", "client", "config"]:
+        assert (filename + ".toml") in config_files
 
-def test_service(host):
-    svc = host.file("/etc/systemd/system/cosmovisor.service")
-    assert svc.exists
-    for prop in [
-        "User=cosmovisor",
-        "Group=dcl",
-        'Environment="DAEMON_HOME=/var/lib/dcl/.dcl" "DAEMON_NAME=dcld"',
-        "ExecStart=/usr/bin/cosmovisor start",
-    ]:
-        assert prop in svc.content_string
+    assert "chain_id" in all_variables
+    assert (
+        all_variables["chain_id"]
+        in host.file(DCLD_HOME + "/config/client.toml").content_string
+    )

@@ -13,29 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-- name: create DCL group
-  become: true
-  group:
-    name: "{{ cosmovisor.group }}"
-    state: present
+- name: public-sentry | discover IPv4 addresses information
+  setup:
+    filter:
+      - 'ansible_default_ipv4'
+  delegate_to: "{{ item }}"
+  register: default_ipv4_facts
+  loop: "{{ groups['private-sentries'] | list }}"
 
-- name: create DCL user
-  become: true
-  user:
-    name: "{{ cosmovisor.user }}"
-    groups: "{{ cosmovisor.group }}"
-    shell: /sbin/nologin
-    append: true
-    state: present
-    create_home: true
-    home: "{{ cosmovisor.home  }}"
-
-- name: setup DCL service
-  import_tasks: setup-service.yml
-
-- name: ensure user permissions
-  file:
-    recurse: true
-    state: directory
-    owner: "{{ cosmovisor.user }}"
-    path: "{{ dcl_home }}"
+- name: public-sentry | set dynamic values
+  set_fact:
+    config:
+      p2p:
+        persistent_peers: "{{ default_ipv4_facts.results | map(attribute='ansible_facts.ansible_default_ipv4.address') | join(',') }}"

@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dependency:
-  name: galaxy
-  options:
-    requirements-file: ../../../galaxy-requirements.yml
 driver:
   name: docker
 lint: |
@@ -33,15 +29,12 @@ platforms:
       - /run/lock
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    groups:
-      - genesis
 provisioner:
   name: ansible
   inventory:
     group_vars:
       all:
         chain_id: test-net
-        moniker: test-node0
     host_vars:
       node0:
         accounts:
