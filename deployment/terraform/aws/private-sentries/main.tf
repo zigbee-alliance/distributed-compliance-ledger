@@ -42,3 +42,9 @@ resource "aws_instance" "this_nodes" {
         volume_size = 30
     }
 }
+
+resource "aws_eip" "this_eips" {
+    count = length(aws_instance.this_nodes)
+    instance = aws_instance.this_nodes[count.index].id
+    vpc      = true
+}
