@@ -30,7 +30,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 
-	//nolint:staticcheck
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/require"
 	dclauthtypes "github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"

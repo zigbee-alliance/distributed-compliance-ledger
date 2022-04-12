@@ -32,7 +32,6 @@ const (
 )
 
 // AddGenesisAccountCmd returns add-genesis-account cobra Command.
-//nolint:staticcheck
 func AddGenesisAccountCmd(defaultNodeHome string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add-genesis-account ",
