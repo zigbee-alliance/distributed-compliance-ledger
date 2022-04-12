@@ -8,10 +8,10 @@ module "this_vpc_peering" {
     }
 
     this_vpc_id = module.this_vpc.vpc_id
-    peer_vpc_id = var.validator_vpc.vpc_id
+    peer_vpc_id = var.peer_vpc.vpc_id
 
     this_rts_ids = [element(module.this_vpc.public_route_table_ids, 0)]
-    peer_rts_ids = [element(var.validator_vpc.public_route_table_ids, 0)]
+    peer_rts_ids = [element(var.peer_vpc.public_route_table_ids, 0)]
 
     auto_accept_peering = true
 

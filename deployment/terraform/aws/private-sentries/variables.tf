@@ -13,8 +13,8 @@ variable "ssh_username" {
     default     = "ubuntu"
 }
 
-variable "validator_vpc" {
-    description = "Validator VPC"
+variable "peer_vpc" {
+    description = "Peer VPC"
 }
 
 variable "nodes_count" {
