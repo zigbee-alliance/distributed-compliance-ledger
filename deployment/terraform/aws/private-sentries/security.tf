@@ -15,7 +15,7 @@ module "this_private_sg" {
     source  = "terraform-aws-modules/security-group/aws"
     version = "~> 4.0"
 
-    name        = "private-sentry-internal-security-group"
+    name        = "private-sentry-private-security-group"
     description = "Private Sentry nodes security group for internal connections"
     vpc_id      = module.this_vpc.vpc_id
 
@@ -42,8 +42,8 @@ module "this_public_sg" {
     source  = "terraform-aws-modules/security-group/aws"
     version = "~> 4.0"
 
-    name        = "private-sentry-internal-security-group"
-    description = "Security group for Private Sentry nodes internal connections"
+    name        = "private-sentry-public-security-group"
+    description = "Private Sentry nodes security group for external connections"
     vpc_id      = module.this_vpc.vpc_id
 
     # ingress_cidr_blocks = ["10.0.0.0/8"]
@@ -55,7 +55,7 @@ module "this_public_sg" {
             from_port   = 26656
             to_port     = 26656
             protocol    = "tcp"
-            description = "Allow P2P Some Organization"
+            description = "Allow P2P from Some Organization"
             cidr_blocks = "10.1.1.1/32" # whitelist IP
         },
     ]
