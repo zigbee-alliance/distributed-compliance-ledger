@@ -133,9 +133,12 @@ check_response "$result" "\"moniker\": \"$node_name\""
 check_response "$result" "\"pubKey\":$vpubkey" raw
 echo "$result"
 
-result=$(dcld query validator node --address "$address")
-echo "$result"
 
+test_divider
+
+result=$(dcld query validator node --address "$address")
+validator_address=$(echo "$result" | jq -r '.owner')
+echo "$result"
 
 test_divider
 
@@ -235,7 +238,7 @@ test_divider
 
 
 echo "Alice proposes to disable validator $address"
-result=$(dcld tx validator propose-disable-node --address="$address" --from alice --yes)
+result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -261,7 +264,7 @@ test_divider
 
 
 echo "Bob approves to disable validator $address"
-result=$(dcld tx validator approve-disable-node --address="$address" --from bob --yes)
+result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -289,7 +292,7 @@ echo "$result"
 test_divider
 
 echo "Alice proposes to disable validator $address"
-result=$(dcld tx validator propose-disable-node --address="$address" --from alice --yes)
+result=$(dcld tx validator propose-disable-node --address="$validator_address" --from alice --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
@@ -301,11 +304,11 @@ check_response "$result" "\"approvals\":\[{\"address\":\"$alice_address\"" raw
 echo "$result"
 
 
-test_divider
+# test_divider
 
 
 echo "Bob approves to disable validator $address"
-result=$(dcld tx validator approve-disable-node --address="$address" --from bob --yes)
+result=$(dcld tx validator approve-disable-node --address="$validator_address" --from bob --yes)
 check_response "$result" "\"code\": 0"
 echo "$result"
 
