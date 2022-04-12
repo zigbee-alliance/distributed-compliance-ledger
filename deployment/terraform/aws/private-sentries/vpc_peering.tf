@@ -1,4 +1,4 @@
-module "vpc_peering" {
+module "this_vpc_peering" {
     source  = "grem11n/vpc-peering/aws"
     version = "4.1.0"
     
@@ -16,6 +16,6 @@ module "vpc_peering" {
     auto_accept_peering = true
 
     tags = {
-        Name = "Validator to Private Sentry VPC peering"
+        Name = "Private Sentries to Validator VPC peering"
     }
 }
