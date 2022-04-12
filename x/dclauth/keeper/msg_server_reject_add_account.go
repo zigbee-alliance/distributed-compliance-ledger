@@ -31,6 +31,11 @@ func (k msgServer) RejectAddAccount(
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid Address: (%s)", err)
 	}
 
+	// check if pending account exists
+	if !k.IsPendingAccountPresent(ctx, accAddr) {
+		return nil, types.ErrPendingAccountDoesNotExist(msg.Address)
+	}
+
 	// get pending account
 	pendAcc, _ := k.GetPendingAccount(ctx, accAddr)
 
