@@ -47,4 +47,8 @@ resource "aws_eip" "this_eips" {
     count = length(aws_instance.this_nodes)
     instance = aws_instance.this_nodes[count.index].id
     vpc      = true
+
+    tags = {
+        Name = "Private Sentry Node ${count.index} Elastic IP"
+    }
 }
