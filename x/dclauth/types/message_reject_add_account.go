@@ -1,6 +1,8 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -9,10 +11,12 @@ const TypeMsgRejectAddAccount = "reject_add_account"
 
 var _ sdk.Msg = &MsgRejectAddAccount{}
 
-func NewMsgRejectAddAccount(signer string, address string) *MsgRejectAddAccount {
+func NewMsgRejectAddAccount(signer sdk.AccAddress, address sdk.AccAddress, info string) *MsgRejectAddAccount {
 	return &MsgRejectAddAccount{
-		Signer:  signer,
-		Address: address,
+		Signer:  signer.String(),
+		Address: address.String(),
+		Info:    info,
+		Time:    time.Now().Unix(),
 	}
 }
 

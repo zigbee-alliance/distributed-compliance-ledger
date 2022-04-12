@@ -87,7 +87,7 @@ func (gs GenesisState) Validate() error {
 	rejectedAccountIndexMap := make(map[string]struct{})
 
 	for _, elem := range gs.RejectedAccountList {
-		index := string(RejectedAccountKey(elem.Address))
+		index := string(RejectedAccountKey(elem.GetAddress()))
 		if _, ok := rejectedAccountIndexMap[index]; ok {
 			return fmt.Errorf("duplicated index for rejectedAccount")
 		}

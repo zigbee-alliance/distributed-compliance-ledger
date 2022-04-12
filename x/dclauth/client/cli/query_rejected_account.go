@@ -5,13 +5,16 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/zigbee-alliance/distributed-compliance-ledger/utils/cli"
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
 func CmdListRejectedAccount() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-rejected-account",
+		Use:   "all-rejected-accounts",
 		Short: "list all RejectedAccount",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -46,28 +49,31 @@ func CmdShowRejectedAccount() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "rejected-account [address]",
 		Short: "shows a RejectedAccount",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
-			queryClient := types.NewQueryClient(clientCtx)
-
-			argAddress := args[0]
-
-			params := &types.QueryGetRejectedAccountRequest{
-				Address: argAddress,
-			}
-
-			res, err := queryClient.RejectedAccount(context.Background(), params)
+			argAddress, err := sdk.AccAddressFromBech32(viper.GetString(FlagAddress))
 			if err != nil {
 				return err
 			}
 
-			return clientCtx.PrintProto(res)
+			var res types.RevokedAccount
+
+			return cli.QueryWithProof(
+				clientCtx,
+				types.StoreKey,
+				types.RejectedAccountKeyPrefix,
+				types.RejectedAccountKey(argAddress),
+				&res,
+			)
 		},
 	}
 
+	cmd.Flags().String(FlagAddress, "", "Bech32 encoded account address")
 	flags.AddQueryFlagsToCmd(cmd)
+
+	_ = cmd.MarkFlagRequired(FlagAddress)
 
 	return cmd
 }

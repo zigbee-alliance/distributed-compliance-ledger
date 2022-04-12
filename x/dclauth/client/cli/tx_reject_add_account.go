@@ -33,7 +33,7 @@ func CmdRejectAddAccount() *cobra.Command {
 
 			argInfo := viper.GetString(FlagInfo)
 
-			msg := types.NewMsgApproveAddAccount(
+			msg := types.NewMsgRejectAddAccount(
 				clientCtx.GetFromAddress(),
 				argAddress,
 				argInfo,

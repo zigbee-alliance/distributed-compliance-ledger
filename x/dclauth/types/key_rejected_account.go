@@ -1,6 +1,10 @@
 package types
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 var _ binary.ByteOrder
 
@@ -11,7 +15,7 @@ const (
 
 // RejectedAccountKey returns the store key to retrieve a RejectedAccount from the index fields.
 func RejectedAccountKey(
-	address string,
+	address sdk.AccAddress,
 ) []byte {
 	var key []byte
 

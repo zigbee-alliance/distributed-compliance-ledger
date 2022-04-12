@@ -11,14 +11,14 @@ func (k Keeper) SetRejectedAccount(ctx sdk.Context, rejectedAccount types.Reject
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedAccountKeyPrefix))
 	b := k.cdc.MustMarshal(&rejectedAccount)
 	store.Set(types.RejectedAccountKey(
-		rejectedAccount.Address,
+		rejectedAccount.GetAddress(),
 	), b)
 }
 
 // GetRejectedAccount returns a rejectedAccount from its index.
 func (k Keeper) GetRejectedAccount(
 	ctx sdk.Context,
-	address string,
+	address sdk.AccAddress,
 ) (val types.RejectedAccount, found bool) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedAccountKeyPrefix))
 
@@ -37,7 +37,7 @@ func (k Keeper) GetRejectedAccount(
 // RemoveRejectedAccount removes a rejectedAccount from the store.
 func (k Keeper) RemoveRejectedAccount(
 	ctx sdk.Context,
-	address string,
+	address sdk.AccAddress,
 ) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.RejectedAccountKeyPrefix))
 	store.Delete(types.RejectedAccountKey(

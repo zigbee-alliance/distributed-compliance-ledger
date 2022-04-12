@@ -45,9 +45,13 @@ func (k Keeper) RejectedAccount(c context.Context, req *types.QueryGetRejectedAc
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
+	addr, err := sdk.AccAddressFromBech32(req.Address)
+	if err != nil {
+		return nil, err
+	}
+
 	val, found := k.GetRejectedAccount(
-		ctx,
-		req.Address,
+		ctx, addr,
 	)
 	if !found {
 		return nil, status.Error(codes.NotFound, "not found")
