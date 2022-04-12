@@ -1238,7 +1238,14 @@ Gets a proposed validator node.
 - Parameters:
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
-  - `dcld query validator proposed-disable-node --address=<validator address|account>`
+  - `dcld query validator proposed-disable-node --address=<validator address|account>` <br> e.g.:
+    ```
+    dcld query validator proposed-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator proposed-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
 - REST API:
   - GET `/dcl/validator/proposed-disable-nodes/{owner}`
 
@@ -1267,6 +1274,14 @@ Gets a disabled validator node.
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
   - `dcld query validator disabled-node --address=<validator address|account>`
+  <br> e.g.:
+    ```
+    dcld query validator disabled-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator disabled-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
 - REST API:
   - GET `/dcl/validator/disabled-nodes/{owner}`
 
@@ -1295,6 +1310,14 @@ Gets a last validator node power.
   - address: `string` - Bech32 encoded validator address or owner account
 - CLI command:
   - `dcld query validator last-power --address=<validator address|account>`
+  <br> e.g.:
+    ```
+    dcld query validator last-power --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator last-power --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
 - REST API:
   - GET `/dcl/validator/last-powers/{owner}`
 
