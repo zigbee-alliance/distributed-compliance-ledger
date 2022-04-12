@@ -32,9 +32,12 @@ module "private_sentries" {
 module "public_sentries" {
     source      = "./public-sentries"
     # node_count  = 3
-    providers   = {
-        aws = aws.reg1
+    providers = {
+        aws = aws.reg2
+        aws.peer = aws.reg1
     }
+
+    peer_vpc = module.private_sentries.vpc
 }
 
 # Observers region 1
