@@ -51,3 +51,8 @@ func TestAddVendorInfoTwiceREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	vendorinfo.AddVendorInfoTwice(&suite)
 }
+
+func TestDemoWithHexVid(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	vendorinfo.DemoWithHexVid(&suite)
+}

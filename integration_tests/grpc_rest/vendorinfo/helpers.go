@@ -80,6 +80,24 @@ func GetVendorInfo(
 	return &res, nil
 }
 
+func GetVindorInfoByHexVID(
+	suite *utils.TestSuite,
+	vid string,
+) (*vendorinfotypes.VendorInfo, error) {
+	var res vendorinfotypes.VendorInfo
+
+	if suite.Rest {
+		var resp vendorinfotypes.QueryGetVendorInfoResponse
+		err := suite.QueryREST(fmt.Sprintf("/dcl/vendorinfo/vendors/%s", vid), &resp)
+		if err != nil {
+			return nil, err
+		}
+		res = resp.GetVendorInfo()
+	}
+
+	return &res, nil
+}
+
 func GetVendorInfos(suite *utils.TestSuite) (res []vendorinfotypes.VendorInfo, err error) {
 	if suite.Rest {
 		var resp vendorinfotypes.QueryAllVendorInfoResponse
@@ -285,4 +303,49 @@ func GetVendorInfoForInvalidVid(suite *utils.TestSuite) {
 	// FIXME: Consider adding validation for queries.
 	// require.True(suite.T, sdkerrors.ErrInvalidRequest.Is(err))
 	suite.AssertNotFound(err)
+}
+
+func DemoWithHexVid(suite *utils.TestSuite) {
+	// Alice and Bob are predefined Trustees
+	aliceName := testconstants.AliceAccount
+	aliceKeyInfo, err := suite.Kr.Key(aliceName)
+	require.NoError(suite.T, err)
+	aliceAccount, err := test_dclauth.GetAccount(suite, aliceKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	bobName := testconstants.BobAccount
+	bobKeyInfo, err := suite.Kr.Key(bobName)
+	require.NoError(suite.T, err)
+	bobAccount, err := test_dclauth.GetAccount(suite, bobKeyInfo.GetAddress())
+	require.NoError(suite.T, err)
+
+	// Register new Vendor account
+	var vid int32 = 0xA13
+	vendorName := utils.RandString()
+	vendorAccount := test_dclauth.CreateAccount(
+		suite,
+		vendorName,
+		dclauthtypes.AccountRoles{dclauthtypes.Vendor},
+		vid,
+		aliceName,
+		aliceAccount,
+		bobName,
+		bobAccount,
+		testconstants.Info,
+	)
+	require.NotNil(suite.T, vendorAccount)
+
+	// New vendor adds first vendorinfo
+	createFirstVendorInfoMsg := NewMsgCreateVendorInfo(vid, vendorAccount.Address)
+	_, err = suite.BuildAndBroadcastTx([]sdk.Msg{createFirstVendorInfoMsg}, vendorName, vendorAccount)
+	require.NoError(suite.T, err)
+
+	// Check first vendorinfo is added
+	receivedVendorInfo, err := GetVindorInfoByHexVID(suite, testconstants.TestVID1String)
+	require.NoError(suite.T, err)
+	require.Equal(suite.T, createFirstVendorInfoMsg.VendorID, receivedVendorInfo.VendorID)
+	require.Equal(suite.T, createFirstVendorInfoMsg.VendorName, receivedVendorInfo.VendorName)
+	require.Equal(suite.T, createFirstVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
+	require.Equal(suite.T, createFirstVendorInfoMsg.CompanyLegalName, receivedVendorInfo.CompanyLegalName)
+	require.Equal(suite.T, createFirstVendorInfoMsg.VendorLandingPageURL, receivedVendorInfo.VendorLandingPageURL)
 }
