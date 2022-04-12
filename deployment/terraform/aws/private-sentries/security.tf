@@ -2,7 +2,7 @@ module "this_dev_sg" {
     source  = "terraform-aws-modules/security-group/aws"
     version = "~> 4.0"
 
-    name        = "private-sentry-maintenance-security-group"
+    name        = "private-sentry-dev-security-group"
     description = "Private Sentry nodes security group for development"
     vpc_id      = module.this_vpc.vpc_id
 
