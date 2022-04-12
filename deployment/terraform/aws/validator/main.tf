@@ -38,8 +38,4 @@ resource "aws_instance" "this_node" {
         encrypted   = true
         volume_size = 30
     }
-    metadata_options {
-        http_endpoint = "enabled"
-        http_tokens   = "required"
-    }
 }
