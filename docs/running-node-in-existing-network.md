@@ -101,7 +101,7 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
 - Cons:
   - Needs an access to another machine (may not be possible to everyone)
   - Node that data is copied from should be stopped (downtime)
-  - Probably error prone due to manual operations
+  - Probably error-prone due to manual operations
 
 ### 3) Catchup from genesis
 
