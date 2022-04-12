@@ -17,7 +17,7 @@ resource "aws_key_pair" "key_pair" {
     public_key = file(var.ssh_public_key_path)
 }
 
-resource "aws_instance" "private_sentry_nodes" {
+resource "aws_instance" "this_nodes" {
     count = var.nodes_count
 
     ami           = data.aws_ami.ubuntu.id

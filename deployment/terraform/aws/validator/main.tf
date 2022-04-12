@@ -17,7 +17,7 @@ resource "aws_key_pair" "key_pair" {
     public_key = file(var.ssh_public_key_path)
 }
 
-resource "aws_instance" "validator_node" {
+resource "aws_instance" "this_node" {
     ami           = data.aws_ami.ubuntu.id
     instance_type = "t3.medium"
 
