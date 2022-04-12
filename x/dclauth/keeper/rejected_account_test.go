@@ -1,5 +1,6 @@
 package keeper_test
 
+/*
 import (
 	"strconv"
 	"testing"
@@ -63,3 +64,4 @@ func TestRejectedAccountGetAll(t *testing.T) {
 		nullify.Fill(keeper.GetAllRejectedAccount(ctx)),
 	)
 }
+*/
