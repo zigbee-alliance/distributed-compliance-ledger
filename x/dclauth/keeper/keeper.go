@@ -50,5 +50,5 @@ func (k Keeper) AccountApprovalsCount(ctx sdk.Context) int {
 }
 
 func (k Keeper) AccountRejectApprovalsCount(ctx sdk.Context) int {
-	return int(math.Round(types.AccountRejectApprovalsPercent * float64(k.CountAccountsWithRole(ctx, types.Trustee))))
+	return k.CountAccountsWithRole(ctx, types.Trustee) - k.AccountApprovalsCount(ctx) + 1
 }
