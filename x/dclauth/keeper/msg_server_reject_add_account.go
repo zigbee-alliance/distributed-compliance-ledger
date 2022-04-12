@@ -39,6 +39,15 @@ func (k msgServer) RejectAddAccount(
 	// get pending account
 	pendAcc, _ := k.GetPendingAccount(ctx, accAddr)
 
+	// check if pending account already has reject approval from signer
+	if pendAcc.HasRejactApprovalFrom(signerAddr) {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
+			"Pending account associated with the address=%v already has approval from=%v",
+			msg.Address,
+			msg.Signer,
+		)
+	}
+
 	// check if pending account already has approval from signer
 	if pendAcc.HasApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
