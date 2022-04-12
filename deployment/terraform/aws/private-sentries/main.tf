@@ -43,9 +43,9 @@ resource "aws_instance" "this_nodes" {
     }
 }
 
-resource "aws_eip" "this_eips" {
-    count = length(aws_instance.this_nodes)
-    instance = aws_instance.this_nodes[count.index].id
+resource "aws_eip" "this_eip" {
+    count = length(aws_instance.this_nodes) > 0 ? 1 : 0
+    instance = aws_instance.this_nodes[0].id
     vpc      = true
 
     tags = {
