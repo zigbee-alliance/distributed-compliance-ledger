@@ -19,12 +19,13 @@ module "validator" {
 # Private Sentries
 module "private_sentries" {
     source      = "./private-sentries"
-    # node_count  = 2
-    providers   = {
+
+    providers = {
         aws = aws.reg1
+        aws.peer = aws.reg1
     }
 
-    validator_vpc_id = module.validator.vpc_id
+    validator_vpc = module.validator.vpc
 }
 
 # Public Sentries
