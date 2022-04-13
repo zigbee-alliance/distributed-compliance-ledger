@@ -1206,8 +1206,6 @@ Disables the Validator node (removes from the validator set) by the owner.
 
 - Who can send:
   - NodeAdmin; owner
-- Parameters:
-  - account: `string` - Bech32 encoded NodeAdmin address or owner account
 - CLI command:
   - `dcld tx validator disable-node --from=<account>`
   <br> e.g.:
@@ -1279,8 +1277,6 @@ the node will be enabled and returned to the active validator set.
 
 - Who can send:
   - NodeAdmin; owner
-- Parameters:
-  - account: `string` - Bech32 encoded NodeAdmin address or owner account
 - CLI command:
   - `dcld tx validator enable-node --from=<account>`
   <br> e.g.:
