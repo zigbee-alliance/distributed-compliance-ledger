@@ -40,9 +40,9 @@ func (k msgServer) RejectAddAccount(
 	pendAcc, _ := k.GetPendingAccount(ctx, accAddr)
 
 	// check if pending account already has reject approval from signer
-	if pendAcc.HasRejactApprovalFrom(signerAddr) {
+	if pendAcc.HasRejectApprovalFrom(signerAddr) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
-			"Pending account associated with the address=%v already has approval from=%v",
+			"Pending account associated with the address=%v already has reject approval from=%v",
 			msg.Address,
 			msg.Signer,
 		)
@@ -79,9 +79,6 @@ func (k msgServer) RejectAddAccount(
 		}
 
 		k.SetRejectedAccount(ctx, rejectedAccount)
-
-		// delete revoked account record if we have else don't delete
-		k.RemoveRevokedAccount(ctx, accAddr)
 
 		// delete pending account record
 		k.RemovePendingAccount(ctx, accAddr)

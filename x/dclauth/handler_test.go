@@ -938,7 +938,7 @@ func TestHandler_Duplicate_RejectAccountFromTheSameTrustee(t *testing.T) {
 	require.ErrorIs(t, err, sdkerrors.ErrUnauthorized)
 }
 
-func TestHandler_ApproveAccountAndRejactAccountTheSameTrustee(t *testing.T) {
+func TestHandler_ApproveAccountAndRejectAccountTheSameTrustee(t *testing.T) {
 	setup := Setup(t)
 
 	// store 3 trustee
@@ -964,7 +964,7 @@ func TestHandler_ApproveAccountAndRejactAccountTheSameTrustee(t *testing.T) {
 	require.ErrorIs(t, err, types.PendingAccountDoesNotExist)
 }
 
-func TestHandler_RejactAccountAndApproveAccountTheSameTrustee(t *testing.T) {
+func TestHandler_RejectAccountAndApproveAccountTheSameTrustee(t *testing.T) {
 	setup := Setup(t)
 
 	// store 3 trustee
