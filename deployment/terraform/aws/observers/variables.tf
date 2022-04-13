@@ -13,11 +13,16 @@ variable "ssh_username" {
     default     = "ubuntu"
 }
 
-variable "peer_vpc" {
-    description = "Peer VPC"
-}
-
 variable "nodes_count" {
     description = "Number of Observer nodes"
     default = 5
+}
+
+variable "region_index" {
+    description = "Observer Region Index"
+    default = 0
+}
+
+variable "peer_vpc" {
+    description = "Peer VPC"
 }
