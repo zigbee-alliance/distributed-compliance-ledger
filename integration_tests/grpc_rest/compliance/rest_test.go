@@ -43,3 +43,18 @@ func TestComplianceTrackProvisionDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
 	compliance.DemoTrackProvision(&suite)
 }
+
+func TestDemoTrackComplianceWithHexVidAndPid(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	compliance.DemoTrackComplianceWithHexVidAndPid(&suite)
+}
+
+func TestDemoTrackRevocationWithHexVidAndPid(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	compliance.DemoTrackRevocationWithHexVidAndPid(&suite)
+}
+
+func TestDemoTrackProvisionByHexVidAndPid(t *testing.T) {
+	suite := utils.SetupTest(t, testconstants.ChainID, true)
+	compliance.DemoTrackProvisionByHexVidAndPid(&suite)
+}
