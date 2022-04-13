@@ -89,7 +89,7 @@ jobs:
         with:
           go-version: ^1.16
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         if: ${{ !env.ACT }}
         with:
           path: |
@@ -115,7 +115,7 @@ jobs:
         with:
           go-version: ^1.16
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: |
             ~/.cache/go-build
