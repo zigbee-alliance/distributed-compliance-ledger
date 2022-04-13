@@ -1,10 +1,10 @@
 provider "aws" {
-    alias   = "reg1"
+    alias   = "region_1"
     region  = var.region_1
 }
 
 provider "aws" {
-    alias  = "reg2"
+    alias  = "region_2"
     region = var.region_2
 }
 
@@ -12,7 +12,7 @@ provider "aws" {
 module "validator" {
     source    = "./validator"
     providers = {
-        aws = aws.reg1
+        aws = aws.region_1
     }
 }
 
@@ -21,11 +21,11 @@ module "private_sentries" {
     source      = "./private-sentries"
 
     providers = {
-        aws = aws.reg1
-        aws.peer = aws.reg1
+        aws = aws.region_1
+        aws.peer = aws.region_1
     }
 
-    validator_vpc = module.validator.vpc
+    peer_vpc = module.validator.vpc
 }
 
 # Public Sentries
@@ -33,25 +33,35 @@ module "public_sentries" {
     source      = "./public-sentries"
     # node_count  = 3
     providers = {
-        aws = aws.reg2
-        aws.peer = aws.reg1
+        aws = aws.region_2
+        aws.peer = aws.region_1
     }
 
     peer_vpc = module.private_sentries.vpc
 }
 
 # Observers region 1
-module "observers_region_1" {
+module "observers_1" {
     source      = "./observers"
-    providers   = {
-        aws = aws.reg1
+    
+    providers = {
+        aws = aws.region_1
+        aws.peer = aws.region_1
     }
+
+    region_index = 1
+    peer_vpc = module.private_sentries.vpc
 }
 
 # Observers region 2
-module "observers_region_2" {
+module "observers_2" {
     source      = "./observers"
-    providers   = {
-        aws = aws.reg2
+    
+    providers = {
+        aws = aws.region_2
+        aws.peer = aws.region_1
     }
+
+    region_index = 2
+    peer_vpc = module.private_sentries.vpc
 }
