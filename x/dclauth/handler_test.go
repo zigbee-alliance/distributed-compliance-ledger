@@ -365,6 +365,13 @@ func TestHandler_RevokeAccount_OneApprovalIsNeeded(t *testing.T) {
 
 		// ensure no pending account revocation created
 		require.False(t, setup.Keeper.IsPendingAccountRevocationPresent(setup.Ctx, address))
+
+		// ensure that account be in entity revoked account
+		revokedAccount, isFound := setup.Keeper.GetRevokedAccount(setup.Ctx, address)
+		require.True(t, isFound)
+		require.Equal(t, address.String(), revokedAccount.Address)
+		require.Equal(t, trustee.String(), revokedAccount.RevokeApprovals[0].Address)
+		require.Equal(t, types.RevokedAccount_TrusteeVoting, revokedAccount.Reason)
 	}
 }
 
@@ -409,6 +416,14 @@ func TestHandler_RevokeAccount_TwoApprovalsAreNeeded(t *testing.T) {
 
 	// ensure adding account to entity RevokedAccount
 	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+
+	// get revoked account and check fields
+	revokedAccount, isFound := setup.Keeper.GetRevokedAccount(setup.Ctx, address)
+	require.True(t, isFound)
+	require.Equal(t, address.String(), revokedAccount.Address)
+	require.Equal(t, trustee1.String(), revokedAccount.RevokeApprovals[0].Address)
+	require.Equal(t, trustee2.String(), revokedAccount.RevokeApprovals[1].Address)
+	require.Equal(t, types.RevokedAccount_TrusteeVoting, revokedAccount.Reason)
 }
 
 func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
@@ -467,6 +482,15 @@ func TestHandler_RevokeAccount_ThreeApprovalsAreNeeded(t *testing.T) {
 
 	// ensure adding account to entity RevokedAccount
 	require.True(t, setup.Keeper.IsRevokedAccountPresent(setup.Ctx, address))
+
+	// get revoked account and check fields
+	revokedAccount, isFound := setup.Keeper.GetRevokedAccount(setup.Ctx, address)
+	require.True(t, isFound)
+	require.Equal(t, address.String(), revokedAccount.Address)
+	require.Equal(t, trustee1.String(), revokedAccount.RevokeApprovals[0].Address)
+	require.Equal(t, trustee2.String(), revokedAccount.RevokeApprovals[1].Address)
+	require.Equal(t, trustee3.String(), revokedAccount.RevokeApprovals[2].Address)
+	require.Equal(t, types.RevokedAccount_TrusteeVoting, revokedAccount.Reason)
 }
 
 func TestHandler_ReAdding_RevokedAccount(t *testing.T) {

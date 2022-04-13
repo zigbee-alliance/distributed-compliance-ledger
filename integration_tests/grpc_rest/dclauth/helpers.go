@@ -617,8 +617,9 @@ func AuthDemo(suite *utils.TestSuite) {
 	// Ensure that new account is exist in revoked account
 	receivedRevokedAccount, err := GetRevokedAccount(suite, testAccAddr)
 	require.NoError(suite.T, err)
-	require.Equal(suite.T, testAccAddr, receivedRevokedAccount.GetAddress())
-	require.Equal(suite.T, []dclauthtypes.AccountRole{dclauthtypes.Vendor}, receivedRevokedAccount.GetRoles())
+	require.Equal(suite.T, aliceAccount.Address, receivedRevokedAccount.RevokeApprovals[0].Address)
+	require.Equal(suite.T, bobAccount.Address, receivedRevokedAccount.RevokeApprovals[1].Address)
+	require.Equal(suite.T, dclauthtypes.RevokedAccount_TrusteeVoting, receivedRevokedAccount.Reason)
 
 	// Jack proposes for re-adding the revoked account
 	_, err = ProposeAddAccount(

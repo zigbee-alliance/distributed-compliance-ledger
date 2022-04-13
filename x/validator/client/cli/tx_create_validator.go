@@ -20,7 +20,7 @@ var _ = strconv.Itoa(0)
 
 func CmdCreateValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-node",
+		Use:   "add-node [flags]",
 		Short: "create new validator",
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -59,7 +59,7 @@ func CmdCreateValidator() *cobra.Command {
 }
 
 func newBuildCreateValidatorMsg(clientCtx client.Context, txf tx.Factory, fs *flag.FlagSet) (tx.Factory, *types.MsgCreateValidator, error) {
-	valAddr := clientCtx.GetFromAddress()
+	accAddr := clientCtx.GetFromAddress()
 	pkStr, err := fs.GetString(FlagPubKey)
 	if err != nil {
 		return txf, nil, err
@@ -81,7 +81,7 @@ func newBuildCreateValidatorMsg(clientCtx client.Context, txf tx.Factory, fs *fl
 		details,
 	)
 
-	msg, err := types.NewMsgCreateValidator(sdk.ValAddress(valAddr), pk, &description)
+	msg, err := types.NewMsgCreateValidator(sdk.ValAddress(accAddr), pk, &description)
 	if err != nil {
 		return txf, nil, err
 	}

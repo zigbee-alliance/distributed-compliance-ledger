@@ -5,6 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/dclauth/types"
 )
 
@@ -55,16 +56,13 @@ func (k msgServer) ApproveRevokeAccount(goCtx context.Context, msg *types.MsgApp
 
 	// check if pending account revocation has enough approvals
 	if len(revoc.Approvals) == k.AccountApprovalsCount(ctx) {
-		// get account
-		account, ok := k.GetAccountO(ctx, accAddr)
-
-		// check we can get that account or can not
-		if !ok {
-			return nil, types.ErrAccountDoesNotExist(msg.Address)
+		// Move account to entity revoked account
+		revokedAccount, err := k.AddAccountToRevokedAccount(
+			ctx, accAddr, revoc.Approvals, types.RevokedAccount_TrusteeVoting)
+		if err != nil {
+			return nil, err
 		}
 
-		// create revoked account record
-		revokedAccount := types.NewRevokedAccount(&account, revoc.Approvals)
 		k.SetRevokedAccount(ctx, *revokedAccount)
 
 		// delete account record

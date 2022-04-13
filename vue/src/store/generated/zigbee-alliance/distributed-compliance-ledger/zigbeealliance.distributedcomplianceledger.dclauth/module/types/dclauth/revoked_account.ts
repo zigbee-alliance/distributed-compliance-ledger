@@ -8,9 +8,42 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.dclau
 export interface RevokedAccount {
   account: Account | undefined
   revokeApprovals: Grant[]
+  reason: RevokedAccount_Reason
 }
 
-const baseRevokedAccount: object = {}
+export enum RevokedAccount_Reason {
+  TrusteeVoting = 0,
+  MaliciousValidator = 1,
+  UNRECOGNIZED = -1
+}
+
+export function revokedAccount_ReasonFromJSON(object: any): RevokedAccount_Reason {
+  switch (object) {
+    case 0:
+    case 'TrusteeVoting':
+      return RevokedAccount_Reason.TrusteeVoting
+    case 1:
+    case 'MaliciousValidator':
+      return RevokedAccount_Reason.MaliciousValidator
+    case -1:
+    case 'UNRECOGNIZED':
+    default:
+      return RevokedAccount_Reason.UNRECOGNIZED
+  }
+}
+
+export function revokedAccount_ReasonToJSON(object: RevokedAccount_Reason): string {
+  switch (object) {
+    case RevokedAccount_Reason.TrusteeVoting:
+      return 'TrusteeVoting'
+    case RevokedAccount_Reason.MaliciousValidator:
+      return 'MaliciousValidator'
+    default:
+      return 'UNKNOWN'
+  }
+}
+
+const baseRevokedAccount: object = { reason: 0 }
 
 export const RevokedAccount = {
   encode(message: RevokedAccount, writer: Writer = Writer.create()): Writer {
@@ -19,6 +52,9 @@ export const RevokedAccount = {
     }
     for (const v of message.revokeApprovals) {
       Grant.encode(v!, writer.uint32(18).fork()).ldelim()
+    }
+    if (message.reason !== 0) {
+      writer.uint32(24).int32(message.reason)
     }
     return writer
   },
@@ -36,6 +72,9 @@ export const RevokedAccount = {
           break
         case 2:
           message.revokeApprovals.push(Grant.decode(reader, reader.uint32()))
+          break
+        case 3:
+          message.reason = reader.int32() as any
           break
         default:
           reader.skipType(tag & 7)
@@ -58,6 +97,11 @@ export const RevokedAccount = {
         message.revokeApprovals.push(Grant.fromJSON(e))
       }
     }
+    if (object.reason !== undefined && object.reason !== null) {
+      message.reason = revokedAccount_ReasonFromJSON(object.reason)
+    } else {
+      message.reason = 0
+    }
     return message
   },
 
@@ -69,6 +113,7 @@ export const RevokedAccount = {
     } else {
       obj.revokeApprovals = []
     }
+    message.reason !== undefined && (obj.reason = revokedAccount_ReasonToJSON(message.reason))
     return obj
   },
 
@@ -84,6 +129,11 @@ export const RevokedAccount = {
       for (const e of object.revokeApprovals) {
         message.revokeApprovals.push(Grant.fromPartial(e))
       }
+    }
+    if (object.reason !== undefined && object.reason !== null) {
+      message.reason = object.reason
+    } else {
+      message.reason = 0
     }
     return message
   }

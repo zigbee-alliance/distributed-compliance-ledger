@@ -1,12 +1,16 @@
 import { Validator } from '../validator/validator';
 import { LastValidatorPower } from '../validator/last_validator_power';
+import { ProposedDisableValidator } from '../validator/proposed_disable_validator';
+import { DisabledValidator } from '../validator/disabled_validator';
 import { Writer, Reader } from 'protobufjs/minimal';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 /** GenesisState defines the validator module's genesis state. */
 export interface GenesisState {
     validatorList: Validator[];
-    /** this line is used by starport scaffolding # genesis/proto/state */
     lastValidatorPowerList: LastValidatorPower[];
+    proposedDisableValidatorList: ProposedDisableValidator[];
+    /** this line is used by starport scaffolding # genesis/proto/state */
+    disabledValidatorList: DisabledValidator[];
 }
 export declare const GenesisState: {
     encode(message: GenesisState, writer?: Writer): Writer;

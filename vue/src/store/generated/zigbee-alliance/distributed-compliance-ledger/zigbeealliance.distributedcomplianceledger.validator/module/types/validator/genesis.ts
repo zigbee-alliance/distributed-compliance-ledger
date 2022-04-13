@@ -1,6 +1,8 @@
 /* eslint-disable */
 import { Validator } from '../validator/validator'
 import { LastValidatorPower } from '../validator/last_validator_power'
+import { ProposedDisableValidator } from '../validator/proposed_disable_validator'
+import { DisabledValidator } from '../validator/disabled_validator'
 import { Writer, Reader } from 'protobufjs/minimal'
 
 export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.validator'
@@ -8,8 +10,10 @@ export const protobufPackage = 'zigbeealliance.distributedcomplianceledger.valid
 /** GenesisState defines the validator module's genesis state. */
 export interface GenesisState {
   validatorList: Validator[]
-  /** this line is used by starport scaffolding # genesis/proto/state */
   lastValidatorPowerList: LastValidatorPower[]
+  proposedDisableValidatorList: ProposedDisableValidator[]
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  disabledValidatorList: DisabledValidator[]
 }
 
 const baseGenesisState: object = {}
@@ -22,6 +26,12 @@ export const GenesisState = {
     for (const v of message.lastValidatorPowerList) {
       LastValidatorPower.encode(v!, writer.uint32(18).fork()).ldelim()
     }
+    for (const v of message.proposedDisableValidatorList) {
+      ProposedDisableValidator.encode(v!, writer.uint32(26).fork()).ldelim()
+    }
+    for (const v of message.disabledValidatorList) {
+      DisabledValidator.encode(v!, writer.uint32(34).fork()).ldelim()
+    }
     return writer
   },
 
@@ -31,6 +41,8 @@ export const GenesisState = {
     const message = { ...baseGenesisState } as GenesisState
     message.validatorList = []
     message.lastValidatorPowerList = []
+    message.proposedDisableValidatorList = []
+    message.disabledValidatorList = []
     while (reader.pos < end) {
       const tag = reader.uint32()
       switch (tag >>> 3) {
@@ -39,6 +51,12 @@ export const GenesisState = {
           break
         case 2:
           message.lastValidatorPowerList.push(LastValidatorPower.decode(reader, reader.uint32()))
+          break
+        case 3:
+          message.proposedDisableValidatorList.push(ProposedDisableValidator.decode(reader, reader.uint32()))
+          break
+        case 4:
+          message.disabledValidatorList.push(DisabledValidator.decode(reader, reader.uint32()))
           break
         default:
           reader.skipType(tag & 7)
@@ -52,6 +70,8 @@ export const GenesisState = {
     const message = { ...baseGenesisState } as GenesisState
     message.validatorList = []
     message.lastValidatorPowerList = []
+    message.proposedDisableValidatorList = []
+    message.disabledValidatorList = []
     if (object.validatorList !== undefined && object.validatorList !== null) {
       for (const e of object.validatorList) {
         message.validatorList.push(Validator.fromJSON(e))
@@ -60,6 +80,16 @@ export const GenesisState = {
     if (object.lastValidatorPowerList !== undefined && object.lastValidatorPowerList !== null) {
       for (const e of object.lastValidatorPowerList) {
         message.lastValidatorPowerList.push(LastValidatorPower.fromJSON(e))
+      }
+    }
+    if (object.proposedDisableValidatorList !== undefined && object.proposedDisableValidatorList !== null) {
+      for (const e of object.proposedDisableValidatorList) {
+        message.proposedDisableValidatorList.push(ProposedDisableValidator.fromJSON(e))
+      }
+    }
+    if (object.disabledValidatorList !== undefined && object.disabledValidatorList !== null) {
+      for (const e of object.disabledValidatorList) {
+        message.disabledValidatorList.push(DisabledValidator.fromJSON(e))
       }
     }
     return message
@@ -77,6 +107,16 @@ export const GenesisState = {
     } else {
       obj.lastValidatorPowerList = []
     }
+    if (message.proposedDisableValidatorList) {
+      obj.proposedDisableValidatorList = message.proposedDisableValidatorList.map((e) => (e ? ProposedDisableValidator.toJSON(e) : undefined))
+    } else {
+      obj.proposedDisableValidatorList = []
+    }
+    if (message.disabledValidatorList) {
+      obj.disabledValidatorList = message.disabledValidatorList.map((e) => (e ? DisabledValidator.toJSON(e) : undefined))
+    } else {
+      obj.disabledValidatorList = []
+    }
     return obj
   },
 
@@ -84,6 +124,8 @@ export const GenesisState = {
     const message = { ...baseGenesisState } as GenesisState
     message.validatorList = []
     message.lastValidatorPowerList = []
+    message.proposedDisableValidatorList = []
+    message.disabledValidatorList = []
     if (object.validatorList !== undefined && object.validatorList !== null) {
       for (const e of object.validatorList) {
         message.validatorList.push(Validator.fromPartial(e))
@@ -92,6 +134,16 @@ export const GenesisState = {
     if (object.lastValidatorPowerList !== undefined && object.lastValidatorPowerList !== null) {
       for (const e of object.lastValidatorPowerList) {
         message.lastValidatorPowerList.push(LastValidatorPower.fromPartial(e))
+      }
+    }
+    if (object.proposedDisableValidatorList !== undefined && object.proposedDisableValidatorList !== null) {
+      for (const e of object.proposedDisableValidatorList) {
+        message.proposedDisableValidatorList.push(ProposedDisableValidator.fromPartial(e))
+      }
+    }
+    if (object.disabledValidatorList !== undefined && object.disabledValidatorList !== null) {
+      for (const e of object.disabledValidatorList) {
+        message.disabledValidatorList.push(DisabledValidator.fromPartial(e))
       }
     }
     return message
