@@ -1212,12 +1212,9 @@ Disables the Validator node (removes from the validator set) by the owner.
   - `dcld tx validator disable-node --from=<account>`
   <br> e.g.:
     ```
-    dcld query validator disable-node --from=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    dcld query validator disable-node --from=<account>
     ``` 
-    or
-    ```
-    dcld query validator disable-node --from=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
-    ```
+    
 
 #### PROPOSE_DISABLE_VALIDATOR_NODE
 
@@ -1287,13 +1284,9 @@ the node will be enabled and returned to the active validator set.
 - CLI command:
   - `dcld tx validator enable-node --from=<account>`
   <br> e.g.:
-    ```
-    dcld query validator enable-node --from=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+     ```
+    dcld query validator enable-node --from=<account>
     ``` 
-    or
-    ```
-    dcld query validator enable-node --from=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
-    ```
 
 #### GET_VALIDATOR
 
