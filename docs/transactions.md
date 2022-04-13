@@ -1247,7 +1247,7 @@ Gets a proposed validator node.
     dcld query validator proposed-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
     ```
 - REST API:
-  - GET `/dcl/validator/proposed-disable-nodes/{owner}`
+  - GET `/dcl/validator/proposed-disable-nodes/{address}`
 
 #### GET_ALL_PROPOSED_DISABLE_VALIDATORS
 
