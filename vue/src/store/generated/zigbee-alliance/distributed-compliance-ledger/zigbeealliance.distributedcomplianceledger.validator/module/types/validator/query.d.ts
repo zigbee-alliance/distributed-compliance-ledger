@@ -2,6 +2,8 @@ import { Reader, Writer } from 'protobufjs/minimal';
 import { Validator } from '../validator/validator';
 import { PageRequest, PageResponse } from '../cosmos/base/query/v1beta1/pagination';
 import { LastValidatorPower } from '../validator/last_validator_power';
+import { ProposedDisableValidator } from '../validator/proposed_disable_validator';
+import { DisabledValidator } from '../validator/disabled_validator';
 export declare const protobufPackage = "zigbeealliance.distributedcomplianceledger.validator";
 export interface QueryGetValidatorRequest {
     owner: string;
@@ -27,6 +29,32 @@ export interface QueryAllLastValidatorPowerRequest {
 }
 export interface QueryAllLastValidatorPowerResponse {
     lastValidatorPower: LastValidatorPower[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetProposedDisableValidatorRequest {
+    address: string;
+}
+export interface QueryGetProposedDisableValidatorResponse {
+    proposedDisableValidator: ProposedDisableValidator | undefined;
+}
+export interface QueryAllProposedDisableValidatorRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllProposedDisableValidatorResponse {
+    proposedDisableValidator: ProposedDisableValidator[];
+    pagination: PageResponse | undefined;
+}
+export interface QueryGetDisabledValidatorRequest {
+    address: string;
+}
+export interface QueryGetDisabledValidatorResponse {
+    disabledValidator: DisabledValidator | undefined;
+}
+export interface QueryAllDisabledValidatorRequest {
+    pagination: PageRequest | undefined;
+}
+export interface QueryAllDisabledValidatorResponse {
+    disabledValidator: DisabledValidator[];
     pagination: PageResponse | undefined;
 }
 export declare const QueryGetValidatorRequest: {
@@ -85,6 +113,62 @@ export declare const QueryAllLastValidatorPowerResponse: {
     toJSON(message: QueryAllLastValidatorPowerResponse): unknown;
     fromPartial(object: DeepPartial<QueryAllLastValidatorPowerResponse>): QueryAllLastValidatorPowerResponse;
 };
+export declare const QueryGetProposedDisableValidatorRequest: {
+    encode(message: QueryGetProposedDisableValidatorRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetProposedDisableValidatorRequest;
+    fromJSON(object: any): QueryGetProposedDisableValidatorRequest;
+    toJSON(message: QueryGetProposedDisableValidatorRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetProposedDisableValidatorRequest>): QueryGetProposedDisableValidatorRequest;
+};
+export declare const QueryGetProposedDisableValidatorResponse: {
+    encode(message: QueryGetProposedDisableValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetProposedDisableValidatorResponse;
+    fromJSON(object: any): QueryGetProposedDisableValidatorResponse;
+    toJSON(message: QueryGetProposedDisableValidatorResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetProposedDisableValidatorResponse>): QueryGetProposedDisableValidatorResponse;
+};
+export declare const QueryAllProposedDisableValidatorRequest: {
+    encode(message: QueryAllProposedDisableValidatorRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllProposedDisableValidatorRequest;
+    fromJSON(object: any): QueryAllProposedDisableValidatorRequest;
+    toJSON(message: QueryAllProposedDisableValidatorRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllProposedDisableValidatorRequest>): QueryAllProposedDisableValidatorRequest;
+};
+export declare const QueryAllProposedDisableValidatorResponse: {
+    encode(message: QueryAllProposedDisableValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllProposedDisableValidatorResponse;
+    fromJSON(object: any): QueryAllProposedDisableValidatorResponse;
+    toJSON(message: QueryAllProposedDisableValidatorResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllProposedDisableValidatorResponse>): QueryAllProposedDisableValidatorResponse;
+};
+export declare const QueryGetDisabledValidatorRequest: {
+    encode(message: QueryGetDisabledValidatorRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetDisabledValidatorRequest;
+    fromJSON(object: any): QueryGetDisabledValidatorRequest;
+    toJSON(message: QueryGetDisabledValidatorRequest): unknown;
+    fromPartial(object: DeepPartial<QueryGetDisabledValidatorRequest>): QueryGetDisabledValidatorRequest;
+};
+export declare const QueryGetDisabledValidatorResponse: {
+    encode(message: QueryGetDisabledValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryGetDisabledValidatorResponse;
+    fromJSON(object: any): QueryGetDisabledValidatorResponse;
+    toJSON(message: QueryGetDisabledValidatorResponse): unknown;
+    fromPartial(object: DeepPartial<QueryGetDisabledValidatorResponse>): QueryGetDisabledValidatorResponse;
+};
+export declare const QueryAllDisabledValidatorRequest: {
+    encode(message: QueryAllDisabledValidatorRequest, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllDisabledValidatorRequest;
+    fromJSON(object: any): QueryAllDisabledValidatorRequest;
+    toJSON(message: QueryAllDisabledValidatorRequest): unknown;
+    fromPartial(object: DeepPartial<QueryAllDisabledValidatorRequest>): QueryAllDisabledValidatorRequest;
+};
+export declare const QueryAllDisabledValidatorResponse: {
+    encode(message: QueryAllDisabledValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): QueryAllDisabledValidatorResponse;
+    fromJSON(object: any): QueryAllDisabledValidatorResponse;
+    toJSON(message: QueryAllDisabledValidatorResponse): unknown;
+    fromPartial(object: DeepPartial<QueryAllDisabledValidatorResponse>): QueryAllDisabledValidatorResponse;
+};
 /** Query defines the gRPC querier service. */
 export interface Query {
     /** Queries a validator by index. */
@@ -95,6 +179,14 @@ export interface Query {
     LastValidatorPower(request: QueryGetLastValidatorPowerRequest): Promise<QueryGetLastValidatorPowerResponse>;
     /** Queries a list of lastValidatorPower items. */
     LastValidatorPowerAll(request: QueryAllLastValidatorPowerRequest): Promise<QueryAllLastValidatorPowerResponse>;
+    /** Queries a ProposedDisableValidator by index. */
+    ProposedDisableValidator(request: QueryGetProposedDisableValidatorRequest): Promise<QueryGetProposedDisableValidatorResponse>;
+    /** Queries a list of ProposedDisableValidator items. */
+    ProposedDisableValidatorAll(request: QueryAllProposedDisableValidatorRequest): Promise<QueryAllProposedDisableValidatorResponse>;
+    /** Queries a DisabledValidator by index. */
+    DisabledValidator(request: QueryGetDisabledValidatorRequest): Promise<QueryGetDisabledValidatorResponse>;
+    /** Queries a list of DisabledValidator items. */
+    DisabledValidatorAll(request: QueryAllDisabledValidatorRequest): Promise<QueryAllDisabledValidatorResponse>;
 }
 export declare class QueryClientImpl implements Query {
     private readonly rpc;
@@ -103,6 +195,10 @@ export declare class QueryClientImpl implements Query {
     ValidatorAll(request: QueryAllValidatorRequest): Promise<QueryAllValidatorResponse>;
     LastValidatorPower(request: QueryGetLastValidatorPowerRequest): Promise<QueryGetLastValidatorPowerResponse>;
     LastValidatorPowerAll(request: QueryAllLastValidatorPowerRequest): Promise<QueryAllLastValidatorPowerResponse>;
+    ProposedDisableValidator(request: QueryGetProposedDisableValidatorRequest): Promise<QueryGetProposedDisableValidatorResponse>;
+    ProposedDisableValidatorAll(request: QueryAllProposedDisableValidatorRequest): Promise<QueryAllProposedDisableValidatorResponse>;
+    DisabledValidator(request: QueryGetDisabledValidatorRequest): Promise<QueryGetDisabledValidatorResponse>;
+    DisabledValidatorAll(request: QueryAllDisabledValidatorRequest): Promise<QueryAllDisabledValidatorResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

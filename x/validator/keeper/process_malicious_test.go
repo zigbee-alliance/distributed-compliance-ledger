@@ -1,220 +1,222 @@
 package keeper_test
 
-import (
-	"testing"
-	"time"
+// import (
+// 	"testing"
+// 	"time"
 
-	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
-	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
-	"github.com/stretchr/testify/require"
-	abci "github.com/tendermint/tendermint/abci/types"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
-	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
-)
+// 	// evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+// 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
+// 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
+// 	"github.com/stretchr/testify/require"
 
-func TestProcessMalicious_HandleJailUnjail(t *testing.T) {
-	setup := testkeeper.Setup(t)
+// 	// abci "github.com/tendermint/tendermint/abci/types"
+// 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+// 	testkeeper "github.com/zigbee-alliance/distributed-compliance-ledger/testutil/keeper"
+// 	"github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types"
+// )
 
-	// create validator
-	validator := testkeeper.DefaultValidator()
-	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+// func TestProcessMalicious_HandleJailUnjail(t *testing.T) {
+// 	setup := testkeeper.Setup(t)
 
-	// check it is not slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.False(t, receivedValidator.Jailed)
-	require.Equal(t, types.Power, receivedValidator.Power)
+// 	// create validator
+// 	validator := testkeeper.DefaultValidator()
+// 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+// 	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
-	// Jail/Slash
-	setup.ValidatorKeeper.Jail(setup.Ctx, validator, "some reason")
+// 	// check it is not slashed
+// 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.False(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.Power, receivedValidator.Power)
 
-	// check validator is slashed
-	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.True(t, receivedValidator.Jailed)
-	require.Equal(t, types.ZeroPower, receivedValidator.Power)
-	require.Equal(t, "some reason", receivedValidator.JailedReason)
+// 	// Jail/Slash
+// 	setup.ValidatorKeeper.Jail(setup.Ctx, validator, "some reason")
 
-	// Unjail/unslash
-	setup.ValidatorKeeper.Unjail(setup.Ctx, validator)
+// 	// check validator is slashed
+// 	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.True(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
+// 	require.Equal(t, "some reason", receivedValidator.JailedReason)
 
-	// check validator is not slashed
-	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.False(t, receivedValidator.Jailed)
-	require.Equal(t, types.Power, receivedValidator.Power)
-	require.Equal(t, "", receivedValidator.JailedReason)
-}
+// 	// Unjail/unslash
+// 	setup.ValidatorKeeper.Unjail(setup.Ctx, validator)
 
-func TestProcessMalicious_HandleDoubleSign(t *testing.T) {
-	setup := testkeeper.Setup(t)
+// 	// check validator is not slashed
+// 	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.False(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.Power, receivedValidator.Power)
+// 	require.Equal(t, "", receivedValidator.JailedReason)
+// }
 
-	// create validator
-	validator := testkeeper.DefaultValidator()
-	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+// func TestProcessMalicious_HandleDoubleSign(t *testing.T) {
+// 	setup := testkeeper.Setup(t)
 
-	// check it is not slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.False(t, receivedValidator.Jailed)
-	require.Equal(t, types.Power, receivedValidator.Power)
+// 	// create validator
+// 	validator := testkeeper.DefaultValidator()
+// 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+// 	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
-	timestamp := time.Now().UTC()
+// 	// check it is not slashed
+// 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.False(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.Power, receivedValidator.Power)
 
-	// imitate double sign for validator
-	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
-		Time: timestamp.Add(time.Second * time.Duration(5)),
-	})
-	validatorConsAddr, _ := validator.GetConsAddr()
-	evidence := evidencetypes.Equivocation{
-		Height:           1,
-		Time:             timestamp,
-		Power:            int64(types.Power),
-		ConsensusAddress: validatorConsAddr.String(),
-	}
+// 	timestamp := time.Now().UTC()
 
-	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
+// 	// imitate double sign for validator
+// 	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
+// 		Time: timestamp.Add(time.Second * time.Duration(5)),
+// 	})
+// 	validatorConsAddr, _ := validator.GetConsAddr()
+// 	evidence := evidencetypes.Equivocation{
+// 		Height:           1,
+// 		Time:             timestamp,
+// 		Power:            int64(types.Power),
+// 		ConsensusAddress: validatorConsAddr.String(),
+// 	}
 
-	// check validator is slashed
-	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.True(t, receivedValidator.Jailed)
-	require.Equal(t, types.ZeroPower, receivedValidator.Power)
+// 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
 
-	events := setup.Ctx.EventManager().Events().ToABCIEvents()
-	require.Equal(t, 1, len(events))
-	require.Equal(t, slashingtypes.EventTypeSlash, events[0].Type)
-}
+// 	// check validator is slashed
+// 	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.True(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
 
-func TestProcessMalicious_HandleDoubleSign_ForOutdated(t *testing.T) {
-	setup := testkeeper.Setup(t)
+// 	events := setup.Ctx.EventManager().Events().ToABCIEvents()
+// 	require.Equal(t, 1, len(events))
+// 	require.Equal(t, slashingtypes.EventTypeSlash, events[0].Type)
+// }
 
-	// create validator
-	validator := testkeeper.DefaultValidator()
-	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+// func TestProcessMalicious_HandleDoubleSign_ForOutdated(t *testing.T) {
+// 	setup := testkeeper.Setup(t)
 
-	// check it is not slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.False(t, receivedValidator.Jailed)
-	require.Equal(t, types.Power, receivedValidator.Power)
+// 	// create validator
+// 	validator := testkeeper.DefaultValidator()
+// 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+// 	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
-	timestamp := time.Now().UTC()
-	initialHeight := int64(1)
+// 	// check it is not slashed
+// 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.False(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.Power, receivedValidator.Power)
 
-	// imitate double sign for validator with outdated timestamp AND block
-	maxEvidenceAge := time.Duration(1000)
-	maxNumBlocks := int64(20)
-	cp := abci.ConsensusParams{
-		Evidence: &tmproto.EvidenceParams{
-			MaxAgeDuration:  maxEvidenceAge,
-			MaxAgeNumBlocks: maxNumBlocks,
-		},
-	}
-	setup.Ctx = setup.Ctx.WithConsensusParams(&cp)
-	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
-		Time:   timestamp.Add(maxEvidenceAge + 2*time.Second),
-		Height: maxNumBlocks + initialHeight + 1,
-	})
+// 	timestamp := time.Now().UTC()
+// 	initialHeight := int64(1)
 
-	validatorConsAddr, _ := validator.GetConsAddr()
-	evidence := evidencetypes.Equivocation{
-		Height:           initialHeight,
-		Time:             timestamp,
-		Power:            int64(types.Power),
-		ConsensusAddress: validatorConsAddr.String(),
-	}
+// 	// imitate double sign for validator with outdated timestamp AND block
+// 	maxEvidenceAge := time.Duration(1000)
+// 	maxNumBlocks := int64(20)
+// 	cp := abci.ConsensusParams{
+// 		Evidence: &tmproto.EvidenceParams{
+// 			MaxAgeDuration:  maxEvidenceAge,
+// 			MaxAgeNumBlocks: maxNumBlocks,
+// 		},
+// 	}
+// 	setup.Ctx = setup.Ctx.WithConsensusParams(&cp)
+// 	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
+// 		Time:   timestamp.Add(maxEvidenceAge + 2*time.Second),
+// 		Height: maxNumBlocks + initialHeight + 1,
+// 	})
 
-	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
+// 	validatorConsAddr, _ := validator.GetConsAddr()
+// 	evidence := evidencetypes.Equivocation{
+// 		Height:           initialHeight,
+// 		Time:             timestamp,
+// 		Power:            int64(types.Power),
+// 		ConsensusAddress: validatorConsAddr.String(),
+// 	}
 
-	// check validator is not slashed
-	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.False(t, receivedValidator.Jailed)
-	require.Equal(t, types.Power, receivedValidator.Power)
-}
+// 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
 
-func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedBlock(t *testing.T) {
-	setup := testkeeper.Setup(t)
+// 	// check validator is not slashed
+// 	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.False(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.Power, receivedValidator.Power)
+// }
 
-	// create validator
-	validator := testkeeper.DefaultValidator()
-	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+// func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedBlock(t *testing.T) {
+// 	setup := testkeeper.Setup(t)
 
-	// check it is not slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.False(t, receivedValidator.Jailed)
-	require.Equal(t, types.Power, receivedValidator.Power)
+// 	// create validator
+// 	validator := testkeeper.DefaultValidator()
+// 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+// 	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
-	timestamp := time.Now().UTC()
-	initialHeight := int64(1)
+// 	// check it is not slashed
+// 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.False(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.Power, receivedValidator.Power)
 
-	// imitate double sign for validator with outdated timestamp and not block
-	maxEvidenceAge := time.Duration(1000)
-	cp := abci.ConsensusParams{
-		Evidence: &tmproto.EvidenceParams{
-			MaxAgeDuration: maxEvidenceAge,
-		},
-	}
-	setup.Ctx = setup.Ctx.WithConsensusParams(&cp)
-	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
-		Time: timestamp.Add(maxEvidenceAge + 2*time.Second),
-	})
+// 	timestamp := time.Now().UTC()
+// 	initialHeight := int64(1)
 
-	validatorConsAddr, _ := validator.GetConsAddr()
-	evidence := evidencetypes.Equivocation{
-		Height:           initialHeight,
-		Time:             timestamp,
-		Power:            int64(types.Power),
-		ConsensusAddress: validatorConsAddr.String(),
-	}
+// 	// imitate double sign for validator with outdated timestamp and not block
+// 	maxEvidenceAge := time.Duration(1000)
+// 	cp := abci.ConsensusParams{
+// 		Evidence: &tmproto.EvidenceParams{
+// 			MaxAgeDuration: maxEvidenceAge,
+// 		},
+// 	}
+// 	setup.Ctx = setup.Ctx.WithConsensusParams(&cp)
+// 	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
+// 		Time: timestamp.Add(maxEvidenceAge + 2*time.Second),
+// 	})
 
-	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
+// 	validatorConsAddr, _ := validator.GetConsAddr()
+// 	evidence := evidencetypes.Equivocation{
+// 		Height:           initialHeight,
+// 		Time:             timestamp,
+// 		Power:            int64(types.Power),
+// 		ConsensusAddress: validatorConsAddr.String(),
+// 	}
 
-	// check validator is slashed
-	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.True(t, receivedValidator.Jailed)
-	require.Equal(t, types.ZeroPower, receivedValidator.Power)
-}
+// 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
 
-func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedAge(t *testing.T) {
-	setup := testkeeper.Setup(t)
+// 	// check validator is slashed
+// 	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.True(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
+// }
 
-	// create validator
-	validator := testkeeper.DefaultValidator()
-	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
-	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
+// func TestProcessMalicious_HandleDoubleSign_ForNotOutdatedAge(t *testing.T) {
+// 	setup := testkeeper.Setup(t)
 
-	// check it is not slashed
-	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.False(t, receivedValidator.Jailed)
-	require.Equal(t, types.Power, receivedValidator.Power)
+// 	// create validator
+// 	validator := testkeeper.DefaultValidator()
+// 	setup.ValidatorKeeper.SetValidator(setup.Ctx, validator)
+// 	_ = setup.ValidatorKeeper.SetValidatorByConsAddr(setup.Ctx, validator)
 
-	timestamp := time.Now().UTC()
-	initialHeight := int64(1)
+// 	// check it is not slashed
+// 	receivedValidator, _ := setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.False(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.Power, receivedValidator.Power)
 
-	// imitate double sign for validator with outdated block and not timestamp
-	maxNumBlocks := int64(20)
-	cp := abci.ConsensusParams{
-		Evidence: &tmproto.EvidenceParams{
-			MaxAgeNumBlocks: maxNumBlocks,
-		},
-	}
-	setup.Ctx = setup.Ctx.WithConsensusParams(&cp)
-	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
-		Height: maxNumBlocks + initialHeight + 1,
-	})
+// 	timestamp := time.Now().UTC()
+// 	initialHeight := int64(1)
 
-	validatorConsAddr, _ := validator.GetConsAddr()
-	evidence := evidencetypes.Equivocation{
-		Height:           initialHeight,
-		Time:             timestamp,
-		Power:            int64(types.Power),
-		ConsensusAddress: validatorConsAddr.String(),
-	}
+// 	// imitate double sign for validator with outdated block and not timestamp
+// 	maxNumBlocks := int64(20)
+// 	cp := abci.ConsensusParams{
+// 		Evidence: &tmproto.EvidenceParams{
+// 			MaxAgeNumBlocks: maxNumBlocks,
+// 		},
+// 	}
+// 	setup.Ctx = setup.Ctx.WithConsensusParams(&cp)
+// 	setup.Ctx = setup.Ctx.WithBlockHeader(tmproto.Header{
+// 		Height: maxNumBlocks + initialHeight + 1,
+// 	})
 
-	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
+// 	validatorConsAddr, _ := validator.GetConsAddr()
+// 	evidence := evidencetypes.Equivocation{
+// 		Height:           initialHeight,
+// 		Time:             timestamp,
+// 		Power:            int64(types.Power),
+// 		ConsensusAddress: validatorConsAddr.String(),
+// 	}
 
-	// check validator is slashed
-	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
-	require.True(t, receivedValidator.Jailed)
-	require.Equal(t, types.ZeroPower, receivedValidator.Power)
-}
+// 	setup.ValidatorKeeper.HandleDoubleSign(setup.Ctx, &evidence)
+
+// 	// check validator is slashed
+// 	receivedValidator, _ = setup.ValidatorKeeper.GetValidator(setup.Ctx, validator.GetOwner())
+// 	require.True(t, receivedValidator.Jailed)
+// 	require.Equal(t, types.ZeroPower, receivedValidator.Power)
+// }

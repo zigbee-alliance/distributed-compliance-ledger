@@ -24,7 +24,7 @@ func (k msgServer) CreateValidator(goCtx context.Context, msg *types.MsgCreateVa
 	if !k.dclauthKeeper.HasRole(ctx, sdk.AccAddress(valAddr), dclauthtypes.NodeAdmin) {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized,
 			"CreateValidator transaction should be signed by an account with the \"%s\" role",
-			dclauthtypes.NodeAdmin,
+			types.EnableDisableValidatorRole,
 		)
 	}
 

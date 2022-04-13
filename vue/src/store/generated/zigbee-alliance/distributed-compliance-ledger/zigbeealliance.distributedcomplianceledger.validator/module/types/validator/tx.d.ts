@@ -9,6 +9,32 @@ export interface MsgCreateValidator {
 }
 export interface MsgCreateValidatorResponse {
 }
+export interface MsgProposeDisableValidator {
+    creator: string;
+    address: string;
+    info: string;
+    time: number;
+}
+export interface MsgProposeDisableValidatorResponse {
+}
+export interface MsgApproveDisableValidator {
+    creator: string;
+    address: string;
+    info: string;
+    time: number;
+}
+export interface MsgApproveDisableValidatorResponse {
+}
+export interface MsgDisableValidator {
+    creator: string;
+}
+export interface MsgDisableValidatorResponse {
+}
+export interface MsgEnableValidator {
+    creator: string;
+}
+export interface MsgEnableValidatorResponse {
+}
 export declare const MsgCreateValidator: {
     encode(message: MsgCreateValidator, writer?: Writer): Writer;
     decode(input: Reader | Uint8Array, length?: number): MsgCreateValidator;
@@ -23,15 +49,79 @@ export declare const MsgCreateValidatorResponse: {
     toJSON(_: MsgCreateValidatorResponse): unknown;
     fromPartial(_: DeepPartial<MsgCreateValidatorResponse>): MsgCreateValidatorResponse;
 };
+export declare const MsgProposeDisableValidator: {
+    encode(message: MsgProposeDisableValidator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgProposeDisableValidator;
+    fromJSON(object: any): MsgProposeDisableValidator;
+    toJSON(message: MsgProposeDisableValidator): unknown;
+    fromPartial(object: DeepPartial<MsgProposeDisableValidator>): MsgProposeDisableValidator;
+};
+export declare const MsgProposeDisableValidatorResponse: {
+    encode(_: MsgProposeDisableValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgProposeDisableValidatorResponse;
+    fromJSON(_: any): MsgProposeDisableValidatorResponse;
+    toJSON(_: MsgProposeDisableValidatorResponse): unknown;
+    fromPartial(_: DeepPartial<MsgProposeDisableValidatorResponse>): MsgProposeDisableValidatorResponse;
+};
+export declare const MsgApproveDisableValidator: {
+    encode(message: MsgApproveDisableValidator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgApproveDisableValidator;
+    fromJSON(object: any): MsgApproveDisableValidator;
+    toJSON(message: MsgApproveDisableValidator): unknown;
+    fromPartial(object: DeepPartial<MsgApproveDisableValidator>): MsgApproveDisableValidator;
+};
+export declare const MsgApproveDisableValidatorResponse: {
+    encode(_: MsgApproveDisableValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgApproveDisableValidatorResponse;
+    fromJSON(_: any): MsgApproveDisableValidatorResponse;
+    toJSON(_: MsgApproveDisableValidatorResponse): unknown;
+    fromPartial(_: DeepPartial<MsgApproveDisableValidatorResponse>): MsgApproveDisableValidatorResponse;
+};
+export declare const MsgDisableValidator: {
+    encode(message: MsgDisableValidator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDisableValidator;
+    fromJSON(object: any): MsgDisableValidator;
+    toJSON(message: MsgDisableValidator): unknown;
+    fromPartial(object: DeepPartial<MsgDisableValidator>): MsgDisableValidator;
+};
+export declare const MsgDisableValidatorResponse: {
+    encode(_: MsgDisableValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgDisableValidatorResponse;
+    fromJSON(_: any): MsgDisableValidatorResponse;
+    toJSON(_: MsgDisableValidatorResponse): unknown;
+    fromPartial(_: DeepPartial<MsgDisableValidatorResponse>): MsgDisableValidatorResponse;
+};
+export declare const MsgEnableValidator: {
+    encode(message: MsgEnableValidator, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgEnableValidator;
+    fromJSON(object: any): MsgEnableValidator;
+    toJSON(message: MsgEnableValidator): unknown;
+    fromPartial(object: DeepPartial<MsgEnableValidator>): MsgEnableValidator;
+};
+export declare const MsgEnableValidatorResponse: {
+    encode(_: MsgEnableValidatorResponse, writer?: Writer): Writer;
+    decode(input: Reader | Uint8Array, length?: number): MsgEnableValidatorResponse;
+    fromJSON(_: any): MsgEnableValidatorResponse;
+    toJSON(_: MsgEnableValidatorResponse): unknown;
+    fromPartial(_: DeepPartial<MsgEnableValidatorResponse>): MsgEnableValidatorResponse;
+};
 /** Msg defines the Msg service. */
 export interface Msg {
-    /** this line is used by starport scaffolding # proto/tx/rpc */
     CreateValidator(request: MsgCreateValidator): Promise<MsgCreateValidatorResponse>;
+    ProposeDisableValidator(request: MsgProposeDisableValidator): Promise<MsgProposeDisableValidatorResponse>;
+    ApproveDisableValidator(request: MsgApproveDisableValidator): Promise<MsgApproveDisableValidatorResponse>;
+    DisableValidator(request: MsgDisableValidator): Promise<MsgDisableValidatorResponse>;
+    /** this line is used by starport scaffolding # proto/tx/rpc */
+    EnableValidator(request: MsgEnableValidator): Promise<MsgEnableValidatorResponse>;
 }
 export declare class MsgClientImpl implements Msg {
     private readonly rpc;
     constructor(rpc: Rpc);
     CreateValidator(request: MsgCreateValidator): Promise<MsgCreateValidatorResponse>;
+    ProposeDisableValidator(request: MsgProposeDisableValidator): Promise<MsgProposeDisableValidatorResponse>;
+    ApproveDisableValidator(request: MsgApproveDisableValidator): Promise<MsgApproveDisableValidatorResponse>;
+    DisableValidator(request: MsgDisableValidator): Promise<MsgDisableValidatorResponse>;
+    EnableValidator(request: MsgEnableValidator): Promise<MsgEnableValidatorResponse>;
 }
 interface Rpc {
     request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;

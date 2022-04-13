@@ -105,41 +105,430 @@ func (m *MsgCreateValidatorResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgCreateValidatorResponse proto.InternalMessageInfo
 
+type MsgProposeDisableValidator struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" validate:"required"`
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty" validate:"required"`
+	Info    string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time    int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
+}
+
+func (m *MsgProposeDisableValidator) Reset()         { *m = MsgProposeDisableValidator{} }
+func (m *MsgProposeDisableValidator) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeDisableValidator) ProtoMessage()    {}
+func (*MsgProposeDisableValidator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{2}
+}
+func (m *MsgProposeDisableValidator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeDisableValidator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeDisableValidator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeDisableValidator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeDisableValidator.Merge(m, src)
+}
+func (m *MsgProposeDisableValidator) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeDisableValidator) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeDisableValidator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeDisableValidator proto.InternalMessageInfo
+
+func (m *MsgProposeDisableValidator) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgProposeDisableValidator) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *MsgProposeDisableValidator) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgProposeDisableValidator) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
+type MsgProposeDisableValidatorResponse struct {
+}
+
+func (m *MsgProposeDisableValidatorResponse) Reset()         { *m = MsgProposeDisableValidatorResponse{} }
+func (m *MsgProposeDisableValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgProposeDisableValidatorResponse) ProtoMessage()    {}
+func (*MsgProposeDisableValidatorResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{3}
+}
+func (m *MsgProposeDisableValidatorResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgProposeDisableValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgProposeDisableValidatorResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgProposeDisableValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgProposeDisableValidatorResponse.Merge(m, src)
+}
+func (m *MsgProposeDisableValidatorResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgProposeDisableValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgProposeDisableValidatorResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgProposeDisableValidatorResponse proto.InternalMessageInfo
+
+type MsgApproveDisableValidator struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" validate:"required"`
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty" validate:"required"`
+	Info    string `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty" validate:"max=4096"`
+	Time    int64  `protobuf:"varint,4,opt,name=time,proto3" json:"time,omitempty"`
+}
+
+func (m *MsgApproveDisableValidator) Reset()         { *m = MsgApproveDisableValidator{} }
+func (m *MsgApproveDisableValidator) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveDisableValidator) ProtoMessage()    {}
+func (*MsgApproveDisableValidator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{4}
+}
+func (m *MsgApproveDisableValidator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveDisableValidator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveDisableValidator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveDisableValidator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveDisableValidator.Merge(m, src)
+}
+func (m *MsgApproveDisableValidator) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveDisableValidator) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveDisableValidator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveDisableValidator proto.InternalMessageInfo
+
+func (m *MsgApproveDisableValidator) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgApproveDisableValidator) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *MsgApproveDisableValidator) GetInfo() string {
+	if m != nil {
+		return m.Info
+	}
+	return ""
+}
+
+func (m *MsgApproveDisableValidator) GetTime() int64 {
+	if m != nil {
+		return m.Time
+	}
+	return 0
+}
+
+type MsgApproveDisableValidatorResponse struct {
+}
+
+func (m *MsgApproveDisableValidatorResponse) Reset()         { *m = MsgApproveDisableValidatorResponse{} }
+func (m *MsgApproveDisableValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgApproveDisableValidatorResponse) ProtoMessage()    {}
+func (*MsgApproveDisableValidatorResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{5}
+}
+func (m *MsgApproveDisableValidatorResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgApproveDisableValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgApproveDisableValidatorResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgApproveDisableValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgApproveDisableValidatorResponse.Merge(m, src)
+}
+func (m *MsgApproveDisableValidatorResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgApproveDisableValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgApproveDisableValidatorResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgApproveDisableValidatorResponse proto.InternalMessageInfo
+
+type MsgDisableValidator struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" validate:"required"`
+}
+
+func (m *MsgDisableValidator) Reset()         { *m = MsgDisableValidator{} }
+func (m *MsgDisableValidator) String() string { return proto.CompactTextString(m) }
+func (*MsgDisableValidator) ProtoMessage()    {}
+func (*MsgDisableValidator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{6}
+}
+func (m *MsgDisableValidator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDisableValidator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDisableValidator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDisableValidator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDisableValidator.Merge(m, src)
+}
+func (m *MsgDisableValidator) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDisableValidator) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDisableValidator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDisableValidator proto.InternalMessageInfo
+
+func (m *MsgDisableValidator) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+type MsgDisableValidatorResponse struct {
+}
+
+func (m *MsgDisableValidatorResponse) Reset()         { *m = MsgDisableValidatorResponse{} }
+func (m *MsgDisableValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgDisableValidatorResponse) ProtoMessage()    {}
+func (*MsgDisableValidatorResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{7}
+}
+func (m *MsgDisableValidatorResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgDisableValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgDisableValidatorResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgDisableValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgDisableValidatorResponse.Merge(m, src)
+}
+func (m *MsgDisableValidatorResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgDisableValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgDisableValidatorResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgDisableValidatorResponse proto.InternalMessageInfo
+
+type MsgEnableValidator struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty" validate:"required"`
+}
+
+func (m *MsgEnableValidator) Reset()         { *m = MsgEnableValidator{} }
+func (m *MsgEnableValidator) String() string { return proto.CompactTextString(m) }
+func (*MsgEnableValidator) ProtoMessage()    {}
+func (*MsgEnableValidator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{8}
+}
+func (m *MsgEnableValidator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgEnableValidator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgEnableValidator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgEnableValidator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEnableValidator.Merge(m, src)
+}
+func (m *MsgEnableValidator) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgEnableValidator) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEnableValidator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgEnableValidator proto.InternalMessageInfo
+
+func (m *MsgEnableValidator) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+type MsgEnableValidatorResponse struct {
+}
+
+func (m *MsgEnableValidatorResponse) Reset()         { *m = MsgEnableValidatorResponse{} }
+func (m *MsgEnableValidatorResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgEnableValidatorResponse) ProtoMessage()    {}
+func (*MsgEnableValidatorResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_3d1df81e3a65fd6a, []int{9}
+}
+func (m *MsgEnableValidatorResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgEnableValidatorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgEnableValidatorResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgEnableValidatorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgEnableValidatorResponse.Merge(m, src)
+}
+func (m *MsgEnableValidatorResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgEnableValidatorResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgEnableValidatorResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgEnableValidatorResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreateValidator)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidator")
 	proto.RegisterType((*MsgCreateValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgCreateValidatorResponse")
+	proto.RegisterType((*MsgProposeDisableValidator)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgProposeDisableValidator")
+	proto.RegisterType((*MsgProposeDisableValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgProposeDisableValidatorResponse")
+	proto.RegisterType((*MsgApproveDisableValidator)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidator")
+	proto.RegisterType((*MsgApproveDisableValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgApproveDisableValidatorResponse")
+	proto.RegisterType((*MsgDisableValidator)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidator")
+	proto.RegisterType((*MsgDisableValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgDisableValidatorResponse")
+	proto.RegisterType((*MsgEnableValidator)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidator")
+	proto.RegisterType((*MsgEnableValidatorResponse)(nil), "zigbeealliance.distributedcomplianceledger.validator.MsgEnableValidatorResponse")
 }
 
 func init() { proto.RegisterFile("validator/tx.proto", fileDescriptor_3d1df81e3a65fd6a) }
 
 var fileDescriptor_3d1df81e3a65fd6a = []byte{
-	// 416 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xb1, 0x8a, 0xd4, 0x40,
-	0x18, 0xc7, 0x33, 0x77, 0xb2, 0xe8, 0x5c, 0x21, 0xc4, 0x2d, 0xd6, 0x28, 0xc9, 0x91, 0xea, 0x9a,
-	0xcc, 0xc0, 0x69, 0x75, 0xdd, 0xae, 0x82, 0xa2, 0x1c, 0x1c, 0x11, 0x2c, 0x04, 0x91, 0x24, 0xf3,
-	0x39, 0x0e, 0x64, 0x33, 0x71, 0x66, 0x22, 0x17, 0x9f, 0xc0, 0xd2, 0x47, 0xd8, 0x17, 0xb0, 0x10,
-	0xf4, 0x1d, 0x16, 0xab, 0xc5, 0xca, 0x6a, 0x91, 0xdd, 0xc6, 0xda, 0x27, 0x10, 0x33, 0x89, 0x09,
-	0x2e, 0x36, 0x8b, 0xdd, 0x4c, 0x3e, 0xbe, 0xdf, 0xef, 0xcf, 0x3f, 0x0c, 0x76, 0xdf, 0x24, 0xb9,
-	0x60, 0x89, 0x91, 0x8a, 0x9a, 0x4b, 0x52, 0x2a, 0x69, 0xa4, 0x7b, 0xf7, 0xad, 0xe0, 0x29, 0x40,
-	0x92, 0xe7, 0x22, 0x29, 0x32, 0x20, 0x4c, 0x68, 0xa3, 0x44, 0x5a, 0x19, 0x60, 0x99, 0x9c, 0x97,
-	0xf6, 0x6b, 0x0e, 0x8c, 0x83, 0x22, 0x7f, 0xd6, 0xbd, 0x5b, 0x3d, 0x89, 0x81, 0xce, 0x94, 0x28,
-	0x8d, 0x90, 0x85, 0x45, 0x7a, 0x37, 0xb9, 0x94, 0x3c, 0x07, 0xda, 0xdc, 0xd2, 0xea, 0x25, 0x4d,
-	0x8a, 0xba, 0x1d, 0x8d, 0xb9, 0xe4, 0xb2, 0x39, 0xd2, 0xdf, 0xa7, 0x6e, 0x21, 0x93, 0x7a, 0x2e,
-	0xf5, 0x0b, 0x3b, 0xb0, 0x17, 0x3b, 0x0a, 0x3f, 0x1e, 0x60, 0xf7, 0x5c, 0xf3, 0x7b, 0x0a, 0x12,
-	0x03, 0x4f, 0x3b, 0xa9, 0xfb, 0x00, 0x8f, 0xb4, 0xe0, 0x05, 0xa8, 0x09, 0x3a, 0x46, 0x27, 0xd7,
-	0x66, 0xf4, 0xe7, 0x3a, 0xb8, 0xd1, 0x66, 0x82, 0xb3, 0x50, 0xc1, 0xeb, 0x4a, 0x28, 0x60, 0xe1,
-	0xd7, 0x4f, 0xd1, 0xb8, 0xe5, 0x4d, 0x19, 0x53, 0xa0, 0xf5, 0x13, 0xa3, 0x44, 0xc1, 0xe3, 0x76,
-	0xdd, 0x7d, 0x8e, 0x47, 0x65, 0x95, 0x3e, 0x86, 0x7a, 0x72, 0x70, 0x8c, 0x4e, 0x8e, 0x4e, 0xc7,
-	0xc4, 0x86, 0x27, 0x5d, 0x78, 0x32, 0x2d, 0xea, 0x7f, 0xe2, 0xbf, 0xf4, 0xf8, 0x4c, 0xd5, 0xa5,
-	0x91, 0xe4, 0xa2, 0x81, 0xc5, 0x2d, 0xd4, 0x15, 0xf8, 0x68, 0xd0, 0xcf, 0xe4, 0xb0, 0x71, 0x4c,
-	0xc9, 0x3e, 0x9d, 0x93, 0xfb, 0x3d, 0x68, 0x76, 0x65, 0xb9, 0x0e, 0x9c, 0x78, 0xc8, 0x3e, 0xbb,
-	0xfa, 0x6e, 0x11, 0x38, 0x3f, 0x16, 0x81, 0x13, 0xde, 0xc6, 0xde, 0x6e, 0x65, 0x31, 0xe8, 0x52,
-	0x16, 0x1a, 0x4e, 0x3f, 0x23, 0x7c, 0x78, 0xae, 0xb9, 0xfb, 0x01, 0xe1, 0xeb, 0x7f, 0xd7, 0xfa,
-	0x70, 0xbf, 0x64, 0xbb, 0x36, 0xef, 0xe2, 0x7f, 0x91, 0xba, 0xdc, 0x33, 0xb6, 0xdc, 0xf8, 0x68,
-	0xb5, 0xf1, 0xd1, 0xf7, 0x8d, 0x8f, 0xde, 0x6f, 0x7d, 0x67, 0xb5, 0xf5, 0x9d, 0x6f, 0x5b, 0xdf,
-	0x79, 0xf6, 0x88, 0x0b, 0xf3, 0xaa, 0x4a, 0x49, 0x26, 0xe7, 0xd4, 0x5a, 0xa3, 0x4e, 0x4b, 0x07,
-	0xda, 0xa8, 0xf7, 0x46, 0x56, 0x4c, 0x2f, 0xe9, 0xe0, 0x45, 0xd4, 0x25, 0xe8, 0x74, 0xd4, 0xfc,
-	0xf7, 0x3b, 0xbf, 0x02, 0x00, 0x00, 0xff, 0xff, 0x83, 0xec, 0x79, 0x26, 0x2b, 0x03, 0x00, 0x00,
+	// 619 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe4, 0x96, 0x4f, 0x6b, 0x13, 0x41,
+	0x18, 0xc6, 0x77, 0x9b, 0x90, 0xda, 0xe9, 0x41, 0x99, 0x06, 0x1a, 0x53, 0xdd, 0x84, 0xc5, 0x43,
+	0x40, 0xb2, 0x2b, 0xb5, 0x08, 0x16, 0x3c, 0x24, 0x56, 0xfc, 0x47, 0x20, 0xae, 0x20, 0x22, 0x48,
+	0xdd, 0x3f, 0xd3, 0x71, 0x60, 0xb3, 0xb3, 0xce, 0x4c, 0x4a, 0xe2, 0x27, 0xf0, 0xe8, 0x47, 0xe8,
+	0xd1, 0x8b, 0xa0, 0xe0, 0x57, 0x10, 0x8a, 0xa7, 0xe2, 0xc9, 0x53, 0x91, 0xe4, 0xe2, 0x59, 0xbf,
+	0x80, 0x64, 0x76, 0x37, 0x49, 0x13, 0x17, 0x61, 0x9b, 0x9e, 0x7a, 0x9b, 0xcd, 0x9b, 0xf7, 0xf7,
+	0xbc, 0xef, 0xc3, 0x3c, 0xcb, 0x02, 0xb8, 0x6f, 0xfb, 0xc4, 0xb3, 0x05, 0x65, 0xa6, 0xe8, 0x19,
+	0x21, 0xa3, 0x82, 0xc2, 0xad, 0xb7, 0x04, 0x3b, 0x08, 0xd9, 0xbe, 0x4f, 0xec, 0xc0, 0x45, 0x86,
+	0x47, 0xb8, 0x60, 0xc4, 0xe9, 0x0a, 0xe4, 0xb9, 0xb4, 0x13, 0x46, 0xbf, 0xfa, 0xc8, 0xc3, 0x88,
+	0x19, 0xe3, 0xf6, 0xf2, 0xc6, 0x84, 0xe4, 0x21, 0xee, 0x32, 0x12, 0x0a, 0x42, 0x83, 0x08, 0x59,
+	0xbe, 0x8c, 0x29, 0xc5, 0x3e, 0x32, 0xe5, 0x93, 0xd3, 0xdd, 0x33, 0xed, 0xa0, 0x1f, 0x97, 0x8a,
+	0x98, 0x62, 0x2a, 0x8f, 0xe6, 0xe8, 0x94, 0x34, 0xb8, 0x94, 0x77, 0x28, 0xdf, 0x8d, 0x0a, 0xd1,
+	0x43, 0x54, 0xd2, 0x3f, 0x2f, 0x01, 0xd8, 0xe2, 0xf8, 0x2e, 0x43, 0xb6, 0x40, 0xcf, 0x12, 0x51,
+	0x78, 0x1f, 0x14, 0x38, 0xc1, 0x01, 0x62, 0x25, 0xb5, 0xaa, 0xd6, 0x56, 0x9a, 0xe6, 0xef, 0xe3,
+	0xca, 0x5a, 0x3c, 0x13, 0xda, 0xd6, 0x19, 0x7a, 0xd3, 0x25, 0x0c, 0x79, 0xfa, 0xf7, 0x2f, 0xf5,
+	0x62, 0xcc, 0x6b, 0x78, 0x1e, 0x43, 0x9c, 0x3f, 0x15, 0x8c, 0x04, 0xd8, 0x8a, 0xdb, 0xe1, 0x4b,
+	0x50, 0x08, 0xbb, 0xce, 0x63, 0xd4, 0x2f, 0x2d, 0x55, 0xd5, 0xda, 0xea, 0x66, 0xd1, 0x88, 0x86,
+	0x37, 0x92, 0xe1, 0x8d, 0x46, 0xd0, 0x4f, 0xc5, 0x7f, 0x9b, 0xe0, 0x5d, 0xd6, 0x0f, 0x05, 0x35,
+	0xda, 0x12, 0x66, 0xc5, 0x50, 0x48, 0xc0, 0xea, 0x94, 0x3f, 0xa5, 0x9c, 0xd4, 0x68, 0x18, 0x59,
+	0x3c, 0x37, 0x76, 0x26, 0xa0, 0x66, 0xfe, 0xf0, 0xb8, 0xa2, 0x58, 0xd3, 0xec, 0xed, 0x0b, 0xef,
+	0x0e, 0x2a, 0xca, 0xaf, 0x83, 0x8a, 0xa2, 0x5f, 0x01, 0xe5, 0x79, 0xcb, 0x2c, 0xc4, 0x43, 0x1a,
+	0x70, 0xa4, 0xff, 0x51, 0x65, 0xb9, 0xcd, 0x68, 0x48, 0x39, 0xda, 0x21, 0xdc, 0x76, 0xfc, 0x29,
+	0x67, 0x1f, 0x82, 0x65, 0x77, 0xd4, 0x49, 0x33, 0x5b, 0x9b, 0xf4, 0x8f, 0x50, 0x76, 0x54, 0x91,
+	0xe6, 0x66, 0x41, 0xc5, 0xfd, 0xf0, 0x3a, 0xc8, 0x93, 0x60, 0x8f, 0x4a, 0x03, 0x57, 0x9a, 0xeb,
+	0x27, 0x39, 0x1d, 0xbb, 0x77, 0x67, 0xeb, 0xc6, 0xed, 0x5b, 0xba, 0x25, 0xff, 0x04, 0x21, 0xc8,
+	0x0b, 0xd2, 0x41, 0xa5, 0x7c, 0x55, 0xad, 0xe5, 0x2c, 0x79, 0xd6, 0xaf, 0x01, 0x3d, 0x7d, 0xe9,
+	0x59, 0x6f, 0x1a, 0x61, 0xc8, 0xe8, 0xfe, 0x39, 0xf3, 0x26, 0x65, 0xe9, 0xb1, 0x37, 0xaf, 0xc0,
+	0x5a, 0x8b, 0xe3, 0x33, 0xf4, 0x44, 0xbf, 0x0a, 0x36, 0xfe, 0xa1, 0x30, 0x1e, 0x60, 0x57, 0xbe,
+	0x09, 0xee, 0x05, 0x67, 0xa6, 0x1f, 0xe5, 0x66, 0x46, 0x20, 0x91, 0xdf, 0xfc, 0xb0, 0x0c, 0x72,
+	0x2d, 0x8e, 0xe1, 0x47, 0x15, 0x5c, 0x9c, 0x7d, 0x1d, 0x3d, 0xc8, 0x96, 0xe8, 0xf9, 0x94, 0x96,
+	0xdb, 0x8b, 0x22, 0x25, 0x73, 0xc3, 0xaf, 0x2a, 0x58, 0x4f, 0x0b, 0x7b, 0x76, 0xb5, 0x14, 0x62,
+	0xf9, 0xf9, 0xa2, 0x89, 0x27, 0xf6, 0x48, 0x0b, 0x66, 0xf6, 0x3d, 0x52, 0x88, 0xa7, 0xd8, 0xe3,
+	0x3f, 0x39, 0x82, 0x9f, 0x54, 0x70, 0x69, 0x3e, 0x45, 0x99, 0xe5, 0xe6, 0x26, 0x7f, 0xb2, 0x30,
+	0xd4, 0x78, 0xe4, 0xd1, 0x95, 0x9f, 0xcd, 0x5d, 0xf6, 0x2b, 0x3f, 0x43, 0x3a, 0xc5, 0x95, 0x4f,
+	0x89, 0x6a, 0xd3, 0x3b, 0x1c, 0x68, 0xea, 0xd1, 0x40, 0x53, 0x7f, 0x0e, 0x34, 0xf5, 0xfd, 0x50,
+	0x53, 0x8e, 0x86, 0x9a, 0xf2, 0x63, 0xa8, 0x29, 0x2f, 0x1e, 0x61, 0x22, 0x5e, 0x77, 0x1d, 0xc3,
+	0xa5, 0x1d, 0x33, 0x52, 0xad, 0x27, 0xb2, 0xe6, 0x94, 0x6c, 0x7d, 0xa2, 0x5b, 0x8f, 0x84, 0xcd,
+	0x9e, 0x39, 0xf5, 0xf1, 0xd4, 0x0f, 0x11, 0x77, 0x0a, 0xf2, 0x13, 0xe1, 0xe6, 0xdf, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0xc0, 0xb5, 0xaa, 0xab, 0x56, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -155,6 +544,10 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	CreateValidator(ctx context.Context, in *MsgCreateValidator, opts ...grpc.CallOption) (*MsgCreateValidatorResponse, error)
+	ProposeDisableValidator(ctx context.Context, in *MsgProposeDisableValidator, opts ...grpc.CallOption) (*MsgProposeDisableValidatorResponse, error)
+	ApproveDisableValidator(ctx context.Context, in *MsgApproveDisableValidator, opts ...grpc.CallOption) (*MsgApproveDisableValidatorResponse, error)
+	DisableValidator(ctx context.Context, in *MsgDisableValidator, opts ...grpc.CallOption) (*MsgDisableValidatorResponse, error)
+	EnableValidator(ctx context.Context, in *MsgEnableValidator, opts ...grpc.CallOption) (*MsgEnableValidatorResponse, error)
 }
 
 type msgClient struct {
@@ -174,9 +567,49 @@ func (c *msgClient) CreateValidator(ctx context.Context, in *MsgCreateValidator,
 	return out, nil
 }
 
+func (c *msgClient) ProposeDisableValidator(ctx context.Context, in *MsgProposeDisableValidator, opts ...grpc.CallOption) (*MsgProposeDisableValidatorResponse, error) {
+	out := new(MsgProposeDisableValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Msg/ProposeDisableValidator", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ApproveDisableValidator(ctx context.Context, in *MsgApproveDisableValidator, opts ...grpc.CallOption) (*MsgApproveDisableValidatorResponse, error) {
+	out := new(MsgApproveDisableValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Msg/ApproveDisableValidator", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DisableValidator(ctx context.Context, in *MsgDisableValidator, opts ...grpc.CallOption) (*MsgDisableValidatorResponse, error) {
+	out := new(MsgDisableValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Msg/DisableValidator", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) EnableValidator(ctx context.Context, in *MsgEnableValidator, opts ...grpc.CallOption) (*MsgEnableValidatorResponse, error) {
+	out := new(MsgEnableValidatorResponse)
+	err := c.cc.Invoke(ctx, "/zigbeealliance.distributedcomplianceledger.validator.Msg/EnableValidator", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	CreateValidator(context.Context, *MsgCreateValidator) (*MsgCreateValidatorResponse, error)
+	ProposeDisableValidator(context.Context, *MsgProposeDisableValidator) (*MsgProposeDisableValidatorResponse, error)
+	ApproveDisableValidator(context.Context, *MsgApproveDisableValidator) (*MsgApproveDisableValidatorResponse, error)
+	DisableValidator(context.Context, *MsgDisableValidator) (*MsgDisableValidatorResponse, error)
+	EnableValidator(context.Context, *MsgEnableValidator) (*MsgEnableValidatorResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -185,6 +618,18 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) CreateValidator(ctx context.Context, req *MsgCreateValidator) (*MsgCreateValidatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateValidator not implemented")
+}
+func (*UnimplementedMsgServer) ProposeDisableValidator(ctx context.Context, req *MsgProposeDisableValidator) (*MsgProposeDisableValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProposeDisableValidator not implemented")
+}
+func (*UnimplementedMsgServer) ApproveDisableValidator(ctx context.Context, req *MsgApproveDisableValidator) (*MsgApproveDisableValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApproveDisableValidator not implemented")
+}
+func (*UnimplementedMsgServer) DisableValidator(ctx context.Context, req *MsgDisableValidator) (*MsgDisableValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DisableValidator not implemented")
+}
+func (*UnimplementedMsgServer) EnableValidator(ctx context.Context, req *MsgEnableValidator) (*MsgEnableValidatorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnableValidator not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -209,6 +654,78 @@ func _Msg_CreateValidator_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_ProposeDisableValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgProposeDisableValidator)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ProposeDisableValidator(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Msg/ProposeDisableValidator",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ProposeDisableValidator(ctx, req.(*MsgProposeDisableValidator))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ApproveDisableValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgApproveDisableValidator)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ApproveDisableValidator(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Msg/ApproveDisableValidator",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ApproveDisableValidator(ctx, req.(*MsgApproveDisableValidator))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DisableValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDisableValidator)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DisableValidator(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Msg/DisableValidator",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DisableValidator(ctx, req.(*MsgDisableValidator))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_EnableValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgEnableValidator)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).EnableValidator(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zigbeealliance.distributedcomplianceledger.validator.Msg/EnableValidator",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).EnableValidator(ctx, req.(*MsgEnableValidator))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "zigbeealliance.distributedcomplianceledger.validator.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -216,6 +733,22 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateValidator",
 			Handler:    _Msg_CreateValidator_Handler,
+		},
+		{
+			MethodName: "ProposeDisableValidator",
+			Handler:    _Msg_ProposeDisableValidator_Handler,
+		},
+		{
+			MethodName: "ApproveDisableValidator",
+			Handler:    _Msg_ApproveDisableValidator_Handler,
+		},
+		{
+			MethodName: "DisableValidator",
+			Handler:    _Msg_DisableValidator_Handler,
+		},
+		{
+			MethodName: "EnableValidator",
+			Handler:    _Msg_EnableValidator_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -297,6 +830,256 @@ func (m *MsgCreateValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgProposeDisableValidator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeDisableValidator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeDisableValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgProposeDisableValidatorResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgProposeDisableValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgProposeDisableValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveDisableValidator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveDisableValidator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveDisableValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Time != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Time))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Info) > 0 {
+		i -= len(m.Info)
+		copy(dAtA[i:], m.Info)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Info)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Address)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgApproveDisableValidatorResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgApproveDisableValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgApproveDisableValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDisableValidator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDisableValidator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDisableValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgDisableValidatorResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgDisableValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgDisableValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgEnableValidator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgEnableValidator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgEnableValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgEnableValidatorResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgEnableValidatorResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgEnableValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -328,6 +1111,116 @@ func (m *MsgCreateValidator) Size() (n int) {
 }
 
 func (m *MsgCreateValidatorResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgProposeDisableValidator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
+	return n
+}
+
+func (m *MsgProposeDisableValidatorResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgApproveDisableValidator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Info)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.Time != 0 {
+		n += 1 + sovTx(uint64(m.Time))
+	}
+	return n
+}
+
+func (m *MsgApproveDisableValidatorResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgDisableValidator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgDisableValidatorResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgEnableValidator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	return n
+}
+
+func (m *MsgEnableValidatorResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -520,6 +1413,700 @@ func (m *MsgCreateValidatorResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgCreateValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeDisableValidator) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeDisableValidator: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeDisableValidator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgProposeDisableValidatorResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgProposeDisableValidatorResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgProposeDisableValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveDisableValidator) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveDisableValidator: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveDisableValidator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Info", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Info = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
+			}
+			m.Time = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Time |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgApproveDisableValidatorResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgApproveDisableValidatorResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgApproveDisableValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDisableValidator) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDisableValidator: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDisableValidator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgDisableValidatorResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgDisableValidatorResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgDisableValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgEnableValidator) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgEnableValidator: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgEnableValidator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgEnableValidatorResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgEnableValidatorResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgEnableValidatorResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:
