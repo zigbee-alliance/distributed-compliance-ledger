@@ -184,7 +184,7 @@ func ApproveDisableValidator(
 	signerAccount *dclauthtypes.Account,
 	info string,
 ) (*sdk.TxResponse, error) {
-	msg := validatortypes.NewMsgApproveDisableValidator(suite.GetAddress(signerName), accAddr, info)
+	msg := validatortypes.NewMsgApproveDisableValidator(suite.GetAddress(signerName), valAddr, info)
 
 	return suite.BuildAndBroadcastTx([]sdk.Msg{msg}, signerName, signerAccount)
 }
