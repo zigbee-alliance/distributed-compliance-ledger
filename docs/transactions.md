@@ -1283,7 +1283,7 @@ Gets a disabled validator node.
     dcld query validator disabled-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
     ```
 - REST API:
-  - GET `/dcl/validator/disabled-nodes/{owner}`
+  - GET `/dcl/validator/disabled-nodes/{address}`
 
 #### GET_ALL_DISABLED_VALIDATORS
 
