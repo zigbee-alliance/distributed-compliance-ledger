@@ -179,7 +179,7 @@ func ProposeDisableValidator(
 
 func ApproveDisableValidator(
 	suite *utils.TestSuite,
-	accAddr sdk.ValAddress,
+	valAddr sdk.ValAddress,
 	signerName string,
 	signerAccount *dclauthtypes.Account,
 	info string,
