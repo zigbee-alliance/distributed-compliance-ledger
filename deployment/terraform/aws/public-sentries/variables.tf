@@ -13,11 +13,16 @@ variable "ssh_username" {
     default     = "ubuntu"
 }
 
-variable "peer_vpc" {
-    description = "Peer VPC"
-}
-
 variable "nodes_count" {
     description = "Number of Public Sentry nodes"
     default = 2
+}
+
+variable "region_index" {
+    description = "Public Sentries Region Index"
+    default = 0
+}
+
+variable "peer_vpc" {
+    description = "Peer VPC"
 }

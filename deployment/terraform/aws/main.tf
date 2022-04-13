@@ -28,15 +28,29 @@ module "private_sentries" {
     peer_vpc = module.validator.vpc
 }
 
-# Public Sentries
-module "public_sentries" {
+# Public Sentries region 1
+module "public_sentries_1" {
     source      = "./public-sentries"
-    # node_count  = 3
+    nodes_count  = 1
+    providers = {
+        aws = aws.region_1
+        aws.peer = aws.region_1
+    }
+
+    region_index = 1
+    peer_vpc = module.private_sentries.vpc
+}
+
+# Public Sentries region 2
+module "public_sentries_2" {
+    source      = "./public-sentries"
+    nodes_count  = 2
     providers = {
         aws = aws.region_2
         aws.peer = aws.region_1
     }
 
+    region_index = 2
     peer_vpc = module.private_sentries.vpc
 }
 
