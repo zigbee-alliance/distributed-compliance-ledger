@@ -5,5 +5,5 @@ variable "region_1" {
 
 variable "region_2" {
   description = "AWS Region 2"
-  default     = "eu-west-1"
+  default     = "us-east-2"
 }
