@@ -24,6 +24,8 @@ resource "aws_instance" "this_nodes" {
     instance_type = "t3.medium"
 
     subnet_id              = element(module.this_vpc.public_subnets, 0)
+    ipv6_address_count     = 1
+    
     vpc_security_group_ids = [
         module.this_dev_sg.security_group_id,
         module.this_public_sg.security_group_id
@@ -47,6 +49,8 @@ resource "aws_instance" "this_seed_node" {
     instance_type = "t3.medium"
 
     subnet_id              = element(module.this_vpc.public_subnets, 0)
+    ipv6_address_count     = 1
+    
     vpc_security_group_ids = [
         module.this_dev_sg.security_group_id,
         module.this_seed_sg.security_group_id

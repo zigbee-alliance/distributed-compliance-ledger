@@ -7,6 +7,7 @@ module "this_dev_sg" {
     vpc_id      = module.this_vpc.vpc_id
 
     ingress_cidr_blocks = ["0.0.0.0/0"]
+    ingress_ipv6_cidr_blocks = ["::/0"]
     ingress_rules       = ["all-icmp", "ssh-tcp"]
     egress_rules        = ["all-all"]
 }
@@ -34,6 +35,23 @@ module "this_public_sg" {
             protocol    = "tcp"
             description = "Allow RPC from all external IPs"
             cidr_blocks = "0.0.0.0/0"
+        },
+    ]
+
+    ingress_with_ipv6_cidr_blocks = [
+        {
+            from_port   = 26656
+            to_port     = 26656
+            protocol    = "tcp"
+            description = "Allow p2p from all external IPs"
+            ipv6_cidr_blocks = "::/0"
+        },
+        {
+            from_port   = 26657
+            to_port     = 26657
+            protocol    = "tcp"
+            description = "Allow RPC from all external IPs"
+            ipv6_cidr_blocks = "::/0"
         },
     ]
 }
