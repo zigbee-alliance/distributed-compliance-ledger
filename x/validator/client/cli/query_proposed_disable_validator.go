@@ -13,7 +13,7 @@ import (
 
 func CmdListProposedDisableValidator() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "all-proposed-disable-validators",
+		Use:   "all-proposed-disable-nodes",
 		Short: "Query the list of all proposed disable validators",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
@@ -51,7 +51,7 @@ func CmdShowProposedDisableValidator() *cobra.Command {
 	var address string
 
 	cmd := &cobra.Command{
-		Use:   "proposed-disable-validator --address [address]",
+		Use:   "proposed-disable-node --address [address]",
 		Short: "Query proposed disable validator by address",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {

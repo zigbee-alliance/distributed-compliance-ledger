@@ -8625,7 +8625,7 @@ paths:
                       format: byte
       tags:
         - Query
-  /dcl/validator/disabled-validators:
+  /dcl/validator/disabled-nodes:
     get:
       summary: Queries a list of DisabledValidator items.
       operationId: DisabledValidatorAll
@@ -8933,7 +8933,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/validator/disabled-validators/{address}:
+  /dcl/validator/disabled-nodes/{address}:
     get:
       summary: Queries a DisabledValidator by index.
       operationId: DisabledValidator
@@ -10580,7 +10580,7 @@ paths:
           type: string
       tags:
         - Query
-  /dcl/validator/proposed-disable-validators:
+  /dcl/validator/proposed-disable-nodes:
     get:
       summary: Queries a list of ProposedDisableValidator items.
       operationId: ProposedDisableValidatorAll
@@ -10886,7 +10886,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /dcl/validator/proposed-disable-validators/{address}:
+  /dcl/validator/proposed-disable-nodes/{address}:
     get:
       summary: Queries a ProposedDisableValidator by index.
       operationId: ProposedDisableValidator

@@ -622,7 +622,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryDisabledValidatorAll
    * @summary Queries a list of DisabledValidator items.
-   * @request GET:/dcl/validator/disabled-validators
+   * @request GET:/dcl/validator/disabled-nodes
    */
   queryDisabledValidatorAll = (
     query?: {
@@ -635,7 +635,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<ValidatorQueryAllDisabledValidatorResponse, RpcStatus>({
-      path: `/dcl/validator/disabled-validators`,
+      path: `/dcl/validator/disabled-nodes`,
       method: "GET",
       query: query,
       format: "json",
@@ -648,11 +648,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryDisabledValidator
    * @summary Queries a DisabledValidator by index.
-   * @request GET:/dcl/validator/disabled-validators/{address}
+   * @request GET:/dcl/validator/disabled-nodes/{address}
    */
   queryDisabledValidator = (address: string, params: RequestParams = {}) =>
     this.request<ValidatorQueryGetDisabledValidatorResponse, RpcStatus>({
-      path: `/dcl/validator/disabled-validators/${address}`,
+      path: `/dcl/validator/disabled-nodes/${address}`,
       method: "GET",
       format: "json",
       ...params,
@@ -748,7 +748,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedDisableValidatorAll
    * @summary Queries a list of ProposedDisableValidator items.
-   * @request GET:/dcl/validator/proposed-disable-validators
+   * @request GET:/dcl/validator/proposed-disable-nodes
    */
   queryProposedDisableValidatorAll = (
     query?: {
@@ -761,7 +761,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<ValidatorQueryAllProposedDisableValidatorResponse, RpcStatus>({
-      path: `/dcl/validator/proposed-disable-validators`,
+      path: `/dcl/validator/proposed-disable-nodes`,
       method: "GET",
       query: query,
       format: "json",
@@ -774,11 +774,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryProposedDisableValidator
    * @summary Queries a ProposedDisableValidator by index.
-   * @request GET:/dcl/validator/proposed-disable-validators/{address}
+   * @request GET:/dcl/validator/proposed-disable-nodes/{address}
    */
   queryProposedDisableValidator = (address: string, params: RequestParams = {}) =>
     this.request<ValidatorQueryGetProposedDisableValidatorResponse, RpcStatus>({
-      path: `/dcl/validator/proposed-disable-validators/${address}`,
+      path: `/dcl/validator/proposed-disable-nodes/${address}`,
       method: "GET",
       format: "json",
       ...params,

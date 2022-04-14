@@ -21,7 +21,7 @@ func CmdApproveDisableValidator() *cobra.Command {
 	)
 
 	cmd := &cobra.Command{
-		Use:   "approve-disable-validator --address [address] --info [info] [flags]",
+		Use:   "approve-disable-node --address [address] --info [info] [flags]",
 		Short: "Approves disabling of the Validator node by a Trustee.",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -31,14 +31,14 @@ func CmdApproveDisableValidator() *cobra.Command {
 			}
 
 			fromAddr := clientCtx.GetFromAddress()
-			addr, err := sdk.AccAddressFromBech32(address)
+			addr, err := sdk.ValAddressFromBech32(address)
 			if err != nil {
 				return err
 			}
 
 			msg := types.NewMsgApproveDisableValidator(
 				fromAddr,
-				sdk.ValAddress(addr),
+				addr,
 				info,
 			)
 

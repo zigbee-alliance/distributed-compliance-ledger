@@ -727,7 +727,7 @@ The certificate is immutable. It can only be revoked by either the owner or a qu
   - the signature (self-signature) and expiration date are valid.
   - parent certificate must be already stored on the ledger and a valid chain to some root certificate can be built.
 
-Note: Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
+> **_Note:_**  Multiple certificates can refer to the same `<Certificate's Subject>:<Certificate's Subject Key ID>` combination.
 
 #### REVOKE_X509_CERT
 
@@ -1053,7 +1053,7 @@ The account is not revoked until sufficient number of Trustees approve it.
   - 2/3 of Trustees
 - CLI command:
   - `dcld tx auth approve-revoke-account --address=<bench32 encoded string> --from=<account>`
-- Note: If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
+> **_Note:_**  If revoking an account has sufficient number of Trustees approve it then this account is placed in Revoked Account.
 
 #### GET_ACCOUNT
 
@@ -1198,55 +1198,6 @@ Adds a new Validator node.
 - CLI command:
   - `dcld tx validator add-node --pubkey=<protobuf JSON encoded> --moniker=<string> --from=<account>`
 
-#### GET_VALIDATOR
-
-**Status: Implemented**
-
-Gets a validator node.
-
-- Parameters:
-  - address: `string` - Bech32 encoded validator address or owner account
-- CLI command:
-  - `dcld query validator node --address=<validator address|account>`
-- REST API:
-  - GET `/dcl/validator/nodes/{owner}`
-
-#### GET_ALL_VALIDATORS
-
-**Status: Implemented**
-
-Gets the list of all validator nodes from the store.
-
-Note: All stored validator nodes (`active` and `jailed`) will be returned by default.
-In order to get an active validator set use specific command [validator set](#validator-set).
-
-Should be sent to trusted nodes only.
-
-- Parameters:
-  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
-- CLI command:
-  - `dcld query validator all-nodes`
-- REST API:
-  - GET `/dcl/validator/nodes`
-
-#### UPDATE_VALIDATOR_NODE
-
-**Status: Not Implemented**
-
-Updates the Validator node by the owner.  
-`address` is used to reference the node, but can not be changed.
-
-- Parameters:
-  - address: `string` - Bech32 encoded validator address or owner account
-  - moniker: `string` - The validator's human-readable name
-  - identity: `optional(string)` - identity signature (ex. UPort or Keybase)
-  - website: `optional(string)` - The validator's site link
-  - details: `optional(string)` - The validator's details
-  - ip: `optional(string)` - The node's public IP
-  - node-id: `optional(string)` - The node's ID
-- Who can send:
-  - NodeAdmin; owner
-
 #### DISABLE_VALIDATOR_NODE
 
 **Status: Implemented**
@@ -1255,6 +1206,10 @@ Disables the Validator node (removes from the validator set) by the owner.
 
 - Who can send:
   - NodeAdmin; owner
+- Parameters: No
+- CLI command:
+  - `dcld tx validator disable-node --from=<account>`
+    
 
 #### PROPOSE_DISABLE_VALIDATOR_NODE
 
@@ -1270,6 +1225,17 @@ will be in a pending state until sufficient number of approvals is received.
   - info: `optional(string)` - information/notes for the proposal
 - Who can send:
   - Trustee
+- CLI command:
+  - `dcld tx validator propose-disable-node --address=<validator address|account>`
+  <br> e.g.:
+    ```
+    dcld query validator propose-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator propose-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator) 
 
 #### APPROVE_DISABLE_VALIDATOR_NODE
 
@@ -1286,6 +1252,17 @@ The validator node is not disabled until sufficient number of Trustees approve i
   - Trustee
 - Number of required approvals:
   - 2/3 of Trustees
+- CLI command:
+  - `dcld tx validator approve-disable-node --address=<validator address|account>`
+  <br> e.g.:
+    ```
+    dcld query validator approve-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator approve-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
+> **_Note:_** You can get Validator's address or owner address using query [GET_VALIDATOR](#getvalidator)
 
 #### ENABLE_VALIDATOR_NODE
 
@@ -1295,6 +1272,172 @@ Enables the Validator node (returns to the validator set) by the owner.
 
 the node will be enabled and returned to the active validator set.
 
+- Who can send:
+  - NodeAdmin; owner
+- Parameters: No
+- CLI command:
+  - `dcld tx validator enable-node --from=<account>`
+
+#### GET_VALIDATOR
+
+**Status: Implemented**
+
+Gets a validator node.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator node --address=<validator address|account>` <br> e.g.:
+    ```
+    dcld query validator node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
+- REST API:
+  - GET `/dcl/validator/nodes/{owner}`
+
+#### GET_ALL_VALIDATORS
+
+**Status: Implemented**
+
+Gets the list of all validator nodes from the store.
+
+> **_Note:_**  All stored validator nodes (`active` and `jailed`) will be returned by default.
+In order to get an active validator set use specific command [validator set](#validator-set).
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-nodes`
+- REST API:
+  - GET `/dcl/validator/nodes`
+
+#### GET_PROPOSED_DISABLE_VALIDATOR
+
+**Status: Implemented**
+
+Gets a proposed validator node.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator proposed-disable-node --address=<validator address|account>` <br> e.g.:
+    ```
+    dcld query validator proposed-disable-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator proposed-disable-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
+- REST API:
+  - GET `/dcl/validator/proposed-disable-nodes/{address}`
+
+#### GET_ALL_PROPOSED_DISABLE_VALIDATORS
+
+**Status: Implemented**
+
+Gets the list of all proposed disable validator nodes from the store.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-proposed-disable-nodes`
+- REST API:
+  - GET `/dcl/validator/proposed-disable-nodes`
+
+#### GET_DISABLED_VALIDATOR
+
+**Status: Implemented**
+
+Gets a disabled validator node.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator disabled-node --address=<validator address|account>`
+  <br> e.g.:
+    ```
+    dcld query validator disabled-node --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator disabled-node --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
+- REST API:
+  - GET `/dcl/validator/disabled-nodes/{address}`
+
+#### GET_ALL_DISABLED_VALIDATORS
+
+**Status: Implemented**
+
+Gets the list of all disabled validator nodes from the store.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-disabled-nodes`
+- REST API:
+  - GET `/dcl/validator/disabled-nodes`
+
+#### GET_LAST_VALIDATOR_POWER
+
+**Status: Implemented**
+
+Gets a last validator node power.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+- CLI command:
+  - `dcld query validator last-power --address=<validator address|account>`
+  <br> e.g.:
+    ```
+    dcld query validator last-power --address=cosmosvaloper1qse069r3w0d82dul4xluqapxfg62qlndsdw9ms
+    ``` 
+    or
+    ```
+    dcld query validator last-power --address=cosmos1nlt926tzc280ntkdmqvqumgrnvym8xc5wqwg3q
+    ```
+- REST API:
+  - GET `/dcl/validator/last-powers/{owner}`
+
+#### GET_ALL_LAST_VALIDATORS_POWER
+
+**Status: Implemented**
+
+Gets the list of all last validator nodes power from the store.
+
+Should be sent to trusted nodes only.
+
+- Parameters:
+  - Common pagination parameters (see [pagination-params](#common-pagination-parameters))
+- CLI command:
+  - `dcld query validator all-last-powers`
+- REST API:
+  - GET `/dcl/validator/last-powers`
+
+#### UPDATE_VALIDATOR_NODE
+
+**Status: Not Implemented**
+
+Updates the Validator node by the owner.  
+`address` is used to reference the node, but can not be changed.
+
+- Parameters:
+  - address: `string` - Bech32 encoded validator address or owner account
+  - moniker: `string` - The validator's human-readable name
+  - identity: `optional(string)` - identity signature (ex. UPort or Keybase)
+  - website: `optional(string)` - The validator's site link
+  - details: `optional(string)` - The validator's details
+  - ip: `optional(string)` - The node's public IP
+  - node-id: `optional(string)` - The node's ID
 - Who can send:
   - NodeAdmin; owner
 
@@ -1502,7 +1645,7 @@ Sign transaction by the given key.
   - `chain-id` - (optional) chain ID.
 - CLI command:
   - `dcld tx sign [path-to-txn-file] --from [address]`
-Note: if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  
+> **_Note:_**  if `account_number` and `sequence`  are not specified they will be fetched from the ledger automatically.  
 
 ### Broadcast
 

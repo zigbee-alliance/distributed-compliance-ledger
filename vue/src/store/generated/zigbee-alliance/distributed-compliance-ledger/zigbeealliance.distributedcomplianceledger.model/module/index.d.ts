@@ -4,6 +4,7 @@ import { Api } from "./rest";
 import { MsgCreateModel } from "./types/model/tx";
 import { MsgDeleteModel } from "./types/model/tx";
 import { MsgCreateModelVersion } from "./types/model/tx";
+import { MsgUpdateModel } from "./types/model/tx";
 import { MsgUpdateModelVersion } from "./types/model/tx";
 import { MsgUpdateModel } from "./types/model/tx";
 export declare const MissingWalletError: Error;
@@ -20,6 +21,7 @@ declare const txClient: (wallet: OfflineSigner, { addr: addr }?: TxClientOptions
     msgCreateModel: (data: MsgCreateModel) => EncodeObject;
     msgDeleteModel: (data: MsgDeleteModel) => EncodeObject;
     msgCreateModelVersion: (data: MsgCreateModelVersion) => EncodeObject;
+    msgUpdateModel: (data: MsgUpdateModel) => EncodeObject;
     msgUpdateModelVersion: (data: MsgUpdateModelVersion) => EncodeObject;
     msgUpdateModel: (data: MsgUpdateModel) => EncodeObject;
 }>;

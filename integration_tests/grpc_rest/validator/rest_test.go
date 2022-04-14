@@ -24,5 +24,5 @@ import (
 
 func TestValidatorDemoREST(t *testing.T) {
 	suite := utils.SetupTest(t, testconstants.ChainID, true)
-	validator.ValidatorDemo(&suite)
+	validator.Demo(&suite)
 }
