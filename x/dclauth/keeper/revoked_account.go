@@ -60,3 +60,23 @@ func (k Keeper) GetAllRevokedAccount(ctx sdk.Context) (list []types.RevokedAccou
 
 	return
 }
+
+func (k Keeper) AddAccountToRevokedAccount(
+	ctx sdk.Context, accAddr sdk.AccAddress,
+	approvals []*types.Grant,
+	reason types.RevokedAccount_Reason,
+) (*types.RevokedAccount, error) {
+	// get account
+	account, ok := k.GetAccountO(ctx, accAddr)
+
+	// check we can get that account or can not
+	if !ok {
+		return nil, types.ErrAccountDoesNotExist(accAddr)
+	}
+
+	// create revoked account record
+	revokedAccount := types.NewRevokedAccount(&account, approvals)
+	revokedAccount.Reason = reason
+
+	return revokedAccount, nil
+}

@@ -18,6 +18,7 @@ const (
 	FlagState  = "state"
 
 	FlagGenesisFormat = "genesis-format"
+	FlagInfo          = "info"
 )
 
 // FlagSetPublicKey Returns the flagset for Public Key related operations.

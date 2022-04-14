@@ -257,9 +257,12 @@ check_response "$result" "\"code\": 0"
 
 test_divider
 
+trustee_voting="TrusteeVoting"
+
 echo "Get all revoked accounts. $user account in the list"
 result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\"address\": \"$user_address\""
+check_response "$result" "\"reason\": \"$trustee_voting\""
 
 test_divider
 
@@ -281,6 +284,13 @@ check_response "$result" "\[\]"
 
 test_divider
 
+echo "Get revoked account $user account"
+result=$(dcld query auth revoked-account --address="$user_address")
+check_response "$result" "\"address\": \"$user_address\""
+check_response "$result" "\"reason\": \"$trustee_voting\""
+
+test_divider
+
 echo "Get a proposed account to revoke for $user is not found"
 result=$(dcld query auth proposed-account-to-revoke --address="$user_address")
 check_response "$result" "Not Found"
@@ -290,7 +300,6 @@ test_divider
 echo "Get $user account"
 result=$(dcld query auth account --address=$user_address)
 check_response "$result" "Not Found"
-
 
 test_divider
 
@@ -303,6 +312,7 @@ test_divider
 echo "Get all revoked accounts. $user account in the list"
 result=$(dcld query auth all-revoked-accounts)
 check_response "$result" "\"address\": \"$user_address\""
+check_response "$result" "\"reason\": \"$trustee_voting\""
 
 test_divider
 

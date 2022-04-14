@@ -13,6 +13,10 @@ option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/
 // Msg defines the Msg service.
 service Msg {
       rpc CreateValidator(MsgCreateValidator) returns (MsgCreateValidatorResponse);
+  rpc ProposeDisableValidator(MsgProposeDisableValidator) returns (MsgProposeDisableValidatorResponse);
+  rpc ApproveDisableValidator(MsgApproveDisableValidator) returns (MsgApproveDisableValidatorResponse);
+  rpc DisableValidator(MsgDisableValidator) returns (MsgDisableValidatorResponse);
+  rpc EnableValidator(MsgEnableValidator) returns (MsgEnableValidatorResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -26,6 +30,40 @@ message MsgCreateValidator {
 }
 
 message MsgCreateValidatorResponse {
+}
+
+message MsgProposeDisableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
+}
+
+message MsgProposeDisableValidatorResponse {
+}
+
+message MsgApproveDisableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
+}
+
+message MsgApproveDisableValidatorResponse {
+}
+
+message MsgDisableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+}
+
+message MsgDisableValidatorResponse {
+}
+
+message MsgEnableValidator {
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString", (gogoproto.moretags) = "validate:\"required\""];
+}
+
+message MsgEnableValidatorResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

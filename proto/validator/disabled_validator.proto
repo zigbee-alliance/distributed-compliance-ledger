@@ -1,0 +1,15 @@
+syntax = "proto3";
+package zigbeealliance.distributedcomplianceledger.validator;
+
+import "cosmos_proto/cosmos.proto";
+import "validator/grant.proto";
+
+option go_package = "github.com/zigbee-alliance/distributed-compliance-ledger/x/validator/types";
+
+message DisabledValidator {
+  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"]; 
+  string creator = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  repeated Grant approvals = 3; 
+  bool disabledByNodeAdmin = 4; 
+}
+

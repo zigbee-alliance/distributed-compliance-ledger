@@ -8,6 +8,11 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
+export var RevokedAccountReason;
+(function (RevokedAccountReason) {
+    RevokedAccountReason["TrusteeVoting"] = "TrusteeVoting";
+    RevokedAccountReason["MaliciousValidator"] = "MaliciousValidator";
+})(RevokedAccountReason || (RevokedAccountReason = {}));
 export var ContentType;
 (function (ContentType) {
     ContentType["Json"] = "application/json";

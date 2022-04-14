@@ -140,6 +140,35 @@ export class Api extends HttpClient {
          * No description
          *
          * @tags Query
+         * @name QueryDisabledValidatorAll
+         * @summary Queries a list of DisabledValidator items.
+         * @request GET:/dcl/validator/disabled-nodes
+         */
+        this.queryDisabledValidatorAll = (query, params = {}) => this.request({
+            path: `/dcl/validator/disabled-nodes`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryDisabledValidator
+         * @summary Queries a DisabledValidator by index.
+         * @request GET:/dcl/validator/disabled-nodes/{address}
+         */
+        this.queryDisabledValidator = (address, params = {}) => this.request({
+            path: `/dcl/validator/disabled-nodes/${address}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
          * @name QueryLastValidatorPowerAll
          * @summary Queries a list of lastValidatorPower items.
          * @request GET:/dcl/validator/last-powers
@@ -190,6 +219,35 @@ export class Api extends HttpClient {
          */
         this.queryValidator = (owner, params = {}) => this.request({
             path: `/dcl/validator/nodes/${owner}`,
+            method: "GET",
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProposedDisableValidatorAll
+         * @summary Queries a list of ProposedDisableValidator items.
+         * @request GET:/dcl/validator/proposed-disable-nodes
+         */
+        this.queryProposedDisableValidatorAll = (query, params = {}) => this.request({
+            path: `/dcl/validator/proposed-disable-nodes`,
+            method: "GET",
+            query: query,
+            format: "json",
+            ...params,
+        });
+        /**
+         * No description
+         *
+         * @tags Query
+         * @name QueryProposedDisableValidator
+         * @summary Queries a ProposedDisableValidator by index.
+         * @request GET:/dcl/validator/proposed-disable-nodes/{address}
+         */
+        this.queryProposedDisableValidator = (address, params = {}) => this.request({
+            path: `/dcl/validator/proposed-disable-nodes/${address}`,
             method: "GET",
             format: "json",
             ...params,
