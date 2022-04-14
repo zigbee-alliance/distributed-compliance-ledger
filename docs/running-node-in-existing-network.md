@@ -1,17 +1,20 @@
 # Running Nodes in an existing network
-> **_NOTE:_** Extra node specific configuration (out of scope of this section) may apply depending on node type or infrastructure.<br>
+
+> **_NOTE:_** Extra node specific configuration (out of scope of this section) may apply depending on node type or infrastructure.
 > Refer to [running-node.md](./running-node.md) for more details
 
 Possible options when adding Validator, Observer, Sentry or Seed nodes to existing DCL network:
 
-### 1) State sync (recommended)
+## 1) State sync (recommended)
+
 - Prerequisites:
   - Latest binary version running in existing network
-  - State sync snapshots should be enabled in at least one node in the network.<br>
-  Perform the following steps to enable state sync snapshots in running node 
-    
+  - State sync snapshots should be enabled in at least one node in the network.
+  Perform the following steps to enable state sync snapshots in running node
+
     - Edit the following attributes in `$HOME/.dcl/config/app.toml`
-      ```
+
+      ```toml
       # snapshot-interval specifies the block interval at which local state sync snapshots are
       # taken (0 to disable). Must be a multiple of pruning-keep-every.
       snapshot-interval = <snapshot-interval>
@@ -19,20 +22,27 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
       # snapshot-keep-recent specifies the number of recent snapshots to keep and serve (0 to keep all).
       snapshot-keep-recent = <snapshot-keep-recent>
       ```
-      > **_NOTE:_** Snapshot interval must currently be a multiple of the pruning-keep-every(default 100), to prevent heights from being pruned while taking snapshots. 
+
+      > **_NOTE:_** Snapshot interval must currently be a multiple of the pruning-keep-every(default 100), to prevent heights from being pruned while taking snapshots.
       > It’s also usually a good idea to keep at least 2 recent snapshots, such that the previous snapshot isn’t removed while a node is attempting to state sync using it.
+
     - Restart the node
-    > **_NOTE:_** Nodes with snapshots should allow `tendermint p2p` connections to be able to share snapshots with synching peers.<br>
-    > - Do not forget to check firewall and security settings<br> 
+
+    > **_NOTE:_** Nodes with snapshots should allow `tendermint p2p` connections to be able to share snapshots with synching peers.
+    >
+    > - Do not forget to check firewall and security settings
     > - We do not recommend enabling state sync for `Validator Nodes` for security reasons
+
 - Steps:
   - Init node:
 
     ```bash
     ./dcld init "<node-name>" --chain-id "<chain-id>"
     ```
+
   - Enable state sync in config `$HOME/.dcl/config/config.toml`:
-    ```
+
+    ```toml
     [statesync]
     enable = true
 
@@ -48,12 +58,15 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
     trust_hash = "<trust-hash>"
     trust_period = "168h0m0s"
     ```
+
     > **_NOTE:_**  You should provide at least 2 addresses for `rpc_servers`. It can be 2 identical addresses
 
     You can use the following command to obtain `<trust-height>` and `<trust-hash>` of your network
-    ```
+
+    ```bash
     curl -s http(s)://<host>:<port>/commit | jq "{height: .result.signed_header.header.height, hash: .result.signed_header.commit.block_id.hash}"
     ```
+
     - `<host>` - RPC endpoint host of the network being joined
     - `<port>` - RPC endpoint port of the network being joined
 
@@ -69,10 +82,11 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
 - Cons:
   - The node will have a truncated block history, starting from the height of the snapshot.
 
-* References:
-  - https://blog.cosmos.network/cosmos-sdk-state-sync-guide-99e4cf43be2f
+- References:
+  - <https://blog.cosmos.network/cosmos-sdk-state-sync-guide-99e4cf43be2f>
 
 ### 2) Take the data from another node
+
 - Prerequisites:
   - Access to a machine running an up-to-date node to copy data from
 
@@ -87,9 +101,10 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
 - Cons:
   - Needs an access to another machine (may not be possible to everyone)
   - Node that data is copied from should be stopped (downtime)
-  - Probably error prone due to manual operations
+  - Probably error-prone due to manual operations
 
-### 3) Catchup from genesis:
+### 3) Catchup from genesis
+
 - Prerequisites:
   - All binary versions used for upgrading (using `cosmovisor`) existing network up to current state must be available
 - Steps:
@@ -103,5 +118,5 @@ Possible options when adding Validator, Observer, Sentry or Seed nodes to existi
   - Can take quite a lot of time (depends on blockchain size)
   - Probably error-prone (if at least one migration has a bug, catchup fails)
 
-* References:
-  - https://docs.cosmos.network/v0.44/core/upgrade.html#syncing-a-full-node-to-an-upgraded-blockchain
+- References:
+  - <https://docs.cosmos.network/v0.44/core/upgrade.html#syncing-a-full-node-to-an-upgraded-blockchain>

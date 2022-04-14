@@ -305,5 +305,6 @@ systemctl restart dcld
 <!-- markdownlint-enable MD029 -->
 
 ## VII. Post-Ceremony: Adding new nodes to testnet
-When adding new nodes to testnet after a while, you might consider one of the options described in [running-node-in-existing-network](../../../docs/running-node-in-existing-network.md). <br>
+
+When adding new nodes to testnet after a while, you might consider one of the options described in [running-node-in-existing-network](../../../docs/running-node-in-existing-network.md).
 To configure recommended `state sync` option described in the document you can optionally use the following available `CSA Testnet2.0` [endpoints](./testnet-2.0-csa-endpoints.md)
