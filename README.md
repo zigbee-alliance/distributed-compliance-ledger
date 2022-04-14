@@ -1,7 +1,7 @@
 # Distributed Compliance Ledger
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Unit Tests](https://github.com/zigbee-alliance/distributed-compliance-ledger/workflows/Go/badge.svg)](https://github.com/zigbee-alliance/distributed-compliance-ledger/actions/workflows/verify.yml)
+[![Unit Tests](https://github.com/zigbee-alliance/distributed-compliance-ledger/workflows/Check%20Tests%20and%20Documentation/badge.svg)](https://github.com/zigbee-alliance/distributed-compliance-ledger/actions/workflows/verify.yml)
 
 If you are interested in how to build and run the project locally, please look at [README-DEV](README-DEV.md)
 
