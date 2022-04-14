@@ -168,12 +168,16 @@ dcld tx validator add-node --pubkey="<protobuf JSON encoded validator-pubkey>" -
 
 ## 5 Validator Node Deployment Verification
 
-### 5.1 Check the account presence on the ledger: `dcld query auth account --address="<address>"`
+### 5.1 Check the account presence on the ledger
+`dcld query auth account --address="<address>"`
 
-### 5.2 Check the node service is running: `systemctl status dcld`
+### 5.2 Check the node service is running
+`systemctl status dcld`
 
-### 5.3 Check the node gets new blocks: `dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec)
+### 5.3 Check the node gets new blocks
+`dcld status`. Make sure that `result.sync_info.latest_block_height` is increasing over the time (once in about 5 sec)
 
-### 5.4 Make sure the VN participates in consensus: `dcld query tendermint-validator-set` must contain the VN's address
+### 5.4 Make sure the VN participates in consensus
+`dcld query tendermint-validator-set` must contain the VN's address
 
 >**_Note:_** Get your VN's address using `dcld tendermint show-address` command.
