@@ -50,7 +50,7 @@ resource "aws_instance" "this_seed_node" {
 
     subnet_id              = element(module.this_vpc.public_subnets, 0)
     ipv6_address_count     = 1
-    
+
     vpc_security_group_ids = [
         module.this_dev_sg.security_group_id,
         module.this_seed_sg.security_group_id
@@ -66,16 +66,6 @@ resource "aws_instance" "this_seed_node" {
     root_block_device {
         encrypted   = true
         volume_size = 30
-    }
-}
-
-resource "aws_eip" "this_eip" {
-    count = length(aws_instance.this_nodes)
-    instance = aws_instance.this_nodes[count.index].id
-    vpc      = true
-
-    tags = {
-        Name = "Public Sentry Node ${count.index} Elastic IP"
     }
 }
 
