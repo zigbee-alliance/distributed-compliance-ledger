@@ -7,12 +7,12 @@ export interface VendorInfo {
   vendorID: number
   vendorName: string
   companyLegalName: string
-  companyPrefferedName: string
+  companyPrefferredName: string
   vendorLandingPageURL: string
   creator: string
 }
 
-const baseVendorInfo: object = { vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferedName: '', vendorLandingPageURL: '', creator: '' }
+const baseVendorInfo: object = { vendorID: 0, vendorName: '', companyLegalName: '', companyPrefferredName: '', vendorLandingPageURL: '', creator: '' }
 
 export const VendorInfo = {
   encode(message: VendorInfo, writer: Writer = Writer.create()): Writer {
@@ -25,8 +25,8 @@ export const VendorInfo = {
     if (message.companyLegalName !== '') {
       writer.uint32(26).string(message.companyLegalName)
     }
-    if (message.companyPrefferedName !== '') {
-      writer.uint32(34).string(message.companyPrefferedName)
+    if (message.companyPrefferredName !== '') {
+      writer.uint32(34).string(message.companyPrefferredName)
     }
     if (message.vendorLandingPageURL !== '') {
       writer.uint32(42).string(message.vendorLandingPageURL)
@@ -54,7 +54,7 @@ export const VendorInfo = {
           message.companyLegalName = reader.string()
           break
         case 4:
-          message.companyPrefferedName = reader.string()
+          message.companyPrefferredName = reader.string()
           break
         case 5:
           message.vendorLandingPageURL = reader.string()
@@ -87,10 +87,10 @@ export const VendorInfo = {
     } else {
       message.companyLegalName = ''
     }
-    if (object.companyPrefferedName !== undefined && object.companyPrefferedName !== null) {
-      message.companyPrefferedName = String(object.companyPrefferedName)
+    if (object.companyPrefferredName !== undefined && object.companyPrefferredName !== null) {
+      message.companyPrefferredName = String(object.companyPrefferredName)
     } else {
-      message.companyPrefferedName = ''
+      message.companyPrefferredName = ''
     }
     if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
       message.vendorLandingPageURL = String(object.vendorLandingPageURL)
@@ -110,7 +110,7 @@ export const VendorInfo = {
     message.vendorID !== undefined && (obj.vendorID = message.vendorID)
     message.vendorName !== undefined && (obj.vendorName = message.vendorName)
     message.companyLegalName !== undefined && (obj.companyLegalName = message.companyLegalName)
-    message.companyPrefferedName !== undefined && (obj.companyPrefferedName = message.companyPrefferedName)
+    message.companyPrefferredName !== undefined && (obj.companyPrefferredName = message.companyPrefferredName)
     message.vendorLandingPageURL !== undefined && (obj.vendorLandingPageURL = message.vendorLandingPageURL)
     message.creator !== undefined && (obj.creator = message.creator)
     return obj
@@ -133,10 +133,10 @@ export const VendorInfo = {
     } else {
       message.companyLegalName = ''
     }
-    if (object.companyPrefferedName !== undefined && object.companyPrefferedName !== null) {
-      message.companyPrefferedName = object.companyPrefferedName
+    if (object.companyPrefferredName !== undefined && object.companyPrefferredName !== null) {
+      message.companyPrefferredName = object.companyPrefferredName
     } else {
-      message.companyPrefferedName = ''
+      message.companyPrefferredName = ''
     }
     if (object.vendorLandingPageURL !== undefined && object.vendorLandingPageURL !== null) {
       message.vendorLandingPageURL = object.vendorLandingPageURL
