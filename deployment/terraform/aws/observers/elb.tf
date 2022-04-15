@@ -12,12 +12,17 @@ resource "aws_lb" "this_nlb" {
     }
 }
 
+locals {
+    enable_tls  = var.tls_cert_arn != ""
+    ssl_policy  = "ELBSecurityPolicy-TLS13-1-2-2021-06" # TLS 1.3 (recommended)
+}
+
 resource "aws_lb_listener" "rest" {
-    load_balancer_arn = aws_lb.this_nlb.arn
-    port              = "80"
-    protocol          = "TCP"
-    # certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
-    # alpn_policy       = "HTTP2Preferred"
+    count = local.enable_tls ? 0 : 1
+
+    load_balancer_arn   = aws_lb.this_nlb.arn
+    port                = "80"
+    protocol            = "TCP"
 
     default_action {
         type = "forward"
@@ -26,11 +31,11 @@ resource "aws_lb_listener" "rest" {
 }
 
 resource "aws_lb_listener" "grpc" {
-    load_balancer_arn = aws_lb.this_nlb.arn
-    port              = "9090"
-    protocol          = "TCP"
-    # certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
-    # alpn_policy       = "HTTP2Preferred"
+    count = local.enable_tls ? 0 : 1
+
+    load_balancer_arn   = aws_lb.this_nlb.arn
+    port                = "9090"
+    protocol            = "TCP"
 
     default_action {
         type = "forward"
@@ -39,11 +44,56 @@ resource "aws_lb_listener" "grpc" {
 }
 
 resource "aws_lb_listener" "rpc" {
-    load_balancer_arn = aws_lb.this_nlb.arn
-    port              = "26657"
-    protocol          = "TCP"
-    # certificate_arn   = "arn:aws:iam::187416307283:server-certificate/test_cert_rab3wuqwgja25ct3n4jdj2tzu4"
-    # alpn_policy       = "HTTP2Preferred"
+    count = local.enable_tls ? 0 : 1
+
+    load_balancer_arn   = aws_lb.this_nlb.arn
+    port                = "8080"
+    protocol            = "TCP"
+
+    default_action {
+        type = "forward"
+        target_group_arn = aws_lb_target_group.rpc.arn
+    }
+}
+
+resource "aws_lb_listener" "tls_rest" {
+    count = local.enable_tls ? 1 : 0
+
+    load_balancer_arn   = aws_lb.this_nlb.arn
+    port                = "443"
+    protocol            = "TLS"
+    certificate_arn     = var.tls_cert_arn
+    ssl_policy          = local.ssl_policy
+
+    default_action {
+        type = "forward"
+        target_group_arn = aws_lb_target_group.rest.arn
+    }
+}
+
+resource "aws_lb_listener" "tls_grpc" {
+    count = local.enable_tls ? 1 : 0
+
+    load_balancer_arn   = aws_lb.this_nlb.arn
+    port                = "8443"
+    protocol            = "TLS"
+    certificate_arn     = var.tls_cert_arn
+    ssl_policy          = local.ssl_policy
+
+    default_action {
+        type = "forward"
+        target_group_arn = aws_lb_target_group.grpc.arn
+    }
+}
+
+resource "aws_lb_listener" "tls_rpc" {
+    count = local.enable_tls ? 1 : 0
+
+    load_balancer_arn   = aws_lb.this_nlb.arn
+    port                = "26657"
+    protocol            = "TLS"
+    certificate_arn     = var.tls_cert_arn
+    ssl_policy          = local.ssl_policy
 
     default_action {
         type = "forward"

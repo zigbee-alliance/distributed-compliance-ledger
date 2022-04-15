@@ -23,6 +23,11 @@ variable "region_index" {
     default = 0
 }
 
+variable "tls_cert_arn" {
+    description = "NLB Listener TLS certificate ARN"
+    default = ""
+}
+
 variable "peer_vpc" {
     description = "Peer VPC"
 }
