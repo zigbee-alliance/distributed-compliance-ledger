@@ -572,7 +572,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedAccountAll
      * @summary Queries a list of RejectedAccount items.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts
      */
     queryRejectedAccountAll: (query?: {
         "pagination.key"?: string;
@@ -587,7 +587,7 @@ export declare class Api<SecurityDataType extends unknown> extends HttpClient<Se
      * @tags Query
      * @name QueryRejectedAccount
      * @summary Queries a RejectedAccount by index.
-     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/{address}
+     * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/{address}
      */
     queryRejectedAccount: (address: string, params?: RequestParams) => Promise<HttpResponse<DclauthQueryGetRejectedAccountResponse, RpcStatus>>;
 }

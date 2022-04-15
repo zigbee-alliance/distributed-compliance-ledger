@@ -277,10 +277,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRejectedAccountAll
          * @summary Queries a list of RejectedAccount items.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts
          */
         this.queryRejectedAccountAll = (query, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account`,
+            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts`,
             method: "GET",
             query: query,
             format: "json",
@@ -292,10 +292,10 @@ export class Api extends HttpClient {
          * @tags Query
          * @name QueryRejectedAccount
          * @summary Queries a RejectedAccount by index.
-         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/{address}
+         * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/{address}
          */
         this.queryRejectedAccount = (address, params = {}) => this.request({
-            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/${address}`,
+            path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/${address}`,
             method: "GET",
             format: "json",
             ...params,

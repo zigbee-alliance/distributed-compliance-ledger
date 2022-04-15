@@ -47,6 +47,8 @@ export interface MsgApproveRevokeAccountResponse {}
 export interface MsgRejectAddAccount {
   signer: string
   address: string
+  info: string
+  time: number
 }
 
 export interface MsgRejectAddAccountResponse {}
@@ -685,7 +687,7 @@ export const MsgApproveRevokeAccountResponse = {
   }
 }
 
-const baseMsgRejectAddAccount: object = { signer: '', address: '' }
+const baseMsgRejectAddAccount: object = { signer: '', address: '', info: '', time: 0 }
 
 export const MsgRejectAddAccount = {
   encode(message: MsgRejectAddAccount, writer: Writer = Writer.create()): Writer {
@@ -694,6 +696,12 @@ export const MsgRejectAddAccount = {
     }
     if (message.address !== '') {
       writer.uint32(18).string(message.address)
+    }
+    if (message.info !== '') {
+      writer.uint32(26).string(message.info)
+    }
+    if (message.time !== 0) {
+      writer.uint32(32).int64(message.time)
     }
     return writer
   },
@@ -710,6 +718,12 @@ export const MsgRejectAddAccount = {
           break
         case 2:
           message.address = reader.string()
+          break
+        case 3:
+          message.info = reader.string()
+          break
+        case 4:
+          message.time = longToNumber(reader.int64() as Long)
           break
         default:
           reader.skipType(tag & 7)
@@ -731,6 +745,16 @@ export const MsgRejectAddAccount = {
     } else {
       message.address = ''
     }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = String(object.info)
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = Number(object.time)
+    } else {
+      message.time = 0
+    }
     return message
   },
 
@@ -738,6 +762,8 @@ export const MsgRejectAddAccount = {
     const obj: any = {}
     message.signer !== undefined && (obj.signer = message.signer)
     message.address !== undefined && (obj.address = message.address)
+    message.info !== undefined && (obj.info = message.info)
+    message.time !== undefined && (obj.time = message.time)
     return obj
   },
 
@@ -752,6 +778,16 @@ export const MsgRejectAddAccount = {
       message.address = object.address
     } else {
       message.address = ''
+    }
+    if (object.info !== undefined && object.info !== null) {
+      message.info = object.info
+    } else {
+      message.info = ''
+    }
+    if (object.time !== undefined && object.time !== null) {
+      message.time = object.time
+    } else {
+      message.time = 0
     }
     return message
   }

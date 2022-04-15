@@ -844,7 +844,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedAccountAll
    * @summary Queries a list of RejectedAccount items.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts
    */
   queryRejectedAccountAll = (
     query?: {
@@ -857,7 +857,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<DclauthQueryAllRejectedAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account`,
+      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts`,
       method: "GET",
       query: query,
       format: "json",
@@ -870,11 +870,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryRejectedAccount
    * @summary Queries a RejectedAccount by index.
-   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/{address}
+   * @request GET:/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/{address}
    */
   queryRejectedAccount = (address: string, params: RequestParams = {}) =>
     this.request<DclauthQueryGetRejectedAccountResponse, RpcStatus>({
-      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/${address}`,
+      path: `/zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/${address}`,
       method: "GET",
       format: "json",
       ...params,

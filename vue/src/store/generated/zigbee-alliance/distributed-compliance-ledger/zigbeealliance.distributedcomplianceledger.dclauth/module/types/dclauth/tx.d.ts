@@ -39,6 +39,8 @@ export interface MsgApproveRevokeAccountResponse {
 export interface MsgRejectAddAccount {
     signer: string;
     address: string;
+    info: string;
+    time: number;
 }
 export interface MsgRejectAddAccountResponse {
 }
