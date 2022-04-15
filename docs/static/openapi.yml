@@ -10160,7 +10160,7 @@ paths:
                       type: string
                     companyLegalName:
                       type: string
-                    companyPrefferredName:
+                    companyPreferredName:
                       type: string
                     vendorLandingPageURL:
                       type: string
@@ -10294,7 +10294,7 @@ paths:
                     type: string
                   companyLegalName:
                     type: string
-                  companyPrefferredName:
+                  companyPreferredName:
                     type: string
                   vendorLandingPageURL:
                     type: string
@@ -16586,7 +16586,7 @@ definitions:
               type: string
             companyLegalName:
               type: string
-            companyPrefferredName:
+            companyPreferredName:
               type: string
             vendorLandingPageURL:
               type: string
@@ -16630,7 +16630,7 @@ definitions:
             type: string
           companyLegalName:
             type: string
-          companyPrefferredName:
+          companyPreferredName:
             type: string
           vendorLandingPageURL:
             type: string
@@ -16646,7 +16646,7 @@ definitions:
         type: string
       companyLegalName:
         type: string
-      companyPrefferredName:
+      companyPreferredName:
         type: string
       vendorLandingPageURL:
         type: string
