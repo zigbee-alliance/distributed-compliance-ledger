@@ -65,6 +65,8 @@ message MsgApproveRevokeAccountResponse {
 message MsgRejectAddAccount {
   string signer = 1;
   string address = 2;
+  string info = 3 [(gogoproto.moretags) = "validate:\"max=4096\""];
+  int64 time = 4;
 }
 
 message MsgRejectAddAccountResponse {
