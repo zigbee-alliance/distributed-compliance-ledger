@@ -1126,6 +1126,18 @@ paths:
                     vendorID:
                       type: integer
                       format: int32
+                    rejectApprovals:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          address:
+                            type: string
+                          time:
+                            type: string
+                            format: int64
+                          info:
+                            type: string
               pagination:
                 type: object
                 properties:
@@ -1841,6 +1853,18 @@ paths:
                   vendorID:
                     type: integer
                     format: int32
+                  rejectApprovals:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                        time:
+                          type: string
+                          format: int64
+                        info:
+                          type: string
         default:
           description: An unexpected error response.
           schema:
@@ -2277,6 +2301,18 @@ paths:
                         vendorID:
                           type: integer
                           format: int32
+                        rejectApprovals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
               pagination:
                 type: object
                 properties:
@@ -2790,6 +2826,18 @@ paths:
                       vendorID:
                         type: integer
                         format: int32
+                      rejectApprovals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
         default:
           description: An unexpected error response.
           schema:
@@ -3753,6 +3801,18 @@ paths:
                         vendorID:
                           type: integer
                           format: int32
+                        rejectApprovals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
                     revokeApprovals:
                       type: array
                       items:
@@ -4284,6 +4344,18 @@ paths:
                       vendorID:
                         type: integer
                         format: int32
+                      rejectApprovals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
                   revokeApprovals:
                     type: array
                     items:
@@ -4498,7 +4570,7 @@ paths:
           type: string
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account:
+  /zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts:
     get:
       summary: Queries a list of RejectedAccount items.
       operationId: RejectedAccountAll
@@ -4738,18 +4810,18 @@ paths:
                         vendorID:
                           type: integer
                           format: int32
-                    rejectApprovals:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          address:
-                            type: string
-                          time:
-                            type: string
-                            format: int64
-                          info:
-                            type: string
+                        rejectApprovals:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              address:
+                                type: string
+                              time:
+                                type: string
+                                format: int64
+                              info:
+                                type: string
               pagination:
                 type: object
                 properties:
@@ -5025,7 +5097,7 @@ paths:
           type: boolean
       tags:
         - Query
-  /zigbee-alliance/distributedcomplianceledger/dclauth/rejected_account/{address}:
+  /zigbee-alliance/distributedcomplianceledger/dclauth/rejected-accounts/{address}:
     get:
       summary: Queries a RejectedAccount by index.
       operationId: RejectedAccount
@@ -5263,18 +5335,18 @@ paths:
                       vendorID:
                         type: integer
                         format: int32
-                  rejectApprovals:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        address:
-                          type: string
-                        time:
-                          type: string
-                          format: int64
-                        info:
-                          type: string
+                      rejectApprovals:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            address:
+                              type: string
+                            time:
+                              type: string
+                              format: int64
+                            info:
+                              type: string
         default:
           description: An unexpected error response.
           schema:
@@ -12516,6 +12588,18 @@ definitions:
       vendorID:
         type: integer
         format: int32
+      rejectApprovals:
+        type: array
+        items:
+          type: object
+          properties:
+            address:
+              type: string
+            time:
+              type: string
+              format: int64
+            info:
+              type: string
   zigbeealliance.distributedcomplianceledger.dclauth.AccountStat:
     type: object
     properties:
@@ -12752,6 +12836,18 @@ definitions:
           vendorID:
             type: integer
             format: int32
+          rejectApprovals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.dclauth.PendingAccountRevocation:
     type: object
     properties:
@@ -12995,6 +13091,18 @@ definitions:
             vendorID:
               type: integer
               format: int32
+            rejectApprovals:
+              type: array
+              items:
+                type: object
+                properties:
+                  address:
+                    type: string
+                  time:
+                    type: string
+                    format: int64
+                  info:
+                    type: string
       pagination:
         type: object
         properties:
@@ -13251,6 +13359,18 @@ definitions:
                 vendorID:
                   type: integer
                   format: int32
+                rejectApprovals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
       pagination:
         type: object
         properties:
@@ -13554,18 +13674,18 @@ definitions:
                 vendorID:
                   type: integer
                   format: int32
-            rejectApprovals:
-              type: array
-              items:
-                type: object
-                properties:
-                  address:
-                    type: string
-                  time:
-                    type: string
-                    format: int64
-                  info:
-                    type: string
+                rejectApprovals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
       pagination:
         type: object
         properties:
@@ -13822,6 +13942,18 @@ definitions:
                 vendorID:
                   type: integer
                   format: int32
+                rejectApprovals:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      address:
+                        type: string
+                      time:
+                        type: string
+                        format: int64
+                      info:
+                        type: string
             revokeApprovals:
               type: array
               items:
@@ -14085,6 +14217,18 @@ definitions:
           vendorID:
             type: integer
             format: int32
+          rejectApprovals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetAccountStatResponse:
     type: object
     properties:
@@ -14321,6 +14465,18 @@ definitions:
               vendorID:
                 type: integer
                 format: int32
+              rejectApprovals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetPendingAccountRevocationResponse:
     type: object
     properties:
@@ -14568,18 +14724,18 @@ definitions:
               vendorID:
                 type: integer
                 format: int32
-          rejectApprovals:
-            type: array
-            items:
-              type: object
-              properties:
-                address:
-                  type: string
-                time:
-                  type: string
-                  format: int64
-                info:
-                  type: string
+              rejectApprovals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
   zigbeealliance.distributedcomplianceledger.dclauth.QueryGetRevokedAccountResponse:
     type: object
     properties:
@@ -14807,6 +14963,18 @@ definitions:
               vendorID:
                 type: integer
                 format: int32
+              rejectApprovals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    address:
+                      type: string
+                    time:
+                      type: string
+                      format: int64
+                    info:
+                      type: string
           revokeApprovals:
             type: array
             items:
@@ -15045,18 +15213,18 @@ definitions:
           vendorID:
             type: integer
             format: int32
-      rejectApprovals:
-        type: array
-        items:
-          type: object
-          properties:
-            address:
-              type: string
-            time:
-              type: string
-              format: int64
-            info:
-              type: string
+          rejectApprovals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
   zigbeealliance.distributedcomplianceledger.dclauth.RevokedAccount:
     type: object
     properties:
@@ -15277,6 +15445,18 @@ definitions:
           vendorID:
             type: integer
             format: int32
+          rejectApprovals:
+            type: array
+            items:
+              type: object
+              properties:
+                address:
+                  type: string
+                time:
+                  type: string
+                  format: int64
+                info:
+                  type: string
       revokeApprovals:
         type: array
         items:
